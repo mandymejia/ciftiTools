@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1581690268037.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "C8863676",
+    "lastKnownWriteTime" : 1581951558,
+    "last_content_update" : 1581951558688,
+    "path" : "~/Box Sync/SOFTWARE/ciftiTools/R/cifti_read_separate.R",
+    "project_path" : "R/cifti_read_separate.R",
+    "properties" : {
+        "cursorPosition" : "95,75",
+        "scrollLine" : "5"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
