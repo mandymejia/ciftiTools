@@ -1,9 +1,9 @@
 #' Visualize cifti brain data
 #'
 #' @param cifti Object of class 'cifti'. See \code{help(cifti_read_separate)}.
-#' @param (Optional) z_min Lower limit of color scale for values
-#' @param (Optional) z_max Upper limit of color scale for values
-#' @param (Optional) colors Vector of colors for color scale
+#' @param z_min (Optional) Lower limit of color scale for values
+#' @param z_max (Optional) Upper limit of color scale for values
+#' @param colors (Optional) Vector of colors for color scale
 #' @param brainstructure 'left', 'right', 'surface' or 'subcortical'.
 #' @param mesh_left If brainstructure is 'left' or 'surface', an inla.mesh object for the left hemisphere.  (Provide mesh_left OR vertices_left and faces_left, but not both.)
 #' @param vertices_left If brainstructure is 'left' or 'surface', the Vx3 matrix of surface vertices for the left hemisphere. (Provide mesh_left OR vertices_left and faces_left, but not both.)
@@ -13,16 +13,16 @@
 #' @param faces_right  If brainstructure is 'right' or 'surface', the Wx3 matrix of triangle membership for the right surface vertices. (Provide mesh_right OR vertices_right and faces_right, but not both.)
 #' @param structural_img If brainstructure is 'subcortical', the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
 #' @param w The time/column index of the cifti data to plot.
-#' @param plane If brainstructure is 'subcortical', the plane to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.
-#' @param num.slices If brainstructure is 'subcortical', the number of slices to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.
+#' @param plane If brainstructure is 'subcortical' and papaya=FALSE, the plane to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.
+#' @param num.slices If brainstructure is 'subcortical' and papaya=FALSE, the number of slices to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.
 #' @param use_papaya If brainstructure is 'subcortical', papaya=TRUE will use papayar to allows for interactive visualization.
 #'
 #' @export
 #' @importFrom grDevices colorRampPalette
-#' @importFrom RColorBrewer brewer.pal
 #' @importFrom INLA inla.mesh.create
 #' @importFrom INLA plot.inla.mesh
 #' @importFrom oro.nifti overlay
+#' @importFrom stats quantile
 #' @import papayar
 #'
 cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructure, mesh_left=NULL, vertices_left=NULL, faces_left=NULL, mesh_right=NULL, vertices_right=NULL, faces_right=NULL, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){

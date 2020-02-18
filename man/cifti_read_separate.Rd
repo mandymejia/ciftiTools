@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_read_separate.R
 \name{cifti_read_separate}
 \alias{cifti_read_separate}
-\title{Separates CIFTI data into left/right cortical surfaces and subcortical and reads in data}
+\title{Reads in CIFTI data}
 \usage{
 cifti_read_separate(
   fname_cifti,
@@ -21,7 +21,7 @@ cifti_read_separate(
 An object of type 'cifti', a list containing up to 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.  LABELS contains the brain structure labels (usually 3-21) of the subcortical elements.
 }
 \description{
-Separates CIFTI data into left/right cortical surfaces and subcortical and reads in data
+Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure.
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,

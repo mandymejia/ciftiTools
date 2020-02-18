@@ -1,4 +1,6 @@
-#' Separates CIFTI data into left/right cortical surfaces and subcortical and reads in data
+#' Reads in CIFTI data
+#'
+#' @description Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure.
 #'
 #' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
 #' @param brainstructures A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)
@@ -42,7 +44,7 @@ cifti_read_separate <- function(fname_cifti, brainstructures=c('left','right','s
   ### Separate the CIFTI file into left cortex, right cortex, subcortical volumetric data, and subcortical labels
   dir <- dirname(fname_cifti) #extract directory component of file path to cifti data
   fname_cifti <- basename(fname_cifti) #extract file name component of file path to cifti data
-  extn <- paste(rev(unlist(strsplit(fname_cifti, split='.', fixed = TRUE)))[c(2,1)], collapse='.') #get extension of cifti file (e.g. "dtseries.nii", "dscalar.nii")
+  extn <- get_cifti_extn(fname_cifti)  #get extension of cifti file (e.g. "dtseries.nii", "dscalar.nii")
   if(do_left) fname_left <- gsub(extn,'L.func.gii',fname_cifti, fixed=TRUE)
   if(do_right) fname_right <- gsub(extn,'R.func.gii',fname_cifti, fixed=TRUE)
   if(do_sub) {
@@ -95,6 +97,15 @@ cifti_read_separate <- function(fname_cifti, brainstructures=c('left','right','s
 
   class(result) <- 'cifti'
   return(result)
+}
+
+get_cifti_extn <- function(fname_cifti){
+
+  fname_cifti <- basename(fname_cifti)
+  fname_parts <- unlist(strsplit(fname_cifti, split='.', fixed = TRUE)) #split by "."
+  extn <- paste(rev(fname_parts)[c(2,1)], collapse='.') #"dtseries.nii", "dscalar.nii", etc.
+  return(extn)
+
 }
 
 

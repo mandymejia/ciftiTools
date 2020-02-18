@@ -6,6 +6,9 @@
 \usage{
 cifti_view(
   cifti,
+  z_min = NULL,
+  z_max = NULL,
+  colors = NULL,
   brainstructure,
   mesh_left = NULL,
   vertices_left = NULL,
@@ -22,6 +25,12 @@ cifti_view(
 }
 \arguments{
 \item{cifti}{Object of class 'cifti'. See \code{help(cifti_read_separate)}.}
+
+\item{z_min}{(Optional) Lower limit of color scale for values}
+
+\item{z_max}{(Optional) Upper limit of color scale for values}
+
+\item{colors}{(Optional) Vector of colors for color scale}
 
 \item{brainstructure}{'left', 'right', 'surface' or 'subcortical'.}
 
@@ -41,9 +50,9 @@ cifti_view(
 
 \item{w}{The time/column index of the cifti data to plot.}
 
-\item{plane}{If brainstructure is 'subcortical', the plane to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.}
+\item{plane}{If brainstructure is 'subcortical' and papaya=FALSE, the plane to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.}
 
-\item{num.slices}{If brainstructure is 'subcortical', the number of slices to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.}
+\item{num.slices}{If brainstructure is 'subcortical' and papaya=FALSE, the number of slices to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.}
 
 \item{use_papaya}{If brainstructure is 'subcortical', papaya=TRUE will use papayar to allows for interactive visualization.}
 }
