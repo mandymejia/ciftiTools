@@ -1,7 +1,6 @@
 #' Separates CIFTI data into left/right cortical surfaces and subcortical and reads in data
 #'
-#' @param fname_cifti File name of CIFTI-format data (ending in .d*.nii), located in current or specified working directory.
-#' @param dir Directory containing CIFTI file. If NULL, use current working directory.
+#' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
 #' @param brainstructures A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)
 #' @param wb_cmd Path to Connectome Workbench executable file, ending in 'wb_command' (Mac/linux) or 'wb_command.exe' (Windows).
 #'
@@ -34,15 +33,15 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_separate <- function(fname_cifti, dir=NULL, brainstructures=c('left','right','subcortical'), wb_cmd){
+cifti_read_separate <- function(fname_cifti, brainstructures=c('left','right','subcortical'), wb_cmd){
 
   do_left <- ('left' %in% brainstructures)
   do_right <- ('right' %in% brainstructures)
   do_sub <- ('subcortical' %in% brainstructures)
 
-
   ### Separate the CIFTI file into left cortex, right cortex, subcortical volumetric data, and subcortical labels
-
+  dir <- dirname(fname_cifti) #extract directory component of file path to cifti data
+  fname_cifti <- basename(fname_cifti) #extract file name component of file path to cifti data
   extn <- paste(rev(unlist(strsplit(fname_cifti, split='.', fixed = TRUE)))[c(2,1)], collapse='.') #get extension of cifti file (e.g. "dtseries.nii", "dscalar.nii")
   if(do_left) fname_left <- gsub(extn,'L.func.gii',fname_cifti, fixed=TRUE)
   if(do_right) fname_right <- gsub(extn,'R.func.gii',fname_cifti, fixed=TRUE)
@@ -53,25 +52,22 @@ cifti_read_separate <- function(fname_cifti, dir=NULL, brainstructures=c('left',
 
 
   ### Check whether separated files already exist
-
-  if(is.null(dir)) dir <- getwd()
   all_files <- list.files(dir)
-  if(!(fname_cifti %in% all_files)) stop('fname_cifti does not exist in specified or current working directory')
+  if(!(fname_cifti %in% all_files)) stop('fname_cifti does not exist')
   need_left <- need_right <- need_sub <- FALSE
-  if(do_left & !(fname_left %in% all_files)) need_left <- TRUE
-  if(do_right & !(fname_right %in% all_files)) need_right <- TRUE
-  if(do_sub & !(fname_vol %in% all_files & fname_labels %in% all_files)) need_sub <- TRUE
+  if(do_left) if(!(fname_left %in% all_files)) need_left <- TRUE
+  if(do_right) if(!(fname_right %in% all_files)) need_right <- TRUE
+  if(do_sub) if(!(fname_vol %in% all_files & fname_labels %in% all_files)) need_sub <- TRUE
 
 
   ### Construct system command to create needed files
-
   cmd_left <- cmd_right <- cmd_sub <- NULL
-  if(need_left) cmd_left <- paste('-metric CORTEX_LEFT', fname_left, sep=' ')
-  if(need_right) cmd_right <- paste('-metric CORTEX_RIGHT', fname_right, sep=' ')
-  if(need_sub) cmd_sub <- paste('-volume-all', fname_vol, '-label', fname_labels, sep=' ')
+  if(need_left) cmd_left <- paste('-metric CORTEX_LEFT', file.path(dir,fname_left), sep=' ')
+  if(need_right) cmd_right <- paste('-metric CORTEX_RIGHT', file.path(dir,fname_right), sep=' ')
+  if(need_sub) cmd_sub <- paste('-volume-all', file.path(dir,fname_vol), '-label', file.path(dir,fname_labels), sep=' ')
 
   if(need_left | need_right | need_sub){
-    cmd <- paste(wb_cmd, '-cifti-separate', fname_cifti, 'COLUMN', cmd_left, cmd_right, cmd_sub, sep=' ')
+    cmd <- paste(wb_cmd, '-cifti-separate', file.path(dir,fname_cifti), 'COLUMN', cmd_left, cmd_right, cmd_sub, sep=' ')
     system(cmd)
   }
 
@@ -94,6 +90,7 @@ cifti_read_separate <- function(fname_cifti, dir=NULL, brainstructures=c('left',
   if(do_sub){
     result$VOL <- readNIfTI(file.path(dir,fname_vol), reorient=FALSE)
     result$LABELS <- readNIfTI(file.path(dir,fname_labels), reorient=FALSE)
+    result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 #shift by 2 to be consistent with Matlab ft_read_cifti function, which labels 1=CORTEX_LEFT and 2=CORTEX_RIGHT
   }
 
   class(result) <- 'cifti'

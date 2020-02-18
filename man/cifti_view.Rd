@@ -4,10 +4,21 @@
 \alias{cifti_view}
 \title{Visualize cifti brain data}
 \usage{
-cifti_view(cifti, brainstructure, mesh_left = NULL,
-  vertices_left = NULL, faces_left = NULL, mesh_right = NULL,
-  vertices_right = NULL, faces_right = NULL, structural_img = "MNI",
-  w = 1, plane = "axial", num.slices = 12, use_papaya = FALSE)
+cifti_view(
+  cifti,
+  brainstructure,
+  mesh_left = NULL,
+  vertices_left = NULL,
+  faces_left = NULL,
+  mesh_right = NULL,
+  vertices_right = NULL,
+  faces_right = NULL,
+  structural_img = "MNI",
+  w = 1,
+  plane = "axial",
+  num.slices = 12,
+  use_papaya = FALSE
+)
 }
 \arguments{
 \item{cifti}{Object of class 'cifti'. See \code{help(cifti_read_separate)}.}

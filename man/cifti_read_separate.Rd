@@ -4,13 +4,14 @@
 \alias{cifti_read_separate}
 \title{Separates CIFTI data into left/right cortical surfaces and subcortical and reads in data}
 \usage{
-cifti_read_separate(fname_cifti, dir = NULL,
-  brainstructures = c("left", "right", "subcortical"), wb_cmd)
+cifti_read_separate(
+  fname_cifti,
+  brainstructures = c("left", "right", "subcortical"),
+  wb_cmd
+)
 }
 \arguments{
-\item{fname_cifti}{File name of CIFTI-format data (ending in .d*.nii), located in current or specified working directory.}
-
-\item{dir}{Directory containing CIFTI file. If NULL, use current working directory.}
+\item{fname_cifti}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{brainstructures}{A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)}
 

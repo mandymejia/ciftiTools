@@ -1,6 +1,9 @@
 #' Visualize cifti brain data
 #'
 #' @param cifti Object of class 'cifti'. See \code{help(cifti_read_separate)}.
+#' @param (Optional) z_min Lower limit of color scale for values
+#' @param (Optional) z_max Upper limit of color scale for values
+#' @param (Optional) colors Vector of colors for color scale
 #' @param brainstructure 'left', 'right', 'surface' or 'subcortical'.
 #' @param mesh_left If brainstructure is 'left' or 'surface', an inla.mesh object for the left hemisphere.  (Provide mesh_left OR vertices_left and faces_left, but not both.)
 #' @param vertices_left If brainstructure is 'left' or 'surface', the Vx3 matrix of surface vertices for the left hemisphere. (Provide mesh_left OR vertices_left and faces_left, but not both.)
@@ -15,13 +18,14 @@
 #' @param use_papaya If brainstructure is 'subcortical', papaya=TRUE will use papayar to allows for interactive visualization.
 #'
 #' @export
-#' @import viridis
+#' @importFrom grDevices colorRampPalette
+#' @importFrom RColorBrewer brewer.pal
 #' @importFrom INLA inla.mesh.create
 #' @importFrom INLA plot.inla.mesh
 #' @importFrom oro.nifti overlay
 #' @import papayar
 #'
-cifti_view <- function(cifti, brainstructure, mesh_left=NULL, vertices_left=NULL, faces_left=NULL, mesh_right=NULL, vertices_right=NULL, faces_right=NULL, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
+cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructure, mesh_left=NULL, vertices_left=NULL, faces_left=NULL, mesh_right=NULL, vertices_right=NULL, faces_right=NULL, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
 
   if(brainstructure %in% c('left','right','surface')){
 
@@ -35,8 +39,14 @@ cifti_view <- function(cifti, brainstructure, mesh_left=NULL, vertices_left=NULL
 
     #assign colors to vertices based on intensity values
     nColors <- 64
-    pal <- viridis_pal()(nColors)
-    colindex <- as.integer(cut(values,breaks=nColors))
+    #pal <- viridis_pal()(nColors)
+    if(is.null(colors)) colors <- c('aquamarine','green','purple','blue','black','darkred','red','orange','yellow')
+    pal <- colorRampPalette(colors)(nColors)
+    if(!is.null(z_min)) values[values < z_min] <- z_min else z_min <- min(values, na.rm=TRUE)
+    if(!is.null(z_max)) values[values > z_max] <- z_max else z_max <- max(values, na.rm=TRUE)
+    breaks <- quantile(values[(values > z_min) & (values < z_max)],
+                       probs = seq(0,1,length.out=nColors), na.rm=TRUE)
+    colindex <- as.integer(cut(values,breaks=breaks))
     if(brainstructure=='surface') {
       colindex_left <- colindex[1:nvox_left]
       colindex_right <- colindex[(nvox_left+1):(nvox_left+nvox_right)]
