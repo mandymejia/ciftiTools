@@ -11,6 +11,7 @@
 #' @param make_helper_files If TRUE, make all the helper files required for resampling. Otherwise, all necessary helper files must be located in a subdirectory named 'helper_files_resampling'.
 #' @param delete_helper_files If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.
 #' @param overwrite Logical indicating whether cifti_target should be overwritten if it already exists.
+#' @param verbose Logical indicating whether progress updates should be displayed
 #'
 #' @return Logical indicating whether resampled CIFTI file was created.
 #' @export
@@ -23,7 +24,7 @@
 #' Step 3: Use cifti-create to form a template CIFTI file in the target resolution based on the components created in Steps 2a and 2b.
 #' Step 4: Use cifti-resample to resample cifti_orig to the target resolution
 #'
-cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE){
+cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE){
 
   if(file.exists(cifti_target) & overwrite==FALSE) stop('cifti_target already exists. Set overwrite=TRUE to overwrite.')
   if(file.exists(cifti_target) & overwrite==TRUE) warning('cifti_target already exists. It will be overwritten since overwrite=TRUE.')
@@ -49,7 +50,10 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   # Step 1. Create new spherical GIFTI files using wb_command -surface-create-sphere
   sphere_target_R <- file.path(dir2,'Sphere.target.R.surf.gii')
   sphere_target_L <- file.path(dir2,'Sphere.target.L.surf.gii')
-  if(make_helper_files) make_helper_spheres(sphere_target_R, sphere_target_L, target_res, wb_cmd)
+  if(make_helper_files) {
+    if(verbose) cat('\nCreating spherical surfaces in target resolution... \n')
+    make_helper_spheres(sphere_target_R, sphere_target_L, target_res, wb_cmd)
+  }
 
   # Step 2. Create CIFTI space with target number of vertices
 
@@ -61,7 +65,10 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   surf_orig_R <- file.path(dir2, 'surf.orig.R.func.gii')
   roi_orig_L <- file.path(dir2, 'roi.orig.L.func.gii')
   roi_orig_R <- file.path(dir2, 'roi.orig.R.func.gii')
-  if(make_helper_files) system(paste(wb_cmd, '-cifti-separate', cifti_orig, 'COLUMN -volume-all', vol_orig, '-label', labels_orig, '-metric CORTEX_LEFT', surf_orig_L, '-roi', roi_orig_L, '-metric CORTEX_RIGHT', surf_orig_R, '-roi', roi_orig_R, sep=' '))
+  if(make_helper_files) {
+    if(verbose) cat('Separating cifti_orig into components... \n')
+    system(paste(wb_cmd, '-cifti-separate', cifti_orig, 'COLUMN -volume-all', vol_orig, '-label', labels_orig, '-metric CORTEX_LEFT', surf_orig_L, '-roi', roi_orig_L, '-metric CORTEX_RIGHT', surf_orig_R, '-roi', roi_orig_R, sep=' '))
+  }
 
   # Then, use wb_commmand -metric-resample to create versions of these in the target resolution
 
@@ -72,6 +79,7 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   surf_target_L <- file.path(dir2, 'surf.target.L.func.gii')
   surf_target_R <- file.path(dir2, 'surf.target.R.func.gii')
   if(make_helper_files){
+    if(verbose) cat('Resampling components to target resolution... \n')
     system(paste(wb_cmd, '-metric-resample', surf_orig_L, sphere_orig_L, sphere_target_L, 'BARYCENTRIC', surf_target_L, '-current-roi', roi_orig_L, '-valid-roi-out', validroi_target_L, sep=' '))
     system(paste(wb_cmd, '-metric-resample', surf_orig_R, sphere_orig_R, sphere_target_R, 'BARYCENTRIC', surf_target_R, '-current-roi', roi_orig_R, '-valid-roi-out', validroi_target_R, sep=' '))
     system(paste(wb_cmd, '-metric-resample', roi_orig_L,  sphere_orig_L, sphere_target_L, 'BARYCENTRIC', roi_target_L, sep=' '))
@@ -86,8 +94,11 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   cifti_template_target <- file.path(dir2, cifti_template_target)
   if(grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'
   if(grepl('dscalar',cifti_extn)) create_cmd <- '-cifti-create-dense-scalar'
-  if(grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-label'
-  if(make_helper_files) system(paste(wb_cmd, create_cmd, cifti_template_target, '-volume', vol_orig, labels_orig, '-left-metric', surf_target_L, '-roi-left', roi_target_L, '-right-metric', surf_target_R, '-roi-right', roi_target_R, sep=' '))
+  if(grepl('dlabel',cifti_extn)) create_cmd <- '-cifti-create-label'
+  if(make_helper_files) {
+    if(verbose) cat('Creating template CIFTI file in target resolution... \n')
+    system(paste(wb_cmd, create_cmd, cifti_template_target, '-volume', vol_orig, labels_orig, '-left-metric', surf_target_L, '-roi-left', roi_target_L, '-right-metric', surf_target_R, '-roi-right', roi_target_R, sep=' '))
+  }
 
 
   # Step 4.  Perform resampling with cifti-resample
@@ -96,10 +107,12 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   if(file.exists(cifti_target) & overwrite==TRUE) file.remove(cifti_target)
 
   #peform resampling
+  if(verbose) cat('Resampling cifti_orig to target resolution... \n')
   cmd = paste(wb_cmd, '-cifti-resample', cifti_orig, 'COLUMN', cifti_template_target, 'COLUMN BARYCENTRIC CUBIC', cifti_target, '-left-spheres',  sphere_orig_L, sphere_target_L, '-right-spheres', sphere_orig_R, sphere_target_R, sep=' ')
   system(cmd)
 
   #check whether operation successful and return result
+  if(verbose) cat('Checking if resampled CIFTI was written. \n')
   file.exists(cifti_target)
 }
 
@@ -130,7 +143,7 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
   if(file.exists(gifti_target) & overwrite==TRUE) file.remove(gifti_target)
 
   #peform resampling
-  cmd = paste0(wb_cmd, '-surface-resample', gifti_orig, sphere_orig, sphere_target, 'BARYCENTRIC', gifti_target, sep=' ')
+  cmd = paste(wb_cmd, '-surface-resample', gifti_orig, sphere_orig, sphere_target, 'BARYCENTRIC', gifti_target, sep=' ')
   system(cmd)
 
   #check whether operation successful and return result
