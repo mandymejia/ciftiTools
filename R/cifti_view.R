@@ -30,6 +30,11 @@
 #'
 cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructure, gifti_left=NULL, mesh_left=NULL, vertices_left=NULL, faces_left=NULL, gifti_right=NULL, mesh_right=NULL, vertices_right=NULL, faces_right=NULL, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
 
+  nColors <- 64
+  #pal <- viridis_pal()(nColors)
+  if(is.null(colors)) colors <- c('aquamarine','green','purple','blue','black','darkred','red','orange','yellow')
+  pal <- colorRampPalette(colors)(nColors)
+
   if(brainstructure %in% c('left','right','surface')){
 
     values_left <- cifti$CORTEX_LEFT[,w]
@@ -41,10 +46,6 @@ cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructur
     if(brainstructure=='right') values <- values_right
 
     #assign colors to vertices based on intensity values
-    nColors <- 64
-    #pal <- viridis_pal()(nColors)
-    if(is.null(colors)) colors <- c('aquamarine','green','purple','blue','black','darkred','red','orange','yellow')
-    pal <- colorRampPalette(colors)(nColors)
     if(!is.null(z_min)) values[values < z_min] <- z_min else z_min <- min(values, na.rm=TRUE)
     if(!is.null(z_max)) values[values > z_max] <- z_max else z_max <- max(values, na.rm=TRUE)
     # breaks <- quantile(values[(values > z_min) & (values < z_max)],
@@ -112,12 +113,21 @@ cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructur
       T1w <- readNIfTI(structural_img, reorient=FALSE)
     }
 
-    img_overlay <- T1w*0
-    img_overlay@.Data <- cifti$VOL[,,,w]
-    img_overlay[img_overlay==0] <- NA
+    values <- cifti$VOL[,,,w]
+    if(!is.null(z_min)) values[values < z_min] <- z_min
+    if(!is.null(z_max)) values[values > z_max] <- z_max
+    print(paste0('Values to be plotted range from ',min(values[cifti$LABELS > 0]),' to ',max(values[cifti$LABELS > 0])))
 
-    if(use_papaya==FALSE) oro.nifti::overlay(x=T1w, y=img_overlay, plot.type='single', plane=plane, z=slices)
-    if(use_papaya==TRUE) papaya(list(T1w, img_overlay))
+    img_overlay <- T1w*0
+    img_overlay@.Data <- values
+    img_overlay@.Data[cifti$LABELS==0] <- NA
+
+    img_labels <- T1w*0
+    img_labels@.Data <- cifti$LABELS
+    img_labels@.Data[cifti$LABELS==0] <- NA
+
+    if(use_papaya==FALSE) oro.nifti::overlay(x=T1w, y=img_overlay, plot.type='single', plane=plane, z=slices, col.y=pal)
+    if(use_papaya==TRUE) papaya(list(T1w, img_overlay, img_labels))
 
   }
 
