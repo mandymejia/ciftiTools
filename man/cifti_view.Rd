@@ -10,9 +10,11 @@ cifti_view(
   z_max = NULL,
   colors = NULL,
   brainstructure,
+  gifti_left = NULL,
   mesh_left = NULL,
   vertices_left = NULL,
   faces_left = NULL,
+  gifti_right = NULL,
   mesh_right = NULL,
   vertices_right = NULL,
   faces_right = NULL,
@@ -34,17 +36,21 @@ cifti_view(
 
 \item{brainstructure}{'left', 'right', 'surface' or 'subcortical'.}
 
-\item{mesh_left}{If brainstructure is 'left' or 'surface', an inla.mesh object for the left hemisphere.  (Provide mesh_left OR vertices_left and faces_left, but not both.)}
+\item{gifti_left}{If brainstructure is 'left' or 'surface', a file path to a gifti shape file for the left hemisphere.  (Provide gifti_left OR mesh_left OR vertices_left/faces_left.)}
 
-\item{vertices_left}{If brainstructure is 'left' or 'surface', the Vx3 matrix of surface vertices for the left hemisphere. (Provide mesh_left OR vertices_left and faces_left, but not both.)}
+\item{mesh_left}{If brainstructure is 'left' or 'surface', an inla.mesh object for the left hemisphere.  (Provide gifti_left OR mesh_left OR vertices_left/faces_left.)}
 
-\item{faces_left}{If brainstructure is 'left' or 'surface', the Wx3 matrix of triangle membership for the left surface vertices. (Provide mesh_left OR vertices_left and faces_left, but not both.)}
+\item{vertices_left}{If brainstructure is 'left' or 'surface', the Vx3 matrix of surface vertices for the left hemisphere.  (Provide gifti_left OR mesh_left OR vertices_left/faces_left.)}
 
-\item{mesh_right}{If brainstructure is 'right' or 'surface', an inla.mesh object for the right hemisphere. (Provide mesh_right OR vertices_right and faces_right, but not both.)}
+\item{faces_left}{If brainstructure is 'left' or 'surface', the Wx3 matrix of triangle membership for the left surface vertices. (Provide gifti_left OR mesh_left OR vertices_left/faces_left.)}
 
-\item{vertices_right}{If brainstructure is 'right' or 'surface', the Vx3 matrix of surface vertices for the right hemisphere.(Provide mesh_right OR vertices_right and faces_right, but not both.)}
+\item{gifti_right}{If brainstructure is 'right' or 'surface', a file path to a gifti shape file for the right hemisphere.  (Provide gifti_right OR mesh_right OR vertices_right/faces_right.)}
 
-\item{faces_right}{If brainstructure is 'right' or 'surface', the Wx3 matrix of triangle membership for the right surface vertices. (Provide mesh_right OR vertices_right and faces_right, but not both.)}
+\item{mesh_right}{If brainstructure is 'right' or 'surface', an inla.mesh object for the right hemisphere.  (Provide gifti_right OR mesh_right OR vertices_right/faces_right.)}
+
+\item{vertices_right}{If brainstructure is 'right' or 'surface', the Vx3 matrix of surface vertices for the right hemisphere.  (Provide gifti_right OR mesh_right OR vertices_right/faces_right.)}
+
+\item{faces_right}{If brainstructure is 'right' or 'surface', the Wx3 matrix of triangle membership for the right surface vertices.  (Provide gifti_right OR mesh_right OR vertices_right/faces_right.)}
 
 \item{structural_img}{If brainstructure is 'subcortical', the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.}
 

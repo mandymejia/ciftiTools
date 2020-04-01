@@ -13,7 +13,8 @@ cifti_resample(
   wb_cmd,
   make_helper_files = TRUE,
   delete_helper_files = FALSE,
-  overwrite = FALSE
+  overwrite = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ cifti_resample(
 \item{delete_helper_files}{If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.}
 
 \item{overwrite}{Logical indicating whether cifti_target should be overwritten if it already exists.}
+
+\item{verbose}{Logical indicating whether progress updates should be displayed}
 }
 \value{
 Logical indicating whether resampled CIFTI file was created.

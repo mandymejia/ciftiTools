@@ -22,11 +22,8 @@
 #' @export
 #' @importFrom gifti readGIfTI
 #' @importFrom grDevices colorRampPalette
-#' @importFrom INLA inla.mesh.create
-#' @importFrom INLA plot.inla.mesh
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom stats quantile
-#' @import papayar
 #'
 cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructure, gifti_left=NULL, mesh_left=NULL, vertices_left=NULL, faces_left=NULL, gifti_right=NULL, mesh_right=NULL, vertices_right=NULL, faces_right=NULL, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
 
@@ -36,6 +33,11 @@ cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructur
   pal <- colorRampPalette(colors)(nColors)
 
   if(brainstructure %in% c('left','right','surface')){
+
+    if (!requireNamespace("INLA", quietly = TRUE)) {
+      stop("Package \"INLA\" needed for this function to work. Please install it from http://www.r-inla.org/download.",
+           call. = FALSE)
+    }
 
     values_left <- cifti$CORTEX_LEFT[,w]
     nvox_left <- length(values_left)
@@ -66,7 +68,7 @@ cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructur
           vertices_left <- surf_left$pointset
           faces_left <- surf_left$triangle + 1
         }
-        mesh_left <- inla.mesh.create(loc=vertices_left, tv=faces_left)
+        mesh_left <- INLA::inla.mesh.create(loc=vertices_left, tv=faces_left)
       }
     }
 
@@ -78,19 +80,26 @@ cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructur
           vertices_right <- surf_right$pointset
           faces_right <- surf_right$triangle + 1
         }
-        mesh_right <- inla.mesh.create(loc=vertices_right, tv=faces_right)
+        mesh_right <- INLA::inla.mesh.create(loc=vertices_right, tv=faces_right)
       }
     }
 
-    if(brainstructure=='left') plot.inla.mesh(mesh_left, rgl=TRUE, col=pal[colindex], draw.edges=FALSE)
-    if(brainstructure=='right') plot.inla.mesh(mesh_right, rgl=TRUE, col=pal[colindex], draw.edges=FALSE)
+    if(brainstructure=='left') INLA::plot.inla.mesh(mesh_left, rgl=TRUE, col=pal[colindex], draw.edges=FALSE)
+    if(brainstructure=='right') INLA::plot.inla.mesh(mesh_right, rgl=TRUE, col=pal[colindex], draw.edges=FALSE)
     if(brainstructure=='surface') {
-      plot.inla.mesh(mesh_left, rgl=TRUE, col=pal[colindex_left])
-      plot.inla.mesh(mesh_right, rgl=TRUE, col=pal[colindex_left], add=TRUE)
+      INLA::plot.inla.mesh(mesh_left, rgl=TRUE, col=pal[colindex_left])
+      INLA::plot.inla.mesh(mesh_right, rgl=TRUE, col=pal[colindex_left], add=TRUE)
     }
   }
 
   if(brainstructure=='subcortical'){
+
+    if(use_papaya) {
+      if (!requireNamespace("papayar", quietly = TRUE)) {
+        stop("Package \"papayar\" needed for this function to work. Please install it.",
+             call. = FALSE)
+      }
+    }
 
     #pick slices with a lot of subcortical voxels
     if(!use_papaya){
@@ -127,7 +136,7 @@ cifti_view <- function(cifti, z_min=NULL, z_max=NULL, colors=NULL, brainstructur
     img_labels@.Data[cifti$LABELS==0] <- NA
 
     if(use_papaya==FALSE) oro.nifti::overlay(x=T1w, y=img_overlay, plot.type='single', plane=plane, z=slices, col.y=pal)
-    if(use_papaya==TRUE) papaya(list(T1w, img_overlay, img_labels))
+    if(use_papaya==TRUE) papayar::papaya(list(T1w, img_overlay, img_labels))
 
   }
 
