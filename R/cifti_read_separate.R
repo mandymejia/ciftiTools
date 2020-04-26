@@ -3,6 +3,9 @@
 #' @description Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure.
 #'
 #' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
+#' @param fname_gifti_left (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex
+#' @param fname_gifti_right (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing right cortex
+#' @param surf_names Character vector containing descriptive names of each GIFTI surface geometry provided (e.g. midthickness, inflated, etc.). Should match the length of fname_gifti_left and/or fname_gifti_left if they are provided. Otherwise, ignored.
 #' @param brainstructures A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)
 #' @param wb_cmd Path to Connectome Workbench executable file, ending in 'wb_command' (Mac/linux) or 'wb_command.exe' (Windows).
 #'
@@ -35,11 +38,17 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_separate <- function(fname_cifti, brainstructures=c('left','right','subcortical'), wb_cmd){
+cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names=NULL, brainstructures=c('left','right','subcortical'), wb_cmd){
 
   do_left <- ('left' %in% brainstructures)
   do_right <- ('right' %in% brainstructures)
   do_sub <- ('subcortical' %in% brainstructures)
+
+  ### Check surface argument compatibility
+  do_left_surf <- (!is.null(fname_gifti_left))
+  do_right_surf <- (!is.null(fname_gifti_right))
+  if(do_left_surf){ if(length(fname_gifti_left) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') }
+  if(do_right_surf){ if(length(fname_gifti_right) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') }
 
   ### Separate the CIFTI file into left cortex, right cortex, subcortical volumetric data, and subcortical labels
   dir <- dirname(fname_cifti) #extract directory component of file path to cifti data
@@ -95,10 +104,54 @@ cifti_read_separate <- function(fname_cifti, brainstructures=c('left','right','s
     result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 #shift by 2 to be consistent with Matlab ft_read_cifti function, which labels 1=CORTEX_LEFT and 2=CORTEX_RIGHT
   }
 
+  ### Read in GIFTI surface geometry files if provided
+  do_left_surf <- (!is.null(fname_gifti_left))
+  do_right_surf <- (!is.null(fname_gifti_right))
+  num_surf <- length(surf_names) #number of surface types provided
+
+  if(do_left_surf){
+
+    result$SURF_LEFT <- vector('list', num_surf)
+    names(result$SURF_LEFT) <- surf_names
+
+    for(ii in 1:num_surf){
+      surf_left_ii <- readGIfTI(fname_gifti_left[ii])
+      verts_left_ii <- surf_left_ii$pointset
+      faces_left_ii <- surf_left_ii$triangle
+      if(min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
+      result$SURF_LEFT[[ii]] <- list(vertices = verts_left_ii, faces = faces_left_ii)
+    }
+  } else {
+    result$SURF_LEFT <- NULL
+  }
+
+  if(do_right_surf){
+
+    result$SURF_RIGHT <- vector('list', num_surf)
+    names(result$SURF_RIGHT) <- surf_names
+
+    for(ii in 1:num_surf){
+      surf_right_ii <- readGIfTI(fname_gifti_right[ii])
+      verts_right_ii <- surf_right_ii$pointset
+      faces_right_ii <- surf_right_ii$triangle
+      if(min(faces_right_ii)==0) faces_right_ii <- faces_right_ii + 1 #start vertex indexing at 1 instead of 0
+      result$SURF_RIGHT[[ii]] <- list(vertices = verts_right_ii, faces = faces_right_ii)
+    }
+  } else {
+    result$SURF_RIGHT <- NULL
+  }
+
   class(result) <- 'cifti'
   return(result)
 }
 
+#' Gets CIFTI file extension
+#'
+#' @param fname_cifti Path to CIFTI file, including full file name and extension
+#'
+#' @return Character file extension of CIFTI file, e.g. 'dtseries.nii', 'dscalar.nii'.
+#' @export
+#'
 get_cifti_extn <- function(fname_cifti){
 
   fname_cifti <- basename(fname_cifti)

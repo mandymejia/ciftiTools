@@ -139,7 +139,7 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
   if(file.exists(gifti_target) & overwrite==FALSE) stop('gifti_target already exists. Set overwrite=TRUE to overwrite.')
   if(file.exists(gifti_target) & overwrite==TRUE) warning('gifti_target already exists. It will be overwritten since overwrite=TRUE.')
 
-  #delete existing cifti_target
+  #delete existing gifti_target
   if(file.exists(gifti_target) & overwrite==TRUE) file.remove(gifti_target)
 
   #peform resampling

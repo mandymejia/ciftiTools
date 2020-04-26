@@ -6,12 +6,21 @@
 \usage{
 cifti_read_separate(
   fname_cifti,
+  fname_gifti_left = NULL,
+  fname_gifti_right = NULL,
+  surf_names = NULL,
   brainstructures = c("left", "right", "subcortical"),
   wb_cmd
 )
 }
 \arguments{
 \item{fname_cifti}{File path of CIFTI-format data (ending in .d*.nii).}
+
+\item{fname_gifti_left}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex}
+
+\item{fname_gifti_right}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing right cortex}
+
+\item{surf_names}{Character vector containing descriptive names of each GIFTI surface geometry provided (e.g. midthickness, inflated, etc.). Should match the length of fname_gifti_left and/or fname_gifti_left if they are provided. Otherwise, ignored.}
 
 \item{brainstructures}{A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)}
 

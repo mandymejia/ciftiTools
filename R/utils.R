@@ -13,6 +13,8 @@ summary.cifti <- function(object, ...){
   if('VOL' %in% out$includes) out$includes <- c(out$includes[!(out$includes %in% c('VOL','LABELS'))],'SUBCORTICAL')
   if('CORTEX_LEFT' %in% out$includes) out$CORTEX_LEFT <- dim(object$CORTEX_LEFT)
   if('CORTEX_RIGHT' %in% out$includes) out$CORTEX_RIGHT <- dim(object$CORTEX_RIGHT)
+  if('SURF_LEFT' %in% out$includes) out$SURF_LEFT <- names(out$SURF_LEFT)
+  if('SURF_RIGHT' %in% out$includes) out$SURF_RIGHT <- names(out$SURF_RIGHT)
   if('SUBCORTICAL' %in% out$includes) out$VOL <- list(dim_vol=dim(object$VOL), nvox_vol=sum(object$LABELS>0))
   if('SUBCORTICAL' %in% out$includes) out$LABELS <- table(object$LABELS[object$LABELS>0])
   return(out)
@@ -27,6 +29,8 @@ print.summary.cifti <- function(x, ...){
   cat("Brain Structures: ", paste(x$includes, collapse=', '), " \n")
   if('CORTEX_LEFT' %in% x$includes) cat("Left Cortex: ", x$CORTEX_LEFT[1], "surface vertices, ", x$CORTEX_LEFT[2], "measurements \n")
   if('CORTEX_RIGHT' %in% x$includes) cat("Right Cortex: ", x$CORTEX_RIGHT[1], "surface vertices, ", x$CORTEX_RIGHT[2], "measurements \n")
+  if('SURF_LEFT' %in% x$includes) cat("Left Surface Models: ", paste(x$SURF_LEFT, collapse=', '))
+  if('SURF_RIGHT' %in% x$includes) cat("Right Surface Models: ", paste(x$SURF_RIGHT, collapse=', '))
   if('SUBCORTICAL' %in% x$includes){
     cat("Subcortical: ", x$VOL[[2]], "voxels, ", x$VOL[[1]][4], "measurements \n")
     cat("Subcortical Labels:")

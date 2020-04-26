@@ -7,6 +7,8 @@
 cifti_make(
   cortex_left = NULL,
   cortex_right = NULL,
+  surf_left = NULL,
+  surf_right = NULL,
   subcortical = NULL,
   mask = NULL,
   labels = NULL
@@ -16,6 +18,10 @@ cifti_make(
 \item{cortex_left}{Data matrix for left cortex, with vertices in rows}
 
 \item{cortex_right}{Data matrix for right cortex, with vertices in rows}
+
+\item{surf_left}{Surface model for left cortex (a list with two elements, vertices and faces)}
+
+\item{surf_right}{Surface model for right cortex (a list with two elements, vertices and faces)}
 
 \item{subcortical}{Data matrix for subcortical locations, with voxels in rows}
 
