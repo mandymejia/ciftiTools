@@ -44,3 +44,37 @@ print.summary.cifti <- function(x, ...){
 print.cifti <- function(x, ...) {
   print.summary.cifti(summary(x))
 }
+
+
+is.cifti <- function(x){
+  if(!is.list(x)) {message('not a list'); return(FALSE)}
+  if(!all.equal(names(x), c('CORTEX_LEFT','CORTEX_RIGHT','SURF_LEFT','SURF_RIGHT','VOL','LABELS'))) { message('names are not correct'); return(FALSE) }
+  if(!is.null(x$CORTEX_LEFT)){ if(!is.matrix(x$CORTEX_LEFT)) { message('x$CORTEX_LEFT not a matrix.'); return(FALSE) } }
+  if(!is.null(x$CORTEX_RIGHT)){ if(!is.matrix(x$CORTEX_RIGHT)) { message('x$CORTEX_RIGHT not a matrix.'); return(FALSE) } }
+  if(!is.null(x$SURF_LEFT)){
+    if(!is.list(x$SURF_LEFT)) { message('x$SURF_LEFT not a list'); return(FALSE) }
+    if(min(sapply(x$SURF_LEFT, is.surface)) == 0) { message('At least one element of x$SURF_LEFT not a valid surface object.'); return(FALSE) }
+  }
+  if(!is.null(x$VOL)){ if(!is.array(x$VOL) | !is.numeric(x$VOL)) { message('x$VOL not a numeric array'); return(FALSE) } }
+  if(!is.null(x$LABELS)){ if(!is.array(x$LABELS)  | !is.numeric(x$LABELS)) { message('x$LABELS not a numeric array'); return(FALSE) } }
+
+  return(TRUE)
+}
+
+is.surface <- function(x){
+  if(!is.list(x)) { message('Not a list'); return(FALSE) }
+  if(length(x) != 2) { message('Must be a list with 2 elements'); return(FALSE) }
+  if(!all.equal(names(x), c('vertices','faces'))) { message('Elements of x must be named "vertices" and "faces"'); return(FALSE) }
+  if(ncol(x$vertices) != 3) { message('x$vertices must have 3 columns'); return(FALSE) }
+  if(ncol(x$faces) != 3) { message('x$faces must have 3 columns'); return(FALSE) }
+  if(!is.numeric(x$faces)) { message('x$faces must be numeric'); return(FALSE) }
+  if(!is.numeric(x$vertices)) { message('x$vertices must be numeric'); return(FALSE) }
+  if(!all.equal(x$faces, round(x$faces), check.attributes=FALSE)) { message('x$faces must be only integers'); return(FALSE) }
+
+  V <- nrow(x$vertices)
+  if(max(x$faces) > V) { message('Max vertex index in x$faces is too high'); return(FALSE) }
+  if(min(x$faces) < 1) { message('Min vertex index in x$faces is too low'); return(FALSE) }
+
+  return(TRUE)
+}
+

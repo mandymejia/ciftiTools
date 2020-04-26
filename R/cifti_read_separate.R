@@ -119,7 +119,9 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
       verts_left_ii <- surf_left_ii$pointset
       faces_left_ii <- surf_left_ii$triangle
       if(min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
-      result$SURF_LEFT[[ii]] <- list(vertices = verts_left_ii, faces = faces_left_ii)
+      surf_left_ii <- list(vertices = verts_left_ii, faces = faces_left_ii)
+      class(surf_left_ii) <- 'surface'
+      result$SURF_LEFT[[ii]] <- surf_left_ii
     }
   } else {
     result$SURF_LEFT <- NULL
@@ -135,7 +137,9 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
       verts_right_ii <- surf_right_ii$pointset
       faces_right_ii <- surf_right_ii$triangle
       if(min(faces_right_ii)==0) faces_right_ii <- faces_right_ii + 1 #start vertex indexing at 1 instead of 0
-      result$SURF_RIGHT[[ii]] <- list(vertices = verts_right_ii, faces = faces_right_ii)
+      surf_right_ii <- list(vertices = verts_right_ii, faces = faces_right_ii)
+      class(surf_right_ii) <- 'surface'
+      result$SURF_RIGHT[[ii]] <- surf_right_ii
     }
   } else {
     result$SURF_RIGHT <- NULL

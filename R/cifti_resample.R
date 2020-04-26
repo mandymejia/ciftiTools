@@ -26,8 +26,14 @@
 #'
 cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE){
 
-  if(file.exists(cifti_target) & overwrite==FALSE) stop('cifti_target already exists. Set overwrite=TRUE to overwrite.')
-  if(file.exists(cifti_target) & overwrite==TRUE) warning('cifti_target already exists. It will be overwritten since overwrite=TRUE.')
+  if(file.exists(cifti_target)){
+    if(!overwrite){
+      message('cifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')
+      return(NULL)
+    } else {
+      warning('cifti_target already exists. It will be overwritten since overwrite=TRUE.')
+    }
+  }
 
   #location of cifti_orig and write location of cifti_target
   dir <- dirname(cifti_orig)
@@ -136,8 +142,14 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
 #'
 gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target, wb_cmd, overwrite=FALSE){
 
-  if(file.exists(gifti_target) & overwrite==FALSE) stop('gifti_target already exists. Set overwrite=TRUE to overwrite.')
-  if(file.exists(gifti_target) & overwrite==TRUE) warning('gifti_target already exists. It will be overwritten since overwrite=TRUE.')
+  if(file.exists(gifti_target)){
+    if(!overwrite){
+      message('gifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')
+      return(NULL)
+    } else {
+      warning('gifti_target already exists. It will be overwritten since overwrite=TRUE.')
+    }
+  }
 
   #delete existing gifti_target
   if(file.exists(gifti_target) & overwrite==TRUE) file.remove(gifti_target)

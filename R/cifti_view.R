@@ -2,8 +2,7 @@
 #'
 #' @param cifti Object of class 'cifti'. See \code{help(cifti_read_separate)}.
 #' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, cifti$SURF_RIGHT). If NULL, first surface will be used.
-#' @param z_min (Optional) Lower limit of color scale for values
-#' @param z_max (Optional) Upper limit of color scale for values
+#' @param z_lim (Optional) Lower and upper limits of values for color scale. Use -Inf for lower limit or Inf for upper limit to use the data value bounds.
 #' @param colors (Optional) Vector of colors for color scale
 #' @param brainstructure 'left', 'right', 'surface' or 'subcortical'.
 #' @param structural_img If brainstructure is 'subcortical', the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
@@ -17,33 +16,49 @@
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom stats quantile
 #'
-cifti_view <- function(cifti, surface=NULL, z_min=NULL, z_max=NULL, colors=NULL, brainstructure, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
+cifti_view <- function(cifti, surface=NULL, z_lim=NULL, colors=NULL, brainstructure, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
 
-  nColors <- 64
+  nColors <- 6
   #pal <- viridis_pal()(nColors)
   if(is.null(colors)) colors <- c('aquamarine','green','purple','blue','black','darkred','red','orange','yellow')
   pal <- colorRampPalette(colors)(nColors)
 
-  if(brainstructure %in% c('left','right','surface')){
+  do_left <- (brainstructure %in% c('left','surface'))
+  do_right <- (brainstructure %in% c('right','surface'))
+
+  if(do_left | do_right){
 
     if (!requireNamespace("INLA", quietly = TRUE)) {
       stop("Package \"INLA\" needed for this function to work. Please install it from http://www.r-inla.org/download.",
            call. = FALSE)
     }
 
-    values_left <- cifti$CORTEX_LEFT[,w]
+    if(w != round(w) | w < 1 | w > max(ncol(cifti$CORTEX_LEFT), ncol(cifti$CORTEX_RIGHT))) stop('w is not a valid column index for CORTEX_LEFT and/or CORTEX_right')
+    if(do_left) values_left <- cifti$CORTEX_LEFT[,w] else values_left <- NULL
+    if(do_right) values_right <- cifti$CORTEX_RIGHT[,w] else values_right <- NULL
     nvox_left <- length(values_left)
-    values_right <- cifti$CORTEX_RIGHT[,w]
     nvox_right <- length(values_right)
     if(brainstructure=='surface') values <- c(values_left, values_right)
     if(brainstructure=='left') values <- values_left
     if(brainstructure=='right') values <- values_right
 
     #assign colors to vertices based on intensity values
-    if(!is.null(z_min)) values[values < z_min] <- z_min else z_min <- min(values, na.rm=TRUE)
-    if(!is.null(z_max)) values[values > z_max] <- z_max else z_max <- max(values, na.rm=TRUE)
+    if(sum(is.na(z_lim))>0) stop('z_lim must not contains NAs')
+    if(!is.null(z_lim)){
+      z_min <- z_lim[1]
+      z_max <- z_lim[2]
+    } else {
+      z_min <- -Inf
+      z_max <- Inf
+    }
+    values[values < z_min] <- z_min
+    values[values > z_max] <- z_max
+    if(z_min == -Inf) z_min <- min(values)
+    if(z_max == Inf) z_max <- max(values)
+
     # breaks <- quantile(values[(values > z_min) & (values < z_max)],
     #                    probs = seq(0,1,length.out=nColors), na.rm=TRUE)
+    if(z_min >= z_max) stop('Invalid value range for color scale. Check that z_lim is valid and compatible with the range of observed values.')
     breaks <- seq(z_min, z_max, length.out=nColors)
     colindex <- as.integer(cut(values,breaks=breaks))
     if(brainstructure=='surface') {
@@ -52,7 +67,7 @@ cifti_view <- function(cifti, surface=NULL, z_min=NULL, z_max=NULL, colors=NULL,
     }
 
     #construct and plot mesh object
-    if(brainstructure %in% c('left','surface')){
+    if(do_left){
       if(is.null(cifti$SURF_LEFT)) stop("If brainstructure is 'left' or 'surface', cifti$SURF_LEFT must not be NULL.")
       if(is.null(surface)){
         surf_left <- cifti$SURF_LEFT[[1]]
@@ -64,7 +79,7 @@ cifti_view <- function(cifti, surface=NULL, z_min=NULL, z_max=NULL, colors=NULL,
     }
 
 
-    if(brainstructure %in% c('right','surface')){
+    if(do_right){
       if(is.null(cifti$SURF_RIGHT)) stop("If brainstructure is 'right' or 'surface', cifti$SURF_RIGHT must not be NULL.")
       if(is.null(surface)){
         surf_right <- cifti$SURF_RIGHT[[1]]

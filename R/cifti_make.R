@@ -2,8 +2,9 @@
 #'
 #' @param cortex_left Data matrix for left cortex, with vertices in rows
 #' @param cortex_right Data matrix for right cortex, with vertices in rows
-#' @param surf_left Surface model for left cortex (a list with two elements, vertices and faces)
-#' @param surf_right Surface model for right cortex (a list with two elements, vertices and faces)
+#' @param surf_left Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof
+#' @param surf_right Object of class 'surface' for right cortex (a list with two elements, vertices and faces), or a list thereof
+#' @param surf_names Character vector containing descriptive names of each surface geometry provided (e.g. midthickness, inflated, etc.). Must be provided if fname_gifti_left and/or fname_gifti_left provided, and length must match. Otherwise, ignored.
 #' @param subcortical Data matrix for subcortical locations, with voxels in rows
 #' @param mask Volumetric brain mask for subcortical locations
 #' @param labels Volumetric labels for subcortical ROIs
@@ -11,7 +12,7 @@
 #' @return Object of class 'cifti'
 #' @export
 #'
-cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surf_left=NULL, surf_right=NULL, subcortical=NULL, mask=NULL, labels=NULL){
+cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surf_left=NULL, surf_right=NULL, surf_names=NULL, subcortical=NULL, mask=NULL, labels=NULL){
 
   #check argument compatibility
   if(!is.null(subcortical)) { if(is.null(mask)) stop('If subcortical is provided, mask must be provided also.')} else mask <- NULL
@@ -19,22 +20,34 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surf_left=NULL, surf
   if(!is.null(cortex_left)) { if(class(cortex_left) != 'matrix') stop('cortex_left must be a matrix (or NULL), but it is not.') }
   if(!is.null(cortex_right)) { if(class(cortex_right) != 'matrix') stop('cortex_right must be a matrix (or NULL), but it is not.') }
 
+  numsurf <- length(surf_names)
+
   #check formatting of surf_left
   if(!is.null(surf_left)){
-    if(class(surf_left) != 'list' | !all.equal(names(surf_left), c('vertices','faces')) ) stop('surf_left must be NULL or a list with two elements: vertices and faces')
-    if(!is.null(cortex_left)) { if(nrow(cortex_left) != nrow(surf_left$vertices)) stop('cortex_left and surf_left must have same number of vertices.')}
-    if(ncol(surf_left$vertices) != 3 | class(surf_left$vertices) != 'matrix') stop('surf_left$vertices must be a matrix with 3 columns')
-    if(ncol(surf_left$faces) != 3 | class(surf_left$faces) != 'matrix') stop('surf_left$faces must be a matrix with 3 columns')
-    if(min(surf_left$faces) == 0) stop('Vertex indexing in surf_left$faces should start at 1, not 0.')
+    if(numsurf==1) {
+      if(!is.surface(surf_left)) stop('If only one surface provided, surf_left must be a valid surface object.  See if.surface().')
+      surf_left <- list(surface=surf_left)
+    }
+    if(numsurf != length(surf_left)) stop('Length of fname_gifti_left and surf_names must match.')
+    for(ii in 1:numsurf){
+      if(!is.surface(surf_left[[ii]])) stop('An element of surf_left is not a valid surface object.  See is.surface().')
+      if(!is.null(cortex_left)) { if(nrow(cortex_left) != nrow(surf_left[[ii]]$vertices)) stop('cortex_left and left surface model(s) must have same number of vertices.')}
+      class(surf_left[[ii]]) <- 'surface'
+    }
   }
 
   #check formatting of surf_right
   if(!is.null(surf_right)){
-    if(class(surf_right) != 'list' | !all.equal(names(surf_right), c('vertices','faces')) ) stop('surf_right must be NULL or a list with two elements: vertices and faces')
-    if(!is.null(cortex_right)) { if(nrow(cortex_right) != nrow(surf_right$vertices)) stop('cortex_right and surf_right must have same number of vertices.')}
-    if(ncol(surf_right$vertices) != 3 | class(surf_right$vertices) != 'matrix') stop('surf_right$vertices must be a matrix with 3 columns')
-    if(ncol(surf_right$faces) != 3 | class(surf_right$faces) != 'matrix') stop('surf_right$faces must be a matrix with 3 columns')
-    if(min(surf_right$faces) == 0) stop('Vertex indexing in surf_right$faces should start at 1, not 0.')
+    if(numsurf==1) {
+      if(!is.surface(surf_right)) stop('If only one surface provided, surf_right must be a valid surface object.  See if.surface().')
+      surf_right <- list(surface=surf_right)
+    }
+    if(numsurf != length(surf_right)) stop('Length of fname_gifti_right and surf_names must match.')
+    for(ii in 1:numsurf){
+      if(!is.surface(surf_right[[ii]])) stop('An element of surf_right is not a valid surface object.  See is.surface().')
+      if(!is.null(cortex_right)) { if(nrow(cortex_right) != nrow(surf_right[[ii]]$vertices)) stop('cortex_right and right surface model(s) must have same number of vertices.')}
+      class(surf_right[[ii]]) <- 'surface'
+    }
   }
 
   #check formatting of subcortical data
