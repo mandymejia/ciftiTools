@@ -7,9 +7,9 @@
 cifti_view(
   cifti,
   surface = NULL,
-  z_min = NULL,
-  z_max = NULL,
-  colors = NULL,
+  z_lim = NULL,
+  colors = c("aquamarine", "green", "purple", "blue", "black", "darkred", "red",
+    "orange", "yellow"),
   brainstructure,
   structural_img = "MNI",
   w = 1,
@@ -19,13 +19,11 @@ cifti_view(
 )
 }
 \arguments{
-\item{cifti}{Object of class 'cifti'. See \code{help(cifti_read_separate)}.}
+\item{cifti}{Object of class 'cifti'. See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
 
 \item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, cifti$SURF_RIGHT). If NULL, first surface will be used.}
 
-\item{z_min}{(Optional) Lower limit of color scale for values}
-
-\item{z_max}{(Optional) Upper limit of color scale for values}
+\item{z_lim}{(Optional) Lower and upper limits of values for color scale. Use -Inf for lower limit or Inf for upper limit to use the data value bounds.}
 
 \item{colors}{(Optional) Vector of colors for color scale}
 

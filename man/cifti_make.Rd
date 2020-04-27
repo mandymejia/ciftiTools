@@ -9,6 +9,7 @@ cifti_make(
   cortex_right = NULL,
   surf_left = NULL,
   surf_right = NULL,
+  surf_names = NULL,
   subcortical = NULL,
   mask = NULL,
   labels = NULL
@@ -19,9 +20,11 @@ cifti_make(
 
 \item{cortex_right}{Data matrix for right cortex, with vertices in rows}
 
-\item{surf_left}{Surface model for left cortex (a list with two elements, vertices and faces)}
+\item{surf_left}{Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof}
 
-\item{surf_right}{Surface model for right cortex (a list with two elements, vertices and faces)}
+\item{surf_right}{Object of class 'surface' for right cortex (a list with two elements, vertices and faces), or a list thereof}
+
+\item{surf_names}{Character vector containing descriptive names of each surface geometry provided (e.g. midthickness, inflated, etc.). Must be provided if fname_gifti_left and/or fname_gifti_left provided, and length must match. Otherwise, ignored.}
 
 \item{subcortical}{Data matrix for subcortical locations, with voxels in rows}
 
