@@ -46,21 +46,58 @@ print.cifti <- function(x, ...) {
 }
 
 
+#' Checks whether object is a valid cifti object
+#'
+#' @param x A list in the format of a cifti object.
+#'
+#' @return Logical indicating whether x is a valid cifti object
+#' @export
+#'
 is.cifti <- function(x){
-  if(!is.list(x)) {message('not a list'); return(FALSE)}
-  if(!all.equal(names(x), c('CORTEX_LEFT','CORTEX_RIGHT','SURF_LEFT','SURF_RIGHT','VOL','LABELS'))) { message('names are not correct'); return(FALSE) }
+  if(!is.list(x)) {message('x is not a list'); return(FALSE)}
+  names_x <- names(x)
+  if(length(names_x) != 6) { message('x must contain 6 elements (CORTEX_LEFT, CORTEX_RIGHT, SURF_LEFT, SURF_RIGHT, VOL, LABELS)'); return(FALSE) }
+  names_ok <- sapply(names_x, function(name) return(name %in% c('CORTEX_LEFT','CORTEX_RIGHT','SURF_LEFT','SURF_RIGHT','VOL','LABELS')))
+  if(min(names_ok) == 0) {
+    message('Elements of x must be named CORTEX_LEFT, CORTEX_RIGHT, SURF_LEFT, SURF_RIGHT, VOL, LABELS'); return(FALSE)
+  }
   if(!is.null(x$CORTEX_LEFT)){ if(!is.matrix(x$CORTEX_LEFT)) { message('x$CORTEX_LEFT not a matrix.'); return(FALSE) } }
   if(!is.null(x$CORTEX_RIGHT)){ if(!is.matrix(x$CORTEX_RIGHT)) { message('x$CORTEX_RIGHT not a matrix.'); return(FALSE) } }
+
   if(!is.null(x$SURF_LEFT)){
+    nsurf_left <- length(x$SURF_LEFT)
     if(!is.list(x$SURF_LEFT)) { message('x$SURF_LEFT not a list'); return(FALSE) }
     if(min(sapply(x$SURF_LEFT, is.surface)) == 0) { message('At least one element of x$SURF_LEFT not a valid surface object.'); return(FALSE) }
+    nvert_left <- sapply(x$SURF_LEFT, function(x) nrow(x$vertices))
+    if((min(nvert_left) != max(nvert_left))) { message('All surfaces in x$SURF_LEFT must have the same number of vertices.'); return(FALSE) }
+    if(!is.null(x$CORTEX_LEFT)) { if(nvert_left[1] != nrow(x$CORTEX_LEFT)) { message('Number of vertices in x$CORTEX_LEFT and surfaces in x$SURF_LEFT must match.'); return(FALSE) } }
   }
+
+  if(!is.null(x$SURF_RIGHT)){
+    nsurf_right <- length(x$SURF_RIGHT)
+    if(!is.list(x$SURF_RIGHT)) { message('x$SURF_RIGHT not a list'); return(FALSE) }
+    if(min(sapply(x$SURF_RIGHT, is.surface)) == 0) { message('At least one element of x$SURF_RIGHT not a valid surface object.'); return(FALSE) }
+    nvert_right <- sapply(x$SURF_RIGHT, function(x) nrow(x$vertices))
+    if((min(nvert_right) != max(nvert_right))) { message('All surfaces in x$SURF_RIGHT must have the same number of vertices.'); return(FALSE) }
+    if(!is.null(x$CORTEX_RIGHT)) { if(nvert_right[1] != nrow(x$CORTEX_RIGHT)) { message('Number of vertices in x$CORTEX_RIGHT and surfaces in x$SURF_RIGHT must match.'); return(FALSE) } }
+  }
+
+  if(!is.null(x$SURF_RIGHT) & !is.null(x$SURF_LEFT)){
+    if(nsurf_left != nsurf_right) warning('The number of surface models in x$SURF_RIGHT and x$SURF_LEFT are not the same.')
+  }
+
   if(!is.null(x$VOL)){ if(!is.array(x$VOL) | !is.numeric(x$VOL)) { message('x$VOL not a numeric array'); return(FALSE) } }
   if(!is.null(x$LABELS)){ if(!is.array(x$LABELS)  | !is.numeric(x$LABELS)) { message('x$LABELS not a numeric array'); return(FALSE) } }
 
   return(TRUE)
 }
 
+#' Checks whether object is a valid surface object
+#'
+#' @param x A list in the format of a surface object.
+#'
+#' @return Logical indicating whether x is a valid surface object
+#' @export
 is.surface <- function(x){
   if(!is.list(x)) { message('Not a list'); return(FALSE) }
   if(length(x) != 2) { message('Must be a list with 2 elements'); return(FALSE) }

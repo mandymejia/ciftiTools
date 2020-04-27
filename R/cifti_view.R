@@ -1,6 +1,6 @@
 #' Visualize cifti brain data
 #'
-#' @param cifti Object of class 'cifti'. See \code{help(cifti_read_separate)}.
+#' @param cifti Object of class 'cifti'. See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
 #' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, cifti$SURF_RIGHT). If NULL, first surface will be used.
 #' @param z_lim (Optional) Lower and upper limits of values for color scale. Use -Inf for lower limit or Inf for upper limit to use the data value bounds.
 #' @param colors (Optional) Vector of colors for color scale
@@ -16,11 +16,12 @@
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom stats quantile
 #'
-cifti_view <- function(cifti, surface=NULL, z_lim=NULL, colors=NULL, brainstructure, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
+cifti_view <- function(cifti, surface=NULL, z_lim=NULL, colors=c('aquamarine','green','purple','blue','black','darkred','red','orange','yellow'), brainstructure, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
 
-  nColors <- 6
+  if(!is.cifti(cifti)) stop('cifti argument is not a valid cifti object. See is.cifti().')
+
+  nColors <- 60
   #pal <- viridis_pal()(nColors)
-  if(is.null(colors)) colors <- c('aquamarine','green','purple','blue','black','darkred','red','orange','yellow')
   pal <- colorRampPalette(colors)(nColors)
 
   do_left <- (brainstructure %in% c('left','surface'))
@@ -29,13 +30,22 @@ cifti_view <- function(cifti, surface=NULL, z_lim=NULL, colors=NULL, brainstruct
   if(do_left | do_right){
 
     if (!requireNamespace("INLA", quietly = TRUE)) {
-      stop("Package \"INLA\" needed for this function to work. Please install it from http://www.r-inla.org/download.",
-           call. = FALSE)
+      stop("Package \"INLA\" needed for this function to work. Please install it from http://www.r-inla.org/download.", call. = FALSE)
     }
 
-    if(w != round(w) | w < 1 | w > max(ncol(cifti$CORTEX_LEFT), ncol(cifti$CORTEX_RIGHT))) stop('w is not a valid column index for CORTEX_LEFT and/or CORTEX_right')
-    if(do_left) values_left <- cifti$CORTEX_LEFT[,w] else values_left <- NULL
-    if(do_right) values_right <- cifti$CORTEX_RIGHT[,w] else values_right <- NULL
+    values_left <- values_right <- NULL
+    if(do_left){
+      if(is.null(cifti$CORTEX_LEFT)) stop('No data in cifti$CORTEX_LEFT.')
+      if(is.null(cifti$SURF_LEFT)) stop('No data in cifti$SURF_LEFT. Must provide a surface model for left cortex.')
+      if(!(w %in% 1:ncol(cifti$CORTEX_LEFT))) stop('w is not a valid column index for cifti$CORTEX_LEFT')
+    }
+    if(do_right){
+      if(is.null(cifti$CORTEX_RIGHT)) stop('No data in cifti$CORTEX_RIGHT.')
+      if(is.null(cifti$SURF_RIGHT)) stop('No data in cifti$SURF_RIGHT. Must provide a surface model for right cortex.')
+      if(!(w %in% 1:ncol(cifti$CORTEX_RIGHT))) stop('w is not a valid column index for cifti$CORTEX_RIGHT')
+    }
+    if(do_left) values_left <- cifti$CORTEX_LEFT[,w]
+    if(do_right) values_right <- cifti$CORTEX_RIGHT[,w]
     nvox_left <- length(values_left)
     nvox_right <- length(values_right)
     if(brainstructure=='surface') values <- c(values_left, values_right)

@@ -38,7 +38,7 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names=NULL, brainstructures=c('left','right','subcortical'), wb_cmd){
+cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd){
 
   do_left <- ('left' %in% brainstructures)
   do_right <- ('right' %in% brainstructures)
@@ -115,7 +115,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     names(result$SURF_LEFT) <- surf_names
 
     for(ii in 1:num_surf){
-      surf_left_ii <- readGIfTI(fname_gifti_left[ii])
+      surf_left_ii <- readGIfTI(fname_gifti_left[ii])$data
       verts_left_ii <- surf_left_ii$pointset
       faces_left_ii <- surf_left_ii$triangle
       if(min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
@@ -133,7 +133,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     names(result$SURF_RIGHT) <- surf_names
 
     for(ii in 1:num_surf){
-      surf_right_ii <- readGIfTI(fname_gifti_right[ii])
+      surf_right_ii <- readGIfTI(fname_gifti_right[ii])$data
       verts_right_ii <- surf_right_ii$pointset
       faces_right_ii <- surf_right_ii$triangle
       if(min(faces_right_ii)==0) faces_right_ii <- faces_right_ii + 1 #start vertex indexing at 1 instead of 0
