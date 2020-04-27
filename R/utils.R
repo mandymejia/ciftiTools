@@ -115,3 +115,21 @@ is.surface <- function(x){
   return(TRUE)
 }
 
+
+#' Gets CIFTI file extension
+#'
+#' @param fname_cifti Path to CIFTI file, including full file name and extension
+#'
+#' @return Character file extension of CIFTI file, e.g. 'dtseries.nii', 'dscalar.nii'.
+#' @export
+#'
+get_cifti_extn <- function(fname_cifti){
+
+  fname_cifti <- basename(fname_cifti)
+  fname_parts <- unlist(strsplit(fname_cifti, split='.', fixed = TRUE)) #split by "."
+  extn <- paste(rev(fname_parts)[c(2,1)], collapse='.') #"dtseries.nii", "dscalar.nii", etc.
+  return(extn)
+
+}
+
+
