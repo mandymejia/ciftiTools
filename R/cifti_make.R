@@ -76,7 +76,7 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, fname_gifti_left=NUL
   #if gifti file provided, create surfaces for left cortex
   if(!is.null(fname_gifti_left)){
     surf_left <- vector('list', length=numsurf)
-    for(ii in 1:num_surf){
+    for(ii in 1:numsurf){
       surf_left_ii <- readGIfTI(fname_gifti_left[ii])$data
       verts_left_ii <- surf_left_ii$pointset
       faces_left_ii <- surf_left_ii$triangle
