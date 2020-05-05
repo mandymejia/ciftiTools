@@ -7,7 +7,9 @@
 cifti_make(
   cortex_left = NULL,
   cortex_right = NULL,
+  fname_gifti_left = NULL,
   surf_left = NULL,
+  fname_gifti_right = NULL,
   surf_right = NULL,
   surf_names = NULL,
   subcortical = NULL,
@@ -20,7 +22,11 @@ cifti_make(
 
 \item{cortex_right}{Data matrix for right cortex, with vertices in rows}
 
-\item{surf_left}{Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof}
+\item{fname_gifti_left}{File path to gifti surface object for left cortex, or a vector of file names. Provide fname_gifti_left OR surf_left.}
+
+\item{surf_left}{Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof. Provide fname_gifti_left OR surf_left.}
+
+\item{fname_gifti_right}{File path to gifti surface object for right cortex, or a vector of file names. Provide fname_gifti_right OR surf_right.}
 
 \item{surf_right}{Object of class 'surface' for right cortex (a list with two elements, vertices and faces), or a list thereof}
 

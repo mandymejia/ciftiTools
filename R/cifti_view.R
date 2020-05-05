@@ -63,8 +63,8 @@ cifti_view <- function(cifti, surface=NULL, z_lim=NULL, colors=c('aquamarine','g
     }
     values[values < z_min] <- z_min
     values[values > z_max] <- z_max
-    if(z_min == -Inf) z_min <- min(values)
-    if(z_max == Inf) z_max <- max(values)
+    if(z_min == -Inf) z_min <- min(values, na.rm=TRUE)
+    if(z_max == Inf) z_max <- max(values, na.rm=TRUE)
 
     # breaks <- quantile(values[(values > z_min) & (values < z_max)],
     #                    probs = seq(0,1,length.out=nColors), na.rm=TRUE)
