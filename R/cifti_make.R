@@ -24,26 +24,11 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, fname_gifti_left=NUL
   if(!is.null(fname_gifti_left) & !is.null(surf_left)) stop('Provide fname_gifti_left or surf_left, but not both.')
   if(!is.null(fname_gifti_right) & !is.null(surf_right)) stop('Provide fname_gifti_right or surf_right, but not both.')
 
-  #check formatting of surf_left, if provided
-  if(!is.null(surf_left)){
-    if(numsurf==1) {
-      if(!is.surface(surf_left)) stop('If only one surface provided, surf_left must be a valid surface object or NULL.  See is.surface().')
-      surf_left <- list(surface=surf_left)
-    }
-  }
-
-  #check formatting of surf_right, if provided
-  if(!is.null(surf_right)){
-    if(numsurf==1) {
-      if(!is.surface(surf_right)) stop('If only one surface provided, surf_right must be a valid surface object or NULL.  See is.surface().')
-      surf_right <- list(surface=surf_right)
-    }
-  }
-
   #get number of left cortex gifti files or surfaces provided
   if(!is.null(fname_gifti_left)){
     numsurf_left <- length(fname_gifti_left)
   } else if(!is.null(surf_left)){
+    if(is.surface(surf_left)) surf_left <- list(surf1 = surf_left) #for single surface case
     numsurf_left <- length(surf_left)
   } else {
     numsurf_left <- NULL
@@ -53,6 +38,7 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, fname_gifti_left=NUL
   if(!is.null(fname_gifti_right)){
     numsurf_right <- length(fname_gifti_right)
   } else if(!is.null(surf_right)){
+    if(is.surface(surf_right)) surf_right <- list(surf1 = surf_right) #for single surface case
     numsurf_right <- length(surf_right)
   } else {
     numsurf_right <- NULL
@@ -72,6 +58,16 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, fname_gifti_left=NUL
       if(numsurf > 1) surf_names <- paste0('surface',1:numsurf)
     }
   }
+
+
+  # #check formatting of surf_right, if provided
+  # if(!is.null(surf_right)){
+  #   if(numsurf==1) {
+  #     if(!is.surface(surf_right)) stop('If only one surface provided, surf_right must be a valid surface object or NULL.  See is.surface().')
+  #     surf_right <- list(surface=surf_right)
+  #   }
+  # }
+  #
 
   #if gifti file provided, create surfaces for left cortex
   if(!is.null(fname_gifti_left)){
@@ -94,6 +90,7 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, fname_gifti_left=NUL
       if(!is.null(cortex_left)) { if(nrow(cortex_left) != nrow(surf_left[[ii]]$vertices)) stop('cortex_left and left surface model(s) must have same number of vertices.')}
       class(surf_left[[ii]]) <- 'surface'
     }
+    names(surf_left) <- surf_names
   }
 
   #check formatting of surf_right elements
@@ -103,6 +100,7 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, fname_gifti_left=NUL
       if(!is.null(cortex_right)) { if(nrow(cortex_right) != nrow(surf_right[[ii]]$vertices)) stop('cortex_right and right surface model(s) must have same number of vertices.')}
       class(surf_right[[ii]]) <- 'surface'
     }
+    names(surf_right) <- surf_names
   }
 
   #check formatting of subcortical data
