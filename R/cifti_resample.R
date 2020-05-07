@@ -8,7 +8,7 @@
 #' @param sphere_orig_R File path of right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig)
 #' @param target_res Target resolution (number of cortical surface vertices per hemisphere)
 #' @param wb_cmd Path to Connectome Workbench executable file, ending in 'wb_command' (Mac/linux) or 'wb_command.exe' (Windows).
-#' @param make_helper_files If TRUE, make all the helper files required for resampling. Otherwise, all necessary helper files must be located in a subdirectory named 'helper_files_resampling'.
+#' @param make_helper_files If TRUE, make all the helper files required for resampling. Otherwise, all necessary helper files must be located in a subdirectory of working directory named 'helper_files_resampling'.
 #' @param delete_helper_files If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.
 #' @param overwrite Logical indicating whether cifti_target should be overwritten if it already exists.
 #' @param verbose Logical indicating whether progress updates should be displayed
@@ -43,11 +43,11 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
     warning('Since make_helper_files is FALSE, I will not delete the helper files.  Setting delete_helper_files to FALSE.')
     delete_helper_files <- FALSE
   }
-  if(make_helper_files==FALSE) dir2 <- file.path(dir, 'helper_files_resampling') #expected location of existing helper files
+  if(make_helper_files==FALSE) 'helper_files_resampling' #expected location of existing helper files
   if(make_helper_files==TRUE){
     if(delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
     if(!delete_helper_files){
-      dir2 <- file.path(dir, 'helper_files_resampling') #location to save helper files
+      dir2 <- 'helper_files_resampling' #location to save helper files
       if(dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
       if(!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
     }

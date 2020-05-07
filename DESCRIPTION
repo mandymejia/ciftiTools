@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 0.0.0.9000
+Version: 1.0.0
 Author: Amanda Mejia
 Maintainer: Amanda Mejia <mandy.mejia@gmail.com>
 Description: Tools for reading and visualizing CIFTI brain imaging files. CIFTI files contain brain imaging data in 
