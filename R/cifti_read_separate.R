@@ -38,7 +38,9 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd){
+cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd=NULL){
+
+  wb_cmd <- check_wb_cmd(wb_cmd)
 
   do_left <- ('left' %in% brainstructures)
   do_right <- ('right' %in% brainstructures)
@@ -57,7 +59,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   if(do_left) fname_left <- gsub(extn,'L.func.gii',fname_cifti, fixed=TRUE)
   if(do_right) fname_right <- gsub(extn,'R.func.gii',fname_cifti, fixed=TRUE)
   if(do_sub) {
-    fname_vol <-gsub(extn,'nii.gz',fname_cifti, fixed=TRUE)
+    fname_vol <- gsub(extn,'nii.gz',fname_cifti, fixed=TRUE)
     fname_labels <- gsub(extn,'labels.nii.gz',fname_cifti, fixed=TRUE)
   }
 

@@ -24,7 +24,9 @@
 #' Step 3: Use cifti-create to form a template CIFTI file in the target resolution based on the components created in Steps 2a and 2b.
 #' Step 4: Use cifti-resample to resample cifti_orig to the target resolution
 #'
-cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE){
+cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd=NULL, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE){
+
+  wb_cmd <- check_wb_cmd(wb_cmd)
 
   if(file.exists(cifti_target)){
     if(!overwrite){

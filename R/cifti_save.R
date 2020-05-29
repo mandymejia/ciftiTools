@@ -7,8 +7,9 @@
 #' @return Logical indicating whether CIFTI file was created.
 #' @export
 #'
-# cifti_save <- function(cifti, fname_out, wb_cmd){
+# cifti_save <- function(cifti, fname_out, wb_cmd=NULL){
 #
+#   wb_cmd <- check_wb_cmd(wb_cmd)
 #
 #   cifti_extn <- get_cifti_extn(fname_out)
 #   if(grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'
