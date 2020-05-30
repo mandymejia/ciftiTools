@@ -10,7 +10,7 @@ cifti_read_separate(
   fname_gifti_right = NULL,
   surf_names = "surface",
   brainstructures = c("left", "right", "subcortical"),
-  wb_cmd
+  wb_cmd = NULL
 )
 }
 \arguments{
