@@ -217,13 +217,12 @@ use_color_pal <- function(data_values, pal){
 #' @param use_papaya If brainstructure is 'subcortical', papaya=TRUE will use papayar to allows for interactive visualization.
 #'
 #' @export
+#' @import rgl
 #' @importFrom grDevices colorRampPalette
-#' @importFrom RColorBrewer brewer.pal
 #' @importFrom oro.nifti overlay readNIfTI
-#' @importFrom stats quantile
-#'
+#' @importFrom fields image.plot
 cifti_view <- function(cifti, surface=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL,
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, color_legend_label='',
   brainstructure, structural_img='MNI', w=1, plane='axial', num.slices=12, use_papaya=FALSE){
   
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
@@ -311,14 +310,24 @@ cifti_view <- function(cifti, surface=NULL,
                            meshColor = "faces")    
     }
 
-    par3d(windowRect = c(20, 30, 1200, 700))
+    par3d(windowRect = c(20, 30, 1100, 700))
     if(do_left){
       shade3d(addNormals(plt_left), col=cols_left, specular="black", legend=TRUE)
     }
     if(do_right){
       shade3d(addNormals(plt_right), col=cols_right, specular="black", legend=TRUE)
     }
-    legend3d("topleft", legend=round(pal_base$value), col=as.character(pal_base$color), pch=16, cex=2.5, pt.cex=2.5, inset=.02)
+    # Suppress this warning: calling par(new=TRUE) with no plot
+    suppressWarnings(
+      bgplot3d(image.plot(legend.only = TRUE, zlim = range(pal_base$value), col = as.character(pal_base$color),
+                          legend.cex=2, legend.lab=color_legend_label, legend.shrink=1, legend.width=2, legend.line=3,
+                          legend.mar=8, axis.args=list(cex.axis=2)))
+    )
+    # TO-DO
+    if(brainstructure=="left"){
+      #rgl.viewpoint(0, 15)
+    } else if(brainstructure=="right") {
+      #rgl.viewpoint(0, 15)
   }
 
   if(brainstructure=='subcortical'){

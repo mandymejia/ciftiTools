@@ -10,6 +10,7 @@ cifti_view(
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
   color_values = NULL,
+  color_legend_label = "",
   brainstructure,
   structural_img = "MNI",
   w = 1,
