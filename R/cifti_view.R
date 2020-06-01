@@ -244,13 +244,25 @@ cifti_view <- function(cifti, surface=NULL,
       if(is.null(cifti$SURF_RIGHT)) stop('No data in cifti$SURF_RIGHT. Must provide a surface model for right cortex.')
       if(!(w %in% 1:ncol(cifti$CORTEX_RIGHT))) stop('w is not a valid column index for cifti$CORTEX_RIGHT')
     }
-    if(do_left) values_left <- apply(matrix(cifti$CORTEX_LEFT[,w][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean)
-    if(do_right) values_right <- apply(matrix(cifti$CORTEX_RIGHT[,w][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean)
+    eps <- 1e-8
+    if(do_left){
+      NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < eps
+      cifti$CORTEX_LEFT[NA_mask_left,] <- NA
+      values_left <- apply(matrix(cifti$CORTEX_LEFT[,w][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE)
+      cifti$CORTEX_LEFT <- NULL #save memory
+    }
+    if(do_right){
+      NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < eps
+      cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
+      values_right <- apply(matrix(cifti$CORTEX_RIGHT[,w][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE)
+      cifti$CORTEX_RIGHT <- NULL #save memory
+    }
     nvox_left <- length(values_left)
     nvox_right <- length(values_right)
     if(brainstructure=='surface') values <- c(values_left, values_right)
     if(brainstructure=='left') values <- values_left
     if(brainstructure=='right') values <- values_right
+    values[is.nan(values)] <- 0
 
     #assign colors to faces based on intensity values
     if(color_mode=="qualitative"){
@@ -317,7 +329,7 @@ cifti_view <- function(cifti, surface=NULL,
     if(do_right){
       shade3d(addNormals(plt_right), col=cols_right, specular="black", legend=TRUE)
     }
-    # Suppress this warning: calling par(new=TRUE) with no plot
+    # Suppress this warning: "calling par(new=TRUE) with no plot"
     suppressWarnings(
       bgplot3d(image.plot(legend.only = TRUE, zlim = range(pal_base$value), col = as.character(pal_base$color),
                           legend.cex=2, legend.lab=color_legend_label, legend.shrink=1, legend.width=2, legend.line=3,
@@ -325,9 +337,20 @@ cifti_view <- function(cifti, surface=NULL,
     )
     # TO-DO
     if(brainstructure=="left"){
-      #rgl.viewpoint(0, 15)
+      rot_left <- rbind(
+        c( 0,-1, 0, 0),
+        c( 0, 0, 1, 0),
+        c(-1, 0, 0, 0),
+        c( 0, 0, 0, 1))
+      rgl.viewpoint(userMatrix=rot_left)
     } else if(brainstructure=="right") {
-      #rgl.viewpoint(0, 15)
+      rot_right <- rbind(
+        c( 0, 1, 0, 0),
+        c( 0, 0, 1, 0),
+        c( 1, 0, 0, 0),
+        c( 0, 0, 0, 1))
+      rgl.viewpoint(userMatrix=rot_right)
+    }
   }
 
   if(brainstructure=='subcortical'){
