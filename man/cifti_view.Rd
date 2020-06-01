@@ -7,9 +7,9 @@
 cifti_view(
   cifti,
   surface = NULL,
-  z_lim = NULL,
-  colors = c("aquamarine", "green", "purple", "blue", "black", "darkred", "red",
-    "orange", "yellow"),
+  colors = NULL,
+  color_mode = c("sequential", "qualitative", "diverging"),
+  color_values = NULL,
   brainstructure,
   structural_img = "MNI",
   w = 1,
@@ -21,11 +21,18 @@ cifti_view(
 \arguments{
 \item{cifti}{Object of class 'cifti'. See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
 
-\item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, cifti$SURF_RIGHT). If NULL, first surface will be used.}
+\item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
+cifti$SURF_RIGHT). If NULL, first surface will be used. See the \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{z_lim}{(Optional) Lower and upper limits of values for color scale. Use -Inf for lower limit or Inf for upper limit to use the data value bounds.}
+\item{colors}{(Optional) Vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
+and colorbrewer2.org). Defaults are \code{"YlOrRd"} (sequential), \code{"Set2"} (qualitative), and \code{"RdYlBu"} (diverging).}
 
-\item{colors}{(Optional) Vector of colors for color scale}
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the 
+\code{ciftiTools::make_color_pal()} description for more details.}
+
+\item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
+one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
+\code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{brainstructure}{'left', 'right', 'surface' or 'subcortical'.}
 

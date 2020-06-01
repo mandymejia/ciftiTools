@@ -15,15 +15,14 @@ check_wb_cmd <- function(wb_cmd){
     wb_cmd <- getOption("ciftiTools_cwb_path")
     if(is.null(wb_cmd)){
       stop(cwb_option_request())
-    } else {
-      wb_cmd_source == "option"
-    }
+    } 
+    wb_cmd_source <- "option"
   } else {
     if(!is.null(getOption("ciftiTools_cwb_path"))){
       print("Overriding existing 'ciftiTools_cwb_path' option with 
         'wb_cmd' argument provided in function call.")
     }
-    wb_cmd_source == "arg"
+    wb_cmd_source <- "arg"
   }
 
   # Check if wb_cmd is valid. 
@@ -33,10 +32,6 @@ check_wb_cmd <- function(wb_cmd){
   if(!file.exists(wb_cmd)){
     stop(paste(wb_cmd_source_name, "is set as", 
       wb_cmd, "which does not reference an existing file."))
-  }
-  if(!endsWith(wb_cmd, ".exe")){
-    stop(paste(wb_cmd_source_name, "is set as", 
-      wb_cmd, "which does not reference an executable file."))
   }
 
   return(wb_cmd)
