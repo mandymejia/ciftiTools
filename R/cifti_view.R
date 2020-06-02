@@ -245,6 +245,8 @@ cifti_view <- function(cifti, surface=NULL,
       if(!(w %in% 1:ncol(cifti$CORTEX_RIGHT))) stop('w is not a valid column index for cifti$CORTEX_RIGHT')
     }
     eps <- 1e-8
+
+    #apply(array(cifti$CORTEX_LEFT[cifti$SURF_LEFT$surface$faces,1:10], dim=c(64980, 3, 10)), c(1,3), mean, na.rm=TRUE)
     if(do_left){
       NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < eps
       cifti$CORTEX_LEFT[NA_mask_left,] <- NA
@@ -282,6 +284,7 @@ cifti_view <- function(cifti, surface=NULL,
       pal <- pal_base
     }
 
+    #cols <- apply(values, 2, use_color_pal, pal)
     cols <- use_color_pal(values, pal)
     if(brainstructure=='surface') {
       cols_left <- cols[1:nvox_left]
@@ -306,6 +309,7 @@ cifti_view <- function(cifti, surface=NULL,
                                   rep(1, nrow(cifti$SURF_LEFT$surface$vertices)))),
                           t(cifti$SURF_LEFT$surface$faces),
                           meshColor = "faces")
+      plt_left <- addNormals(plt_left)
     }
 
     if(do_right){
@@ -319,21 +323,23 @@ cifti_view <- function(cifti, surface=NULL,
       plt_right <- tmesh3d(t(cbind(cifti$SURF_RIGHT$surface$vertices,
                                    rep(1, nrow(cifti$SURF_RIGHT$surface$vertices)))),
                            t(cifti$SURF_RIGHT$surface$faces),
-                           meshColor = "faces")    
+                           meshColor = "faces")
+      plt_right <- addNormals(plt_right)
     }
 
-    par3d(windowRect = c(20, 30, 1100, 700))
+    par3d(windowRect = c(20, 20, 1200, 700))
     if(do_left){
-      shade3d(addNormals(plt_left), col=cols_left, specular="black", legend=TRUE)
+      shade3d(plt_left, col=cols_left, specular="black", legend=TRUE)
     }
     if(do_right){
-      shade3d(addNormals(plt_right), col=cols_right, specular="black", legend=TRUE)
+      shade3d(plt_right, col=cols_right, specular="black", legend=TRUE)
     }
     # Suppress this warning: "calling par(new=TRUE) with no plot"
     suppressWarnings(
-      bgplot3d(image.plot(legend.only = TRUE, zlim = range(pal_base$value), col = as.character(pal_base$color),
-                          legend.cex=2, legend.lab=color_legend_label, legend.shrink=1, legend.width=2, legend.line=3,
-                          legend.mar=8, axis.args=list(cex.axis=2)))
+      bgplot3d(image.plot(
+        legend.only = TRUE, zlim = range(pal_base$value), col = as.character(pal_base$color),
+        legend.cex=2, legend.lab=color_legend_label, legend.shrink=.9, legend.width=2, legend.line=7,
+        legend.mar=12, axis.args=list(cex.axis=1.7)))
     )
     # TO-DO
     if(brainstructure=="left"){
@@ -351,6 +357,8 @@ cifti_view <- function(cifti, surface=NULL,
         c( 0, 0, 0, 1))
       rgl.viewpoint(userMatrix=rot_right)
     }
+
+    return(rgl_out)
   }
 
   if(brainstructure=='subcortical'){
