@@ -40,6 +40,8 @@
 #'
 cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd){
 
+  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+
   do_left <- ('left' %in% brainstructures)
   do_right <- ('right' %in% brainstructures)
   do_sub <- ('subcortical' %in% brainstructures)
@@ -71,14 +73,22 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   if(do_sub) if(!(fname_vol %in% all_files & fname_labels %in% all_files)) need_sub <- TRUE
 
 
+
   ### Construct system command to create needed files
+
+  fname_cifti2 <- paste0('"',file.path(dir,fname_cifti),'"')
+  if(need_left) fname_left2 <- paste0('"',file.path(dir,fname_left),'"')
+  if(need_right) fname_right2 <- paste0('"',file.path(dir,fname_right),'"')
+  if(need_sub) fname_vol2 <- paste0('"',file.path(dir,fname_vol),'"')
+  if(need_sub) fname_labels2 <- paste0('"',file.path(dir,fname_labels),'"')
+
   cmd_left <- cmd_right <- cmd_sub <- NULL
-  if(need_left) cmd_left <- paste('-metric CORTEX_LEFT', file.path(dir,fname_left), sep=' ')
-  if(need_right) cmd_right <- paste('-metric CORTEX_RIGHT', file.path(dir,fname_right), sep=' ')
-  if(need_sub) cmd_sub <- paste('-volume-all', file.path(dir,fname_vol), '-label', file.path(dir,fname_labels), sep=' ')
+  if(need_left) cmd_left <- paste('-metric CORTEX_LEFT', fname_left2, sep=' ')
+  if(need_right) cmd_right <- paste('-metric CORTEX_RIGHT', fname_right2, sep=' ')
+  if(need_sub) cmd_sub <- paste('-volume-all', fname_vol2, '-label', fname_labels2, sep=' ')
 
   if(need_left | need_right | need_sub){
-    cmd <- paste(wb_cmd, '-cifti-separate', file.path(dir,fname_cifti), 'COLUMN', cmd_left, cmd_right, cmd_sub, sep=' ')
+    cmd <- paste(wb_cmd, '-cifti-separate', fname_cifti2, 'COLUMN', cmd_left, cmd_right, cmd_sub, sep=' ')
     system(cmd)
   }
 
