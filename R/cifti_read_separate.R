@@ -39,7 +39,7 @@
 #' 21 Thalamus-R
 #'
 cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, 
-  surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd=NULL){
+  surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd=NULL, write_dir=NULL){
 
   wb_cmd <- check_wb_cmd(wb_cmd)
 
@@ -79,11 +79,12 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
 
   ### Construct system command to create needed files
 
-  fname_cifti2 <- paste0('"',file.path(dir,fname_cifti),'"')
-  if(need_left) fname_left2 <- paste0('"',file.path(dir,fname_left),'"')
-  if(need_right) fname_right2 <- paste0('"',file.path(dir,fname_right),'"')
-  if(need_sub) fname_vol2 <- paste0('"',file.path(dir,fname_vol),'"')
-  if(need_sub) fname_labels2 <- paste0('"',file.path(dir,fname_labels),'"')
+  if(is.null(write_dir)) write_dir <- getwd() 
+  fname_cifti2 <- paste0('"',file.path(write_dir,fname_cifti),'"')
+  if(need_left) fname_left2 <- paste0('"',file.path(write_dir,fname_left),'"')
+  if(need_right) fname_right2 <- paste0('"',file.path(write_dir,fname_right),'"')
+  if(need_sub) fname_vol2 <- paste0('"',file.path(write_dir,fname_vol),'"')
+  if(need_sub) fname_labels2 <- paste0('"',file.path(write_dir,fname_labels),'"')
 
   cmd_left <- cmd_right <- cmd_sub <- NULL
   if(need_left) cmd_left <- paste('-metric CORTEX_LEFT', fname_left2, sep=' ')
@@ -100,14 +101,14 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   result <- vector('list', length=4)
   names(result) <- c('CORTEX_LEFT','CORTEX_RIGHT','VOL','LABELS')
   if(do_left) {
-    result$CORTEX_LEFT <- do.call(cbind, readGIfTI(file.path(dir,fname_left))$data)
+    result$CORTEX_LEFT <- do.call(cbind, readGIfTI(file.path(write_dir,fname_left))$data)
   }
   if(do_right) {
-    result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(file.path(dir,fname_right))$data)
+    result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(file.path(write_dir,fname_right))$data)
   }
   if(do_sub){
-    result$VOL <- readNIfTI(file.path(dir,fname_vol), reorient=FALSE)
-    result$LABELS <- readNIfTI(file.path(dir,fname_labels), reorient=FALSE)
+    result$VOL <- readNIfTI(file.path(write_dir,fname_vol), reorient=FALSE)
+    result$LABELS <- readNIfTI(file.path(write_dir,fname_labels), reorient=FALSE)
     result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 #shift by 2 to be consistent with Matlab ft_read_cifti function, which labels 1=CORTEX_LEFT and 2=CORTEX_RIGHT
   }
 
