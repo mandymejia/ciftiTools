@@ -38,7 +38,10 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd){
+cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, 
+  surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd=NULL){
+
+  wb_cmd <- check_wb_cmd(wb_cmd)
 
   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
@@ -59,8 +62,8 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   if(do_left) fname_left <- gsub(extn,'L.func.gii',fname_cifti, fixed=TRUE)
   if(do_right) fname_right <- gsub(extn,'R.func.gii',fname_cifti, fixed=TRUE)
   if(do_sub) {
-    fname_vol <-gsub(extn,'nii.gz',fname_cifti, fixed=TRUE)
-    fname_labels <- gsub(extn,'labels.nii.gz',fname_cifti, fixed=TRUE)
+    fname_vol <- gsub(extn,'nii',fname_cifti, fixed=TRUE)
+    fname_labels <- gsub(extn,'labels.nii',fname_cifti, fixed=TRUE)
   }
 
 
@@ -97,16 +100,10 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   result <- vector('list', length=4)
   names(result) <- c('CORTEX_LEFT','CORTEX_RIGHT','VOL','LABELS')
   if(do_left) {
-    dat_left <- readGIfTI(file.path(dir,fname_left))$data #list of length T, each element of length nvox
-    nvox <- length(dat_left[[1]])
-    ntime <- length(dat_left)
-    result$CORTEX_LEFT <- matrix(unlist(dat_left), nrow=nvox, ncol=ntime) #form data matrix
+    result$CORTEX_LEFT <- do.call(cbind, readGIfTI(file.path(dir,fname_left))$data)
   }
   if(do_right) {
-    dat_left <- readGIfTI(file.path(dir,fname_right))$data #list of length T, each element of length nvox
-    nvox <- length(dat_left[[1]])
-    ntime <- length(dat_left)
-    result$CORTEX_RIGHT <- matrix(unlist(dat_left), nrow=nvox, ncol=ntime) #form data matrix
+    result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(file.path(dir,fname_right))$data)
   }
   if(do_sub){
     result$VOL <- readNIfTI(file.path(dir,fname_vol), reorient=FALSE)
@@ -115,8 +112,6 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   }
 
   ### Read in GIFTI surface geometry files if provided
-  do_left_surf <- (!is.null(fname_gifti_left))
-  do_right_surf <- (!is.null(fname_gifti_right))
   num_surf <- length(surf_names) #number of surface types provided
 
   if(do_left_surf){
@@ -133,6 +128,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
       class(surf_left_ii) <- 'surface'
       result$SURF_LEFT[[ii]] <- surf_left_ii
     }
+    rm(surf_left_ii, verts_left_ii, faces_left_ii)
   } else {
     result$SURF_LEFT <- NULL
   }
@@ -151,6 +147,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
       class(surf_right_ii) <- 'surface'
       result$SURF_RIGHT[[ii]] <- surf_right_ii
     }
+    rm(surf_right_ii, verts_right_ii, faces_right_ii)
   } else {
     result$SURF_RIGHT <- NULL
   }
