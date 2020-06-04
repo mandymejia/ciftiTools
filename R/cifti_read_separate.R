@@ -60,8 +60,8 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   if(do_left) fname_left <- gsub(extn,'L.func.gii',fname_cifti, fixed=TRUE)
   if(do_right) fname_right <- gsub(extn,'R.func.gii',fname_cifti, fixed=TRUE)
   if(do_sub) {
-    fname_vol <- gsub(extn,'nii.gz',fname_cifti, fixed=TRUE)
-    fname_labels <- gsub(extn,'labels.nii.gz',fname_cifti, fixed=TRUE)
+    fname_vol <- gsub(extn,'nii',fname_cifti, fixed=TRUE)
+    fname_labels <- gsub(extn,'labels.nii',fname_cifti, fixed=TRUE)
   }
 
 
@@ -92,18 +92,11 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   result <- vector('list', length=4)
   names(result) <- c('CORTEX_LEFT','CORTEX_RIGHT','VOL','LABELS')
   if(do_left) {
-    dat <- readGIfTI(file.path(dir,fname_left))$data #list of length T, each element of length nvox
-    nvox <- length(dat[[1]])
-    ntime <- length(dat)
-    result$CORTEX_LEFT <- matrix(unlist(dat), nrow=nvox, ncol=ntime) #form data matrix
+    result$CORTEX_LEFT <- do.call(cbind, readGIfTI(file.path(dir,fname_left))$data)
   }
   if(do_right) {
-    dat <- readGIfTI(file.path(dir,fname_right))$data #list of length T, each element of length nvox
-    nvox <- length(dat[[1]])
-    ntime <- length(dat)
-    result$CORTEX_RIGHT <- matrix(unlist(dat), nrow=nvox, ncol=ntime) #form data matrix
+    result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(file.path(dir,fname_right))$data)
   }
-  if(do_left | do_right){ rm(dat) }
   if(do_sub){
     result$VOL <- readNIfTI(file.path(dir,fname_vol), reorient=FALSE)
     result$LABELS <- readNIfTI(file.path(dir,fname_labels), reorient=FALSE)
