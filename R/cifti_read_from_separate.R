@@ -20,7 +20,7 @@
 #'  were provided in the arguments, the list will also contain SURF_LEFT and SURF_RIGHT.
 #' @export
 #' @importFrom gifti readGIfTI
-#' @importFrom oro.nifti readNIfTI
+#' @importFrom RNifti readNifti
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
 #' available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_cmd' argument is the full file path to the 'wb_command' executable file.
@@ -65,11 +65,11 @@ cifti_read_from_separate <- function(fname_cortexL, fname_cortexR, fname_subcort
 
   # Read in NIfTI files for subcortical data.
   if(!is.null(fname_subcortVol)){
-    result$VOL <- readNIfTI(file.path(dir, fname_subcortVol), reorient=FALSE)
+    result$VOL <- readNifti(file.path(dir, fname_subcortVol))
   }
   if(!is.null(fname_subcortLab)){
-    result$LABELS <- readNIfTI(file.path(dir, fname_subcortLab), reorient=FALSE)
-    result$LABELS@.Data[result$LABELS@.Data > 0] <- result$LABELS@.Data[result$LABELS@.Data > 0] + 2 
+    result$LABELS <- readNifti(file.path(dir, fname_subcortLab))
+    result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 
   }
 
   # Read in GIfTI surface geometry files.

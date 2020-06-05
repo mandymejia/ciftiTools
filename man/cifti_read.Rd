@@ -38,10 +38,14 @@ provided. Otherwise, ignored.}
 files. Each name should match a file created by \code{cifti_separate()}: "cortexL", "cortexR", "subcortVol", or 
 "subcortLab".}
 
+\item{keep_sep_files}{If FALSE (Default), new files made by the \code{cifti_separate()} call are deleted.}
+
+\item{overwrite_sep_files}{(For cifti_separate) If a NIfTI or GIfTI file already exists, should it be overwritten? 
+Default is FALSE.}
+
 \item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
 
-\item{overwrite}{(For cifti_separate) If a NIfTI or GIfTI file already exists, should it be overwritten? Default is 
-FALSE.}
+\item{verbose}{Should occasional updates be printed? Default is FALSE.}
 }
 \value{
 An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.

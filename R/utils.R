@@ -131,5 +131,3 @@ get_cifti_extn <- function(fname_cifti){
   return(extn)
 
 }
-
-

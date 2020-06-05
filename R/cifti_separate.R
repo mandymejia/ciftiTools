@@ -47,7 +47,6 @@ cifti_separate <- function(fname_cifti, brainstructures=c("left","right","subcor
   fname_cortexR=NULL, fname_subcortVol=NULL, fname_subcortLab=NULL, dir=NULL, wb_dir=NULL, overwrite=FALSE){
 
   wb_dir <- check_wb_dir(wb_dir)
-  if(is.null(dir)){ dir <- ""}
 
   # Separate the CIfTI file path into directory, file name, and extension components.
   dir_cifti <- dirname(fname_cifti) 
@@ -55,6 +54,8 @@ cifti_separate <- function(fname_cifti, brainstructures=c("left","right","subcor
   extn_cifti <- get_cifti_extn(fname_cifti)  # "dtseries.nii" or "dscalar.nii"
   all_files <- list.files(dir_cifti)
   if(!(fname_cifti %in% all_files)) stop("fname_cifti does not exist")
+
+  if(is.null(dir)){ dir <- dir_cifti}
 
   # Determine which brainstructures to obtain.
   for(i in 1:length(brainstructures)){
@@ -104,5 +105,5 @@ cifti_separate <- function(fname_cifti, brainstructures=c("left","right","subcor
   } else {
     out <- NA
   }
-  return(out)
+  invisible(out)
 }
