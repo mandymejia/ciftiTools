@@ -50,7 +50,7 @@ cifti_read_from_separate <- function(fname_cortexL, fname_cortexR, fname_subcort
   fname_surfaceR, dir=NULL, surf_names="surface", wb_dir=NULL){
 
   wb_dir <- check_wb_dir(wb_dir)
-  if(is.null(dir)){ dir <- ""}
+  if(is.null(dir)){ dir <- "."}
 
   result <- vector("list", length=6)
   names(result) <- c("CORTEX_LEFT", "CORTEX_RIGHT", "VOL", "LABELS", "SURF_LEFT", "SURF_RIGHT")

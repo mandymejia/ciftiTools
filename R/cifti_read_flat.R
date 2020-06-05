@@ -3,6 +3,7 @@
 #' @description Reads CIfTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
 #'  Workbench command.
 #'
+#' @param dir_gifti
 #' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
 #' @param keep This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
 #'  created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).
@@ -17,7 +18,7 @@
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_cmd' argument is the full file path to the 'wb_command' executable file.
+#'  The 'wb_dir' argument is the full file path to the 'wb_command' executable file.
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 #' 3 Accumbens-L
@@ -40,7 +41,9 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_flat <- function(fname_cifti, fname_gifti=NULL, keep=FALSE, overwrite=FALSE, wb_dir=NULL){
+cifti_read_flat <- function(fname_cifti, dir_gifti=NULL, fname_gifti=NULL, keep=FALSE, overwrite=FALSE, wb_dir=NULL){
+
+  wb_dir <- check_wb_dir(wb_dir)
 
   # Separate the CIfTI file path into directory, file name, and extension components.
   dir_cifti <- dirname(fname_cifti) 
@@ -49,14 +52,19 @@ cifti_read_flat <- function(fname_cifti, fname_gifti=NULL, keep=FALSE, overwrite
   all_files <- list.files(dir_cifti)
   if(!(bname_cifti %in% all_files)) stop("fname_cifti does not exist")
 
+  if(identical(dir_gifti, NULL)){ dir_gifti <- "." }
+
   if(identical(fname_gifti, NULL)){
-    fname_gifti <- gsub(extn_cifti, "flat.gii", fname_cifti, fixed=TRUE)
+    fname_gifti <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }
+  fname_gifti <- file.path(dir_gifti, fname_gifti)
   gifti_existed <- file.exists(fname_gifti)
   if(overwrite | !(gifti_existed)){
-    cmd_result <- system(paste(wb_cmd, "-cifti-convert -to-gifti-ext", fname_cifti, fname_gifti))
+    cmd <- paste(wb_dir, "-cifti-convert -to-gifti-ext", fname_cifti, fname_gifti)
+    cmd_result <- system(cmd)
     if(cmd_result != 0){
-      stop(paste0("The Connectome Workbench command failed with code ", out, ". The command was:\n", cmd))
+      stop(paste0("The Connectome Workbench command failed with code ", cmd_result, 
+                  ". The command was:\n", cmd))
     }
   }
 

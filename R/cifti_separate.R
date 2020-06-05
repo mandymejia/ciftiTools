@@ -55,7 +55,7 @@ cifti_separate <- function(fname_cifti, brainstructures=c("left","right","subcor
   all_files <- list.files(dir_cifti)
   if(!(fname_cifti %in% all_files)) stop("fname_cifti does not exist")
 
-  if(is.null(dir)){ dir <- dir_cifti}
+  if(is.null(dir)){ dir <- "."}
 
   # Determine which brainstructures to obtain.
   for(i in 1:length(brainstructures)){

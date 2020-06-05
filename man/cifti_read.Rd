@@ -10,6 +10,7 @@ cifti_read(
   fname_surfaceL = NULL,
   fname_surfaceR = NULL,
   surf_names = "surface",
+  dir_sep_files = NULL,
   fnames_sep_files = NULL,
   keep_sep_files = FALSE,
   overwrite_sep_files = FALSE,
@@ -34,8 +35,10 @@ representing right cortex}
 (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
 provided. Otherwise, ignored.}
 
-\item{fnames_sep_files}{A named character vector or list indicating where to save the separated GIfTI and NIfTI 
-files. Each name should match a file created by \code{cifti_separate()}: "cortexL", "cortexR", "subcortVol", or 
+\item{dir_sep_files}{(Optional) Will save the separate files to this directory.}
+
+\item{fnames_sep_files}{(Optional) A named character vector or list indicating where to save the separated GIfTI and 
+NIfTI files. Each name should match a file created by \code{cifti_separate()}: "cortexL", "cortexR", "subcortVol", or 
 "subcortLab".}
 
 \item{keep_sep_files}{If FALSE (Default), new files made by the \code{cifti_separate()} call are deleted.}

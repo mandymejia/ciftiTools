@@ -13,8 +13,9 @@
 #' @param surf_names (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 #'  (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
 #'  provided. Otherwise, ignored.
-#' @param fnames_sep_files A named character vector or list indicating where to save the separated GIfTI and NIfTI 
-#'  files. Each name should match a file created by \code{cifti_separate()}: "cortexL", "cortexR", "subcortVol", or 
+#' @param dir_sep_files (Optional) Will save the separate files to this directory.
+#' @param fnames_sep_files (Optional) A named character vector or list indicating where to save the separated GIfTI and 
+#'  NIfTI files. Each name should match a file created by \code{cifti_separate()}: "cortexL", "cortexR", "subcortVol", or 
 #'  "subcortLab".
 #' @param keep_sep_files If FALSE (Default), new files made by the \code{cifti_separate()} call are deleted.
 #' @param overwrite_sep_files (For cifti_separate) If a NIfTI or GIfTI file already exists, should it be overwritten? 
@@ -53,8 +54,11 @@
 #' 21 Thalamus-R
 #'
 cifti_read <- function(fname_cifti, brainstructures=c("left","right","subcortical"), fname_surfaceL=NULL, 
-  fname_surfaceR=NULL, surf_names="surface", fnames_sep_files=NULL, keep_sep_files=FALSE, overwrite_sep_files=FALSE, 
-  wb_dir=NULL, verbose=FALSE){
+  fname_surfaceR=NULL, surf_names="surface", dir_sep_files=NULL, fnames_sep_files=NULL, keep_sep_files=FALSE, 
+  overwrite_sep_files=FALSE, wb_dir=NULL, verbose=FALSE){
+
+  wb_dir <- check_wb_dir(wb_dir)
+  if(identical(dir_sep_files, NULL)){ dir_sep_files <- "."}
 
   # Separate the CIfTI file path into directory, file name, and extension components.
   dir_cifti <- dirname(fname_cifti) 
@@ -75,7 +79,8 @@ cifti_read <- function(fname_cifti, brainstructures=c("left","right","subcortica
   fnames_sep_files_defaults <- list(cortexL="L.func.gii", cortexR="R.func.gii", subcortVol="nii", 
     subcortLab="labels.nii")
   for(i in 1:length(fnames_sep_files_defaults)){
-    fnames_sep_files_defaults[[i]] <- gsub(extn_cifti, fnames_sep_files_defaults[[i]], fname_cifti, fixed=TRUE)
+    fnames_sep_files_defaults[[i]] <- file.path(dir_sep_files, 
+      gsub(extn_cifti, fnames_sep_files_defaults[[i]], bname_cifti, fixed=TRUE))
   }
   # Use the default names wherever no argument was provided.
   if(identical(fnames_sep_files, NULL)){
@@ -89,11 +94,11 @@ cifti_read <- function(fname_cifti, brainstructures=c("left","right","subcortica
       sep_file <- sep_files[i]
       if(!(sep_file %in% names(fnames_sep_files))){ 
         fnames_sep_files[[sep_file]] <- fnames_sep_files_defaults[[sep_file]]
+      } else {
+        fnames_sep_files[[sep_file]] <- file.path(dir_sep_files, fnames_sep_files[[sep_file]])
       }
     }
   }
-  names(fnames_sep_files) <- paste0("fname_", names(fnames_sep_files))
-  sep_files_existed <- file.exists(unlist(fnames_sep_files))
 
   # Separate the CIfTI file.
   if(verbose){ print("Separating CIfTI file.") }
