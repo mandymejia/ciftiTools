@@ -33,7 +33,7 @@
 #' @return A data.frame with two columns: color (character: standard color names or hex values) and value (numeric).
 #'
 make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL,
-               DATA_MIN=0, DATA_MAX=1){
+                           DATA_MIN=0, DATA_MAX=1){
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   
   if(DATA_MIN >= DATA_MAX){ stop("DATA_MAX must be greater than DATA_MIN") }
@@ -55,7 +55,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
       }
       colors <- brewer.pal(as.numeric(colors_info$maxcolors), colors)
       
-    } else {stop("Only one color was provided!")}
+    } else {stop("Only one color was provided! If a pallete was provided, it is not listed in `RColorBrewer::brewer.pal.info`.")}
   }
   
   N_COLORS <- length(colors)
@@ -357,8 +357,7 @@ cifti_view <- function(cifti, surface=NULL,
         c( 0, 0, 0, 1))
       rgl.viewpoint(userMatrix=rot_right)
     }
-
-    return(rgl_out)
+    #return(rgl_out)
   }
 
   if(brainstructure=='subcortical'){
