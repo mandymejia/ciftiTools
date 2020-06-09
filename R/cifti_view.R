@@ -72,7 +72,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
     
     # Order color values from lowest to highest, if not already sorted.
     color_values_order <- order(color_values)
-    colors <- colors[color_values_order]
+    if(N_COLOR_VALUES==N_COLORS){ colors <- colors[color_values_order] }
     color_values <- color_values[color_values_order]
     
     # Replace infinite values with data bounds.
