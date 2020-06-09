@@ -99,6 +99,8 @@ cifti_read <- function(fname_cifti, brainstructures=c("left","right","subcortica
       }
     }
   }
+  names(fnames_sep_files) <- paste0("fname_", names(fnames_sep_files))
+  sep_files_existed <- file.exists(as.character(fnames_sep_files))
 
   # Separate the CIfTI file.
   if(verbose){ print("Separating CIfTI file.") }

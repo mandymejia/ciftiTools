@@ -16,6 +16,10 @@ cifti_read_flat(
 \arguments{
 \item{fname_cifti}{File path of CIFTI-format data (ending in .d*.nii).}
 
+\item{dir_gifti}{The directory to save the GIfTI into.}
+
+\item{fname_gifti}{The GIfTI file name to save as.}
+
 \item{keep}{This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
 created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).}
 

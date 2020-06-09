@@ -3,8 +3,9 @@
 #' @description Reads CIfTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
 #'  Workbench command.
 #'
-#' @param dir_gifti
 #' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
+#' @param dir_gifti The directory to save the GIfTI into.
+#' @param fname_gifti The GIfTI file name to save as.
 #' @param keep This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
 #'  created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).
 #' @param overwrite This function works by saving the CIfTI file as a GIfTI file, and then reading it in. Should the 
