@@ -28,6 +28,8 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
 
   wb_cmd <- check_wb_cmd(wb_cmd)
 
+  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+
   if(file.exists(cifti_target)){
     if(!overwrite){
       message('cifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')
@@ -36,9 +38,6 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
       warning('cifti_target already exists. It will be overwritten since overwrite=TRUE.')
     }
   }
-
-  #location of cifti_orig and write location of cifti_target
-  dir <- dirname(cifti_orig)
 
   #location of helper files
   if(make_helper_files==FALSE & delete_helper_files==TRUE){
@@ -64,6 +63,9 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   }
 
   # Step 2. Create CIFTI space with target number of vertices
+
+  #cifti_orig <- paste0("'",cifti_orig,"'") #add quotes in case file path contains spaces
+  #cifti_target <- paste0("'",cifti_target,"'") #add quotes in case file path contains spaces
 
   # First, use -cifti-separate to get separate CORTEX_LEFT, CORTEX_RIGHT and both medial walls in original resolution
 
@@ -144,6 +146,8 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
 #'
 gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target, wb_cmd, overwrite=FALSE){
 
+  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+
   if(file.exists(gifti_target)){
     if(!overwrite){
       message('gifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')
@@ -179,6 +183,9 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
 #' @export
 #'
 make_helper_spheres <- function(sphere_R, sphere_L, target_res, wb_cmd){
+
+  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+
   system(paste(wb_cmd,'-surface-create-sphere', target_res, sphere_R, sep=' '))
   system(paste(wb_cmd, '-surface-flip-lr', sphere_R, sphere_L, sep=' '))
   system(paste(wb_cmd, '-set-structure', sphere_R, 'CORTEX_RIGHT', sep=' '))
