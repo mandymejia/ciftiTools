@@ -475,6 +475,8 @@ cifti_view <- function(cifti, surface=NULL,
     rm(cols)
 
     #construct and plot mesh object
+    open3d()
+    
     if(do_left){
       if(is.null(cifti$SURF_LEFT)) stop("If brainstructure is 'left' or 'surface', cifti$SURF_LEFT must not be NULL.")
       if(is.null(surface)){
