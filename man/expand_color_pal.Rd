@@ -8,13 +8,13 @@ expand_color_pal(pal, MIN_COLOR_RES = 60)
 }
 \arguments{
 \item{pal}{The color palette to expand: a data.frame with two columns, color (character: standard color names 
-or hex values) and value (numeric).}
+or hex codes) and value (numeric).}
 
 \item{MIN_COLOR_RES}{The minimum number of entries to have in the output palette. Because of rounding, there may be more
 than this number of entries.}
 }
 \value{
-A data.frame with two columns: color (character: standard color names or hex values) and value (numeric).
+A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
 }
 \description{
 Interpolates between entries in the input palette to make a larger palette with at least MIN_COLOR_RES entries.

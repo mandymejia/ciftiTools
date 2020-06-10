@@ -13,13 +13,16 @@ make_color_pal(
 )
 }
 \arguments{
-\item{colors}{(Optional) Vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-and colorbrewer2.org). Defaults are \code{"YlOrRd"} (sequential), \code{"Set2"} (qualitative), and \code{"RdYlBu"} (diverging).}
+\item{colors}{(Optional) "ROY_BIG_BL", the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info and
+colorbrewer2.org), or a character vector of colors. Defaults are \code{"ROY_BIG_BL"} (sequential color mode), 
+\code{"Set2"} (qualitative color mode), and \code{"ROY_BIG_BL"} (diverging color mode). See the description for more 
+details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential.}
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is "sequential".
+See the description for more details.}
 
-\item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
-one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
+\item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer
+than one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 description for more details.}
 
 \item{DATA_MIN}{(Optional) The minimum value of the data to make the palette for. Overrided by certain \code{color_values}.}
@@ -27,24 +30,12 @@ description for more details.}
 \item{DATA_MAX}{(Optional) The maximum value of the data to make the palette for. Overrided by certain \code{color_values}.}
 }
 \value{
-A data.frame with two columns: color (character: standard color names or hex values) and value (numeric).
+A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
 }
 \description{
-\code{color_mode=="sequential"}: If \code{color_values=="NULL"}, the colors will be mapped with equal spacing from
- \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(color_values)==2}, these values will be used as the upper and lower 
- bounds instead. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
+There are three argument types for \code{colors}: \code{"ROY_BIG_BL"}, the name of an \code{RColorBrewer} palette, or
+ a character vector of color names.
 }
 \details{
-\code{color_mode=="qualitative"}: If \code{color_values=="NULL"}, the colors will be mapped onto each integer between
- \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors is less than 
- this range. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
 
-\code{color_mode=="diverging"}: If \code{color_values=="NULL"}, the colors will be mapped with equal spacing from
- \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the data. If 
- \code{length(color_values)==1}, the middle color will correspond to this value instead. The preceeding colors will be
- equally-spaced between \code{DATA_MIN} and this value; the remaining colors will be equally-spaced between thsi value and
- \code{DATA_MAX}. If \code{length(color_values)==3}, these values will correspond to the first, middle, and last colors 
- respectively, with equal spacing between the first and middle and between the middle and last. If 
- \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value. Thus, the middle color
- will correspond to the middle color_value. For this color mode, the length of \code{colors} must be odd and >= 3.
 }
