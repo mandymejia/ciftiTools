@@ -14,6 +14,7 @@
 #' @param resample Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL, do not perform resampling.
 #' @param sphere_orig_L File path of left-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
 #' @param sphere_orig_R File path of right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
+#' @param verbose Should occasional updates be printed?
 #'
 #' @return An object of type 'cifti', a list containing up to 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.  LABELS contains the brain structure labels (usually 3-21) of the subcortical elements.
 #' @export
@@ -47,7 +48,7 @@
 cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, 
   surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd=NULL, 
   make_helper_files=TRUE, delete_helper_files=FALSE, outdir=NULL, 
-  resample=NULL, sphere_orig_L, sphere_orig_R){
+  resample=NULL, sphere_orig_L, sphere_orig_R, verbose=FALSE){
 
   wb_cmd <- ciftiTools:::check_wb_cmd(wb_cmd)
   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))

@@ -164,6 +164,8 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
   
   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
+  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+
   if(file.exists(gifti_target)){
     if(!overwrite){
       message('gifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')

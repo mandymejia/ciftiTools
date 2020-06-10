@@ -1,3 +1,32 @@
+# ROY_BIG_BL:
+#   This is the same color palette as the default Connectime Workbench palette.
+#   github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
+ROY_BIG_BL <- function(min=0, max=1, mid=NULL){
+  stopifnot(max > min)
+  # Use the same color RGB values, and same spacing
+  colors <- c(
+    "#ffff00", "#ffc800", "#ff7800", "#ff0000", "#c80000", "#960000", 
+    "#640000", "#3c0000", "#000000", "#000050", "#0000aa", "#4b007d", 
+    "#7d00a0", "#4b7d00", "#00c800", "#00ff00", "#00ffff"#, "#00ffff"
+  )
+  values <- c(
+    1.00, 0.875, 0.750, 0.625, 0.500, 0.375, 
+    0.250, 0.125, 0.000, -0.125, -0.250, -0.375, 
+    -0.500, -0.625, -0.750, -0.875, -0.990#, -1.00
+  )
+  # Normalize the values. Note that the bottom .5% are all #00ffff.
+  values <- (values + 1)/2
+  values <- values * (max - min) + min
+  if(!is.null(mid)){
+    stopifnot(mid > min & mid < max)
+    old_mid <- (min + max)/2
+    values[1:8] <- (values[1:8] - old_mid) / (max - old_mid) * (max - mid) + mid
+    values[9] <- mid
+    values[10:17] <- (values[10:17] - min) / (old_mid - min) * (mid - min) + min
+  }
+  return(list(colors=colors, values = values))
+}
+
 #' Control the mapping of values to colors with \code{colors}, \code{color_mode}, and \code{color_values}. 
 #'
 #' \code{color_mode=="sequential"}: If \code{color_values=="NULL"}, the colors will be mapped with equal spacing from
@@ -41,14 +70,44 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
   # Use default palettes if the colors are not specified.
   if(identical(colors, NULL)){
     colors <- switch(color_mode,
-                     sequential="YlOrRd",
+                     sequential="ROY_BIG_BL",
                      qualitative="Set2",
-                     diverging="RdYlBu")
+                     diverging="ROY_BIG_BL")
   }
   
+  N_COLORS_PRE <- length(colors)
+  N_COLOR_VALUES_PRE <- length(color_values)
   if(length(colors) == 1){
+    # ROY_BIG_BL
+    if(colors == "ROY_BIG_BL"){
+      if(color_mode=="sequential"){
+        if(N_COLOR_VALUES_PRE==0){
+          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
+        } else if(N_COLOR_VALUES_PRE==2){
+          RBB <- ROY_BIG_BL(color_values[1], color_values[2])
+        } else {
+          stop("The sequential ROY_BIG_BL palette (default) requires two or NULL/none color_values.")
+        }
+
+      } else if(color_mode=="qualitative"){
+        warning("The ROY_BIG_BL palette is not recommended for qualitative data.")
+        RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
+
+      } else if(color_mode=="diverging"){
+        if(N_COLOR_VALUES_PRE==0){
+          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
+        } else if(N_COLOR_VALUES_PRE==1){
+          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, mid=color_values)
+        } else if(N_COLOR_VALUES_PRE==3){
+          RBB <- ROY_BIG_BL(color_values[1], color_values[3], mid=color_values[2])
+        }
+      }
+
+      colors <- RBB$colors
+      if(color_mode != "qualitative"){ color_values <- RBB$values }
+
     # Get the RColorBrewer colors.
-    if(colors %in% row.names(brewer.pal.info)){
+    } else if(colors %in% row.names(brewer.pal.info)){
       colors_info <- brewer.pal.info[row.names(brewer.pal.info) == colors,]
       if(match.arg(as.character(colors_info$category), c("sequential", "qualitative", "diverging")) != color_mode){
         warning(paste("The RColorBrewer palette type is", colors_info$category, "but the color_mode is", color_mode))
@@ -57,7 +116,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
       
     } else {stop("Only one color was provided! If a pallete was provided, it is not listed in `RColorBrewer::brewer.pal.info`.")}
   }
-  
+
   N_COLORS <- length(colors)
   N_COLOR_VALUES <- length(color_values)
   if(!identical(color_values, NULL)){
@@ -218,7 +277,6 @@ use_color_pal <- function(data_values, pal){
 #'
 #' @export
 #' @import rgl
-#' @importFrom grDevices colorRampPalette
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom fields image.plot
 cifti_view <- function(cifti, surface=NULL,
@@ -250,13 +308,15 @@ cifti_view <- function(cifti, surface=NULL,
     if(do_left){
       NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < eps
       cifti$CORTEX_LEFT[NA_mask_left,] <- NA
-      values_left <- apply(matrix(cifti$CORTEX_LEFT[,w][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE)
+      values_left <- cifti$CORTEX_LEFT[,w]
+      #values_left <- apply(matrix(cifti$CORTEX_LEFT[,w][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
       cifti$CORTEX_LEFT <- NULL #save memory
     }
     if(do_right){
       NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < eps
       cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
-      values_right <- apply(matrix(cifti$CORTEX_RIGHT[,w][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE)
+      values_right <- cifti$CORTEX_RIGHT[,w]
+      #values_right <- apply(matrix(cifti$CORTEX_RIGHT[,w][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
       cifti$CORTEX_RIGHT <- NULL #save memory
     }
     nvox_left <- length(values_left)
@@ -264,7 +324,8 @@ cifti_view <- function(cifti, surface=NULL,
     if(brainstructure=='surface') values <- c(values_left, values_right)
     if(brainstructure=='left') values <- values_left
     if(brainstructure=='right') values <- values_right
-    values[is.nan(values)] <- 0
+    values[is.nan(values)] <- 0 # FACES
+    values[is.na(values)] <- 0
 
     #assign colors to faces based on intensity values
     if(color_mode=="qualitative"){
@@ -308,7 +369,7 @@ cifti_view <- function(cifti, surface=NULL,
       plt_left <- tmesh3d(t(cbind(cifti$SURF_LEFT$surface$vertices,
                                   rep(1, nrow(cifti$SURF_LEFT$surface$vertices)))),
                           t(cifti$SURF_LEFT$surface$faces),
-                          meshColor = "faces")
+                          meshColor = "vertices")
       plt_left <- addNormals(plt_left)
     }
 
@@ -323,7 +384,7 @@ cifti_view <- function(cifti, surface=NULL,
       plt_right <- tmesh3d(t(cbind(cifti$SURF_RIGHT$surface$vertices,
                                    rep(1, nrow(cifti$SURF_RIGHT$surface$vertices)))),
                            t(cifti$SURF_RIGHT$surface$faces),
-                           meshColor = "faces")
+                           meshColor = "vertices")
       plt_right <- addNormals(plt_right)
     }
 
