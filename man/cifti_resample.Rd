@@ -14,7 +14,8 @@ cifti_resample(
   make_helper_files = TRUE,
   delete_helper_files = FALSE,
   overwrite = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  outdir = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ cifti_resample(
 \item{overwrite}{Logical indicating whether cifti_target should be overwritten if it already exists.}
 
 \item{verbose}{Logical indicating whether progress updates should be displayed}
+
+\item{outdir}{Location where to write output files. If NULL, use the current working directory.}
 }
 \value{
 Logical indicating whether resampled CIFTI file was created.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_read_separate.R
 \name{cifti_read_separate}
 \alias{cifti_read_separate}
-\title{Reads in CIFTI data}
+\title{Reads in CIFTI/GIFTI data and (optionally) resamples}
 \usage{
 cifti_read_separate(
   fname_cifti,
@@ -11,7 +11,12 @@ cifti_read_separate(
   surf_names = "surface",
   brainstructures = c("left", "right", "subcortical"),
   wb_cmd = NULL,
-  write_dir = NULL
+  make_helper_files = TRUE,
+  delete_helper_files = FALSE,
+  outdir = NULL,
+  resample = NULL,
+  sphere_orig_L,
+  sphere_orig_R
 )
 }
 \arguments{
@@ -26,12 +31,24 @@ cifti_read_separate(
 \item{brainstructures}{A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)}
 
 \item{wb_cmd}{Path to Connectome Workbench executable file, ending in 'wb_command' (Mac/linux) or 'wb_command.exe' (Windows).}
+
+\item{make_helper_files}{If TRUE, make all the helper files required for resampling. Otherwise, all necessary helper files must be located in a subdirectory of current working directory named 'helper_files_resampling'.}
+
+\item{delete_helper_files}{If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.}
+
+\item{outdir}{Location where to write output files. If NULL, use the current working directory.}
+
+\item{resample}{Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL, do not perform resampling.}
+
+\item{sphere_orig_L}{File path of left-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.}
+
+\item{sphere_orig_R}{File path of right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.}
 }
 \value{
 An object of type 'cifti', a list containing up to 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.  LABELS contains the brain structure labels (usually 3-21) of the subcortical elements.
 }
 \description{
-Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure.
+Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure. Optionally reads in gifti surface model files also. Optionally resamples cortical and surface model data.
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
