@@ -250,13 +250,15 @@ cifti_view <- function(cifti, surface=NULL,
     if(do_left){
       NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < eps
       cifti$CORTEX_LEFT[NA_mask_left,] <- NA
-      values_left <- apply(matrix(cifti$CORTEX_LEFT[,w][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE)
+      values_left <- cifti$CORTEX_LEFT[,w]
+      #values_left <- apply(matrix(cifti$CORTEX_LEFT[,w][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
       cifti$CORTEX_LEFT <- NULL #save memory
     }
     if(do_right){
       NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < eps
       cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
-      values_right <- apply(matrix(cifti$CORTEX_RIGHT[,w][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE)
+      values_right <- cifti$CORTEX_RIGHT[,w]
+      #values_right <- apply(matrix(cifti$CORTEX_RIGHT[,w][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
       cifti$CORTEX_RIGHT <- NULL #save memory
     }
     nvox_left <- length(values_left)
@@ -264,7 +266,8 @@ cifti_view <- function(cifti, surface=NULL,
     if(brainstructure=='surface') values <- c(values_left, values_right)
     if(brainstructure=='left') values <- values_left
     if(brainstructure=='right') values <- values_right
-    values[is.nan(values)] <- 0
+    values[is.nan(values)] <- 0 # FACES
+    values[is.na(values)] <- 0
 
     #assign colors to faces based on intensity values
     if(color_mode=="qualitative"){
@@ -308,7 +311,7 @@ cifti_view <- function(cifti, surface=NULL,
       plt_left <- tmesh3d(t(cbind(cifti$SURF_LEFT$surface$vertices,
                                   rep(1, nrow(cifti$SURF_LEFT$surface$vertices)))),
                           t(cifti$SURF_LEFT$surface$faces),
-                          meshColor = "faces")
+                          meshColor = "vertices")
       plt_left <- addNormals(plt_left)
     }
 
@@ -323,7 +326,7 @@ cifti_view <- function(cifti, surface=NULL,
       plt_right <- tmesh3d(t(cbind(cifti$SURF_RIGHT$surface$vertices,
                                    rep(1, nrow(cifti$SURF_RIGHT$surface$vertices)))),
                            t(cifti$SURF_RIGHT$surface$faces),
-                           meshColor = "faces")
+                           meshColor = "vertices")
       plt_right <- addNormals(plt_right)
     }
 
