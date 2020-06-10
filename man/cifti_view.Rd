@@ -20,13 +20,14 @@ cifti_view(
 )
 }
 \arguments{
-\item{cifti}{Object of class 'cifti'. See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
+\item{cifti}{Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
 
 \item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-cifti$SURF_RIGHT). If NULL, first surface will be used. See the \code{ciftiTools::make_color_pal()} description for more details.}
+cifti$SURF_RIGHT). If NULL, first surface will be used.}
 
-\item{colors}{(Optional) Vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-and colorbrewer2.org). Defaults are \code{"YlOrRd"} (sequential), \code{"Set2"} (qualitative), and \code{"RdYlBu"} (diverging).}
+\item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
+and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+See the \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the 
 \code{ciftiTools::make_color_pal()} description for more details.}
@@ -35,17 +36,19 @@ and colorbrewer2.org). Defaults are \code{"YlOrRd"} (sequential), \code{"Set2"} 
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{brainstructure}{'left', 'right', 'surface' or 'subcortical'.}
+\item{brainstructure}{"left", "right", "surface" or "subcortical".}
 
-\item{structural_img}{If brainstructure is 'subcortical', the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.}
+\item{structural_img}{If brainstructure is "subcortical", the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.}
 
 \item{w}{The time/column index of the cifti data to plot.}
 
-\item{plane}{If brainstructure is 'subcortical' and papaya=FALSE, the plane to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.}
+\item{plane}{If brainstructure is "subcortical" and papaya=FALSE, the plane to display.
+Default is "axial". Other options are "sagittal" and "coronal".}
 
-\item{num.slices}{If brainstructure is 'subcortical' and papaya=FALSE, the number of slices to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.}
+\item{num.slices}{If brainstructure is "subcortical" and papaya=FALSE, the number of slices to display.
+Default is "axial". Other options are "sagittal" and "coronal".}
 
-\item{use_papaya}{If brainstructure is 'subcortical', papaya=TRUE will use papayar to allows for interactive visualization.}
+\item{use_papaya}{If brainstructure is "subcortical", papaya=TRUE will use papayar to allows for interactive visualization.}
 }
 \description{
 Visualize cifti brain data

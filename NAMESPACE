@@ -3,6 +3,7 @@
 S3method(print,cifti)
 S3method(print,summary.cifti)
 S3method(summary,cifti)
+export(ROY_BIG_BL)
 export(cifti_make)
 export(cifti_read_separate)
 export(cifti_resample)
