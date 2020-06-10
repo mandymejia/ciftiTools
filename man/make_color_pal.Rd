@@ -13,13 +13,16 @@ make_color_pal(
 )
 }
 \arguments{
-\item{colors}{(Optional) Vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-and colorbrewer2.org). Defaults are \code{"YlOrRd"} (sequential), \code{"Set2"} (qualitative), and \code{"RdYlBu"} (diverging).}
+\item{colors}{(Optional) "ROY_BIG_BL", the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info and
+colorbrewer2.org), or a character vector of colors. Defaults are \code{"ROY_BIG_BL"} (sequential color mode), 
+\code{"Set2"} (qualitative color mode), and \code{"ROY_BIG_BL"} (diverging color mode). See the description for more 
+details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential.}
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is "sequential".
+See the description for more details.}
 
-\item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
-one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
+\item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer
+than one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 description for more details.}
 
 \item{DATA_MIN}{(Optional) The minimum value of the data to make the palette for. Overrided by certain \code{color_values}.}
@@ -27,24 +30,73 @@ description for more details.}
 \item{DATA_MAX}{(Optional) The maximum value of the data to make the palette for. Overrided by certain \code{color_values}.}
 }
 \value{
-A data.frame with two columns: color (character: standard color names or hex values) and value (numeric).
+A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
 }
 \description{
-\code{color_mode=="sequential"}: If \code{color_values=="NULL"}, the colors will be mapped with equal spacing from
- \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(color_values)==2}, these values will be used as the upper and lower 
- bounds instead. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
+There are three argument types for \code{colors}: \code{"ROY_BIG_BL"}, the name of an \code{RColorBrewer} palette, or
+ a character vector of color names.
 }
 \details{
-\code{color_mode=="qualitative"}: If \code{color_values=="NULL"}, the colors will be mapped onto each integer between
- \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors is less than 
- this range. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
+If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is the same palette as the default used in
+ the Connectome Workbench application (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
+ The midpoint will be colored black. From the midpoint toward the upper bound, colors will proceed from black to red 
+ to yellow. From the midpoint toward the lower bound, colors will proceed from black to blue to purple to green to aqua.
+ Note that the colors are not equally-spaced, and the bottom .5\% of the color range has the same color. Here is how 
+ each color mode behaves if \code{colors=="ROY_BIG_BL"}:
 
-\code{color_mode=="diverging"}: If \code{color_values=="NULL"}, the colors will be mapped with equal spacing from
- \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the data. If 
- \code{length(color_values)==1}, the middle color will correspond to this value instead. The preceeding colors will be
- equally-spaced between \code{DATA_MIN} and this value; the remaining colors will be equally-spaced between thsi value and
- \code{DATA_MAX}. If \code{length(color_values)==3}, these values will correspond to the first, middle, and last colors 
- respectively, with equal spacing between the first and middle and between the middle and last. If 
- \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value. Thus, the middle color
- will correspond to the middle color_value. For this color mode, the length of \code{colors} must be odd and >= 3.
+\describe{
+ \item{\code{color_mode=="sequential"}}{Only the second half of the pallete will be used (black --> red --> yellow).
+   If \code{identical(color_values, NULL)}, the colors will be mapped between \code{DATA_MIN} (black) to 
+   \code{DATA_MAX} (yellow). If \code{length(color_values)==2}, \code{color_values[1]} will be the lower bound (black) 
+   and \code{color_values[2]} will be the upper bound (yellow). If \code{color_values[1] > color_values[2]}, the
+   first value will be used as the maximum and the second will be used as the minimum, and the color scale will be
+   reversed with the highest value colored black and the lowest value colored yellow.
+ }
+ \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not recommended for qualitative data, so a
+   warning will be issued. Colors will be based on the landmark colors in the "ROY_BIG_BL" pallete. If 
+   \code{identical(color_values, NULL)}, the colors will be mapped onto each integer between \code{DATA_MIN} and 
+   \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors in the palette (17) is less 
+   than this range. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
+ }
+ \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped from
+   \code{DATA_MIN} (aqua) to \code{DATA_MAX} (yellow). If \code{length(color_values)==1}, this value will be used as
+   the midpoint (black) instead of the data midpoint. If \code{length(color_values)==2}, \code{color_values[1]} will 
+   be the lower bound (aqua) and \code{color_values[2]} will be the upper bound (yellow). If \code{length(color_values)==3}, 
+   these values will correspond to the lowest bound (aqua), midpoint (black), and upper bound (yellow) respectively.
+   If the \code{color_values} are in descending order, the first value will be used as the maximum and the last 
+   will be used as the minimum, and the color scale will be reversed with the highest values colored aqua and the 
+   lowest values colored yellow.
+ }
+}
+
+If \code{colors} is the name of an RColorBrewer palette (see a listing at `RColorBrewer::brewer.pal.info`), the colors
+ in that pallete will be used, and the below behavior applies. If \code{colors} is a character vector of color names
+ (hex codes or standard R color names), the below behavior applies directly:
+
+\describe{
+ \item{\code{color_mode=="sequential"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal
+   spacing from \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(color_values)==2}, these values will be used as 
+   the upper and lower bounds instead. If \code{color_values[1] > color_values[2]}, the first value will be used as 
+   the maximum and the second will be used as the minimum, and the color scale will be reversed. If 
+   \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value. 
+ }
+ \item{\code{color_mode=="qualitative"}}{If \code{identical(color_values, NULL)}, the colors will be mapped onto 
+   each integer between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the 
+   number of colors in the palette is less than this range. If \code{length(color_values)==length(colors)}, each 
+   color will be mapped to each corresponding value.
+ }
+ \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal 
+   spacing from \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the 
+   data. If \code{length(color_values)==1}, the middle color will correspond to this value instead. The preceeding 
+   colors will be equally-spaced between \code{DATA_MIN} and this value; the following colors will be equally-spaced 
+   between this value and\code{DATA_MAX}. If \code{length(color_values)==2}, \code{color_values[1]} will be the lower 
+   bound (first color) and \code{color_values[2]} will be the upper bound (last color). If \code{length(color_values)==3}, 
+   these values will correspond to the lowest bound, midpoint, and upper bound respectively. There must be an odd 
+   number of colors, since the diverging color mode requires a midpoint. If the \code{color_values} are in descending 
+   order, the first value will be used as the maximum and the last will be used as the minimum, and the color scale 
+   will be reversed. Finally, if \code{length(color_values)==length(colors)}, each color will be mapped to each 
+   corresponding value. Thus, the middle color will correspond to the middle color_value. The length of \code{colors} 
+   must be odd and >= 3.
+ }
+}
 }

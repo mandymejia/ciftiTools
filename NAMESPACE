@@ -3,7 +3,11 @@
 S3method(print,cifti)
 S3method(print,summary.cifti)
 S3method(summary,cifti)
+<<<<<<< HEAD
 export(cifti_flatten)
+=======
+export(ROY_BIG_BL)
+>>>>>>> bb086f35873571dba63d91ac0efffe2a6c10be8a
 export(cifti_make)
 export(cifti_read)
 export(cifti_read_flat)

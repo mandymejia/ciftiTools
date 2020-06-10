@@ -6,6 +6,14 @@
 \usage{
 use_color_pal(data_values, pal)
 }
+\arguments{
+\item{data_values}{The values to map to colors}
+
+\item{pal}{The palette to use to map values to colors}
+}
+\value{
+A character vector of color names
+}
 \description{
 Applies a palette to a data vector to yield a vector of colors.
 }
