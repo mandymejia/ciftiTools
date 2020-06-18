@@ -4,7 +4,7 @@
 \alias{expand_color_pal}
 \title{Interpolates between entries in the input palette to make a larger palette with at least MIN_COLOR_RES entries.}
 \usage{
-expand_color_pal(pal, MIN_COLOR_RES = 60)
+expand_color_pal(pal, MIN_COLOR_RES = 255)
 }
 \arguments{
 \item{pal}{The color palette to expand: a data.frame with two columns, color (character: standard color names 

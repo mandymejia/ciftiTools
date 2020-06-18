@@ -8,7 +8,7 @@ ROY_BIG_BL(min = 0, max = 1, mid = NULL, pos_half = FALSE)
 }
 \arguments{
 \item{min}{The minimum value for the color mapping. As in the original palette, the last color (aqua) is actually
-placed at the bottom .5% between the minimum and maximum.}
+placed at the bottom .5\% between the minimum and maximum.}
 
 \item{max}{The maximum value for the color mapping. If this value is lower than the minimum, the color mapping will
 be reversed.}

@@ -4,7 +4,7 @@
 #' default Connectime Workbench palette. Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 #' 
 #' @param min The minimum value for the color mapping. As in the original palette, the last color (aqua) is actually
-#'  placed at the bottom .5% between the minimum and maximum.
+#'  placed at the bottom .5\% between the minimum and maximum.
 #' @param max The maximum value for the color mapping. If this value is lower than the minimum, the color mapping will
 #'  be reversed.
 #' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
@@ -69,24 +69,24 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
 #'  the Connectome Workbench application (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
 #'  The midpoint will be colored black. From the midpoint toward the upper bound, colors will proceed from black to red 
 #'  to yellow. From the midpoint toward the lower bound, colors will proceed from black to blue to purple to green to aqua.
-#'  Note that the colors are not equally-spaced, and the bottom .5% of the color range has the same color. Here is how 
+#'  Note that the colors are not equally-spaced, and the bottom .5\% of the color range has the same color. Here is how 
 #'  each color mode behaves if \code{colors=="ROY_BIG_BL"}:
 #' 
 #' \describe{
-#'  \item{\code{color_mode=="sequential"}}: Only the second half of the pallete will be used (black --> red --> yellow).
+#'  \item{\code{color_mode=="sequential"}}{Only the second half of the pallete will be used (black --> red --> yellow).
 #'    If \code{identical(color_values, NULL)}, the colors will be mapped between \code{DATA_MIN} (black) to 
 #'    \code{DATA_MAX} (yellow). If \code{length(color_values)==2}, \code{color_values[1]} will be the lower bound (black) 
 #'    and \code{color_values[2]} will be the upper bound (yellow). If \code{color_values[1] > color_values[2]}, the
 #'    first value will be used as the maximum and the second will be used as the minimum, and the color scale will be
 #'    reversed with the highest value colored black and the lowest value colored yellow.
 #'  }
-#'  \item{\code{color_mode=="qualitative"}}: The "ROY_BIG_BL" pallete is not recommended for qualitative data, so a
+#'  \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not recommended for qualitative data, so a
 #'    warning will be issued. Colors will be based on the landmark colors in the "ROY_BIG_BL" pallete. If 
 #'    \code{identical(color_values, NULL)}, the colors will be mapped onto each integer between \code{DATA_MIN} and 
 #'    \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors in the palette (17) is less 
 #'    than this range. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
 #'  }
-#'  \item{\code{color_mode=="diverging"}}: If \code{identical(color_values, NULL)}, the colors will be mapped from
+#'  \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped from
 #'    \code{DATA_MIN} (aqua) to \code{DATA_MAX} (yellow). If \code{length(color_values)==1}, this value will be used as
 #'    the midpoint (black) instead of the data midpoint. If \code{length(color_values)==2}, \code{color_values[1]} will 
 #'    be the lower bound (aqua) and \code{color_values[2]} will be the upper bound (yellow). If \code{length(color_values)==3}, 
@@ -102,18 +102,18 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
 #'  (hex codes or standard R color names), the below behavior applies directly:
 #' 
 #' \describe{
-#'  \item{\code{color_mode=="sequential"}}: If \code{identical(color_values, NULL)}, the colors will be mapped with equal
+#'  \item{\code{color_mode=="sequential"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal
 #'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(color_values)==2}, these values will be used as 
 #'    the upper and lower bounds instead. If \code{color_values[1] > color_values[2]}, the first value will be used as 
 #'    the maximum and the second will be used as the minimum, and the color scale will be reversed. If 
 #'    \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value. 
 #'  }
-#'  \item{\code{color_mode=="qualitative"}}: If \code{identical(color_values, NULL)}, the colors will be mapped onto 
+#'  \item{\code{color_mode=="qualitative"}}{If \code{identical(color_values, NULL)}, the colors will be mapped onto 
 #'    each integer between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the 
 #'    number of colors in the palette is less than this range. If \code{length(color_values)==length(colors)}, each 
 #'    color will be mapped to each corresponding value.
 #'  }
-#'  \item{\code{color_mode=="diverging"}: If \code{identical(color_values, NULL)}, the colors will be mapped with equal 
+#'  \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal 
 #'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the 
 #'    data. If \code{length(color_values)==1}, the middle color will correspond to this value instead. The preceeding 
 #'    colors will be equally-spaced between \code{DATA_MIN} and this value; the following colors will be equally-spaced 
@@ -183,6 +183,9 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
           RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
         } else if(N_COLOR_VALUES_PRE==1){
           RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, mid=color_values)
+        } else if(N_COLOR_VALUES_PRE==2){
+          RBB <- ROY_BIG_BL(color_values[1], color_values[2], 
+                            mid=(color_values[1]+color_values[2])/2)
         } else if(N_COLOR_VALUES_PRE==3){
           RBB <- ROY_BIG_BL(color_values[1], color_values[3], mid=color_values[2])
         }
@@ -328,7 +331,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
 #'
 #' @return A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
 #'
-expand_color_pal <- function(pal, MIN_COLOR_RES=60){
+expand_color_pal <- function(pal, MIN_COLOR_RES=255){
   if(nrow(pal) < MIN_COLOR_RES){
     colors <- as.character(pal$color)
     # Interpolate between palette values to obtain at least MIN_COLOR_RES color levels.
@@ -348,12 +351,17 @@ expand_color_pal <- function(pal, MIN_COLOR_RES=60){
     cols <- c(cols, colors[nrow(pal)])
   } else {
     vals <- pal$value
-    cols <- colors
+    cols <- as.character(pal$color)
   }
   return(data.frame(color=cols, value=vals))
 }
 
 #' Applies a palette to a data vector to yield a vector of colors.
+#'
+#' @param data_values The values to map to colors
+#' @param pal The palette to use to map values to colors
+#'
+#' @return A character vector of color names
 use_color_pal <- function(data_values, pal){
   colors <- as.character(pal$color)
   pal$cut <- -Inf
@@ -364,22 +372,25 @@ use_color_pal <- function(data_values, pal){
 
 #' Visualize cifti brain data
 #'
-#' @param cifti Object of class 'cifti'. See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
+#' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
 #' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-#'  cifti$SURF_RIGHT). If NULL, first surface will be used. See the \code{ciftiTools::make_color_pal()} description for more details.
-#' @param colors (Optional) Vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-#'  and colorbrewer2.org). Defaults are \code{"YlOrRd"} (sequential), \code{"Set2"} (qualitative), and \code{"RdYlBu"} (diverging).
+#'  cifti$SURF_RIGHT). If NULL, first surface will be used. 
+#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
+#'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+#'  See the \code{ciftiTools::make_color_pal()} description for more details.
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the 
 #'  \code{ciftiTools::make_color_pal()} description for more details.
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param brainstructure 'left', 'right', 'surface' or 'subcortical'.
-#' @param structural_img If brainstructure is 'subcortical', the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
+#' @param brainstructure "left", "right", "surface" or "subcortical".
+#' @param structural_img If brainstructure is "subcortical", the file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
 #' @param w The time/column index of the cifti data to plot.
-#' @param plane If brainstructure is 'subcortical' and papaya=FALSE, the plane to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.
-#' @param num.slices If brainstructure is 'subcortical' and papaya=FALSE, the number of slices to display.  Default is 'axial'. Other options are 'sagittal' and 'coronal'.
-#' @param use_papaya If brainstructure is 'subcortical', papaya=TRUE will use papayar to allows for interactive visualization.
+#' @param plane If brainstructure is "subcortical" and papaya=FALSE, the plane to display.  
+#'  Default is "axial". Other options are "sagittal" and "coronal".
+#' @param num.slices If brainstructure is "subcortical" and papaya=FALSE, the number of slices to display.  
+#'  Default is "axial". Other options are "sagittal" and "coronal".
+#' @param use_papaya If brainstructure is "subcortical", papaya=TRUE will use papayar to allows for interactive visualization.
 #'
 #' @export
 #' @import rgl
@@ -464,6 +475,8 @@ cifti_view <- function(cifti, surface=NULL,
     rm(cols)
 
     #construct and plot mesh object
+    open3d()
+    
     if(do_left){
       if(is.null(cifti$SURF_LEFT)) stop("If brainstructure is 'left' or 'surface', cifti$SURF_LEFT must not be NULL.")
       if(is.null(surface)){
@@ -501,13 +514,38 @@ cifti_view <- function(cifti, surface=NULL,
     if(do_right){
       shade3d(plt_right, col=cols_right, specular="black", legend=TRUE)
     }
+
+    # Add color bar scale/legend.
     # Suppress this warning: "calling par(new=TRUE) with no plot"
+    colbar_min <- ifelse(
+      color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
+      pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
+      pal_base$value[1])
+    colbar_breaks <- c(
+      colbar_min, 
+      pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
+      pal$value[length(pal$value)]
+    )
+    colbar_labs <- switch(color_mode,
+      sequential=c(colbar_min, 
+                    pal_base$value[nrow(pal_base)]),
+      qualitative=1:N_VALUES,
+      diverging=c(colbar_min, 
+                  pal_base$value[as.integer(ceiling(nrow(pal_base)/2))], 
+                  pal_base$value[nrow(pal_base)])
+    )
+    colbar_labs_digits <- ifelse(
+      diff(range(pal$value)) >=1, 0, 
+      1+ceiling(abs(log(diff(range(pal$value)), 10))))
     suppressWarnings(
       bgplot3d(image.plot(
-        legend.only = TRUE, zlim = range(pal_base$value), col = as.character(pal_base$color),
-        legend.cex=2, legend.lab=color_legend_label, legend.shrink=.9, legend.width=2, legend.line=7,
-        legend.mar=12, axis.args=list(cex.axis=1.7)))
+        legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color), 
+        breaks=colbar_breaks, legend.lab=color_legend_label,
+        legend.cex=2, legend.shrink=.9, legend.width=2, legend.line=7, legend.mar=12,
+        axis.args=list(cex.axis=1.7, at=colbar_labs, 
+                       labels=round(colbar_labs, colbar_labs_digits))))
     )
+
     # TO-DO
     if(brainstructure=="left"){
       rot_left <- rbind(
