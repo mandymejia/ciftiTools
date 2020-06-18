@@ -8,7 +8,7 @@ cifti_read_separate(
   fname_cifti,
   fname_gifti_left = NULL,
   fname_gifti_right = NULL,
-  surf_names = "surface",
+  surf_names = NULL,
   brainstructures = c("left", "right", "subcortical"),
   wb_cmd = NULL,
   make_helper_files = TRUE,

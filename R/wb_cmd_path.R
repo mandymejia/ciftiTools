@@ -1,12 +1,20 @@
-cwb_option_request <- function(){
+wb_path_request <- function(){
   return(paste(
-    "\n***************************************************************************************",
+    "\n******************************************************************************************",
     "ciftiTools requires the path to the Connectome Workbench folder, or directly to the", 
-    "`wb_command(.exe)`. Please execute `options(ciftiTools_wb_path = 'path/to/workbench')`.", 
+    "`wb_command(.exe)`. Please execute `ciftiTools.setOption('wb_path', 'path/to/workbench')`.", 
     "Or, provide the path to each function with the `wb_path` argument.",
-    "***************************************************************************************\n",
+    "******************************************************************************************\n",
     sep='\n'
   ))
+}
+
+ciftiTools.setOption <- function(opt, val){
+  stopifnot(opt %in% "wb_path")
+  val <- list(val)
+  names(val) <- paste0("ciftiTools_", opt)
+  options(val)
+  invisible(val)
 }
 
 get_wb_cmd_path <- function(wb_path, verbose=FALSE){
@@ -14,7 +22,7 @@ get_wb_cmd_path <- function(wb_path, verbose=FALSE){
   if(is.null(wb_path)){
     wb_path <- getOption("ciftiTools_wb_path")
     if(is.null(wb_path)){
-      stop(cwb_option_request())
+      stop(wb_path_request())
     } 
     wb_path_source <- "option"
   } else {
@@ -70,7 +78,7 @@ get_wb_cmd_path <- function(wb_path, verbose=FALSE){
 .onAttach <- function(...){
   if(interactive()){
     if(is.null(getOption("ciftiTools_wb_path"))){
-      packageStartupMessage(cwb_option_request())
+      packageStartupMessage(wb_path_request())
     }
   }
 }
