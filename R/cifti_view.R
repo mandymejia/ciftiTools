@@ -223,10 +223,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
     
     # Order color values from lowest to highest, if not already sorted.
     color_values_order <- order(color_values)
-<<<<<<< HEAD
     if(N_COLOR_VALUES==N_COLORS){ colors <- colors[color_values_order] }
-=======
->>>>>>> bb086f35873571dba63d91ac0efffe2a6c10be8a
     color_values <- color_values[color_values_order]
     # If the color values are descending, reverse the color scale.
     if(identical(color_values_order, length(color_values):1)){
@@ -284,7 +281,6 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
     } else if(N_COLOR_VALUES==N_COLORS){
       pal_vals <- color_values
     } else {
-<<<<<<< HEAD
       if(N_COLOR_VALUES==1){
         mid_val <- color_values
         if((mid_val <= DATA_MIN) | (mid_val >= DATA_MAX)){
@@ -297,39 +293,6 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
         min_val <- color_values[1]
         mid_val <- color_values[2]
         max_val <- color_values[3]
-=======
-      if(N_COLOR_VALUES==N_COLORS){
-        pal_vals <- color_values
-      } else {
-        # Get the minimum, middle, and maximum value for the color scale.
-        if(N_COLOR_VALUES==1){
-          mid_val <- color_values
-          if((mid_val <= DATA_MIN) | (mid_val >= DATA_MAX)){
-            stop("If one color_value is used with the diverging color_mode, it represents the midpoint of the data scale
-              and must be between the data minimum and maximum. (It does not have to be the true midpoint.) Different 
-              bounds can be set with color_value=c(new_min, midpoint, new_max).")
-          }
-          min_val <- DATA_MIN
-          max_val <- DATA_MAX
-        } else if(N_COLOR_VALUES==2){
-          mid_val <- (DATA_MIN + DATA_MAX)/2
-          min_val <- color_values[1]
-          max_val <- color_values[2]
-        } else if(N_COLOR_VALUES==3){
-          mid_val <- color_values[2]
-          min_val <- color_values[1]
-          max_val <- color_values[3]
-        }
-
-        # Interpolate between the min/mid/max to get the color values.
-        # To-do: allow for odd-length color palettes?
-        if(length(colors) %% 2 != 1){ stop("There must be an odd number of colors for the diverging color mode, to have a middle color.") }
-        low_vals <- seq(min_val, mid_val, length.out=floor(N_COLORS/2)+1)
-        low_vals <- low_vals[1:(length(low_vals)-1)]
-        high_vals <- seq(mid_val, max_val, length.out=floor(N_COLORS/2)+1)
-        high_vals <- high_vals[2:length(high_vals)]
-        pal_vals <- c(low_vals, mid_val, high_vals)
->>>>>>> bb086f35873571dba63d91ac0efffe2a6c10be8a
       }
       low_vals <- seq(min_val, mid_val, length.out=floor(N_COLORS/2)+1)
       low_vals <- low_vals[1:(length(low_vals)-1)]
@@ -337,11 +300,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
       high_vals <- high_vals[2:length(high_vals)]
       pal_vals <- c(low_vals, mid_val, high_vals)
     }
-<<<<<<< HEAD
     
-=======
-
->>>>>>> bb086f35873571dba63d91ac0efffe2a6c10be8a
   } else {
     stop(paste("Unrecognized color mode", color_mode))
   }

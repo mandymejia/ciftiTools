@@ -12,8 +12,8 @@
 #' @param delete_helper_files If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.
 #' @param outdir Location where to write output files. If NULL, use the current working directory.
 #' @param resample Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL, do not perform resampling.
-#' @param sphere_orig_L File path of left-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
-#' @param sphere_orig_R File path of right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
+#' @param fname_sphereOrigL File path of left-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
+#' @param fname_sphereOrigR File path of right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
 #' @param verbose Should occasional updates be printed?
 #'
 #' @return An object of type 'cifti', a list containing up to 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.  LABELS contains the brain structure labels (usually 3-21) of the subcortical elements.
@@ -46,9 +46,9 @@
 #' 21 Thalamus-R
 #'
 cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, 
-  surf_names='surface', brainstructures=c('left','right','subcortical'), wb_cmd=NULL, 
+  surf_names=NULL, brainstructures=c('left','right','subcortical'), wb_cmd=NULL, 
   make_helper_files=TRUE, delete_helper_files=FALSE, outdir=NULL, 
-  resample=NULL, sphere_orig_L, sphere_orig_R, verbose=FALSE){
+  resample=NULL, fname_sphereOrigL, fname_sphereOrigR, verbose=FALSE){
 
   wb_cmd <- ciftiTools:::check_wb_cmd(wb_cmd)
   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
@@ -70,8 +70,14 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   ### Check surface argument compatibility
   do_left_surf <- (!is.null(fname_gifti_left))
   do_right_surf <- (!is.null(fname_gifti_right))
-  if(do_left_surf){ if(length(fname_gifti_left) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') }
-  if(do_right_surf){ if(length(fname_gifti_right) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') }
+  if(do_left_surf){ 
+    if(is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_left))
+    if(length(fname_gifti_left) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') 
+  }
+  if(do_right_surf){ 
+    if(is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_right))
+    if(length(fname_gifti_right) != length(surf_names)) stop('Length of fname_gifti_right and surf_names must match.') 
+  }
 
   ### Outline of steps:
   ### 1. Use -cifti-separate to separate the CIFTI file into left cortex, right cortex, subcortical volumetric data, and subcortical labels
@@ -90,8 +96,8 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   fname_cifti <- normalizePath(fname_cifti)
   if(do_left_surf) fname_gifti_left <- normalizePath(fname_gifti_left) 
   if(do_right_surf) fname_gifti_right <- normalizePath(fname_gifti_right) 
-  if(!is.null(resample)) sphere_orig_L <- normalizePath(sphere_orig_L)
-  if(!is.null(resample)) sphere_orig_R <- normalizePath(sphere_orig_R)
+  if(!is.null(resample)) fname_sphereOrigL <- normalizePath(fname_sphereOrigL)
+  if(!is.null(resample)) fname_sphereOrigR <- normalizePath(fname_sphereOrigR)
   
   # Create file names for separated cifti components
   basename_cifti <- basename(fname_cifti) #extract file name component of file path to cifti data
@@ -161,7 +167,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     sphere_target_R <- file.path(dir2,'Sphere.target.R.surf.gii')
     sphere_target_L <- file.path(dir2,'Sphere.target.L.surf.gii')
     if(make_helper_files) {
-      if(verbose) cat('\nCreating spherical surfaces in target resolution... \n')
+      if(verbose) cat('Creating spherical surfaces in target resolution... \n')
       make_helper_spheres(sphere_target_R, sphere_target_L, target_res=resample, wb_cmd)
     }
     
@@ -175,12 +181,12 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
 
     if(do_left){
       if(verbose) cat('Resampling components to target resolution... \n')
-      system(paste(wb_cmd, '-metric-resample', surf_L, sphere_orig_L, sphere_target_L, 'BARYCENTRIC', surf_target_L, sep=' '))
+      system(paste(wb_cmd, '-metric-resample', surf_L, fname_sphereOrigL, sphere_target_L, 'BARYCENTRIC', surf_target_L, sep=' '))
     }
     
     if(do_right){
       if(verbose) cat('Resampling components to target resolution... \n')
-      system(paste(wb_cmd, '-metric-resample', surf_R, sphere_orig_R, sphere_target_R, 'BARYCENTRIC', surf_target_R, sep=' '))
+      system(paste(wb_cmd, '-metric-resample', surf_R, fname_sphereOrigR, sphere_target_R, 'BARYCENTRIC', surf_target_R, sep=' '))
     }
     
     surf_L <- surf_target_L
@@ -191,20 +197,27 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     
     ## TO DO: Use gifti_resample function for this part?
     
+    ### Read in GIFTI surface geometry files if provided
+    num_surf <- length(surf_names) #number of surface types provided
+    
     #left hemisphere
     if(do_left_surf){
-      gifti_target_L <- file.path(outdir, 'gifti.target.L.surf.gii')
-      cmd = paste(wb_cmd, '-surface-resample', fname_gifti_left, sphere_orig_L, sphere_target_L, 'BARYCENTRIC', gifti_target_L, sep=' ')
-      system(cmd)
-      fname_gifti_left <- gifti_target_L #replace gifti file name with resampled file
+      for(ii in 1:num_surf){
+        gifti_target_L <- file.path(outdir, paste0('gifti',ii,'.target.L.surf.gii'))
+        cmd = paste(wb_cmd, '-surface-resample', fname_gifti_left[ii], fname_sphereOrigL, sphere_target_L, 'BARYCENTRIC', gifti_target_L, sep=' ')
+        system(cmd)
+        fname_gifti_left[ii] <- gifti_target_L #replace gifti file name with resampled file
+      }
     }
     
     #right hemisphere
     if(do_right_surf){
-      gifti_target_R <- file.path(outdir, 'gifti.target.R.surf.gii')
-      cmd = paste(wb_cmd, '-surface-resample', fname_gifti_right, sphere_orig_R, sphere_target_R, 'BARYCENTRIC', gifti_target_R, sep=' ')
-      system(cmd)
-      fname_gifti_right <- gifti_target_R #replace gifti file name with resampled file
+      for(ii in 1:num_surf){
+        gifti_target_R <- file.path(outdir, paste0('gifti',ii,'.target.R.surf.gii'))
+        cmd = paste(wb_cmd, '-surface-resample', fname_gifti_right[ii], fname_sphereOrigR, sphere_target_R, 'BARYCENTRIC', gifti_target_R, sep=' ')
+        system(cmd)
+        fname_gifti_right[ii] <- gifti_target_R #replace gifti file name with resampled file
+      }
     }
     
     
@@ -229,8 +242,6 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 #shift by 2 to be consistent with Matlab ft_read_cifti function, which labels 1=CORTEX_LEFT and 2=CORTEX_RIGHT
   }
 
-  ### Read in GIFTI surface geometry files if provided
-  num_surf <- length(surf_names) #number of surface types provided
 
   if(do_left_surf){
 
@@ -273,9 +284,3 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   class(result) <- 'cifti'
   return(result)
 }
-
-
-
-
-
-
