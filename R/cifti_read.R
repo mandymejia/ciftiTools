@@ -6,26 +6,21 @@
 #' @param brainstructures A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 #'  \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
 #'  default is \code{c('left','right','subcortical')} (all brain structures).
-#' @param sep_fnames (Optional) A named character vector or list indicating where to save the sepd GIfTI and 
-#'  NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
-#'  "subcortLab". The path should be absolute, or relative to \code{dir_write}.
-#' @param sep_dir Where to write the sep files. Defaults to the current working directory.
-#' @param sep_keep If FALSE (Default), new files made by the \code{cifti_sep()} call are deleted.
-#' @param sep_overwrite (For cifti_sep) If a NIfTI or GIfTI file already exists, should it be overwritten? 
-#'  Default is FALSE.
-#' @param resamp_res Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL, do not perform resampling.
-#' @param resamp_helper_dir (Optional) Directory of helper files required for resampling. Default is "helper_files_resampling" .
-#' @param resamp_helper_keep (Optional) If new helper files are created, should they be deleted?
-#' @param resamp_sphereOrigin_fnames File paths of left- and right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
-#' @param resamp_sphereTarget_fnames File paths of left- and right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
-#' @param surf_fnames (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+#' @param sep_kwargs 
+#' @param resamp Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL, do not perform resampling.
+#' @param resamp_kwargs (Optional) Directory of helper files required for resampling. Default is "helper_files_resampling" .
+#' @param surfL_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 #'  representing left cortex. A named character vector or list indicating where to save the sepd GIfTI and 
 #'  NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
-#'  "subcortLab". The path should be absolute, or relative to \code{dir_write}.
+#'  "subcortLab". The path should be absolute, or relative to \code{write_dir}.
+#' @param surfR_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+#'  representing left cortex. A named character vector or list indicating where to save the sepd GIfTI and 
+#'  NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
+#'  "subcortLab". The path should be absolute, or relative to \code{write_dir}.
 #' @param surf_labels (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 #'  (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
 #'  provided. Otherwise, ignored.
-#' @param dir_wb (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ... Also can be the executable itself.
+#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ... Also can be the executable itself.
 #' @param verbose Should occasional updates be printed? Default is FALSE.
 #'
 #' @return An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
@@ -61,8 +56,8 @@
 cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   sep_kwargs=NULL,
   resamp=FALSE, resamp_kwargs=NULL,
-  surf_fnames=NULL, surf_labels=NULL, 
-  dir_wb=NULL, verbose=FALSE){
+  surf_label=NULL, surf_labels=NULL, 
+  wb_dir=NULL, verbose=FALSE){
 
   ################
   # cifti_separate
@@ -96,8 +91,8 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     resamp_kwargs <- match.arg(resamp_kwargs, resamp_kwargs_allowed, several.ok=TRUE)
 
     resamp_result <- do.call(cifti_resamp_sep, resamp_kwargs)
-    stopifnot(resep_result$cmd_code %in% c(NA, 0))
-    files_to_read <- resep_result$files
+    stopifnot(resamp_result$cmd_code %in% c(NA, 0))
+    files_to_read <- resamp_result$files
   }
 
   #####################
@@ -106,16 +101,15 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
 
   # Read the CIfTI file.
   if(verbose){ print("Reading GIfTI and NIfTI files.") }
-  cifti_read_from_sep_args <- c(
-    list(fname_surfaceL=fname_surfaceL, fname_surfaceR=fname_surfaceR, surf_names=surf_names, dir=".", dir_wb=dir_wb), 
-    sep_fnames
-  )  
-  result <- do.call(cifti_read_from_sep, cifti_read_from_sep_args)
+  read_from_sep_kwargs <- c(
+    files_to_read,
+    list(surfL_fname=surfL_fname, surfR_fname=surfR_fname, read_dir=NULL, surf_label=surf_label, wb_dir=wb_dir)
+  )
+  result <- do.call(cifti_read_from_sep, read_from_sep_kwargs)
 
-
-  #########
-  # Cleanup
-  #########
+  ########
+  # Finish
+  ########
 
   # Delete the sepd files, unless otherwise requested. Do not delete files that existed before.
   if(!sep_keep){

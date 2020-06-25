@@ -6,14 +6,14 @@
 #' @param cortexR_fname (Optional) File path of GIfTI data for right cortex
 #' @param subcortVol_fname (Optional) File path of NIfTI volume data for subcortical structures
 #' @param subcortLab_fname (Optional) File path of the NIfTI labels for subcortical structures
-#' @param fname_surfaceL (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+#' @param surfL_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 #'  representing left cortex
-#' @param fname_surfaceR (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+#' @param surfR_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 #'  representing right cortex
-#' @param surf_names (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
-#'  (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
+#' @param surf_label (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
+#'  (e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are 
 #'  provided. Otherwise, ignored.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
+#' @param wb_diiir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
 #'
 #' @return An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
 #'  LABELS contains the brain structure labels (usually 3-21) of the subcortical elements. If surface geometry files
@@ -46,36 +46,31 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_from_separate <- function(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname, fname_surfaceL,
-  fname_surfaceR, dir=NULL, surf_names="surface", wb_dir=NULL){
+cifti_read_from_separate <- function(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname, surfL_fname,
+  surfR_fname, read_dir=NULL, surf_label="surface", wb_dir=NULL){
 
-
-  # Make full file paths.
-  if(!is.null(fname_surface_L)) fname_surfaceL <- normalizePath(fname_surfaceL) 
-  if(!is.null(fname_surface_R)) fname_surfaceR <- normalizePath(fname_surfaceR) 
-  if(!is.null(fname_sphereOrigL)) fname_sphereOrigL <- normalizePath(fname_sphereOrigL)
-  if(!is.null(fname_sphereOrigR)) fname_sphereOrigR <- normalizePath(fname_sphereOrigR)
-
-  wb_dir <- check_wb_dir(wb_dir)
-  if(is.null(dir)){ dir <- "."}
+  wb_cmd <- get_wb_cmd_path(wb_dir)
 
   result <- vector("list", length=6)
   names(result) <- c("CORTEX_LEFT", "CORTEX_RIGHT", "VOL", "LABELS", "SURF_LEFT", "SURF_RIGHT")
 
   # Read in GIfTI files for left and right cortex.
   if(!is.null(cortexL_fname)){
-    result$CORTEX_LEFT <- do.call(cbind, readGIfTI(file.path(dir, cortexL_fname))$data)
+    cortexL_fname <- make_abs_path(cortexL_fname, read_dir)
+    result$CORTEX_LEFT <- do.call(cbind, readGIfTI(cortexL_fname)$data)
   }
   if(!is.null(cortexR_fname)){
-    result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(file.path(dir, cortexR_fname))$data)
-  }
+    cortexR_fname <- make_abs_path(cortexR_fname, read_dir)
+    result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(cortexR_fname)$data)  }
 
   # Read in NIfTI files for subcortical data.
   if(!is.null(subcortVol_fname)){
-    result$VOL <- readNifti(file.path(dir, subcortVol_fname))
+    subcortVol_fname <- make_abs_path(subcortVol_fname, read_dir)
+    result$VOL <- readNifti(subcortVol_fname)
   }
   if(!is.null(subcortLab_fname)){
-    result$LABELS <- readNifti(file.path(dir, subcortLab_fname))
+    subcortLab_fname <- make_abs_path(subcortLab_fname, read_dir)
+    result$LABELS <- readNifti(subcortLab_fname)
     result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 
   }
 
@@ -90,19 +85,21 @@ cifti_read_from_separate <- function(cortexL_fname, cortexR_fname, subcortVol_fn
     result$SURF_LEFT[[ii]] <- surf
     return(result)
   }
-  num_surf <- length(surf_names) #number of surface types provided
-  if(!is.null(fname_surfaceL)){
+  num_surf <- length(surf_label) #number of surface types provided
+  if(!is.null(surfL_fname)){
     result$SURF_LEFT <- vector('list', num_surf)
-    names(result$SURF_LEFT) <- surf_names
+    names(result$SURF_LEFT) <- surf_label
     for(ii in 1:num_surf){
-      result$SURF_LEFT[[ii]] <- read_surf(fname_surfaceL[ii])
+      surfL_fname[ii] <- make_abs_path(surfL_fname[ii], read_dir)
+      result$SURF_LEFT[[ii]] <- read_surf(surfL_fname[ii])
     }
   }
-  if(!is.null(fname_surfaceR)){
+  if(!is.null(surfR_fname)){
     result$SURF_RIGHT <- vector('list', num_surf)
-    names(result$SURF_RIGHT) <- surf_names
+    names(result$SURF_RIGHT) <- surf_label
     for(ii in 1:num_surf){
-      result$SURF_RIGHT[[ii]] <- read_surf(fname_surfaceR[ii])
+      surfR_fname[ii] <- make_abs_path(surfR_fname[ii], read_dir)
+      result$SURF_RIGHT[[ii]] <- read_surf(surfR_fname[ii])
     }
   }
 

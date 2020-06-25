@@ -11,9 +11,9 @@ cifti_separate(
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLab_fname = NULL,
-  dir = NULL,
-  wb_dir = NULL,
-  overwrite = FALSE
+  overwrite = TRUE,
+  write_dir = NULL,
+  wb_dir = NULL
 )
 }
 \arguments{
@@ -23,16 +23,18 @@ cifti_separate(
 \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
 default is \code{c('left','right','subcortical')} (all brain structures).}
 
+\item{cortexL_fname, cortexR_fname}{(Optional) where to save the left and right cortex GIfTIs. If not provided, 
+defaults to \code{"*[L/R].func.gii"}, where * is the same directory and file name component of \code{cifti_fname}.}
+
 \item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and label NIfTIs. If not 
 provided, defaults to \code{"[/.labels].nii.gz"}, where * is the same directory and file name component of 
 \code{cifti_fname}.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
-
 \item{overwrite}{If a NIfTI or GIfTI file already exists, should it be overwritten? Default is FALSE.}
 
-\item{fnames_cortexL, fnames_cortexR}{(Optional) where to save the left and right cortex GIfTIs. If not provided, 
-defaults to \code{"*[L/R].func.gii"}, where * is the same directory and file name component of \code{cifti_fname}.}
+\item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
+
+\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
 }
 \value{
 Nothing

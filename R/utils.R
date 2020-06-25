@@ -131,3 +131,26 @@ get_cifti_extn <- function(cifti_fname){
   return(extn)
 
 }
+
+#' Normalizes a path, placing it in a dir if it is relative. If the path is already absolute,
+#'  dir is ignored.
+#'
+#' @param path
+#' @param dir
+#' 
+#' @importFrom utils isAbsolutePath
+#' 
+#' @return
+#' 
+make_abs_path <- function(path, dir=NULL){
+  if(!is.null(path)){
+    if(!is.null(dir)){
+      if(!isAbsolutePath(path)){ 
+        #stopifnot(file.exists(dir))
+        path <- file.path(dir, path)
+      }
+    }
+    path <- normalizePath(path)
+  }
+  return(path)
+}

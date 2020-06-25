@@ -9,10 +9,10 @@ cifti_read_from_separate(
   cortexR_fname,
   subcortVol_fname,
   subcortLab_fname,
-  fname_surfaceL,
-  fname_surfaceR,
-  dir = NULL,
-  surf_names = "surface",
+  surfL_fname,
+  surfR_fname,
+  read_dir = NULL,
+  surf_label = "surface",
   wb_dir = NULL
 )
 }
@@ -25,17 +25,17 @@ cifti_read_from_separate(
 
 \item{subcortLab_fname}{(Optional) File path of the NIfTI labels for subcortical structures}
 
-\item{fname_surfaceL}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+\item{surfL_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 representing left cortex}
 
-\item{fname_surfaceR}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+\item{surfR_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 representing right cortex}
 
-\item{surf_names}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
-(e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
+\item{surf_label}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
+(e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are 
 provided. Otherwise, ignored.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
+\item{wb_diiir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
 }
 \value{
 An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.

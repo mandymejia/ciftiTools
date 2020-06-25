@@ -13,8 +13,8 @@
 #'  provided, defaults to \code{"[/.labels].nii.gz"}, where * is the same directory and file name component of 
 #'  \code{cifti_fname}.
 #' @param overwrite If a NIfTI or GIfTI file already exists, should it be overwritten? Default is FALSE.
-#' @param dir_write If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
-#' @param dir_wb (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
+#' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
+#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
 #'
 #' @importFrom utils isAbsolutePath
 #'
@@ -23,7 +23,7 @@
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'dir_wb' argument is the path to the Connectome Workbench folder.
+#'  The 'wb_dir' argument is the path to the Connectome Workbench folder.
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 #' 3 Accumbens-L
@@ -48,21 +48,21 @@
 #'
 cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
-  overwrite=TRUE, dir_write=NULL, dir_wb=NULL){
+  overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
 
-  wb_cmd <- get_wb_cmd_path(dir_wb)
+  wb_cmd <- get_wb_cmd_path(wb_dir)
 
-  cifti_fname <- normalizePath(cifti_fname)
+  cifti_fname <- make_abs_path(cifti_fname)
   if(!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
 
   # Separate the CIfTI file path into directory, file name, and extension components.
   bname_cifti <- basename(cifti_fname) 
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
-  if(is.null(dir_write)){ 
-    dir_write <- getwd()
+  if(is.null(write_dir)){ 
+    write_dir <- getwd()
   } else {
-    stop("dir_write does not exist, check and try again.")
+    stop("write_dir does not exist, check and try again.")
     # TO DO: dir.create?
   }
   #TO DO: Check that the user has write permissions in outdir
@@ -72,20 +72,20 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")
 
-  # Use default file names if not provided. Write relative paths to dir_write.
+  # Use default file names if not provided. Write relative paths to write_dir.
   if(do$left){
     if(is.null(cortexL_fname)){ cortexL_fname <- gsub(extn_cifti, "L.func.gii", bname_cifti, fixed=TRUE) }
-    if(!isAbsolutePath(cortexL_fname)){ cortexL_fname <- file.path(dir_write, cortexL_fname) }
+    cortexL_fname <- make_abs_path(cortexL_fname, write_dir)
   }
   if(do$right){
     if(is.null(cortexR_fname)){ cortexR_fname <- gsub(extn_cifti, "R.func.gii", bname_cifti, fixed=TRUE) }
-    if(!isAbsolutePath(cortexR_fname)){ cortexR_fname <- file.path(dir_write, cortexR_fname) }
+    cortexR_fname <- make_abs_path(cortexR_fname, write_dir)
   }
   if(do$sub){
     if(is.null(subcortVol_fname)){ subcortVol_fname <- gsub(extn_cifti, "nii", bname_cifti, fixed=TRUE) }
     if(is.null(subcortLab_fname)){ subcortLab_fname <- gsub(extn_cifti, "labels.nii", bname_cifti, fixed=TRUE) }
-    if(!isAbsolutePath(subcortVol_fname)){ subcortVol_fname <- file.path(dir_write, subcortVol_fname) }
-    if(!isAbsolutePath(subcortLab_fname)){ subcortLab_fname <- file.path(dir_write, subcortLab_fname) } 
+    subcortVol_fname <- make_abs_path(subcortVol_fname, write_dir)
+    subcortLab_fname <- make_abs_path(subcortLab_fname, write_dir)
   }
 
   sep_files <- data.frame(
