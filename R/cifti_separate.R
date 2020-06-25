@@ -3,24 +3,27 @@
 #' @description Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 
 #'  subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
 #'
-#' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
 #' @param brainstructures A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 #'  \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
 #'  default is \code{c('left','right','subcortical')} (all brain structures).
-#' @param fnames_cortexL,fnames_cortexR (Optional) where to save the left and right cortex GIfTIs. If not provided, 
-#'  defaults to \code{"*[L/R].func.gii"}, where * is the same directory and file name component of \code{fname_cifti}.
-#' @param fname_subcortVol,fname_subcortLab (Optional) where to save the subcortical volume and label NIfTIs. If not 
+#' @param cortexL_fname,cortexR_fname (Optional) where to save the left and right cortex GIfTIs. If not provided, 
+#'  defaults to \code{"*[L/R].func.gii"}, where * is the same directory and file name component of \code{cifti_fname}.
+#' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and label NIfTIs. If not 
 #'  provided, defaults to \code{"[/.labels].nii.gz"}, where * is the same directory and file name component of 
-#'  \code{fname_cifti}.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
+#'  \code{cifti_fname}.
 #' @param overwrite If a NIfTI or GIfTI file already exists, should it be overwritten? Default is FALSE.
+#' @param dir_write If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
+#' @param dir_wb (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
+#'
+#' @importFrom utils isAbsolutePath
 #'
 #' @return Nothing
 #' @export
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_dir' argument is the path to the Connectome Workbench folder.
+#'  The 'dir_wb' argument is the path to the Connectome Workbench folder.
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 #' 3 Accumbens-L
@@ -43,67 +46,78 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_separate <- function(fname_cifti, brainstructures=c("left","right","subcortical"), fname_cortexL=NULL, 
-  fname_cortexR=NULL, fname_subcortVol=NULL, fname_subcortLab=NULL, dir=NULL, wb_dir=NULL, overwrite=FALSE){
+cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
+  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
+  overwrite=TRUE, dir_write=NULL, dir_wb=NULL){
 
-  wb_dir <- check_wb_dir(wb_dir)
+  wb_cmd <- get_wb_cmd_path(dir_wb)
+
+  cifti_fname <- normalizePath(cifti_fname)
+  if(!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
 
   # Separate the CIfTI file path into directory, file name, and extension components.
-  dir_cifti <- dirname(fname_cifti) 
-  fname_cifti <- basename(fname_cifti) 
-  extn_cifti <- get_cifti_extn(fname_cifti)  # "dtseries.nii" or "dscalar.nii"
-  all_files <- list.files(dir_cifti)
-  if(!(fname_cifti %in% all_files)) stop("fname_cifti does not exist")
+  bname_cifti <- basename(cifti_fname) 
+  extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
-  if(is.null(dir)){ dir <- "."}
-
-  # Determine which brainstructures to obtain.
-  for(i in 1:length(brainstructures)){
-    brainstructures[i] <- match.arg(brainstructures[i], c("left","right","subcortical"))
-  }
-
-  # Build the Connectome Workbench command. Plan to run it only if at least one file is needed.
-  cmd <- paste(wb_dir, "-cifti-separate", file.path(dir_cifti, fname_cifti), "COLUMN", sep=" ")
-  run_cmd <- FALSE
-  # Define the default names.
-  fnames_sep_files_defaults <- list(cortexL="L.func.gii", cortexR="R.func.gii", subcortVol="nii", 
-    subcortLab="labels.nii")
-  for(i in 1:length(fnames_sep_files_defaults)){
-    fnames_sep_files_defaults[[i]] <- gsub(extn_cifti, fnames_sep_files_defaults[[i]], fname_cifti, fixed=TRUE)
-  }
-  # Get the name and command string for each structure to obtain.
-  if("left" %in% brainstructures){
-    if(is.null(fname_cortexL)){ fname_cortexL <- fnames_sep_files_defaults$cortexL }
-    if(overwrite | (!(fname_cortexL %in% all_files))){
-      cmd <- paste(cmd, '-metric CORTEX_LEFT', file.path(dir, fname_cortexL), sep=' ')
-      run_cmd <- TRUE
-    }
-  }
-  if("right" %in% brainstructures){
-    if(is.null(fname_cortexR)){ fname_cortexR <- fnames_sep_files_defaults$cortexR }
-    if(overwrite | (!(fname_cortexR %in% all_files))){
-      cmd <- paste(cmd, '-metric CORTEX_RIGHT', file.path(dir, fname_cortexR), sep=' ')
-      run_cmd <- TRUE
-    }
-  }    
-  if("subcortical" %in% brainstructures) {
-    if(is.null(fname_subcortVol)){ fname_subcortVol <- fnames_sep_files_defaults$subcortVol }
-    if(is.null(fname_subcortLab)){ fname_subcortLab <- fnames_sep_files_defaults$subcortLab }
-    if(overwrite | (!(fname_subcortVol %in% all_files & fname_subcortLab %in% all_files))){
-      cmd <- paste(cmd, '-volume-all', file.path(dir, fname_subcortVol), sep=' ')
-      cmd <- paste(cmd, '-label', file.path(dir, fname_subcortLab), sep=' ')
-      run_cmd <- TRUE
-    }
-  }
-
-  # Run Connectome Workbench command.
-  if(run_cmd){
-    out <- system(cmd)
-    if(out != 0){
-      stop(paste0("The Connectome Workbench command failed with code ", out, ". The command was:\n", cmd))
-    }
+  if(is.null(dir_write)){ 
+    dir_write <- getwd()
   } else {
-    out <- NA
+    stop("dir_write does not exist, check and try again.")
+    # TO DO: dir.create?
   }
+  #TO DO: Check that the user has write permissions in outdir
+
+  brainstructures <- match.arg(brainstructures, c("left","right","subcortical"), several.ok=TRUE)
+  stopifnot(length(unique(names(brainstructures))) == length(brainstructures))
+  do <- c("left","right","subcortical") %in% brainstructures
+  names(do) <- c("left", "right", "sub")
+
+  # Use default file names if not provided. Write relative paths to dir_write.
+  if(do$left){
+    if(is.null(cortexL_fname)){ cortexL_fname <- gsub(extn_cifti, "L.func.gii", bname_cifti, fixed=TRUE) }
+    if(!isAbsolutePath(cortexL_fname)){ cortexL_fname <- file.path(dir_write, cortexL_fname) }
+  }
+  if(do$right){
+    if(is.null(cortexR_fname)){ cortexR_fname <- gsub(extn_cifti, "R.func.gii", bname_cifti, fixed=TRUE) }
+    if(!isAbsolutePath(cortexR_fname)){ cortexR_fname <- file.path(dir_write, cortexR_fname) }
+  }
+  if(do$sub){
+    if(is.null(subcortVol_fname)){ subcortVol_fname <- gsub(extn_cifti, "nii", bname_cifti, fixed=TRUE) }
+    if(is.null(subcortLab_fname)){ subcortLab_fname <- gsub(extn_cifti, "labels.nii", bname_cifti, fixed=TRUE) }
+    if(!isAbsolutePath(subcortVol_fname)){ subcortVol_fname <- file.path(dir_write, subcortVol_fname) }
+    if(!isAbsolutePath(subcortLab_fname)){ subcortLab_fname <- file.path(dir_write, subcortLab_fname) } 
+  }
+
+  sep_files <- data.frame(
+    label = c("cortexL", "cortexR", "subcortVol", "subcortLab"),
+    fname = c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname)
+  )
+  sep_files$existed <- file.exists(sep_files$fname)
+
+  # Run the command if overwrite==TRUE, or if any desired file does not exist.
+  run_cmd <- overwrite | any(!file.exists(c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname)))
+  if(!run_cmd){
+    cmd_result <- NA
+  } else {
+    # Build the Connectome Workbench command. 
+    cmd <- paste(wb_cmd, "-cifti-separate", cifti_fname, "COLUMN", sep=" ")
+    if(do$left){
+      cmd <- paste(cmd, '-metric CORTEX_LEFT', cortexL_fname)
+    }
+    if(do$right){
+      cmd <- paste(cmd, '-metric CORTEX_RIGHT', cortexR_fname)
+    }
+    if(do$sub) {
+      cmd <- paste(cmd, '-volume-all', subcortVol_fname)
+      cmd <- paste(cmd, '-label', subcortLab_fname)
+    }
+    cmd_code <- system(cmd)
+    if(cmd_code != 0){
+      stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
+        ". The command was:\n", cmd))
+    }
+  }
+
+  out <- list(files=sep_files, cmd_code=cmd_result)
   invisible(out)
 }

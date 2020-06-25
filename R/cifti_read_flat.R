@@ -3,7 +3,7 @@
 #' @description Reads CIfTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
 #'  Workbench command.
 #'
-#' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
 #' @param dir_gifti The directory to save the GIfTI into.
 #' @param fname_gifti The GIfTI file name to save as.
 #' @param keep This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
@@ -42,16 +42,16 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_flat <- function(fname_cifti, dir_gifti=NULL, fname_gifti=NULL, keep=FALSE, overwrite=FALSE, wb_dir=NULL){
+cifti_read_flat <- function(cifti_fname, dir_gifti=NULL, fname_gifti=NULL, keep=FALSE, overwrite=FALSE, wb_dir=NULL){
 
   wb_dir <- check_wb_dir(wb_dir)
 
   # Separate the CIfTI file path into directory, file name, and extension components.
-  dir_cifti <- dirname(fname_cifti) 
-  bname_cifti <- basename(fname_cifti) 
+  dir_cifti <- dirname(cifti_fname) 
+  bname_cifti <- basename(cifti_fname) 
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
   all_files <- list.files(dir_cifti)
-  if(!(bname_cifti %in% all_files)) stop("fname_cifti does not exist")
+  if(!(bname_cifti %in% all_files)) stop("cifti_fname does not exist")
 
   if(identical(dir_gifti, NULL)){ dir_gifti <- "." }
 
@@ -61,7 +61,7 @@ cifti_read_flat <- function(fname_cifti, dir_gifti=NULL, fname_gifti=NULL, keep=
   fname_gifti <- file.path(dir_gifti, fname_gifti)
   gifti_existed <- file.exists(fname_gifti)
   if(overwrite | !(gifti_existed)){
-    cmd <- paste(wb_dir, "-cifti-convert -to-gifti-ext", fname_cifti, fname_gifti)
+    cmd <- paste(wb_dir, "-cifti-convert -to-gifti-ext", cifti_fname, fname_gifti)
     cmd_result <- system(cmd)
     if(cmd_result != 0){
       stop(paste0("The Connectome Workbench command failed with code ", cmd_result, 

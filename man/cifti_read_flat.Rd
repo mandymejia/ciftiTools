@@ -5,7 +5,7 @@
 \title{Reads in CIFTI data}
 \usage{
 cifti_read_flat(
-  fname_cifti,
+  cifti_fname,
   dir_gifti = NULL,
   fname_gifti = NULL,
   keep = FALSE,
@@ -14,7 +14,7 @@ cifti_read_flat(
 )
 }
 \arguments{
-\item{fname_cifti}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{dir_gifti}{The directory to save the GIfTI into.}
 

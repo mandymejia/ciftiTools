@@ -5,10 +5,10 @@
 \title{Reads in CIFTI data}
 \usage{
 cifti_read_from_separate(
-  fname_cortexL,
-  fname_cortexR,
-  fname_subcortVol,
-  fname_subcortLab,
+  cortexL_fname,
+  cortexR_fname,
+  subcortVol_fname,
+  subcortLab_fname,
   fname_surfaceL,
   fname_surfaceR,
   dir = NULL,
@@ -17,13 +17,13 @@ cifti_read_from_separate(
 )
 }
 \arguments{
-\item{fname_cortexL}{(Optional) File path of GIfTI data for left cortex}
+\item{cortexL_fname}{(Optional) File path of GIfTI data for left cortex}
 
-\item{fname_cortexR}{(Optional) File path of GIfTI data for right cortex}
+\item{cortexR_fname}{(Optional) File path of GIfTI data for right cortex}
 
-\item{fname_subcortVol}{(Optional) File path of NIfTI volume data for subcortical structures}
+\item{subcortVol_fname}{(Optional) File path of NIfTI volume data for subcortical structures}
 
-\item{fname_subcortLab}{(Optional) File path of the NIfTI labels for subcortical structures}
+\item{subcortLab_fname}{(Optional) File path of the NIfTI labels for subcortical structures}
 
 \item{fname_surfaceL}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 representing left cortex}

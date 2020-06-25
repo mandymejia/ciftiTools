@@ -5,7 +5,7 @@
 \title{Reads in CIFTI data}
 \usage{
 cifti_read(
-  fname_cifti,
+  cifti_fname,
   brainstructures = c("left", "right", "subcortical"),
   fname_surfaceL = NULL,
   fname_surfaceR = NULL,
@@ -19,7 +19,7 @@ cifti_read(
 )
 }
 \arguments{
-\item{fname_cifti}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{brainstructures}{A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The

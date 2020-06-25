@@ -5,10 +5,10 @@
 \title{Reads in CIFTI/GIFTI data and (optionally) resamples}
 \usage{
 cifti_read_separate(
-  fname_cifti,
+  cifti_fname,
   fname_gifti_left = NULL,
   fname_gifti_right = NULL,
-  surf_names = "surface",
+  surf_names = NULL,
   brainstructures = c("left", "right", "subcortical"),
   wb_cmd = NULL,
   make_helper_files = TRUE,
@@ -21,7 +21,7 @@ cifti_read_separate(
 )
 }
 \arguments{
-\item{fname_cifti}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{fname_gifti_left}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex}
 

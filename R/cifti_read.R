@@ -2,25 +2,30 @@
 #'
 #' @description Wrapper function to read CIfTI data by separating it into GIfTI and NIfTI files, then reading each in.
 #'
-#' @param fname_cifti File path of CIFTI-format data (ending in .d*.nii).
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
 #' @param brainstructures A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 #'  \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
 #'  default is \code{c('left','right','subcortical')} (all brain structures).
-#' @param fname_surfaceL (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-#'  representing left cortex
-#' @param fname_surfaceR (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-#'  representing right cortex
-#' @param surf_names (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
+#' @param sep_fnames (Optional) A named character vector or list indicating where to save the sepd GIfTI and 
+#'  NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
+#'  "subcortLab". The path should be absolute, or relative to \code{dir_write}.
+#' @param sep_dir Where to write the sep files. Defaults to the current working directory.
+#' @param sep_keep If FALSE (Default), new files made by the \code{cifti_sep()} call are deleted.
+#' @param sep_overwrite (For cifti_sep) If a NIfTI or GIfTI file already exists, should it be overwritten? 
+#'  Default is FALSE.
+#' @param resamp_res Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL, do not perform resampling.
+#' @param resamp_helper_dir (Optional) Directory of helper files required for resampling. Default is "helper_files_resampling" .
+#' @param resamp_helper_keep (Optional) If new helper files are created, should they be deleted?
+#' @param resamp_sphereOrigin_fnames File paths of left- and right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
+#' @param resamp_sphereTarget_fnames File paths of left- and right-hemisphere spherical GIFTI files in original resolution (compatible with cifti_orig). Must be provided if resample provided.
+#' @param surf_fnames (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+#'  representing left cortex. A named character vector or list indicating where to save the sepd GIfTI and 
+#'  NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
+#'  "subcortLab". The path should be absolute, or relative to \code{dir_write}.
+#' @param surf_labels (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 #'  (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
 #'  provided. Otherwise, ignored.
-#' @param dir_sep_files (Optional) Will save the separate files to this directory.
-#' @param fnames_sep_files (Optional) A named character vector or list indicating where to save the separated GIfTI and 
-#'  NIfTI files. Each name should match a file created by \code{cifti_separate()}: "cortexL", "cortexR", "subcortVol", or 
-#'  "subcortLab".
-#' @param keep_sep_files If FALSE (Default), new files made by the \code{cifti_separate()} call are deleted.
-#' @param overwrite_sep_files (For cifti_separate) If a NIfTI or GIfTI file already exists, should it be overwritten? 
-#'  Default is FALSE.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
+#' @param dir_wb (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ... Also can be the executable itself.
 #' @param verbose Should occasional updates be printed? Default is FALSE.
 #'
 #' @return An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
@@ -53,75 +58,68 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read <- function(fname_cifti, brainstructures=c("left","right","subcortical"), fname_surfaceL=NULL, 
-  fname_surfaceR=NULL, surf_names="surface", dir_sep_files=NULL, fnames_sep_files=NULL, keep_sep_files=FALSE, 
-  overwrite_sep_files=FALSE, wb_dir=NULL, verbose=FALSE){
+cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
+  sep_kwargs=NULL,
+  resamp=FALSE, resamp_kwargs=NULL,
+  surf_fnames=NULL, surf_labels=NULL, 
+  dir_wb=NULL, verbose=FALSE){
 
-  wb_dir <- check_wb_dir(wb_dir)
-  if(identical(dir_sep_files, NULL)){ dir_sep_files <- "."}
+  ################
+  # cifti_separate
+  ################
 
-  # Separate the CIfTI file path into directory, file name, and extension components.
-  dir_cifti <- dirname(fname_cifti) 
-  bname_cifti <- basename(fname_cifti) 
-  extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
-  all_files <- list.files(dir_cifti)
-  if(!(bname_cifti %in% all_files)) stop("fname_cifti does not exist")
-
-  # Determine which brainstructures to obtain.
-  for(i in 1:length(brainstructures)){
-    brainstructures[i] <- match.arg(brainstructures[i], c("left","right","subcortical"))
-  }
-  stopifnot(length(unique(names(brainstructures))) == length(names(brainstructures)))
-
-  # Format the names of the separate NIfTI and GIfTI files.
-  sep_files <- c("cortexL", "cortexR", "subcortVol", "subcortLab")
-  # Define the default names.
-  fnames_sep_files_defaults <- list(cortexL="L.func.gii", cortexR="R.func.gii", subcortVol="nii", 
-    subcortLab="labels.nii")
-  for(i in 1:length(fnames_sep_files_defaults)){
-    fnames_sep_files_defaults[[i]] <- file.path(dir_sep_files, 
-      gsub(extn_cifti, fnames_sep_files_defaults[[i]], bname_cifti, fixed=TRUE))
-  }
-  # Use the default names wherever no argument was provided.
-  if(identical(fnames_sep_files, NULL)){
-    fnames_sep_files <- fnames_sep_files_defaults
+  if(verbose){ cat("Separating CIfTI file.") }
+  
+  sep_kwargs_allowed <- names(as.list(args(cifti_sep)))
+  sep_kwargs_allowed <- sep_kwargs_allowed[1:(length(sep_kwargs_allowed)-1)] # last is empty
+  sep_kwargs <- match.arg(sep_kwargs, sep_kwargs_allowed, several.ok=TRUE)
+  if("cifti_fname" %in% sep_kwargs){
+    if(!identical(cifti_fname, sep_kwargs$cifti_fname)){
+      stop("cifti_fname argument to cifti_read did not match sep_kwargs entry.")
+    }
   } else {
-    for(i in 1:length(fnames_sep_files)){
-      names(fnames_sep_files)[i] <- match.arg(names(fnames_sep_files), c("cortexL", "cortexR", "subcortVol", "subcortLab"))
-    }
-    stopifnot(length(unique(names(fnames_sep_files))) == length(names(fnames_sep_files)))
-    for(i in 1:length(sep_files)){
-      sep_file <- sep_files[i]
-      if(!(sep_file %in% names(fnames_sep_files))){ 
-        fnames_sep_files[[sep_file]] <- fnames_sep_files_defaults[[sep_file]]
-      } else {
-        fnames_sep_files[[sep_file]] <- file.path(dir_sep_files, fnames_sep_files[[sep_file]])
-      }
-    }
+    if(identical(cifti_fname, NULL)){ stop("cifti_fname must be provided directly to cifti_read or as an entry in sep_kwargs") }
+    sep_kwargs$cifti_fname <- cifti_fname
   }
-  names(fnames_sep_files) <- paste0("fname_", names(fnames_sep_files))
-  sep_files_existed <- file.exists(as.character(fnames_sep_files))
+  sep_result <- do.call(cifti_sep, sep_kwargs)
 
-  # Separate the CIfTI file.
-  if(verbose){ print("Separating CIfTI file.") }
-  cifti_separate_args <- c(
-    list(fname_cifti=fname_cifti, brainstructures=brainstructures, dir=".", wb_dir=wb_dir, overwrite=overwrite_sep_files), 
-    fnames_sep_files
-  )  
-  cifti_separate_result <- do.call(cifti_separate, cifti_separate_args)
-  stopifnot(cifti_separate_result %in% c(NA, 0))
+  stopifnot(sep_result$cmd_code %in% c(NA, 0))
+  files_to_read <- sep_result$files
+
+  #########################
+  # cifti_resamp_sep
+  #########################
+
+  if(resamp){
+    resamp_kwargs_allowed <- names(as.list(args(cifti_resamp_sep)))
+    resamp_kwargs_allowed <- resamp_kwargs_allowed[1:(length(resamp_kwargs_allowed)-1)] # last is empty
+    resamp_kwargs <- match.arg(resamp_kwargs, resamp_kwargs_allowed, several.ok=TRUE)
+
+    resamp_result <- do.call(cifti_resamp_sep, resamp_kwargs)
+    stopifnot(resep_result$cmd_code %in% c(NA, 0))
+    files_to_read <- resep_result$files
+  }
+
+  #####################
+  # cifti_read_from_sep
+  #####################
 
   # Read the CIfTI file.
   if(verbose){ print("Reading GIfTI and NIfTI files.") }
-  cifti_read_from_separate_args <- c(
-    list(fname_surfaceL=fname_surfaceL, fname_surfaceR=fname_surfaceR, surf_names=surf_names, dir=".", wb_dir=wb_dir), 
-    fnames_sep_files
+  cifti_read_from_sep_args <- c(
+    list(fname_surfaceL=fname_surfaceL, fname_surfaceR=fname_surfaceR, surf_names=surf_names, dir=".", dir_wb=dir_wb), 
+    sep_fnames
   )  
-  result <- do.call(cifti_read_from_separate, cifti_read_from_separate_args)
+  result <- do.call(cifti_read_from_sep, cifti_read_from_sep_args)
 
-  # Delete the separated files, unless otherwise requested. Do not delete files that existed before.
-  if(!keep_sep_files){
-    for(f in fnames_sep_files[!(sep_files_existed)]){
+
+  #########
+  # Cleanup
+  #########
+
+  # Delete the sepd files, unless otherwise requested. Do not delete files that existed before.
+  if(!sep_keep){
+    for(f in sep_fnames[!(sep_existed)]){
       file.remove(f)
       if(file.exists(paste0(f, ".data"))){
         file.remove(paste0(f, ".data"))
