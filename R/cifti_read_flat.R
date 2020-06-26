@@ -3,15 +3,19 @@
 #' @description Reads CIfTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
 #'  Workbench command.
 #'
-#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
-#' @param gifti_fname The GIfTI file name to save as.
-#' @param keep This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
-#'  created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).
-#' @param overwrite This function works by saving the CIfTI file as a GIfTI file, and then reading it in. Should the 
-#'  GIfTI file be overwritten if it already exists? Default is FALSE. If FALSE, the existing file is read in. 
-#' @param write_dir The directory to save the GIfTI into.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
-#'
+#' @param cifti_fname File path of CIfTI-format data (ending in .d*.nii) to read in.
+#' @param keep \code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. If 
+#'  a new GIfTI file was made by this function call, should it be deleted once it is read in? Default is FALSE (delete it). 
+#'  If \code{overwrite==FALSE} and the GIfTI already exists, it will not be deleted even if \code{keep==FALSE}.
+#' @param gifti_fname File path of GIfTI-format data to save the CIfTI as.
+#' @param overwrite \code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. Should the 
+#'  GIfTI file be overwritten if it already exists? Default is FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
+#'  the existing file is used.
+#' @param write_dir The directory in which to save the GIfTI (or look for it if \code{overwrite==FALSE}). If NULL, 
+#'  defaults to the current working directory.
+#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+#'  \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.
+#' 
 #' @importFrom gifti readGIfTI
 #'
 #' @return A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIfTI file.
@@ -42,30 +46,26 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_flat <- function(cifti_fname, gifti_fname=NULL, 
-  keep=FALSE, overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
+cifti_read_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL, 
+  overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
 
   wb_cmd <- get_wb_cmd_path(wb_dir)
 
   cifti_fname <- make_abs_path(cifti_fname)
   if(!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
-
-  # Separate the CIfTI file path into directory, file name, and extension components.
+  # Get the components of the CIfTI file path.
   bname_cifti <- basename(cifti_fname) 
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
-  if(is.null(write_dir)){ 
-    write_dir <- getwd()
-  } else {
-    if(!dir.exists(write_dir)){ stop("write_dir does not exist, check and try again.") }
-    # TO DO: dir.create?
-  }
-  #TO DO: Check that the user has write permissions in outdir
+  # Check that write_dir is valid. Use the current working directory if no write_dir is given.
+  write_dir <- check_dir(write_dir, default=getwd())
 
+  # If gifti_fname is not provided, use the CIfTI_fname but replace the extension with "flat.gii".
   if(identical(gifti_fname, NULL)){
     gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }
   gifti_fname <- make_abs_path(gifti_fname, write_dir)
+  # Write the file and read it in. If overwrite=FALSE, do not write it and read in the existing file.
   gifti_existed <- file.exists(gifti_fname)
   if(overwrite | !(gifti_existed)){
     cmd <- paste(wb_cmd, "-cifti-convert -to-gifti-ext", cifti_fname, gifti_fname)
@@ -75,11 +75,10 @@ cifti_read_flat <- function(cifti_fname, gifti_fname=NULL,
                   ". The command was:\n", cmd))
     }
   }
-
   result <- readGIfTI(gifti_fname)
   result <- result$data$normal
 
-  # Delete the GIfTI, unless otherwise requested. Do not delete files that existed before.
+  # Delete the GIfTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
   if(!keep & !gifti_existed){ 
     file.remove(gifti_fname) 
     if(file.exists(paste0(gifti_fname, ".data"))){

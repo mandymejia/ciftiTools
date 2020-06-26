@@ -1,4 +1,5 @@
-# visual studio: ctrl k + u to uncomment
+# Note to self: visual studio: ctrl k + u to uncomment
+# Work In Progress...
 
 # #' Resample CIFTI data
 # #'

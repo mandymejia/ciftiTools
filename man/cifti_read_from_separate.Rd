@@ -47,7 +47,7 @@ Reads in CIFTI data from the separated left and right cortical GIfTI files, the 
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
-available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_cmd' argument is the full file path to the 'wb_command' executable file.
+available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' executable also works.)
 
 The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 3 Accumbens-L

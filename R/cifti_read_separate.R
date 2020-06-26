@@ -1,12 +1,15 @@
+#'
+#' REMOVED IN 1.1
+#' 
 #' Reads in CIFTI/GIFTI data and (optionally) resamples  
 #'
 #' @description Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure. Optionally reads in gifti surface model files also. Optionally resamples cortical and surface model data.
 #'
 #' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
 #' @param brainstructures A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)
-#' @param fname_surfaceL (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex
-#' @param fname_surfaceR (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing right cortex
-#' @param surface_names Character vector containing descriptive names of each GIFTI surface geometry provided (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are provided. Otherwise, ignored.
+#' @param surfL_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex
+#' @param surfR_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing right cortex
+#' @param surf_label Character vector containing descriptive names of each GIFTI surface geometry provided (e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are provided. Otherwise, ignored.
 #' @param wb_cmd Path to Connectome Workbench executable file, ending in 'wb_command' (Mac/linux) or 'wb_command.exe' (Windows).
 #' @param make_helper_files If TRUE, make all the helper files required for resampling. Otherwise, all necessary helper files must be located in a subdirectory of current working directory named 'helper_files_resampling'.
 #' @param delete_helper_files If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.
@@ -22,7 +25,7 @@
 #' @importFrom oro.nifti readNIfTI
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
-#' available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_cmd' argument is the full file path to the 'wb_command' executable file.
+#' available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' executable also works.)
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 #' 3 Accumbens-L
@@ -45,8 +48,8 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR=NULL, 
-  surface_names=NULL, brainstructures=c('left','right','subcortical'), wb_cmd=NULL, 
+cifti_read_separate <- function(cifti_fname, surfL_fname=NULL, surfR_fname=NULL, 
+  surf_label=NULL, brainstructures=c('left','right','subcortical'), wb_cmd=NULL, 
   make_helper_files=TRUE, delete_helper_files=FALSE, outdir=NULL, 
   resample=NULL, fname_sphereOrigL, fname_sphereOrigR, verbose=FALSE){
 
@@ -68,15 +71,15 @@ cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR
   do_sub <- ('subcortical' %in% brainstructures)
 
   ### Check surface argument compatibility
-  do_left_surf <- (!is.null(fname_surfaceL))
-  do_right_surf <- (!is.null(fname_surfaceR))
+  do_left_surf <- (!is.null(surfL_fname))
+  do_right_surf <- (!is.null(surfR_fname))
   if(do_left_surf){ 
-    if(is.null(surface_names)) surface_names <- paste0('surface', 1:length(fname_surfaceL))
-    if(length(fname_surfaceL) != length(surface_names)) stop('Length of fname_surfaceL and surface_names must match.') 
+    if(is.null(surf_label)) surf_label <- paste0('surface', 1:length(surfL_fname))
+    if(length(surfL_fname) != length(surf_label)) stop('Length of surfL_fname and surf_label must match.') 
   }
   if(do_right_surf){ 
-    if(is.null(surface_names)) surface_names <- paste0('surface', 1:length(fname_surfaceR))
-    if(length(fname_surfaceR) != length(surface_names)) stop('Length of fname_surfaceR and surface_names must match.') 
+    if(is.null(surf_label)) surf_label <- paste0('surface', 1:length(surfR_fname))
+    if(length(surfR_fname) != length(surf_label)) stop('Length of surfR_fname and surf_label must match.') 
   }
 
   ### Outline of steps:
@@ -94,8 +97,8 @@ cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR
   
   # Make full file paths
   cifti_fname <- normalizePath(cifti_fname)
-  if(do_left_surf) fname_surfaceL <- normalizePath(fname_surfaceL) 
-  if(do_right_surf) fname_surfaceR <- normalizePath(fname_surfaceR) 
+  if(do_left_surf) surfL_fname <- normalizePath(surfL_fname) 
+  if(do_right_surf) surfR_fname <- normalizePath(surfR_fname) 
   if(!is.null(resample)) fname_sphereOrigL <- normalizePath(fname_sphereOrigL)
   if(!is.null(resample)) fname_sphereOrigR <- normalizePath(fname_sphereOrigR)
   
@@ -198,15 +201,15 @@ cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR
     ## TO DO: Use gifti_resample function for this part?
     
     ### Read in GIFTI surface geometry files if provided
-    num_surf <- length(surface_names) #number of surface types provided
+    num_surf <- length(surf_label) #number of surface types provided
     
     #left hemisphere
     if(do_left_surf){
       for(ii in 1:num_surf){
         gifti_target_L <- file.path(outdir, paste0('gifti',ii,'.target.L.surf.gii'))
-        cmd = paste(wb_cmd, '-surface-resample', fname_surfaceL[ii], sphere_orig_L, sphere_target_L, 'BARYCENTRIC', gifti_target_L, sep=' ')
+        cmd = paste(wb_cmd, '-surface-resample', surfL_fname[ii], sphere_orig_L, sphere_target_L, 'BARYCENTRIC', gifti_target_L, sep=' ')
         system(cmd)
-        fname_surfaceL[ii] <- gifti_target_L #replace gifti file name with resampled file
+        surfL_fname[ii] <- gifti_target_L #replace gifti file name with resampled file
       }
     }
     
@@ -214,9 +217,9 @@ cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR
     if(do_right_surf){
       for(ii in 1:num_surf){
         gifti_target_R <- file.path(outdir, paste0('gifti',ii,'.target.R.surf.gii'))
-        cmd = paste(wb_cmd, '-surface-resample', fname_surfaceR[ii], sphere_orig_R, sphere_target_R, 'BARYCENTRIC', gifti_target_R, sep=' ')
+        cmd = paste(wb_cmd, '-surface-resample', surfR_fname[ii], sphere_orig_R, sphere_target_R, 'BARYCENTRIC', gifti_target_R, sep=' ')
         system(cmd)
-        fname_surfaceR[ii] <- gifti_target_R #replace gifti file name with resampled file
+        surfR_fname[ii] <- gifti_target_R #replace gifti file name with resampled file
       }
     }
     
@@ -246,10 +249,10 @@ cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR
   if(do_left_surf){
 
     result$SURF_LEFT <- vector('list', num_surf)
-    names(result$SURF_LEFT) <- surface_names
+    names(result$SURF_LEFT) <- surf_label
 
     for(ii in 1:num_surf){
-      surf_left_ii <- readGIfTI(fname_surfaceL[ii])$data
+      surf_left_ii <- readGIfTI(surfL_fname[ii])$data
       verts_left_ii <- surf_left_ii$pointset
       faces_left_ii <- surf_left_ii$triangle
       if(min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
@@ -265,10 +268,10 @@ cifti_read_separate <- function(cifti_fname, fname_surfaceL=NULL, fname_surfaceR
   if(do_right_surf){
 
     result$SURF_RIGHT <- vector('list', num_surf)
-    names(result$SURF_RIGHT) <- surface_names
+    names(result$SURF_RIGHT) <- surf_label
 
     for(ii in 1:num_surf){
-      surf_right_ii <- readGIfTI(fname_surfaceR[ii])$data
+      surf_right_ii <- readGIfTI(surfR_fname[ii])$data
       verts_right_ii <- surf_right_ii$pointset
       faces_right_ii <- surf_right_ii$triangle
       if(min(faces_right_ii)==0) faces_right_ii <- faces_right_ii + 1 #start vertex indexing at 1 instead of 0

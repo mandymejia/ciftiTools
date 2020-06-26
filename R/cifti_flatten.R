@@ -11,6 +11,9 @@
 #' @export
 #'
 cifti_flatten <- function(cif, brainstructures=c("subcortical", "everything")){
+
+  EPS <- 1e-8
+
   brainstructures <- match.arg(brainstructures, c("subcortical", "everything"))
 
   # SUBCORTICAL
@@ -32,8 +35,8 @@ cifti_flatten <- function(cif, brainstructures=c("subcortical", "everything")){
   # CORTEX
   if(brainstructures=="everything"){
     dat <- rbind(
-      cif$CORTEX_LEFT[apply(cif$CORTEX_LEFT, 1, sd) > 1e-8,],
-      cif$CORTEX_RIGHT[apply(cif$CORTEX_RIGHT, 1, sd) > 1e-8,],
+      cif$CORTEX_LEFT[apply(cif$CORTEX_LEFT, 1, sd) > EPS,],
+      cif$CORTEX_RIGHT[apply(cif$CORTEX_RIGHT, 1, sd) > EPS,],
       dat
     )
   }

@@ -135,12 +135,12 @@ get_cifti_extn <- function(cifti_fname){
 #' Normalizes a path, placing it in a dir if it is relative. If the path is already absolute,
 #'  dir is ignored.
 #'
-#' @param path
-#' @param dir
+#' @param path The path to normalize.
+#' @param dir The directory to look in, if the path is relative.
 #' 
 #' @importFrom R.utils isAbsolutePath
 #' 
-#' @return
+#' @return The normalized, absolute path.
 #' 
 make_abs_path <- function(path, dir=NULL){
   if(!is.null(path)){
@@ -153,4 +153,23 @@ make_abs_path <- function(path, dir=NULL){
     path <- normalizePath(path, mustWork=FALSE)
   }
   return(path)
+}
+
+#' Helper function that checks if a directory exists. If it is NULL, use a default (default is the current working directory).
+#' Raises an error if the directory does not exist.
+#' 
+#' @param dir The directory.
+#' @param default Use this if dir is NULL (default is the current working directory).
+#' 
+#' @return The directory.
+#' 
+check_dir <- function(dir, default=NULL){
+  if(identical(dir, NULL)){ 
+    if(identical(default, NULL)){ default <- getwd() }
+    dir <- default
+  } 
+  # TO DO: dir.create if make_dir=TRUE?
+  if(!dir.exists(dir)){ stop(paste("The directory", dir, "does not exist, check and try again.") }
+  # TO DO: Check that the user has write permissions in outdir
+  return(dir)
 }
