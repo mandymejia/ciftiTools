@@ -4,12 +4,12 @@
 #'  Workbench command.
 #'
 #' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
-#' @param dir_gifti The directory to save the GIfTI into.
-#' @param fname_gifti The GIfTI file name to save as.
+#' @param gifti_fname The GIfTI file name to save as.
 #' @param keep This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
 #'  created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).
 #' @param overwrite This function works by saving the CIfTI file as a GIfTI file, and then reading it in. Should the 
 #'  GIfTI file be overwritten if it already exists? Default is FALSE. If FALSE, the existing file is read in. 
+#' @param write_dir The directory to save the GIfTI into.
 #' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...
 #'
 #' @importFrom gifti readGIfTI
@@ -42,41 +42,48 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_flat <- function(cifti_fname, dir_gifti=NULL, fname_gifti=NULL, keep=FALSE, overwrite=FALSE, wb_dir=NULL){
+cifti_read_flat <- function(cifti_fname, gifti_fname=NULL, 
+  keep=FALSE, overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
 
-  wb_dir <- check_wb_dir(wb_dir)
+  wb_cmd <- get_wb_cmd_path(wb_dir)
+
+  cifti_fname <- make_abs_path(cifti_fname)
+  if(!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
 
   # Separate the CIfTI file path into directory, file name, and extension components.
-  dir_cifti <- dirname(cifti_fname) 
   bname_cifti <- basename(cifti_fname) 
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
-  all_files <- list.files(dir_cifti)
-  if(!(bname_cifti %in% all_files)) stop("cifti_fname does not exist")
 
-  if(identical(dir_gifti, NULL)){ dir_gifti <- "." }
-
-  if(identical(fname_gifti, NULL)){
-    fname_gifti <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
+  if(is.null(write_dir)){ 
+    write_dir <- getwd()
+  } else {
+    if(!dir.exists(write_dir)){ stop("write_dir does not exist, check and try again.") }
+    # TO DO: dir.create?
   }
-  fname_gifti <- file.path(dir_gifti, fname_gifti)
-  gifti_existed <- file.exists(fname_gifti)
+  #TO DO: Check that the user has write permissions in outdir
+
+  if(identical(gifti_fname, NULL)){
+    gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
+  }
+  gifti_fname <- make_abs_path(gifti_fname, write_dir)
+  gifti_existed <- file.exists(gifti_fname)
   if(overwrite | !(gifti_existed)){
-    cmd <- paste(wb_dir, "-cifti-convert -to-gifti-ext", cifti_fname, fname_gifti)
-    cmd_result <- system(cmd)
-    if(cmd_result != 0){
-      stop(paste0("The Connectome Workbench command failed with code ", cmd_result, 
+    cmd <- paste(wb_cmd, "-cifti-convert -to-gifti-ext", cifti_fname, gifti_fname)
+    cmd_code <- system(cmd)
+    if(cmd_code != 0){
+      stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
                   ". The command was:\n", cmd))
     }
   }
 
-  result <- readGIfTI(fname_gifti)
+  result <- readGIfTI(gifti_fname)
   result <- result$data$normal
 
   # Delete the GIfTI, unless otherwise requested. Do not delete files that existed before.
   if(!keep & !gifti_existed){ 
-    file.remove(fname_gifti) 
-    if(file.exists(paste0(fname_gifti, ".data"))){
-      file.remove(paste0(fname_gifti, ".data"))
+    file.remove(gifti_fname) 
+    if(file.exists(paste0(gifti_fname, ".data"))){
+      file.remove(paste0(gifti_fname, ".data"))
     }
   }
 

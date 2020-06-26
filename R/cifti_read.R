@@ -54,9 +54,9 @@
 #' 21 Thalamus-R
 #'
 cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
-  sep_kwargs=NULL,
+  sep_kwargs=NULL, sep_keep=FALSE,
   resamp=FALSE, resamp_kwargs=NULL,
-  surf_label=NULL, surf_labels=NULL, 
+  surfL_fname=NULL, surfR_fname=NULL, surf_label=NULL, 
   wb_dir=NULL, verbose=FALSE){
 
   ################
@@ -65,9 +65,14 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
 
   if(verbose){ cat("Separating CIfTI file.") }
   
-  sep_kwargs_allowed <- names(as.list(args(cifti_sep)))
+  sep_kwargs_allowed <- names(as.list(args(ciftiTools::cifti_separate)))
   sep_kwargs_allowed <- sep_kwargs_allowed[1:(length(sep_kwargs_allowed)-1)] # last is empty
-  sep_kwargs <- match.arg(sep_kwargs, sep_kwargs_allowed, several.ok=TRUE)
+  if(!is.null(sep_kwargs)){
+    names(sep_kwargs) <- match.arg(names(sep_kwargs), sep_kwargs_allowed, several.ok=TRUE)
+    stopifnot(length(unique(sep_kwargs)) == length(sep_kwargs))
+  } else {
+    sep_kwargs <- vector(length=0, mode="list")
+  }
   if("cifti_fname" %in% sep_kwargs){
     if(!identical(cifti_fname, sep_kwargs$cifti_fname)){
       stop("cifti_fname argument to cifti_read did not match sep_kwargs entry.")
@@ -76,36 +81,40 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     if(identical(cifti_fname, NULL)){ stop("cifti_fname must be provided directly to cifti_read or as an entry in sep_kwargs") }
     sep_kwargs$cifti_fname <- cifti_fname
   }
-  sep_result <- do.call(cifti_sep, sep_kwargs)
-
-  stopifnot(sep_result$cmd_code %in% c(NA, 0))
-  files_to_read <- sep_result$files
+  sep_result <- do.call(cifti_separate, sep_kwargs)
+  files_to_read <- sep_result$fname
+  names(files_to_read) <- sep_result$label
 
   #########################
   # cifti_resamp_sep
   #########################
 
   if(resamp){
-    resamp_kwargs_allowed <- names(as.list(args(cifti_resamp_sep)))
+    resamp_kwargs_allowed <- names(as.list(args(ciftiTools::cifti_resamp_sep)))
     resamp_kwargs_allowed <- resamp_kwargs_allowed[1:(length(resamp_kwargs_allowed)-1)] # last is empty
-    resamp_kwargs <- match.arg(resamp_kwargs, resamp_kwargs_allowed, several.ok=TRUE)
-
+    if(!is.null(resamp_kwargs)){
+      names(resamp_kwargs) <- match.arg(names(resamp_kwargs), resamp_kwargs_allowed, several.ok=TRUE)
+      stopifnot(length(unique(resamp_kwargs)) == length(resamp_kwargs))
+    } else {
+      resamp_kwargs <- vector(length=0, mode="list")
+    }
     resamp_result <- do.call(cifti_resamp_sep, resamp_kwargs)
-    stopifnot(resamp_result$cmd_code %in% c(NA, 0))
-    files_to_read <- resamp_result$files
+    files_to_read <- resamp_result$fname
+    names(files_to_read) <- resamp_result$label
   }
 
-  #####################
-  # cifti_read_from_sep
-  #####################
+  ##########################
+  # cifti_read_from_separate
+  ##########################
 
   # Read the CIfTI file.
   if(verbose){ print("Reading GIfTI and NIfTI files.") }
-  read_from_sep_kwargs <- c(
+  # read_dir will only affect the surfaces because the cifti file paths are absolute.
+  read_from_separate_kwargs <- c(
     files_to_read,
     list(surfL_fname=surfL_fname, surfR_fname=surfR_fname, read_dir=NULL, surf_label=surf_label, wb_dir=wb_dir)
   )
-  result <- do.call(cifti_read_from_sep, read_from_sep_kwargs)
+  result <- do.call(cifti_read_from_separate, read_from_separate_kwargs)
 
   ########
   # Finish
@@ -113,7 +122,7 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
 
   # Delete the sepd files, unless otherwise requested. Do not delete files that existed before.
   if(!sep_keep){
-    for(f in sep_fnames[!(sep_existed)]){
+    for(f in sep_result$fname[!(sep_result$existed)]){
       file.remove(f)
       if(file.exists(paste0(f, ".data"))){
         file.remove(paste0(f, ".data"))

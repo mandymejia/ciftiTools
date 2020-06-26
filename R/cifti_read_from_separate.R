@@ -46,10 +46,13 @@
 #' 20 Thalamus-L
 #' 21 Thalamus-R
 #'
-cifti_read_from_separate <- function(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname, surfL_fname,
-  surfR_fname, read_dir=NULL, surf_label="surface", wb_dir=NULL){
+cifti_read_from_separate <- function(cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
+  surfL_fname=NULL, surfR_fname=NULL, surf_label="surface",
+  read_dir=NULL, wb_dir=NULL){
 
   wb_cmd <- get_wb_cmd_path(wb_dir)
+
+  if(is.null(read_dir)){ read_dir <- getwd() }
 
   result <- vector("list", length=6)
   names(result) <- c("CORTEX_LEFT", "CORTEX_RIGHT", "VOL", "LABELS", "SURF_LEFT", "SURF_RIGHT")

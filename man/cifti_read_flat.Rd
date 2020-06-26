@@ -6,25 +6,25 @@
 \usage{
 cifti_read_flat(
   cifti_fname,
-  dir_gifti = NULL,
-  fname_gifti = NULL,
+  gifti_fname = NULL,
   keep = FALSE,
-  overwrite = FALSE,
+  overwrite = TRUE,
+  write_dir = NULL,
   wb_dir = NULL
 )
 }
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
-\item{dir_gifti}{The directory to save the GIfTI into.}
-
-\item{fname_gifti}{The GIfTI file name to save as.}
+\item{gifti_fname}{The GIfTI file name to save as.}
 
 \item{keep}{This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
 created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).}
 
 \item{overwrite}{This function works by saving the CIfTI file as a GIfTI file, and then reading it in. Should the 
 GIfTI file be overwritten if it already exists? Default is FALSE. If FALSE, the existing file is read in.}
+
+\item{write_dir}{The directory to save the GIfTI into.}
 
 \item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
 }

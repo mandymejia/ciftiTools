@@ -138,7 +138,7 @@ get_cifti_extn <- function(cifti_fname){
 #' @param path
 #' @param dir
 #' 
-#' @importFrom utils isAbsolutePath
+#' @importFrom R.utils isAbsolutePath
 #' 
 #' @return
 #' 
@@ -150,7 +150,7 @@ make_abs_path <- function(path, dir=NULL){
         path <- file.path(dir, path)
       }
     }
-    path <- normalizePath(path)
+    path <- normalizePath(path, mustWork=FALSE)
   }
   return(path)
 }

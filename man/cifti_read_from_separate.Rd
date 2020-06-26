@@ -5,14 +5,14 @@
 \title{Reads in CIFTI data}
 \usage{
 cifti_read_from_separate(
-  cortexL_fname,
-  cortexR_fname,
-  subcortVol_fname,
-  subcortLab_fname,
-  surfL_fname,
-  surfR_fname,
-  read_dir = NULL,
+  cortexL_fname = NULL,
+  cortexR_fname = NULL,
+  subcortVol_fname = NULL,
+  subcortLab_fname = NULL,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
   surf_label = "surface",
+  read_dir = NULL,
   wb_dir = NULL
 )
 }

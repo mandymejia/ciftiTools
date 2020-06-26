@@ -8,10 +8,12 @@ cifti_read(
   cifti_fname,
   brainstructures = c("left", "right", "subcortical"),
   sep_kwargs = NULL,
+  sep_keep = FALSE,
   resamp = FALSE,
   resamp_kwargs = NULL,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
   surf_label = NULL,
-  surf_labels = NULL,
   wb_dir = NULL,
   verbose = FALSE
 )
@@ -29,14 +31,6 @@ default is \code{c('left','right','subcortical')} (all brain structures).}
 
 \item{resamp_kwargs}{(Optional) Directory of helper files required for resampling. Default is "helper_files_resampling" .}
 
-\item{surf_labels}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
-(e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
-provided. Otherwise, ignored.}
-
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ... Also can be the executable itself.}
-
-\item{verbose}{Should occasional updates be printed? Default is FALSE.}
-
 \item{surfL_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 representing left cortex. A named character vector or list indicating where to save the sepd GIfTI and 
 NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
@@ -46,6 +40,14 @@ NIfTI files. Each name should match a file created by \code{cifti_sep()}: "corte
 representing left cortex. A named character vector or list indicating where to save the sepd GIfTI and 
 NIfTI files. Each name should match a file created by \code{cifti_sep()}: "cortexL", "cortexR", "subcortVol", or 
 "subcortLab". The path should be absolute, or relative to \code{write_dir}.}
+
+\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ... Also can be the executable itself.}
+
+\item{verbose}{Should occasional updates be printed? Default is FALSE.}
+
+\item{surf_labels}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
+(e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are 
+provided. Otherwise, ignored.}
 }
 \value{
 An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
