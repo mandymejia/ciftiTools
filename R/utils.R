@@ -169,7 +169,7 @@ check_dir <- function(dir, default=NULL){
     dir <- default
   } 
   # TO DO: dir.create if make_dir=TRUE?
-  if(!dir.exists(dir)){ stop(paste("The directory", dir, "does not exist, check and try again.") }
+  if(!dir.exists(dir)){ stop(paste("The directory", dir, "does not exist, check and try again.")) }
   # TO DO: Check that the user has write permissions in outdir
   return(dir)
 }

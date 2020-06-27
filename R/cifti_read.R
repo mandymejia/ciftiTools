@@ -69,7 +69,7 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   # cifti_separate
   ################
 
-  if(verbose){ cat("Separating CIfTI file.") }
+  if(verbose){ cat("Separating CIfTI file.\n") }
   
   # Check that the cifti_separate arguments are valid.
   sep_kwargs_allowed <- names(as.list(args(ciftiTools::cifti_separate)))
@@ -90,6 +90,7 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     sep_kwargs$cifti_fname <- cifti_fname
   }
   # Do cifti_separate.
+  sep_kwargs[sapply(sep_kwargs, is.null)] <- NULL
   sep_result <- do.call(cifti_separate, sep_kwargs) # column names are "label", "fname", and "existed"
   files_to_read <- sep_result$fname
   names(files_to_read) <- sep_result$label
@@ -98,8 +99,8 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   # cifti_resample_separate
   #########################
 
-  if(identical(resamp_res, NULL) | identical(resamp_res, FALSE)){
-    if(verbose){ cat("Resampling CIfTI file.") }
+  if(!identical(resamp_res, NULL) & !identical(resamp_res, FALSE)){
+    if(verbose){ cat("Resampling CIfTI file.\n") }
 
     # Check that the cifti_resample_separate arguments are valid.
     resamp_kwargs_allowed <- names(as.list(args(ciftiTools::cifti_resample_separate)))
@@ -111,6 +112,7 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
       resamp_kwargs <- vector(length=0, mode="list")
     }
     # To-do: Populate resamp_kwargs with required arguments.
+    resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
     resamp_result <- do.call(cifti_resample_separate, resamp_kwargs)
     files_to_read <- resamp_result$fname
     names(files_to_read) <- resamp_result$label
@@ -121,12 +123,13 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   ##########################
 
   # Read the CIfTI file from the separated files.
-  if(verbose){ print("Reading GIfTI and NIfTI files to form the CIfTI.") }
+  if(verbose){ cat("Reading GIfTI and NIfTI files to form the CIfTI.\n") }
   # Note: read_dir will only affect the surfaces because the cifti file paths are absolute.
   read_from_separate_kwargs <- c(
     files_to_read,
     list(surfL_fname=surfL_fname, surfR_fname=surfR_fname, read_dir=NULL, surf_label=surf_label, wb_dir=wb_dir)
   )
+  read_from_separate_kwargs[sapply(read_from_separate_kwargs, is.null)] <- NULL
   result <- do.call(cifti_read_from_separate, read_from_separate_kwargs)
 
   ########

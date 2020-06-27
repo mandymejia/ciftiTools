@@ -91,8 +91,7 @@ cifti_read_from_separate <- function(cortexL_fname=NULL, cortexR_fname=NULL, sub
     if(min(faces)==0) faces <- faces + 1 #start vertex indexing at 1 instead of 0
     surf <- list(vertices = verts, faces = faces)
     class(surf) <- "surface"
-    result$SURF_LEFT[[ii]] <- surf
-    return(result)
+    return(surf)
   }
   num_surf <- length(surf_label) #number of surface types provided
   if(!is.null(surfL_fname)){

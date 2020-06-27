@@ -7,11 +7,11 @@
 cifti_make(
   cortex_left = NULL,
   cortex_right = NULL,
-  fname_gifti_left = NULL,
-  surf_left = NULL,
-  fname_gifti_right = NULL,
-  surf_right = NULL,
-  surf_names = NULL,
+  surfL_fname = NULL,
+  surfL = NULL,
+  surfR_fname = NULL,
+  surfR = NULL,
+  surf_label = NULL,
   subcortical = NULL,
   mask = NULL,
   labels = NULL
@@ -22,15 +22,15 @@ cifti_make(
 
 \item{cortex_right}{Data matrix for right cortex, with vertices in rows}
 
-\item{fname_gifti_left}{File path to gifti surface object for left cortex, or a vector of file names. Provide fname_gifti_left OR surf_left.}
+\item{surfL_fname}{File path to gifti surface object for left cortex, or a vector of file names. Provide surfL_fname OR surfL.}
 
-\item{surf_left}{Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof. Provide fname_gifti_left OR surf_left.}
+\item{surfL}{Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof. Provide surfL_fname OR surfL.}
 
-\item{fname_gifti_right}{File path to gifti surface object for right cortex, or a vector of file names. Provide fname_gifti_right OR surf_right.}
+\item{surfR_fname}{File path to gifti surface object for right cortex, or a vector of file names. Provide surfR_fname OR surfR.}
 
-\item{surf_right}{Object of class 'surface' for right cortex (a list with two elements, vertices and faces), or a list thereof}
+\item{surfR}{Object of class 'surface' for right cortex (a list with two elements, vertices and faces), or a list thereof}
 
-\item{surf_names}{Character vector containing descriptive names of each surface geometry provided (e.g. midthickness, inflated, etc.). Must be provided if fname_gifti_left and/or fname_gifti_left provided, and length must match. Otherwise, ignored.}
+\item{surf_label}{Character vector containing descriptive names of each surface geometry provided (e.g. midthickness, inflated, etc.). Must be provided if surfL_fname and/or surfL_fname provided, and length must match. Otherwise, ignored.}
 
 \item{subcortical}{Data matrix for subcortical locations, with voxels in rows}
 

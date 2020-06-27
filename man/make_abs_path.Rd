@@ -8,10 +8,12 @@
 make_abs_path(path, dir = NULL)
 }
 \arguments{
-\item{dir}{}
+\item{path}{The path to normalize.}
+
+\item{dir}{The directory to look in, if the path is relative.}
 }
 \value{
-
+The normalized, absolute path.
 }
 \description{
 Normalizes a path, placing it in a dir if it is relative. If the path is already absolute,

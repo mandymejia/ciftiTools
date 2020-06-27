@@ -2,13 +2,13 @@
 % Please edit documentation in R/cifti_read_separate.R
 \name{cifti_read_separate}
 \alias{cifti_read_separate}
-\title{Reads in CIFTI/GIFTI data and (optionally) resamples}
+\title{REMOVED IN 1.1}
 \usage{
 cifti_read_separate(
   cifti_fname,
-  fname_surfaceL = NULL,
-  fname_surfaceR = NULL,
-  surface_names = NULL,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  surf_label = NULL,
   brainstructures = c("left", "right", "subcortical"),
   wb_cmd = NULL,
   make_helper_files = TRUE,
@@ -23,11 +23,11 @@ cifti_read_separate(
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
-\item{fname_surfaceL}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex}
+\item{surfL_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing left cortex}
 
-\item{fname_surfaceR}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing right cortex}
+\item{surfR_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file representing right cortex}
 
-\item{surface_names}{Character vector containing descriptive names of each GIFTI surface geometry provided (e.g. midthickness, inflated, etc.). Should match the length of fname_surfaceL and/or fname_surfaceL if they are provided. Otherwise, ignored.}
+\item{surf_label}{Character vector containing descriptive names of each GIFTI surface geometry provided (e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are provided. Otherwise, ignored.}
 
 \item{brainstructures}{A vector indicating which brain structure(s) to include: 'left' (left cortical surface), 'right' (right cortical surface), and/or 'subcortical' (subcortical and cerebellar gray matter)}
 
@@ -54,6 +54,8 @@ An object of type 'cifti', a list containing up to 4 elements: CORTEX_LEFT, CORT
 Separates CIFTI data into cortical (left and right) and subcortical structures and reads in the data within each structure. Optionally reads in gifti surface model files also. Optionally resamples cortical and surface model data.
 }
 \details{
+Reads in CIFTI/GIFTI data and (optionally) resamples
+
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
 available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' executable also works.)
 

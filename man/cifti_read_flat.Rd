@@ -6,27 +6,31 @@
 \usage{
 cifti_read_flat(
   cifti_fname,
-  gifti_fname = NULL,
   keep = FALSE,
+  gifti_fname = NULL,
   overwrite = TRUE,
   write_dir = NULL,
   wb_dir = NULL
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIfTI-format data (ending in .d*.nii) to read in.}
 
-\item{gifti_fname}{The GIfTI file name to save as.}
+\item{keep}{\code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. If 
+a new GIfTI file was made by this function call, should it be deleted once it is read in? Default is FALSE (delete it). 
+If \code{overwrite==FALSE} and the GIfTI already exists, it will not be deleted even if \code{keep==FALSE}.}
 
-\item{keep}{This function works by saving the CIfTI file as a GIfTI file, and then reading it in. If a new GIfTI was
-created by this function call, should it be kept or deleted? Default is FALSE (deletes the new file).}
+\item{gifti_fname}{File path of GIfTI-format data to save the CIfTI as.}
 
-\item{overwrite}{This function works by saving the CIfTI file as a GIfTI file, and then reading it in. Should the 
-GIfTI file be overwritten if it already exists? Default is FALSE. If FALSE, the existing file is read in.}
+\item{overwrite}{\code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. Should the 
+GIfTI file be overwritten if it already exists? Default is FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
+the existing file is used.}
 
-\item{write_dir}{The directory to save the GIfTI into.}
+\item{write_dir}{The directory in which to save the GIfTI (or look for it if \code{overwrite==FALSE}). If NULL, 
+defaults to the current working directory.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
+\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
 A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIfTI file.

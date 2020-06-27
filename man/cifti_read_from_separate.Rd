@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_read_from_separate.R
 \name{cifti_read_from_separate}
 \alias{cifti_read_from_separate}
-\title{Reads in CIFTI data}
+\title{Reads in CIFTI data from GIfTI and NIfTI files, e.g. those created by \code{cifti_separate}.}
 \usage{
 cifti_read_from_separate(
   cortexL_fname = NULL,
@@ -17,25 +17,29 @@ cifti_read_from_separate(
 )
 }
 \arguments{
-\item{cortexL_fname}{(Optional) File path of GIfTI data for left cortex}
+\item{cortexL_fname}{(Optional) File path of GIfTI data for left cortex.}
 
-\item{cortexR_fname}{(Optional) File path of GIfTI data for right cortex}
+\item{cortexR_fname}{(Optional) File path of GIfTI data for right cortex.}
 
-\item{subcortVol_fname}{(Optional) File path of NIfTI volume data for subcortical structures}
+\item{subcortVol_fname}{(Optional) File path of NIfTI volume data for subcortical structures.}
 
-\item{subcortLab_fname}{(Optional) File path of the NIfTI labels for subcortical structures}
+\item{subcortLab_fname}{(Optional) File path of the NIfTI labels for subcortical structures.}
 
 \item{surfL_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-representing left cortex}
+representing left cortex.}
 
 \item{surfR_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-representing right cortex}
+representing right cortex.}
 
 \item{surf_label}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 (e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are 
 provided. Otherwise, ignored.}
 
-\item{wb_diiir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set by option ...}
+\item{read_dir}{If any of the file names are relative, this is the directory to look for them in. If NULL (default),
+use the current working directory. \code{read_dir} will not affect files specified with absolute paths.}
+
+\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
 An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
@@ -46,8 +50,10 @@ An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, C
 Reads in CIFTI data from the separated left and right cortical GIfTI files, the subcortical NIfTI file, and optionally any surface geometry GIfTI files.
 }
 \details{
-This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
-available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' executable also works.)
+This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
+ install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
+ The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
+ executable also works.)
 
 The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 3 Accumbens-L
