@@ -10,7 +10,11 @@ wb_path_request <- function(){
 }
 
 ciftiTools.setOption <- function(opt, val){
-  stopifnot(opt %in% "wb_path")
+  stopifnot(opt %in% "wb_path") # Might add more options in the future.
+  if(opt == "wb_path"){
+    if(!file.exists(val)){ warning(paste0("The wb_path value '" , 
+      normalizePath(val, mustWork=FALSE), "' does not exist.")) }
+  }
   val <- list(val)
   names(val) <- paste0("ciftiTools_", opt)
   options(val)

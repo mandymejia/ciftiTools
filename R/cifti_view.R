@@ -434,7 +434,7 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     if((brainstructure != "both") & (n_panels == 4)){ stop("Four panels are only necessary if both surfaces are being viewed. Try using two panels.") }
   }
   if(is.null(view_dims)){
-    view_dims <- list(c(1200, 700), c(1920, 560), NULL, c(1200, 700))[[n_panels]]
+    view_dims <- list(c(1200, 900), c(1920, 720), NULL, c(1200, 900))[[n_panels]]
   }
   stopifnot(length(view_dims) == 2)
 
@@ -536,7 +536,7 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
   # Map each vertex to a color by its value.
   #cols <- apply(values, 2, use_color_pal, pal) # ???
   cols <- use_color_pal(values, pal)
-  if(brainstructure=="surface") {
+  if(brainstructure=="both") {
     cols_left <- cols[1:nvox_left]
     cols_right <- cols[(nvox_left+1):(nvox_left+nvox_right)]
   } else if(brainstructure=="left"){
@@ -545,6 +545,38 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     cols_right <- cols
   }
   rm(cols)
+
+  ###################
+  # Make the colorbar
+  ###################
+
+  colbar_min <- ifelse(
+    color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
+    pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
+    pal_base$value[1])
+  colbar_breaks <- c(
+    colbar_min, 
+    pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
+    pal$value[length(pal$value)]
+  )
+  colbar_labs <- switch(color_mode,
+    sequential=c(colbar_min, 
+                  pal_base$value[nrow(pal_base)]),
+    qualitative=1:N_VALUES,
+    diverging=c(colbar_min, 
+                pal_base$value[as.integer(ceiling(nrow(pal_base)/2))], 
+                pal_base$value[nrow(pal_base)])
+  )
+  colbar_labs_digits <- ifelse(
+    diff(range(pal$value)) >=1, 0, 
+    1+ceiling(abs(log(diff(range(pal$value)), 10))))
+  colorbar_kwargs = list(
+    legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color), 
+    breaks=colbar_breaks, legend.lab=colorbar_label,
+    legend.cex=2, legend.shrink=.9, legend.width=2, legend.line=7, legend.mar=12,
+    axis.args=list(cex.axis=1.7, at=colbar_labs, 
+                    labels=round(colbar_labs, colbar_labs_digits))
+  )
 
   ############################################################
   # Color and arrange the meshes according to the layout.
@@ -581,67 +613,50 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
       c( 0, 1, 0, 0),
       c( 0, 0, 1, 0),
       c( 1, 0, 0, 0),
-      c( 0, 0, 0, 1))
+      c( 0, 0, 0, 1)),
+    ID = diag(4)
   )
 
-  for(i in 1:length(panels)){
+  # Populate the RGL window.
+  for(i in 1:n_panels){
     p <- panels[i]
 
     # Select the mesh for this panel, and orient it.
     if(grepl("left", p)){
       shade3d(mesh_left, col=cols_left, specular="black", legend=TRUE)
       if(grepl("out", p)){
-        rgl.viewpoint(userMatrix=rot$left)
+        this_rot <- rot$left
       } else if(grepl("med", p)){
-        rgl.viewpoint(userMatrix=rot$right)
-      } 
+        this_rot <- rot$right
+      } else { this_rot <- rot$ID }
     }
     if(grepl("right", p)){
       shade3d(mesh_right, col=cols_right, specular="black", legend=TRUE)
       if(grepl("out", p)){
-        rgl.viewpoint(userMatrix=rot$right)
+        this_rot <- rot$right
       } else if(grepl("med", p)){
-        rgl.viewpoint(userMatrix=rot$left)
-      } 
+        this_rot <- rot$left
+      } else { this_rot <- rot$ID }
     } 
+    rgl.viewpoint(userMatrix=this_rot, zoom=1/1.5)
 
     # Add color bar scale/legend to the last panel.
-    if(i == length(panels)){
-      colbar_min <- ifelse(
-        color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
-        pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
-        pal_base$value[1])
-      colbar_breaks <- c(
-        colbar_min, 
-        pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
-        pal$value[length(pal$value)]
-      )
-      colbar_labs <- switch(color_mode,
-        sequential=c(colbar_min, 
-                      pal_base$value[nrow(pal_base)]),
-        qualitative=1:N_VALUES,
-        diverging=c(colbar_min, 
-                    pal_base$value[as.integer(ceiling(nrow(pal_base)/2))], 
-                    pal_base$value[nrow(pal_base)])
-      )
-      colbar_labs_digits <- ifelse(
-        diff(range(pal$value)) >=1, 0, 
-        1+ceiling(abs(log(diff(range(pal$value)), 10))))
+    if(colorbar_position=="embedded"){
       # Suppress this warning: "calling par(new=TRUE) with no plot"
-      suppressWarnings(
-        bgplot3d(image.plot(
-          legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color), 
-          breaks=colbar_breaks, legend.lab=colorbar_label,
-          legend.cex=2, legend.shrink=.9, legend.width=2, legend.line=7, legend.mar=12,
-          axis.args=list(cex.axis=1.7, at=colbar_labs, 
-                          labels=round(colbar_labs, colbar_labs_digits))))
-      )
+      if(i == n_panels){ 
+        bgplot3d(suppressWarnings(do.call(image.plot, colorbar_kwargs)))
+      }
     }
 
     next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
-  #return(rgl_out)
+  if(colorbar_position=="separate"){ 
+    # Suppress this warning: "calling par(new=TRUE) with no plot"
+    suppressWarnings(do.call(image.plot, colorbar_kwargs))
+  }
+
+  return(invisible())
 }
 
 #' Visualize cifti brain data
