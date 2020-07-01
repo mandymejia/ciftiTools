@@ -365,15 +365,13 @@ use_color_pal <- function(data_values, pal){
   colors <- as.character(pal$color)
   pal$cut <- -Inf
   pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
-  out <- colors[apply(outer(data_values, pal$cut, '>='), 1, sum)]
+  out <- colors[apply(outer(as.numeric(data_values), pal$cut, '>='), 1, sum)]
   return(out)
 }
 
 #' Visualize cifti brain data
 #'
 #' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
-#' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-#'  cifti$SURF_RIGHT). If NULL, the first surface will be used. 
 #' @param idx The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.
 #' @param layout \code{*_**}, where * is which surface to display: "left", "right", or "both", and ** is the number of panels
 #'  to use: 1 or 2 (or 4 if both surfaces are being displayed). If only one panel is used, the surface(s) will be rotated to orient
@@ -386,9 +384,6 @@ use_color_pal <- function(data_values, pal){
 #'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro.
 #' @param view_dims A length-2 numeric vector giving the width and height of the RGL window, in pixels. If NULL (default), it will use
 #'  a 1200 x 700 pixel window for 1-panel or 4-panel layouts, and a 1920 x 560 pixel window for a 2-panel layout (because it's twice as wide).
-#' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-#'  Default is "cifti".
-#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory.
 #' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
 #'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
@@ -397,8 +392,13 @@ use_color_pal <- function(data_values, pal){
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 #'  \code{ciftiTools::make_color_pal()} description for more details.
+#' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+#'  Default is "cifti".
+#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory.
 #' @param colorbar_position "embedded" (default) or "separate".
 #' @param colorbar_label A title for the colorbar (none by default).
+#' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
+#'  cifti$SURF_RIGHT). If NULL, the first surface will be used. 
 #'
 #' @export
 #' @import rgl
@@ -412,7 +412,7 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
   
   # Check that the arguments are valid.
   if(!is.cifti(cifti)) stop("cifti argument is not a valid cifti object. See is.cifti().")
-  if(length(idx) > 1) stop("Only one time/column index is supported right now.")
+  #if(length(idx) > 1) stop("Only one time/column index is supported right now.")
   view_mode <- match.arg(view_mode, c("widget", "image", "video"))
   if(view_mode != "widget"){ write_dir <- check_dir(write_dir) }
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
@@ -421,8 +421,8 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
   # If the layout argument is not provided, all surfaces will be displayed using the most panels.
   # Separate the layout argument into which surfaces ("brainstructures") and the number of panels ("n_panels").
   if(is.null(layout)){
-    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) & (!is.null(cifti$SURF_LEFT)) & (idx %in% 1:ncol(cifti$CORTEX_LEFT))
-    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT)) & (idx %in% 1:ncol(cifti$CORTEX_RIGHT))
+    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) & (!is.null(cifti$SURF_LEFT)) & all(idx %in% 1:ncol(cifti$CORTEX_LEFT))
+    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT)) & all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))
     if(!can_do_left & !can_do_right){ stop(paste0("Neither hemisphere has all of: CORTEX data, SURFace data, and the idx ", idx, ".")) }
     brainstructure <- c("left", "right", "both")[can_do_left + 2*can_do_right]
     n_panels <- ifelse(brainstructure=="both", 4, 2)
@@ -449,7 +449,9 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     ## Ensure cortex data, surface data, and slice are present.
     if(is.null(cifti$CORTEX_LEFT)) stop("No data in cifti$CORTEX_LEFT.")
     if(is.null(cifti$SURF_LEFT)) stop("No data in cifti$SURF_LEFT. Must provide a surface model for left cortex.")
-    if(!(idx %in% 1:ncol(cifti$CORTEX_LEFT))) stop("idx is not a valid column index for cifti$CORTEX_LEFT")
+    if(!all(idx %in% 1:ncol(cifti$CORTEX_LEFT))) stop(
+      ifelse(length(idx) > 1, "The idx are not all valid column indices for cifti$CORTEX_LEFT", "The idx is not a valid column index for cifti$CORTEX_LEFT")
+    )
 
     ## Select the surface model.
     if(is.null(surface)){
@@ -462,7 +464,7 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     ## Get the values at the slice, replacing constant brainordinates with NA values.
     NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < EPS
     cifti$CORTEX_LEFT[NA_mask_left,] <- NA
-    values_left <- cifti$CORTEX_LEFT[,idx]
+    values_left <- matrix(cifti$CORTEX_LEFT[,idx], ncol=length(idx))
     #values_left <- apply(matrix(cifti$CORTEX_LEFT[,idx][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
     cifti$CORTEX_LEFT <- NULL #save memory
 
@@ -478,8 +480,9 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     ## Ensure cortex data, surface data, and slice are present.
     if(is.null(cifti$CORTEX_RIGHT)) stop("No data in cifti$CORTEX_RIGHT.")
     if(is.null(cifti$SURF_RIGHT)) stop("No data in cifti$SURF_RIGHT. Must provide a surface model for right cortex.")
-    if(!(idx %in% 1:ncol(cifti$CORTEX_RIGHT))) stop("idx is not a valid column index for cifti$CORTEX_RIGHT")
-
+    if(!all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))) stop(
+      ifelse(length(idx) > 1, "The idx are not all valid column indices for cifti$CORTEX_RIGHT", "The idx is not a valid column index for cifti$CORTEX_RIGHT")
+    )
     ## Select the surface model.
     if(is.null(surface)){
       surf_right <- cifti$SURF_RIGHT[[1]]
@@ -491,7 +494,7 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     ## Get the values at the slice, replacing constant brainordinates with NA values.
     NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < EPS
     cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
-    values_right <- cifti$CORTEX_RIGHT[,idx]
+    values_right <- matrix(cifti$CORTEX_RIGHT[,idx], ncol=length(idx))
     #values_right <- apply(matrix(cifti$CORTEX_RIGHT[,idx][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
     cifti$CORTEX_RIGHT <- NULL #save memory
 
@@ -504,8 +507,8 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
   }
 
   # Put the values together.
-  nvox_left <- length(values_left)
-  nvox_right <- length(values_right)
+  nvox_left <- nrow(values_left)
+  nvox_right <- nrow(values_right)
   if(brainstructure=="both") values <- c(values_left, values_right)
   else if(brainstructure=="left") values <- values_left
   else if(brainstructure=="right") values <- values_right

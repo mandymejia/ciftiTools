@@ -70,17 +70,20 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
   names(do) <- c("left", "right", "sub")
 
   # Use default file names if not provided. Relative paths will be placed in write_dir.
+  default_fname <- function(label, extn_cifti, bname_cifti){ 
+    gsub(extn_cifti, cifti_separate_default_suffix(label), bname_cifti, fixed=TRUE)
+  }
   if(do['left']){
-    if(is.null(cortexL_fname)){ cortexL_fname <- gsub(extn_cifti, "L.func.gii", bname_cifti, fixed=TRUE) }
+    if(is.null(cortexL_fname)){ cortexL_fname <- default_fname("cortexL", extn_cifti, bname_cifti) }
     cortexL_fname <- make_abs_path(cortexL_fname, write_dir)
   }
   if(do['right']){
-    if(is.null(cortexR_fname)){ cortexR_fname <- gsub(extn_cifti, "R.func.gii", bname_cifti, fixed=TRUE) }
+    if(is.null(cortexR_fname)){ cortexL_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
     cortexR_fname <- make_abs_path(cortexR_fname, write_dir)
   }
   if(do['sub']){
-    if(is.null(subcortVol_fname)){ subcortVol_fname <- gsub(extn_cifti, "nii", bname_cifti, fixed=TRUE) }
-    if(is.null(subcortLab_fname)){ subcortLab_fname <- gsub(extn_cifti, "labels.nii", bname_cifti, fixed=TRUE) }
+    if(is.null(subcortVol_fname)){ cortexL_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
+    if(is.null(subcortLab_fname)){ cortexL_fname <- default_fname("subcortLab", extn_cifti, bname_cifti) }
     subcortVol_fname <- make_abs_path(subcortVol_fname, write_dir)
     subcortLab_fname <- make_abs_path(subcortLab_fname, write_dir)
   }

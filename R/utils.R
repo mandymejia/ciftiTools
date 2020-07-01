@@ -160,16 +160,36 @@ make_abs_path <- function(path, dir=NULL){
 #' 
 #' @param dir The directory.
 #' @param default Use this if dir is NULL (default is the current working directory).
-#' 
+#' @param make If the directory does not exist, should it be made? Default is FALSE.
+#'
 #' @return The directory.
 #' 
-check_dir <- function(dir, default=NULL){
+check_dir <- function(dir, default=NULL, make=FALSE){
+  # TO DO: get absolute path to dir?
   if(identical(dir, NULL)){ 
     if(identical(default, NULL)){ default <- getwd() }
     dir <- default
   } 
-  # TO DO: dir.create if make_dir=TRUE?
-  if(!dir.exists(dir)){ stop(paste("The directory", dir, "does not exist, check and try again.")) }
+  if(!dir.exists(dir)){ 
+    if(make){
+      dir.create(dir)
+    } else {
+      stop(paste("The directory", dir, "does not exist, check and try again or use make==TRUE.")) 
+    }
+  }
   # TO DO: Check that the user has write permissions in outdir
   return(dir)
+}
+
+#' Get the default file name suffix for a certain type of separated file.
+#'
+#' @param label the file type: one of "cortexL", "cortexR", "subcortVol" or "subcortLab"
+cifti_separate_default_suffix(label){
+  label <- match.arg(label, c("cortexL", "cortexR", "subcortVol", "subcortLab"))
+  switch(label,
+    cortexL = "L.func.gii",
+    cortexR = "R.func.gii",
+    subcortVol = "nii"
+    subcortLab = "labels.nii"
+  )
 }
