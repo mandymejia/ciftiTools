@@ -78,12 +78,12 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
     cortexL_fname <- make_abs_path(cortexL_fname, write_dir)
   }
   if(do['right']){
-    if(is.null(cortexR_fname)){ cortexL_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
+    if(is.null(cortexR_fname)){ cortexR_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
     cortexR_fname <- make_abs_path(cortexR_fname, write_dir)
   }
   if(do['sub']){
-    if(is.null(subcortVol_fname)){ cortexL_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
-    if(is.null(subcortLab_fname)){ cortexL_fname <- default_fname("subcortLab", extn_cifti, bname_cifti) }
+    if(is.null(subcortVol_fname)){ subcortVol_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
+    if(is.null(subcortLab_fname)){ subcortLab_fname <- default_fname("subcortLab", extn_cifti, bname_cifti) }
     subcortVol_fname <- make_abs_path(subcortVol_fname, write_dir)
     subcortLab_fname <- make_abs_path(subcortLab_fname, write_dir)
   }

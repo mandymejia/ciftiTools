@@ -5,12 +5,14 @@
 \title{Helper function that checks if a directory exists. If it is NULL, use a default (default is the current working directory).
 Raises an error if the directory does not exist.}
 \usage{
-check_dir(dir, default = NULL)
+check_dir(dir, default = NULL, make = FALSE)
 }
 \arguments{
 \item{dir}{The directory.}
 
 \item{default}{Use this if dir is NULL (default is the current working directory).}
+
+\item{make}{If the directory does not exist, should it be made? Default is FALSE.}
 }
 \value{
 The directory.

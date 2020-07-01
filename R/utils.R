@@ -184,12 +184,12 @@ check_dir <- function(dir, default=NULL, make=FALSE){
 #' Get the default file name suffix for a certain type of separated file.
 #'
 #' @param label the file type: one of "cortexL", "cortexR", "subcortVol" or "subcortLab"
-cifti_separate_default_suffix(label){
+cifti_separate_default_suffix <- function(label){
   label <- match.arg(label, c("cortexL", "cortexR", "subcortVol", "subcortLab"))
   switch(label,
     cortexL = "L.func.gii",
     cortexR = "R.func.gii",
-    subcortVol = "nii"
+    subcortVol = "nii",
     subcortLab = "labels.nii"
   )
 }
