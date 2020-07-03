@@ -61,7 +61,7 @@
 #'
 cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   sep_kwargs=NULL, sep_keep=FALSE, # cifti_separate
-  resamp_res=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
+  resamp_res=NULL, resamp_sphereL_fname=NULL, resamp_sphereR_fname=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
   read_from_separate_kwargs=NULL, surfL_fname=NULL, surfR_fname=NULL, surf_label=NULL, # cifti_read_from_separate
   wb_dir=NULL, verbose=FALSE){
 
@@ -104,12 +104,20 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   sep_kwargs[sapply(sep_kwargs, is.null)] <- NULL
   sep_result <- do.call(cifti_separate, sep_kwargs) # column names are "label", "fname", and "existed"
 
+  # Organize the files to (resample and) read
+  labels_to_read <- vector("character", 0)
+  if("left" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexL") }
+  if("right" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexR") }
+  if("sub" %in% brainstructures){ labels_to_read <- c(labels_to_read, "subcortVol", "subcortLab") }
+  files_to_read <- as.list(sep_result$fname)
+  names(files_to_read) <- sep_result$label
+  files_to_read <- files_to_read[names(files_to_read) %in% labels_to_read]
+
   #########################
   # cifti_resample_separate
   #########################
 
   if(!identical(resamp_res, NULL) & !identical(resamp_res, FALSE)){
-    stop("Resampling is still under construction.")
     if(verbose){ cat("Resampling CIfTI file.\n") }
 
     # Check that the cifti_resample_separate arguments are valid.
@@ -121,7 +129,12 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     } else {
       resamp_kwargs <- vector(length=0, mode="list")
     }
-    # To-do: Populate resamp_kwargs with required arguments.
+    resamp_kwargs["c_original_fnames"] <- files_to_read
+    resamp_kwargs <- c(resamp_kwargs, list(
+      surfL_fname=surfL_original_fname, surfR_fname=surfR_original_fname, 
+      res_target=resamp_res,
+      sphereL_original_fname=resamp_sphereL_fname, sphereR_original_fname=resamp_sphereR_fname
+    ))
     # If resamp_keep==FALSE, use a temporary directory
     if(!resamp_keep){
       if(!is.null(resamp_kwargs$write_dir)){
@@ -137,14 +150,6 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   ##########################
   # cifti_read_from_separate
   ##########################
-
-  labels_to_read <- vector("character", 0)
-  if("left" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexL") }
-  if("right" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexR") }
-  if("sub" %in% brainstructures){ labels_to_read <- c(labels_to_read, "subcortVol", "subcortLab") }
-  files_to_read <- as.list(sep_result$fname)
-  names(files_to_read) <- sep_result$label
-  files_to_read <- files_to_read[names(files_to_read) %in% labels_to_read]
 
   # Read the CIfTI file from the separated files.
   if(verbose){ cat("Reading GIfTI and NIfTI files to form the CIfTI.\n") }

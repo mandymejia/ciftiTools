@@ -1,7 +1,7 @@
 #' Make cifti object
 #'
-#' @param cortex_left Data matrix for left cortex, with vertices in rows
-#' @param cortex_right Data matrix for right cortex, with vertices in rows
+#' @param cortexL_fname Data matrix for left cortex, with vertices in rows
+#' @param cortexR_fname Data matrix for right cortex, with vertices in rows
 #' @param surfL_fname File path to gifti surface object for left cortex, or a vector of file names. Provide surfL_fname OR surfL.
 #' @param surfL Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof. Provide surfL_fname OR surfL.
 #' @param surfR_fname File path to gifti surface object for right cortex, or a vector of file names. Provide surfR_fname OR surfR.
@@ -14,13 +14,13 @@
 #' @return Object of class 'cifti'
 #' @export
 #'
-cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surfL_fname=NULL, surfL=NULL, surfR_fname=NULL, surfR=NULL, surf_label=NULL, subcortical=NULL, mask=NULL, labels=NULL){
+cifti_make <- function(cortexL_fname=NULL, cortexR_fname=NULL, surfL_fname=NULL, surfL=NULL, surfR_fname=NULL, surfR=NULL, surf_label=NULL, subcortical=NULL, mask=NULL, labels=NULL){
 
   #check argument compatibility
   if(!is.null(subcortical)) { if(is.null(mask)) stop('If subcortical is provided, mask must be provided also.')} else mask <- NULL
   if(!is.null(subcortical)) { if(is.null(labels)) stop('If subcortical is provided, labels must be provided also.')} else labels <- NULL
-  if(!is.null(cortex_left)) { if(class(cortex_left) != 'matrix') stop('cortex_left must be a matrix (or NULL), but it is not.') }
-  if(!is.null(cortex_right)) { if(class(cortex_right) != 'matrix') stop('cortex_right must be a matrix (or NULL), but it is not.') }
+  if(!is.null(cortexL_fname)) { if(class(cortexL_fname) != 'matrix') stop('cortexL_fname must be a matrix (or NULL), but it is not.') }
+  if(!is.null(cortexR_fname)) { if(class(cortexR_fname) != 'matrix') stop('cortexR_fname must be a matrix (or NULL), but it is not.') }
   if(!is.null(surfL_fname) & !is.null(surfL)) stop('Provide surfL_fname or surfL, but not both.')
   if(!is.null(surfR_fname) & !is.null(surfR)) stop('Provide surfR_fname or surfR, but not both.')
 
@@ -87,7 +87,7 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surfL_fname=NULL, su
   if(!is.null(surfL)){
     for(ii in 1:numsurf){
       if(!is.surface(surfL[[ii]])) stop('An element of surfL is not a valid surface object.  See is.surface().')
-      if(!is.null(cortex_left)) { if(nrow(cortex_left) != nrow(surfL[[ii]]$vertices)) stop('cortex_left and left surface model(s) must have same number of vertices.')}
+      if(!is.null(cortexL_fname)) { if(nrow(cortexL_fname) != nrow(surfL[[ii]]$vertices)) stop('cortexL_fname and left surface model(s) must have same number of vertices.')}
       class(surfL[[ii]]) <- 'surface'
     }
     names(surfL) <- surf_label
@@ -97,7 +97,7 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surfL_fname=NULL, su
   if(!is.null(surfR)){
     for(ii in 1:numsurf){
       if(!is.surface(surfR[[ii]])) stop('An element of surfR is not a valid surface object.  See is.surface().')
-      if(!is.null(cortex_right)) { if(nrow(cortex_right) != nrow(surfR[[ii]]$vertices)) stop('cortex_right and right surface model(s) must have same number of vertices.')}
+      if(!is.null(cortexR_fname)) { if(nrow(cortexR_fname) != nrow(surfR[[ii]]$vertices)) stop('cortexR_fname and right surface model(s) must have same number of vertices.')}
       class(surfR[[ii]]) <- 'surface'
     }
     names(surfR) <- surf_label
@@ -112,15 +112,15 @@ cifti_make <- function(cortex_left=NULL, cortex_right=NULL, surfL_fname=NULL, su
     if(sum(mask) != nrow(subcortical)) stop(paste0('The number of voxels in the mask (',sum(mask),') must equal the number of rows in subcortical (',nrow(subcortical),'), but they do not match.'))
     if(!all.equal(dim(mask),dim(labels))) stop('mask and labels must have the same dimensions, but they do not.')
   }
-  check_cols <- c(ncol(cortex_left), ncol(cortex_right), ncol(subcortical))
-  if(length(unique(check_cols)) > 1) stop('If provided, cortex_left, cortex_right and subcortical must all have the same number of columns (measurements), but they do not.')
+  check_cols <- c(ncol(cortexL_fname), ncol(cortexR_fname), ncol(subcortical))
+  if(length(unique(check_cols)) > 1) stop('If provided, cortexL_fname, cortexR_fname and subcortical must all have the same number of columns (measurements), but they do not.')
 
   cifti_out <- vector('list', 6)
   class(cifti_out) <- 'cifti'
-  names(cifti_out) <- c("CORTEX_LEFT","CORTEX_RIGHT","surfL", "surfR", "VOL","LABELS")
+  names(cifti_out) <- c("cortexL_fname","cortexR_fname","surfL", "surfR", "VOL","LABELS")
 
-  if(!is.null(cortex_left)) cifti_out$CORTEX_LEFT <- cortex_left
-  if(!is.null(cortex_right)) cifti_out$CORTEX_RIGHT <- cortex_right
+  if(!is.null(cortexL_fname)) cifti_out$cortexL_fname <- cortexL_fname
+  if(!is.null(cortexR_fname)) cifti_out$cortexR_fname <- cortexR_fname
   if(!is.null(surfL)) cifti_out$surfL <- surfL
   if(!is.null(surfR)) cifti_out$surfR <- surfR
   if(!is.null(subcortical)){

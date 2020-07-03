@@ -19,7 +19,7 @@
 #' @param sphereL_original_fname,sphereR_original_fname File path of [left/right]-hemisphere spherical GIFTI files in original resolution 
 #'  (compatible with cifti_orig) .
 #' @param sphereL_target_fname,sphereR_target_fname File path of [left/right]-hemisphere spherical GIFTI files in targetinal resolution 
-#'  (compatible with cifti_Target) . Default is "Sphere.target.[L/R].surf.gii"
+#'  (compatible with cifti_Target) . NULL (default) will be named as "Resampled_[res_target]_[basename(sphere[L/R]_original_fname)]"
 #' @param sphere_target_keep Should helper files be deleted at the end of this function call, if they were created? Default is FALSE.
 #' @param sphere_target_overwrite Logical indicating whether sphere[L/R]_target_fname should be overwritten if it already exists. Default is TRUE.
 #' @param overwrite Logical indicating whether each target file should be overwritten if it already exists.
@@ -45,7 +45,7 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
   surfL_original_fname=NULL, surfR_original_fname=NULL, surfL_target_fname=NULL, surfR_target_fname=NULL,
   res_target, 
   sphereL_original_fname, sphereR_original_fname, 
-  sphereL_target_fname="Sphere.target.L.surf.gii", sphereR_target_fname="Sphere.target.R.surf.gii", 
+  sphereL_target_fname=NULL, sphereR_target_fname=NULL, 
   sphere_target_keep=FALSE, sphere_target_overwrite=TRUE,
   overwrite=TRUE, read_dir=NULL, write_dir=NULL, sphere_target_dir=NULL, wb_dir=NULL){
 
@@ -74,6 +74,7 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
   } else {
     names(c_target_fnames) <- match.arg(names(c_target_fnames), possible_file_labels, several.ok=TRUE)
     stopifnot(length(unique(names(c_target_fnames))) == length(c_target_fnames))
+    stopifnot(length(c_target_fnames) > 0)
   }
   for(i in 1:length(c_original_fnames)){
     lab_i <- names(c_original_fnames)[i]
@@ -82,6 +83,11 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
     }
     c_target_fnames[[lab_i]] <- make_abs_path(c_target_fnames[[lab_i]], write_dir)
   }
+  if(length(c_target_fnames) > length(c_original_fnames)){
+    missing_original <- names(c_target_fnames)[!(names(c_target_fnames) %in% names(c_original_fnames))]
+    warning(paste("Ignoring these resampling targets because their original files were not provided:", missing_original))
+  }
+  c_target_fnames <- c_target_fnames[names(c_original_fnames)]
   ## surfL
   if(!is.null(surfL_original_fname)){
     surfL_original_fname <- make_abs_path(surfL_original_fname, read_dir)
@@ -90,7 +96,7 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
     }
     surfL_target_fname <- make_abs_path(surfL_target_fname, write_dir)
     stopifnot(length(surfL_original_fname) == length(surfL_target_fname))
-  }
+  } else { surfL_target_fname <- "" }
   ## surfR
   if(!is.null(surfR_original_fname)){
     surfR_original_fname <- make_abs_path(surfR_original_fname, read_dir)
@@ -99,14 +105,30 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
     }
     surfR_target_fname <- make_abs_path(surfR_target_fname, write_dir)
     stopifnot(length(surfR_original_fname) == length(surfR_target_fname))
-  }
+  } else { surfR_target_fname <- "" }
   # other args
   sphere_target_dir <- check_dir(sphere_target_dir, "helper_files_resampling", make=TRUE)
+  if(is.null(sphereL_target_fname)){ sphereL_target_fname <- paste0("Resampled", res_target, basename(sphereL_original_fname), sep="_") }
+  if(is.null(sphereR_target_fname)){ sphereR_target_fname <- paste0("Resampled", res_target, basename(sphereR_original_fname), sep="_") }
   sphereL_target_fname <- make_abs_path(sphereL_target_fname, write_dir)
   sphereR_target_fname <- make_abs_path(sphereR_target_fname, write_dir)
   stopifnot(is.logical(sphere_target_keep))
   stopifnot(is.logical(sphere_target_overwrite))
-  
+
+  # Collect the absolute paths to each file in a data.frame to return later. Also record whether each existed before the
+  # workbook command.
+  resamp_files <- data.frame(
+    label = c(names(c_target_fnames), 
+      paste0("surfL_", 1:length(surfL_target_fname)), 
+      paste0("surfR_", 1:length(surfR_target_fname))),
+    fname = c(as.character(c_target_fnames), 
+      surfL_target_fname), 
+      surfR_target_fname)),
+    stringsAsFactors=FALSE
+  )
+  resamp_files <- resamp_files[resamp_files$fname != "",]
+  resamp_files$existed <- file.exists(resamp_files$fname)
+
   # Step 1: Generate spheres in the target resolution (if not already existing and provided)
   sphere_target_exists <- file.exists(sphereL_target_fname, sphereR_target_fname)
   if(sum(sphere_target_exists) == 1){ warning("One sphere target file exists but not the other. Overwriting the existing file.") }
@@ -120,38 +142,44 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
     overwrite=overwrite, read_dir=read_dir, write_dir=write_dir, sphere_target_dir=sphere_target_dir, wb_dir=wb_dir)
   for(lab in c("cortexL", "cortexR")){
     if(lab %in% names(c_original_fnames)){
-      is_left <- lab == "cortexL"
-      additional_kwargs <- list(
-        original_fname=c_original_fnames[[lab]], target_fname=c_target_fnames[[lab]], file_type="metric",
-        sphere_original_fname=ifelse(is_left, sphereL_original_fname, sphereR_original_fname),
-        sphere_target_fname=ifelse(is_left, sphereL_target_fname, sphereR_target_fname) )
-      roi_lab <- paste0(gsub(lab, "subcortVol", "subcort"), "_ROI")
-      if(roi_lab %in% names(c_original_fnames)){
-        additional_kwargs <- c(additional_kwargs, 
+      if(overwrite | !resamp_files$existed[resamp_files$label=="lab"]){
+        is_left <- lab == "cortexL"
+        additional_kwargs <- list(
+          original_fname=c_original_fnames[[lab]], target_fname=c_target_fnames[[lab]], file_type="metric",
+          sphere_original_fname=ifelse(is_left, sphereL_original_fname, sphereR_original_fname),
+          sphere_target_fname=ifelse(is_left, sphereL_target_fname, sphereR_target_fname) )
+        roi_lab <- paste0(gsub(lab, "subcortVol", "subcort"), "_ROI")
+        if(roi_lab %in% names(c_original_fnames)){
+          additional_kwargs <- c(additional_kwargs, 
           list(original_ROI_fname=c_original_fnames[[roi_lab]], target_ROI_fname=c_target_fnames[[roi_lab]]))
+        }
+        do.call(resample_individual, c(resample_individual_kwargs_common, additional_kwargs))
       }
-      do.call(resample_individual, c(resample_individual_kwargs_common, additional_kwargs))
     }
   }
 
   # Step 3: Use -surface-resample to resample surface/cortex files into target resolution
   for(i in 1:length(surfL_original_fname)){
-    additional_kwargs <- list(
-      original_fname=surfL_original_fname[i], target_fname=surfL_target_fname[i], file_type="surface",
-      sphere_original_fname=sphereL_original_fname, sphere_target_fname=sphereL_target_fname)
-    do.call(resample_individual, c(resample_individual_kwargs_common, additional_kwargs))
+    if(overwrite | !resamp_files$existed[resamp_files$label==paste0("surfL_", i)){
+      additional_kwargs <- list(
+        original_fname=surfL_original_fname[i], target_fname=surfL_target_fname[i], file_type="surface",
+        sphere_original_fname=sphereL_original_fname, sphere_target_fname=sphereL_target_fname)
+      do.call(resample_individual, c(resample_individual_kwargs_common, additional_kwargs))
+    }
   }
   for(i in 1:length(surfR_original_fname)){
-    additional_kwargs <- list(
-      original_fname=surfR_original_fname[i], target_fname=surfR_target_fname[i], file_type="surface",
-      sphere_original_fname=sphereR_original_fname, sphere_target_fname=sphereR_target_fname)
-    do.call(resample_individual, c(resample_individual_kwargs_common, additional_kwargs))
+    if(overwrite | !resamp_files$existed[resamp_files$label==paste0("surfL_", i)){
+      additional_kwargs <- list(
+        original_fname=surfR_original_fname[i], target_fname=surfR_target_fname[i], file_type="surface",
+        sphere_original_fname=sphereR_original_fname, sphere_target_fname=sphereR_target_fname)
+      do.call(resample_individual, c(resample_individual_kwargs_common, additional_kwargs))
+    }
   }
 
-  return(invisible(NULL))
+  invisible(resamp_files)
 }
 
-#' Resample an individual surface file
+#' Resample an individual file (with its ROI)
 #'
 #' @description Performs spatial resampling of NIfTI/GIfTI data on the cortical surface
 #'

@@ -5,6 +5,7 @@
 * Replaced `cifti_read_separate` with `cifti_read`, which calls `cifti_separate`, `cifti_resample_separate` (optionally), and `cifti_read_from_separate` in order. But resampling with `cifti_resample_separate` is still a work-in-progress.
 * Re-named a few arguments to look similar between functions:
     * Arguments referring to file names all end in `_fname` instead of beginning with `fname_`
+    * List/process/etc. "left" hemisphere components before "right" (e.g. argument order for make_helper_spheres has been swapped to match this).
     * `surf_L` is now `cortexL` (likewise for right)
     * `gifti_left` is now `surfL` (likewise for right)
     * `sphere_orig_L` is now `sphereL_original` (likewise for right)
