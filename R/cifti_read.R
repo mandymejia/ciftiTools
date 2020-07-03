@@ -103,14 +103,13 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   # Do cifti_separate.
   sep_kwargs[sapply(sep_kwargs, is.null)] <- NULL
   sep_result <- do.call(cifti_separate, sep_kwargs) # column names are "label", "fname", and "existed"
-  files_to_read <- sep_result$fname
-  names(files_to_read) <- sep_result$label
 
   #########################
   # cifti_resample_separate
   #########################
 
   if(!identical(resamp_res, NULL) & !identical(resamp_res, FALSE)){
+    stop("Resampling is still under construction.")
     if(verbose){ cat("Resampling CIfTI file.\n") }
 
     # Check that the cifti_resample_separate arguments are valid.
@@ -133,14 +132,19 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     # Do cifti_resample_separate
     resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
     resamp_result <- do.call(cifti_resample_separate, resamp_kwargs)
-    # Fix the below lines
-    files_to_read <- resamp_result$fname
-    names(files_to_read) <- resamp_result$label
   }
 
   ##########################
   # cifti_read_from_separate
   ##########################
+
+  labels_to_read <- vector("character", 0)
+  if("left" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexL") }
+  if("right" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexR") }
+  if("sub" %in% brainstructures){ labels_to_read <- c(labels_to_read, "subcortVol", "subcortLab") }
+  files_to_read <- as.list(sep_result$fname)
+  names(files_to_read) <- sep_result$label
+  files_to_read <- files_to_read[names(files_to_read) %in% labels_to_read]
 
   # Read the CIfTI file from the separated files.
   if(verbose){ cat("Reading GIfTI and NIfTI files to form the CIfTI.\n") }

@@ -1,7 +1,7 @@
 # 1.1
 
 ## Since 1.0
-* Tried using RNifti instead of oro.nifti, but reverted to oro.nifti due to memory issue with large file (?)
+* Replaced oro.nifti::readNIfTI with RNifti::readNifti for speedup.
 * Replaced `cifti_read_separate` with `cifti_read`, which calls `cifti_separate`, `cifti_resample_separate` (optionally), and `cifti_read_from_separate` in order. But resampling with `cifti_resample_separate` is still a work-in-progress.
 * Re-named a few arguments to look similar between functions:
     * Arguments referring to file names all end in `_fname` instead of beginning with `fname_`

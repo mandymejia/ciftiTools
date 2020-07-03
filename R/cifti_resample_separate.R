@@ -54,7 +54,7 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
   read_dir <- check_dir(read_dir)
   possible_file_labels <- c("cortexL", "cortexR", "subcortVol", "subcortLab", "cortexL_ROI", "cortexR_ROI", "subcort_ROI")
   if(length(c_original_fnames == 1) & grepl("\\.d.*.nii$", cifti_fname)){ # .d*.nii or .d*.nii where * is tseries or scalar
-    c_original_fnames <- do.call(list, possible_file_labels)
+    c_original_fnames <- as.list(possible_file_labels)
     names(c_original_fnames) <- c_original_fnames
     c_original_fnames <- sapply(c_original_fnames, cifti_separate_default_suffix)
     c_original_fnames <- make_abs_path(c_original_fnames, read_dir)
