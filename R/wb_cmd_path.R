@@ -9,14 +9,34 @@ wb_path_request <- function(){
   ))
 }
 
+#' Sets an R option (with prefix "ciftiTools_"). Right now, the only option is "wb_path".
+#'
+#' @param opt The option. Right now, the only option is "wb_path".
+#' @param val The value to set the option as.
+#'
+#' @export
+#'
 ciftiTools.setOption <- function(opt, val){
-  stopifnot(opt %in% "wb_path")
+  stopifnot(opt %in% "wb_path") # Might add more options in the future.
+  if(opt == "wb_path"){
+    if(!file.exists(val)){ warning(paste0("The wb_path value '" , 
+      normalizePath(val, mustWork=FALSE), "' does not exist.")) }
+  }
   val <- list(val)
   names(val) <- paste0("ciftiTools_", opt)
   options(val)
   invisible(val)
 }
 
+#' Retrieves the Connectome Workbench path from the ciftiTools_wb_path option or the provided argument.
+#' This path can be the Connectome Workbench folder or the executable directly.
+#' 
+#' @param wb_path The path to the Connectome Workbench folder or executable. Ignored if the 
+#'  ciftiTools_wb_path option has been set.
+#' @param verbose Default FALSE.
+#'
+#' @export
+#'
 get_wb_cmd_path <- function(wb_path, verbose=FALSE){
   # Retrieve the wb_cmd path. Prioritize the function argument over the option.
   if(is.null(wb_path)){

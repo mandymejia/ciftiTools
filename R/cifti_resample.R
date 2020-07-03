@@ -27,7 +27,7 @@
 #'
 cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd=NULL, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE, outdir=NULL){
 
-  wb_cmd <- check_wb_cmd(wb_cmd)
+  wb_cmd <- get_wb_cmd_path(wb_cmd)
 
   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 

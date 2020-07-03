@@ -50,7 +50,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   make_helper_files=TRUE, delete_helper_files=FALSE, outdir=NULL, 
   resample=NULL, sphere_orig_L, sphere_orig_R, verbose=FALSE){
 
-  wb_cmd <- ciftiTools:::check_wb_cmd(wb_cmd)
+  wb_cmd <- get_wb_cmd_path(wb_cmd)
   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
   if(is.null(outdir)){
@@ -78,6 +78,7 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     if(is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_right))
     if(length(fname_gifti_right) != length(surf_names)) stop('Length of fname_gifti_right and surf_names must match.') 
   }
+  num_surf <- length(surf_names) #number of surface types provided
 
   ### Outline of steps:
   ### 1. Use -cifti-separate to separate the CIFTI file into left cortex, right cortex, subcortical volumetric data, and subcortical labels
@@ -198,7 +199,6 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     ## TO DO: Use gifti_resample function for this part?
     
     ### Read in GIFTI surface geometry files if provided
-    num_surf <- length(surf_names) #number of surface types provided
     
     #left hemisphere
     if(do_left_surf){
