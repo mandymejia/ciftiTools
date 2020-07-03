@@ -384,6 +384,9 @@ use_color_pal <- function(data_values, pal){
 #'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro.
 #' @param view_dims A length-2 numeric vector giving the width and height of the RGL window, in pixels. If NULL (default), it will use
 #'  a 1200 x 700 pixel window for 1-panel or 4-panel layouts, and a 1920 x 560 pixel window for a 2-panel layout (because it's twice as wide).
+#' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+#'  Default is "cifti".
+#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory.
 #' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
 #'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
@@ -392,9 +395,6 @@ use_color_pal <- function(data_values, pal){
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-#'  Default is "cifti".
-#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory.
 #' @param colorbar_position "embedded" (default) or "separate".
 #' @param colorbar_label A title for the colorbar (none by default).
 #' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 

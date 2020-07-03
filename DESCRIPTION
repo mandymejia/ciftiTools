@@ -18,7 +18,7 @@ Imports:
     fields,
     gifti,
     grDevices,
-    RNifti,
+    oro.nifti,
     RColorBrewer,
 Suggests:
     papayar,

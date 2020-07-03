@@ -13,6 +13,9 @@
 #' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and label NIfTIs. If not 
 #'  provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 #'  path is relative, they will be saved in \code{write_dir}.
+#' @param get_ROI Separate out the regions of interest for each brainstructure? Default is FALSE.
+#' @param cortexL_ROI_fname,cortexR_ROI_fname File names for cortex ROIs.
+#' @param subcort_ROI_fname File name for volume ROI.
 #' @param overwrite If all NIfTI or GIfTI files already exists, should they be overwritten? Default is TRUE. 
 #' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
 #' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
@@ -49,6 +52,7 @@
 #'
 cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
+  get_ROI=FALSE, cortexL_ROI_fname=NULL, cortexR_ROI_fname=NULL, subcort_ROI_fname=NULL, 
   overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
 
   wb_cmd <- get_wb_cmd_path(wb_dir)
@@ -76,25 +80,42 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
   if(do['left']){
     if(is.null(cortexL_fname)){ cortexL_fname <- default_fname("cortexL", extn_cifti, bname_cifti) }
     cortexL_fname <- make_abs_path(cortexL_fname, write_dir)
-  }
+    if(get_ROI){
+      if(is.null(cortexL_ROI_fname)){ cortexL_ROI_fname <- default_fname("cortexL_ROI", extn_cifti, bname_cifti) }
+      cortexL_ROI_fname <- make_abs_path(cortexL_ROI_fname, write_dir)
+    } else { cortexL_ROI_fname <- "" }
+  } else { cortexL_fname <- "" }
   if(do['right']){
     if(is.null(cortexR_fname)){ cortexR_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
     cortexR_fname <- make_abs_path(cortexR_fname, write_dir)
-  }
+    if(get_ROI){
+      if(is.null(cortexR_ROI_fname)){ cortexR_ROI_fname <- default_fname("cortexR_ROI", extn_cifti, bname_cifti) }
+      cortexR_ROI_fname <- make_abs_path(cortexR_ROI_fname, write_dir)
+    } else { cortexR_ROI_fname <- "" }
+  } else { cortexR_fname <- "" }
   if(do['sub']){
     if(is.null(subcortVol_fname)){ subcortVol_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
-    if(is.null(subcortLab_fname)){ subcortLab_fname <- default_fname("subcortLab", extn_cifti, bname_cifti) }
     subcortVol_fname <- make_abs_path(subcortVol_fname, write_dir)
+    if(is.null(subcortLab_fname)){ subcortLab_fname <- default_fname("subcortLab", extn_cifti, bname_cifti) }
     subcortLab_fname <- make_abs_path(subcortLab_fname, write_dir)
+    if(get_ROI){
+      if(is.null(subcort_ROI_fname)){ subcort_ROI_fname <- default_fname("subcort_ROI", extn_cifti, bname_cifti) }
+      subcort_ROI_fname <- make_abs_path(subcort_ROI_fname, write_dir)
+    } else { subcort_ROI_fname <- "" }
+  } else { 
+    subcortVol_fname <- subcortLab_fname <- "" 
   }
 
   # Collect the absolute paths to each file in a data.frame to return later. Also record whether each existed before the
   # workbook command.
   sep_files <- data.frame(
-    label = c("cortexL", "cortexR", "subcortVol", "subcortLab"),
-    fname = c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname),
+    label = c("cortexL", "cortexR", "subcortVol", "subcortLab", 
+      "cortexL_ROI", "cortexR_ROI", "subcort_ROI"),
+    fname = c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname,
+      cortexL_ROI_fname, cortexR_ROI_fname, subcort_ROI_fname),
     stringsAsFactors=FALSE
   )
+  sep_files <- sep_files[sep_files$fname != "",]
   sep_files$existed <- file.exists(sep_files$fname)
 
   # Run the command if overwrite==TRUE, or if any desired file does not exist.
@@ -106,12 +127,15 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
     cmd <- paste(wb_cmd, "-cifti-separate", cifti_fname, "COLUMN")
     if(do['left']){
       cmd <- paste(cmd, '-metric CORTEX_LEFT', cortexL_fname)
+      if(get_ROI){ cmd <- paste(cmd, '-roi', cortexL_ROI_fname) }
     }
     if(do['right']){
       cmd <- paste(cmd, '-metric CORTEX_RIGHT', cortexR_fname)
+      if(get_ROI){ cmd <- paste(cmd, '-roi', cortexR_ROI_fname) }
     }
     if(do['sub']){
       cmd <- paste(cmd, '-volume-all', subcortVol_fname)
+      if(get_ROI){ cmd <- paste(cmd, '-roi', subcort_ROI_fname) }
       cmd <- paste(cmd, '-label', subcortLab_fname)
     }
     # Run it! Raise an error if it fails.

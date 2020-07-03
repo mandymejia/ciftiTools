@@ -145,10 +145,7 @@ get_cifti_extn <- function(cifti_fname){
 make_abs_path <- function(path, dir=NULL){
   if(!is.null(path)){
     if(!is.null(dir)){
-      if(!isAbsolutePath(path)){ 
-        #stopifnot(file.exists(dir))
-        path <- file.path(dir, path)
-      }
+      path <- ifelse(isAbsolutePath(path), path, file.path(dir, path))
     }
     path <- normalizePath(path, mustWork=FALSE)
   }
@@ -185,11 +182,15 @@ check_dir <- function(dir, default=NULL, make=FALSE){
 #'
 #' @param label the file type: one of "cortexL", "cortexR", "subcortVol" or "subcortLab"
 cifti_separate_default_suffix <- function(label){
-  label <- match.arg(label, c("cortexL", "cortexR", "subcortVol", "subcortLab"))
+  label <- match.arg(label, c("cortexL", "cortexR", "subcortVol", "subcortLab",
+    "cortexL_ROI", "cortexR_ROI", "subcort_ROI"))
   switch(label,
     cortexL = "L.func.gii",
     cortexR = "R.func.gii",
     subcortVol = "nii",
-    subcortLab = "labels.nii"
+    subcortLab = "labels.nii",
+    cortexL_ROI = "L_ROI.func.gii",
+    cortexR_ROI = "R_ROI.func.gii",
+    subcort_ROI = "ROI.nii",
   )
 }

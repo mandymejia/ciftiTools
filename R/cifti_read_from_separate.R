@@ -23,7 +23,7 @@
 #'  were provided in the arguments, the list will also contain SURF_LEFT and SURF_RIGHT.
 #' @export
 #' @importFrom gifti readGIfTI
-#' @importFrom RNifti readNifti
+#' @importFrom oro.nifti readNIfTI
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
@@ -75,11 +75,11 @@ cifti_read_from_separate <- function(cortexL_fname=NULL, cortexR_fname=NULL, sub
   # Read in NIfTI files for subcortical data.
   if(!is.null(subcortVol_fname)){
     subcortVol_fname <- make_abs_path(subcortVol_fname, read_dir)
-    result$VOL <- readNifti(subcortVol_fname)
+    result$VOL <- readNIfTI(subcortVol_fname)
   }
   if(!is.null(subcortLab_fname)){
     subcortLab_fname <- make_abs_path(subcortLab_fname, read_dir)
-    result$LABELS <- readNifti(subcortLab_fname)
+    result$LABELS <- readNIfTI(subcortLab_fname)
     result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 
   }
 

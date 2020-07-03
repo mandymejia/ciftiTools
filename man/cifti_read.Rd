@@ -11,6 +11,7 @@ cifti_read(
   sep_keep = FALSE,
   resamp_res = NULL,
   resamp_kwargs = NULL,
+  resamp_keep = FALSE,
   read_from_separate_kwargs = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,

@@ -61,9 +61,13 @@
 #'
 cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   sep_kwargs=NULL, sep_keep=FALSE, # cifti_separate
-  resamp_res=NULL, resamp_kwargs=NULL, # cifti_resample
+  resamp_res=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
   read_from_separate_kwargs=NULL, surfL_fname=NULL, surfR_fname=NULL, surf_label=NULL, # cifti_read_from_separate
   wb_dir=NULL, verbose=FALSE){
+
+  #######
+  # setup
+  #######
 
   ################
   # cifti_separate
@@ -89,6 +93,13 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     if(identical(cifti_fname, NULL)){ stop("cifti_fname must be provided directly to cifti_read or as an entry in sep_kwargs.") }
     sep_kwargs$cifti_fname <- cifti_fname
   }
+  # If sep_keep==FALSE, use a temporary directory
+  if(!sep_keep){
+    if(!is.null(sep_kwargs$write_dir)){
+      if(verbose){ cat("Warning: using temporary directory instead of sep_kwargs$write_dir because sep_keep is FALSE.\n") }
+    }
+    sep_kwargs$write_dir <- tempdir()
+  }
   # Do cifti_separate.
   sep_kwargs[sapply(sep_kwargs, is.null)] <- NULL
   sep_result <- do.call(cifti_separate, sep_kwargs) # column names are "label", "fname", and "existed"
@@ -112,8 +123,17 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
       resamp_kwargs <- vector(length=0, mode="list")
     }
     # To-do: Populate resamp_kwargs with required arguments.
+    # If resamp_keep==FALSE, use a temporary directory
+    if(!resamp_keep){
+      if(!is.null(resamp_kwargs$write_dir)){
+        if(verbose){ cat("Warning: using temporary directory instead of resamp_kwargs$write_dir because resamp_keep is FALSE.\n") }
+      }
+      resamp_kwargs$write_dir <- tempdir()
+    }
+    # Do cifti_resample_separate
     resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
     resamp_result <- do.call(cifti_resample_separate, resamp_kwargs)
+    # Fix the below lines
     files_to_read <- resamp_result$fname
     names(files_to_read) <- resamp_result$label
   }
