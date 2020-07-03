@@ -9,10 +9,12 @@ gifti_resample(
   gifti_target,
   sphere_orig,
   sphere_target,
+  target_res,
   wb_cmd,
   make_helper_files = TRUE,
   delete_helper_files = FALSE,
-  overwrite = FALSE
+  overwrite = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -24,6 +26,8 @@ gifti_resample(
 
 \item{sphere_target}{File path of GIFTI sphere surface that is in register with sphere_orig and has the desired output mesh}
 
+\item{target_res}{Target resolution (number of cortical surface vertices per hemisphere)}
+
 \item{wb_cmd}{Path to Connectome Workbench executable file, ending in 'wb_command' (Mac/linux) or 'wb_command.exe' (Windows).}
 
 \item{make_helper_files}{If TRUE, make all the helper files required for resampling. Otherwise, all necessary helper files must be located in a subdirectory of outdir or current working directory named 'helper_files_resampling'.}
@@ -31,6 +35,8 @@ gifti_resample(
 \item{delete_helper_files}{If make_helper_files=TRUE, logical indicating whether those files should be deleted after resampling.}
 
 \item{overwrite}{Logical indicating whether gifti_target should be overwritten if it already exists.}
+
+\item{verbose}{Occasional print statements? Default is FALSE.}
 }
 \value{
 Logical indicating whether resampled GIFTI file was created.

@@ -10,7 +10,9 @@ cifti_view_volume(
   idx = 1,
   plane = "axial",
   num.slices = 12,
-  use_papaya = FALSE
+  use_papaya = FALSE,
+  z_min = NULL,
+  z_max = NULL
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ cifti_view_volume(
 \item{num.slices}{If use_papaya=FALSE, the number of slices to display.}
 
 \item{use_papaya}{use_papaya=TRUE will use papayar to allows for interactive visualization.}
+
+\item{z_min}{Floor value.}
+
+\item{z_max}{Ceiling value.}
 }
 \description{
 Visualize cifti brain data

@@ -395,26 +395,26 @@ use_color_pal <- function(data_values, pal){
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param colorbar_position "embedded" (default) or "separate".
-#' @param colorbar_label A title for the colorbar (none by default).
 #' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
 #'  cifti$SURF_RIGHT). If NULL, the first surface will be used. 
+#' @param colorbar_position "embedded" (default) or "separate".
+#' @param colorbar_label A title for the colorbar (none by default).
 #'
 #' @export
 #' @import rgl
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom fields image.plot
-cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL, 
+cifti_view_surface <- function(cifti, idx=1, layout=NULL, 
   view_mode=c("widget", "image", "video"), view_dims=NULL,
   fname_prefix="cifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, 
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, surface=NULL,
   colorbar_position=c("embedded", "separate"), colorbar_label=""){
   
   # Check that the arguments are valid.
   if(!is.cifti(cifti)) stop("cifti argument is not a valid cifti object. See is.cifti().")
   #if(length(idx) > 1) stop("Only one time/column index is supported right now.")
   view_mode <- match.arg(view_mode, c("widget", "image", "video"))
-  if(view_mode != "widget"){ write_dir <- check_dir(write_dir) }
+  #if(view_mode != "widget"){ write_dir <- check_dir(write_dir) } # check_dir will be added in 1.1
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   colorbar_position <- match.arg(colorbar_position, c("embedded", "separate"))
   
@@ -469,9 +469,9 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     cifti$CORTEX_LEFT <- NULL #save memory
 
     ## Construct the mesh.
-    mesh_left <- tmesh3d(t(cbind(cifti$SURF_LEFT$surface$vertices,
-                           rep(1, nrow(cifti$SURF_LEFT$surface$vertices)))), # add homogenous coordinate
-                         t(cifti$SURF_LEFT$surface$faces),
+    mesh_left <- tmesh3d(t(cbind(surf_left$vertices,
+                           rep(1, nrow(surf_left$vertices)))), # add homogenous coordinate
+                         t(surf_left$faces),
                          meshColor = "vertices")
     mesh_left <- addNormals(mesh_left) # for smooth coloring
   }
@@ -499,9 +499,9 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
     cifti$CORTEX_RIGHT <- NULL #save memory
 
     ## Construct the mesh.
-    mesh_right <- tmesh3d(t(cbind(cifti$SURF_RIGHT$surface$vertices,
-                           rep(1, nrow(cifti$SURF_RIGHT$surface$vertices)))), # add homogenous coordinate
-                         t(cifti$SURF_RIGHT$surface$faces),
+    mesh_right <- tmesh3d(t(cbind(surf_right$vertices,
+                           rep(1, nrow(surf_right$vertices)))), # add homogenous coordinate
+                         t(surf_right$faces),
                          meshColor = "vertices")
     mesh_right <- addNormals(mesh_right) # for smooth coloring
   }
@@ -670,12 +670,14 @@ cifti_view_surface <- function(cifti, surface=NULL, idx=1, layout=NULL,
 #' @param plane If use_papaya=FALSE, the plane to display. Default is "axial". Other options are "sagittal" and "coronal".
 #' @param num.slices If use_papaya=FALSE, the number of slices to display. 
 #' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
+#' @param z_min Floor value.
+#' @param z_max Ceiling value.
 #'
 #' @export
 #' @import rgl
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom fields image.plot
-cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial", num.slices=12, use_papaya=FALSE){
+cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial", num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL){
   if(use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
       stop("Package \"papayar\" needed for this function to work. Please install it.",
@@ -704,7 +706,7 @@ cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
     T1w <- readNIfTI(structural_img, reorient=FALSE)
   }
 
-  values <- cifti$VOL[,,,w]
+  values <- cifti$VOL[,,,idx]
   if(!is.null(z_min)) values[values < z_min] <- z_min
   if(!is.null(z_max)) values[values > z_max] <- z_max
   print(paste0("Values to be plotted range from ",min(values[cifti$LABELS > 0])," to ",max(values[cifti$LABELS > 0])))
@@ -726,13 +728,14 @@ cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
 #' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
 #' @param surface_or_volume Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and 
 #'  volume otherwise
+#' @param ... Additional arguments to pass to either view function.
 #'
 #' @export
 #'
 cifti_view <- function(cifti, surface_or_volume=NULL, ...){
   if(is.null(surface_or_volume)){
-    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) & (!is.null(cifti$SURF_LEFT)) & (idx %in% 1:ncol(cifti$CORTEX_LEFT))
-    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT)) & (idx %in% 1:ncol(cifti$CORTEX_RIGHT))
+    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) & (!is.null(cifti$SURF_LEFT))
+    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT))
     surface_or_volume <- ifelse(can_do_left | can_do_right, "surface", "volume")
   }
   if(surface_or_volume == "surface"){ return(cifti_view_surface(cifti, ...)) }
