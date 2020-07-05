@@ -1,22 +1,22 @@
 #' The ROY_BIG_BL color palette, the default palette from the Connectome Workbench.
-#' 
-#' Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. This is the same color palette as the 
+#'
+#' Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. This is the same color palette as the
 #' default Connectime Workbench palette. Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
-#' 
+#'
 #' @param min The minimum value for the color mapping. As in the original palette, the last color (aqua) is actually
 #'  placed at the bottom .5\% between the minimum and maximum.
 #' @param max The maximum value for the color mapping. If this value is lower than the minimum, the color mapping will
 #'  be reversed.
 #' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
 #' @param pos_half Use the positive half (black --> red --> yellow) only? Default is \code{FALSE}.
-#' 
+#'
 #' @export
 #' @return A data.frame with two columns: color (character: color hex codes) and value (numeric).
-#'  
+#'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
   if(min==max){ stop("The minimum and maximum value should not be equal.") }
   rev_order <- min > max
-  if(rev_order){ 
+  if(rev_order){
     temp <- min
     min <- max
     max <- temp
@@ -25,13 +25,13 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
 
   # Use the same landmark color RGB values, and same spacing. Note the spacing is not equidistant between landmarks.
   color <- c(
-    "#ffff00", "#ffc800", "#ff7800", "#ff0000", "#c80000", "#960000", 
-    "#640000", "#3c0000", "#000000", "#000050", "#0000aa", "#4b007d", 
+    "#ffff00", "#ffc800", "#ff7800", "#ff0000", "#c80000", "#960000",
+    "#640000", "#3c0000", "#000000", "#000050", "#0000aa", "#4b007d",
     "#7d00a0", "#4b7d00", "#00c800", "#00ff00", "#00ffff"#, "#00ffff"
   )
   value <- c(
-    1.00, 0.875, 0.750, 0.625, 0.500, 0.375, 
-    0.250, 0.125, 0.000, -0.125, -0.250, -0.375, 
+    1.00, 0.875, 0.750, 0.625, 0.500, 0.375,
+    0.250, 0.125, 0.000, -0.125, -0.250, -0.375,
     -0.500, -0.625, -0.750, -0.875, -0.990#, -1.00
   )
 
@@ -39,7 +39,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
     # Only use the latter half.
     value <- value[1:9]
     color <- color[1:9]
-    # Normalize the values to [min, max]. 
+    # Normalize the values to [min, max].
     value <- value * (max - min) + min
 
   } else {
@@ -60,82 +60,82 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
   return(data.frame(color=color, value=value))
 }
 
-#' Control the mapping of values to colors with \code{colors}, \code{color_mode}, and \code{color_values}. 
+#' Control the mapping of values to colors with \code{colors}, \code{color_mode}, and \code{color_values}.
 #'
 #' There are three argument types for \code{colors}: \code{"ROY_BIG_BL"}, the name of an \code{RColorBrewer} palette, or
 #'  a character vector of color names.
-#' 
+#'
 #' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is the same palette as the default used in
 #'  the Connectome Workbench application (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
-#'  The midpoint will be colored black. From the midpoint toward the upper bound, colors will proceed from black to red 
+#'  The midpoint will be colored black. From the midpoint toward the upper bound, colors will proceed from black to red
 #'  to yellow. From the midpoint toward the lower bound, colors will proceed from black to blue to purple to green to aqua.
-#'  Note that the colors are not equally-spaced, and the bottom .5\% of the color range has the same color. Here is how 
+#'  Note that the colors are not equally-spaced, and the bottom .5\% of the color range has the same color. Here is how
 #'  each color mode behaves if \code{colors=="ROY_BIG_BL"}:
-#' 
+#'
 #' \describe{
 #'  \item{\code{color_mode=="sequential"}}{Only the second half of the pallete will be used (black --> red --> yellow).
-#'    If \code{identical(color_values, NULL)}, the colors will be mapped between \code{DATA_MIN} (black) to 
-#'    \code{DATA_MAX} (yellow). If \code{length(color_values)==2}, \code{color_values[1]} will be the lower bound (black) 
+#'    If \code{identical(color_values, NULL)}, the colors will be mapped between \code{DATA_MIN} (black) to
+#'    \code{DATA_MAX} (yellow). If \code{length(color_values)==2}, \code{color_values[1]} will be the lower bound (black)
 #'    and \code{color_values[2]} will be the upper bound (yellow). If \code{color_values[1] > color_values[2]}, the
 #'    first value will be used as the maximum and the second will be used as the minimum, and the color scale will be
 #'    reversed with the highest value colored black and the lowest value colored yellow.
 #'  }
 #'  \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not recommended for qualitative data, so a
-#'    warning will be issued. Colors will be based on the landmark colors in the "ROY_BIG_BL" pallete. If 
-#'    \code{identical(color_values, NULL)}, the colors will be mapped onto each integer between \code{DATA_MIN} and 
-#'    \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors in the palette (17) is less 
+#'    warning will be issued. Colors will be based on the landmark colors in the "ROY_BIG_BL" pallete. If
+#'    \code{identical(color_values, NULL)}, the colors will be mapped onto each integer between \code{DATA_MIN} and
+#'    \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors in the palette (17) is less
 #'    than this range. If \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
 #'  }
 #'  \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped from
 #'    \code{DATA_MIN} (aqua) to \code{DATA_MAX} (yellow). If \code{length(color_values)==1}, this value will be used as
-#'    the midpoint (black) instead of the data midpoint. If \code{length(color_values)==2}, \code{color_values[1]} will 
-#'    be the lower bound (aqua) and \code{color_values[2]} will be the upper bound (yellow). If \code{length(color_values)==3}, 
+#'    the midpoint (black) instead of the data midpoint. If \code{length(color_values)==2}, \code{color_values[1]} will
+#'    be the lower bound (aqua) and \code{color_values[2]} will be the upper bound (yellow). If \code{length(color_values)==3},
 #'    these values will correspond to the lowest bound (aqua), midpoint (black), and upper bound (yellow) respectively.
-#'    If the \code{color_values} are in descending order, the first value will be used as the maximum and the last 
-#'    will be used as the minimum, and the color scale will be reversed with the highest values colored aqua and the 
+#'    If the \code{color_values} are in descending order, the first value will be used as the maximum and the last
+#'    will be used as the minimum, and the color scale will be reversed with the highest values colored aqua and the
 #'    lowest values colored yellow.
 #'  }
 #' }
-#' 
+#'
 #' If \code{colors} is the name of an RColorBrewer palette (see a listing at `RColorBrewer::brewer.pal.info`), the colors
 #'  in that pallete will be used, and the below behavior applies. If \code{colors} is a character vector of color names
 #'  (hex codes or standard R color names), the below behavior applies directly:
-#' 
+#'
 #' \describe{
 #'  \item{\code{color_mode=="sequential"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal
-#'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(color_values)==2}, these values will be used as 
-#'    the upper and lower bounds instead. If \code{color_values[1] > color_values[2]}, the first value will be used as 
-#'    the maximum and the second will be used as the minimum, and the color scale will be reversed. If 
-#'    \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value. 
+#'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(color_values)==2}, these values will be used as
+#'    the upper and lower bounds instead. If \code{color_values[1] > color_values[2]}, the first value will be used as
+#'    the maximum and the second will be used as the minimum, and the color scale will be reversed. If
+#'    \code{length(color_values)==length(colors)}, each color will be mapped to each corresponding value.
 #'  }
-#'  \item{\code{color_mode=="qualitative"}}{If \code{identical(color_values, NULL)}, the colors will be mapped onto 
-#'    each integer between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the 
-#'    number of colors in the palette is less than this range. If \code{length(color_values)==length(colors)}, each 
+#'  \item{\code{color_mode=="qualitative"}}{If \code{identical(color_values, NULL)}, the colors will be mapped onto
+#'    each integer between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the
+#'    number of colors in the palette is less than this range. If \code{length(color_values)==length(colors)}, each
 #'    color will be mapped to each corresponding value.
 #'  }
-#'  \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal 
-#'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the 
-#'    data. If \code{length(color_values)==1}, the middle color will correspond to this value instead. The preceeding 
-#'    colors will be equally-spaced between \code{DATA_MIN} and this value; the following colors will be equally-spaced 
-#'    between this value and\code{DATA_MAX}. If \code{length(color_values)==2}, \code{color_values[1]} will be the lower 
-#'    bound (first color) and \code{color_values[2]} will be the upper bound (last color). If \code{length(color_values)==3}, 
-#'    these values will correspond to the lowest bound, midpoint, and upper bound respectively. There must be an odd 
-#'    number of colors, since the diverging color mode requires a midpoint. If the \code{color_values} are in descending 
-#'    order, the first value will be used as the maximum and the last will be used as the minimum, and the color scale 
-#'    will be reversed. Finally, if \code{length(color_values)==length(colors)}, each color will be mapped to each 
-#'    corresponding value. Thus, the middle color will correspond to the middle color_value. The length of \code{colors} 
+#'  \item{\code{color_mode=="diverging"}}{If \code{identical(color_values, NULL)}, the colors will be mapped with equal
+#'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the
+#'    data. If \code{length(color_values)==1}, the middle color will correspond to this value instead. The preceeding
+#'    colors will be equally-spaced between \code{DATA_MIN} and this value; the following colors will be equally-spaced
+#'    between this value and\code{DATA_MAX}. If \code{length(color_values)==2}, \code{color_values[1]} will be the lower
+#'    bound (first color) and \code{color_values[2]} will be the upper bound (last color). If \code{length(color_values)==3},
+#'    these values will correspond to the lowest bound, midpoint, and upper bound respectively. There must be an odd
+#'    number of colors, since the diverging color mode requires a midpoint. If the \code{color_values} are in descending
+#'    order, the first value will be used as the maximum and the last will be used as the minimum, and the color scale
+#'    will be reversed. Finally, if \code{length(color_values)==length(colors)}, each color will be mapped to each
+#'    corresponding value. Thus, the middle color will correspond to the middle color_value. The length of \code{colors}
 #'    must be odd and >= 3.
 #'  }
 #' }
 #'
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info and
-#'  colorbrewer2.org), or a character vector of colors. Defaults are \code{"ROY_BIG_BL"} (sequential color mode), 
-#'  \code{"Set2"} (qualitative color mode), and \code{"ROY_BIG_BL"} (diverging color mode). See the description for more 
+#'  colorbrewer2.org), or a character vector of colors. Defaults are \code{"ROY_BIG_BL"} (sequential color mode),
+#'  \code{"Set2"} (qualitative color mode), and \code{"ROY_BIG_BL"} (diverging color mode). See the description for more
 #'  details.
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is "sequential".
 #'  See the description for more details.
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer
-#'  than one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
+#'  than one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
 #'  description for more details.
 #' @param DATA_MIN (Optional) The minimum value of the data to make the palette for. Overrided by certain \code{color_values}.
 #' @param DATA_MAX (Optional) The maximum value of the data to make the palette for. Overrided by certain \code{color_values}.
@@ -149,9 +149,9 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE){
 make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL,
                            DATA_MIN=0, DATA_MAX=1){
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
-  
+
   if(DATA_MIN >= DATA_MAX){ stop("DATA_MAX must be greater than DATA_MIN") }
-  
+
   # Use default palettes if the colors are not specified.
   if(identical(colors, NULL)){
     colors <- switch(color_mode,
@@ -159,7 +159,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
                      qualitative="Set2",
                      diverging="ROY_BIG_BL")
   }
-  
+
   N_COLORS_PRE <- length(colors)
   N_COLOR_VALUES_PRE <- length(color_values)
   if(N_COLORS_PRE == 1){
@@ -184,7 +184,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
         } else if(N_COLOR_VALUES_PRE==1){
           RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, mid=color_values)
         } else if(N_COLOR_VALUES_PRE==2){
-          RBB <- ROY_BIG_BL(color_values[1], color_values[2], 
+          RBB <- ROY_BIG_BL(color_values[1], color_values[2],
                             mid=(color_values[1]+color_values[2])/2)
         } else if(N_COLOR_VALUES_PRE==3){
           RBB <- ROY_BIG_BL(color_values[1], color_values[3], mid=color_values[2])
@@ -202,7 +202,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
         warning(paste("The RColorBrewer palette type is", brewer_mode, "but the color_mode is", color_mode))
       }
       colors <- brewer.pal(as.numeric(colors_info$maxcolors), colors)
-      
+
     } else {
       stop("The `colors` argument must be 'ROY_BIG_BL', an palette listed in `RColorBrewer::brewer.pal.info`, or
         a character vector of color hex codes or standard R names with a length greater than one.")
@@ -220,22 +220,22 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
     if(!(N_COLOR_VALUES %in% valid_color_values_lengths)){
       stop(paste("There are", N_COLOR_VALUES, "color values--this is not compatible for the", color_mode, "color mode. See the description for details."))
     }
-    
+
     # Order color values from lowest to highest, if not already sorted.
     color_values_order <- order(color_values)
     color_values <- color_values[color_values_order]
     # If the color values are descending, reverse the color scale.
     if(identical(color_values_order, length(color_values):1)){
       colors <- colors[length(colors):1]
-    } else if(N_COLOR_VALUES==N_COLORS){ 
-      colors <- colors[color_values_order] 
+    } else if(N_COLOR_VALUES==N_COLORS){
+      colors <- colors[color_values_order]
     }
-    
+
     # Replace infinite values with data bounds.
     if(identical(color_values[1], -Inf)){ color_values[1] <- DATA_MIN }
     if(identical(color_values[N_COLOR_VALUES], Inf)){ color_values[N_COLOR_VALUES] <- DATA_MAX }
   }
-  
+
   # Sequential
   if(color_mode == "sequential"){
     pal_cols <- colors
@@ -250,11 +250,11 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
         stop("The sequential color mode requires length(color_values) == 0 (NULL), 2, or length(colors).")
       }
     }
-    
+
     #Qualitative
   } else if(color_mode=="qualitative"){
-    if(!identical(c(DATA_MIN, DATA_MAX), round(c(DATA_MIN, DATA_MAX)))){ 
-      stop("Data bounds must be integers for qualitative color mode.") 
+    if(!identical(c(DATA_MIN, DATA_MAX), round(c(DATA_MIN, DATA_MAX)))){
+      stop("Data bounds must be integers for qualitative color mode.")
       }
     N_DATA_VALUES <- DATA_MAX - DATA_MIN + 1
     if(identical(color_values, NULL)){
@@ -271,7 +271,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
     } else {
       stop("The qualitative color mode requires length(color_values) == 0 (NULL) or length(colors).")
     }
-    
+
     # Diverging
   } else if(color_mode=="diverging"){
     pal_cols <- colors
@@ -286,7 +286,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
           mid_val <- color_values
           if((mid_val <= DATA_MIN) | (mid_val >= DATA_MAX)){
             stop("If one color_value is used with the diverging color_mode, it represents the midpoint of the data scale
-              and must be between the data minimum and maximum. (It does not have to be the true midpoint.) Different 
+              and must be between the data minimum and maximum. (It does not have to be the true midpoint.) Different
               bounds can be set with color_value=c(new_min, midpoint, new_max).")
           }
           min_val <- DATA_MIN
@@ -314,13 +314,13 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
   } else {
     stop(paste("Unrecognized color mode", color_mode))
   }
-  
+
   return(data.frame(color=pal_cols, value=pal_vals))
-} 
+}
 
 #' Interpolates between entries in the input palette to make a larger palette with at least MIN_COLOR_RES entries.
 #'
-#' @param pal The color palette to expand: a data.frame with two columns, color (character: standard color names 
+#' @param pal The color palette to expand: a data.frame with two columns, color (character: standard color names
 #'  or hex codes) and value (numeric).
 #' @param MIN_COLOR_RES The minimum number of entries to have in the output palette. Because of rounding, there may be more
 #'  than this number of entries.
@@ -380,23 +380,23 @@ use_color_pal <- function(data_values, pal){
 #'  surfaces on the bottom left and bottom right. If NULL (default) all present surfaces will be displayed using the most panels.
 #' @param view_mode One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
 #'  of the RGL window, save it to a file in \code{write_dir} named by \code{fname_prefix} and close it. "video" will take a series of screenshots
-#'  of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} named by \code{fname_prefix}, and then close 
+#'  of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} named by \code{fname_prefix}, and then close
 #'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro.
 #' @param view_dims A length-2 numeric vector giving the width and height of the RGL window, in pixels. If NULL (default), it will use
 #'  a 1200 x 700 pixel window for 1-panel or 4-panel layouts, and a 1920 x 560 pixel window for a 2-panel layout (because it's twice as wide).
 #' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
 #'  Default is "cifti".
 #' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory.
-#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
+#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info
 #'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
-#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the 
+#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
-#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
+#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-#'  cifti$SURF_RIGHT). If NULL, the first surface will be used. 
+#' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently,
+#'  cifti$SURF_RIGHT). If NULL, the first surface will be used.
 #' @param colorbar_position "embedded" (default) or "separate".
 #' @param colorbar_label A title for the colorbar (none by default).
 #'
@@ -404,12 +404,12 @@ use_color_pal <- function(data_values, pal){
 #' @import rgl
 #' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom fields image.plot
-cifti_view_surface <- function(cifti, idx=1, layout=NULL, 
+cifti_view_surface <- function(cifti, idx=1, layout=NULL,
   view_mode=c("widget", "image", "video"), view_dims=NULL,
   fname_prefix="cifti", write_dir=NULL,
   colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, surface=NULL,
   colorbar_position=c("embedded", "separate"), colorbar_label=""){
-  
+
   # Check that the arguments are valid.
   if(!is.cifti(cifti)) stop("cifti argument is not a valid cifti object. See is.cifti().")
   #if(length(idx) > 1) stop("Only one time/column index is supported right now.")
@@ -417,7 +417,7 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
   #if(view_mode != "widget"){ write_dir <- check_dir(write_dir) } # check_dir will be added in 1.1
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   colorbar_position <- match.arg(colorbar_position, c("embedded", "separate"))
-  
+
   # If the layout argument is not provided, all surfaces will be displayed using the most panels.
   # Separate the layout argument into which surfaces ("brainstructures") and the number of panels ("n_panels").
   if(is.null(layout)){
@@ -558,27 +558,24 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
     pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
     pal_base$value[1])
   colbar_breaks <- c(
-    colbar_min, 
+    colbar_min,
     pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
     pal$value[length(pal$value)]
   )
   colbar_labs <- switch(color_mode,
-    sequential=c(colbar_min, 
+    sequential=c(colbar_min,
                   pal_base$value[nrow(pal_base)]),
     qualitative=1:N_VALUES,
-    diverging=c(colbar_min, 
-                pal_base$value[as.integer(ceiling(nrow(pal_base)/2))], 
+    diverging=c(colbar_min,
+                pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
                 pal_base$value[nrow(pal_base)])
   )
-  colbar_labs_digits <- ifelse(
-    diff(range(pal$value)) >=1, 0, 
-    1+ceiling(abs(log(diff(range(pal$value)), 10))))
   colorbar_kwargs = list(
-    legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color), 
+    legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
     breaks=colbar_breaks, legend.lab=colorbar_label,
     legend.cex=2, legend.shrink=.9, legend.width=2, legend.line=7, legend.mar=12,
-    axis.args=list(cex.axis=1.7, at=colbar_labs, 
-                    labels=round(colbar_labs, colbar_labs_digits))
+    axis.args=list(cex.axis=1.7, at=colbar_labs,
+                    labels=format(colbar_labs))
   )
 
   ############################################################
@@ -588,7 +585,7 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
   # Open a new RGL window.
   open3d()
   par3d(windowRect = c(20, 20, view_dims[1], view_dims[2]))
-  
+
   # Determine the panel layout.
   if(n_panels==2){
     mfrow3d(1, 2, byrow = TRUE, parent = NA, sharedMouse = TRUE)
@@ -640,13 +637,13 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
       } else if(grepl("med", p)){
         this_rot <- rot$left
       } else { this_rot <- rot$ID }
-    } 
+    }
     rgl.viewpoint(userMatrix=this_rot, zoom=1/1.5)
 
     # Add color bar scale/legend to the last panel.
     if(colorbar_position=="embedded"){
       # Suppress this warning: "calling par(new=TRUE) with no plot"
-      if(i == n_panels){ 
+      if(i == n_panels){
         bgplot3d(suppressWarnings(do.call(image.plot, colorbar_kwargs)))
       }
     }
@@ -654,7 +651,7 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
     next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
-  if(colorbar_position=="separate"){ 
+  if(colorbar_position=="separate"){
     # Suppress this warning: "calling par(new=TRUE) with no plot"
     suppressWarnings(do.call(image.plot, colorbar_kwargs))
   }
@@ -668,7 +665,7 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
 #' @param structural_img The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
 #' @param idx The time/column index of the cifti data to plot.
 #' @param plane If use_papaya=FALSE, the plane to display. Default is "axial". Other options are "sagittal" and "coronal".
-#' @param num.slices If use_papaya=FALSE, the number of slices to display. 
+#' @param num.slices If use_papaya=FALSE, the number of slices to display.
 #' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
 #' @param z_min Floor value.
 #' @param z_max Ceiling value.
@@ -726,7 +723,7 @@ cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
 #' Switch for cifti_view_surface or cifti_view_volume
 #'
 #' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
-#' @param surface_or_volume Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and 
+#' @param surface_or_volume Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and
 #'  volume otherwise
 #' @param ... Additional arguments to pass to either view function.
 #'
