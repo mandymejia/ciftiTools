@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_resample_separate.R
 \name{resample_individual}
 \alias{resample_individual}
-\title{Resample an individual surface file}
+\title{Resample an individual file (with its ROI)}
 \usage{
 resample_individual(
   original_fname,
@@ -17,7 +17,7 @@ resample_individual(
   read_dir = NULL,
   write_dir = NULL,
   sphere_target_dir = NULL,
-  wb_dir = NULL
+  wb_path = NULL
 )
 }
 \arguments{
@@ -51,7 +51,7 @@ look for them in. If NULL (default), use the current working directory. \code{wr
 \item{sphere_target_dir}{If \code{sphere_target_keep} and the file names of \code{c_original_fnames} are relative, this is the directory to 
 write and look for them in. The default is "./helper_files_resampling".}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{

@@ -9,7 +9,7 @@
 #'
 # # cifti_save <- function(cifti, fname_out, wb_cmd=NULL){
 # #
-# #   wb_cmd <- get_wb_cmd_path(wb_dir)
+# #   wb_cmd <- get_wb_cmd_path(wb_path)
 # #
 # #   cifti_extn <- get_cifti_extn(fname_out)
 # #   if(grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'

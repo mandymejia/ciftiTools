@@ -25,7 +25,7 @@
 # #' @importFrom oro.nifti readNIfTI
 # #'
 # #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and install the Connectome Workbench,
-# #' available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' executable also works.)
+# #' available from https://www.humanconnectome.org/software/get-connectome-workbench. The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' executable also works.)
 # #'
 # #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 # #' 3 Accumbens-L
@@ -53,7 +53,7 @@
 #   make_helper_files=TRUE, delete_helper_files=FALSE, outdir=NULL, 
 #   resample=NULL, fname_sphereOrigL, fname_sphereOrigR, verbose=FALSE){
 
-#   wb_cmd <- get_wb_cmd_path(wb_dir)
+#   wb_cmd <- get_wb_cmd_path(wb_path)
 #   if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
 #   if(is.null(outdir)){

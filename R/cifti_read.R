@@ -1,10 +1,10 @@
 #' Reads in CIFTI data
 #'
-#' @description Wrapper function to read CIfTI data by separating it into GIfTI and NIfTI files (\code{cifti_separate}), 
+#' @description Wrapper function to read CIFTI data by separating it into GIfTI and NIfTI files (\code{cifti_separate}), 
 #'  optionally resampling them (\code{cifti_resample_separate}) (NOT YET IMPLEMENTED), and then reading each in
 #'  (\code{cifti_read_from_separate}).
 #'
-#' @param cifti_fname File path of CIfTI-format data (ending in .d*.nii) to read in.
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii) to read in.
 #' @param brainstructures A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 #'  \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
 #'  default is \code{c("left","right","subcortical")} (all brain structures).
@@ -16,7 +16,9 @@
 #'  they will be read in and will not be deleted even if \code{sep_keep==FALSE}.
 #' @param resamp_res Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL or 
 #'  FALSE, do not perform resampling. NOT YET IMPLEMENTED.
+#' @param sphereL_fname,sphereR_fname Helper sphere files needed for resampling
 #' @param resamp_kwargs (Optional) Additional arguments to cifti_resample_separate in the form of a list.
+#' @param resamp_keep Should files made by \code{cifti_resample} be kept? Default is FALSE (delete after).
 #' @param read_from_separate_kwargs (Optional) Additional arguments to cifti_read_from_separate in the form of a list.
 #' @param surfL_fname,surfR_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 #'  representing the left/right cortex. The path should be absolute, or relative to 
@@ -24,7 +26,7 @@
 #' @param surf_label (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 #'  (e.g. "midthickness", "inflated", etc.). Should match the lengths of \code{surfL_fname} and/or \code{surfR_fname} 
 #'  if they are provided. Otherwise, ignored.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+#' @param wb_path (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 #'  \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.
 #' @param verbose Should occasional updates be printed? Default is FALSE.
 #'
@@ -35,7 +37,7 @@
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
 #'  executable also works.)
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
@@ -61,19 +63,22 @@
 #'
 cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   sep_kwargs=NULL, sep_keep=FALSE, # cifti_separate
-  resamp_res=NULL, resamp_sphereL_fname=NULL, resamp_sphereR_fname=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
+  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
   read_from_separate_kwargs=NULL, surfL_fname=NULL, surfR_fname=NULL, surf_label=NULL, # cifti_read_from_separate
-  wb_dir=NULL, verbose=FALSE){
+  wb_path=NULL, verbose=FALSE){
 
   #######
   # setup
   #######
 
+  brainstructures <- match.arg(brainstructures, c("left","right","subcortical"), several.ok=TRUE)
+  stopifnot(length(unique(brainstructures)) == length(brainstructures))
+
   ################
   # cifti_separate
   ################
 
-  if(verbose){ cat("Separating CIfTI file.\n") }
+  if(verbose){ cat("Separating CIFTI file.\n") }
   
   # Check that the cifti_separate arguments are valid.
   sep_kwargs_allowed <- names(as.list(args(ciftiTools::cifti_separate)))
@@ -82,7 +87,7 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     names(sep_kwargs) <- match.arg(names(sep_kwargs), sep_kwargs_allowed, several.ok=TRUE)
     stopifnot(length(unique(names(sep_kwargs))) == length(names(sep_kwargs)))
   } else {
-    sep_kwargs <- vector(length=0, mode="list")
+    sep_kwargs <- list(brainstructures=brainstructures)
   }
   # It will read cifti_fname or sep_kwargs["cifti_fname"]. Raise an error if both are provided and they differ.
   if("cifti_fname" %in% sep_kwargs){
@@ -108,7 +113,7 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   labels_to_read <- vector("character", 0)
   if("left" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexL") }
   if("right" %in% brainstructures){ labels_to_read <- c(labels_to_read, "cortexR") }
-  if("sub" %in% brainstructures){ labels_to_read <- c(labels_to_read, "subcortVol", "subcortLab") }
+  if("subcortical" %in% brainstructures){ labels_to_read <- c(labels_to_read, "subcortVol", "subcortLab") }
   files_to_read <- as.list(sep_result$fname)
   names(files_to_read) <- sep_result$label
   files_to_read <- files_to_read[names(files_to_read) %in% labels_to_read]
@@ -118,7 +123,14 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
   #########################
 
   if(!identical(resamp_res, NULL) & !identical(resamp_res, FALSE)){
-    if(verbose){ cat("Resampling CIfTI file.\n") }
+    if(verbose){ cat("Resampling CIFTI file.\n") }
+
+    if("left" %in% brainstructures){
+      if(is.null(sphereL_fname)){ stop("To resample the left cortex, `sphereL_fname` must be provided to `cifti_read`.") }
+    }
+    if("right" %in% brainstructures){
+      if(is.null(sphereR_fname)){ stop("To resample the right cortex, `sphereR_fname` must be provided to `cifti_read`.") }
+    }
 
     # Check that the cifti_resample_separate arguments are valid.
     resamp_kwargs_allowed <- names(as.list(args(ciftiTools::cifti_resample_separate)))
@@ -129,34 +141,46 @@ cifti_read <- function(cifti_fname, brainstructures=c("left","right","subcortica
     } else {
       resamp_kwargs <- vector(length=0, mode="list")
     }
-    resamp_kwargs["c_original_fnames"] <- files_to_read
+    resamp_kwargs[["c_original_fnames"]] <- files_to_read[!grepl("subcort", names(files_to_read))] # labels don't get resampled
     resamp_kwargs <- c(resamp_kwargs, list(
-      surfL_fname=surfL_original_fname, surfR_fname=surfR_original_fname, 
+      surfL_original_fname=surfL_fname, surfR_original_fname=surfR_fname, 
       res_target=resamp_res,
-      sphereL_original_fname=resamp_sphereL_fname, sphereR_original_fname=resamp_sphereR_fname
+      sphereL_original_fname=sphereL_fname, sphereR_original_fname=sphereR_fname
     ))
-    # If resamp_keep==FALSE, use a temporary directory
+    # If resamp_keep==FALSE, use a temporary directory.
     if(!resamp_keep){
       if(!is.null(resamp_kwargs$write_dir)){
         if(verbose){ cat("Warning: using temporary directory instead of resamp_kwargs$write_dir because resamp_keep is FALSE.\n") }
       }
       resamp_kwargs$write_dir <- tempdir()
     }
-    # Do cifti_resample_separate
+    # Do cifti_resample_separate .
     resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
     resamp_result <- do.call(cifti_resample_separate, resamp_kwargs)
+    
+    # Replace cortical data to read in.
+    for(i in 1:length(files_to_read)){
+      if(names(files_to_read)[i] %in% resamp_result$label){
+        files_to_read[i] <- resamp_result$fname[resamp_result$label == names(files_to_read)[i]]
+      }
+    }
+    # Replace surface geometry to read in.
+    resamp_surfL_fname <- resamp_result$fname[grepl("surfL", resamp_result$label)]
+    if(length(resamp_surfL_fname) > 0){ surfL_fname <- resamp_surfL_fname }
+    resamp_surfR_fname <- resamp_result$fname[grepl("surfR", resamp_result$label)]
+    if(length(resamp_surfR_fname) > 0){ surfR_fname <- resamp_surfR_fname }
   }
 
   ##########################
   # cifti_read_from_separate
   ##########################
 
-  # Read the CIfTI file from the separated files.
-  if(verbose){ cat("Reading GIfTI and NIfTI files to form the CIfTI.\n") }
+  # Read the CIFTI file from the separated files.
+  if(verbose){ cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
   # Note: read_dir will only affect the surfaces because the cifti file paths are absolute.
   read_from_separate_kwargs <- c(
     files_to_read,
-    list(surfL_fname=surfL_fname, surfR_fname=surfR_fname, read_dir=NULL, surf_label=surf_label, wb_dir=wb_dir)
+    list(surfL_fname=surfL_fname, surfR_fname=surfR_fname, read_dir=NULL, surf_label=surf_label, wb_path=wb_path)
   )
   read_from_separate_kwargs[sapply(read_from_separate_kwargs, is.null)] <- NULL
   result <- do.call(cifti_read_from_separate, read_from_separate_kwargs)

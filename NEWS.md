@@ -10,6 +10,7 @@
     * `gifti_left` is now `surfL` (likewise for right)
     * `sphere_orig_L` is now `sphereL_original` (likewise for right)
     * `sphere_target_L` is now `sphereL_target` (likewise for right)
+    * `target_res` in `make_helper_spheres` is now `resamp_res` (to match `cifti_read`)
     * ... (more to document)
 * Added `cifti_read_flat` to read cortical and surface data together as a single matrix (faster). `cifti_flatten` to convert a cifti object to this same matrix.
 * New `cifti_view_surface` using the `rgl` package.

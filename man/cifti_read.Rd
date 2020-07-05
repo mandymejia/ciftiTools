@@ -10,18 +10,20 @@ cifti_read(
   sep_kwargs = NULL,
   sep_keep = FALSE,
   resamp_res = NULL,
+  sphereL_fname = NULL,
+  sphereR_fname = NULL,
   resamp_kwargs = NULL,
   resamp_keep = FALSE,
   read_from_separate_kwargs = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
   surf_label = NULL,
-  wb_dir = NULL,
+  wb_path = NULL,
   verbose = FALSE
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIfTI-format data (ending in .d*.nii) to read in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read in.}
 
 \item{brainstructures}{A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
@@ -38,7 +40,11 @@ they will be read in and will not be deleted even if \code{sep_keep==FALSE}.}
 \item{resamp_res}{Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL or 
 FALSE, do not perform resampling. NOT YET IMPLEMENTED.}
 
+\item{sphereL_fname, sphereR_fname}{Helper sphere files needed for resampling}
+
 \item{resamp_kwargs}{(Optional) Additional arguments to cifti_resample_separate in the form of a list.}
+
+\item{resamp_keep}{Should files made by \code{cifti_resample} be kept? Default is FALSE (delete after).}
 
 \item{read_from_separate_kwargs}{(Optional) Additional arguments to cifti_read_from_separate in the form of a list.}
 
@@ -50,7 +56,7 @@ representing the left/right cortex. The path should be absolute, or relative to
 (e.g. "midthickness", "inflated", etc.). Should match the lengths of \code{surfL_fname} and/or \code{surfR_fname} 
 if they are provided. Otherwise, ignored.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 
 \item{verbose}{Should occasional updates be printed? Default is FALSE.}
@@ -61,14 +67,14 @@ An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, C
  were provided in the arguments, the list will also contain SURF_LEFT and SURF_RIGHT.
 }
 \description{
-Wrapper function to read CIfTI data by separating it into GIfTI and NIfTI files (\code{cifti_separate}), 
+Wrapper function to read CIFTI data by separating it into GIfTI and NIfTI files (\code{cifti_separate}), 
  optionally resampling them (\code{cifti_resample_separate}) (NOT YET IMPLEMENTED), and then reading each in
  (\code{cifti_read_from_separate}).
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
+ The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
  executable also works.)
 
 The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:

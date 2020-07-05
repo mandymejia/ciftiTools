@@ -6,7 +6,6 @@
 \usage{
 cifti_view_surface(
   cifti,
-  surface = NULL,
   idx = 1,
   layout = NULL,
   view_mode = c("widget", "image", "video"),
@@ -16,15 +15,13 @@ cifti_view_surface(
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
   color_values = NULL,
+  surface = NULL,
   colorbar_position = c("embedded", "separate"),
   colorbar_label = ""
 )
 }
 \arguments{
 \item{cifti}{Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
-
-\item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-cifti$SURF_RIGHT). If NULL, the first surface will be used.}
 
 \item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.}
 
@@ -57,6 +54,9 @@ See the \code{ciftiTools::make_color_pal()} description for more details.}
 \item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 \code{ciftiTools::make_color_pal()} description for more details.}
+
+\item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
+cifti$SURF_RIGHT). If NULL, the first surface will be used.}
 
 \item{colorbar_position}{"embedded" (default) or "separate".}
 

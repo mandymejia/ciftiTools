@@ -7,8 +7,10 @@
 #' @param brainstructures "subcortical" for just the subcortical voxels, or "everything" to include non-zero
 #'  brainordinates from the left and right cortices.
 #'
-#' @return A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIfTI.
+#' @return A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI.
 #' @export
+#'
+#' @importFrom stats sd
 #'
 cifti_flatten <- function(cif, brainstructures=c("subcortical", "everything")){
 
@@ -35,8 +37,8 @@ cifti_flatten <- function(cif, brainstructures=c("subcortical", "everything")){
   # CORTEX
   if(brainstructures=="everything"){
     dat <- rbind(
-      cif$CORTEX_LEFT[apply(cif$CORTEX_LEFT, 1, sd) > EPS,],
-      cif$CORTEX_RIGHT[apply(cif$CORTEX_RIGHT, 1, sd) > EPS,],
+      cif$CORTEX_LEFT[apply(cif$CORTEX_LEFT, 1, stats::sd) > EPS,],
+      cif$CORTEX_RIGHT[apply(cif$CORTEX_RIGHT, 1, stats::sd) > EPS,],
       dat
     )
   }

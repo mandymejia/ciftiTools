@@ -1,29 +1,29 @@
 #' Reads in CIFTI data
 #'
-#' @description Reads CIfTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
+#' @description Reads CIFTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
 #'  Workbench command.
 #'
-#' @param cifti_fname File path of CIfTI-format data (ending in .d*.nii) to read in.
-#' @param keep \code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. If 
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii) to read in.
+#' @param keep \code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
 #'  a new GIfTI file was made by this function call, should it be deleted once it is read in? Default is FALSE (delete it). 
 #'  If \code{overwrite==FALSE} and the GIfTI already exists, it will not be deleted even if \code{keep==FALSE}.
-#' @param gifti_fname File path of GIfTI-format data to save the CIfTI as.
-#' @param overwrite \code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. Should the 
+#' @param gifti_fname File path of GIfTI-format data to save the CIFTI as.
+#' @param overwrite \code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. Should the 
 #'  GIfTI file be overwritten if it already exists? Default is FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
 #'  the existing file is used.
 #' @param write_dir The directory in which to save the GIfTI (or look for it if \code{overwrite==FALSE}). If NULL, 
 #'  defaults to the current working directory.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+#' @param wb_path (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 #'  \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.
 #' 
 #' @importFrom gifti readGIfTI
 #'
-#' @return A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIfTI file.
+#' @return A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI file.
 #' @export
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_dir' argument is the full file path to the 'wb_command' executable file.
+#'  The 'wb_path' argument is the full file path to the 'wb_command' executable file.
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 #' 3 Accumbens-L
@@ -47,20 +47,20 @@
 #' 21 Thalamus-R
 #'
 cifti_read_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL, 
-  overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
+  overwrite=TRUE, write_dir=NULL, wb_path=NULL){
 
-  wb_cmd <- get_wb_cmd_path(wb_dir)
+  wb_cmd <- get_wb_cmd_path(wb_path)
 
   cifti_fname <- make_abs_path(cifti_fname)
   if(!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
-  # Get the components of the CIfTI file path.
+  # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname) 
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
   # Check that write_dir is valid. Use the current working directory if no write_dir is given.
   write_dir <- check_dir(write_dir, default=getwd())
 
-  # If gifti_fname is not provided, use the CIfTI_fname but replace the extension with "flat.gii".
+  # If gifti_fname is not provided, use the CIFTI_fname but replace the extension with "flat.gii".
   if(identical(gifti_fname, NULL)){
     gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }

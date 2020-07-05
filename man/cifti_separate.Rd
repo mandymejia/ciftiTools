@@ -17,11 +17,11 @@ cifti_separate(
   subcort_ROI_fname = NULL,
   overwrite = TRUE,
   write_dir = NULL,
-  wb_dir = NULL
+  wb_path = NULL
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIfTI-format data (ending in .d*.nii) to read in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read in.}
 
 \item{brainstructures}{A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
@@ -45,7 +45,7 @@ path is relative, they will be saved in \code{write_dir}.}
 
 \item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
@@ -58,7 +58,7 @@ Separates a CIFTI file into GIfTIs for the cortical (left and right) structures,
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
+ The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
  executable also works.)
 
 The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:

@@ -10,39 +10,39 @@ cifti_read_flat(
   gifti_fname = NULL,
   overwrite = TRUE,
   write_dir = NULL,
-  wb_dir = NULL
+  wb_path = NULL
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIfTI-format data (ending in .d*.nii) to read in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read in.}
 
-\item{keep}{\code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. If 
+\item{keep}{\code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
 a new GIfTI file was made by this function call, should it be deleted once it is read in? Default is FALSE (delete it). 
 If \code{overwrite==FALSE} and the GIfTI already exists, it will not be deleted even if \code{keep==FALSE}.}
 
-\item{gifti_fname}{File path of GIfTI-format data to save the CIfTI as.}
+\item{gifti_fname}{File path of GIfTI-format data to save the CIFTI as.}
 
-\item{overwrite}{\code{cifti_read_flat} works by saving the CIfTI as a GIfTI file, and then reading it in. Should the 
+\item{overwrite}{\code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. Should the 
 GIfTI file be overwritten if it already exists? Default is FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
 the existing file is used.}
 
 \item{write_dir}{The directory in which to save the GIfTI (or look for it if \code{overwrite==FALSE}). If NULL, 
 defaults to the current working directory.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
-A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIfTI file.
+A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI file.
 }
 \description{
-Reads CIfTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
+Reads CIFTI data as a single large matrix. This uses the -cifti-convert -to-gifti-ext Connectome
  Workbench command.
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_dir' argument is the full file path to the 'wb_command' executable file.
+ The 'wb_path' argument is the full file path to the 'wb_command' executable file.
 
 The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
 3 Accumbens-L

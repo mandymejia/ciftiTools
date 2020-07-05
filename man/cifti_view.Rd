@@ -11,6 +11,8 @@ cifti_view(cifti, surface_or_volume = NULL, ...)
 
 \item{surface_or_volume}{Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and 
 volume otherwise}
+
+\item{...}{Additional arguments to pass to either view function.}
 }
 \description{
 Switch for cifti_view_surface or cifti_view_volume

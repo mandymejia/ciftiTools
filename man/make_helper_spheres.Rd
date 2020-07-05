@@ -7,9 +7,9 @@
 make_helper_spheres(
   sphereL_fname,
   sphereR_fname,
-  target_res,
+  resamp_res,
   write_dir = NULL,
-  wb_dir = NULL
+  wb_path = NULL
 )
 }
 \arguments{
@@ -17,11 +17,11 @@ make_helper_spheres(
 
 \item{sphereR_fname}{File path to right-hemisphere spherical GIFTI to be created}
 
-\item{target_res}{Target resolution of spherical GIFTIs to be created (approximate number of vertices per hemisphere)}
+\item{resamp_res}{Target resolution of spherical GIFTIs to be created (approximate number of vertices per hemisphere)}
 
 \item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{

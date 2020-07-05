@@ -3,7 +3,7 @@
 #' @description Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 
 #'  subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
 #'
-#' @param cifti_fname File path of CIfTI-format data (ending in .d*.nii) to read in.
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii) to read in.
 #' @param brainstructures A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
 #'  \code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
 #'  default is \code{c("left","right","subcortical")} (all brain structures).
@@ -18,7 +18,7 @@
 #' @param subcort_ROI_fname File name for volume ROI.
 #' @param overwrite If all NIfTI or GIfTI files already exists, should they be overwritten? Default is TRUE. 
 #' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
-#' @param wb_dir (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+#' @param wb_path (Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 #'  \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.
 #'
 #' @return A data frame with column names "label", "fname", and "existed", and rows corresponding to each separate file.
@@ -26,7 +26,7 @@
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
 #'  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
 #'  executable also works.)
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
@@ -53,14 +53,14 @@
 cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcortical"), 
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
   get_ROI=FALSE, cortexL_ROI_fname=NULL, cortexR_ROI_fname=NULL, subcort_ROI_fname=NULL, 
-  overwrite=TRUE, write_dir=NULL, wb_dir=NULL){
+  overwrite=TRUE, write_dir=NULL, wb_path=NULL){
 
-  wb_cmd <- get_wb_cmd_path(wb_dir)
+  wb_cmd <- get_wb_cmd_path(wb_path)
 
   cifti_fname <- make_abs_path(cifti_fname)
   if(!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
 
-  # Get the components of the CIfTI file path.
+  # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname) 
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
@@ -84,7 +84,7 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
       if(is.null(cortexL_ROI_fname)){ cortexL_ROI_fname <- default_fname("cortexL_ROI", extn_cifti, bname_cifti) }
       cortexL_ROI_fname <- make_abs_path(cortexL_ROI_fname, write_dir)
     } else { cortexL_ROI_fname <- "" }
-  } else { cortexL_fname <- "" }
+  } else { cortexL_fname <- cortexL_ROI_fname <- "" }
   if(do['right']){
     if(is.null(cortexR_fname)){ cortexR_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
     cortexR_fname <- make_abs_path(cortexR_fname, write_dir)
@@ -92,7 +92,7 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
       if(is.null(cortexR_ROI_fname)){ cortexR_ROI_fname <- default_fname("cortexR_ROI", extn_cifti, bname_cifti) }
       cortexR_ROI_fname <- make_abs_path(cortexR_ROI_fname, write_dir)
     } else { cortexR_ROI_fname <- "" }
-  } else { cortexR_fname <- "" }
+  } else { cortexR_fname <- cortexR_ROI_fname <- "" }
   if(do['sub']){
     if(is.null(subcortVol_fname)){ subcortVol_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
     subcortVol_fname <- make_abs_path(subcortVol_fname, write_dir)
@@ -103,7 +103,7 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right","subcor
       subcort_ROI_fname <- make_abs_path(subcort_ROI_fname, write_dir)
     } else { subcort_ROI_fname <- "" }
   } else { 
-    subcortVol_fname <- subcortLab_fname <- "" 
+    subcortVol_fname <- subcortLab_fname <- subcort_ROI_fname <- "" 
   }
 
   # Collect the absolute paths to each file in a data.frame to return later. Also record whether each existed before the

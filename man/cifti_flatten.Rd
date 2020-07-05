@@ -13,7 +13,7 @@ cifti_flatten(cif, brainstructures = c("subcortical", "everything"))
 brainordinates from the left and right cortices.}
 }
 \value{
-A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIfTI.
+A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI.
 }
 \description{
 Flattens a "cifti" object into a single matrix.

@@ -13,7 +13,7 @@ cifti_read_from_separate(
   surfR_fname = NULL,
   surf_label = "surface",
   read_dir = NULL,
-  wb_dir = NULL
+  wb_path = NULL
 )
 }
 \arguments{
@@ -38,7 +38,7 @@ provided. Otherwise, ignored.}
 \item{read_dir}{If any of the file names are relative, this is the directory to look for them in. If NULL (default),
 use the current working directory. \code{read_dir} will not affect files specified with absolute paths.}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
@@ -52,7 +52,7 @@ Reads in CIFTI data from the separated left and right cortical GIfTI files, the 
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_dir' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
+ The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
  executable also works.)
 
 The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:

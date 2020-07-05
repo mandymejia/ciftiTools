@@ -3,14 +3,8 @@
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
 #'
-#' @param c_original_fnames File paths of CIFTI file components in original resolution. Should be a named character vector with values
-#'  as the file names, and names as the file label: each name should be one of "cortexL", "cortexR", "subcortVol", "subcortLab",
-#'  "cortexL_ROI", "cortexR_ROI", or "subcort_ROI". Alternatively, this can be the file name of the original CIFTI that was separated 
-#'  into files named by default using ciftiTools::cifti_separate_default_suffix . All existing files in \code{c_original_fnames} will be resampled.
-#' @param c_target_fnames File paths of CIFTI file components in target resolution to make. Should be a named character vector with values
-#'  as the file names, and names as the file label: each name should be one of "cortexL", "cortexR", "subcortVol", "subcortLab",
-#'  "cortexL_ROI", "cortexR_ROI", or "subcort_ROI". Alternatively, this can be the file name of the original CIFTI that was separated 
-#'  into files named by default using ciftiTools::cifti_separate_default_suffix .
+#' @param cifti_original_fname A CIFTI file to resample.
+#' @param cifti_target_fname Where to save the resampled CIFTI file.
 #' @param surfL_original_fname,surfR_original_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
 #'  representing left/right cortex to resample.
 #' @param surfL_target_fname,surfR_target_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
@@ -23,10 +17,10 @@
 #' @param sphere_target_keep Should helper files be deleted at the end of this function call, if they were created? Default is FALSE.
 #' @param sphere_target_overwrite Logical indicating whether sphere[L/R]_target_fname should be overwritten if it already exists. Default is TRUE.
 #' @param overwrite Logical indicating whether each target file should be overwritten if it already exists.
-#' @param read_dir If the file names of \code{c_original_fnames}, \code{surfL_original_fname}, or \code{surfR_original_fname} are relative, this is the 
+#' @param read_dir If the file names of \code{cifti_original_fname}, \code{surfL_original_fname}, or \code{surfR_original_fname} are relative, this is the 
 #'  directory to look for them in. If NULL (default), use the current working directory. \code{read_dir} will not affect files specified 
 #   with absolute paths.
-#' @param write_dir If the file names of \code{c_target_fnames} or surf[L/R]_original_fname are relative, this is the directory to look for them in.
+#' @param write_dir If the file names of \code{cifti_target_fname} or surf[L/R]_original_fname are relative, this is the directory to look for them in.
 #'  Defaults to the current working directory.
 #' @param sphere_target_dir If \code{sphere_target_keep} and the file names of \code{c_original_fnames} are relative, this is the directory to 
 #'  write and look for them in. The default is "./helper_files_resampling".
@@ -41,7 +35,7 @@
 #' Step 1: Generate spheres in the target resolution (if not already existing and provided)
 #' Step 2: Use -metric-resample to resample surface/cortex files into target resolution
 #' Step 3: Use -surface-resample to resample the gifti files (if provided) into target resolution
-cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL, 
+cifti_resample_separate <- function(cifti_original_fname, cifti_target_fname=NULL, 
   surfL_original_fname=NULL, surfR_original_fname=NULL, surfL_target_fname=NULL, surfR_target_fname=NULL,
   res_target, 
   sphereL_original_fname, sphereR_original_fname, 
@@ -54,29 +48,8 @@ cifti_resample_separate <- function(c_original_fnames, c_target_fnames=NULL,
   # Check Arguments
   ## c_original_fnames
   read_dir <- check_dir(read_dir)
-  possible_file_labels <- c("cortexL", "cortexR", "subcortVol", "cortexL_ROI", "cortexR_ROI", "subcort_ROI")
-  if(length(c_original_fnames)==1 & grepl("\\.d.*.nii$", c_original_fnames)){ # .d*.nii or .d*.nii where * is tseries or scalar
-    c_original_fnames <- as.list(possible_file_labels)
-    names(c_original_fnames) <- c_original_fnames
-    c_original_fnames <- sapply(c_original_fnames, cifti_separate_default_suffix)
-    c_original_fnames <- make_abs_path(c_original_fnames, read_dir)
-    if(sum(file.exists(c_original_fnames)) < 1){
-      stop(paste("The `c_original_fnames` argument is", c_original_fnames, ", a NIfTI file name.",
-                 "However, no separated files with default names exist. The files that were looked for are:\n\n", 
-                 paste(as.character(c_original_fnames), collapse="\n")))
-    }
-    c_original_fnames <- c_original_fnames[file.exists(c_original_fnames)]
-  } else {
-    names(c_original_fnames) <- match.arg(names(c_original_fnames), possible_file_labels, several.ok=TRUE)
-    stopifnot(length(unique(names(c_original_fnames))) == length(c_original_fnames))
-    c_original_fnames <- lapply(c_original_fnames, make_abs_path, read_dir)
-    if(!all(sapply(c_original_fnames, file.exists))){
-      stop(do.call(paste, c("This file(s) to resample does not exist:", 
-                            as.character(c_original_fnames)[!sapply(c_original_fnames, file.exists)])))
-      stop(paste("This file(s) to resample does not exist:\n\n",
-                 paste(as.character(c_original_fnames)[!sapply(c_original_fnames, file.exists)], collapse="\n")))
-    }
-  }
+  cifti_original_fname <- make_abs_path(cifti_original_fname, read_dir)
+  stopifnot(file.exists(cifti_original_fname))
   ## c_target_fnames
   original_to_target_fname <- function(original_fname, res_target){
     bname <- basename(original_fname)

@@ -14,26 +14,26 @@ cifti_resample_separate(
   res_target,
   sphereL_original_fname,
   sphereR_original_fname,
-  sphereL_target_fname = "Sphere.target.L.surf.gii",
-  sphereR_target_fname = "Sphere.target.R.surf.gii",
+  sphereL_target_fname = NULL,
+  sphereR_target_fname = NULL,
   sphere_target_keep = FALSE,
   sphere_target_overwrite = TRUE,
   overwrite = TRUE,
   read_dir = NULL,
   write_dir = NULL,
   sphere_target_dir = NULL,
-  wb_dir = NULL
+  wb_path = NULL
 )
 }
 \arguments{
 \item{c_original_fnames}{File paths of CIFTI file components in original resolution. Should be a named character vector with values
 as the file names, and names as the file label: each name should be one of "cortexL", "cortexR", "subcortVol", "subcortLab",
-"cortexL_ROI", "cortexR_ROI", or "subcort_ROI". Alternatively, this can be the file name of the original CIfTI that was separated 
+"cortexL_ROI", "cortexR_ROI", or "subcort_ROI". Alternatively, this can be the file name of the original CIFTI that was separated 
 into files named by default using ciftiTools::cifti_separate_default_suffix . All existing files in \code{c_original_fnames} will be resampled.}
 
 \item{c_target_fnames}{File paths of CIFTI file components in target resolution to make. Should be a named character vector with values
 as the file names, and names as the file label: each name should be one of "cortexL", "cortexR", "subcortVol", "subcortLab",
-"cortexL_ROI", "cortexR_ROI", or "subcort_ROI". Alternatively, this can be the file name of the original CIfTI that was separated 
+"cortexL_ROI", "cortexR_ROI", or "subcort_ROI". Alternatively, this can be the file name of the original CIFTI that was separated 
 into files named by default using ciftiTools::cifti_separate_default_suffix .}
 
 \item{surfL_original_fname, surfR_original_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
@@ -48,7 +48,7 @@ representing left/right cortex to save the resampled data as. Each should corres
 (compatible with cifti_orig) .}
 
 \item{sphereL_target_fname, sphereR_target_fname}{File path of [left/right]-hemisphere spherical GIFTI files in targetinal resolution 
-(compatible with cifti_Target) . Default is "Sphere.target.[L/R].surf.gii"}
+(compatible with cifti_Target) . NULL (default) will be named as "Resampled_[res_target]_[basename(sphere[L/R]_original_fname)]"}
 
 \item{sphere_target_keep}{Should helper files be deleted at the end of this function call, if they were created? Default is FALSE.}
 
@@ -65,14 +65,14 @@ Defaults to the current working directory.}
 \item{sphere_target_dir}{If \code{sphere_target_keep} and the file names of \code{c_original_fnames} are relative, this is the directory to 
 write and look for them in. The default is "./helper_files_resampling".}
 
-\item{wb_dir}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
+\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
 \code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
 Logical indicating whether resampled CIFTI file was created.
 }
 \description{
-Performs spatial resampling of CIfTI data on the cortical surface
+Performs spatial resampling of CIFTI data on the cortical surface
 }
 \details{
 Performs resampling of CIFTI files using Connectome Workbench tools.  Several helper files must be created:
