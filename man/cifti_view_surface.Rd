@@ -18,7 +18,6 @@ cifti_view_surface(
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
   color_values = NULL,
-  color_NA = "white",
   surfL = NULL,
   surfR = NULL,
   colorbar_position = c("bottom", "right", "separate"),
@@ -32,10 +31,10 @@ cifti_view_surface(
 
 \item{hemisphere}{Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
-colored by \code{color_NA}. Each cortex will be shown in a separate panel row within the RGL window (exception: see \code{both_lateral_together}).}
+colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window (exception: see \code{both_lateral_together}).}
 
 \item{view}{Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
-will be shown in a separate panel column within the RGL window.}
+will be shown in a separate panel row within the RGL window.}
 
 \item{both_lateral_together}{If only the lateral views of both hemisphers are to be shown, the hemispheres can be viewed together spatially
 by setting this argument to \code{TRUE}. Otherwise, they are displayed in separate panels (default). This argument will not affect the layout in 
@@ -67,8 +66,6 @@ See the \code{ciftiTools::make_color_pal()} description for more details.}
 \item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
-
-\item{color_NA}{The color for NA values. Default is "white".}
 
 \item{surfL, surfR}{(Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
 for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 

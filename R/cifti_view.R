@@ -379,9 +379,9 @@ use_color_pal <- function(data_values, pal, color_NA="white"){
 #' @param idx The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 #'  or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
-#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel row within the RGL window (exception: see \code{both_lateral_together}).
+#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window (exception: see \code{both_lateral_together}).
 #' @param view Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
-#'  will be shown in a separate panel column within the RGL window.
+#'  will be shown in a separate panel row within the RGL window.
 #' @param both_lateral_together If only the lateral views of both hemisphers are to be shown, the hemispheres can be viewed together spatially
 #'  by setting this argument to \code{TRUE}. Otherwise, they are displayed in separate panels (default). This argument will not affect the layout in 
 #'  other situations.
@@ -405,7 +405,6 @@ use_color_pal <- function(data_values, pal, color_NA="white"){
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param color_NA The color for NA values. Default is "white".
 #' @param surfL,surfR (Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
 #'  for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
 #'  \code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.
@@ -418,7 +417,7 @@ cifti_view_surface <- function(cifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"), both_lateral_together=FALSE,
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
   fname_prefix="cifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, color_NA="white",
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_position=c("bottom", "right", "separate"), colorbar_label=""){
 
@@ -569,8 +568,7 @@ cifti_view_surface <- function(cifti, idx=1,
     pal <- pal_base
   }
   # Map each vertex to a color by its value.
-  #cols <- apply(values, 2, use_color_pal, pal) # ???
-  cols <- use_color_pal(values, pal, color_NA=color_NA)
+  cols <- use_color_pal(values, pal) # color_NA?
   if(length(hemisphere)==2) {
     cols_left <- cols[1:nvoxL]
     cols_right <- cols[(nvoxL+1):(nvoxL+nvoxR)]
@@ -631,7 +629,7 @@ cifti_view_surface <- function(cifti, idx=1,
   
   # Determine the panel layout.
   rgl::mfrow3d(panel_nrow, panel_ncol, byrow = TRUE, parent = NA, sharedMouse = TRUE)
-  panels <- as.character(t(outer(hemisphere, view, paste0))) # by row
+  panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
   n_panels <- length(panels)
   legend_panel <- switch(colorbar_position,
     bottom = ((panel_nrow-1) * panel_ncol) + 1,
