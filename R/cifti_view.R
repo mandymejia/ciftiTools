@@ -430,17 +430,21 @@ cifti_view_surface <- function(cifti, idx=1,
   #if(length(idx) > 1) stop("Only one time/column index is supported right now.")
   # surfaces.
   if(is.null(surfL)){
-    if(is.null(cifti$SURF_LEFT$surface1)){
-      stop("The left hemisphere was requested, but no surface data was provided (cifti$SURF_LEFT or the surfL argument).")
+    if(is.null(cifti$SURF_LEFT[[1]]) & !is.null(hemisphere)){
+      if(hemisphere %in% c("both", "left")){
+        stop("The left hemisphere was requested, but no surface data was provided (cifti$SURF_LEFT or the surfL argument).")
+      }
     } else {
-      surfL <- cifti$SURF_LEFT$surface1 # to-edit
+      surfL <- cifti$SURF_LEFT[[1]] # to-edit
     }
   } else { surfL <- make_cifti_surface(surfL) }
   if(is.null(surfR)){
-    if(is.null(cifti$SURF_RIGHT$surface1)){
-      stop("The right hemisphere was requested, but no surface data was provided (cifti$SURF_RIGHT or the surfR argument).")
+    if(is.null(cifti$SURF_RIGHT[[1]]) & !is.null(hemisphere)){
+      if(hemisphere %in% c("both", "right")){
+        stop("The right hemisphere was requested, but no surface data was provided (cifti$SURF_RIGHT or the surfR argument).")
+      }    
     } else {
-      surfR <- cifti$SURF_RIGHT$surface1 # to-edit
+      surfR <- cifti$SURF_RIGHT[[1]] # to-edit
     }
   } else { surfR <- make_cifti_surface(surfR) }
   # hemisphere and view.
@@ -499,7 +503,7 @@ cifti_view_surface <- function(cifti, idx=1,
     if(is.null(cifti$CORTEX_LEFT)){ valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices)) }
     else if(!all(idx %in% 1:ncol(cifti$CORTEX_LEFT))){ valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices)) }
     else {
-      # Mask out (near-)constant voxels.
+      # Mask out (near-)constant zero voxels.
       NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < EPS
       cifti$CORTEX_LEFT[NA_mask_left,] <- NA
       valuesL <- matrix(cifti$CORTEX_LEFT[,idx], ncol=length(idx))
@@ -525,7 +529,7 @@ cifti_view_surface <- function(cifti, idx=1,
       if(is.null(cifti$CORTEX_RIGHT)){ valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices)) }
       else if(!all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))){ valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices)) }
       else {
-      # Mask out (near-)constant voxels.
+      # Mask out (near-)constant zero voxels.
       NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < EPS
       cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
       valuesR <- matrix(cifti$CORTEX_RIGHT[,idx], ncol=length(idx))
@@ -545,6 +549,7 @@ cifti_view_surface <- function(cifti, idx=1,
   nvoxL <- nrow(valuesL)
   nvoxR <- nrow(valuesR)
   values <- unlist(list(left=valuesL, right=valuesR)[hemisphere], use.names=FALSE)
+  if(all(is.na(values))){ stop("No non-constant zero data with valid surface.") }
 
   ###############################################
   # Assign colors to vertices based on intensity.
@@ -656,8 +661,9 @@ cifti_view_surface <- function(cifti, idx=1,
   for(i in 1:n_panels){
     p <- panels[i]
 
-    # Select the mesh for this panel, and orient it.
+    # Select the mesh for this panel, and determine the orientation.
     if(grepl("left", p)){
+      this_surf <- surfL
       rgl::shade3d(mesh_left, col=cols_left, specular="black", legend=TRUE)
       if(grepl("lateral", p)){
         this_rot <- rot$left
@@ -666,20 +672,17 @@ cifti_view_surface <- function(cifti, idx=1,
       } else { this_rot <- rot$ID }
     }
     if(grepl("right", p)){
+      this_surf <- surfR
       rgl::shade3d(mesh_right, col=cols_right, specular="black", legend=TRUE)
       if(grepl("lateral", p)){
         this_rot <- rot$right
       } else if(grepl("medial", p)){
         this_rot <- rot$left
       } else { this_rot <- rot$ID }
-    } 
-    if(colorbar_position=="right"){
-      if("right" %in% hemisphere){
-        surf_w_colorbar <- surfR
-      } else {
-        surf_w_colorbar <- surfL
-      }
-      displacement <- .25 * diff(range(surf_w_colorbar$vertices[,2]))
+    }
+    # Make room for color bar if positioned on the right.
+    if(colorbar_position=="right"){ #to-do: lateral_together
+      displacement <- .25 * diff(range(this_surf$vertices[,2]))
       if(grepl("lateral", p)){ displacement <- -displacement }
       if(grepl("left", p)){ displacement <- -displacement }
       this_trans <- t(rgl::translationMatrix(0, displacement, 0))
@@ -688,7 +691,7 @@ cifti_view_surface <- function(cifti, idx=1,
       this_trans <- diag(4)
     }
     this_mat <- this_rot %*% this_trans
-    rgl::rgl.viewpoint(userMatrix=this_mat)
+    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0)
 
     # Suppress this warning: "calling par(new=TRUE) with no plot"
     if(i == legend_panel){ 
