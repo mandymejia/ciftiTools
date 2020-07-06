@@ -421,8 +421,11 @@ cifti_view_surface <- function(cifti, idx=1,
   surfL=NULL, surfR=NULL,
   colorbar_position=c("bottom", "right", "separate"), colorbar_label=""){
 
-  if (!requireNamespace("rgl", quietly = TRUE)) {
+  if(!requireNamespace("rgl", quietly = TRUE)) {
     stop("Package \"rgl\" needed to use `cifti_view_surface`. Please install it.", call. = FALSE)
+  }
+  if(!capabilities("X11")){
+    stop("X11 capability is needed to open the rgl window for `cifti_view_surface`.")
   }
   
   # Check that the arguments are valid.
