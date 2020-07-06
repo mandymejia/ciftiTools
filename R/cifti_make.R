@@ -28,7 +28,7 @@ cifti_make <- function(cortexL_fname=NULL, cortexR_fname=NULL, surfL_fname=NULL,
   if(!is.null(surfL_fname)){
     numsurfL <- length(surfL_fname)
   } else if(!is.null(surfL)){
-    if(is.surface(surfL)) surfL <- list(surf1 = surfL) #for single surface case
+    if(is.cifti_surface(surfL)) surfL <- list(surf1 = surfL) #for single surface case
     numsurfL <- length(surfL)
   } else {
     numsurfL <- NULL
@@ -38,7 +38,7 @@ cifti_make <- function(cortexL_fname=NULL, cortexR_fname=NULL, surfL_fname=NULL,
   if(!is.null(surfR_fname)){
     numsurfR <- length(surfR_fname)
   } else if(!is.null(surfR)){
-    if(is.surface(surfR)) surfR <- list(surf1 = surfR) #for single surface case
+    if(is.cifti_surface(surfR)) surfR <- list(surf1 = surfR) #for single surface case
     numsurfR <- length(surfR)
   } else {
     numsurfR <- NULL
@@ -63,7 +63,7 @@ cifti_make <- function(cortexL_fname=NULL, cortexR_fname=NULL, surfL_fname=NULL,
   # #check formatting of surfR, if provided
   # if(!is.null(surfR)){
   #   if(numsurf==1) {
-  #     if(!is.surface(surfR)) stop('If only one surface provided, surfR must be a valid surface object or NULL.  See is.surface().')
+  #     if(!is.cifti_surface(surfR)) stop('If only one surface provided, surfR must be a valid surface object or NULL.  See is.cifti_surface().')
   #     surfR <- list(surface=surfR)
   #   }
   # }
@@ -86,7 +86,7 @@ cifti_make <- function(cortexL_fname=NULL, cortexR_fname=NULL, surfL_fname=NULL,
   #check formatting of surfL elements
   if(!is.null(surfL)){
     for(ii in 1:numsurf){
-      if(!is.surface(surfL[[ii]])) stop('An element of surfL is not a valid surface object.  See is.surface().')
+      if(!is.cifti_surface(surfL[[ii]])) stop('An element of surfL is not a valid surface object.  See is.cifti_surface().')
       if(!is.null(cortexL_fname)) { if(nrow(cortexL_fname) != nrow(surfL[[ii]]$vertices)) stop('cortexL_fname and left surface model(s) must have same number of vertices.')}
       class(surfL[[ii]]) <- 'surface'
     }
@@ -96,7 +96,7 @@ cifti_make <- function(cortexL_fname=NULL, cortexR_fname=NULL, surfL_fname=NULL,
   #check formatting of surfR elements
   if(!is.null(surfR)){
     for(ii in 1:numsurf){
-      if(!is.surface(surfR[[ii]])) stop('An element of surfR is not a valid surface object.  See is.surface().')
+      if(!is.cifti_surface(surfR[[ii]])) stop('An element of surfR is not a valid surface object.  See is.cifti_surface().')
       if(!is.null(cortexR_fname)) { if(nrow(cortexR_fname) != nrow(surfR[[ii]]$vertices)) stop('cortexR_fname and right surface model(s) must have same number of vertices.')}
       class(surfR[[ii]]) <- 'surface'
     }

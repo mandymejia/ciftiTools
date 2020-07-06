@@ -84,22 +84,13 @@ cifti_read_from_separate <- function(cortexL_fname=NULL, cortexR_fname=NULL, sub
   }
 
   # Read in GIfTI surface geometry files.
-  read_surf <- function(surf_fname){
-    surf <- readGIfTI(surf_fname)$data
-    verts <- surf$pointset
-    faces <- surf$triangle
-    if(min(faces)==0) faces <- faces + 1 #start vertex indexing at 1 instead of 0
-    surf <- list(vertices = verts, faces = faces)
-    class(surf) <- "surface"
-    return(surf)
-  }
   num_surf <- length(surf_label) #number of surface types provided
   if(!is.null(surfL_fname)){
     result$SURF_LEFT <- vector('list', num_surf)
     names(result$SURF_LEFT) <- surf_label
     for(ii in 1:num_surf){
       surfL_fname[ii] <- make_abs_path(surfL_fname[ii], read_dir)
-      result$SURF_LEFT[[ii]] <- read_surf(surfL_fname[ii])
+      result$SURF_LEFT[[ii]] <- make_cifti_surface(surfL_fname[ii])
     }
   }
   if(!is.null(surfR_fname)){
@@ -107,7 +98,7 @@ cifti_read_from_separate <- function(cortexL_fname=NULL, cortexR_fname=NULL, sub
     names(result$SURF_RIGHT) <- surf_label
     for(ii in 1:num_surf){
       surfR_fname[ii] <- make_abs_path(surfR_fname[ii], read_dir)
-      result$SURF_RIGHT[[ii]] <- read_surf(surfR_fname[ii])
+      result$SURF_RIGHT[[ii]] <- make_cifti_surface(surfR_fname[ii])
     }
   }
 

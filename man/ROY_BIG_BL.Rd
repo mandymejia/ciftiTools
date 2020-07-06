@@ -21,6 +21,6 @@ be reversed.}
 A data.frame with two columns: color (character: color hex codes) and value (numeric).
 }
 \description{
-Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. This is the same color palette as the 
+Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. This is the same color palette as the
 default Connectime Workbench palette. Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 }

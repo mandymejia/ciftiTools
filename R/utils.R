@@ -67,7 +67,7 @@ is.cifti <- function(x){
   if(!is.null(x$SURF_LEFT)){
     nsurf_left <- length(x$SURF_LEFT)
     if(!is.list(x$SURF_LEFT)) { message('x$SURF_LEFT not a list'); return(FALSE) }
-    if(min(sapply(x$SURF_LEFT, is.surface)) == 0) { message('At least one element of x$SURF_LEFT not a valid surface object.'); return(FALSE) }
+    if(min(sapply(x$SURF_LEFT, is.cifti_surface)) == 0) { message('At least one element of x$SURF_LEFT not a valid surface object.'); return(FALSE) }
     nvert_left <- sapply(x$SURF_LEFT, function(x) nrow(x$vertices))
     if((min(nvert_left) != max(nvert_left))) { message('All surfaces in x$SURF_LEFT must have the same number of vertices.'); return(FALSE) }
     if(!is.null(x$CORTEX_LEFT)) { if(nvert_left[1] != nrow(x$CORTEX_LEFT)) { message('Number of vertices in x$CORTEX_LEFT and surfaces in x$SURF_LEFT must match.'); return(FALSE) } }
@@ -76,7 +76,7 @@ is.cifti <- function(x){
   if(!is.null(x$SURF_RIGHT)){
     nsurf_right <- length(x$SURF_RIGHT)
     if(!is.list(x$SURF_RIGHT)) { message('x$SURF_RIGHT not a list'); return(FALSE) }
-    if(min(sapply(x$SURF_RIGHT, is.surface)) == 0) { message('At least one element of x$SURF_RIGHT not a valid surface object.'); return(FALSE) }
+    if(min(sapply(x$SURF_RIGHT, is.cifti_surface)) == 0) { message('At least one element of x$SURF_RIGHT not a valid surface object.'); return(FALSE) }
     nvert_right <- sapply(x$SURF_RIGHT, function(x) nrow(x$vertices))
     if((min(nvert_right) != max(nvert_right))) { message('All surfaces in x$SURF_RIGHT must have the same number of vertices.'); return(FALSE) }
     if(!is.null(x$CORTEX_RIGHT)) { if(nvert_right[1] != nrow(x$CORTEX_RIGHT)) { message('Number of vertices in x$CORTEX_RIGHT and surfaces in x$SURF_RIGHT must match.'); return(FALSE) } }
@@ -92,13 +92,13 @@ is.cifti <- function(x){
   return(TRUE)
 }
 
-#' Checks whether object is a valid surface object
+#' Checks whether object is a valid cifti_surface object
 #'
-#' @param x A list in the format of a surface object.
+#' @param x A list in the format of a cifti_surface object.
 #'
-#' @return Logical indicating whether x is a valid surface object
+#' @return Logical indicating whether x is a valid cifti_surface object
 #' @export
-is.surface <- function(x){
+is.cifti_surface <- function(x){
   if(!is.list(x)) { message('Not a list'); return(FALSE) }
   if(length(x) != 2) { message('Must be a list with 2 elements'); return(FALSE) }
   if(!all.equal(names(x), c('vertices','faces'))) { message('Elements of x must be named "vertices" and "faces"'); return(FALSE) }
@@ -115,21 +115,49 @@ is.surface <- function(x){
   return(TRUE)
 }
 
+#' Converts a file path, GIFTI object, or cifti_surface object to a cifti_surface object.
+#'
+#' @param surf What to make a cifti_surface from
+#'
+#' @return The cifti_surface object.
+#' @export
+#'
+#' @importFrom gifti readGIfTI is.gifti
+make_cifti_surface <- function(surf){
+  gifti_to_surf <- function(gifti){
+    surf <- gifti$data
+    verts <- surf$pointset
+    faces <- surf$triangle
+    if(min(faces)==0) faces <- faces + 1 #start vertex indexing at 1 instead of 0
+    surf <- list(vertices = verts, faces = faces)
+    class(surf) <- "cifti_surface"
+    return(surf)
+  }
+  # file path
+  if(is.character(surf) & length(surf)==1 & file.exists(surf) & !dir.exists(surf)){
+    surf <- gifti::readGIfTI(surf)
+  }
+  # GIFTI
+  if(is.gifti(surf)){ surf <- gifti_to_surf(surf) }
+  # Return cifti_surface or error.
+  if(!is.cifti_surface(surf)){ 
+    stop("The object could not be converted into a cifti_surface object.")
+  } 
+  return(surf)
+}
 
 #' Gets CIFTI file extension
 #'
-#' @param cifti_fname Path to CIFTI file, including full file name and extension
+#' @param fname_cifti Path to CIFTI file, including full file name and extension
 #'
 #' @return Character file extension of CIFTI file, e.g. 'dtseries.nii', 'dscalar.nii'.
 #' @export
 #'
-get_cifti_extn <- function(cifti_fname){
-
-  cifti_fname <- basename(cifti_fname)
-  fname_parts <- unlist(strsplit(cifti_fname, split='.', fixed = TRUE)) #split by "."
+get_cifti_extn <- function(fname_cifti){
+  fname_cifti <- basename(fname_cifti)
+  fname_parts <- unlist(strsplit(fname_cifti, split='.', fixed = TRUE)) #split by "."
   extn <- paste(rev(fname_parts)[c(2,1)], collapse='.') #"dtseries.nii", "dscalar.nii", etc.
   return(extn)
-
 }
 
 #' Normalizes a path, placing it in a dir if it is relative. If the path is already absolute,

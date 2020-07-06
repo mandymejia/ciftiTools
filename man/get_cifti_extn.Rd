@@ -4,10 +4,10 @@
 \alias{get_cifti_extn}
 \title{Gets CIFTI file extension}
 \usage{
-get_cifti_extn(cifti_fname)
+get_cifti_extn(fname_cifti)
 }
 \arguments{
-\item{cifti_fname}{Path to CIFTI file, including full file name and extension}
+\item{fname_cifti}{Path to CIFTI file, including full file name and extension}
 }
 \value{
 Character file extension of CIFTI file, e.g. 'dtseries.nii', 'dscalar.nii'.
