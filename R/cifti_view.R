@@ -359,34 +359,44 @@ expand_color_pal <- function(pal, MIN_COLOR_RES=255){
 #'
 #' @param data_values The values to map to colors
 #' @param pal The palette to use to map values to colors
+#' @param color_NA The color to use for NA values (default is "white").
 #'
 #' @return A character vector of color names
-use_color_pal <- function(data_values, pal){
+use_color_pal <- function(data_values, pal, color_NA="white"){
+  NA_mask <- is.na(data_values)
   colors <- as.character(pal$color)
   pal$cut <- -Inf
   pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
-  out <- colors[apply(outer(as.numeric(data_values), pal$cut, '>='), 1, sum)]
+  out <- vector("character", length(data_values))
+  out[!NA_mask] <- colors[apply(outer(as.numeric(data_values[!NA_mask]), pal$cut, '>='), 1, sum)]
+  out[NA_mask] <- color_NA
   return(out)
 }
 
-#' Visualize cifti brain data
+#' Visualize cifti brain data. The \code{rgl} package is required.
 #'
 #' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
 #' @param idx The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.
-#' @param layout \code{*_**}, where * is which surface to display: "left", "right", or "both", and ** is the number of panels
-#'  to use: 1 or 2 (or 4 if both surfaces are being displayed). If only one panel is used, the surface(s) will be rotated to orient
-#'  the outer side(s) toward the viewer. If two panels are used, one will show the front and the other will show the back. If the
-#'  layout is "both_4", a standard four-way plot will be shown with outer surfaces on the top left and top right, and the medial
-#'  surfaces on the bottom left and bottom right. If NULL (default) all present surfaces will be displayed using the most panels.
-#' @param view_mode One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
-#'  of the RGL window, save it to a file in \code{write_dir} named by \code{fname_prefix} and close it. "video" will take a series of screenshots
-#'  of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} named by \code{fname_prefix}, and then close 
-#'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro.
-#' @param view_dims A length-2 numeric vector giving the width and height of the RGL window, in pixels. If NULL (default), it will use
-#'  a 1200 x 700 pixel window for 1-panel or 4-panel layouts, and a 1920 x 560 pixel window for a 2-panel layout (because it's twice as wide).
+#' @param hemisphere Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
+#'  or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
+#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel row within the RGL window (exception: see \code{both_lateral_together}).
+#' @param view Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
+#'  will be shown in a separate panel column within the RGL window.
+#' @param both_lateral_together If only the lateral views of both hemisphers are to be shown, the hemispheres can be viewed together spatially
+#'  by setting this argument to \code{TRUE}. Otherwise, they are displayed in separate panels (default). This argument will not affect the layout in 
+#'  other situations.
+#' @param mode One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
+#'  of the RGL window, save it to a file in \code{write_dir} namedial by \code{fname_prefix} and close it. "video" will take a series of screenshots
+#'  of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} namedial by \code{fname_prefix}, and then close 
+#'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro. Only the "widget" view mode is
+#'  supported right now.
+#' @param width,height The dimensions of the RGL window, in pixels. If both are \code{NULL} (default), it will use a 7x9 aspect ratio for each panel and
+#'  the largest size that fits within a 1600x900 pixel area (a standard monitor size) . If one of these arguments is \code{NULL}, the other will be set 
+#'  to make each panel have a 7x9 aspect ratio.
 #' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-#'  Default is "cifti".
-#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory.
+#'  Default is "cifti". Note: only the "widget" view mode is supported right now.
+#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
+#'  supported right now.
 #' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
 #'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
@@ -395,125 +405,147 @@ use_color_pal <- function(data_values, pal){
 #' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param surface Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-#'  cifti$SURF_RIGHT). If NULL, the first surface will be used. 
-#' @param colorbar_position "embedded" (default) or "separate".
+#' @param color_NA The color for NA values. Default is "white".
+#' @param surfL,surfR (Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
+#'  for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
+#'  \code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.
+#' @param colorbar_position "bottom" (default), "right", or "separate" from the RGL window.
 #' @param colorbar_label A title for the colorbar (none by default).
 #'
 #' @export
-#' @import rgl
-#' @importFrom oro.nifti overlay readNIfTI
 #' @importFrom fields image.plot
-cifti_view_surface <- function(cifti, idx=1, layout=NULL, 
-  view_mode=c("widget", "image", "video"), view_dims=NULL,
+cifti_view_surface <- function(cifti, idx=1, 
+  hemisphere=NULL, view=c("both", "lateral", "medial"), both_lateral_together=FALSE,
+  mode=c("widget", "image", "video"), width=NULL, height=NULL,
   fname_prefix="cifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, surface=NULL,
-  colorbar_position=c("embedded", "separate"), colorbar_label=""){
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL, color_NA="white",
+  surfL=NULL, surfR=NULL,
+  colorbar_position=c("bottom", "right", "separate"), colorbar_label=""){
+
+  if (!requireNamespace("rgl", quietly = TRUE)) {
+    stop("Package \"rgl\" needed to use `cifti_view_surface`. Please install it.", call. = FALSE)
+  }
   
   # Check that the arguments are valid.
   if(!is.cifti(cifti)) stop("cifti argument is not a valid cifti object. See is.cifti().")
   #if(length(idx) > 1) stop("Only one time/column index is supported right now.")
-  view_mode <- match.arg(view_mode, c("widget", "image", "video"))
-  #if(view_mode != "widget"){ write_dir <- check_dir(write_dir) } # check_dir will be added in 1.1
-  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
-  colorbar_position <- match.arg(colorbar_position, c("embedded", "separate"))
-  
-  # If the layout argument is not provided, all surfaces will be displayed using the most panels.
-  # Separate the layout argument into which surfaces ("brainstructures") and the number of panels ("n_panels").
-  if(is.null(layout)){
-    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) & (!is.null(cifti$SURF_LEFT)) & all(idx %in% 1:ncol(cifti$CORTEX_LEFT))
-    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT)) & all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))
-    if(!can_do_left & !can_do_right){ stop(paste0("Neither hemisphere has all of: CORTEX data, SURFace data, and the idx ", idx, ".")) }
-    brainstructure <- c("left", "right", "both")[can_do_left + 2*can_do_right]
-    n_panels <- ifelse(brainstructure=="both", 4, 2)
-    layout <- paste(brainstructure, n_panels, sep="_")
+  # surfaces.
+  if(is.null(surfL)){
+    if(is.null(cifti$SURF_LEFT$surface1)){
+      stop("The left hemisphere was requested, but no surface data was provided (cifti$SURF_LEFT or the surfL argument).")
+    } else {
+      surfL <- cifti$SURF_LEFT$surface1 # to-edit
+    }
+  } else { surfL <- make_cifti_surface(surfL) }
+  if(is.null(surfR)){
+    if(is.null(cifti$SURF_RIGHT$surface1)){
+      stop("The right hemisphere was requested, but no surface data was provided (cifti$SURF_RIGHT or the surfR argument).")
+    } else {
+      surfR <- cifti$SURF_RIGHT$surface1 # to-edit
+    }
+  } else { surfR <- make_cifti_surface(surfR) }
+  # hemisphere and view.
+  if(is.null(hemisphere)){
+    hemisphere <- c("left", "right", "both")[1*(!is.null(surfL)) + 2*(!is.null(surfR))]
+  }
+  view <- match.arg(view, c("both", "lateral", "medial"))
+  if(hemisphere=="both"){ hemisphere=c("left", "right") } # reformat
+  if(view=="both"){ view=c("lateral", "medial") } # reformat
+  # both_lateral_together
+  if(length(hemisphere)==2 & identical(view, "lateral") & both_lateral_together){
+    stop("both_lateral_together==TRUE is not supported yet.")
   } else {
-    layout_split <- strsplit(layout, "_")[[1]]
-    brainstructure <- match.arg(layout_split[1], c("left", "right", "both"))
-    n_panels <- as.numeric(match.arg(layout_split[2], c("1", "2", "4")))
-    if((brainstructure != "both") & (n_panels == 4)){ stop("Four panels are only necessary if both surfaces are being viewed. Try using two panels.") }
+    panel_nrow <- length(view)
+    panel_ncol <- length(hemisphere)
   }
-  if(is.null(view_dims)){
-    view_dims <- list(c(1200, 900), c(1920, 720), NULL, c(1200, 900))[[n_panels]]
+  # others...
+  mode <- match.arg(mode, c("widget", "image", "video"))
+  if(mode != "widget"){ stop("Only the widget view mode is supported right now.") }
+  #if(mode != "widget"){ write_dir <- check_dir(write_dir) } # check_dir will be added in 1.1
+  if(is.null(width) | is.null(height)){
+    DEF_ASPECT_PER_PANEL <- c(9, 7) # 7:9 aspect ratio
+    def_aspect <- DEF_ASPECT_PER_PANEL * c(panel_ncol, panel_nrow)
+    DEF_MAX_SIZE <- c(1600, 900)
+
+    if(is.null(width) & is.null(height)){
+      window_dims <- def_aspect*floor(min(DEF_MAX_SIZE/def_aspect))
+    } else if(is.null(width)){
+      height <- as.integer(height)
+      window_dims <- c(floor(height*def_aspect[1]/def_aspect[2]), height)
+    } else if(is.null(height)){
+      width <- as.integer(width)
+      window_dims <- c(width, floor(width*def_aspect[2]/def_aspect[1]))
+    }
+    width <- window_dims[1]; height <- window_dims[2]
+  } else {
+    width <- as.integer(width); height <- as.integer(height)
   }
-  stopifnot(length(view_dims) == 2)
+  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
+  colorbar_position <- match.arg(colorbar_position, c("bottom", "right", "separate"))
 
   #################################################################
   # Get the data values and surface models, and construct the mesh.
   #################################################################
 
   EPS <- 1e-8 # TODO : ciftiTools option?
-  values_left <- values_right <- NULL
+  valuesL <- valuesR <- NULL
   # Left cortex:
-  if(brainstructure %in% c("left","both")){
-    ## Ensure cortex data, surface data, and slice are present.
-    if(is.null(cifti$CORTEX_LEFT)) stop("No data in cifti$CORTEX_LEFT.")
-    if(is.null(cifti$SURF_LEFT)) stop("No data in cifti$SURF_LEFT. Must provide a surface model for left cortex.")
-    if(!all(idx %in% 1:ncol(cifti$CORTEX_LEFT))) stop(
-      ifelse(length(idx) > 1, "The idx are not all valid column indices for cifti$CORTEX_LEFT", "The idx is not a valid column index for cifti$CORTEX_LEFT")
-    )
+  if("left" %in% hemisphere){
 
-    ## Select the surface model.
-    if(is.null(surface)){
-      surf_left <- cifti$SURF_LEFT[[1]]
-    } else {
-      if(!(surface %in% names(cifti$SURF_LEFT))) stop("If surface is provided, it must be one of the names of cifti$SURF_LEFT.")
-      surf_left <- cifti$SURF_LEFT[names(cifti$SURF_LEFT) == surface]
+    if(is.null(surfL)){ 
+      stop(paste0("The left hemisphere was requested, but no surface data ",
+        "(cifti$SURF_LEFT or the surfL argument to cifti_view) was provided."))
     }
 
-    ## Get the values at the slice, replacing constant brainordinates with NA values.
-    NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < EPS
-    cifti$CORTEX_LEFT[NA_mask_left,] <- NA
-    values_left <- matrix(cifti$CORTEX_LEFT[,idx], ncol=length(idx))
-    #values_left <- apply(matrix(cifti$CORTEX_LEFT[,idx][cifti$SURF_LEFT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
-    cifti$CORTEX_LEFT <- NULL #save memory
+    if(is.null(cifti$CORTEX_LEFT)){ valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices)) }
+    else if(!all(idx %in% 1:ncol(cifti$CORTEX_LEFT))){ valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices)) }
+    else {
+      # Mask out (near-)constant voxels.
+      NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < EPS
+      cifti$CORTEX_LEFT[NA_mask_left,] <- NA
+      valuesL <- matrix(cifti$CORTEX_LEFT[,idx], ncol=length(idx))
+      #valuesL <- apply(matrix(cifti$CORTEX_LEFT[,idx][surfL$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
+      cifti$CORTEX_LEFT <- NULL #save memory
+    }
 
     ## Construct the mesh.
-    mesh_left <- tmesh3d(t(cbind(surf_left$vertices,
-                           rep(1, nrow(surf_left$vertices)))), # add homogenous coordinate
-                         t(surf_left$faces),
-                         meshColor = "vertices")
-    mesh_left <- addNormals(mesh_left) # for smooth coloring
+    mesh_left <- rgl::tmesh3d(t(cbind(surfL$vertices,
+                                rep(1, nrow(surfL$vertices)))), # add homogenous coordinate
+                              t(surfL$faces),
+                              meshColor = "vertices")
+    mesh_left <- rgl::addNormals(mesh_left) # for smooth coloring
   }
   # Right cortex:
-  if(brainstructure %in% c("right","both")){
-    ## Ensure cortex data, surface data, and slice are present.
-    if(is.null(cifti$CORTEX_RIGHT)) stop("No data in cifti$CORTEX_RIGHT.")
-    if(is.null(cifti$SURF_RIGHT)) stop("No data in cifti$SURF_RIGHT. Must provide a surface model for right cortex.")
-    if(!all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))) stop(
-      ifelse(length(idx) > 1, "The idx are not all valid column indices for cifti$CORTEX_RIGHT", "The idx is not a valid column index for cifti$CORTEX_RIGHT")
-    )
-    ## Select the surface model.
-    if(is.null(surface)){
-      surf_right <- cifti$SURF_RIGHT[[1]]
-    } else {
-      if(!(surface %in% names(cifti$SURF_RIGHT))) stop("If surface is provided, it must be one of the names of cifti$SURF_RIGHT.")
-      surf_right <- cifti$SURF_RIGHT[names(cifti$SURF_RIGHT) == surface]
+  if("right" %in% hemisphere){
+
+    if(is.null(surfR)){ 
+      stop(paste0("The right hemisphere was requested, but no surface data ",
+        "(cifti$SURF_RIGHT or the surfR argument to cifti_view) was provided."))
     }
 
-    ## Get the values at the slice, replacing constant brainordinates with NA values.
-    NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < EPS
-    cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
-    values_right <- matrix(cifti$CORTEX_RIGHT[,idx], ncol=length(idx))
-    #values_right <- apply(matrix(cifti$CORTEX_RIGHT[,idx][cifti$SURF_RIGHT$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
-    cifti$CORTEX_RIGHT <- NULL #save memory
+      if(is.null(cifti$CORTEX_RIGHT)){ valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices)) }
+      else if(!all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))){ valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices)) }
+      else {
+      # Mask out (near-)constant voxels.
+      NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < EPS
+      cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
+      valuesR <- matrix(cifti$CORTEX_RIGHT[,idx], ncol=length(idx))
+      #valuesR <- apply(matrix(cifti$CORTEX_RIGHT[,idx][surfR$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
+      cifti$CORTEX_RIGHT <- NULL #save memory
+    }
 
     ## Construct the mesh.
-    mesh_right <- tmesh3d(t(cbind(surf_right$vertices,
-                           rep(1, nrow(surf_right$vertices)))), # add homogenous coordinate
-                         t(surf_right$faces),
-                         meshColor = "vertices")
-    mesh_right <- addNormals(mesh_right) # for smooth coloring
+    mesh_right <- rgl::tmesh3d(t(cbind(surfR$vertices,
+                                 rep(1, nrow(surfR$vertices)))), # add homogenous coordinate
+                               t(surfR$faces),
+                               meshColor = "vertices")
+    mesh_right <- rgl::addNormals(mesh_right) # for smooth coloring
   }
 
   # Put the values together.
-  nvox_left <- nrow(values_left)
-  nvox_right <- nrow(values_right)
-  if(brainstructure=="both") values <- c(values_left, values_right)
-  else if(brainstructure=="left") values <- values_left
-  else if(brainstructure=="right") values <- values_right
-  #values[is.nan(values)] <- 0 # FACES
-  values[is.na(values)] <- 0
+  nvoxL <- nrow(valuesL)
+  nvoxR <- nrow(valuesR)
+  values <- unlist(list(left=valuesL, right=valuesR)[hemisphere], use.names=FALSE)
 
   ###############################################
   # Assign colors to vertices based on intensity.
@@ -528,7 +560,7 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
       DATA_MIN=1, DATA_MAX=N_VALUES)
   } else {
     pal_base <- make_color_pal(colors=colors, color_mode=color_mode, color_values=color_values,
-      DATA_MIN=min(values), DATA_MAX=max(values))
+      DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE))
   }
   # Interpolate colors in the base palette for higher color resolution.
   if(color_mode %in% c("sequential", "diverging")){
@@ -538,13 +570,13 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
   }
   # Map each vertex to a color by its value.
   #cols <- apply(values, 2, use_color_pal, pal) # ???
-  cols <- use_color_pal(values, pal)
-  if(brainstructure=="both") {
-    cols_left <- cols[1:nvox_left]
-    cols_right <- cols[(nvox_left+1):(nvox_left+nvox_right)]
-  } else if(brainstructure=="left"){
+  cols <- use_color_pal(values, pal, color_NA=color_NA)
+  if(length(hemisphere)==2) {
+    cols_left <- cols[1:nvoxL]
+    cols_right <- cols[(nvoxL+1):(nvoxL+nvoxR)]
+  } else if(hemisphere=="left"){
     cols_left <- cols
-  } else if(brainstructure=="right"){
+  } else if(hemisphere=="right"){
     cols_right <- cols
   }
   rm(cols)
@@ -564,45 +596,47 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
   )
   colbar_labs <- switch(color_mode,
     sequential=c(colbar_min, 
-                  pal_base$value[nrow(pal_base)]),
+                 pal_base$value[nrow(pal_base)]),
     qualitative=1:N_VALUES,
     diverging=c(colbar_min, 
                 pal_base$value[as.integer(ceiling(nrow(pal_base)/2))], 
                 pal_base$value[nrow(pal_base)])
   )
-  colbar_labs_digits <- ifelse(
-    diff(range(pal$value)) >=1, 0, 
-    1+ceiling(abs(log(diff(range(pal$value)), 10))))
+  # To-do: use colorbar_position argument.
   colorbar_kwargs = list(
     legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color), 
     breaks=colbar_breaks, legend.lab=colorbar_label,
-    legend.cex=2, legend.shrink=.9, legend.width=2, legend.line=7, legend.mar=12,
-    axis.args=list(cex.axis=1.7, at=colbar_labs, 
-                    labels=round(colbar_labs, colbar_labs_digits))
+    axis.args=list(cex.axis=1.7, at=colbar_labs, labels=format(colbar_labs))
   )
+  if(colorbar_position=="right"){
+    colorbar_kwargs <- c(
+      colorbar_kwargs, 
+      list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
+    )
+  } else if(colorbar_position=="bottom"){
+    colorbar_kwargs <- c(
+      colorbar_kwargs, 
+      list(horizontal=TRUE, legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=4)
+    )
+  }
+
 
   ############################################################
   # Color and arrange the meshes according to the layout.
   ############################################################
 
   # Open a new RGL window.
-  open3d()
-  par3d(windowRect = c(20, 20, view_dims[1], view_dims[2]))
+  rgl::open3d()
+  rgl::par3d(windowRect = c(20, 20, width, height))
   
   # Determine the panel layout.
-  if(n_panels==2){
-    mfrow3d(1, 2, byrow = TRUE, parent = NA, sharedMouse = TRUE)
-  } else if(n_panels==4){
-    mfrow3d(2, 2, byrow = TRUE, parent = NA, sharedMouse = TRUE)
-  }
-  panels <- switch(layout,
-    left_1  = "left_out",
-    right_1 = "right_out",
-    both_1  = "leftright", # hacky but it works :) # TO DO: open it
-    left_2  = c("left_out", "left_med"),
-    right_2 = c("right_out", "right_med"),
-    both_2  = c("left_out", "right_out"),
-    both_4  = c("left_out", "right_out", "left_med", "right_med")
+  rgl::mfrow3d(panel_nrow, panel_ncol, byrow = TRUE, parent = NA, sharedMouse = TRUE)
+  panels <- as.character(t(outer(hemisphere, view, paste0))) # by row
+  n_panels <- length(panels)
+  legend_panel <- switch(colorbar_position,
+    bottom = ((panel_nrow-1) * panel_ncol) + 1,
+    right = n_panels,
+    separate = 0
   )
 
   # Rotation matrices to orient meshes.
@@ -626,37 +660,49 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
 
     # Select the mesh for this panel, and orient it.
     if(grepl("left", p)){
-      shade3d(mesh_left, col=cols_left, specular="black", legend=TRUE)
-      if(grepl("out", p)){
+      rgl::shade3d(mesh_left, col=cols_left, specular="black", legend=TRUE)
+      if(grepl("lateral", p)){
         this_rot <- rot$left
-      } else if(grepl("med", p)){
+      } else if(grepl("medial", p)){
         this_rot <- rot$right
       } else { this_rot <- rot$ID }
     }
     if(grepl("right", p)){
-      shade3d(mesh_right, col=cols_right, specular="black", legend=TRUE)
-      if(grepl("out", p)){
+      rgl::shade3d(mesh_right, col=cols_right, specular="black", legend=TRUE)
+      if(grepl("lateral", p)){
         this_rot <- rot$right
-      } else if(grepl("med", p)){
+      } else if(grepl("medial", p)){
         this_rot <- rot$left
       } else { this_rot <- rot$ID }
     } 
-    rgl.viewpoint(userMatrix=this_rot, zoom=1/1.5)
-
-    # Add color bar scale/legend to the last panel.
-    if(colorbar_position=="embedded"){
-      # Suppress this warning: "calling par(new=TRUE) with no plot"
-      if(i == n_panels){ 
-        bgplot3d(suppressWarnings(do.call(image.plot, colorbar_kwargs)))
+    if(colorbar_position=="right"){
+      if("right" %in% hemisphere){
+        surf_w_colorbar <- surfR
+      } else {
+        surf_w_colorbar <- surfL
       }
+      displacement <- .25 * diff(range(surf_w_colorbar$vertices[,2]))
+      if(grepl("lateral", p)){ displacement <- -displacement }
+      if(grepl("left", p)){ displacement <- -displacement }
+      this_trans <- t(rgl::translationMatrix(0, displacement, 0))
+      # to-do: also displace meshes upward if colorbar_position=="bottom"
+    } else {
+      this_trans <- diag(4)
+    }
+    this_mat <- this_rot %*% this_trans
+    rgl::rgl.viewpoint(userMatrix=this_mat)
+
+    # Suppress this warning: "calling par(new=TRUE) with no plot"
+    if(i == legend_panel){ 
+      rgl::bgplot3d(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)))
     }
 
-    next3d(current = NA, clear = FALSE, reuse = FALSE)
+    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
   if(colorbar_position=="separate"){ 
     # Suppress this warning: "calling par(new=TRUE) with no plot"
-    suppressWarnings(do.call(image.plot, colorbar_kwargs))
+    suppressWarnings(do.call(fields::image.plot, colorbar_kwargs))
   }
 
   return(invisible())
@@ -674,9 +720,8 @@ cifti_view_surface <- function(cifti, idx=1, layout=NULL,
 #' @param z_max Ceiling value.
 #'
 #' @export
-#' @import rgl
+#' 
 #' @importFrom oro.nifti overlay readNIfTI
-#' @importFrom fields image.plot
 cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial", num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL){
   if(use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
@@ -738,7 +783,11 @@ cifti_view <- function(cifti, surface_or_volume=NULL, ...){
     can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT))
     surface_or_volume <- ifelse(can_do_left | can_do_right, "surface", "volume")
   }
-  if(surface_or_volume == "surface"){ return(cifti_view_surface(cifti, ...)) }
+  hemispheres=c("left", "right", "both")
+  if(surface_or_volume == "surface"){ 
+    layout=c("left_2", "right_2", "both_4")[can_do_left + can_do_right*2]
+    return(cifti_view_surface(cifti, ...)) 
+  }
   else if(surface_or_volume == "volume"){ return(cifti_view_volume(cifti, ...)) }
   else{ stop() }
 }

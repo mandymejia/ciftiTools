@@ -2,21 +2,26 @@
 % Please edit documentation in R/cifti_view.R
 \name{cifti_view_surface}
 \alias{cifti_view_surface}
-\title{Visualize cifti brain data}
+\title{Visualize cifti brain data. The \code{rgl} package is required.}
 \usage{
 cifti_view_surface(
   cifti,
   idx = 1,
-  layout = NULL,
-  view_mode = c("widget", "image", "video"),
-  view_dims = NULL,
+  hemisphere = NULL,
+  view = c("both", "lateral", "medial"),
+  both_lateral_together = FALSE,
+  mode = c("widget", "image", "video"),
+  width = NULL,
+  height = NULL,
   fname_prefix = "cifti",
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
   color_values = NULL,
-  surface = NULL,
-  colorbar_position = c("embedded", "separate"),
+  color_NA = "white",
+  surfL = NULL,
+  surfR = NULL,
+  colorbar_position = c("bottom", "right", "separate"),
   colorbar_label = ""
 )
 }
@@ -25,24 +30,32 @@ cifti_view_surface(
 
 \item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.}
 
-\item{layout}{\code{*_**}, where * is which surface to display: "left", "right", or "both", and ** is the number of panels
-to use: 1 or 2 (or 4 if both surfaces are being displayed). If only one panel is used, the surface(s) will be rotated to orient
-the outer side(s) toward the viewer. If two panels are used, one will show the front and the other will show the back. If the
-layout is "both_4", a standard four-way plot will be shown with outer surfaces on the top left and top right, and the medial
-surfaces on the bottom left and bottom right. If NULL (default) all present surfaces will be displayed using the most panels.}
+\item{hemisphere}{Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
+or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
+colored by \code{color_NA}. Each cortex will be shown in a separate panel row within the RGL window (exception: see \code{both_lateral_together}).}
 
-\item{view_mode}{One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
-of the RGL window, save it to a file in \code{write_dir} named by \code{fname_prefix} and close it. "video" will take a series of screenshots
-of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} named by \code{fname_prefix}, and then close 
-the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro.}
+\item{view}{Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
+will be shown in a separate panel column within the RGL window.}
 
-\item{view_dims}{A length-2 numeric vector giving the width and height of the RGL window, in pixels. If NULL (default), it will use
-a 1200 x 700 pixel window for 1-panel or 4-panel layouts, and a 1920 x 560 pixel window for a 2-panel layout (because it's twice as wide).}
+\item{both_lateral_together}{If only the lateral views of both hemisphers are to be shown, the hemispheres can be viewed together spatially
+by setting this argument to \code{TRUE}. Otherwise, they are displayed in separate panels (default). This argument will not affect the layout in 
+other situations.}
+
+\item{mode}{One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
+of the RGL window, save it to a file in \code{write_dir} namedial by \code{fname_prefix} and close it. "video" will take a series of screenshots
+of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} namedial by \code{fname_prefix}, and then close 
+the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro. Only the "widget" view mode is
+supported right now.}
+
+\item{width, height}{The dimensions of the RGL window, in pixels. If both are \code{NULL} (default), it will use a 7x9 aspect ratio for each panel and
+the largest size that fits within a 1600x900 pixel area (a standard monitor size) . If one of these arguments is \code{NULL}, the other will be set 
+to make each panel have a 7x9 aspect ratio.}
 
 \item{fname_prefix}{An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-Default is "cifti".}
+Default is "cifti". Note: only the "widget" view mode is supported right now.}
 
-\item{write_dir}{Where to save image or video files. If NULL (default), uses the current working directory.}
+\item{write_dir}{Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
+supported right now.}
 
 \item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
 and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
@@ -55,13 +68,16 @@ See the \code{ciftiTools::make_color_pal()} description for more details.}
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{surface}{Name of brain surface model to use.  Must equal one of the names of cifti$SURF_LEFT (or equivalently, 
-cifti$SURF_RIGHT). If NULL, the first surface will be used.}
+\item{color_NA}{The color for NA values. Default is "white".}
 
-\item{colorbar_position}{"embedded" (default) or "separate".}
+\item{surfL, surfR}{(Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
+for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
+\code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.}
+
+\item{colorbar_position}{"bottom" (default), "right", or "separate" from the RGL window.}
 
 \item{colorbar_label}{A title for the colorbar (none by default).}
 }
 \description{
-Visualize cifti brain data
+Visualize cifti brain data. The \code{rgl} package is required.
 }
