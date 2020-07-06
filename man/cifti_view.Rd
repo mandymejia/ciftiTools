@@ -9,7 +9,7 @@ cifti_view(cifti, surface_or_volume = NULL, ...)
 \arguments{
 \item{cifti}{Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
 
-\item{surface_or_volume}{Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and 
+\item{surface_or_volume}{Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and
 volume otherwise}
 
 \item{...}{Additional arguments to pass to either view function.}

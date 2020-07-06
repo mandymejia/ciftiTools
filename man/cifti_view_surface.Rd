@@ -61,11 +61,11 @@ supported right now.}
 and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 See the \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the 
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
-one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the 
+one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{color_NA}{The color for NA values. Default is "white".}
