@@ -208,17 +208,22 @@ check_dir <- function(dir, default=NULL, make=FALSE){
 
 #' Get the default file name suffix for a certain type of separated file.
 #'
-#' @param label the file type: one of "cortexL", "cortexR", "subcortVol" or "subcortLab"
-cifti_separate_default_suffix <- function(label){
+#' @param label the file type: one of "cortexL", "cortexR", "subcortVol", "subcortLab",
+#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR"
+#' @param GIFTI_type "func"
+#'
+cifti_separate_default_suffix <- function(label, GIFTI_type="func"){
   label <- match.arg(label, c("cortexL", "cortexR", "subcortVol", "subcortLab",
-    "cortexL_ROI", "cortexR_ROI", "subcort_ROI"))
+    "ROIcortexL", "ROIcortexR", "ROIsubcortVol", "validROIcortexL", "validROIcortexR"))
   switch(label,
-    cortexL = "L.func.gii",
-    cortexR = "R.func.gii",
+    cortexL = paste0("L.", GIFTI_type, ".gii"),
+    cortexR = paste0("R.", GIFTI_type, ".gii"),
     subcortVol = "nii",
     subcortLab = "labels.nii",
-    cortexL_ROI = "L_ROI.func.gii",
-    cortexR_ROI = "R_ROI.func.gii",
-    subcort_ROI = "ROI.nii",
+    ROIcortexL = paste0("ROI_L.", GIFTI_type, ".gii"),
+    ROIcortexR = paste0("ROI_R.", GIFTI_type, ".gii"),
+    ROIsubcortVol = "ROI.nii",
+    validROIcortexL = paste0("valid_ROI_L.", GIFTI_type, ".gii"),
+    validROIcortexR = paste0("valid_ROI_R.", GIFTI_type, ".gii")
   )
 }

@@ -11,10 +11,10 @@ cifti_separate(
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLab_fname = NULL,
-  get_ROI = FALSE,
-  cortexL_ROI_fname = NULL,
-  cortexR_ROI_fname = NULL,
-  subcort_ROI_fname = NULL,
+  ROI_brainstructures = NULL,
+  ROIcortexL_fname = NULL,
+  ROIcortexR_fname = NULL,
+  ROIsubcortVol_fname = NULL,
   overwrite = TRUE,
   write_dir = NULL,
   wb_path = NULL
@@ -35,11 +35,12 @@ relative, they will be saved in \code{write_dir}.}
 provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 path is relative, they will be saved in \code{write_dir}.}
 
-\item{get_ROI}{Separate out the regions of interest for each brainstructure? Default is FALSE.}
+\item{ROI_brainstructures}{Which ROIs should be obtained? NULL (default) to not get any ROIs. This should be a subset of the
+\code{brainstructures} argument.}
 
-\item{cortexL_ROI_fname, cortexR_ROI_fname}{File names for cortex ROIs.}
+\item{ROIcortexL_fname, ROIcortexR_fname}{File names for cortex ROIs.}
 
-\item{subcort_ROI_fname}{File name for volume ROI.}
+\item{ROIsubcortVol_fname}{File name for volume ROI.}
 
 \item{overwrite}{If all NIfTI or GIfTI files already exists, should they be overwritten? Default is TRUE.}
 

@@ -17,19 +17,14 @@ cifti_read_from_separate(
 )
 }
 \arguments{
-\item{cortexL_fname}{(Optional) File path of GIfTI data for left cortex.}
-
-\item{cortexR_fname}{(Optional) File path of GIfTI data for right cortex.}
+\item{cortexL_fname, cortexR_fname}{(Optional) File path of GIfTI data for [left/right] cortex.}
 
 \item{subcortVol_fname}{(Optional) File path of NIfTI volume data for subcortical structures.}
 
 \item{subcortLab_fname}{(Optional) File path of the NIfTI labels for subcortical structures.}
 
-\item{surfL_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-representing left cortex.}
-
-\item{surfR_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-representing right cortex.}
+\item{surfL_fname, surfR_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+representing [left/right] cortex.}
 
 \item{surf_label}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 (e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are 

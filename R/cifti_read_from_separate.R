@@ -2,14 +2,11 @@
 #'
 #' @description Reads in CIFTI data from the separated left and right cortical GIfTI files, the subcortical NIfTI file, and optionally any surface geometry GIfTI files.
 #'
-#' @param cortexL_fname (Optional) File path of GIfTI data for left cortex.
-#' @param cortexR_fname (Optional) File path of GIfTI data for right cortex.
+#' @param cortexL_fname,cortexR_fname (Optional) File path of GIfTI data for [left/right] cortex.
 #' @param subcortVol_fname (Optional) File path of NIfTI volume data for subcortical structures.
 #' @param subcortLab_fname (Optional) File path of the NIfTI labels for subcortical structures.
-#' @param surfL_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-#'  representing left cortex.
-#' @param surfR_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-#'  representing right cortex.
+#' @param surfL_fname,surfR_fname (Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+#'  representing [left/right] cortex.
 #' @param surf_label (Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
 #'  (e.g. midthickness, inflated, etc.). Should match the length of surfL_fname and/or surfL_fname if they are 
 #'  provided. Otherwise, ignored.

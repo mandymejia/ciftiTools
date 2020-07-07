@@ -4,10 +4,13 @@
 \alias{cifti_separate_default_suffix}
 \title{Get the default file name suffix for a certain type of separated file.}
 \usage{
-cifti_separate_default_suffix(label)
+cifti_separate_default_suffix(label, GIFTI_type = "func")
 }
 \arguments{
-\item{label}{the file type: one of "cortexL", "cortexR", "subcortVol" or "subcortLab"}
+\item{label}{the file type: one of "cortexL", "cortexR", "subcortVol", "subcortLab",
+"ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR"}
+
+\item{GIFTI_type}{"func"}
 }
 \description{
 Get the default file name suffix for a certain type of separated file.
