@@ -2,20 +2,23 @@
 % Please edit documentation in R/cifti_flatten.R
 \name{cifti_flatten}
 \alias{cifti_flatten}
-\title{Flattens a "cifti" object into a single matrix.}
+\title{Flatten a "cifti" object into a single matrix}
 \usage{
 cifti_flatten(cif, brainstructures = c("subcortical", "everything"))
 }
 \arguments{
 \item{cif}{Object of class "cifti"}
 
-\item{brainstructures}{"subcortical" for just the subcortical voxels, or "everything" to include non-zero
-brainordinates from the left and right cortices.}
+\item{brainstructures}{"subcortical" for just the subcortical voxels 
+(default), or "everything" to include non-zero brainordinates from the left
+and right cortices.}
 }
 \value{
-A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI.
+A T x B matrix, where T is the number of time points and B is the 
+ number of brainordinates in the CIFTI.
 }
 \description{
-Flattens a "cifti" object into a single matrix.
- Workbench command.
+Flattens data in a "cifti" object into a single matrix. This 
+ matrix is identical to that obtained by \code{\link{cifti_read_flat}}, 
+ which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
 }

@@ -2,16 +2,17 @@
 % Please edit documentation in R/gifti_resample.R
 \name{surface_resample}
 \alias{surface_resample}
-\title{Resample a surface GIFTI file (ends with "func.gii")}
+\title{Resample a surface GIFTI file}
 \usage{
 surface_resample(...)
 }
 \arguments{
-\item{...}{Arguments to gifti_resample. All except \code{file_type} (which is "surface") can be provided.}
+\item{...}{Arguments to \code{\link{gifti_resample}}. All except 
+\code{file_type} (which is "surface") can be provided.}
 }
 \value{
 Logical indicating whether resampled file was created.
 }
 \description{
-Resample a surface GIFTI file (ends with "func.gii")
+Resample a surface GIFTI file
 }

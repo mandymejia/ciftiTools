@@ -22,7 +22,7 @@ cifti_view_volume(
 
 \item{idx}{The time/column index of the cifti data to plot.}
 
-\item{plane}{If use_papaya=FALSE, the plane to display. Default is "axial". Other options are "sagittal" and "coronal".}
+\item{plane}{If use_papaya=FALSE, the plane to display. Default: "axial". Other options are "sagittal" and "coronal".}
 
 \item{num.slices}{If use_papaya=FALSE, the number of slices to display.}
 

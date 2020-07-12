@@ -2,11 +2,11 @@
 % Please edit documentation in R/cifti_make.R
 \name{cifti_make}
 \alias{cifti_make}
-\title{Make cifti object}
+\title{Make a cifti object from its components}
 \usage{
 cifti_make(
-  cortexL_fname = NULL,
-  cortexR_fname = NULL,
+  cortexL = NULL,
+  cortexR = NULL,
   surfL_fname = NULL,
   surfL = NULL,
   surfR_fname = NULL,
@@ -18,9 +18,9 @@ cifti_make(
 )
 }
 \arguments{
-\item{cortexL_fname}{Data matrix for left cortex, with vertices in rows}
+\item{cortexL}{Data matrix for left cortex, with vertices in rows}
 
-\item{cortexR_fname}{Data matrix for right cortex, with vertices in rows}
+\item{cortexR}{Data matrix for right cortex, with vertices in rows}
 
 \item{surfL_fname}{File path to gifti surface object for left cortex, or a vector of file names. Provide surfL_fname OR surfL.}
 
@@ -42,5 +42,5 @@ cifti_make(
 Object of class 'cifti'
 }
 \description{
-Make cifti object
+Make a cifti object from its components
 }

@@ -6,18 +6,20 @@
 \usage{
 cifti_resample(
   cifti_original_fname,
-  cifti_target_fname = NULL,
+  cifti_target_fname,
   sep_kwargs = NULL,
   sep_keep = FALSE,
   resamp_res = NULL,
-  sphereL_fname = NULL,
-  sphereR_fname = NULL,
   resamp_kwargs = NULL,
   resamp_keep = FALSE,
+  sphereL_original_fname = NULL,
+  sphereR_original_fname = NULL,
+  sphereL_target_fname = NULL,
+  sphereR_target_fname = NULL,
   overwrite = FALSE,
   write_dir = NULL,
   wb_path = NULL,
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,64 +27,67 @@ cifti_resample(
 
 \item{cifti_target_fname}{The file name to save the resampled CIFTI.}
 
-\item{sep_kwargs}{(Optional) Additional arguments to cifti_resample in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="separated_cifti_files")} . Note that \code{cifti_read} will save the location
-of the files from cifti_resample}
+\item{sep_kwargs}{(Optional) Additional arguments to 
+\code{\link{cifti_separate}} in the form of a list, e.g. 
+\code{list(overwrite=FALSE, write_dir="separated_files", 
+cortexL_fname="my_cortexL.nii")}. Do not specify \code{cifti_fname} in 
+\code{sep_kwargs}; instead, use the \code{cifti_fname} argument directly.}
 
-\item{sep_keep}{If new separated files were made by this function call, should they be deleted once they are read in?
-Default is FALSE (delete them). If \code{sep_kwargs["overwrite"]==FALSE} and the separated files already exist,
-they will be read in and will not be deleted even if \code{sep_keep==FALSE}.}
+\item{sep_keep}{If files are created by \code{\link{cifti_separate}}, should 
+they be deleted at the end of this function call? (If 
+\code{sep_kwargs$overwrite == FALSE} and the separated files already exist,
+they will not be deleted even if \code{sep_keep == FALSE}.) Default:
+\code{FALSE} (delete new files).}
 
-\item{resamp_res}{Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL or 
-FALSE, do not perform resampling. NOT YET IMPLEMENTED.}
+\item{resamp_res}{(Optional) Target resolution for resampling (number of 
+cortical surface vertices per hemisphere). If \code{NULL} (default) or 
+\code{FALSE}, do not perform resampling.}
 
-\item{sphereL_fname, sphereR_fname}{Helper sphere files needed for resampling}
+\item{resamp_kwargs}{(Optional) Additional arguments to 
+\code{\link{cifti_resample_separate}} in the form of a list, e.g. 
+\code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
+\code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
+\code{resamp_kwargs}; instead, use the \code{cifti_read} arguments. Do not 
+specify the names of the files to resample, e.g. 
+\code{cortexL_original_fname}, because these are determined by the
+preceeding \code{\link{cifti_separate}} call.}
 
-\item{resamp_kwargs}{(Optional) Additional arguments to cifti_resample_separate in the form of a list.}
+\item{resamp_keep}{If files are created by 
+\code{\link{cifti_resample_separate}}, should they be deleted at the end of 
+this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
+resampled files already exist, they will not be deleted even if 
+\code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
 
-\item{resamp_keep}{Should files made by \code{cifti_resample} be kept? Default is FALSE (delete after).}
+\item{sphereL_original_fname, sphereR_original_fname}{Helper sphere files 
+needed for resampling}
 
-\item{overwrite}{If \code{cifti_target_fname} exists, should it be replaced? Default is \code{FALSE}.}
+\item{sphereL_target_fname, sphereR_target_fname}{Helper sphere files 
+needed for resampling}
 
-\item{write_dir}{Where to place the resampled CIFTI. Defaults to the current working directory.}
+\item{overwrite}{If \code{cifti_target_fname} exists, should it be replaced? 
+Default: \code{FALSE}.}
 
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
+\item{write_dir}{Where to place the resampled CIFTI. Defaults to the current 
+working directory.}
 
-\item{verbose}{Should occasional updates be printed? Default is FALSE.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
+
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 }
 \value{
-An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
- LABELS contains the brain structure labels (usually 3-21) of the subcortical elements. If surface geometry files
- were provided in the arguments, the list will also contain SURF_LEFT and SURF_RIGHT.
+The code returned by the Connectome Workbench command, or \code{NA} 
+ if no resampling was performed because \code{overwrite==FALSE} and
 }
 \description{
 Performs spatial resampling of CIFTI data on the cortical surface
 }
 \details{
-This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
- install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
- executable also works.)
-
-The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
-3 Accumbens-L
-4 Accumbens-R
-5 Amygdala-L
-6 Amygdala-R
-7 Brain Stem
-8 Caudate-L
-9 Caudate-R
-10 Cerebellum-L
-11 Cerebellum-R
-12 Diencephalon-L
-13 Diencephalon-R
-14 Hippocampus-L
-15 Hippocampus-R
-16 Pallidum-L
-17 Pallidum-R
-18 Putamen-L
-19 Putamen-R
-20 Thalamus-L
-21 Thalamus-R
+This function uses a system wrapper for the "wb_command"
+ executable. The user must first download and install the Connectome 
+ Workbench, available from 
+ \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
+ The \code{wb_path} argument is the path to the Connectime Workbench folder or
+ executable.
 }

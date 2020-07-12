@@ -7,7 +7,8 @@
 metric_resample(...)
 }
 \arguments{
-\item{...}{Arguments to gifti_resample. All except \code{file_type} (which is "metric") can be provided.}
+\item{...}{Arguments to \code{\link{gifti_resample}}. All except 
+\code{file_type} (which is "metric") can be provided.}
 }
 \value{
 Logical indicating whether resampled file was created.

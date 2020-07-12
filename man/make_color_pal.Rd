@@ -18,7 +18,7 @@ colorbrewer2.org), or a character vector of colors. Defaults are \code{"ROY_BIG_
 \code{"Set2"} (qualitative color mode), and \code{"ROY_BIG_BL"} (diverging color mode). See the description for more
 details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is "sequential".
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default: "sequential".
 See the description for more details.}
 
 \item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer

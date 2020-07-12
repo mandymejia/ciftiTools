@@ -2,11 +2,11 @@
 % Please edit documentation in R/cifti_separate.R
 \name{cifti_separate}
 \alias{cifti_separate}
-\title{Separates and saves CIFTI data to NIfTI and GIfTI files.}
+\title{Separate and save CIFTI data as NIfTI and GIfTI files}
 \usage{
 cifti_separate(
   cifti_fname,
-  brainstructures = c("left", "right", "subcortical"),
+  brainstructures = c("left", "right"),
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -21,11 +21,13 @@ cifti_separate(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
+in.}
 
-\item{brainstructures}{A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
-\code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
-default is \code{c("left","right","subcortical")} (all brain structures).}
+\item{brainstructures}{Character vector indicating which brain structure(s) 
+to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
+gray matter). Default: \code{c("left","right")} (brain surface only).}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
@@ -42,12 +44,13 @@ path is relative, they will be saved in \code{write_dir}.}
 
 \item{ROIsubcortVol_fname}{File name for volume ROI.}
 
-\item{overwrite}{If all NIfTI or GIfTI files already exists, should they be overwritten? Default is TRUE.}
+\item{overwrite}{If all NIfTI or GIfTI files already exists, should they be overwritten? Default: TRUE.}
 
 \item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
 
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 A data frame with column names "label", "fname", and "existed", and rows corresponding to each separate file.
@@ -61,25 +64,4 @@ This function uses a system wrapper for the 'wb_command' executable. The user mu
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
  The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
  executable also works.)
-
-The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
-3 Accumbens-L
-4 Accumbens-R
-5 Amygdala-L
-6 Amygdala-R
-7 Brain Stem
-8 Caudate-L
-9 Caudate-R
-10 Cerebellum-L
-11 Cerebellum-R
-12 Diencephalon-L
-13 Diencephalon-R
-14 Hippocampus-L
-15 Hippocampus-R
-16 Pallidum-L
-17 Pallidum-R
-18 Putamen-L
-19 Putamen-R
-20 Thalamus-L
-21 Thalamus-R
 }

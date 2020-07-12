@@ -5,11 +5,12 @@
 \title{Retrieves the Connectome Workbench path from the ciftiTools_wb_path option or the provided argument.
 This path can be the Connectome Workbench folder or the executable directly.}
 \usage{
-get_wb_cmd_path(wb_path, verbose = FALSE)
+get_wb_cmd_path(wb_path = NULL, verbose = FALSE)
 }
 \arguments{
-\item{wb_path}{The path to the Connectome Workbench folder or executable. Ignored if the 
-ciftiTools_wb_path option has been set.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 
 \item{verbose}{Default FALSE.}
 }

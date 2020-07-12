@@ -2,32 +2,44 @@
 % Please edit documentation in R/gifti_resample.R
 \name{make_helper_spheres}
 \alias{make_helper_spheres}
-\title{Generates GIFTI sphere surface files}
+\title{Generate GIFTI sphere surface files}
 \usage{
 make_helper_spheres(
   sphereL_fname,
   sphereR_fname,
   resamp_res,
   write_dir = NULL,
+  overwrite = FALSE,
   wb_path = NULL
 )
 }
 \arguments{
-\item{sphereL_fname}{File path to left-hemisphere spherical GIFTI to be created}
+\item{sphereL_fname}{File path to left-hemisphere spherical GIFTI to be 
+created}
 
-\item{sphereR_fname}{File path to right-hemisphere spherical GIFTI to be created}
+\item{sphereR_fname}{File path to right-hemisphere spherical GIFTI to be 
+created}
 
-\item{resamp_res}{Target resolution of spherical GIFTIs to be created (approximate number of vertices per hemisphere)}
+\item{resamp_res}{(Optional) Target resolution for resampling (number of 
+cortical surface vertices per hemisphere). If \code{NULL} (default) or 
+\code{FALSE}, do not perform resampling.}
 
-\item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
+\item{write_dir}{(Optional) directory to place the sphere files in. If
+\code{NULL} (default), do not append any directory to the sphere file paths.}
 
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
+\item{overwrite}{If both spheres already exist, should they be written over? 
+Default: \code{FALSE} (skip execution if both exist).}
+
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Logical indicating whether output files exist
+Logical indicating whether output files exist. Or, \code{NA} if the 
+ command was skipped because both already existed and \code{overwrite==FALSE}.
 }
 \description{
-Generates GIFTI spherical surface files in a target resolution. These are required for resampling CIFTI
-and GIFTI files.  This function generates a pair of vertex-matched left and right spheres in the target resolution.
+This function generates a pair of GIFTI vertex-matched left and 
+ right spheres in the target resolution. These are required for resampling 
+ CIFTI and GIFTI files.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_read_flat.R
 \name{cifti_read_flat}
 \alias{cifti_read_flat}
-\title{Reads in CIFTI data}
+\title{Read in CIFTI data as a single matrix}
 \usage{
 cifti_read_flat(
   cifti_fname,
@@ -14,23 +14,25 @@ cifti_read_flat(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
+in.}
 
 \item{keep}{\code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
-a new GIfTI file was made by this function call, should it be deleted once it is read in? Default is FALSE (delete it). 
+a new GIfTI file was made by this function call, should it be deleted once it is read in? Default: FALSE (delete it). 
 If \code{overwrite==FALSE} and the GIfTI already exists, it will not be deleted even if \code{keep==FALSE}.}
 
 \item{gifti_fname}{File path of GIfTI-format data to save the CIFTI as.}
 
 \item{overwrite}{\code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. Should the 
-GIfTI file be overwritten if it already exists? Default is FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
+GIfTI file be overwritten if it already exists? Default: FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
 the existing file is used.}
 
 \item{write_dir}{The directory in which to save the GIfTI (or look for it if \code{overwrite==FALSE}). If NULL, 
 defaults to the current working directory.}
 
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI file.
@@ -44,24 +46,27 @@ This function uses a system wrapper for the 'wb_command' executable. The user mu
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
  The 'wb_path' argument is the full file path to the 'wb_command' executable file.
 
-The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
-3 Accumbens-L
-4 Accumbens-R
-5 Amygdala-L
-6 Amygdala-R
-7 Brain Stem
-8 Caudate-L
-9 Caudate-R
-10 Cerebellum-L
-11 Cerebellum-R
-12 Diencephalon-L
-13 Diencephalon-R
-14 Hippocampus-L
-15 Hippocampus-R
-16 Pallidum-L
-17 Pallidum-R
-18 Putamen-L
-19 Putamen-R
-20 Thalamus-L
-21 Thalamus-R
+The subcortical brain structure labels (LABELS element of returned list) take 
+ values 3-21 and represent:
+ \describe{
+   \item{3}{Accumbens-L}
+   \item{4}{Accumbens-R}
+   \item{5}{Amygdala-L}
+   \item{6}{Amygdala-R}
+   \item{7}{Brain Stem}
+   \item{8}{Caudate-L}
+   \item{9}{Caudate-R}
+   \item{10}{Cerebellum-L}
+   \item{11}{Cerebellum-R}
+   \item{12}{Diencephalon-L}
+   \item{13}{Diencephalon-R}
+   \item{14}{Hippocampus-L}
+   \item{15}{Hippocampus-R}
+   \item{16}{Pallidum-L}
+   \item{17}{Pallidum-R}
+   \item{18}{Putamen-L}
+   \item{19}{Putamen-R}
+   \item{20}{Thalamus-L}
+   \item{21}{Thalamus-R}
+ }
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_resample_separate.R
 \name{cifti_resample_separate}
 \alias{cifti_resample_separate}
-\title{Resample CIFTI data from various separated files.}
+\title{Resample CIFTI data from separate GIfTI and NIfTI files}
 \usage{
 cifti_resample_separate(
   cortexL_original_fname = NULL,
@@ -19,7 +19,7 @@ cifti_resample_separate(
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
-  res_target,
+  resamp_res,
   sphereL_original_fname,
   sphereR_original_fname,
   sphereL_target_fname = NULL,
@@ -34,51 +34,76 @@ cifti_resample_separate(
 )
 }
 \arguments{
-\item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of GIFTI data for [left/right] cortex to resample.}
+\item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of 
+GIFTI data for [left/right] cortex to resample.}
 
-\item{cortexL_target_fname, cortexR_target_fname}{(Optional) File path to save the resampled GIFTI data for [left/right] cortex as.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it will be named by ciftiTools::cifti_separate_default_suffix.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it will be named by ciftiTools::cifti_separate_default_suffix.}
+\item{cortexL_target_fname, cortexR_target_fname}{(Optional) File path to 
+save the resampled GIFTI data for [left/right] cortex as.
+If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+will be named by \code{\link{cifti_separate_default_suffix}}.}
 
-\item{ROIcortexL_original_fname, ROIcortexR_original_fname}{(Optional) File path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to resample.}
+\item{ROIcortexL_original_fname, ROIcortexR_original_fname}{(Optional) File 
+path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
+resample.}
 
-\item{ROIcortexL_target_fname, ROIcortexR_target_fname}{(Optional) File path of to save the resampled GIFTI ROI corresponding to \code{cortex[L/R]_target_fname} as.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it will be named by ciftiTools::cifti_separate_default_suffix.}
+\item{ROIcortexL_target_fname, ROIcortexR_target_fname}{(Optional) File path 
+of to save the resampled GIFTI ROI corresponding to 
+\code{cortex[L/R]_target_fname} as.
+If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+will be named by \code{\link{cifti_separate_default_suffix}}.}
 
-\item{validROIcortexL_target_fname, validROIcortexR_target_fname}{(Optional) Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it will be named by ciftiTools::cifti_separate_default_suffix.}
+\item{validROIcortexL_target_fname, validROIcortexR_target_fname}{(Optional) 
+Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
+If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+will be named by \code{\link{cifti_separate_default_suffix}}.}
 
-\item{surfL_original_fname, surfR_original_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
+\item{surfL_original_fname, surfR_original_fname}{(Optional) File path, or 
+vector of multiple file paths, of GIFTI surface geometry file 
 representing left/right cortex to resample too.}
 
-\item{surfL_target_fname, surfR_target_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-representing left/right cortex to save the resampled data as. Each should correspond to \code{surf[L/R]_original_fname}.}
+\item{surfL_target_fname, surfR_target_fname}{(Optional) File path, or vector 
+of multiple file paths, to save the resampled data at. 
+Each should correspond to \code{surf[L/R]_original_fname}.}
 
-\item{res_target}{Target resolution (number of cortical surface vertices per hemisphere)}
+\item{resamp_res}{(Optional) Target resolution for resampling (number of 
+cortical surface vertices per hemisphere). If \code{NULL} (default) or 
+\code{FALSE}, do not perform resampling.}
 
-\item{sphereL_original_fname, sphereR_original_fname}{File path of [left/right]-hemisphere spherical GIFTI files in original resolution 
-(compatible with original_fnames and surfL_original_fname) .}
+\item{sphereL_original_fname, sphereR_original_fname}{File path of 
+[left/right]-hemisphere spherical GIFTI files in original resolution 
+(compatible with original files e.g. \code{cortex[L/R]_original_fname} and 
+\code{surf[L/R]_original_fname}) .}
 
-\item{sphereL_target_fname, sphereR_target_fname}{File path of [left/right]-hemisphere spherical GIFTI files in targetinal resolution 
-(compatible with target_fnames) . NULL (default) will be named as "Resampled_[res_target]_[basename(sphere[L/R]_original_fname)]"}
+\item{sphereL_target_fname, sphereR_target_fname}{File path of 
+[left/right]-hemisphere spherical GIFTI files in targetinal resolution 
+(compatible with target files) . \code{NULL} (default) will be named as 
+"Resampled_[resamp_res]_[basename(sphere[L/R]_original_fname)]"}
 
-\item{sphere_target_keep}{Should helper files be deleted at the end of this function call, if they were created? Default is FALSE.}
+\item{sphere_target_keep}{Should helper files be deleted at the end of this 
+function call, if they were created? Default: \code{FALSE}.}
 
-\item{sphere_target_overwrite}{Logical indicating whether sphere[L/R]_target_fname should be overwritten if it already exists. Default is TRUE.}
+\item{sphere_target_overwrite}{Logical indicating whether 
+\code{sphere[L/R]_target_fname} should be overwritten if it already exists. 
+Default: \code{TRUE}.}
 
-\item{overwrite}{Logical indicating whether each target file should be overwritten if it already exists.}
+\item{overwrite}{Logical indicating whether each target file should be 
+overwritten if it already exists. Default: \code{TRUE}.}
 
-\item{read_dir}{If the file names of \code{original_fnames}, \code{surfL_original_fname}, or \code{surfR_original_fname} are relative, this is the 
-directory to look for them in. If NULL (default), use the current working directory. \code{read_dir} will not affect files specified}
+\item{read_dir}{Directory to append to the path of every file name in
+\code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
+(default), do not append any directory to the path.}
 
-\item{write_dir}{If the file names of \code{target_fnames} or surf[L/R]_original_fname are relative, this is the directory to look for them in.
-Defaults to the current working directory.}
+\item{write_dir}{Directory to append to the path of every file name in
+\code{target_fname} and \code{validROIcortex_target_fname}. If \code{NULL} 
+(default), do not append any directory to the path.}
 
-\item{sphere_target_dir}{If \code{sphere_target_keep} and the file names of \code{original_fnames} are relative, this is the directory to 
-write and look for them in. The default is "./helper_files_resampling".}
+\item{sphere_target_dir}{Directory to append to the path of 
+\code{sphere_target_fname}. If \code{NULL} (default), it will be a folder
+titled \code{"helper_files_resampling"} within \code{write_dir} (or the}
 
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 Logical indicating whether resampled CIFTI file was created.
@@ -87,9 +112,8 @@ Logical indicating whether resampled CIFTI file was created.
 Performs spatial resampling of various CIFTI file components on the cortical surface.
 }
 \details{
-Performs resampling of CIFTI files using Connectome Workbench tools.  Several helper files must be created:
-
-Step 1: Generate spheres in the target resolution (if not already existing and provided)
-Step 2: Use -metric-resample to resample surface/cortex files into target resolution
-Step 3: Use -surface-resample to resample the gifti files (if provided) into target resolution
+Performs resampling of CIFTI files using Connectome Workbench tools.  
+ Step 1: Generate spheres in the target resolution (if not already existing and provided)
+ Step 2: Use -metric-resample to resample surface/cortex files into target resolution
+ Step 3: Use -surface-resample to resample the gifti files (if provided) into target resolution
 }

@@ -21,13 +21,14 @@ cifti_view_surface(
   surfL = NULL,
   surfR = NULL,
   colorbar_position = c("bottom", "right", "separate"),
-  colorbar_label = ""
+  colorbar_label = "",
+  colorbar_digits = NULL
 )
 }
 \arguments{
 \item{cifti}{Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
 
-\item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.}
+\item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.}
 
 \item{hemisphere}{Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
@@ -51,7 +52,7 @@ the largest size that fits within a 1600x900 pixel area (a standard monitor size
 to make each panel have a 7x9 aspect ratio.}
 
 \item{fname_prefix}{An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-Default is "cifti". Note: only the "widget" view mode is supported right now.}
+Default: "cifti". Note: only the "widget" view mode is supported right now.}
 
 \item{write_dir}{Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
 supported right now.}
@@ -60,7 +61,7 @@ supported right now.}
 and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 See the \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default: sequential. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
@@ -74,6 +75,9 @@ for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surfa
 \item{colorbar_position}{"bottom" (default), "right", or "separate" from the RGL window.}
 
 \item{colorbar_label}{A title for the colorbar (none by default).}
+
+\item{colorbar_digits}{The number of decimal values to display. If \code{NULL} (default), let \code{\link{format}} 
+decide.}
 }
 \description{
 Visualize cifti brain data. The \code{rgl} package is required.

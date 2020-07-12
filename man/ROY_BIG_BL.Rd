@@ -15,7 +15,7 @@ be reversed.}
 
 \item{mid}{(Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.}
 
-\item{pos_half}{Use the positive half (black --> red --> yellow) only? Default is \code{FALSE}.}
+\item{pos_half}{Use the positive half (black --> red --> yellow) only? Default: \code{FALSE}.}
 }
 \value{
 A data.frame with two columns: color (character: color hex codes) and value (numeric).

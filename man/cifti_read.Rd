@@ -2,11 +2,11 @@
 % Please edit documentation in R/cifti_read.R
 \name{cifti_read}
 \alias{cifti_read}
-\title{Reads in CIFTI data}
+\title{Read in CIFTI data}
 \usage{
 cifti_read(
   cifti_fname,
-  brainstructures = c("left", "right", "subcortical"),
+  brainstructures = c("left", "right"),
   ROI_brainstructures = NULL,
   sep_kwargs = NULL,
   sep_keep = FALSE,
@@ -15,91 +15,115 @@ cifti_read(
   sphereR_fname = NULL,
   resamp_kwargs = NULL,
   resamp_keep = FALSE,
-  read_from_separate_kwargs = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
-  surf_label = NULL,
-  wb_path = NULL,
-  verbose = FALSE
+  verbose = TRUE,
+  wb_path = NULL
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
+in.}
 
-\item{brainstructures}{A vector indicating which brain structure(s) to obtain: \code{"left"} (left cortical surface), 
-\code{"right"} (right cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar gray matter). The
-default is \code{c("left","right","subcortical")} (all brain structures).}
+\item{brainstructures}{Character vector indicating which brain structure(s) 
+to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
+gray matter). Default: \code{c("left","right")} (brain surface only).}
 
-\item{ROI_brainstructures}{Which ROIs should be obtained? NULL (default) to not get any ROIs. This should be a subset of the
-\code{brainstructures} argument--any not in \code{brainstructures} will be ignored.}
+\item{ROI_brainstructures}{Character vector indicating which ROIs should be 
+obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
+be a subset of the \code{brainstructures} argument. Any elements in 
+\code{ROI_brainstructures} but not in \code{brainstructures} will be 
+ignored.}
 
-\item{sep_kwargs}{(Optional) Additional arguments to cifti_separate in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="separated_cifti_files")} . Note that \code{cifti_read} will save the location
-of the files from cifti_separate}
+\item{sep_kwargs}{(Optional) Additional arguments to 
+\code{\link{cifti_separate}} in the form of a list, e.g. 
+\code{list(overwrite=FALSE, write_dir="separated_files", 
+cortexL_fname="my_cortexL.nii")}. Do not specify \code{cifti_fname} in 
+\code{sep_kwargs}; instead, use the \code{cifti_fname} argument directly.}
 
-\item{sep_keep}{If new separated files were made by this function call, should they be deleted once they are read in?
-Default is FALSE (delete them). If \code{sep_kwargs["overwrite"]==FALSE} and the separated files already exist,
-they will be read in and will not be deleted even if \code{sep_keep==FALSE}.}
+\item{sep_keep}{If files are created by \code{\link{cifti_separate}}, should 
+they be deleted at the end of this function call? (If 
+\code{sep_kwargs$overwrite == FALSE} and the separated files already exist,
+they will not be deleted even if \code{sep_keep == FALSE}.) Default:
+\code{FALSE} (delete new files).}
 
-\item{resamp_res}{Target resolution for resampling (number of cortical surface vertices per hemisphere). If NULL or 
-FALSE, do not perform resampling. NOT YET IMPLEMENTED.}
+\item{resamp_res}{(Optional) Target resolution for resampling (number of 
+cortical surface vertices per hemisphere). If \code{NULL} (default) or 
+\code{FALSE}, do not perform resampling.}
 
-\item{sphereL_fname, sphereR_fname}{Helper sphere files needed for resampling}
+\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
+as the CIFTI data. It is only required for resampling.}
 
-\item{resamp_kwargs}{(Optional) Additional arguments to cifti_resample_separate in the form of a list. Specify 
-resamp_res, sphereL_fname, and sphereR_fname through the  \code{cifti_read} arguments and not through \code{resamp_kwargs}.}
+\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
+as the CIFTI data. It is only required for resampling.}
 
-\item{resamp_keep}{Should files made by \code{cifti_resample} be kept? Default is FALSE (delete after).}
+\item{resamp_kwargs}{(Optional) Additional arguments to 
+\code{\link{cifti_resample_separate}} in the form of a list, e.g. 
+\code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
+\code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
+\code{resamp_kwargs}; instead, use the \code{cifti_read} arguments. Do not 
+specify the names of the files to resample, e.g. 
+\code{cortexL_original_fname}, because these are determined by the
+preceeding \code{\link{cifti_separate}} call.}
 
-\item{read_from_separate_kwargs}{(Optional) Additional arguments to cifti_read_from_separate in the form of a list.}
+\item{resamp_keep}{If files are created by 
+\code{\link{cifti_resample_separate}}, should they be deleted at the end of 
+this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
+resampled files already exist, they will not be deleted even if 
+\code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
 
-\item{surfL_fname, surfR_fname}{(Optional) File path, or vector of multiple file paths, of GIFTI surface geometry file 
-representing the left/right cortex. The path should be absolute, or relative to 
-\code{read_from_separate_kwargs["read_dir"]}, which defaults to the current working directory.}
+\item{surfL_fname, surfR_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left/right cortex. One or both can be provided.}
 
-\item{surf_label}{(Optional) Character vector containing descriptive names of each GIFTI surface geometry provided 
-(e.g. "midthickness", "inflated", etc.). Should match the lengths of \code{surfL_fname} and/or \code{surfR_fname} 
-if they are provided. Otherwise, ignored.}
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
-
-\item{verbose}{Should occasional updates be printed? Default is FALSE.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
- LABELS contains the brain structure labels (usually 3-21) of the subcortical elements. If surface geometry files
- were provided in the arguments, the list will also contain SURF_LEFT and SURF_RIGHT.
+An object of type \code{cifti}, a list containing at least 4 elements: 
+ \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} and \code{LABELS}.
+ \code{LABELS} contains the brain structure labels (usually 3-21) of the 
+ subcortical elements. If a surface geometry file(s) was provided in the 
+ arguments, the list will also contain \code{SURF_LEFT}/\code{SURF_RIGHT}.
 }
 \description{
-Wrapper function to read CIFTI data by separating it into GIfTI and NIfTI files (\code{cifti_separate}), 
- optionally resampling them (\code{cifti_resample_separate}) (NOT YET IMPLEMENTED), and then reading each in
- (\code{cifti_read_from_separate}).
+Read a CIFTI file by separating it into GIfTI and NIfTI files 
+ with \code{\link{cifti_separate}}, optionally resampling them with 
+ \code{\link{cifti_resample_separate}}, and then reading each separated 
+ component into R with \code{\link{cifti_read_from_separate}}.
 }
 \details{
-This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
- install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
- executable also works.)
+This function uses a system wrapper for the "wb_command"
+ executable. The user must first download and install the Connectome 
+ Workbench, available from 
+ \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
+ The \code{wb_path} argument is the path to the Connectime Workbench folder or
+ executable.
 
-The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
-3 Accumbens-L
-4 Accumbens-R
-5 Amygdala-L
-6 Amygdala-R
-7 Brain Stem
-8 Caudate-L
-9 Caudate-R
-10 Cerebellum-L
-11 Cerebellum-R
-12 Diencephalon-L
-13 Diencephalon-R
-14 Hippocampus-L
-15 Hippocampus-R
-16 Pallidum-L
-17 Pallidum-R
-18 Putamen-L
-19 Putamen-R
-20 Thalamus-L
-21 Thalamus-R
+The subcortical brain structure labels (LABELS element of returned list) take 
+ values 3-21 and represent:
+ \describe{
+   \item{3}{Accumbens-L}
+   \item{4}{Accumbens-R}
+   \item{5}{Amygdala-L}
+   \item{6}{Amygdala-R}
+   \item{7}{Brain Stem}
+   \item{8}{Caudate-L}
+   \item{9}{Caudate-R}
+   \item{10}{Cerebellum-L}
+   \item{11}{Cerebellum-R}
+   \item{12}{Diencephalon-L}
+   \item{13}{Diencephalon-R}
+   \item{14}{Hippocampus-L}
+   \item{15}{Hippocampus-R}
+   \item{16}{Pallidum-L}
+   \item{17}{Pallidum-R}
+   \item{18}{Putamen-L}
+   \item{19}{Putamen-R}
+   \item{20}{Thalamus-L}
+   \item{21}{Thalamus-R}
+ }
 }

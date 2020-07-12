@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_view.R
 \name{cifti_view}
 \alias{cifti_view}
-\title{Switch for cifti_view_surface or cifti_view_volume}
+\title{Switch for \code{\link{cifti_view_surface}} or \code{\link{cifti_view_volume}}}
 \usage{
 cifti_view(cifti, surface_or_volume = NULL, ...)
 }
@@ -14,6 +14,10 @@ volume otherwise}
 
 \item{...}{Additional arguments to pass to either view function.}
 }
+\value{
+The return value of \code{cifti_view_surface} or 
+ \code{cifti_view_volume}.
+}
 \description{
-Switch for cifti_view_surface or cifti_view_volume
+Switch for \code{\link{cifti_view_surface}} or \code{\link{cifti_view_volume}}
 }

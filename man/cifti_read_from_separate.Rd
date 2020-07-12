@@ -2,7 +2,7 @@
 % Please edit documentation in R/cifti_read_from_separate.R
 \name{cifti_read_from_separate}
 \alias{cifti_read_from_separate}
-\title{Reads in CIFTI data from GIfTI and NIfTI files, e.g. those created by \code{cifti_separate}.}
+\title{Read in CIFTI data from separate GIfTI and NIfTI files}
 \usage{
 cifti_read_from_separate(
   cortexL_fname = NULL,
@@ -12,8 +12,7 @@ cifti_read_from_separate(
   surfL_fname = NULL,
   surfR_fname = NULL,
   surf_label = "surface",
-  read_dir = NULL,
-  wb_path = NULL
+  read_dir = NULL
 )
 }
 \arguments{
@@ -32,9 +31,6 @@ provided. Otherwise, ignored.}
 
 \item{read_dir}{If any of the file names are relative, this is the directory to look for them in. If NULL (default),
 use the current working directory. \code{read_dir} will not affect files specified with absolute paths.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder. If not provided, should be set with 
-\code{ciftiTools.setOption('wb_path', 'path/to/workbench')}.}
 }
 \value{
 An object of type 'cifti', a list containing at least 4 elements: CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS.
@@ -49,25 +45,4 @@ This function uses a system wrapper for the 'wb_command' executable. The user mu
  install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
  The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
  executable also works.)
-
-The subcortical brain structure labels (LABELS element of returned list) take values 3-21 and represent:
-3 Accumbens-L
-4 Accumbens-R
-5 Amygdala-L
-6 Amygdala-R
-7 Brain Stem
-8 Caudate-L
-9 Caudate-R
-10 Cerebellum-L
-11 Cerebellum-R
-12 Diencephalon-L
-13 Diencephalon-R
-14 Hippocampus-L
-15 Hippocampus-R
-16 Pallidum-L
-17 Pallidum-R
-18 Putamen-L
-19 Putamen-R
-20 Thalamus-L
-21 Thalamus-R
 }
