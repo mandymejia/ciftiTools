@@ -6,11 +6,18 @@
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
 #' @inheritParams sep_kwargs_Param
 #' @inheritParams sep_keep_Param
-#' @inheritParams resamp_res_Param
+#' @param resamp_res Target resolution for resampling (number of 
+#'  cortical surface vertices per hemisphere). 
 #' @param sphereL_original_fname,sphereR_original_fname Helper sphere files 
 #'  needed for resampling
 #' @param sphereL_target_fname,sphereR_target_fname Helper sphere files 
 #'  needed for resampling
+#' @param surfL_original_fname,surfR_original_fname (Optional) File path of 
+#'  existing GIFTI surface geometry file representing the left/right cortex. 
+#'  One or both can be provided.
+#' @param surfL_target_fname,surfR_target_fname (Optional) File path for
+#'  the resampled GIFTI surface geometry file representing the left/right 
+#'  cortex. If NULL (default),
 #' @inheritParams resamp_kwargs_Param
 #' @inheritParams resamp_keep_Param
 #' @param overwrite If \code{cifti_target_fname} exists, should it be replaced? 
@@ -32,23 +39,25 @@
 #'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
 #'  executable.
 #'
-cifti_resample <- function(cifti_original_fname, cifti_target_fname, 
+cifti_resample <- function(
+  cifti_original_fname, cifti_target_fname, 
   sep_kwargs=NULL, sep_keep=FALSE, #cifti_separate
-  resamp_res=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
+  resamp_res, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
   sphereL_original_fname=NULL, sphereR_original_fname=NULL, 
   sphereL_target_fname=NULL, sphereR_target_fname=NULL,
-  overwrite=FALSE, write_dir=NULL, wb_path=NULL, verbose=TRUE) {
+  surfL_original_fname=NULL, surfR_original_fname=NULL,
+  surfL_target_fname=NULL, surfR_target_fname=NULL,
+  overwrite=FALSE, write_dir=NULL, verbose=TRUE, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
 
+  # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
 
   brainstructures <- ROI_brainstructures <- c("left","right","subcortical")
 
-  original_to_target_fname <- function(original_fname, resamp_res) {
-    bname <- basename(original_fname)
-    paste("resampled", resamp_res, bname, sep="_")
-  }
+  # [TO DO]: consider auto-generating cifti_target_fname & make it optional
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
   if (file.exists(cifti_target_fname) & !overwrite) { return(invisible(NA)) }
 
@@ -65,6 +74,7 @@ cifti_resample <- function(cifti_original_fname, cifti_target_fname,
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
     sep_kwargs=sep_kwargs, sep_keep=sep_keep, wb_path=wb_path
   )
+
   to_cif <- sep_result$fname
   names(to_cif) <- sep_result$label
 
@@ -77,33 +87,43 @@ cifti_resample <- function(cifti_original_fname, cifti_target_fname,
   # cifti_resample_separate() --------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  do_resamp <- !identical(resamp_res, NULL) & !identical(resamp_res, FALSE)
-  if (do_resamp) {
-    if (verbose) { cat("Resampling CIFTI file.\n") }
+  if (verbose) { cat("Resampling CIFTI file.\n") }
 
-    # Do not resample the subcortical data.
-    to_resample <- to_cif[!grepl("subcort", names(to_cif))]
-    
-    # Do cifti_resample_separate.
-    resamp_result <- cifti_resample_wrapper(
-      resamp_res, to_resample, resamp_kwargs, resamp_keep, 
-      surfL_fname, surfR_fname, sphereL_original_fname, sphereR_original_fname, 
-      wb_path
-    )
-    # Replace resampled files.
-    to_cif_resampled <- names(to_cif)[names(to_cif) %in% resamp_result$label]
-    to_cif[to_cif_resampled] <- resamp_result$fname[resamp_result$label %in% to_cif_resampled]
-    if (length(surfL_fname) > 0) { 
-      surfL_fname <- resamp_result$fname[grepl("surfL", resamp_result$label)] 
-    }
-    if (length(surfR_fname) > 0) { 
-      surfR_fname <- resamp_result$fname[grepl("surfR", resamp_result$label)] 
-    }
+  # Do not resample the subcortical data.
+  to_resample <- to_cif[!grepl("subcort", names(to_cif))]
+  
+  # [TO DO]: Add surf[L/R]_target_fname to resamp_kwargs
+  # resamp_kwargs
+  resamp_kwargs$target_fnames <- merge_kwargs(
+    list(
+      sphereL=sphereL_target_fname, sphereR=sphereR_target_fname,
+      surfL=surfL_target_fname, surfR=surfR_target_fname
+    ),
+    resamp_kwargs$target_fnames, 
+    "Direct arguments", "resamp_kwargs$target_fnames"
+  )
 
-    if (verbose) { 
-      print(Sys.time() - exec_time)
-      exec_time <- Sys.time()
-    }
+  # Do cifti_resample_separate.
+  resamp_result <- cifti_resample_wrapper(
+    resamp_res, to_resample, resamp_kwargs, resamp_keep, 
+    surfL_original_fname, surfR_original_fname, 
+    sphereL_original_fname, sphereR_original_fname, 
+    wb_path
+  )
+  # Replace resampled files.
+  to_cif_resampled <- names(to_cif)[names(to_cif) %in% resamp_result$label]
+  to_cif[to_cif_resampled] <- resamp_result$fname[resamp_result$label %in% to_cif_resampled]
+
+  if (!is.null(surfL_fname)) { 
+    surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"] 
+  }
+  if (!is.null(surfR_fname)) { 
+    surfR_fname <- resamp_result$fname[resamp_result$label == "surfR"] 
+  }
+
+  if (verbose) { 
+    print(Sys.time() - exec_time)
+    exec_time <- Sys.time()
   }
 
   # ----------------------------------------------------------------------------
@@ -183,7 +203,10 @@ cifti_resample <- function(cifti_original_fname, cifti_target_fname,
         file.remove(paste0(f, ".data"))
       }
     }
+  }
 
+  # Same for resampled files.
+  if (!resamp_keep) {
     for(f in resamp_result$fname[!(resamp_result$existed)]) {
       file.remove(f)
       if (file.exists(paste0(f, ".data"))) {
@@ -192,5 +215,6 @@ cifti_resample <- function(cifti_original_fname, cifti_target_fname,
     }
   }
 
-  invisible(cmd_code)
+  out <- list(cifti=cifti_target_fname, surfL=surfL_target_fname, surfR=surfR_target_fname)
+  out[!sapply(out, is.null)]
 }

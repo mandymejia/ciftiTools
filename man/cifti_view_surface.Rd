@@ -76,8 +76,8 @@ for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surfa
 
 \item{colorbar_label}{A title for the colorbar (none by default).}
 
-\item{colorbar_digits}{The number of decimal values to display. If \code{NULL} (default), let \code{\link{format}} 
-decide.}
+\item{colorbar_digits}{The number of digits for the colorbar legend ticks. 
+If \code{NULL} (default), let \code{\link{format}} decide.}
 }
 \description{
 Visualize cifti brain data. The \code{rgl} package is required.

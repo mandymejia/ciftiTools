@@ -8,7 +8,7 @@
 \code{\link{cifti_resample_separate}} in the form of a list, e.g. 
 \code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
 \code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-\code{resamp_kwargs}; instead, use the \code{cifti_read} arguments. Do not 
+\code{resamp_kwargs}; instead, use the immediate arguments. Do not 
 specify the names of the files to resample, e.g. 
 \code{cortexL_original_fname}, because these are determined by the
 preceeding \code{\link{cifti_separate}} call.}

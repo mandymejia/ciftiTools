@@ -1,133 +1,223 @@
-#' Make a cifti object from its components
+#' Coerce a file path, GIFTI object, or "cifti_cortex" object to a 
+#'  "cifti_cortex" object.
 #'
-#' @param cortexL Data matrix for left cortex, with vertices in rows
-#' @param cortexR Data matrix for right cortex, with vertices in rows
-#' @param surfL_fname File path to gifti surface object for left cortex, or a vector of file names. Provide surfL_fname OR surfL.
-#' @param surfL Object of class 'surface' for left cortex (a list with two elements, vertices and faces), or a list thereof. Provide surfL_fname OR surfL.
-#' @param surfR_fname File path to gifti surface object for right cortex, or a vector of file names. Provide surfR_fname OR surfR.
-#' @param surfR Object of class 'surface' for right cortex (a list with two elements, vertices and faces), or a list thereof
-#' @param surf_label Character vector containing descriptive names of each surface geometry provided (e.g. midthickness, inflated, etc.). Must be provided if surfL_fname and/or surfL_fname provided, and length must match. Otherwise, ignored.
-#' @param subcortical Data matrix for subcortical locations, with voxels in rows
-#' @param mask Volumetric brain mask for subcortical locations
-#' @param labels Volumetric labels for subcortical ROIs
+#' @param cortex What to coerce as a "cifti_cortex" object.
 #'
-#' @return Object of class 'cifti'
+#' @return The "cifti_cortex" object.
 #' @export
 #'
-cifti_make <- function(cortexL=NULL, cortexR=NULL, surfL_fname=NULL, surfL=NULL, surfR_fname=NULL, surfR=NULL, surf_label=NULL, subcortical=NULL, mask=NULL, labels=NULL) {
+#' @importFrom gifti readGIfTI is.gifti
+cifti_make_cortex <- function(cortex) {
+  # File path.
+  if (is.fname(cortex)) {
+    cortex <- readGIfTI(cortex)
+  }
+  # GIFTI,
+  if (is.gifti(cortex)) { 
+    cortex <- do.call(cbind, cortex$data)
+  }
 
-  #check argument compatibility
-  if (!is.null(subcortical)) { if (is.null(mask)) stop('If subcortical is provided, mask must be provided also.')} else mask <- NULL
-  if (!is.null(subcortical)) { if (is.null(labels)) stop('If subcortical is provided, labels must be provided also.')} else labels <- NULL
-  if (!is.null(cortexL)) { if (class(cortexL) != 'matrix') stop('cortexL must be a matrix (or NULL), but it is not.') }
-  if (!is.null(cortexR)) { if (class(cortexR) != 'matrix') stop('cortexR must be a matrix (or NULL), but it is not.') }
-  if (!is.null(surfL_fname) & !is.null(surfL)) stop('Provide surfL_fname or surfL, but not both.')
-  if (!is.null(surfR_fname) & !is.null(surfR)) stop('Provide surfR_fname or surfR, but not both.')
+  # Return cifti_cortex or error.
+  if (!is.cifti_cortex(cortex)) { 
+    stop("The object could not be converted into a cifti_cortex object.")
+  } 
+  class(cortex) <- "cifti_cortex"
+  cortex
+}
 
-  #get number of left cortex gifti files or surfaces provided
-  if (!is.null(surfL_fname)) {
-    numsurfL <- length(surfL_fname)
-  } else if (!is.null(surfL)) {
-    if (is.cifti_surface(surfL)) surfL <- list(surf1 = surfL) #for single surface case
-    numsurfL <- length(surfL)
+#' Coerce a volume and label into valid "cifti_volume" and "cifti_label" 
+#'  objects. They can both be file paths, NIFTI objects, or "cifti_volume"
+#'  / "cifti_labels" objects. They should correspond to one another.
+#'
+#' @param vol What to coerce as a "cifti_volume" object.
+#' @param labels What to coerce as a "cifti_labels" object.
+#'
+#' @return The "cifti_volume" and "cifti_label"  objects.
+#' @export
+#'
+#' @importFrom RNifti readNifti
+cifti_make_subcortical <- function(vol, labels) {
+  # vol 
+  if (is.fname(vol)) {
+    vol <- readNifti(vol)
+  }
+  # [TO DO]: check if it is from RNifti::readNifti.
+  # https://github.com/jonclayden/RNifti/blob/master/NAMESPACE
+
+  # labels
+  if (is.fname(labels)) {
+    labels <- readNifti(labels)
+  }
+  labels[labels > 0] <- labels[labels > 0] + 2
+  # [TO DO]: check if it is from RNifti::readNifti.
+
+  # Return them or raise an error.
+  if (!is.cifti_subcortical(vol, labels)) { 
+    stop(paste0(
+      "The objects could not be converted into",
+      "\"cifti_volume\" and \"cifti_label\" objects."
+    ))
+  } 
+  subcortical <- list(vol=vol, labels=labels)
+  class(subcortical) <- "cifti_subcortical"
+  subcortical
+}
+
+#' Coerce a matrix and mask into valid "cifti_volume" and "cifti_label" 
+#'  objects. They should both be numeric data with compatible dimensions.
+#'
+#' @param mat Data matrix for subcortical locations, with voxels in rows
+#' @param mask Volumetric brain mask for subcortical locations
+#'
+#' @return The "cifti_volume" and "cifti_label"  objects.
+#' @export
+#'
+cifti_make_vol <- function(mat, mask) {
+  if (!is.cifti_matmask_pair(mat, mask)) {
+    stop(paste0(
+      "The objects are not a compatible matrix and mask pair."
+    ))
+  }
+  vol <- array(NA, dim=c(dim(mask), ncol(mat)))
+  for(ii in 1:ncol(mat)) { 
+    vol[,,,ii][mask==1] <- mat[,ii] 
+  }
+  vol
+}
+
+#' Coerce a file path, GIFTI object, or "cifti_surface" object to a 
+#'  "cifti_surface" object.
+#'
+#' @param surf What to coerce as a "cifti_surface" object.
+#'
+#' @return The "cifti_surface" object.
+#' @export
+#'
+#' @importFrom gifti readGIfTI is.gifti
+cifti_make_surface <- function(surf) {
+  # file path
+  if (is.fname(surf)){ surf <- readGIfTI(surf) }
+  # GIFTI
+  gifti_to_surf <- function(gifti) {
+    surf <- gifti$data
+    verts <- surf$pointset
+    faces <- surf$triangle
+    if (min(faces)==0) faces <- faces + 1 #start vertex indexing at 1 instead of 0
+    surf <- list(vertices = verts, faces = faces)
+  }
+  if (is.gifti(surf)) { surf <- gifti_to_surf(surf) }
+
+  # Return cifti_surface or error.
+  if (!is.cifti_surface(surf)) { 
+    stop("The object could not be converted into a cifti_surface object.")
+  } 
+  class(surf) <- "cifti_surface"
+  surf
+}
+
+#' Get CIFTI data from separate GIfTI and NIfTI files
+#'
+#' @description Make a "cifti" object from the separated left and right cortical 
+#'  GIfTI data and surface geometry files (\code{\link[gifti]{readGIfTI}}), 
+#'  as well as the subcortical NIfTI file (\code{\link[RNifti]{readNifti}}).
+#'  Objects can be provided as file names, GIFTI/NIFTI objects, or "cifti_[...]"
+#'  objects. 
+#'
+#' @param cortexL,cortexR (Optional) [Left/right] cortical data. Can be a file
+#'  path for GIFTI data, an object from \code{\link[gifti]{readGIfTI}}, or an 
+#'  object of class "ciftiTools_cortex".
+#' @param subcortVol (Optional) Volumetric subcortical data. Can 
+#'  be a file path for NIFTI data, an object from 
+#'  \code{\link[RNifti]{readNifti}}, or the "vol" component of a 
+#'  ciftiTools_subcortical" object. If it is provided then \code{subcortMat} and 
+#'  \code{subcortMask} should not be, and vice versa. Requires \code{subcortLab}.
+#' @param subcortMat,subcortMask (Optional) Alternatively to \code{subcortVol},
+#'  the vectorized subcortical data can be provided with a volumetric mask. If
+#'  these are provided then \code{subcortVol} should not be, and vice versa. 
+#'  Requires \code{subcortLab}. The \code{subcortMat} should be a data matrix 
+#'  for subcortical locations, with voxels in rows, and \code{subcortMask}
+#'  should be a volumetric brain mask for subcortical locations.
+#' @param subcortLab (Required if \code{subcortVol} or [\code{subcortMat} and 
+#'  \code{subcortMask}] are present) Labels for subcortical ROIs. Can 
+#'  be a file path for NIFTI data, an object from 
+#'  \code{\link[RNifti]{readNifti}}, or the "labels" component of a 
+#'  ciftiTools_subcortical" object.
+#' @param surfL,surfR (Optional) [Left/right] brain surface model. Can be a file
+#'  path for GIFTI data, an object from \code{\link[gifti]{readGIfTI}}, or an 
+#'  object of class "cifti_surface". 
+#' @param read_dir (Optional) Append a directory to all file names. If \code{NULL}
+#'  (default), do not modify file names. 
+#' 
+#' @return An object of type "cifti", a list containing at least 4 elements: 
+#'  CORTEX_LEFT, CORTX_RIGHT, VOL and LABELS. LABELS contains the brain 
+#'  structure labels (usually 3-21) of the subcortical elements. If surface 
+#'  geometry files were provided in the arguments, the list will also contain 
+#'  SURF_LEFT and/or SURF_RIGHT.
+#'
+#' @export
+#'
+cifti_make_from_separate <- function(
+  cortexL=NULL, cortexR=NULL, 
+  subcortVol=NULL, subcortMat=NULL, subcortMask=NULL, subcortLab=NULL, 
+  surfL=NULL, surfR=NULL, 
+  read_dir=NULL) {
+
+  cif <- list(
+    CORTEX_LEFT=cortexL, CORTEX_RIGHT=cortexR, 
+    VOL=subcortVol, MAT=subcortMat, MASK=subcortMask, 
+    LABELS=subcortLab, 
+    SURF_LEFT=surfL, SURF_RIGHT=surfR
+  )
+
+  cif <- lapply(cif, function(x){ 
+    if (is.fname(x)) { format_path(x, read_dir, mode=4) } else { x } 
+  })
+
+  # Cortical data.
+  if (!is.null(cif$CORTEX_LEFT)) {
+    cif$CORTEX_LEFT <- cifti_make_cortex(cif$CORTEX_LEFT)
+  }
+  if (!is.null(cif$CORTEX_RIGHT)) {
+    cif$CORTEX_RIGHT <- cifti_make_cortex(cif$CORTEX_RIGHT)
+  }
+
+  # Subcortical data.
+  if (is.null(cif$LABELS)) { 
+    if(!is.null(cif$VOL)){
+      stop("subcortVol must be accompanied by subcortLab.")
+    }
+    if(!is.null(cif$MAT) | !is.null(cif$MASK)){
+      stop("subcortMat and subcortMask must be accompanied by subcortLab.")
+    }
   } else {
-    numsurfL <- NULL
-  }
-
-  #get number of right cortex gifti files or surfaces provided
-  if (!is.null(surfR_fname)) {
-    numsurfR <- length(surfR_fname)
-  } else if (!is.null(surfR)) {
-    if (is.cifti_surface(surfR)) surfR <- list(surf1 = surfR) #for single surface case
-    numsurfR <- length(surfR)
-  } else {
-    numsurfR <- NULL
-  }
-
-  #check that number of left and right surfaces is the same
-  if (!is.null(numsurfL) & !is.null(numsurfR)) {
-    if (numsurfL != numsurfR) stop('Must provide the same number of left and right surfaces, if both are provided.')
-  }
-
-  #check that the length of surf_label (if provided) matches the number of surfaces provided
-  if (!is.null(numsurfL) | !is.null(numsurfR)) {
-    numsurf <- max(numsurfL, numsurfR)
-    if (!is.null(surf_label)) { if (numsurf != length(surf_label)) stop('Length of surf_label must match number of left or right surfaces provided.')}
-    if (is.null(surf_label)) {
-      if (numsurf==1) surf_label <- 'surface'
-      if (numsurf > 1) surf_label <- paste0('surface',1:numsurf)
+    if (is.null(cif$MAT) != is.null(cif$MASK)) {
+      stop("Either both or none of subcortMat and subcortMask should be provided.")
     }
-  }
-
-
-  # #check formatting of surfR, if provided
-  # if (!is.null(surfR)) {
-  #   if (numsurf==1) {
-  #     if (!is.cifti_surface(surfR)) stop('If only one surface provided, surfR must be a valid surface object or NULL.  See is.cifti_surface().')
-  #     surfR <- list(surface=surfR)
-  #   }
-  # }
-  #
-
-  #if gifti file provided, create surfaces for left cortex
-  if (!is.null(surfL_fname)) {
-    surfL <- vector('list', length=numsurf)
-    for(ii in 1:numsurf) {
-      surfL_ii <- readGIfTI(surfL_fname[ii])$data
-      verts_left_ii <- surfL_ii$pointset
-      faces_left_ii <- surfL_ii$triangle
-      if (min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
-      surfL_ii <- list(vertices = verts_left_ii, faces = faces_left_ii)
-      class(surfL_ii) <- 'surface'
-      surfL[[ii]] <- surfL_ii
+    if (!xor(is.null(cif$VOL), is.null(cif$MAT))) {
+      stop("Exactly one of subcortVol and (subcortMat/Mask) should be provided.")
     }
-  }
-
-  #check formatting of surfL elements
-  if (!is.null(surfL)) {
-    for(ii in 1:numsurf) {
-      if (!is.cifti_surface(surfL[[ii]])) stop('An element of surfL is not a valid surface object.  See is.cifti_surface().')
-      if (!is.null(cortexL)) { if (nrow(cortexL) != nrow(surfL[[ii]]$vertices)) stop('cortexL and left surface model(s) must have same number of vertices.')}
-      class(surfL[[ii]]) <- 'surface'
+    if (is.null(cif$VOL)) { # Infer that MAT and MASK must both be present.
+      cif$VOL <- cifti_make_vol(cif$MAT, cif$MASK)
     }
-    names(surfL) <- surf_label
+    subcort <- cifti_make_subcortical(cif$VOL, cif$LABELS)
+    cif$VOL <- subcort$vol; cif$LABELS <- subcort$labels
   }
 
-  #check formatting of surfR elements
-  if (!is.null(surfR)) {
-    for(ii in 1:numsurf) {
-      if (!is.cifti_surface(surfR[[ii]])) stop('An element of surfR is not a valid surface object.  See is.cifti_surface().')
-      if (!is.null(cortexR)) { if (nrow(cortexR) != nrow(surfR[[ii]]$vertices)) stop('cortexR and right surface model(s) must have same number of vertices.')}
-      class(surfR[[ii]]) <- 'surface'
-    }
-    names(surfR) <- surf_label
+  # Surfaces
+  if (!is.null(cif$SURF_LEFT)) { 
+    cif$SURF_LEFT <- cifti_make_surface(cif$SURF_LEFT) 
+  }
+  if (!is.null(cif$SURF_RIGHT)) { 
+    cif$SURF_RIGHT <- cifti_make_surface(cif$SURF_RIGHT) 
   }
 
-  #check formatting of subcortical data
-  if (!is.null(subcortical)) {
-    if (class(subcortical) != 'matrix') stop('subcortical must be a matrix (or NULL), but it is not.')
-    if (length(dim(mask)) != 3) stop('mask must be a 3-dimensional array, but it is not.')
-    vals_mask <- sort(unique(as.vector(mask)))*1
-    if (!all.equal(vals_mask, c(0,1))) stop('mask must be logical or 0/1, but it is not.')
-    if (sum(mask) != nrow(subcortical)) stop(paste0('The number of voxels in the mask (',sum(mask),') must equal the number of rows in subcortical (',nrow(subcortical),'), but they do not match.'))
-    if (!all.equal(dim(mask),dim(labels))) stop('mask and labels must have the same dimensions, but they do not.')
-  }
-  check_cols <- c(ncol(cortexL), ncol(cortexR), ncol(subcortical))
-  if (length(unique(check_cols)) > 1) stop('If provided, cortexL, cortexR and subcortical must all have the same number of columns (measurements), but they do not.')
+  cif$MAT <- cif$MASK <- NULL
 
-  cifti_out <- vector('list', 6)
-  class(cifti_out) <- 'cifti'
-  names(cifti_out) <- c("cortexL","cortexR","surfL", "surfR", "VOL","LABELS")
+  class(cif) <- 'cifti'
 
-  if (!is.null(cortexL)) cifti_out$cortexL <- cortexL
-  if (!is.null(cortexR)) cifti_out$cortexR <- cortexR
-  if (!is.null(surfL)) cifti_out$surfL <- surfL
-  if (!is.null(surfR)) cifti_out$surfR <- surfR
-  if (!is.null(subcortical)) {
-    cifti_out$VOL <- array(0, dim=c(dim(mask),ncol(subcortical)))
-    for(ii in 1:ncol(subcortical)) { cifti_out$VOL[,,,ii][mask==1] <- subcortical[,ii] }
-    cifti_out$LABELS <- labels
-  }
-
-  cifti_out
+  # Return cifti or error.
+  if (!is.cifti(cif)) { 
+    stop("The object could not be converted into a cifti object.")
+  } 
+  cif
 }

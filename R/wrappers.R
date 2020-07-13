@@ -83,8 +83,8 @@ cifti_separate_wrapper <- function(
 #'  resample. Should be a named character vector with names as the file type label. 
 #' @inheritParams resamp_kwargs_Param
 #' @inheritParams resamp_keep_Param
-#' @param surfL_fname,surfR_fname (Optional) File path of GIFTI surface geometry
-#'  file representing the left/right cortex. One or both can be provided.
+#' @inheritParams surfL_fname_Param
+#' @inheritParams surfR_fname_Param
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param
 #' @inheritParams wb_path_Param
@@ -115,49 +115,37 @@ cifti_resample_wrapper <- function(resamp_res,
     ))
     resamp_kwargs$read_dir <- NULL
   }
-  if (any(grepl("original", names(resamp_kwargs)))) {
+  if ("original_fnames" %in% names(resamp_kwargs)) {
     # [TO DO]: Below warning works for cifti_read and cifti_separate but is not general for this wrapper.
     #   But then again, this wrapper isn't meant to be used generally.
     warning(paste(
-      "`resamp_kwargs` should not specify any original files to resample such",
-      "as `cortexL_original_fname`. This is because these should all be in the",
+      "`resamp_kwargs` should not specify the original files names, because",
+      "these should all be in the",
       "`to_resample_fnames` argument. They will be ignored."
     ))
   }
+
+  # Format kwargs.
   resamp_kwargs <- merge_kwargs(list(resamp_res=resamp_res), resamp_kwargs,
     labelA="immediate arguments", labelB="resamp_kwargs")
-  
-  # Check files to resample.
-  to_resample_fnames <- c(
+  resamp_kwargs$original_fnames <- c(
     to_resample_fnames, 
     list(surfL=surfL_fname, surfR=surfR_fname, sphereL=sphereL_fname, sphereR=sphereR_fname)
   )
-  names(to_resample_fnames) <- paste0(names(to_resample_fnames), "_original_fname")
-  # Check spheres and valid ROI for each cortex.
-  if ("cortexL" %in% names(to_resample_fnames)) {
-    if (is.null(sphereL_fname)) { stop("To resample the left cortex, `sphereL_fname` must be provided.") }
-    if ("ROIcortexL" %in% names(to_resample_fnames) & is.null(resamp_kwargs$validROIcortexL_target_fname)) {
-      resamp_kwargs$validROIcortexL_target_fname <- cifti_separate_default_suffix("validROIcortexL")
-    }
-  }
-  if ("cortexR" %in% names(to_resample_fnames)) {
-    if (is.null(sphereR_fname)) { stop("To resample the right cortex, `sphereR_fname` must be provided.") }
-    if ("ROIcortexR" %in% names(to_resample_fnames) & is.null(resamp_kwargs$validROIcortexR_target_fname)) {
-      resamp_kwargs$validROIcortexR_target_fname <- cifti_separate_default_suffix("validROIcortexR")
-    }
-  }
-  resamp_kwargs <- merge_kwargs(
-    to_resample_fnames, resamp_kwargs, 
-    labelA="file names from immediate argments", 
-    labelB="file names from resamp_kwargs"
-  )
+  resamp_kwargs$original_fnames <- resamp_kwargs$original_fnames[!sapply(resamp_kwargs$original_fnames, is.null)]
+  resamp_kwargs$original_fnames <- resamp_kwargs$original_fnames[!sapply(resamp_kwargs$original_fnames, is.null)]
+  
+  # `cifti_resample_separate` already has extensive checks to validate
+  #   the original files and target files. So, don't perform any here.
 
   # If resamp_keep==FALSE and the writing directory hasn't been set, use a temporary directory.
   if (!resamp_keep & is.null(resamp_kwargs$write_dir)) {
     resamp_kwargs$write_dir <- tempdir()
   }
 
-  # Do cifti_resample_separate .
+  print(resamp_kwargs)
+
+  # Do `cifti_resample_separate`.
   resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
   resamp_result <- do.call(cifti_resample_separate, resamp_kwargs)
 

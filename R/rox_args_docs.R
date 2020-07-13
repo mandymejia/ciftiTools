@@ -30,7 +30,7 @@ NULL
 #'  \code{\link{cifti_resample_separate}} in the form of a list, e.g. 
 #'  \code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
 #'  \code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-#'  \code{resamp_kwargs}; instead, use the \code{cifti_read} arguments. Do not 
+#'  \code{resamp_kwargs}; instead, use the immediate arguments. Do not 
 #'  specify the names of the files to resample, e.g. 
 #'  \code{cortexL_original_fname}, because these are determined by the
 #'  preceeding \code{\link{cifti_separate}} call.
@@ -87,6 +87,20 @@ NULL
 #' @param sphereR_fname The right GIFTI sphere file in the same resolution
 #'  as the CIFTI data. It is only required for resampling. 
 #' @name sphereR_fname_Param
+NULL
+
+#' surfL_fname
+#'
+#' @param surfL_fname (Optional) File path of GIFTI surface geometry
+#'  file representing the left cortex.
+#' @name surfL_fname_Param
+NULL
+
+#' surfR_fname
+#'
+#' @param surfR_fname (Optional) File path of GIFTI surface geometry
+#'  file representing the left/right cortex. One or both can be provided.
+#' @name surfR_fname_Param
 NULL
 
 #' verbose

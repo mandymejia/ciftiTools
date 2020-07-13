@@ -11,10 +11,10 @@ cifti_read(
   sep_kwargs = NULL,
   sep_keep = FALSE,
   resamp_res = NULL,
-  sphereL_fname = NULL,
-  sphereR_fname = NULL,
   resamp_kwargs = NULL,
   resamp_keep = FALSE,
+  sphereL_fname = NULL,
+  sphereR_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
   verbose = TRUE,
@@ -52,17 +52,11 @@ they will not be deleted even if \code{sep_keep == FALSE}.) Default:
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 \code{FALSE}, do not perform resampling.}
 
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
-
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
-
 \item{resamp_kwargs}{(Optional) Additional arguments to 
 \code{\link{cifti_resample_separate}} in the form of a list, e.g. 
 \code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
 \code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-\code{resamp_kwargs}; instead, use the \code{cifti_read} arguments. Do not 
+\code{resamp_kwargs}; instead, use the immediate arguments. Do not 
 specify the names of the files to resample, e.g. 
 \code{cortexL_original_fname}, because these are determined by the
 preceeding \code{\link{cifti_separate}} call.}
@@ -73,7 +67,16 @@ this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the
 resampled files already exist, they will not be deleted even if 
 \code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
 
-\item{surfL_fname, surfR_fname}{(Optional) File path of GIFTI surface geometry
+\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
+as the CIFTI data. It is only required for resampling.}
+
+\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
+as the CIFTI data. It is only required for resampling.}
+
+\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left cortex.}
+
+\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left/right cortex. One or both can be provided.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
@@ -93,7 +96,7 @@ An object of type \code{cifti}, a list containing at least 4 elements:
 Read a CIFTI file by separating it into GIfTI and NIfTI files 
  with \code{\link{cifti_separate}}, optionally resampling them with 
  \code{\link{cifti_resample_separate}}, and then reading each separated 
- component into R with \code{\link{cifti_read_from_separate}}.
+ component into R with \code{\link{cifti_make_from_separate}}.
 }
 \details{
 This function uses a system wrapper for the "wb_command"

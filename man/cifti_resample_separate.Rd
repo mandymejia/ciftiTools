@@ -5,101 +5,68 @@
 \title{Resample CIFTI data from separate GIfTI and NIfTI files}
 \usage{
 cifti_resample_separate(
-  cortexL_original_fname = NULL,
-  cortexR_original_fname = NULL,
-  cortexL_target_fname = NULL,
-  cortexR_target_fname = NULL,
-  ROIcortexL_original_fname = NULL,
-  ROIcortexR_original_fname = NULL,
-  ROIcortexL_target_fname = NULL,
-  ROIcortexR_target_fname = NULL,
-  validROIcortexL_target_fname = NULL,
-  validROIcortexR_target_fname = NULL,
-  surfL_original_fname = NULL,
-  surfR_original_fname = NULL,
-  surfL_target_fname = NULL,
-  surfR_target_fname = NULL,
+  original_fnames,
+  target_fnames = NULL,
   resamp_res,
-  sphereL_original_fname,
-  sphereR_original_fname,
-  sphereL_target_fname = NULL,
-  sphereR_target_fname = NULL,
   sphere_target_keep = FALSE,
   sphere_target_overwrite = TRUE,
+  sphere_target_dir = NULL,
   overwrite = TRUE,
   read_dir = NULL,
   write_dir = NULL,
-  sphere_target_dir = NULL,
   wb_path = NULL
 )
 }
 \arguments{
-\item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of 
-GIFTI data for [left/right] cortex to resample.}
+\item{original_fnames}{The original files to resample. This is a named list 
+where each element's name is a file type label, and each element's value
+is a file name. Labels must be one of the following: "cortexL", "cortexR", 
+"ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
+Both "sphereL" and "sphereR" are required; all others are optional. If 
+\code{read_dir} is not \code{NULL}, then all these file names should be
+relative to \code{read_dir}.}
 
-\item{cortexL_target_fname, cortexR_target_fname}{(Optional) File path to 
-save the resampled GIFTI data for [left/right] cortex as.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{cifti_separate_default_suffix}}.}
+\item{target_fnames}{Where to write the resampled files. This is a named list 
+ where each element's name is a file type label, and each element's value
+ is a file name. Labels must be one of the following: "cortexL", "cortexR", 
+ "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
+ "sphereL", "sphereR", "surfL", or "surfR". All except "validROIcortex[L/R]"
+ must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
+ "cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
+ File names can be \code{NULL}, in which case a default file name based on the
+ original file name will be used: see \code{\link{original_to_target_fname}}.
+ If \code{write_dir} is not \code{NULL}, then all these file names should be
+ relative to \code{write_dir}.
 
-\item{ROIcortexL_original_fname, ROIcortexR_original_fname}{(Optional) File 
-path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
-resample.}
-
-\item{ROIcortexL_target_fname, ROIcortexR_target_fname}{(Optional) File path 
-of to save the resampled GIFTI ROI corresponding to 
-\code{cortex[L/R]_target_fname} as.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{cifti_separate_default_suffix}}.}
-
-\item{validROIcortexL_target_fname, validROIcortexR_target_fname}{(Optional) 
-Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{cifti_separate_default_suffix}}.}
-
-\item{surfL_original_fname, surfR_original_fname}{(Optional) File path, or 
-vector of multiple file paths, of GIFTI surface geometry file 
-representing left/right cortex to resample too.}
-
-\item{surfL_target_fname, surfR_target_fname}{(Optional) File path, or vector 
-of multiple file paths, to save the resampled data at. 
-Each should correspond to \code{surf[L/R]_original_fname}.}
+ Only the files in \code{target_fnames} will be created, even if others
+ can be made from the \code{original_fnames}. If \code{NULL} (default), 
+ all possible resampled files will be created.}
 
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 \code{FALSE}, do not perform resampling.}
 
-\item{sphereL_original_fname, sphereR_original_fname}{File path of 
-[left/right]-hemisphere spherical GIFTI files in original resolution 
-(compatible with original files e.g. \code{cortex[L/R]_original_fname} and 
-\code{surf[L/R]_original_fname}) .}
-
-\item{sphereL_target_fname, sphereR_target_fname}{File path of 
-[left/right]-hemisphere spherical GIFTI files in targetinal resolution 
-(compatible with target files) . \code{NULL} (default) will be named as 
-"Resampled_[resamp_res]_[basename(sphere[L/R]_original_fname)]"}
-
-\item{sphere_target_keep}{Should helper files be deleted at the end of this 
-function call, if they were created? Default: \code{FALSE}.}
+\item{sphere_target_keep}{Should the sphere target files be kept or deleted
+at the end of this function call, if they were created? Default: 
+\code{FALSE} (keep them). NOT IMPLEMENTED YET.}
 
 \item{sphere_target_overwrite}{Logical indicating whether 
 \code{sphere[L/R]_target_fname} should be overwritten if it already exists. 
 Default: \code{TRUE}.}
 
+\item{sphere_target_dir}{Directory to append to the path of the sphere
+target files. Default is \code{"helper_files_resampling"}.}
+
 \item{overwrite}{Logical indicating whether each target file should be 
 overwritten if it already exists. Default: \code{TRUE}.}
 
 \item{read_dir}{Directory to append to the path of every file name in
-\code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
+\code{original_fnames}. If \code{NULL} 
 (default), do not append any directory to the path.}
 
 \item{write_dir}{Directory to append to the path of every file name in
-\code{target_fname} and \code{validROIcortex_target_fname}. If \code{NULL} 
+\code{target_fnames}. If \code{NULL} 
 (default), do not append any directory to the path.}
-
-\item{sphere_target_dir}{Directory to append to the path of 
-\code{sphere_target_fname}. If \code{NULL} (default), it will be a folder
-titled \code{"helper_files_resampling"} within \code{write_dir} (or the}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

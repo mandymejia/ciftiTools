@@ -3,7 +3,7 @@
 #' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
 #'  with \code{\link{cifti_separate}}, optionally resampling them with 
 #'  \code{\link{cifti_resample_separate}}, and then reading each separated 
-#'  component into R with \code{\link{cifti_read_from_separate}}.
+#'  component into R with \code{\link{cifti_make_from_separate}}.
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param
@@ -15,8 +15,8 @@
 #' @inheritParams sphereR_fname_Param
 #' @inheritParams resamp_kwargs_Param
 #' @inheritParams resamp_keep_Param
-#' @param surfL_fname,surfR_fname (Optional) File path of GIFTI surface geometry
-#'  file representing the left/right cortex. One or both can be provided.
+#' @inheritParams surfL_fname_Param
+#' @inheritParams surfR_fname_Param
 #' @inheritParams verbose_Param
 #' @inheritParams wb_path_Param
 #'
@@ -61,10 +61,12 @@
 cifti_read <- function(
   cifti_fname, brainstructures=c("left","right"), ROI_brainstructures=NULL,
   sep_kwargs=NULL, sep_keep=FALSE, # cifti_separate
-  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL, # cifti_resample
-  resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
-  surfL_fname=NULL, surfR_fname=NULL, # cifti_read_from_separate
+  resamp_res=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
+  sphereL_fname=NULL, sphereR_fname=NULL, # cifti_resample
+  surfL_fname=NULL, surfR_fname=NULL, # cifti_make_from_separate
   verbose=TRUE, wb_path=NULL) {
+
+  wb_cmd <- get_wb_cmd_path(wb_path)
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -88,6 +90,7 @@ cifti_read <- function(
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
     sep_kwargs=sep_kwargs, sep_keep=sep_keep, wb_path=wb_path
   )
+
   to_read <- sep_result$fname
   names(to_read) <- sep_result$label
 
@@ -110,17 +113,19 @@ cifti_read <- function(
     # Do cifti_resample_separate.
     resamp_result <- cifti_resample_wrapper(
       resamp_res, to_resample, resamp_kwargs, resamp_keep, 
-      surfL_fname, surfR_fname, sphereL_fname, sphereR_fname, 
+      surfL_fname, surfR_fname,
+      sphereL_fname, sphereR_fname, 
       wb_path
     )
     # Replace resampled files.
     to_read_resampled <- names(to_read)[names(to_read) %in% resamp_result$label]
     to_read[to_read_resampled] <- resamp_result$fname[resamp_result$label %in% to_read_resampled]
-    if (length(surfL_fname) > 0) { 
-      surfL_fname <- resamp_result$fname[grepl("surfL", resamp_result$label)] 
+
+    if (!is.null(surfL_fname)) { 
+      surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"] 
     }
-    if (length(surfR_fname) > 0) { 
-      surfR_fname <- resamp_result$fname[grepl("surfR", resamp_result$label)] 
+    if (!is.null(surfR_fname)) { 
+      surfR_fname <- resamp_result$fname[resamp_result$label == "surfR"] 
     }
 
     if (verbose) { 
@@ -130,7 +135,7 @@ cifti_read <- function(
   }
 
   # ----------------------------------------------------------------------------  
-  # cifti_read_from_separate() -------------------------------------------------
+  # cifti_make_from_separate() -------------------------------------------------
   # ----------------------------------------------------------------------------
 
   # ROI not supported yet.
@@ -142,31 +147,14 @@ cifti_read <- function(
     ))
   }
   to_read <- to_read[!is_ROI]
+  to_read <- as.list(to_read)
+
+  if (!is.null(surfL_fname)) { to_read$surfL <- surfL_fname }
+  if (!is.null(surfR_fname)) { to_read$surfR <- surfR_fname }
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
-
-  # if ("read_dir" %in% read_from_separate_kwargs) {
-  #   # [TO DO]: Below warning works for cifti_read and cifti_separate but is not general for this wrapper.
-  #   #   But then again, this wrapper isn't meant to be used generally.
-  #   warning("read_from_separate_kwargs$read_dir should not be set, because the file paths are determined by cifti_separate. Ignoring.")
-  #   read_from_separate_kwargs$read_dir <- NULL
-  # }
-  # read_from_separate_kwargs <- merge_kwargs(
-  #   to_read, 
-  #   read_from_separate_kwargs, 
-  #   "files listed for reading", "read_from_separate_kwargs"
-  # )
-  # read_from_separate_kwargs <- merge_kwargs(
-  #   list(surfL_fname=surfL_fname, surfR_fname=surfR_fname, read_dir=NULL, surf_label=surf_label, wb_path=wb_path),
-  #   read_from_separate_kwargs,
-  #   "file names from immediate argments", "read_from_separate_kwargs"
-  # )
-  # read_from_separate_kwargs[sapply(read_from_separate_kwargs, is.null)] <- NULL
-  read_from_separate_kwargs <- c(to_read, list(
-    surfL_fname=surfL_fname, surfR_fname=surfR_fname 
-  ))
-  result <- do.call(cifti_read_from_separate, read_from_separate_kwargs)
+  result <- do.call(cifti_make_from_separate, to_read)
 
   if (verbose) { 
     print(Sys.time() - exec_time)
@@ -186,13 +174,13 @@ cifti_read <- function(
         file.remove(paste0(f, ".data"))
       }
     }
-
-    if (do_resamp) {
-      for(f in resamp_result$fname[!(resamp_result$existed)]) {
-        file.remove(f)
-        if (file.exists(paste0(f, ".data"))) {
-          file.remove(paste0(f, ".data"))
-        }
+  }
+  # Same for resampled files.
+  if (do_resamp & !resamp_keep) {
+    for(f in resamp_result$fname[!(resamp_result$existed)]) {
+      file.remove(f)
+      if (file.exists(paste0(f, ".data"))) {
+        file.remove(paste0(f, ".data"))
       }
     }
   }

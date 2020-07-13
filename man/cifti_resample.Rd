@@ -9,17 +9,21 @@ cifti_resample(
   cifti_target_fname,
   sep_kwargs = NULL,
   sep_keep = FALSE,
-  resamp_res = NULL,
+  resamp_res,
   resamp_kwargs = NULL,
   resamp_keep = FALSE,
   sphereL_original_fname = NULL,
   sphereR_original_fname = NULL,
   sphereL_target_fname = NULL,
   sphereR_target_fname = NULL,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
   overwrite = FALSE,
   write_dir = NULL,
-  wb_path = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  wb_path = NULL
 )
 }
 \arguments{
@@ -39,15 +43,14 @@ they be deleted at the end of this function call? (If
 they will not be deleted even if \code{sep_keep == FALSE}.) Default:
 \code{FALSE} (delete new files).}
 
-\item{resamp_res}{(Optional) Target resolution for resampling (number of 
-cortical surface vertices per hemisphere). If \code{NULL} (default) or 
-\code{FALSE}, do not perform resampling.}
+\item{resamp_res}{Target resolution for resampling (number of 
+cortical surface vertices per hemisphere).}
 
 \item{resamp_kwargs}{(Optional) Additional arguments to 
 \code{\link{cifti_resample_separate}} in the form of a list, e.g. 
 \code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
 \code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-\code{resamp_kwargs}; instead, use the \code{cifti_read} arguments. Do not 
+\code{resamp_kwargs}; instead, use the immediate arguments. Do not 
 specify the names of the files to resample, e.g. 
 \code{cortexL_original_fname}, because these are determined by the
 preceeding \code{\link{cifti_separate}} call.}
@@ -64,17 +67,25 @@ needed for resampling}
 \item{sphereL_target_fname, sphereR_target_fname}{Helper sphere files 
 needed for resampling}
 
+\item{surfL_original_fname, surfR_original_fname}{(Optional) File path of 
+existing GIFTI surface geometry file representing the left/right cortex. 
+One or both can be provided.}
+
+\item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
+the resampled GIFTI surface geometry file representing the left/right 
+cortex. If NULL (default),}
+
 \item{overwrite}{If \code{cifti_target_fname} exists, should it be replaced? 
 Default: \code{FALSE}.}
 
 \item{write_dir}{Where to place the resampled CIFTI. Defaults to the current 
 working directory.}
 
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
+
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
-
-\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 }
 \value{
 The code returned by the Connectome Workbench command, or \code{NA} 

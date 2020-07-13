@@ -10,7 +10,7 @@ get_cifti_extn(fname_cifti)
 \item{fname_cifti}{Path to CIFTI file, including full file name and extension}
 }
 \value{
-Character file extension of CIFTI file, e.g. 'dtseries.nii', 'dscalar.nii'.
+Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii".
 }
 \description{
 Get CIFTI file extension

@@ -62,6 +62,19 @@ format_path <- function(path, dir=NULL, mode=NA) {
   path
 }
 
+#' File name check
+#'
+#' Simple check if something is an existing file.
+#'
+#' @param x The potential file name
+#'
+#' @return Whether \code{x} is an existing file.
+#'
+is.fname <- function(x){
+  if(!(length(x)==1 & is.character(x))){ return(FALSE) }
+  file.exists(x) & !dir.exists(x)
+}
+
 #' Format a path for \code{\link{system}}. Right now, it just escapes spaces and
 #'  parentheses with \code{"\\\\"}.
 #'

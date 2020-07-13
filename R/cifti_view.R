@@ -338,10 +338,10 @@ expand_color_pal <- function(pal, MIN_COLOR_RES=255) {
     color_res <- as.integer(round(pmax(color_res, 2)))
     vals <- vector(length=0, mode="numeric")
     cols <- vector(length=0, mode="character")
-    for(i in 1:(nrow(pal)-1)) {
-      next_vals <- seq(pal$value[i], pal$value[i+1], length.out=color_res[i])
+    for(ii in 1:(nrow(pal)-1)) {
+      next_vals <- seq(pal$value[ii], pal$value[ii+1], length.out=color_res[ii])
       next_vals <- next_vals[1:(length(next_vals)-1)]
-      next_cols <- colorRampPalette(c(colors[i], colors[i+1]))(color_res[i])
+      next_cols <- colorRampPalette(c(colors[ii], colors[ii+1]))(color_res[ii])
       next_cols <- next_cols[1:(length(next_cols)-1)]
       vals <- c(vals, next_vals)
       cols <- c(cols, next_cols)
@@ -442,23 +442,23 @@ cifti_view_surface <- function(cifti, idx=1,
   #if (length(idx) > 1) stop("Only one time/column index is supported right now.")
   # surfaces.
   if (is.null(surfL)) {
-    if (is.null(cifti$SURF_LEFT[[1]]) & !is.null(hemisphere)) {
+    if (is.null(cifti$SURF_LEFT) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "left")) {
         stop("The left hemisphere was requested, but no surface data was provided (cifti$SURF_LEFT or the surfL argument).")
       }
     } else {
-      surfL <- cifti$SURF_LEFT[[1]] # to-edit
+      surfL <- cifti$SURF_LEFT # to-edit
     }
-  } else { surfL <- make_cifti_surface(surfL) }
+  } else { surfL <- cifti_make_surface(surfL) }
   if (is.null(surfR)) {
-    if (is.null(cifti$SURF_RIGHT[[1]]) & !is.null(hemisphere)) {
+    if (is.null(cifti$SURF_RIGHT) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "right")) {
         stop("The right hemisphere was requested, but no surface data was provided (cifti$SURF_RIGHT or the surfR argument).")
       }    
     } else {
-      surfR <- cifti$SURF_RIGHT[[1]] # to-edit
+      surfR <- cifti$SURF_RIGHT # to-edit
     }
-  } else { surfR <- make_cifti_surface(surfR) }
+  } else { surfR <- cifti_make_surface(surfR) }
   if (is.null(surfL) & is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
   # hemisphere and view.
   if (is.null(hemisphere)) {
@@ -673,8 +673,8 @@ cifti_view_surface <- function(cifti, idx=1,
   )
 
   # Populate the RGL window.
-  for(i in 1:n_panels) {
-    p <- panels[i]
+  for(ii in 1:n_panels) {
+    p <- panels[ii]
 
     # Select the mesh for this panel, and determine the orientation.
     if (grepl("left", p)) {
@@ -709,7 +709,7 @@ cifti_view_surface <- function(cifti, idx=1,
     rgl::rgl.viewpoint(userMatrix=this_mat, fov=0)
 
     # Suppress this warning: "calling par(new=TRUE) with no plot"
-    if (i == legend_panel) { 
+    if (ii == legend_panel) { 
       rgl::bgplot3d(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)))
     }
 
