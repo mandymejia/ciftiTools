@@ -33,6 +33,9 @@ or shouldn't be resampled.}
 \item{validROIcortex_target_fname}{The name of the resampled ROI file. Only 
 applicable if \code{ROIcortex_original_fname} is provided.}
 
+\item{resamp_res}{Target resolution for resampling (number of 
+cortical surface vertices per hemisphere).}
+
 \item{sphere_original_fname}{File path of [left/right]-hemisphere spherical 
 GIFTI files in original resolution. The hemisphere side should match that of
 \code{original_fname}.}

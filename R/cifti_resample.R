@@ -21,9 +21,7 @@
 #' @inheritParams verbose_Param
 #' @inheritParams wb_path_Param
 #'
-#' @return The code returned by the Connectome Workbench command, or \code{NA} 
-#'  if no resampling was performed because \code{overwrite==FALSE} and 
-#'  \code{cifti_target_fname} already exists.
+#' @return The code returned by the Connectome Workbench command
 #'
 #' @export
 #'
@@ -34,13 +32,13 @@
 #'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
 #'  executable.
 #'
-cifti_resample <- function(
+resample_cifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, sphereL_fname, sphereR_fname,
-  sep_fnames=NULL, sep_keep=FALSE, #cifti_separate
-  resamp_fnames=NULL, resamp_keep=FALSE, # cifti_resample
+  sep_fnames=NULL, sep_keep=FALSE, #separate_cifti
+  resamp_fnames=NULL, resamp_keep=FALSE, # resample_cifti
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
@@ -53,25 +51,24 @@ cifti_resample <- function(
 
   # [TO DO]: consider auto-generating cifti_target_fname & make it optional
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
-  if (file.exists(cifti_target_fname) & !overwrite) { return(invisible(NA)) }
 
   if (is.null(write_dir)) {
-    write_dir_sep <- ifelse(sep_keep, getwcd(), tempdir())
-    write_dir_resamp <- ifelse(resamp_keep, getwcd(), tempdir())
+    write_dir_sep <- ifelse(sep_keep, getwd(), tempdir())
+    write_dir_resamp <- ifelse(resamp_keep, getwd(), tempdir())
   }
 
   if (verbose) { exec_time <- Sys.time() }
 
   # ----------------------------------------------------------------------------
-  # cifti_separate() -----------------------------------------------------------
+  # separate_cifti() -----------------------------------------------------------
   # ----------------------------------------------------------------------------
 
   if (verbose) { cat("Separating CIFTI file.\n") }
 
-  sep_result <- cifti_separate_wrapper(
-    cifti_fname=cifti_fname, 
+  sep_result <- separate_cifti_wrapper(
+    cifti_fname=cifti_original_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_fnames=sep_fnames, sep_keep=sep_keep, wb_path=wb_path
+    sep_fnames=sep_fnames, wb_path=wb_path
   )
 
   to_cif <- sep_result$fname
@@ -83,7 +80,7 @@ cifti_resample <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # cifti_resample_separate() --------------------------------------------------
+  # resample_cifti_separate() --------------------------------------------------
   # ----------------------------------------------------------------------------
 
   if (verbose) { cat("Resampling CIFTI file.\n") }
@@ -91,8 +88,8 @@ cifti_resample <- function(
   # Do not resample the subcortical data.
   to_resample <- to_cif[!grepl("subcort", names(to_cif))]
 
-    # Do cifti_resample_separate.
-    resamp_result <- cifti_resample_wrapper(
+    # Do resample_cifti_separate.
+    resamp_result <- resample_cifti_wrapper(
       resamp_res, to_resample, resamp_fnames, resamp_keep, 
       surfL_fname, surfR_fname,
       sphereL_fname, sphereR_fname, 
@@ -164,8 +161,8 @@ cifti_resample <- function(
     sys_path(wb_cmd), "-cifti-resample", sys_path(cifti_original_fname), 
     "COLUMN", sys_path(cifti_template_fname), 
     "COLUMN BARYCENTRIC CUBIC", sys_path(cifti_target_fname), 
-    "-left-spheres", sys_path(sphereL_original_fname), sys_path(sphereL_target_fname), 
-    "-right-spheres", sys_path(sphereR_original_fname), sys_path(sphereR_target_fname))
+    "-left-spheres", sys_path(sphereL_fname), sys_path(sphereL_target_fname), 
+    "-right-spheres", sys_path(sphereR_fname), sys_path(sphereR_target_fname))
   cmd_code <- system(cmd)
   if (cmd_code != 0) {
     stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 

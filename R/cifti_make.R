@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @importFrom gifti readGIfTI is.gifti
-cifti_make_cortex <- function(cortex) {
+make_cifti_cortex <- function(cortex) {
   # File path.
   if (is.fname(cortex)) {
     cortex <- readGIfTI(cortex)
@@ -36,7 +36,7 @@ cifti_make_cortex <- function(cortex) {
 #' @export
 #'
 #' @importFrom RNifti readNifti
-cifti_make_subcortical <- function(vol, labels) {
+make_cifti_subcortical <- function(vol, labels) {
   # vol 
   if (is.fname(vol)) {
     vol <- readNifti(vol)
@@ -72,7 +72,7 @@ cifti_make_subcortical <- function(vol, labels) {
 #' @return The "cifti_volume" and "cifti_label"  objects.
 #' @export
 #'
-cifti_make_vol <- function(mat, mask) {
+make_cifti_vol <- function(mat, mask) {
   if (!is.cifti_matmask_pair(mat, mask)) {
     stop(paste0(
       "The objects are not a compatible matrix and mask pair."
@@ -94,7 +94,7 @@ cifti_make_vol <- function(mat, mask) {
 #' @export
 #'
 #' @importFrom gifti readGIfTI is.gifti
-cifti_make_surface <- function(surf) {
+make_cifti_surface <- function(surf) {
   # file path
   if (is.fname(surf)){ surf <- readGIfTI(surf) }
   # GIFTI
@@ -156,7 +156,7 @@ cifti_make_surface <- function(surf) {
 #'
 #' @export
 #'
-cifti_make_from_separate <- function(
+make_cifti_from_separate <- function(
   cortexL=NULL, cortexR=NULL, 
   subcortVol=NULL, subcortMat=NULL, subcortMask=NULL, subcortLab=NULL, 
   surfL=NULL, surfR=NULL, 
@@ -175,10 +175,10 @@ cifti_make_from_separate <- function(
 
   # Cortical data.
   if (!is.null(cif$CORTEX_LEFT)) {
-    cif$CORTEX_LEFT <- cifti_make_cortex(cif$CORTEX_LEFT)
+    cif$CORTEX_LEFT <- make_cifti_cortex(cif$CORTEX_LEFT)
   }
   if (!is.null(cif$CORTEX_RIGHT)) {
-    cif$CORTEX_RIGHT <- cifti_make_cortex(cif$CORTEX_RIGHT)
+    cif$CORTEX_RIGHT <- make_cifti_cortex(cif$CORTEX_RIGHT)
   }
 
   # Subcortical data.
@@ -197,18 +197,18 @@ cifti_make_from_separate <- function(
       stop("Exactly one of subcortVol and (subcortMat/Mask) should be provided.")
     }
     if (is.null(cif$VOL)) { # Infer that MAT and MASK must both be present.
-      cif$VOL <- cifti_make_vol(cif$MAT, cif$MASK)
+      cif$VOL <- make_cifti_vol(cif$MAT, cif$MASK)
     }
-    subcort <- cifti_make_subcortical(cif$VOL, cif$LABELS)
+    subcort <- make_cifti_subcortical(cif$VOL, cif$LABELS)
     cif$VOL <- subcort$vol; cif$LABELS <- subcort$labels
   }
 
   # Surfaces
   if (!is.null(cif$SURF_LEFT)) { 
-    cif$SURF_LEFT <- cifti_make_surface(cif$SURF_LEFT) 
+    cif$SURF_LEFT <- make_cifti_surface(cif$SURF_LEFT) 
   }
   if (!is.null(cif$SURF_RIGHT)) { 
-    cif$SURF_RIGHT <- cifti_make_surface(cif$SURF_RIGHT) 
+    cif$SURF_RIGHT <- make_cifti_surface(cif$SURF_RIGHT) 
   }
 
   cif$MAT <- cif$MASK <- NULL

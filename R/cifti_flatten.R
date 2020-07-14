@@ -1,7 +1,7 @@
 #' Flatten a "cifti" object into a single matrix
 #'
 #' @description Flattens data in a "cifti" object into a single matrix. This 
-#'  matrix is identical to that obtained by \code{\link{cifti_read_flat}}, 
+#'  matrix is identical to that obtained by \code{\link{read_cifti_flat}}, 
 #'  which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
 #'  
 #'
@@ -16,7 +16,7 @@
 #'
 #' @importFrom stats sd
 #'
-cifti_flatten <- function(cif, brainstructures=c("subcortical", "everything")) {
+flatten_cifti <- function(cif, brainstructures=c("subcortical", "everything")) {
 
   EPS <- ciftiTools.getOption("EPS")
 

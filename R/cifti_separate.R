@@ -26,7 +26,7 @@
 #'  The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
 #'  executable also works.)
 #'
-cifti_separate <- function(cifti_fname, brainstructures=c("left","right"), 
+separate_cifti <- function(cifti_fname, brainstructures=c("left","right"), 
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL) {
@@ -57,7 +57,7 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right"),
 
   # Use default file names if not provided. Relative paths will be placed in write_dir.
   default_fname <- function(label, extn_cifti, bname_cifti) { 
-    gsub(extn_cifti, cifti_separate_default_suffix(label), bname_cifti, fixed=TRUE)
+    gsub(extn_cifti, separate_cifti_default_suffix(label), bname_cifti, fixed=TRUE)
   }
   if (do['left']) {
     if (is.null(cortexL_fname)) { cortexL_fname <- default_fname("cortexL", extn_cifti, bname_cifti) }

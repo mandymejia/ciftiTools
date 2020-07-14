@@ -19,19 +19,18 @@ created}
 \item{sphereR_fname}{File path to right-hemisphere spherical GIFTI to be 
 created}
 
+\item{resamp_res}{Target resolution for resampling (number of 
+cortical surface vertices per hemisphere).}
+
 \item{write_dir}{(Optional) directory to place the sphere files in. If
 \code{NULL} (default), do not append any directory to the sphere file paths.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
-
-\item{overwrite}{If both spheres already exist, should they be written over? 
-Default: \code{FALSE} (skip execution if both exist).}
 }
 \value{
-Logical indicating whether output files exist. Or, \code{NA} if the 
- command was skipped because both already existed and \code{overwrite==FALSE}.
+Logical indicating whether output files exist.
 }
 \description{
 This function generates a pair of GIFTI vertex-matched left and 

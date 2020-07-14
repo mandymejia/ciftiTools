@@ -23,7 +23,27 @@ NULL
 #'  Both "sphereL" and "sphereR" are required; all others are optional. If 
 #'  \code{read_dir} is not \code{NULL}, then all these file names should be
 #'  relative to \code{read_dir}. 
-#' @name original_fnames_Param_resample
+#' @name original_fnames_Param_resampled
+NULL
+
+#'  read_dir: resampled files
+#'  
+#' @param read_dir Directory to append to the path of every file name in
+#'  \code{original_fnames}. If \code{NULL} 
+#'  (default), do not append any directory to the path.
+#' 
+#'  \code{read_dir} must already exist, or an error will be raised.
+#' @name read_dir_Param_separated
+NULL
+
+#'  read_dir: separated files
+#'  
+#' @param read_dir Directory to append to the path of every file name in
+#'  \code{original_fnames}. If \code{NULL} 
+#'  (default), do not append any directory to the path.
+#' 
+#'  \code{read_dir} must already exist, or an error will be raised.
+#' @name read_dir_Param_separated
 NULL
 
 #' resamp_fnames: for resampling
@@ -36,10 +56,10 @@ NULL
 #'  must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
 #'  "cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
 #'  File names can be \code{NULL}, in which case a default file name based on the
-#'  original file name will be used: see \code{\link{cifti_resample_default_fname}}.
+#'  original file name will be used: see \code{\link{resample_cifti_default_fname}}.
 #'  If \code{write_dir} is not \code{NULL}, then all these file names should be
 #'  relative to \code{write_dir}.
-#' @name resamp_fnames_Param_resample
+#' @name resamp_fnames_Param_resampled
 NULL
 
 #' resamp_keep
@@ -58,7 +78,7 @@ NULL
 #'  "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
 #'  
 #'  Entry values can be \code{NULL}, in which case a default file name will be 
-#'  used: see \code{\link{cifti_resample_default_fname}}. Default file names
+#'  used: see \code{\link{resample_cifti_default_fname}}. Default file names
 #'  will also be used for files that need to be resampled/written but without a
 #'  corresponding entry in \code{resamp_fnames}.
 #'  
@@ -113,7 +133,7 @@ NULL
 #'  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
 #'  
 #'  Entry values can be \code{NULL}, in which case a default file name will be 
-#'  used: see \code{\link{cifti_separate_default_suffix}}. Default file names
+#'  used: see \code{\link{separate_cifti_default_suffix}}. Default file names
 #'  will also be used for files that need to be separated/written but without a
 #'  corresponding entry in \code{sep_fnames}.
 #'  
@@ -148,11 +168,39 @@ NULL
 #' @name surfL_fname_Param
 NULL
 
+#' surfL_original_fname
+#'
+#' @param surfL_original_fname (Optional) File path of GIFTI surface geometry
+#'  file representing the left cortex.
+#' @name surfL_original_fname_Param
+NULL
+
+#' surfL_target_fname
+#'
+#' @param surfL_target_fname (Optional) File path to save the resampled GIFTI 
+#'  surface geometry file representing the left cortex at.
+#' @name surfL_target_fname_Param
+NULL
+
 #' surfR_fname
 #'
 #' @param surfR_fname (Optional) File path of GIFTI surface geometry
-#'  file representing the left/right cortex. One or both can be provided.
+#'  file representing the right cortex.
 #' @name surfR_fname_Param
+NULL
+
+#' surfR_original_fname
+#'
+#' @param surfR_original_fname (Optional) File path of GIFTI surface geometry
+#'  file representing the right cortex.
+#' @name surfR_original_fname_Param
+NULL
+
+#' surfR_target_fname
+#'
+#' @param surfR_target_fname (Optional) File path to save the resampled GIFTI 
+#'  surface geometry file representing the right cortex at.
+#' @name surfR_target_fname_Param
 NULL
 
 #' verbose

@@ -21,20 +21,11 @@ format_path <- function(path, dir=NULL, mode=NA) {
   if (!is.null(dir)) { path <-file.path(dir, path) }
   path <- normalizePath(path, mustWork=FALSE)
 
-  # Create the directory if it does not exist and the ciftiTools option 
-  #   "make_dirs" is TRUE.
   if (!file.exists(dirname(path))) { 
-    if (getOption("ciftiTools_make_dirs")) {
-      # Suppress warnings if the directory goes back and forth, like this:
-      #   my/dir/../dir/file.txt
-      dir.create(dirname(path), recursive=TRUE, showWarnings=FALSE)
-    } else {
-      stop(paste0(
-        "The directory \"", dirname(path), 
-        "\" does not exist. Check and try again, or use ",
-        "`ciftiTools.setOption(\"make_dirs\", TRUE)}`."
-      )) 
-    }
+    stop(paste0(
+      "The directory \"", dirname(path), 
+      "\" does not exist. Check and try again."
+    )) 
   }
 
   # Get the full file path (for Linux: previous normalizePath() does not get 

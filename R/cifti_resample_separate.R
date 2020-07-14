@@ -1,18 +1,17 @@
 #' Resample CIFTI data from separate GIfTI and NIfTI files
 #'
-#' @description Performs spatial resampling of various CIFTI file components on the cortical surface.
+#' @description Performs spatial resampling of various CIFTI file components on 
+#'  the cortical surface.
 #'
-#' @inheritParams resamp_res_Param
-#' @param sphereL_fname,sphereR_fname File path of 
-#'  [left/right]-hemisphere spherical GIFTI files in original resolution 
-#'  (compatible with original files e.g. \code{cortex[L/R]_original_fname} and 
-#'  \code{surf[L/R]_original_fname}) .
+#' @inheritParams resamp_res_Param_required
+#' @inheritParams sphereL_fname_Param
+#' @inheritParams sphereR_fname_Param
 #' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of 
 #'  GIFTI data for [left/right] cortex to resample.
 #' @param cortexL_target_fname,cortexR_target_fname (Optional) File path to 
 #'  save the resampled GIFTI data for [left/right] cortex as.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{cifti_separate_default_suffix}}.
+#'  will be named by \code{\link{separate_cifti_default_suffix}}.
 #' @param ROIcortexL_original_fname,ROIcortexR_original_fname (Optional) File 
 #'  path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
 #'  resample.
@@ -20,23 +19,17 @@
 #'  of to save the resampled GIFTI ROI corresponding to 
 #'  \code{cortex[L/R]_target_fname} as.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{cifti_separate_default_suffix}}.
+#'  will be named by \code{\link{separate_cifti_default_suffix}}.
 #' @param validROIcortexL_target_fname,validROIcortexR_target_fname (Optional) 
 #'  Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{cifti_separate_default_suffix}}.
-#' @param surfL_original_fname,surfR_original_fname (Optional) File path, or 
-#'  vector of multiple file paths, of GIFTI surface geometry file 
-#'  representing left/right cortex to resample too.
-#' @param surfL_target_fname,surfR_target_fname (Optional) (Optional) File path for
-#'  the resampled GIFTI surface geometry file representing the left/right 
-#'  cortex. If NULL (default),
-#' @param read_dir Directory to append to the path of every file name in
-#'  \code{original_fnames}. If \code{NULL} 
-#'  (default), do not append any directory to the path. 
-#' @param write_dir Directory to append to the path of every file name in
-#'  \code{target_fnames}. If \code{NULL} 
-#'  (default), do not append any directory to the path. 
+#'  will be named by \code{\link{separate_cifti_default_suffix}}.
+#' @inheritParams surfL_original_fname_Param
+#' @inheritParams surfR_original_fname_Param
+#' @inheritParams surfL_target_fname_Param
+#' @inheritParams surfR_target_fname_Param
+#' @inheritParams read_dir_Param_separated
+#' @inheritParams write_dir_Param_resampled
 #' @inheritParams wb_path_Param
 #'
 #' @return A data frame with column names "label" and "fname", and 
@@ -47,7 +40,7 @@
 #'  Step 1: Generate spheres in the target resolution
 #'  Step 2: Use -metric-resample to resample surface/cortex files 
 #'  Step 3: Use -surface-resample to resample gifti files
-cifti_resample_separate <- function(
+resample_cifti_separate <- function(
   resamp_res, 
   sphereL_fname, sphereR_fname, 
   cortexL_original_fname=NULL, cortexR_original_fname=NULL, 
@@ -69,7 +62,8 @@ cifti_resample_separate <- function(
   target_fnames <- list(
     cortexL=cortexL_target_fname, cortexR=cortexR_target_fname, 
     ROIcortexL=ROIcortexL_target_fname, ROIcortexR=ROIcortexR_target_fname,
-    validROIcortexL=validROIcortexL_target_fname, validROIcortexR=validROIcortexR_target_fname,
+    validROIcortexL=validROIcortexL_target_fname, 
+    validROIcortexR=validROIcortexR_target_fname,
     surfL=surfL_target_fname, surfR=surfR_target_fname
   )
 
@@ -90,7 +84,8 @@ cifti_resample_separate <- function(
   original_fnames <- lapply(original_fnames, format_path, read_dir, mode=4)
   if (!all(sapply(original_fnames, file.exists))) {
     stop(paste("This file(s) to resample does not exist:\n\n",
-      paste(unique(as.character(original_fnames)[!sapply(original_fnames, file.exists)]), collapse="\n")
+      paste(unique(as.character(original_fnames)[
+        !sapply(original_fnames, file.exists)]), collapse="\n")
     ))
   }
   # Check target files.
@@ -112,7 +107,8 @@ cifti_resample_separate <- function(
   if (sum(missing_original) > 0) {
     warning(paste0(
       "Ignoring these resampling targets because their original files were not provided:\n", 
-      paste(names(target_fnames)[!sapply(target_fnames, is.null)][missing_original], collapse="\n"),
+      paste(names(target_fnames)[
+        !sapply(target_fnames, is.null)][missing_original], collapse="\n"),
       "\n"
     ))
   }
@@ -130,12 +126,12 @@ cifti_resample_separate <- function(
     lab <- names(target_fnames)[ii]
     if (is.null(target_fnames[[lab]])) {
       if (grepl("validROI", lab)) {
-        # [TO DO]: check if this works. use cifti_separate_default_suffix?
+        # [TO DO]: check if this works. use separate_cifti_default_suffix?
         target_fnames[[lab]] <- paste0(
-          "validROI_", cifti_resample_default_fname(
+          "validROI_", resample_cifti_default_fname(
             original_fnames[[gsub("validROI", "", lab)]], resamp_res))
       } else {
-        target_fnames[[lab]] <- cifti_resample_default_fname(
+        target_fnames[[lab]] <- resample_cifti_default_fname(
           original_fnames[[lab]], resamp_res)
       }
     }
@@ -155,16 +151,16 @@ cifti_resample_separate <- function(
 
   # Step 1: Generate spheres in the target resolution (if not already existing and provided)
   sphere_dir <- tempdir()
-  sphereL_target_fname <- cifti_resample_default_fname(sphereL_fname, resamp_res)
+  sphereL_target_fname <- resample_cifti_default_fname(sphereL_fname, resamp_res)
   sphereL_target_fname <- format_path(sphereL_target_fname, sphere_dir, mode=2)
-  sphereR_target_fname <- cifti_resample_default_fname(sphereR_fname, resamp_res)
+  sphereR_target_fname <- resample_cifti_default_fname(sphereR_fname, resamp_res)
   sphereL_target_fname <- format_path(sphereL_target_fname, sphere_dir, mode=2)
   make_helper_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
 
   # Step 2 and 3: Use -metric-resample or -surface-rsample to resample 
   #   cortex, ROI, and surface files into target resolution.
   gifti_resample_kwargs_common <- list(resamp_res=resamp_res, 
-    overwrite=overwrite, wb_path=wb_path,
+    wb_path=wb_path,
     #   Since we already appended read/write/sphere_target directories,
     #     set them to NULL.
     read_dir=NULL, write_dir=NULL)
@@ -172,7 +168,6 @@ cifti_resample_separate <- function(
     lab <- names(original_fnames)[ii]
     # Check if this file should be skipped.
     if (grepl("validROI", lab)) { next }  # Obtained with cortex[L/R].
-    if (!overwrite & resamp_files$existed[resamp_files$label==lab]) { next }
     # Get additional kwargs.
     is_left <- substr(lab, nchar(lab), nchar(lab)) == "L" # last char: L or R.
     resample_kwargs <- c(gifti_resample_kwargs_common, list(

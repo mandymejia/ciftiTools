@@ -12,7 +12,7 @@
 #'  or shouldn't be resampled.
 #' @param validROIcortex_target_fname The name of the resampled ROI file. Only 
 #'  applicable if \code{ROIcortex_original_fname} is provided.
-#' @inheritParams resamp_res_Param
+#' @inheritParams resamp_res_Param_required
 #' @param sphere_original_fname File path of [left/right]-hemisphere spherical 
 #'  GIFTI files in original resolution. The hemisphere side should match that of
 #'  \code{original_fname}.
@@ -73,12 +73,6 @@ gifti_resample <- function(original_fname, target_fname, file_type=NULL,
   if (do_ROI & file_type=="surface") { 
     stop("do_ROI AND file_type=='surface', but surface files do not use ROI.") 
   }
-
-  # Run the command if overwrite==TRUE, or if any desired file does not exist.
-  resampled_files_exist <- all(c(file.exists(
-    target_fname, 
-    ifelse(do_ROI, file.exists(validROIcortex_target_fname), TRUE)
-  )))
 
   cmd_name <- switch(file_type,
     metric="-metric-resample",
@@ -164,15 +158,12 @@ surface_resample <- function(...) {
 #'  created
 #' @param sphereR_fname File path to right-hemisphere spherical GIFTI to be 
 #'  created
-#' @inheritParams resamp_res_Param
+#' @inheritParams resamp_res_Param_required
 #' @param write_dir (Optional) directory to place the sphere files in. If
 #'  \code{NULL} (default), do not append any directory to the sphere file paths.
-#' @param overwrite If both spheres already exist, should they be written over? 
-#'  Default: \code{FALSE} (skip execution if both exist).
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether output files exist. Or, \code{NA} if the 
-#'  command was skipped because both already existed and \code{overwrite==FALSE}.
+#' @return Logical indicating whether output files exist. 
 #' @export
 #'
 make_helper_spheres <- function(

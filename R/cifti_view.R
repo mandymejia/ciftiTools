@@ -375,7 +375,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 
 #' Visualize cifti brain data. The \code{rgl} package is required.
 #'
-#' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
+#' @param cifti Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is.cifti)}.
 #' @param idx The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 #'  or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
@@ -416,7 +416,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @export
 #' @importFrom fields image.plot
 #' @importFrom grDevices dev.list dev.off
-cifti_view_surface <- function(cifti, idx=1, 
+view_cifti_surface <- function(cifti, idx=1, 
   hemisphere=NULL, view=c("both", "lateral", "medial"), both_lateral_together=FALSE,
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
   fname_prefix="cifti", write_dir=NULL,
@@ -426,10 +426,10 @@ cifti_view_surface <- function(cifti, idx=1,
   colorbar_digits=NULL) {
 
   if (!requireNamespace("rgl", quietly = TRUE)) {
-    stop("Package \"rgl\" needed to use `cifti_view_surface`. Please install it.", call. = FALSE)
+    stop("Package \"rgl\" needed to use `view_cifti_surface`. Please install it.", call. = FALSE)
   }
   if (!capabilities("X11")) {
-    stop("X11 capability is needed to open the rgl window for `cifti_view_surface`.")
+    stop("X11 capability is needed to open the rgl window for `view_cifti_surface`.")
   }
 
   # Try to avoid this error with colorbar: 
@@ -449,7 +449,7 @@ cifti_view_surface <- function(cifti, idx=1,
     } else {
       surfL <- cifti$SURF_LEFT # to-edit
     }
-  } else { surfL <- cifti_make_surface(surfL) }
+  } else { surfL <- make_cifti_surface(surfL) }
   if (is.null(surfR)) {
     if (is.null(cifti$SURF_RIGHT) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "right")) {
@@ -458,7 +458,7 @@ cifti_view_surface <- function(cifti, idx=1,
     } else {
       surfR <- cifti$SURF_RIGHT # to-edit
     }
-  } else { surfR <- cifti_make_surface(surfR) }
+  } else { surfR <- make_cifti_surface(surfR) }
   if (is.null(surfL) & is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
   # hemisphere and view.
   if (is.null(hemisphere)) {
@@ -510,7 +510,7 @@ cifti_view_surface <- function(cifti, idx=1,
 
     if (is.null(surfL)) { 
       stop(paste0("The left hemisphere was requested, but no surface data ",
-        "(cifti$SURF_LEFT or the surfL argument to cifti_view) was provided."))
+        "(cifti$SURF_LEFT or the surfL argument to view_cifti) was provided."))
     }
 
     if (is.null(cifti$CORTEX_LEFT)) { valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices)) }
@@ -536,7 +536,7 @@ cifti_view_surface <- function(cifti, idx=1,
 
     if (is.null(surfR)) { 
       stop(paste0("The right hemisphere was requested, but no surface data ",
-        "(cifti$SURF_RIGHT or the surfR argument to cifti_view) was provided."))
+        "(cifti$SURF_RIGHT or the surfR argument to view_cifti) was provided."))
     }
 
       if (is.null(cifti$CORTEX_RIGHT)) { valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices)) }
@@ -726,7 +726,7 @@ cifti_view_surface <- function(cifti, idx=1,
 
 #' Visualize cifti brain data
 #'
-#' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
+#' @param cifti Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is.cifti)}.
 #' @param structural_img The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
 #' @param idx The time/column index of the cifti data to plot.
 #' @param plane If use_papaya=FALSE, the plane to display. Default: "axial". Other options are "sagittal" and "coronal".
@@ -738,7 +738,7 @@ cifti_view_surface <- function(cifti, idx=1,
 #' @export
 #' 
 #' @importFrom oro.nifti overlay readNIfTI
-cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial", num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+view_cifti_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial", num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
   if (use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
       stop("Package \"papayar\" needed for this function to work. Please install it.",
@@ -784,18 +784,18 @@ cifti_view_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
   if (use_papaya==TRUE) papayar::papaya(list(T1w, img_overlay, img_labels))
 }
 
-#' Switch for \code{\link{cifti_view_surface}} or \code{\link{cifti_view_volume}}
+#' Switch for \code{\link{view_cifti_surface}} or \code{\link{view_cifti_volume}}
 #'
-#' @param cifti Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.
+#' @param cifti Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is.cifti)}.
 #' @param surface_or_volume Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and
 #'  volume otherwise
 #' @param ... Additional arguments to pass to either view function.
 #'
-#' @return The return value of \code{cifti_view_surface} or 
-#'  \code{cifti_view_volume}.
+#' @return The return value of \code{view_cifti_surface} or 
+#'  \code{view_cifti_volume}.
 #' @export
 #'
-cifti_view <- function(cifti, surface_or_volume=NULL, ...) {
+view_cifti <- function(cifti, surface_or_volume=NULL, ...) {
   if (is.null(surface_or_volume)) {
     can_do_left <- (!is.null(cifti$CORTEX_LEFT)) & (!is.null(cifti$SURF_LEFT))
     can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) & (!is.null(cifti$SURF_RIGHT))
@@ -804,8 +804,8 @@ cifti_view <- function(cifti, surface_or_volume=NULL, ...) {
   hemispheres=c("left", "right", "both")
   if (surface_or_volume == "surface") { 
     layout=c("left_2", "right_2", "both_4")[can_do_left + can_do_right*2]
-    return(cifti_view_surface(cifti, ...)) 
+    return(view_cifti_surface(cifti, ...)) 
   }
-  else if (surface_or_volume == "volume") { return(cifti_view_volume(cifti, ...)) }
+  else if (surface_or_volume == "volume") { return(view_cifti_volume(cifti, ...)) }
   else{ stop() }
 }

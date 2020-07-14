@@ -69,7 +69,7 @@ get_cifti_extn <- function(fname_cifti) {
 #'
 #' @return The default file name suffix.
 #'
-cifti_separate_default_suffix <- function(label, GIFTI_type="func") {
+separate_cifti_default_suffix <- function(label, GIFTI_type="func") {
   label <- match.arg(label, c(
     "cortexL", "cortexR", "subcortVol", "subcortLab",
     "ROIcortexL", "ROIcortexR", "ROIsubcortVol", 
@@ -91,11 +91,11 @@ cifti_separate_default_suffix <- function(label, GIFTI_type="func") {
 #' Get the default file name for a resampled file.
 #'
 #' @param original_fname The original file name
-#' @inheritParams resamp_res_Param
+#' @inheritParams resamp_res_Param_required
 #'
 #' @return The default file name.
 #'
-cifti_resample_default_fname <- function(original_fname, resamp_res) {
+resample_cifti_default_fname <- function(original_fname, resamp_res) {
   bname <- basename(original_fname)
   paste("resampled", round(resamp_res), bname, sep="_")
 }

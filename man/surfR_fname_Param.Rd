@@ -5,7 +5,7 @@
 \title{surfR_fname}
 \arguments{
 \item{surfR_fname}{(Optional) File path of GIFTI surface geometry
-file representing the left/right cortex. One or both can be provided.}
+file representing the right cortex.}
 }
 \description{
 surfR_fname

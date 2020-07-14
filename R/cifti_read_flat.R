@@ -4,14 +4,10 @@
 #'  Workbench command.
 #'
 #' @inheritParams cifti_fname_Param
-#' @param keep \code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
+#' @param keep \code{read_cifti_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
 #'  a new GIfTI file was made by this function call, should it be deleted once it is read in? Default: FALSE (delete it). 
-#'  If \code{overwrite==FALSE} and the GIfTI already exists, it will not be deleted even if \code{keep==FALSE}.
 #' @param gifti_fname File path of GIfTI-format data to save the CIFTI as.
-#' @param overwrite \code{cifti_read_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. Should the 
-#'  GIfTI file be overwritten if it already exists? Default: FALSE. If \code{overwrite==TRUE} and the GIfTI file exists,
-#'  the existing file is used.
-#' @param write_dir The directory in which to save the GIfTI (or look for it if \code{overwrite==FALSE}). If NULL, 
+#' @param write_dir The directory in which to save the GIfTI. If NULL, 
 #'  defaults to the current working directory.
 #' @inheritParams wb_path_Param
 #' 
@@ -48,8 +44,8 @@
 #'    \item{21}{Thalamus-R}
 #'  }
 #'
-cifti_read_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL, 
-  overwrite=TRUE, write_dir=NULL, wb_path=NULL) {
+read_cifti_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL, 
+  write_dir=NULL, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
 
@@ -64,16 +60,14 @@ cifti_read_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL,
     gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }
   gifti_fname <- format_path(gifti_fname, write_dir, mode=2)
-  # Write the file and read it in. If overwrite=FALSE, do not write it and read in the existing file.
+  # Write the file and read it in.
   gifti_existed <- file.exists(gifti_fname)
-  if (overwrite | !(gifti_existed)) {
     cmd <- paste(sys_path(wb_cmd), "-cifti-convert -to-gifti-ext", sys_path(cifti_fname), sys_path(gifti_fname))
     cmd_code <- system(cmd)
     if (cmd_code != 0) {
       stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
                   ". The command was:\n", cmd))
     }
-  }
   result <- readGIfTI(gifti_fname)
   result <- result$data$normal
 

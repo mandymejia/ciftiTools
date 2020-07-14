@@ -6,15 +6,14 @@
 #' @return \code{NULL}.
 #'
 ciftiTools.checkOption <- function(opt, val=NULL){
-  stopifnot(opt %in% c("wb_path", "make_dirs", "EPS"))
+  stopifnot(opt %in% c("wb_path", "EPS"))
   if(is.null(val)){ return(invisible(NULL)) }
   if (opt == "wb_path") {
     if (!file.exists(val)) { 
-      warning(paste0("The wb_path value '" , normalizePath(val, mustWork=FALSE), "' does not exist.")) 
-    }
-  } else if (opt == "make_dirs") {
-    if (!is.logical(val)) {
-      stop("The make_dirs option must be TRUE or FALSE.")
+      warning(paste0(
+        "The wb_path value '" , normalizePath(val, mustWork=FALSE), 
+        "' does not exist."
+      )) 
     }
   } else if (opt == "EPS") {
     stopifnot(is.numeric(val))
@@ -25,9 +24,8 @@ ciftiTools.checkOption <- function(opt, val=NULL){
 }
 
 #' Sets an R option (with prefix "ciftiTools_"). Right now, the ciftiTool
-#'  options are "wb_path" (path to Workbench Command), "make_dirs"
-#'  (Should a directory to write in be made if it does not exist, or should an 
-#'  error be raised?), and "EPS" (Threshold for detecting constant voxels).
+#'  options are "wb_path" (path to Workbench Command)
+#'  and "EPS" (Threshold for detecting constant voxels).
 #'
 #' @param opt The option. 
 #' @param val The value to set the option as.
@@ -44,9 +42,8 @@ ciftiTools.setOption <- function(opt, val) {
 }
 
 #' Gets an R option (with prefix "ciftiTools_") value. Right now, the ciftiTool
-#'  options are "wb_path" (path to Workbench Command), "make_dirs"
-#'  (Should a directory to write in be made if it does not exist, or should an 
-#'  error be raised?), and "EPS" (Threshold for detecting constant voxels).
+#'  options are "wb_path" (path to Workbench Command)
+#'  and "EPS" (Threshold for detecting constant voxels).
 #'
 #' @param opt The option.
 #'
@@ -64,6 +61,5 @@ ciftiTools.getOption <- function(opt) {
       packageStartupMessage(wb_path_request())
     }
   }
-  ciftiTools.setOption("make_dirs", FALSE)
   ciftiTools.setOption("EPS", 1e-8)
 }

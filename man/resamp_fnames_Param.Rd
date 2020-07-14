@@ -11,7 +11,7 @@
  "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
  
  Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{cifti_resample_default_fname}}. Default file names
+ used: see \code{\link{resample_cifti_default_fname}}. Default file names
  will also be used for files that need to be resampled/written but without a
  corresponding entry in \code{resamp_fnames}.
  

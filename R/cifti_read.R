@@ -1,9 +1,9 @@
 #' Read in CIFTI data
 #'
 #' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
-#'  with \code{\link{cifti_separate}}, optionally resampling them with 
-#'  \code{\link{cifti_resample_separate}}, and then reading each separated 
-#'  component into R with \code{\link{cifti_make_from_separate}}.
+#'  with \code{\link{separate_cifti}}, optionally resampling them with 
+#'  \code{\link{resample_cifti_separate}}, and then reading each separated 
+#'  component into R with \code{\link{make_cifti_from_separate}}.
 #'
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the cortical and subcortical data be obtained as one T x B
@@ -64,7 +64,7 @@
 #'    \item{21}{Thalamus-R}
 #'  }
 #'
-cifti_read <- function(
+read_cifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), ROI_brainstructures=NULL,
@@ -76,7 +76,7 @@ cifti_read <- function(
 
   wb_cmd <- get_wb_cmd_path(wb_path)
   
-  if (flat) { return(cifti_read_flat(cifti_fname, wb_path=wb_path)) }
+  if (flat) { return(read_cifti_flat(cifti_fname, wb_path=wb_path)) }
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -89,22 +89,22 @@ cifti_read <- function(
   }
 
   if (is.null(write_dir)) {
-    write_dir_sep <- ifelse(sep_keep, getwcd(), tempdir())
-    write_dir_resamp <- ifelse(resamp_keep, getwcd(), tempdir())
+    write_dir_sep <- ifelse(sep_keep, getwd(), tempdir())
+    write_dir_resamp <- ifelse(resamp_keep, getwd(), tempdir())
   }
 
   if (verbose) { exec_time <- Sys.time() }
 
   # ----------------------------------------------------------------------------
-  # cifti_separate() -----------------------------------------------------------
+  # separate_cifti() -----------------------------------------------------------
   # ----------------------------------------------------------------------------
 
   if (verbose) { cat("Separating CIFTI file.\n") }
 
-  sep_result <- cifti_separate_wrapper(
+  sep_result <- separate_cifti_wrapper(
     cifti_fname=cifti_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_fnames=sep_fnames, sep_keep=sep_keep, wb_path=wb_path
+    sep_fnames=sep_fnames, wb_path=wb_path
   )
 
   to_read <- sep_result$fname
@@ -116,7 +116,7 @@ cifti_read <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # cifti_resample_separate() --------------------------------------------------
+  # resample_cifti_separate() --------------------------------------------------
   # ----------------------------------------------------------------------------
 
   do_resamp <- !identical(resamp_res, NULL) & !identical(resamp_res, FALSE)
@@ -126,8 +126,8 @@ cifti_read <- function(
     # Do not resample the subcortical data.
     to_resample <- to_read[!grepl("subcort", names(to_read))]
     
-    # Do cifti_resample_separate.
-    resamp_result <- cifti_resample_wrapper(
+    # Do resample_cifti_separate.
+    resamp_result <- resample_cifti_wrapper(
       resamp_res, to_resample, resamp_fnames, resamp_keep, 
       surfL_fname, surfR_fname,
       sphereL_fname, sphereR_fname, 
@@ -152,7 +152,7 @@ cifti_read <- function(
   }
 
   # ----------------------------------------------------------------------------  
-  # cifti_make_from_separate() -------------------------------------------------
+  # make_cifti_from_separate() -------------------------------------------------
   # ----------------------------------------------------------------------------
 
   # ROIs are not supported yet.
@@ -171,7 +171,7 @@ cifti_read <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
-  result <- do.call(cifti_make_from_separate, to_read)
+  result <- do.call(make_cifti_from_separate, to_read)
 
   if (verbose) { 
     print(Sys.time() - exec_time)
