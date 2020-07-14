@@ -7,16 +7,14 @@
 gifti_resample(
   original_fname,
   target_fname,
+  file_type = NULL,
   ROIcortex_original_fname = NULL,
   validROIcortex_target_fname = NULL,
-  file_type = NULL,
   resamp_res,
   sphere_original_fname,
   sphere_target_fname,
-  overwrite = TRUE,
   read_dir = NULL,
   write_dir = NULL,
-  sphere_target_dir = NULL,
   wb_path = NULL
 )
 }
@@ -25,19 +23,15 @@ gifti_resample(
 
 \item{target_fname}{Where to save the resampled file.}
 
+\item{file_type}{\code{"metric"} or \code{"surface"}, or \code{NULL} 
+(default) to infer from \code{original_fname}.}
+
 \item{ROIcortex_original_fname}{The name of the ROI file corresponding to 
 \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
 or shouldn't be resampled.}
 
 \item{validROIcortex_target_fname}{The name of the resampled ROI file. Only 
 applicable if \code{ROIcortex_original_fname} is provided.}
-
-\item{file_type}{\code{"metric"} or \code{"surface"}, or \code{NULL} 
-(default) to infer from \code{original_fname}.}
-
-\item{resamp_res}{(Optional) Target resolution for resampling (number of 
-cortical surface vertices per hemisphere). If \code{NULL} (default) or 
-\code{FALSE}, do not perform resampling.}
 
 \item{sphere_original_fname}{File path of [left/right]-hemisphere spherical 
 GIFTI files in original resolution. The hemisphere side should match that of
@@ -47,9 +41,6 @@ GIFTI files in original resolution. The hemisphere side should match that of
 GIFTI files in targetinal resolution. The hemisphere side should match 
 that of \code{target_fname}. See \code{\link{make_helper_spheres}}.}
 
-\item{overwrite}{Logical indicating whether original_fname should be 
-overwritten if it already exists. Default is \code{TRUE}.}
-
 \item{read_dir}{Directory to append to the path of every file name in
 \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
 (default), do not append any directory to the path.}
@@ -57,10 +48,6 @@ overwritten if it already exists. Default is \code{TRUE}.}
 \item{write_dir}{Directory to append to the path of every file name in
 \code{target_fname} and \code{validROIcortex_target_fname}. If \code{NULL} 
 (default), do not append any directory to the path.}
-
-\item{sphere_target_dir}{Directory to append to the path of 
-\code{sphere_target_fname}. If \code{NULL} (default), do not append any 
-directory to the path.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

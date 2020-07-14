@@ -15,7 +15,6 @@
 #'  \code{brainstructures} argument.
 #' @param ROIcortexL_fname,ROIcortexR_fname File names for cortex ROIs.
 #' @param ROIsubcortVol_fname File name for volume ROI.
-#' @param overwrite If all NIfTI or GIfTI files already exists, should they be overwritten? Default: TRUE. 
 #' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
 #' @inheritParams wb_path_Param
 #'
@@ -30,7 +29,7 @@
 cifti_separate <- function(cifti_fname, brainstructures=c("left","right"), 
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
-  overwrite=TRUE, write_dir=NULL, wb_path=NULL) {
+  write_dir=NULL, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
 
@@ -89,8 +88,7 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right"),
     subcortVol_fname <- subcortLab_fname <- ROIsubcortVol_fname <- "" 
   }
 
-  # Collect the paths to each file in a data.frame to return later. Also record whether each existed before the
-  # workbook command.
+  # Collect the paths to each file in a data.frame to return later. 
   sep_files <- data.frame(
     label = c("cortexL", "cortexR", "subcortVol", "subcortLab", 
       "ROIcortexL", "ROIcortexR", "ROIsubcortVol"),
@@ -99,34 +97,27 @@ cifti_separate <- function(cifti_fname, brainstructures=c("left","right"),
     stringsAsFactors=FALSE
   )
   sep_files <- sep_files[sep_files$fname != "",]
-  sep_files$existed <- file.exists(sep_files$fname)
 
-  # Run the command if overwrite==TRUE, or if any desired file does not exist.
-  run_cmd <- overwrite | any(!sep_files$existed)
-  if (!run_cmd) {
-    cmd_code <- NA
-  } else {
-    # Build the Connectome Workbench command. 
-    cmd <- paste(sys_path(wb_cmd), "-cifti-separate", sys_path(cifti_fname), "COLUMN")
-    if (do['left']) {
-      cmd <- paste(cmd, '-metric CORTEX_LEFT', sys_path(cortexL_fname))
-      if (ROI_do['left']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexL_fname)) }
-    }
-    if (do['right']) {
-      cmd <- paste(cmd, '-metric CORTEX_RIGHT', sys_path(cortexR_fname))
-      if (ROI_do['right']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexR_fname)) }
-    }
-    if (do['sub']) {
-      cmd <- paste(cmd, '-volume-all', sys_path(subcortVol_fname))
-      if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(ROIsubcortVol_fname)) }
-      cmd <- paste(cmd, '-label', sys_path(subcortLab_fname))
-    }
-    # Run it! Raise an error if it fails.
-    cmd_code <- system(cmd)
-    if (cmd_code != 0) {
-      stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-        ". The command was:\n", cmd))
-    }
+  # Build the Connectome Workbench command. 
+  cmd <- paste(sys_path(wb_cmd), "-cifti-separate", sys_path(cifti_fname), "COLUMN")
+  if (do['left']) {
+    cmd <- paste(cmd, '-metric CORTEX_LEFT', sys_path(cortexL_fname))
+    if (ROI_do['left']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexL_fname)) }
+  }
+  if (do['right']) {
+    cmd <- paste(cmd, '-metric CORTEX_RIGHT', sys_path(cortexR_fname))
+    if (ROI_do['right']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexR_fname)) }
+  }
+  if (do['sub']) {
+    cmd <- paste(cmd, '-volume-all', sys_path(subcortVol_fname))
+    if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(ROIsubcortVol_fname)) }
+    cmd <- paste(cmd, '-label', sys_path(subcortLab_fname))
+  }
+  # Run it! Raise an error if it fails.
+  cmd_code <- system(cmd)
+  if (cmd_code != 0) {
+    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
+      ". The command was:\n", cmd))
   }
 
   invisible(sep_files) # column names are "label", "fname", and "existed"

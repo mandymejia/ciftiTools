@@ -4,11 +4,8 @@
 \alias{resamp_keep_Param}
 \title{resamp_keep}
 \arguments{
-\item{resamp_keep}{If files are created by 
-\code{\link{cifti_resample_separate}}, should they be deleted at the end of 
-this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
-resampled files already exist, they will not be deleted even if 
-\code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
+\item{resamp_keep}{If resampled files are created, will they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).}
 }
 \description{
 resamp_keep

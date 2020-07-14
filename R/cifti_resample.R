@@ -4,32 +4,27 @@
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
-#' @inheritParams sep_kwargs_Param
-#' @inheritParams sep_keep_Param
-#' @param resamp_res Target resolution for resampling (number of 
-#'  cortical surface vertices per hemisphere). 
-#' @param sphereL_original_fname,sphereR_original_fname Helper sphere files 
-#'  needed for resampling
-#' @param sphereL_target_fname,sphereR_target_fname Helper sphere files 
-#'  needed for resampling
 #' @param surfL_original_fname,surfR_original_fname (Optional) File path of 
 #'  existing GIFTI surface geometry file representing the left/right cortex. 
 #'  One or both can be provided.
 #' @param surfL_target_fname,surfR_target_fname (Optional) File path for
 #'  the resampled GIFTI surface geometry file representing the left/right 
 #'  cortex. If NULL (default),
-#' @inheritParams resamp_kwargs_Param
+#' @inheritParams resamp_res_Param_required
+#' @inheritParams sphereL_fname_Param
+#' @inheritParams sphereR_fname_Param
+#' @inheritParams sep_fnames_Param
+#' @inheritParams sep_keep_Param
+#' @inheritParams resamp_fnames_Param
 #' @inheritParams resamp_keep_Param
-#' @param overwrite If \code{cifti_target_fname} exists, should it be replaced? 
-#'  Default: \code{FALSE}.
-#' @param write_dir Where to place the resampled CIFTI. Defaults to the current 
-#'  working directory.
-#' @inheritParams wb_path_Param
+#' @inheritParams write_dir_Param_intermediate
 #' @inheritParams verbose_Param
+#' @inheritParams wb_path_Param
 #'
 #' @return The code returned by the Connectome Workbench command, or \code{NA} 
 #'  if no resampling was performed because \code{overwrite==FALSE} and 
-#"  \code{cifti_target_fname} already exists.
+#'  \code{cifti_target_fname} already exists.
+#'
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
@@ -41,13 +36,12 @@
 #'
 cifti_resample <- function(
   cifti_original_fname, cifti_target_fname, 
-  sep_kwargs=NULL, sep_keep=FALSE, #cifti_separate
-  resamp_res, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
-  sphereL_original_fname=NULL, sphereR_original_fname=NULL, 
-  sphereL_target_fname=NULL, sphereR_target_fname=NULL,
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
-  overwrite=FALSE, write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+  resamp_res, sphereL_fname, sphereR_fname,
+  sep_fnames=NULL, sep_keep=FALSE, #cifti_separate
+  resamp_fnames=NULL, resamp_keep=FALSE, # cifti_resample
+  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
 
@@ -61,6 +55,11 @@ cifti_resample <- function(
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
   if (file.exists(cifti_target_fname) & !overwrite) { return(invisible(NA)) }
 
+  if (is.null(write_dir)) {
+    write_dir_sep <- ifelse(sep_keep, getwcd(), tempdir())
+    write_dir_resamp <- ifelse(resamp_keep, getwcd(), tempdir())
+  }
+
   if (verbose) { exec_time <- Sys.time() }
 
   # ----------------------------------------------------------------------------
@@ -70,9 +69,9 @@ cifti_resample <- function(
   if (verbose) { cat("Separating CIFTI file.\n") }
 
   sep_result <- cifti_separate_wrapper(
-    cifti_fname=cifti_original_fname, 
+    cifti_fname=cifti_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_kwargs=sep_kwargs, sep_keep=sep_keep, wb_path=wb_path
+    sep_fnames=sep_fnames, sep_keep=sep_keep, wb_path=wb_path
   )
 
   to_cif <- sep_result$fname
@@ -91,28 +90,18 @@ cifti_resample <- function(
 
   # Do not resample the subcortical data.
   to_resample <- to_cif[!grepl("subcort", names(to_cif))]
-  
-  # [TO DO]: Add surf[L/R]_target_fname to resamp_kwargs
-  # resamp_kwargs
-  resamp_kwargs$target_fnames <- merge_kwargs(
-    list(
-      sphereL=sphereL_target_fname, sphereR=sphereR_target_fname,
-      surfL=surfL_target_fname, surfR=surfR_target_fname
-    ),
-    resamp_kwargs$target_fnames, 
-    "Direct arguments", "resamp_kwargs$target_fnames"
-  )
 
-  # Do cifti_resample_separate.
-  resamp_result <- cifti_resample_wrapper(
-    resamp_res, to_resample, resamp_kwargs, resamp_keep, 
-    surfL_original_fname, surfR_original_fname, 
-    sphereL_original_fname, sphereR_original_fname, 
-    wb_path
-  )
+    # Do cifti_resample_separate.
+    resamp_result <- cifti_resample_wrapper(
+      resamp_res, to_resample, resamp_fnames, resamp_keep, 
+      surfL_fname, surfR_fname,
+      sphereL_fname, sphereR_fname, 
+      wb_path
+    )
   # Replace resampled files.
-  to_cif_resampled <- names(to_cif)[names(to_cif) %in% resamp_result$label]
-  to_cif[to_cif_resampled] <- resamp_result$fname[resamp_result$label %in% to_cif_resampled]
+  to_cif_resampled <- names(to_read)[names(to_read) %in% resamp_result$label]
+  to_read[to_cif_resampled] <- resamp_result$fname[
+    resamp_result$label %in% to_cif_resampled]
 
   if (!is.null(surfL_fname)) { 
     surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"] 

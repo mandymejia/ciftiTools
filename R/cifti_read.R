@@ -6,36 +6,42 @@
 #'  component into R with \code{\link{cifti_make_from_separate}}.
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param
-#' @inheritParams ROI_brainstructures_Param
-#' @inheritParams sep_kwargs_Param
-#' @inheritParams sep_keep_Param
-#' @inheritParams resamp_res_Param
-#' @inheritParams sphereL_fname_Param
-#' @inheritParams sphereR_fname_Param
-#' @inheritParams resamp_kwargs_Param
-#' @inheritParams resamp_keep_Param
+#' @param flat Should the cortical and subcortical data be obtained as one T x B
+#'  matrix (T measurements, B brainordinates)? This will be much faster but the
+#'  spatial data, including whether a brainordinate corresponds to cortical or
+#'  subcortical data, will be lost.
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
+#' @inheritParams brainstructures_Param
+#' @inheritParams ROI_brainstructures_Param
+#' @inheritParams resamp_res_Param_optional
+#' @inheritParams sphereL_fname_Param
+#' @inheritParams sphereR_fname_Param
+#' @inheritParams sep_fnames_Param
+#' @inheritParams sep_keep_Param
+#' @inheritParams resamp_keep_Param
+#' @inheritParams resamp_fnames_Param
+#' @inheritParams write_dir_Param_intermediate
 #' @inheritParams verbose_Param
 #' @inheritParams wb_path_Param
 #'
-#' @return An object of type \code{cifti}, a list containing at least 4 elements: 
-#'  \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} and \code{LABELS}.
-#'  \code{LABELS} contains the brain structure labels (usually 3-21) of the 
-#'  subcortical elements. If a surface geometry file(s) was provided in the 
-#'  arguments, the list will also contain \code{SURF_LEFT}/\code{SURF_RIGHT}.
+#' @return If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
+#'  with T measurements and B brainordinates. If not \code{flat}, 
+#'  an object of type \code{cifti}, a list containing 6 elements: 
+#'  \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} \code{LABELS},
+#'  \code{SURF_LEFT} and \code{SURF_RIGHT}.
+#'
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
 #'  executable. The user must first download and install the Connectome 
 #'  Workbench, available from 
 #'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
-#'  executable.
+#'  The \code{wb_path} argument is the path to the Connectime Workbench folder 
+#'  or executable.
 #'
 #' The subcortical brain structure labels (LABELS element of returned list) take 
-#'  values 3-21 and represent:
+#'  on integer values 3-21 and represent:
 #'  \describe{
 #'    \item{3}{Accumbens-L}
 #'    \item{4}{Accumbens-R}
@@ -59,22 +65,32 @@
 #'  }
 #'
 cifti_read <- function(
-  cifti_fname, brainstructures=c("left","right"), ROI_brainstructures=NULL,
-  sep_kwargs=NULL, sep_keep=FALSE, # cifti_separate
-  resamp_res=NULL, resamp_kwargs=NULL, resamp_keep=FALSE, # cifti_resample
-  sphereL_fname=NULL, sphereR_fname=NULL, # cifti_resample
-  surfL_fname=NULL, surfR_fname=NULL, # cifti_make_from_separate
+  cifti_fname, flat=FALSE,
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), ROI_brainstructures=NULL,
+  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
+  sep_fnames=NULL, sep_keep=FALSE, 
+  resamp_fnames=NULL, resamp_keep=FALSE,
+  write_dir=NULL,
   verbose=TRUE, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
+  
+  if (flat) { return(cifti_read_flat(cifti_fname, wb_path=wb_path)) }
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  brainstructures <- match_input(brainstructures, c("left","right","subcortical"))
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical"))
   if (!is.null(ROI_brainstructures)) {
     ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures)
+  }
+
+  if (is.null(write_dir)) {
+    write_dir_sep <- ifelse(sep_keep, getwcd(), tempdir())
+    write_dir_resamp <- ifelse(resamp_keep, getwcd(), tempdir())
   }
 
   if (verbose) { exec_time <- Sys.time() }
@@ -88,7 +104,7 @@ cifti_read <- function(
   sep_result <- cifti_separate_wrapper(
     cifti_fname=cifti_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_kwargs=sep_kwargs, sep_keep=sep_keep, wb_path=wb_path
+    sep_fnames=sep_fnames, sep_keep=sep_keep, wb_path=wb_path
   )
 
   to_read <- sep_result$fname
@@ -112,14 +128,15 @@ cifti_read <- function(
     
     # Do cifti_resample_separate.
     resamp_result <- cifti_resample_wrapper(
-      resamp_res, to_resample, resamp_kwargs, resamp_keep, 
+      resamp_res, to_resample, resamp_fnames, resamp_keep, 
       surfL_fname, surfR_fname,
       sphereL_fname, sphereR_fname, 
       wb_path
     )
     # Replace resampled files.
     to_read_resampled <- names(to_read)[names(to_read) %in% resamp_result$label]
-    to_read[to_read_resampled] <- resamp_result$fname[resamp_result$label %in% to_read_resampled]
+    to_read[to_read_resampled] <- resamp_result$fname[
+      resamp_result$label %in% to_read_resampled]
 
     if (!is.null(surfL_fname)) { 
       surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"] 
@@ -138,7 +155,7 @@ cifti_read <- function(
   # cifti_make_from_separate() -------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # ROI not supported yet.
+  # ROIs are not supported yet.
   is_ROI <- grepl("ROI", names(to_read))
   if(any(is_ROI)){ 
     warning(paste(

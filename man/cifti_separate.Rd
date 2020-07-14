@@ -15,7 +15,6 @@ cifti_separate(
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
   ROIsubcortVol_fname = NULL,
-  overwrite = TRUE,
   write_dir = NULL,
   wb_path = NULL
 )
@@ -43,8 +42,6 @@ path is relative, they will be saved in \code{write_dir}.}
 \item{ROIcortexL_fname, ROIcortexR_fname}{File names for cortex ROIs.}
 
 \item{ROIsubcortVol_fname}{File name for volume ROI.}
-
-\item{overwrite}{If all NIfTI or GIfTI files already exists, should they be overwritten? Default: TRUE.}
 
 \item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
 

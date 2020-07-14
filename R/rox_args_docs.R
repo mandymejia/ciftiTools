@@ -14,35 +14,77 @@ NULL
 #' @name cifti_fname_Param
 NULL
 
+#' original_fnames: for resampling
+#'
+#' @param original_fnames The original files to resample. This is a named list 
+#'  where each element's name is a file type label, and each element's value
+#'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
+#'  Both "sphereL" and "sphereR" are required; all others are optional. If 
+#'  \code{read_dir} is not \code{NULL}, then all these file names should be
+#'  relative to \code{read_dir}. 
+#' @name original_fnames_Param_resample
+NULL
+
+#' resamp_fnames: for resampling
+#'
+#' @param resamp_fnames Where to write the resampled files. This is a named list 
+#'  where each element's name is a file type label, and each element's value
+#'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
+#'  "sphereL", "sphereR", "surfL", or "surfR". All except "validROIcortex[L/R]"
+#'  must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
+#'  "cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
+#'  File names can be \code{NULL}, in which case a default file name based on the
+#'  original file name will be used: see \code{\link{cifti_resample_default_fname}}.
+#'  If \code{write_dir} is not \code{NULL}, then all these file names should be
+#'  relative to \code{write_dir}.
+#' @name resamp_fnames_Param_resample
+NULL
+
 #' resamp_keep
 #'
-#' @param resamp_keep If files are created by 
-#'  \code{\link{cifti_resample_separate}}, should they be deleted at the end of 
-#'  this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
-#'  resampled files already exist, they will not be deleted even if 
-#'  \code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).
+#' @param resamp_keep If resampled files are created, will they be kept or 
+#'  deleted at the end of this function call? Default: \code{FALSE} (delete).
 #' @name resamp_keep_Param
 NULL
 
-#' resamp_kwargs
+#' resamp_fnames
 #'
-#' @param resamp_kwargs (Optional) Additional arguments to 
-#'  \code{\link{cifti_resample_separate}} in the form of a list, e.g. 
-#'  \code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
-#'  \code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-#'  \code{resamp_kwargs}; instead, use the immediate arguments. Do not 
-#'  specify the names of the files to resample, e.g. 
-#'  \code{cortexL_original_fname}, because these are determined by the
-#'  preceeding \code{\link{cifti_separate}} call.
-#' @name resamp_kwargs_Param
+#' @param resamp_fnames Where to write the resampled files. This is a named list 
+#'  where each entry's name is a file type label, and each entry's value
+#'  is a file name indicating where to write the corresponding resampled file. 
+#'  The recognized file type labels are: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
+#'  
+#'  Entry values can be \code{NULL}, in which case a default file name will be 
+#'  used: see \code{\link{cifti_resample_default_fname}}. Default file names
+#'  will also be used for files that need to be resampled/written but without a
+#'  corresponding entry in \code{resamp_fnames}.
+#'  
+#'  Entries in \code{resamp_fnames} will be ignored if they are not needed
+#'  based on \code{[ROI_]brainstructures}. For example, if
+#'  \code{brainstructures="left"}, then \code{resamp_fnames$cortexR} will be 
+#'  ignored if specified. 
+#'
+#'  The \code{write_dir} argument can be used to place each resampled file in
+#'  the same directory. 
+#' @name resamp_fnames_Param
 NULL
 
-#' resamp_res
+#' resamp_res: required
+#'
+#' @param resamp_res Target resolution for resampling (number of 
+#'  cortical surface vertices per hemisphere).  
+#' @name resamp_res_Param_required
+NULL
+
+#' resamp_res: optional
 #'
 #' @param resamp_res (Optional) Target resolution for resampling (number of 
 #'  cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 #'  \code{FALSE}, do not perform resampling.
-#' @name resamp_res_Param
+#' @name resamp_res_Param_optional
 NULL
 
 #' ROI_brainstructures
@@ -57,22 +99,32 @@ NULL
 
 #' sep_keep
 #'
-#' @param sep_keep If files are created by \code{\link{cifti_separate}}, should 
-#'  they be deleted at the end of this function call? (If 
-#'  \code{sep_kwargs$overwrite == FALSE} and the separated files already exist,
-#'  they will not be deleted even if \code{sep_keep == FALSE}.) Default:
-#'  \code{FALSE} (delete new files).
+#' @param sep_keep If separated files are created, will they be kept or 
+#'  deleted at the end of this function call? Default: \code{FALSE} (delete).
 #' @name sep_keep_Param
 NULL
 
-#' sep_kwargs
+#' sep_fnames
 #'
-#' @param sep_kwargs (Optional) Additional arguments to 
-#'  \code{\link{cifti_separate}} in the form of a list, e.g. 
-#'  \code{list(overwrite=FALSE, write_dir="separated_files", 
-#'  cortexL_fname="my_cortexL.nii")}. Do not specify \code{cifti_fname} in 
-#'  \code{sep_kwargs}; instead, use the \code{cifti_fname} argument directly.
-#' @name sep_kwargs_Param
+#' @param sep_fnames Where to write the separated files. This is a named list 
+#'  where each entry's name is a file type label, and each entry's value
+#'  is a file name indicating where to write the corresponding separated file. 
+#'  The recognized file type labels are: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
+#'  
+#'  Entry values can be \code{NULL}, in which case a default file name will be 
+#'  used: see \code{\link{cifti_separate_default_suffix}}. Default file names
+#'  will also be used for files that need to be separated/written but without a
+#'  corresponding entry in \code{sep_fnames}.
+#'  
+#'  Entries in \code{sep_fnames} will be ignored if they are not needed
+#'  based on \code{[ROI_]brainstructures}. For example, if
+#'  \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
+#'  ignored if specified. 
+#'
+#'  The \code{write_dir} argument can be used to place each separated file in
+#'  the same directory. 
+#' @name sep_fnames_Param
 NULL
 
 #' sphereL_fname
@@ -115,4 +167,40 @@ NULL
 #'  If not provided, should be set with 
 #'  \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.
 #' @name wb_path_Param
+NULL
+
+#'  write_dir: intermediate separated/resampled files
+#'  
+#' @param write_dir Where should the separated (and resampled) intermediate
+#'  files be placed? \code{NULL} (default) will write the separated files to
+#'  the current working directory if \code{sep_keep}, and to a temporary
+#'  directory if not \code{sep_keep}. Likewise, it will write the resampled
+#'  files to the current working directory if \code{resamp_keep}, and to a 
+#'  temporary directory if not \code{resamp_keep}. Otherwise, both the
+#'  separated and resampled files will be written to the same directory,
+#'  \code{write_dir}. (Different subfolders can be used by modifying the
+#'  individual file names in \code{sep_fnames} and \code{resamp_fnames}.)
+#' 
+#'  \code{write_dir} must already exist, or an error will be raised.
+#' @name write_dir_Param_intermediate
+NULL
+
+#'  write_dir: resampled files
+#'  
+#' @param write_dir Where should the resampled
+#'  files be placed? \code{NULL} (default) will write the files to
+#'  the current working directory. 
+#' 
+#'  \code{write_dir} must already exist, or an error will be raised.
+#' @name write_dir_Param_resampled
+NULL
+
+#'  write_dir: separated files
+#'  
+#' @param write_dir Where should the separated
+#'  files be placed? \code{NULL} (default) will write the files to
+#'  the current working directory. 
+#' 
+#'  \code{write_dir} must already exist, or an error will be raised.
+#' @name write_dir_Param_separated
 NULL

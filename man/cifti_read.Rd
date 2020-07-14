@@ -6,17 +6,19 @@
 \usage{
 cifti_read(
   cifti_fname,
-  brainstructures = c("left", "right"),
-  ROI_brainstructures = NULL,
-  sep_kwargs = NULL,
-  sep_keep = FALSE,
-  resamp_res = NULL,
-  resamp_kwargs = NULL,
-  resamp_keep = FALSE,
-  sphereL_fname = NULL,
-  sphereR_fname = NULL,
+  flat = FALSE,
   surfL_fname = NULL,
   surfR_fname = NULL,
+  brainstructures = c("left", "right"),
+  ROI_brainstructures = NULL,
+  resamp_res = NULL,
+  sphereL_fname = NULL,
+  sphereR_fname = NULL,
+  sep_fnames = NULL,
+  sep_keep = FALSE,
+  resamp_fnames = NULL,
+  resamp_keep = FALSE,
+  write_dir = NULL,
   verbose = TRUE,
   wb_path = NULL
 )
@@ -24,6 +26,17 @@ cifti_read(
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
 in.}
+
+\item{flat}{Should the cortical and subcortical data be obtained as one T x B
+matrix (T measurements, B brainordinates)? This will be much faster but the
+spatial data, including whether a brainordinate corresponds to cortical or
+subcortical data, will be lost.}
+
+\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left cortex.}
+
+\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left/right cortex. One or both can be provided.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
@@ -36,36 +49,9 @@ be a subset of the \code{brainstructures} argument. Any elements in
 \code{ROI_brainstructures} but not in \code{brainstructures} will be 
 ignored.}
 
-\item{sep_kwargs}{(Optional) Additional arguments to 
-\code{\link{cifti_separate}} in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="separated_files", 
-cortexL_fname="my_cortexL.nii")}. Do not specify \code{cifti_fname} in 
-\code{sep_kwargs}; instead, use the \code{cifti_fname} argument directly.}
-
-\item{sep_keep}{If files are created by \code{\link{cifti_separate}}, should 
-they be deleted at the end of this function call? (If 
-\code{sep_kwargs$overwrite == FALSE} and the separated files already exist,
-they will not be deleted even if \code{sep_keep == FALSE}.) Default:
-\code{FALSE} (delete new files).}
-
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 \code{FALSE}, do not perform resampling.}
-
-\item{resamp_kwargs}{(Optional) Additional arguments to 
-\code{\link{cifti_resample_separate}} in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
-\code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-\code{resamp_kwargs}; instead, use the immediate arguments. Do not 
-specify the names of the files to resample, e.g. 
-\code{cortexL_original_fname}, because these are determined by the
-preceeding \code{\link{cifti_separate}} call.}
-
-\item{resamp_keep}{If files are created by 
-\code{\link{cifti_resample_separate}}, should they be deleted at the end of 
-this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
-resampled files already exist, they will not be deleted even if 
-\code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
 
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
 as the CIFTI data. It is only required for resampling.}
@@ -73,11 +59,58 @@ as the CIFTI data. It is only required for resampling.}
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
 as the CIFTI data. It is only required for resampling.}
 
-\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
-file representing the left cortex.}
+\item{sep_fnames}{Where to write the separated files. This is a named list 
+ where each entry's name is a file type label, and each entry's value
+ is a file name indicating where to write the corresponding separated file. 
+ The recognized file type labels are: "cortexL", "cortexR", 
+ "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
+ 
+ Entry values can be \code{NULL}, in which case a default file name will be 
+ used: see \code{\link{cifti_separate_default_suffix}}. Default file names
+ will also be used for files that need to be separated/written but without a
+ corresponding entry in \code{sep_fnames}.
+ 
+ Entries in \code{sep_fnames} will be ignored if they are not needed
+ based on \code{[ROI_]brainstructures}. For example, if
+ \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
+ ignored if specified. 
 
-\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
-file representing the left/right cortex. One or both can be provided.}
+ The \code{write_dir} argument can be used to place each separated file in
+ the same directory.}
+
+\item{resamp_fnames}{Where to write the resampled files. This is a named list 
+ where each entry's name is a file type label, and each entry's value
+ is a file name indicating where to write the corresponding resampled file. 
+ The recognized file type labels are: "cortexL", "cortexR", 
+ "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
+ 
+ Entry values can be \code{NULL}, in which case a default file name will be 
+ used: see \code{\link{cifti_resample_default_fname}}. Default file names
+ will also be used for files that need to be resampled/written but without a
+ corresponding entry in \code{resamp_fnames}.
+ 
+ Entries in \code{resamp_fnames} will be ignored if they are not needed
+ based on \code{[ROI_]brainstructures}. For example, if
+ \code{brainstructures="left"}, then \code{resamp_fnames$cortexR} will be 
+ ignored if specified. 
+
+ The \code{write_dir} argument can be used to place each resampled file in
+ the same directory.}
+
+\item{resamp_keep}{If resampled files are created, will they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).}
+
+\item{write_dir}{Where should the separated (and resampled) intermediate
+ files be placed? \code{NULL} (default) will write the separated files to
+ the current working directory if \code{sep_keep}, and to a temporary
+ directory if not \code{sep_keep}. Likewise, it will write the resampled
+ files to the current working directory if \code{resamp_keep}, and to a 
+ temporary directory if not \code{resamp_keep}. Otherwise, both the
+ separated and resampled files will be written to the same directory,
+ \code{write_dir}. (Different subfolders can be used by modifying the
+ individual file names in \code{sep_fnames} and \code{resamp_fnames}.)
+
+ \code{write_dir} must already exist, or an error will be raised.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
@@ -86,11 +119,11 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-An object of type \code{cifti}, a list containing at least 4 elements: 
- \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} and \code{LABELS}.
- \code{LABELS} contains the brain structure labels (usually 3-21) of the 
- subcortical elements. If a surface geometry file(s) was provided in the 
- arguments, the list will also contain \code{SURF_LEFT}/\code{SURF_RIGHT}.
+If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
+ with T measurements and B brainordinates. If not \code{flat}, 
+ an object of type \code{cifti}, a list containing 6 elements: 
+ \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} \code{LABELS},
+ \code{SURF_LEFT} and \code{SURF_RIGHT}.
 }
 \description{
 Read a CIFTI file by separating it into GIfTI and NIfTI files 
@@ -103,11 +136,11 @@ This function uses a system wrapper for the "wb_command"
  executable. The user must first download and install the Connectome 
  Workbench, available from 
  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
- The \code{wb_path} argument is the path to the Connectime Workbench folder or
- executable.
+ The \code{wb_path} argument is the path to the Connectime Workbench folder 
+ or executable.
 
 The subcortical brain structure labels (LABELS element of returned list) take 
- values 3-21 and represent:
+ on integer values 3-21 and represent:
  \describe{
    \item{3}{Accumbens-L}
    \item{4}{Accumbens-R}

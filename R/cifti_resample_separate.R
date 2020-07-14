@@ -2,66 +2,80 @@
 #'
 #' @description Performs spatial resampling of various CIFTI file components on the cortical surface.
 #'
-#' @param original_fnames The original files to resample. This is a named list 
-#'  where each element's name is a file type label, and each element's value
-#'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-#'  "ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
-#'  Both "sphereL" and "sphereR" are required; all others are optional. If 
-#'  \code{read_dir} is not \code{NULL}, then all these file names should be
-#'  relative to \code{read_dir}. 
-#' @param target_fnames Where to write the resampled files. This is a named list 
-#'  where each element's name is a file type label, and each element's value
-#'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
-#'  "sphereL", "sphereR", "surfL", or "surfR". All except "validROIcortex[L/R]"
-#'  must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
-#'  "cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
-#'  File names can be \code{NULL}, in which case a default file name based on the
-#'  original file name will be used: see \code{\link{original_to_target_fname}}.
-#'  If \code{write_dir} is not \code{NULL}, then all these file names should be
-#'  relative to \code{write_dir}.
-#'
-#'  Only the files in \code{target_fnames} will be created, even if others
-#'  can be made from the \code{original_fnames}. If \code{NULL} (default), 
-#'  all possible resampled files will be created.
-#'
 #' @inheritParams resamp_res_Param
-#' @param sphere_target_keep Should the sphere target files be kept or deleted
-#'  at the end of this function call, if they were created? Default: 
-#'  \code{FALSE} (keep them). NOT IMPLEMENTED YET.
-#' @param sphere_target_overwrite Logical indicating whether 
-#'  \code{sphere[L/R]_target_fname} should be overwritten if it already exists. 
-#'  Default: \code{TRUE}.
-#' @param overwrite Logical indicating whether each target file should be 
-#'  overwritten if it already exists. Default: \code{TRUE}.
+#' @param sphereL_fname,sphereR_fname File path of 
+#'  [left/right]-hemisphere spherical GIFTI files in original resolution 
+#'  (compatible with original files e.g. \code{cortex[L/R]_original_fname} and 
+#'  \code{surf[L/R]_original_fname}) .
+#' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of 
+#'  GIFTI data for [left/right] cortex to resample.
+#' @param cortexL_target_fname,cortexR_target_fname (Optional) File path to 
+#'  save the resampled GIFTI data for [left/right] cortex as.
+#'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+#'  will be named by \code{\link{cifti_separate_default_suffix}}.
+#' @param ROIcortexL_original_fname,ROIcortexR_original_fname (Optional) File 
+#'  path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
+#'  resample.
+#' @param ROIcortexL_target_fname,ROIcortexR_target_fname (Optional) File path 
+#'  of to save the resampled GIFTI ROI corresponding to 
+#'  \code{cortex[L/R]_target_fname} as.
+#'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+#'  will be named by \code{\link{cifti_separate_default_suffix}}.
+#' @param validROIcortexL_target_fname,validROIcortexR_target_fname (Optional) 
+#'  Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
+#'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+#'  will be named by \code{\link{cifti_separate_default_suffix}}.
+#' @param surfL_original_fname,surfR_original_fname (Optional) File path, or 
+#'  vector of multiple file paths, of GIFTI surface geometry file 
+#'  representing left/right cortex to resample too.
+#' @param surfL_target_fname,surfR_target_fname (Optional) (Optional) File path for
+#'  the resampled GIFTI surface geometry file representing the left/right 
+#'  cortex. If NULL (default),
 #' @param read_dir Directory to append to the path of every file name in
 #'  \code{original_fnames}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
 #' @param write_dir Directory to append to the path of every file name in
 #'  \code{target_fnames}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
-#' @param sphere_target_dir Directory to append to the path of the sphere
-#'  target files. Default is \code{"helper_files_resampling"}. 
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether resampled CIFTI file was created.
+#' @return A data frame with column names "label" and "fname", and 
+#'  rows corresponding to each resampled file.
 #' @export
 #'
 #' @details Performs resampling of CIFTI files using Connectome Workbench tools.  
-#"  Several helper files must be created:
-#'  Step 1: Generate spheres in the target resolution (if not already existing and provided)
-#'  Step 2: Use -metric-resample to resample surface/cortex files into target resolution
-#'  Step 3: Use -surface-resample to resample the gifti files (if provided) into target resolution
+#'  Step 1: Generate spheres in the target resolution
+#'  Step 2: Use -metric-resample to resample surface/cortex files 
+#'  Step 3: Use -surface-resample to resample gifti files
 cifti_resample_separate <- function(
-  original_fnames, target_fnames=NULL, resamp_res, 
-  sphere_target_keep=FALSE, sphere_target_overwrite=TRUE, sphere_target_dir=NULL,
-  overwrite=TRUE, read_dir=NULL, write_dir=NULL, wb_path=NULL) {
+  resamp_res, 
+  sphereL_fname, sphereR_fname, 
+  cortexL_original_fname=NULL, cortexR_original_fname=NULL, 
+  cortexL_target_fname=NULL, cortexR_target_fname=NULL, 
+  ROIcortexL_original_fname=NULL, ROIcortexR_original_fname=NULL, 
+  ROIcortexL_target_fname=NULL, ROIcortexR_target_fname=NULL,
+  validROIcortexL_target_fname=NULL, validROIcortexR_target_fname=NULL, 
+  surfL_original_fname=NULL, surfR_original_fname=NULL, 
+  surfL_target_fname=NULL, surfR_target_fname=NULL,
+  read_dir=NULL, write_dir=NULL, wb_path=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_path)
 
+  original_fnames <- list(
+    cortexL=cortexL_original_fname, cortexR=cortexR_original_fname, 
+    ROIcortexL=ROIcortexL_original_fname, ROIcortexR=ROIcortexR_original_fname,
+    surfL=surfL_original_fname, surfR=surfR_original_fname
+  )
+  target_fnames <- list(
+    cortexL=cortexL_target_fname, cortexR=cortexR_target_fname, 
+    ROIcortexL=ROIcortexL_target_fname, ROIcortexR=ROIcortexR_target_fname,
+    validROIcortexL=validROIcortexL_target_fname, validROIcortexR=validROIcortexR_target_fname,
+    surfL=surfL_target_fname, surfR=surfR_target_fname
+  )
+
   all_labels <- c(
     "cortexL", "cortexR", "ROIcortexL", "ROIcortexR",
-    "sphereL", "sphereR", "surfL", "surfR"
+    "surfL", "surfR"
   )
   all_labels_with_vROI <- c(all_labels, "validROIcortexL", "validROIcortexR")
 
@@ -116,20 +130,16 @@ cifti_resample_separate <- function(
     lab <- names(target_fnames)[ii]
     if (is.null(target_fnames[[lab]])) {
       if (grepl("validROI", lab)) {
-        # [TO DO]: use cifti_separate_default_suffix
+        # [TO DO]: check if this works. use cifti_separate_default_suffix?
         target_fnames[[lab]] <- paste0(
-          "validROI_", original_to_target_fname(
+          "validROI_", cifti_resample_default_fname(
             original_fnames[[gsub("validROI", "", lab)]], resamp_res))
       } else {
-        target_fnames[[lab]] <- original_to_target_fname(
+        target_fnames[[lab]] <- cifti_resample_default_fname(
           original_fnames[[lab]], resamp_res)
       }
     }
-    if (grepl("sphere", lab)) {
-      target_fnames[[lab]] <- format_path(target_fnames[[lab]], sphere_target_dir, mode=2)
-    } else {
-      target_fnames[[lab]] <- format_path(target_fnames[[lab]], write_dir, mode=2)
-    }
+    target_fnames[[lab]] <- format_path(target_fnames[[lab]], write_dir, mode=2)
   }
 
   for(ii in 1:length(target_fnames)) {
@@ -137,37 +147,30 @@ cifti_resample_separate <- function(
   }
 
   # Collect the paths to each file in a data.frame to return later. 
-  # Also record whether each existed before the Workbook command.
   resamp_files <- data.frame(
     label = names(target_fnames), 
     fname = as.character(target_fnames),
     stringsAsFactors=FALSE
   )
-  resamp_files$existed <- file.exists(resamp_files$fname)
 
   # Step 1: Generate spheres in the target resolution (if not already existing and provided)
-  sphere_target_exists <- file.exists(target_fnames$sphereL, target_fnames$sphereR)
-  if (sum(sphere_target_exists) == 1) { 
-    warning(paste(
-      "One sphere target file exists but not the other.",
-      "Overwriting the existing file."
-    ))
-  }
-  if (sphere_target_overwrite | !all(sphere_target_exists)) {
-    make_helper_spheres(target_fnames$sphereL, target_fnames$sphereR, resamp_res)
-  }
+  sphere_dir <- tempdir()
+  sphereL_target_fname <- cifti_resample_default_fname(sphereL_fname, resamp_res)
+  sphereL_target_fname <- format_path(sphereL_target_fname, sphere_dir, mode=2)
+  sphereR_target_fname <- cifti_resample_default_fname(sphereR_fname, resamp_res)
+  sphereL_target_fname <- format_path(sphereL_target_fname, sphere_dir, mode=2)
+  make_helper_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
 
-  # Step 2: Use -metric-resample or -surface-rsample to resample 
+  # Step 2 and 3: Use -metric-resample or -surface-rsample to resample 
   #   cortex, ROI, and surface files into target resolution.
   gifti_resample_kwargs_common <- list(resamp_res=resamp_res, 
     overwrite=overwrite, wb_path=wb_path,
     #   Since we already appended read/write/sphere_target directories,
     #     set them to NULL.
-    read_dir=NULL, write_dir=NULL, sphere_target_dir=NULL)
+    read_dir=NULL, write_dir=NULL)
   for(ii in 1:length(original_fnames)) {
     lab <- names(original_fnames)[ii]
     # Check if this file should be skipped.
-    if (grepl("sphere", lab)) { next }    # Already done.
     if (grepl("validROI", lab)) { next }  # Obtained with cortex[L/R].
     if (!overwrite & resamp_files$existed[resamp_files$label==lab]) { next }
     # Get additional kwargs.
@@ -175,19 +178,20 @@ cifti_resample_separate <- function(
     resample_kwargs <- c(gifti_resample_kwargs_common, list(
       original_fname=original_fnames[[lab]], target_fname=target_fnames[[lab]],
       sphere_original_fname=ifelse(is_left, 
-        original_fnames$sphereL, original_fnames$sphereR),
+        sphereL_fname, sphereR_fname),
       sphere_target_fname=ifelse(is_left, 
-        target_fnames$sphereL, target_fnames$sphereR) 
+        sphereL_target_fname, sphereR_target_fname) 
     ))
     # Do resampling.
     if (lab %in% c("cortexL", "cortexR")) {
       # Get ROI kwargs if applicable. 
+      ROI_lab <- ifelse(is_left, "ROIcortexL", "ROIcortexR")
       validROI_lab <- ifelse(is_left, "validROIcortexL", "validROIcortexR")
       if (validROI_lab %in% names(target_fnames)) {
         resample_kwargs <- c(
-          resample_kwargs, 
-          list(ROIcortex_original_fname=original_fnames[[ifelse(is_left, "ROIcortexL", "ROIcortexR")]], 
-               validROIcortex_target_fname=target_fnames[[validROI_lab]]
+          resample_kwargs, list(
+            ROIcortex_original_fname=original_fnames[[ROI_lab]], 
+            validROIcortex_target_fname=target_fnames[[validROI_lab]]
           )
         )
       }
@@ -200,7 +204,5 @@ cifti_resample_separate <- function(
     }
   }
   
-  # [TO DO]: sphere_target_keep
-
   invisible(resamp_files)
 }

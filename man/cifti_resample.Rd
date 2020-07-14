@@ -31,35 +31,11 @@ cifti_resample(
 
 \item{cifti_target_fname}{The file name to save the resampled CIFTI.}
 
-\item{sep_kwargs}{(Optional) Additional arguments to 
-\code{\link{cifti_separate}} in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="separated_files", 
-cortexL_fname="my_cortexL.nii")}. Do not specify \code{cifti_fname} in 
-\code{sep_kwargs}; instead, use the \code{cifti_fname} argument directly.}
-
-\item{sep_keep}{If files are created by \code{\link{cifti_separate}}, should 
-they be deleted at the end of this function call? (If 
-\code{sep_kwargs$overwrite == FALSE} and the separated files already exist,
-they will not be deleted even if \code{sep_keep == FALSE}.) Default:
-\code{FALSE} (delete new files).}
-
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
 
-\item{resamp_kwargs}{(Optional) Additional arguments to 
-\code{\link{cifti_resample_separate}} in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
-\code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-\code{resamp_kwargs}; instead, use the immediate arguments. Do not 
-specify the names of the files to resample, e.g. 
-\code{cortexL_original_fname}, because these are determined by the
-preceeding \code{\link{cifti_separate}} call.}
-
-\item{resamp_keep}{If files are created by 
-\code{\link{cifti_resample_separate}}, should they be deleted at the end of 
-this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
-resampled files already exist, they will not be deleted even if 
-\code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
+\item{resamp_keep}{If resampled files are created, will they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).}
 
 \item{sphereL_original_fname, sphereR_original_fname}{Helper sphere files 
 needed for resampling}

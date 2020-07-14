@@ -2,54 +2,53 @@
 % Please edit documentation in R/wrappers.R
 \name{cifti_resample_wrapper}
 \alias{cifti_resample_wrapper}
-\title{Calls cifti_resample_separate after validating and modifying a few arguments.}
+\title{cifti_resample with collapsed file name argument}
 \usage{
 cifti_resample_wrapper(
+  original_fnames,
+  resamp_fnames,
   resamp_res,
-  to_resample_fnames,
-  resamp_kwargs,
-  resamp_keep,
-  surfL_fname,
-  surfR_fname,
   sphereL_fname,
   sphereR_fname,
-  wb_path
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  read_dir = NULL,
+  write_dir = NULL,
+  wb_path = NULL
 )
 }
 \arguments{
-\item{resamp_res}{(Optional) Target resolution for resampling (number of 
-cortical surface vertices per hemisphere). If \code{NULL} (default) or 
-\code{FALSE}, do not perform resampling.}
+\item{original_fnames}{The original files to resample. This is a named list 
+where each element's name is a file type label, and each element's value
+is a file name. Labels must be one of the following: "cortexL", "cortexR", 
+"ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
+Both "sphereL" and "sphereR" are required; all others are optional. If 
+\code{read_dir} is not \code{NULL}, then all these file names should be
+relative to \code{read_dir}.}
 
-\item{to_resample_fnames}{The files from \code{cifti_resample_separate} to 
-resample. Should be a named character vector with names as the file type label.}
-
-\item{resamp_kwargs}{(Optional) Additional arguments to 
-\code{\link{cifti_resample_separate}} in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="resampled_files")}. Do not specify
-\code{resamp_res}, \code{sphereL_fname}, or \code{sphereR_fname} in 
-\code{resamp_kwargs}; instead, use the immediate arguments. Do not 
-specify the names of the files to resample, e.g. 
-\code{cortexL_original_fname}, because these are determined by the
-preceeding \code{\link{cifti_separate}} call.}
-
-\item{resamp_keep}{If files are created by 
-\code{\link{cifti_resample_separate}}, should they be deleted at the end of 
-this function call? (If \code{resamp_kwargs$overwrite == FALSE} and the 
-resampled files already exist, they will not be deleted even if 
-\code{resamp_keep == FALSE}.) Default: \code{FALSE} (delete new files).}
-
-\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
-file representing the left cortex.}
-
-\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
-file representing the left/right cortex. One or both can be provided.}
+\item{resamp_fnames}{Where to write the resampled files. This is a named list 
+where each element's name is a file type label, and each element's value
+is a file name. Labels must be one of the following: "cortexL", "cortexR", 
+"ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
+"sphereL", "sphereR", "surfL", or "surfR". All except "validROIcortex[L/R]"
+must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
+"cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
+File names can be \code{NULL}, in which case a default file name based on the
+original file name will be used: see \code{\link{cifti_resample_default_fname}}.
+If \code{write_dir} is not \code{NULL}, then all these file names should be
+relative to \code{write_dir}.}
 
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
 as the CIFTI data. It is only required for resampling.}
 
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
 as the CIFTI data. It is only required for resampling.}
+
+\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left cortex.}
+
+\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left/right cortex. One or both can be provided.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -59,12 +58,9 @@ If not provided, should be set with
 The return value of the cifti_resample call.
 }
 \description{
-Calls \code{cifti_resample_separate} after validating and 
- modifying a few arguments. This function is used by other functions in 
- \code{ciftiTools} and should not be used directly by users. Also, note that 
- each argument is required despite the documentation mentioning defaults for 
- certain arguments. (The parameter documentation is copied over from the 
- function it wraps, cifti_resample_separate.)
+Calls \code{cifti_resample} using the original file names 
+ listed in the \code{original_fnames} argument and the target file names
+ listed in the \code{resamp_fnames} argument.
 }
 \details{
 Currently used by cifti_read and cifti_resample.

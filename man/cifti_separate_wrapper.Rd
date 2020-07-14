@@ -2,15 +2,15 @@
 % Please edit documentation in R/wrappers.R
 \name{cifti_separate_wrapper}
 \alias{cifti_separate_wrapper}
-\title{Calls cifti_separate after validating and modifying a few arguments.}
+\title{cifti_separate with collapsed file name argument}
 \usage{
 cifti_separate_wrapper(
   cifti_fname,
-  brainstructures,
-  ROI_brainstructures,
-  sep_kwargs,
-  sep_keep,
-  wb_path
+  brainstructures = NULL,
+  ROI_brainstructures = NULL,
+  sep_fnames = NULL,
+  write_dir = NULL,
+  wb_path = NULL
 )
 }
 \arguments{
@@ -28,17 +28,24 @@ be a subset of the \code{brainstructures} argument. Any elements in
 \code{ROI_brainstructures} but not in \code{brainstructures} will be 
 ignored.}
 
-\item{sep_kwargs}{(Optional) Additional arguments to 
-\code{\link{cifti_separate}} in the form of a list, e.g. 
-\code{list(overwrite=FALSE, write_dir="separated_files", 
-cortexL_fname="my_cortexL.nii")}. Do not specify \code{cifti_fname} in 
-\code{sep_kwargs}; instead, use the \code{cifti_fname} argument directly.}
+\item{sep_fnames}{Where to write the separated files. This is a named list 
+ where each entry's name is a file type label, and each entry's value
+ is a file name indicating where to write the corresponding separated file. 
+ The recognized file type labels are: "cortexL", "cortexR", 
+ "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
+ 
+ Entry values can be \code{NULL}, in which case a default file name will be 
+ used: see \code{\link{cifti_separate_default_suffix}}. Default file names
+ will also be used for files that need to be separated/written but without a
+ corresponding entry in \code{sep_fnames}.
+ 
+ Entries in \code{sep_fnames} will be ignored if they are not needed
+ based on \code{[ROI_]brainstructures}. For example, if
+ \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
+ ignored if specified. 
 
-\item{sep_keep}{If files are created by \code{\link{cifti_separate}}, should 
-they be deleted at the end of this function call? (If 
-\code{sep_kwargs$overwrite == FALSE} and the separated files already exist,
-they will not be deleted even if \code{sep_keep == FALSE}.) Default:
-\code{FALSE} (delete new files).}
+ The \code{write_dir} argument can be used to place each separated file in
+ the same directory.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -48,12 +55,8 @@ If not provided, should be set with
 The return value of the cifti_separate call.
 }
 \description{
-Calls \code{cifti_separate} after validating and modifying a few 
- arguments. This function is used by other functions in \code{ciftiTools}
- and should not be used directly by users. Also, note that each argument
- is required despite the documentation mentioning defaults for certain
- arguments. (The parameter documentation is copied over from the function
- it wraps, cifti_separate.)
+Calls \code{cifti_separate} using the file names listed in the
+ argument \code{sep_fnames}.
 }
 \details{
 Currently used by cifti_read and cifti_resample.
