@@ -96,6 +96,7 @@ separate_cifti_default_suffix <- function(label, GIFTI_type="func") {
 #' @return The default file name.
 #'
 resample_cifti_default_fname <- function(original_fname, resamp_res) {
+  stopifnot(!is.null(original_fname))
   bname <- basename(original_fname)
   paste("resampled", round(resamp_res), bname, sep="_")
 }

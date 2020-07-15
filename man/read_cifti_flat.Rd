@@ -2,9 +2,18 @@
 % Please edit documentation in R/read_cifti_flat.R
 \name{read_cifti_flat}
 \alias{read_cifti_flat}
+\alias{readCIfTI_flat}
 \title{Read in CIFTI data as a single matrix}
 \usage{
 read_cifti_flat(
+  cifti_fname,
+  keep = FALSE,
+  gifti_fname = NULL,
+  write_dir = NULL,
+  wb_path = NULL
+)
+
+readCIfTI_flat(
   cifti_fname,
   keep = FALSE,
   gifti_fname = NULL,
@@ -19,9 +28,10 @@ in.}
 \item{keep}{\code{read_cifti_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
 a new GIfTI file was made by this function call, should it be deleted once it is read in? Default: FALSE (delete it).}
 
-\item{gifti_fname}{File path of GIfTI-format data to save the CIFTI as.}
+\item{gifti_fname}{File path of GIfTI-format data to save the CIFTI as. Default:
+the CIFTI_fname but with the extension replaced with "flat.gii".}
 
-\item{write_dir}{The directory in which to save the GIfTI. If NULL, 
+\item{write_dir}{The directory in which to save the GIfTI, if it is being kept. If NULL, 
 defaults to the current working directory.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 

@@ -48,7 +48,8 @@ NULL
 
 #' resamp_fnames: for resampling
 #'
-#' @param resamp_fnames Where to write the resampled files. This is a named list 
+#' @param resamp_fnames Where to write the resampled files (override
+#'  their default file names). This is a named list 
 #'  where each element's name is a file type label, and each element's value
 #'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
 #'  "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
@@ -111,9 +112,13 @@ NULL
 #'
 #' @param ROI_brainstructures Character vector indicating which ROIs should be 
 #'  obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
-#'  be a subset of the \code{brainstructures} argument. Any elements in 
-#'  \code{ROI_brainstructures} but not in \code{brainstructures} will be 
-#'  ignored.
+#'  be a subset of the \code{brainstructures} argument. 
+#'  
+#'  NOTE: ROIs are currently
+#'  not fully supported by ciftiTools, since "cifti" objects will not contain
+#'  the ROIs. A workaround would be to keep the separated/resampled files
+#'  with \code{sep_keep}/\code{resamp_keep} and then read those in with
+#'  \code{make_cifti_from_separate}. 
 #' @name ROI_brainstructures_Param
 NULL
 
@@ -126,7 +131,8 @@ NULL
 
 #' sep_fnames
 #'
-#' @param sep_fnames Where to write the separated files. This is a named list 
+#' @param sep_fnames (Optional) Where to write the separated files (override
+#'  their default file names). This is a named list 
 #'  where each entry's name is a file type label, and each entry's value
 #'  is a file name indicating where to write the corresponding separated file. 
 #'  The recognized file type labels are: "cortexL", "cortexR", 
@@ -150,14 +156,14 @@ NULL
 #' sphereL_fname
 #'
 #' @param sphereL_fname The left GIFTI sphere file in the same resolution
-#'  as the CIFTI data. It is only required for resampling. 
+#'  as the CIFTI data. It is required for resampling. 
 #' @name sphereL_fname_Param
 NULL
 
 #' sphereR_fname
 #'
 #' @param sphereR_fname The right GIFTI sphere file in the same resolution
-#'  as the CIFTI data. It is only required for resampling. 
+#'  as the CIFTI data. It is required for resampling. 
 #' @name sphereR_fname_Param
 NULL
 
@@ -219,36 +225,45 @@ NULL
 
 #'  write_dir: intermediate separated/resampled files
 #'  
-#' @param write_dir Where should the separated (and resampled) intermediate
-#'  files be placed? \code{NULL} (default) will write the separated files to
-#'  the current working directory if \code{sep_keep}, and to a temporary
-#'  directory if not \code{sep_keep}. Likewise, it will write the resampled
-#'  files to the current working directory if \code{resamp_keep}, and to a 
-#'  temporary directory if not \code{resamp_keep}. Otherwise, both the
-#'  separated and resampled files will be written to the same directory,
-#'  \code{write_dir}. (Different subfolders can be used by modifying the
-#'  individual file names in \code{sep_fnames} and \code{resamp_fnames}.)
+#' @param write_dir Where should any output files be written? \code{NULL}
+#'  (default) will write them to the current working directory.
+#'
+#'  Files flagged for deletion will be written to a temporary directory, and
+#'  thus are not affected by this argument. So if \code{sep_keep} is 
+#'  \code{TRUE}, the separated files will be written to \code{write_dir}, but if
+#'  \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
+#'  and later deleted. \code{resamp_keep} works similarly. 
+#'
+#'  For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+#'  are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
+#'  be written to \code{tempdir()}. But for \code{resample_cifti}, the
+#'  surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
+#'  will always be written to \code{write_dir}. 
 #' 
-#'  \code{write_dir} must already exist, or an error will be raised.
+#'  Different subfolders for the separated, resampled, and final output files
+#'  cannot be specified by \code{write_dir}. Instead, modify the individual file
+#'  names in \code{sep_fnames} and \code{resamp_fnames}.
+#' 
+#'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_intermediate
 NULL
 
 #'  write_dir: resampled files
 #'  
 #' @param write_dir Where should the resampled
-#'  files be placed? \code{NULL} (default) will write the files to
+#'  files be placed? \code{NULL} (default) will write them to
 #'  the current working directory. 
 #' 
-#'  \code{write_dir} must already exist, or an error will be raised.
+#'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_resampled
 NULL
 
 #'  write_dir: separated files
 #'  
 #' @param write_dir Where should the separated
-#'  files be placed? \code{NULL} (default) will write the files to
+#'  files be placed? \code{NULL} (default) will write them to
 #'  the current working directory. 
 #' 
-#'  \code{write_dir} must already exist, or an error will be raised.
+#'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_separated
 NULL

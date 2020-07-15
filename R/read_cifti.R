@@ -1,15 +1,16 @@
 #' Read in CIFTI data
 #'
 #' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
-#'  with \code{\link{separate_cifti}}, optionally resampling them with 
-#'  \code{\link{resample_cifti_separate}}, and then reading each separated 
-#'  component into R with \code{\link{make_cifti_from_separate}}.
+#'  (\code{\link{separate_cifti}}), optionally resampling them 
+#'  (\code{\link{resample_cifti_separate}}), and then reading each separated 
+#'  component into R  (\code{\link{make_cifti_from_separate}}).
 #'
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the cortical and subcortical data be obtained as one T x B
 #'  matrix (T measurements, B brainordinates)? This will be much faster but the
-#'  spatial data, including whether a brainordinate corresponds to cortical or
-#'  subcortical data, will be lost.
+#'  output will not include any spatial information, including whether a 
+#'  brainordinate corresponds to cortical or subcortical data. All arguments 
+#'  below except \code{wb_path} will be ignored.
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param
@@ -69,12 +70,9 @@ read_cifti <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), ROI_brainstructures=NULL,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
-  sep_fnames=NULL, sep_keep=FALSE, 
-  resamp_fnames=NULL, resamp_keep=FALSE,
-  write_dir=NULL,
-  verbose=TRUE, wb_path=NULL) {
-
-  wb_cmd <- get_wb_cmd_path(wb_path)
+  sep_keep=FALSE, sep_fnames=NULL, 
+  resamp_keep=FALSE, resamp_fnames=NULL,
+  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
   
   if (flat) { return(read_cifti_flat(cifti_fname, wb_path=wb_path)) }
 
@@ -82,15 +80,31 @@ read_cifti <- function(
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  brainstructures <- match_input(
-    brainstructures, c("left","right","subcortical"))
-  if (!is.null(ROI_brainstructures)) {
-    ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures)
+  # [TO DO]: more extensive preliminary check.
+  if (!is.null(resamp_res)) {
+    if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
+      stop("`sphereL_fname` and `sphereR_fname` are required for resampling.")
+    }
   }
 
-  if (is.null(write_dir)) {
-    write_dir_sep <- ifelse(sep_keep, getwd(), tempdir())
-    write_dir_resamp <- ifelse(resamp_keep, getwd(), tempdir())
+  if (sep_keep) { 
+    write_dir_sep <- write_dir 
+  } else { 
+    write_dir_sep <- tempdir()
+  }
+  if (resamp_keep) { 
+    write_dir_resamp <- write_dir 
+  } else { 
+    write_dir_resamp <- tempdir() 
+  }
+
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical"),
+    user_value_label="ROI_brainstructures"
+  )
+  if (!is.null(ROI_brainstructures)) {
+    ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,
+      user_value_label="ROI_brainstructures")
   }
 
   if (verbose) { exec_time <- Sys.time() }
@@ -104,7 +118,7 @@ read_cifti <- function(
   sep_result <- separate_cifti_wrapper(
     cifti_fname=cifti_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_fnames=sep_fnames, wb_path=wb_path
+    sep_fnames=sep_fnames, write_dir=write_dir_sep, wb_path=wb_path
   )
 
   to_read <- sep_result$fname
@@ -119,20 +133,22 @@ read_cifti <- function(
   # resample_cifti_separate() --------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  do_resamp <- !identical(resamp_res, NULL) & !identical(resamp_res, FALSE)
+  do_resamp <- !is.null(resamp_res) && !identical(resamp_res, FALSE)
+  # Do not resample the subcortical data.
+  to_resample <- to_read[!grepl("subcort", names(to_read))]
+  do_resamp <- do_resamp & length(to_resample) > 0
   if (do_resamp) {
     if (verbose) { cat("Resampling CIFTI file.\n") }
-
-    # Do not resample the subcortical data.
-    to_resample <- to_read[!grepl("subcort", names(to_read))]
     
     # Do resample_cifti_separate.
     resamp_result <- resample_cifti_wrapper(
-      resamp_res, to_resample, resamp_fnames, resamp_keep, 
-      surfL_fname, surfR_fname,
-      sphereL_fname, sphereR_fname, 
-      wb_path
+      resamp_res=resamp_res, original_fnames=to_resample, 
+      resamp_fnames=resamp_fnames, 
+      sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname, 
+      surfL_fname=surfL_fname, surfR_fname=surfR_fname,
+      read_dir=NULL, write_dir=write_dir_resamp, wb_path=wb_path
     )
+
     # Replace resampled files.
     to_read_resampled <- names(to_read)[names(to_read) %in% resamp_result$label]
     to_read[to_read_resampled] <- resamp_result$fname[
@@ -182,25 +198,47 @@ read_cifti <- function(
   # Finish ---------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  ## [TO DO]: The files are in tempdir(), so no need to manually delete?
   # Delete the separated files, unless otherwise requested. 
-  #   Do not delete files that existed before.
-  if (!sep_keep) {
-    for(f in sep_result$fname[!(sep_result$existed)]) {
-      file.remove(f)
-      if (file.exists(paste0(f, ".data"))) {
-        file.remove(paste0(f, ".data"))
-      }
-    }
-  }
-  # Same for resampled files.
-  if (do_resamp & !resamp_keep) {
-    for(f in resamp_result$fname[!(resamp_result$existed)]) {
-      file.remove(f)
-      if (file.exists(paste0(f, ".data"))) {
-        file.remove(paste0(f, ".data"))
-      }
-    }
-  }
+  # if (!sep_keep) {
+  #   for(f in sep_result$fname) {
+  #     file.remove(f)
+  #     if (file.exists(paste0(f, ".data"))) {
+  #       file.remove(paste0(f, ".data"))
+  #     }
+  #   }
+  # }
+  # # Same for resampled files.
+  # if (do_resamp && !resamp_keep) {
+  #   for(f in resamp_result$fname) {
+  #     file.remove(f)
+  #     if (file.exists(paste0(f, ".data"))) {
+  #       file.remove(paste0(f, ".data"))
+  #     }
+  #   }
+  # }
 
   result
+}
+
+#' @rdname read_cifti
+#' @export
+readCIfTI <- readcii <- function(
+  cifti_fname, flat=FALSE,
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), ROI_brainstructures=NULL,
+  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
+  sep_keep=FALSE, sep_fnames=NULL, 
+  resamp_keep=FALSE, resamp_fnames=NULL,
+  write_dir=NULL, verbose=TRUE, wb_path=NULL){
+
+  read_cifti(
+    cifti_fname, flat,
+    surfL_fname, surfR_fname,
+    brainstructures, ROI_brainstructures,
+    resamp_res, sphereL_fname, sphereR_fname,
+    sep_keep, sep_fnames, 
+    resamp_keep, resamp_fnames,
+    write_dir, verbose, wb_path 
+  )
 }

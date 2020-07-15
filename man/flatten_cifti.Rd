@@ -2,9 +2,12 @@
 % Please edit documentation in R/flatten_cifti.R
 \name{flatten_cifti}
 \alias{flatten_cifti}
+\alias{flattenCIfTI}
 \title{Flatten a "cifti" object into a single matrix}
 \usage{
 flatten_cifti(cif, brainstructures = c("subcortical", "everything"))
+
+flattenCIfTI(cif, brainstructures = c("subcortical", "everything"))
 }
 \arguments{
 \item{cif}{Object of class "cifti"}

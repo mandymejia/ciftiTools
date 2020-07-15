@@ -2,9 +2,25 @@
 % Please edit documentation in R/separate_cifti.R
 \name{separate_cifti}
 \alias{separate_cifti}
+\alias{separateCIfTI}
 \title{Separate and save CIFTI data as NIfTI and GIfTI files}
 \usage{
 separate_cifti(
+  cifti_fname,
+  brainstructures = c("left", "right"),
+  cortexL_fname = NULL,
+  cortexR_fname = NULL,
+  subcortVol_fname = NULL,
+  subcortLab_fname = NULL,
+  ROI_brainstructures = NULL,
+  ROIcortexL_fname = NULL,
+  ROIcortexR_fname = NULL,
+  ROIsubcortVol_fname = NULL,
+  write_dir = NULL,
+  wb_path = NULL
+)
+
+separateCIfTI(
   cifti_fname,
   brainstructures = c("left", "right"),
   cortexL_fname = NULL,
@@ -50,7 +66,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A data frame with column names "label", "fname", and "existed", and rows corresponding to each separate file.
+A data frame with column names "label" and "fname", and rows corresponding to each separate file.
 }
 \description{
 Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 

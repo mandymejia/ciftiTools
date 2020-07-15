@@ -24,11 +24,16 @@ gray matter). Default: \code{c("left","right")} (brain surface only).}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be 
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
-be a subset of the \code{brainstructures} argument. Any elements in 
-\code{ROI_brainstructures} but not in \code{brainstructures} will be 
-ignored.}
+be a subset of the \code{brainstructures} argument. 
 
-\item{sep_fnames}{Where to write the separated files. This is a named list 
+NOTE: ROIs are currently
+not fully supported by ciftiTools, since "cifti" objects will not contain
+the ROIs. A workaround would be to keep the separated/resampled files
+with \code{sep_keep}/\code{resamp_keep} and then read those in with
+\code{make_cifti_from_separate}.}
+
+\item{sep_fnames}{(Optional) Where to write the separated files (override
+ their default file names). This is a named list 
  where each entry's name is a file type label, and each entry's value
  is a file name indicating where to write the corresponding separated file. 
  The recognized file type labels are: "cortexL", "cortexR", 
@@ -48,10 +53,10 @@ ignored.}
  the same directory.}
 
 \item{write_dir}{Where should the separated
- files be placed? \code{NULL} (default) will write the files to
+ files be placed? \code{NULL} (default) will write them to
  the current working directory. 
 
- \code{write_dir} must already exist, or an error will be raised.}
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

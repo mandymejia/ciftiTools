@@ -7,7 +7,8 @@
 match_input(
   user,
   expected,
-  unrecognized_kwarg_action = c("warning", "stop", "nothing")
+  unrecognized_action = c("stop", "warning", "nothing"),
+  user_value_label = NULL
 )
 }
 \arguments{
@@ -16,10 +17,13 @@ match_input(
 
 \item{expected}{Character vector of expected/allowed values.}
 
-\item{unrecognized_kwarg_action}{If any value in \code{user} could not be 
+\item{unrecognized_action}{If any value in \code{user} could not be 
 matched, or repeated matches occured, what should happen? Possible values 
-are \code{"warning"} (default), \code{"stop"} (raise error), and 
+are \code{"stop"} (default; raises an error), \code{"warning"}, and 
 \code{"nothing"}.}
+
+\item{user_value_label}{How to refer to the user input in a stop or warning
+message. If \code{NULL}, no label is used.}
 }
 \value{
 The matched user inputs.

@@ -2,6 +2,7 @@
 % Please edit documentation in R/resample_cifti.R
 \name{resample_cifti}
 \alias{resample_cifti}
+\alias{resampleCIfTI}
 \title{Resample CIFTI data}
 \usage{
 resample_cifti(
@@ -14,10 +15,29 @@ resample_cifti(
   resamp_res,
   sphereL_fname,
   sphereR_fname,
-  sep_fnames = NULL,
   sep_keep = FALSE,
-  resamp_fnames = NULL,
+  sep_fnames = NULL,
   resamp_keep = FALSE,
+  resamp_fnames = NULL,
+  write_dir = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+resampleCIfTI(
+  cifti_original_fname,
+  cifti_target_fname,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
+  resamp_res,
+  sphereL_fname,
+  sphereR_fname,
+  sep_keep = FALSE,
+  sep_fnames = NULL,
+  resamp_keep = FALSE,
+  resamp_fnames = NULL,
   write_dir = NULL,
   verbose = TRUE,
   wb_path = NULL
@@ -34,18 +54,23 @@ One or both can be provided.}
 
 \item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
 the resampled GIFTI surface geometry file representing the left/right 
-cortex. If NULL (default),}
+cortex. If NULL (default), will use default names: see 
+\code{resample_cifti_default_fname}.}
 
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
 
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
-\item{sep_fnames}{Where to write the separated files. This is a named list 
+\item{sep_keep}{If separated files are created, will they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).}
+
+\item{sep_fnames}{(Optional) Where to write the separated files (override
+ their default file names). This is a named list 
  where each entry's name is a file type label, and each entry's value
  is a file name indicating where to write the corresponding separated file. 
  The recognized file type labels are: "cortexL", "cortexR", 
@@ -64,7 +89,7 @@ as the CIFTI data. It is only required for resampling.}
  The \code{write_dir} argument can be used to place each separated file in
  the same directory.}
 
-\item{sep_keep}{If separated files are created, will they be kept or 
+\item{resamp_keep}{If resampled files are created, will they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).}
 
 \item{resamp_fnames}{Where to write the resampled files. This is a named list 
@@ -86,20 +111,26 @@ deleted at the end of this function call? Default: \code{FALSE} (delete).}
  The \code{write_dir} argument can be used to place each resampled file in
  the same directory.}
 
-\item{resamp_keep}{If resampled files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).}
+\item{write_dir}{Where should any output files be written? \code{NULL}
+ (default) will write them to the current working directory.
 
-\item{write_dir}{Where should the separated (and resampled) intermediate
- files be placed? \code{NULL} (default) will write the separated files to
- the current working directory if \code{sep_keep}, and to a temporary
- directory if not \code{sep_keep}. Likewise, it will write the resampled
- files to the current working directory if \code{resamp_keep}, and to a 
- temporary directory if not \code{resamp_keep}. Otherwise, both the
- separated and resampled files will be written to the same directory,
- \code{write_dir}. (Different subfolders can be used by modifying the
- individual file names in \code{sep_fnames} and \code{resamp_fnames}.)
+ Files flagged for deletion will be written to a temporary directory, and
+ thus are not affected by this argument. So if \code{sep_keep} is 
+ \code{TRUE}, the separated files will be written to \code{write_dir}, but if
+ \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
+ and later deleted. \code{resamp_keep} works similarly. 
 
- \code{write_dir} must already exist, or an error will be raised.}
+ For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+ are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
+ be written to \code{tempdir()}. But for \code{resample_cifti}, the
+ surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
+ will always be written to \code{write_dir}. 
+
+ Different subfolders for the separated, resampled, and final output files
+ cannot be specified by \code{write_dir}. Instead, modify the individual file
+ names in \code{sep_fnames} and \code{resamp_fnames}.
+
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
@@ -108,7 +139,9 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-The code returned by the Connectome Workbench command
+A list of output files written. The elements are "cifti" and
+ potentially "surfL" (if \code{surfL_original_fname} was provided) and 
+ "surfR" (if \code{surfR_original_fname} was provided).
 }
 \description{
 Performs spatial resampling of CIFTI data on the cortical surface

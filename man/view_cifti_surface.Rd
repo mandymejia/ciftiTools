@@ -2,6 +2,7 @@
 % Please edit documentation in R/view_cifti.R
 \name{view_cifti_surface}
 \alias{view_cifti_surface}
+\alias{viewCIfTI_surface}
 \title{Visualize cifti brain data. The \code{rgl} package is required.}
 \usage{
 view_cifti_surface(
@@ -24,9 +25,30 @@ view_cifti_surface(
   colorbar_label = "",
   colorbar_digits = NULL
 )
+
+viewCIfTI_surface(
+  cifti,
+  idx = 1,
+  hemisphere = NULL,
+  view = c("both", "lateral", "medial"),
+  both_lateral_together = FALSE,
+  mode = c("widget", "image", "video"),
+  width = NULL,
+  height = NULL,
+  fname_prefix = "cifti",
+  write_dir = NULL,
+  colors = NULL,
+  color_mode = c("sequential", "qualitative", "diverging"),
+  color_values = NULL,
+  surfL = NULL,
+  surfR = NULL,
+  colorbar_position = c("bottom", "right", "separate"),
+  colorbar_label = "",
+  colorbar_digits = NULL
+)
 }
 \arguments{
-\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is.cifti)}.}
+\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.}
 
 \item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.}
 

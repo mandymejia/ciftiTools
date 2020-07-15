@@ -18,7 +18,7 @@ make_cifti_cortex <- function(cortex) {
   }
 
   # Return cifti_cortex or error.
-  if (!is.cifti_cortex(cortex)) { 
+  if (!is_cifti_cortex(cortex)) { 
     stop("The object could not be converted into a cifti_cortex object.")
   } 
   class(cortex) <- "cifti_cortex"
@@ -52,8 +52,8 @@ make_cifti_subcortical <- function(vol, labels) {
   # [TO DO]: check if it is from RNifti::readNifti.
 
   # Return them or raise an error.
-  if (!is.cifti_subcortical(vol, labels)) { 
-    stop(paste0(
+  if (!is_cifti_subcortical(vol, labels)) { 
+    stop(paste(
       "The objects could not be converted into",
       "\"cifti_volume\" and \"cifti_label\" objects."
     ))
@@ -73,8 +73,8 @@ make_cifti_subcortical <- function(vol, labels) {
 #' @export
 #'
 make_cifti_vol <- function(mat, mask) {
-  if (!is.cifti_matmask_pair(mat, mask)) {
-    stop(paste0(
+  if (!is_cifti_matmask_pair(mat, mask)) {
+    stop(paste(
       "The objects are not a compatible matrix and mask pair."
     ))
   }
@@ -108,7 +108,7 @@ make_cifti_surface <- function(surf) {
   if (is.gifti(surf)) { surf <- gifti_to_surf(surf) }
 
   # Return cifti_surface or error.
-  if (!is.cifti_surface(surf)) { 
+  if (!is_cifti_surface(surf)) { 
     stop("The object could not be converted into a cifti_surface object.")
   } 
   class(surf) <- "cifti_surface"
@@ -216,8 +216,24 @@ make_cifti_from_separate <- function(
   class(cif) <- 'cifti'
 
   # Return cifti or error.
-  if (!is.cifti(cif)) { 
+  if (!is_cifti(cif)) { 
     stop("The object could not be converted into a cifti object.")
   } 
   cif
+}
+
+#' @rdname make_cifti_from_separate
+#' @export
+makeCIfTI <- makecii <- function(
+  cortexL=NULL, cortexR=NULL, 
+  subcortVol=NULL, subcortMat=NULL, subcortMask=NULL, subcortLab=NULL, 
+  surfL=NULL, surfR=NULL, 
+  read_dir=NULL) {
+
+  make_cifti_from_separate(
+    cortexL, cortexR, 
+    subcortVol, subcortMat, subcortMask, subcortLab, 
+    surfL, surfR, 
+    read_dir
+  )
 }

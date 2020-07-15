@@ -5,19 +5,24 @@
 \title{resample_cifti with collapsed file name argument}
 \usage{
 resample_cifti_wrapper(
+  resamp_res,
   original_fnames,
   resamp_fnames,
-  resamp_res,
   sphereL_fname,
   sphereR_fname,
   surfL_fname = NULL,
   surfR_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
   read_dir = NULL,
   write_dir = NULL,
   wb_path = NULL
 )
 }
 \arguments{
+\item{resamp_res}{Target resolution for resampling (number of 
+cortical surface vertices per hemisphere).}
+
 \item{original_fnames}{The original files to resample. This is a named list 
 where each element's name is a file type label, and each element's value
 is a file name. Labels must be one of the following: "cortexL", "cortexR", 
@@ -26,7 +31,8 @@ Both "sphereL" and "sphereR" are required; all others are optional. If
 \code{read_dir} is not \code{NULL}, then all these file names should be
 relative to \code{read_dir}.}
 
-\item{resamp_fnames}{Where to write the resampled files. This is a named list 
+\item{resamp_fnames}{Where to write the resampled files (override
+their default file names). This is a named list 
 where each element's name is a file type label, and each element's value
 is a file name. Labels must be one of the following: "cortexL", "cortexR", 
 "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
@@ -38,20 +44,21 @@ original file name will be used: see \code{\link{resample_cifti_default_fname}}.
 If \code{write_dir} is not \code{NULL}, then all these file names should be
 relative to \code{write_dir}.}
 
-\item{resamp_res}{Target resolution for resampling (number of 
-cortical surface vertices per hemisphere).}
-
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
 
 \item{surfR_fname}{(Optional) File path of GIFTI surface geometry
 file representing the right cortex.}
+
+\item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
+the resampled GIFTI surface geometry file representing the left/right 
+cortex. If NULL (default),}
 
 \item{read_dir}{Directory to append to the path of every file name in
  \code{original_fnames}. If \code{NULL} 
@@ -60,10 +67,10 @@ file representing the right cortex.}
  \code{read_dir} must already exist, or an error will be raised.}
 
 \item{write_dir}{Where should the resampled
- files be placed? \code{NULL} (default) will write the files to
+ files be placed? \code{NULL} (default) will write them to
  the current working directory. 
 
- \code{write_dir} must already exist, or an error will be raised.}
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

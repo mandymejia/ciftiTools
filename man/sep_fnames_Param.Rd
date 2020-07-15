@@ -4,7 +4,8 @@
 \alias{sep_fnames_Param}
 \title{sep_fnames}
 \arguments{
-\item{sep_fnames}{Where to write the separated files. This is a named list 
+\item{sep_fnames}{(Optional) Where to write the separated files (override
+ their default file names). This is a named list 
  where each entry's name is a file type label, and each entry's value
  is a file name indicating where to write the corresponding separated file. 
  The recognized file type labels are: "cortexL", "cortexR", 

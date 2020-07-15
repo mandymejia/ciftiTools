@@ -2,6 +2,7 @@
 % Please edit documentation in R/read_cifti.R
 \name{read_cifti}
 \alias{read_cifti}
+\alias{readCIfTI}
 \title{Read in CIFTI data}
 \usage{
 read_cifti(
@@ -14,10 +15,29 @@ read_cifti(
   resamp_res = NULL,
   sphereL_fname = NULL,
   sphereR_fname = NULL,
-  sep_fnames = NULL,
   sep_keep = FALSE,
-  resamp_fnames = NULL,
+  sep_fnames = NULL,
   resamp_keep = FALSE,
+  resamp_fnames = NULL,
+  write_dir = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+readCIfTI(
+  cifti_fname,
+  flat = FALSE,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  brainstructures = c("left", "right"),
+  ROI_brainstructures = NULL,
+  resamp_res = NULL,
+  sphereL_fname = NULL,
+  sphereR_fname = NULL,
+  sep_keep = FALSE,
+  sep_fnames = NULL,
+  resamp_keep = FALSE,
+  resamp_fnames = NULL,
   write_dir = NULL,
   verbose = TRUE,
   wb_path = NULL
@@ -29,8 +49,9 @@ in.}
 
 \item{flat}{Should the cortical and subcortical data be obtained as one T x B
 matrix (T measurements, B brainordinates)? This will be much faster but the
-spatial data, including whether a brainordinate corresponds to cortical or
-subcortical data, will be lost.}
+output will not include any spatial information, including whether a 
+brainordinate corresponds to cortical or subcortical data. All arguments 
+below except \code{wb_path} will be ignored.}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -45,21 +66,29 @@ gray matter). Default: \code{c("left","right")} (brain surface only).}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be 
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
-be a subset of the \code{brainstructures} argument. Any elements in 
-\code{ROI_brainstructures} but not in \code{brainstructures} will be 
-ignored.}
+be a subset of the \code{brainstructures} argument. 
+
+NOTE: ROIs are currently
+not fully supported by ciftiTools, since "cifti" objects will not contain
+the ROIs. A workaround would be to keep the separated/resampled files
+with \code{sep_keep}/\code{resamp_keep} and then read those in with
+\code{make_cifti_from_separate}.}
 
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 \code{FALSE}, do not perform resampling.}
 
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
-\item{sep_fnames}{Where to write the separated files. This is a named list 
+\item{sep_keep}{If separated files are created, will they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).}
+
+\item{sep_fnames}{(Optional) Where to write the separated files (override
+ their default file names). This is a named list 
  where each entry's name is a file type label, and each entry's value
  is a file name indicating where to write the corresponding separated file. 
  The recognized file type labels are: "cortexL", "cortexR", 
@@ -78,7 +107,7 @@ as the CIFTI data. It is only required for resampling.}
  The \code{write_dir} argument can be used to place each separated file in
  the same directory.}
 
-\item{sep_keep}{If separated files are created, will they be kept or 
+\item{resamp_keep}{If resampled files are created, will they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).}
 
 \item{resamp_fnames}{Where to write the resampled files. This is a named list 
@@ -100,20 +129,26 @@ deleted at the end of this function call? Default: \code{FALSE} (delete).}
  The \code{write_dir} argument can be used to place each resampled file in
  the same directory.}
 
-\item{resamp_keep}{If resampled files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).}
+\item{write_dir}{Where should any output files be written? \code{NULL}
+ (default) will write them to the current working directory.
 
-\item{write_dir}{Where should the separated (and resampled) intermediate
- files be placed? \code{NULL} (default) will write the separated files to
- the current working directory if \code{sep_keep}, and to a temporary
- directory if not \code{sep_keep}. Likewise, it will write the resampled
- files to the current working directory if \code{resamp_keep}, and to a 
- temporary directory if not \code{resamp_keep}. Otherwise, both the
- separated and resampled files will be written to the same directory,
- \code{write_dir}. (Different subfolders can be used by modifying the
- individual file names in \code{sep_fnames} and \code{resamp_fnames}.)
+ Files flagged for deletion will be written to a temporary directory, and
+ thus are not affected by this argument. So if \code{sep_keep} is 
+ \code{TRUE}, the separated files will be written to \code{write_dir}, but if
+ \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
+ and later deleted. \code{resamp_keep} works similarly. 
 
- \code{write_dir} must already exist, or an error will be raised.}
+ For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+ are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
+ be written to \code{tempdir()}. But for \code{resample_cifti}, the
+ surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
+ will always be written to \code{write_dir}. 
+
+ Different subfolders for the separated, resampled, and final output files
+ cannot be specified by \code{write_dir}. Instead, modify the individual file
+ names in \code{sep_fnames} and \code{resamp_fnames}.
+
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
@@ -130,9 +165,9 @@ If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
 }
 \description{
 Read a CIFTI file by separating it into GIfTI and NIfTI files 
- with \code{\link{separate_cifti}}, optionally resampling them with 
- \code{\link{resample_cifti_separate}}, and then reading each separated 
- component into R with \code{\link{make_cifti_from_separate}}.
+ (\code{\link{separate_cifti}}), optionally resampling them 
+ (\code{\link{resample_cifti_separate}}), and then reading each separated 
+ component into R  (\code{\link{make_cifti_from_separate}}).
 }
 \details{
 This function uses a system wrapper for the "wb_command"

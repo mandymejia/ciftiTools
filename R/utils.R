@@ -18,19 +18,15 @@ format_path <- function(path, dir=NULL, mode=NA) {
   if (is.null(path)) { return(path) }
 
   # Append dir if provided.
-  if (!is.null(dir)) { path <-file.path(dir, path) }
+  if (!is.null(dir)) { path <- file.path(dir, path) }
   path <- normalizePath(path, mustWork=FALSE)
-
-  if (!file.exists(dirname(path))) { 
-    stop(paste0(
-      "The directory \"", dirname(path), 
-      "\" does not exist. Check and try again."
-    )) 
-  }
 
   # Get the full file path (for Linux: previous normalizePath() does not get 
   #   full file path if dir did not exist.)
-  path <- file.path(normalizePath(dirname(path)), basename(path))
+  path <- file.path(
+    normalizePath(dirname(path), mustWork=FALSE), 
+    basename(path)
+  )
 
   # Check existence/writing permission/reading permission of the path.
   #   [TO DO]: Resolve-- "Please note that it is not a good idea to use this 
@@ -41,11 +37,15 @@ format_path <- function(path, dir=NULL, mode=NA) {
   stopifnot(all(mode %in% c(NA, 0, 2, 4)))
   for(m in mode) {
     if (is.na(mode)) { next }
-    if (file.access(dirname(path), m) != 0) { 
-      warning(paste0(
+    if (any(file.access(dirname(path), m) != 0)) { 
+      stop(paste0(
         "The directory \"", dirname(path), "\"",
-        c("doesn't exist", "", "is not writeable", "", "is not readable")[m+1],
-        ".\n"
+        c(
+          " doesn't exist. ", "", 
+          " is not writeable. Does it exist? ", "", 
+          "is not readable. Does it exist? "
+        )[m+1],
+        "Check and try again.\n"
       ))
     }
   }
@@ -89,6 +89,7 @@ sys_path <- function(R_path) {
 get_kwargs <- function(fun) {
   kwargs <- names(as.list(args(fun)))
   kwargs <- kwargs[1:(length(kwargs)-1)] # last is empty
+  kwargs
 }
 
 #' Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
@@ -143,38 +144,56 @@ merge_kwargs <- function(kwargsA, kwargsB,
 #' @param user Character vector of user input. These will be matched to 
 #'  \code{expected} using \code{match.arg()}.
 #' @param expected Character vector of expected/allowed values.
-#' @param unrecognized_kwarg_action If any value in \code{user} could not be 
+#' @param unrecognized_action If any value in \code{user} could not be 
 #'  matched, or repeated matches occured, what should happen? Possible values 
-#'  are \code{"warning"} (default), \code{"stop"} (raise error), and 
+#'  are \code{"stop"} (default; raises an error), \code{"warning"}, and 
 #'  \code{"nothing"}. 
+#' @param user_value_label How to refer to the user input in a stop or warning
+#'  message. If \code{NULL}, no label is used.
 #'
 #' @return The matched user inputs.
 #'
 match_input <- function(
   user, expected, 
-  unrecognized_kwarg_action=c("warning", "stop", "nothing")) {
+  unrecognized_action=c("stop", "warning", "nothing"),
+  user_value_label=NULL) {
 
-  matched <- match.arg(user, expected, several.ok=TRUE)
-  unrecognized_kwarg_action <- match.arg(
-    unrecognized_kwarg_action, 
-    c("warning", "stop", "nothing")
+  unrecognized_action <- match.arg(
+    unrecognized_action, 
+    c("stop", "warning", "nothing")
   )
-  if (length(matched) != length(user)) {
-    msg <- paste0(
-      "User-input kwargs did not match true kwargs. ",
-      "Either several matched the same true kwarg, ",
-      "or at least one did not match any.\n",
-      "The user-input kwargs were:\n",
-      "\"", paste0(user, collapse="\", \""), "\".\n",
-      "The true kwargs were:\n",
-      "\"", paste0(expected, collapse="\", \""), "\".",
-    )
-    if (unrecognized_kwarg_action=="stop") {
-      stop(msg)
-    } else if (unrecognized_kwarg_action=="warning") {
-      warning(msg)
-    }
-  }
+  unrecognized_FUN <- switch(unrecognized_action,
+    warning=warning,
+    stop=stop,
+    nothing=invisible
+  )
 
-  matched
+  if (!is.null(user_value_label)) {
+    user_value_label <- paste0("\"", user_value_label, "\" ")
+  }
+  msg <- paste0(
+    "The user-input values ", user_value_label,
+    "did not match their expected values. ",
+    "Either several matched the same value, ",
+    "or at least one did not match any.\n\n",
+    "The user inputs were:\n",
+    "\t\"", paste0(user, collapse="\", \""), "\".\n",
+    "The expected values were:\n",
+    "\t\"", paste0(expected, collapse="\", \""), "\".\n"
+  )
+
+  tryCatch(
+    { 
+      matched <- match.arg(user, expected, several.ok=TRUE) 
+      if (length(matched) != length(user)) { stop() }
+      return(matched)
+    },
+    error = function(e) { 
+      unrecognized_FUN(msg)
+    },
+    finally = {
+    }
+  )
+
+  invisible(NULL)
 }

@@ -4,17 +4,26 @@
 \alias{write_dir_Param_intermediate}
 \title{write_dir: intermediate separated/resampled files}
 \arguments{
-\item{write_dir}{Where should the separated (and resampled) intermediate
- files be placed? \code{NULL} (default) will write the separated files to
- the current working directory if \code{sep_keep}, and to a temporary
- directory if not \code{sep_keep}. Likewise, it will write the resampled
- files to the current working directory if \code{resamp_keep}, and to a 
- temporary directory if not \code{resamp_keep}. Otherwise, both the
- separated and resampled files will be written to the same directory,
- \code{write_dir}. (Different subfolders can be used by modifying the
- individual file names in \code{sep_fnames} and \code{resamp_fnames}.)
+\item{write_dir}{Where should any output files be written? \code{NULL}
+ (default) will write them to the current working directory.
 
- \code{write_dir} must already exist, or an error will be raised.}
+ Files flagged for deletion will be written to a temporary directory, and
+ thus are not affected by this argument. So if \code{sep_keep} is 
+ \code{TRUE}, the separated files will be written to \code{write_dir}, but if
+ \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
+ and later deleted. \code{resamp_keep} works similarly. 
+
+ For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+ are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
+ be written to \code{tempdir()}. But for \code{resample_cifti}, the
+ surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
+ will always be written to \code{write_dir}. 
+
+ Different subfolders for the separated, resampled, and final output files
+ cannot be specified by \code{write_dir}. Instead, modify the individual file
+ names in \code{sep_fnames} and \code{resamp_fnames}.
+
+ \code{write_dir} must already exist, or an error will occur.}
 }
 \description{
 write_dir: intermediate separated/resampled files

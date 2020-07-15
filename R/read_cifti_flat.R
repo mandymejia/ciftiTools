@@ -6,8 +6,9 @@
 #' @inheritParams cifti_fname_Param
 #' @param keep \code{read_cifti_flat} works by saving the CIFTI as a GIfTI file, and then reading it in. If 
 #'  a new GIfTI file was made by this function call, should it be deleted once it is read in? Default: FALSE (delete it). 
-#' @param gifti_fname File path of GIfTI-format data to save the CIFTI as.
-#' @param write_dir The directory in which to save the GIfTI. If NULL, 
+#' @param gifti_fname File path of GIfTI-format data to save the CIFTI as. Default:
+#'  the CIFTI_fname but with the extension replaced with "flat.gii".
+#' @param write_dir The directory in which to save the GIfTI, if it is being kept. If NULL, 
 #'  defaults to the current working directory.
 #' @inheritParams wb_path_Param
 #' 
@@ -59,25 +60,38 @@ read_cifti_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL,
   if (identical(gifti_fname, NULL)) {
     gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }
+  if (!keep) { write_dir <- tempdir() }
   gifti_fname <- format_path(gifti_fname, write_dir, mode=2)
   # Write the file and read it in.
-  gifti_existed <- file.exists(gifti_fname)
-    cmd <- paste(sys_path(wb_cmd), "-cifti-convert -to-gifti-ext", sys_path(cifti_fname), sys_path(gifti_fname))
-    cmd_code <- system(cmd)
-    if (cmd_code != 0) {
-      stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-                  ". The command was:\n", cmd))
-    }
+  cmd <- paste(sys_path(wb_cmd), "-cifti-convert -to-gifti-ext", sys_path(cifti_fname), sys_path(gifti_fname))
+  cmd_code <- system(cmd)
+  if (cmd_code != 0) {
+    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
+                ". The command was:\n", cmd))
+  }
   result <- readGIfTI(gifti_fname)
   result <- result$data$normal
 
-  # Delete the GIfTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
-  if (!keep & !gifti_existed) { 
-    file.remove(gifti_fname) 
-    if (file.exists(paste0(gifti_fname, ".data"))) {
-      file.remove(paste0(gifti_fname, ".data"))
-    }
-  }
+  # [TO DO]: don't delete since it's in tempdir(). Better way? safe to read (above line)?
+  # # Delete the GIfTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
+  # if (!keep) { 
+  #   file.remove(gifti_fname) 
+  #   if (file.exists(paste0(gifti_fname, ".data"))) {
+  #     file.remove(paste0(gifti_fname, ".data"))
+  #   }
+  # }
 
   result
+}
+
+#' @rdname read_cifti_flat
+#' @export
+readCIfTI_flat <- readcii_flat <- function(
+  cifti_fname, keep=FALSE, gifti_fname=NULL, 
+  write_dir=NULL, wb_path=NULL){
+
+  read_cifti_flat(
+    cifti_fname, keep=FALSE, gifti_fname=NULL, 
+    write_dir=NULL, wb_path=NULL
+  )
 }

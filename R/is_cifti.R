@@ -2,13 +2,13 @@
 #'
 #' Check if object is valid for \code{cifti$CORTEX_LEFT} or 
 #'  \code{cifti$CORTEX_RIGHT}. This is a helper function for 
-#'  \code{\link{is.cifti}}.
+#'  \code{\link{is_cifti}}.
 #'
 #' @param x The object to check
 #'
 #' @return Logical indicating whther x is valid cortex data
 #'
-is.cifti_cortex <- function(x) {
+is_cifti_cortex <- function(x) {
   if (!is.numeric(x)) {
     message("x must be numeric.\n"); return(FALSE)
   }
@@ -19,12 +19,12 @@ is.cifti_cortex <- function(x) {
 #' Check if objects are subcortical data
 #'
 #' Check if objects are valid for \code{cifti$VOL} and \code{cifti$LABELS}. This
-#'  is a helper function for \code{\link{is.cifti}}.
+#'  is a helper function for \code{\link{is_cifti}}.
 #'
 #' @param vol The object that is potentially valid for \code{cifti$VOL}
 #' @param labels The object that is potentially valid for \code{cifti$LABELS}
 #'
-is.cifti_subcortical <- function(vol, labels) {
+is_cifti_subcortical <- function(vol, labels) {
   # Check them separately.
   if (!is.array(vol) | !is.numeric(vol))  {
     message("vol must be a numeric array.\n"); return(FALSE)
@@ -34,8 +34,17 @@ is.cifti_subcortical <- function(vol, labels) {
   }
 
   # Check them together.
-  if (!identical(dim(vol), dim(labels))){
-    message("The volume and label must have the same dimensions.\n"); return(FALSE)
+  if (!identical(dim(vol)[1:length(dim(labels))], dim(labels))){
+    message(
+      "The volume and labels must have the same dimensions. ",
+      "But, the dimensions of the volume are ", 
+      # [TO DO]: confirm: time is always on the last axis?
+      paste(dim(vol), collapse=" x "),
+      " whereas the dimensions of the labels are ", 
+      paste(dim(labels), collapse=" x "),
+      "."
+    )
+    return(FALSE)
   }
 
   # [TO DO]: More checks.
@@ -46,12 +55,12 @@ is.cifti_subcortical <- function(vol, labels) {
 #' Check if objects are a valid 2D matrix/3D mask pair.
 #'
 #' Check if objects are a valid 2D matrix/3D mask pair, e.g. a vectorized
-#'   \code{cifti$VOL}. This is a helper function for \code{\link{is.cifti}}.
+#'   \code{cifti$VOL}. This is a helper function for \code{\link{is_cifti}}.
 #'
 #' @param mat Data matrix for subcortical locations, with voxels in rows
 #' @param mask Volumetric brain mask for subcortical locations
 #'
-is.cifti_matmask_pair <- function(mat, mask) {
+is_cifti_matmask_pair <- function(mat, mask) {
   if (class(mat) != "matrix") {
     message("If provided, subcortMat must be a matrix, but it is not.\n")
     return(FALSE)
@@ -84,7 +93,7 @@ is.cifti_matmask_pair <- function(mat, mask) {
 #'
 #' @return Logical indicating whether x is a valid "cifti_surface" object
 #' @export
-is.cifti_surface <- function(x) {
+is_cifti_surface <- function(x) {
   if (!is.list(x)) {
     message("Not a list"); return(FALSE)
   }
@@ -127,7 +136,7 @@ is.cifti_surface <- function(x) {
 #' @return Logical indicating whether x is a valid "cifti" object
 #' @export
 #'
-is.cifti <- function(x) {
+is_cifti <- function(x) {
   # Check list structure.
   names_expected <- c(
     "CORTEX_LEFT", "CORTEX_RIGHT", "SURF_LEFT", 
@@ -151,23 +160,23 @@ is.cifti <- function(x) {
   }
 
   # Check individual components.
-  if (!is.null(x$CORTEX_LEFT) && !is.cifti_cortex(x$CORTEX_LEFT)) { 
+  if (!is.null(x$CORTEX_LEFT) && !is_cifti_cortex(x$CORTEX_LEFT)) { 
     message("x$CORTEX_LEFT not a matrix.\n"); return(FALSE) 
   }
-  if (!is.null(x$CORTEX_LEFT) && !is.cifti_cortex(x$CORTEX_RIGHT)) { 
+  if (!is.null(x$CORTEX_RIGHT) && !is_cifti_cortex(x$CORTEX_RIGHT)) { 
     message("x$CORTEX_RIGHT not a matrix.\n"); return(FALSE) 
   }
-  if (!is.null(x$SURF_LEFT) && !is.cifti_surface(x$SURF_LEFT)) {
+  if (!is.null(x$SURF_LEFT) && !is_cifti_surface(x$SURF_LEFT)) {
     message("x$SURF_LEFT not a surface.\n"); return(FALSE)
   }
-  if (!is.null(x$SURF_RIGHT) && !is.cifti_surface(x$SURF_RIGHT)) {
+  if (!is.null(x$SURF_RIGHT) && !is_cifti_surface(x$SURF_RIGHT)) {
     message("x$SURF_RIGHT not a surface.\n"); return(FALSE)
   }
   if (sum(c(is.null(x$VOL), is.null(x$LABELS))) == 1) {
     message("x$VOL and x$LABELS must both be present, or both be NULL\n.")
     return(FALSE)
   }
-  if (!is.null(x$VOL) && !is.cifti_subcortical(x$VOL, x$LABELS)) { 
+  if (!is.null(x$VOL) && !is_cifti_subcortical(x$VOL, x$LABELS)) { 
     message("x$VOL and x$LABELS are not compatible\n.")
     return(FALSE) 
   }
@@ -194,7 +203,7 @@ is.cifti <- function(x) {
   if (!is.null(x$SURF_LEFT) && !is.null(x$SURF_RIGHT)) { 
     if (nrow(x$SURF_LEFT$vertices) != nrow(x$SURF_RIGHT$vertices)) { 
       message(
-        "Number of surfaces in x$SURF_LEFT and x$SURF_RIGHT--must match\n."
+        "Number of vertices in x$SURF_LEFT and x$SURF_RIGHT--must match\n."
       )
       return(FALSE) 
     }
@@ -209,4 +218,11 @@ is.cifti <- function(x) {
   }
 
   TRUE
+}
+
+#' @rdname is_cifti
+#' @export
+isCIfTI <- is.cifti <- function(x){
+
+  is_cifti(x)
 }

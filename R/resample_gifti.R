@@ -30,7 +30,7 @@
 #' @return Logical indicating whether resampled file was created.
 #' @export
 #'
-gifti_resample <- function(original_fname, target_fname, file_type=NULL, 
+resample_gifti <- function(original_fname, target_fname, file_type=NULL, 
   ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
   resamp_res, sphere_original_fname, sphere_target_fname, 
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
@@ -46,10 +46,10 @@ gifti_resample <- function(original_fname, target_fname, file_type=NULL,
       ROIcortex_original_fname, read_dir, mode=4)
     stopifnot(file.exists(ROIcortex_original_fname))
   }
-  target_fname <- format_path(target_fname, write_dir)
+  target_fname <- format_path(target_fname, write_dir, mode=2)
   if (do_ROI) {
     validROIcortex_target_fname <- format_path(
-      validROIcortex_target_fname, read_dir, mode=4)
+      validROIcortex_target_fname, write_dir, mode=2)
   }
   if (is.null(file_type)) {
     if (grepl("func.gii", original_fname, fixed=TRUE)) { 
@@ -104,7 +104,7 @@ gifti_resample <- function(original_fname, target_fname, file_type=NULL,
 
 #' Resample a metric GIFTI file (ends with "func.gii")
 #'
-#' @param ... Arguments to \code{\link{gifti_resample}}. All except 
+#' @param ... Arguments to \code{\link{resample_gifti}}. All except 
 #'  \code{file_type} (which is "metric") can be provided.
 #'
 #' @return Logical indicating whether resampled file was created.
@@ -112,7 +112,7 @@ gifti_resample <- function(original_fname, target_fname, file_type=NULL,
 #'
 metric_resample <- function(...) {
   # Check that the arguments are valid.
-  kwargs_allowed <- c("", get_kwargs(ciftiTools::gifti_resample))
+  kwargs_allowed <- c("", get_kwargs(ciftiTools::resample_gifti))
   kwargs <- names(list(...))
   if ("file_type" %in% kwargs) { 
     stop(paste(
@@ -122,12 +122,12 @@ metric_resample <- function(...) {
   }
   stopifnot(all(kwargs %in% kwargs_allowed))
 
-  gifti_resample(..., file_type="metric")
+  resample_gifti(..., file_type="metric")
 }
 
 #' Resample a surface GIFTI file
 #'
-#' @param ... Arguments to \code{\link{gifti_resample}}. All except 
+#' @param ... Arguments to \code{\link{resample_gifti}}. All except 
 #'  \code{file_type} (which is "surface") can be provided.
 #'
 #' @return Logical indicating whether resampled file was created.
@@ -135,7 +135,7 @@ metric_resample <- function(...) {
 #'
 surface_resample <- function(...) {
   # Check that the arguments are valid.
-  kwargs_allowed <- c("", get_kwargs(ciftiTools::gifti_resample))
+  kwargs_allowed <- c("", get_kwargs(ciftiTools::resample_gifti))
   kwargs <- names(list(...))
   if ("file_type" %in% kwargs) { 
     stop(paste(
@@ -145,7 +145,7 @@ surface_resample <- function(...) {
   }
   stopifnot(all(kwargs %in% kwargs_allowed))
 
-  gifti_resample(..., file_type="surface")
+  resample_gifti(..., file_type="surface")
 }
 
 #' Generate GIFTI sphere surface files
@@ -197,4 +197,20 @@ make_helper_spheres <- function(
   ))
 
   invisible(file.exists(sphereL_fname) & file.exists(sphereR_fname))
+}
+
+#' @rdname resample_gifti
+#' @export
+resampleGIfTI <- resamplegii <- function(
+  original_fname, target_fname, file_type=NULL, 
+  ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+  resamp_res, sphere_original_fname, sphere_target_fname, 
+  read_dir=NULL, write_dir=NULL, wb_path=NULL){
+
+  resample_gifti(
+    original_fname, target_fname, file_type, 
+    ROIcortex_original_fname, validROIcortex_target_fname,
+    resamp_res, sphere_original_fname, sphere_target_fname, 
+    read_dir, write_dir, wb_path
+  )
 }

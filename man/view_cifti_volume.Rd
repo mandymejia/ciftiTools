@@ -16,7 +16,7 @@ view_cifti_volume(
 )
 }
 \arguments{
-\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is.cifti)}.}
+\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.}
 
 \item{structural_img}{The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.}
 

@@ -32,10 +32,10 @@ resample_cifti_separate(
 cortical surface vertices per hemisphere).}
 
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 
 \item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of 
 GIFTI data for [left/right] cortex to resample.}
@@ -79,10 +79,10 @@ surface geometry file representing the right cortex at.}
  \code{read_dir} must already exist, or an error will be raised.}
 
 \item{write_dir}{Where should the resampled
- files be placed? \code{NULL} (default) will write the files to
+ files be placed? \code{NULL} (default) will write them to
  the current working directory. 
 
- \code{write_dir} must already exist, or an error will be raised.}
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

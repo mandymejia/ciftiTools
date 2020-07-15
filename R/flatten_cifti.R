@@ -4,6 +4,7 @@
 #'  matrix is identical to that obtained by \code{\link{read_cifti_flat}}, 
 #'  which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
 #'  
+#' @aliases flattenCIfTI
 #'
 #' @param cif Object of class "cifti"
 #' @param brainstructures "subcortical" for just the subcortical voxels 
@@ -18,9 +19,16 @@
 #'
 flatten_cifti <- function(cif, brainstructures=c("subcortical", "everything")) {
 
+  if (!is_cifti(cif)) { stop("`cif` is not a valid CIFTI object.") }
+
   EPS <- ciftiTools.getOption("EPS")
 
   brainstructures <- match.arg(brainstructures, c("subcortical", "everything"))
+
+  stopifnot(!is.null(cif$LABELS) && !is.null(cif$VOL))
+  if (brainstructures == "everything") {
+    stopifnot(!is.null(cif$CORTEX_LEFT) && !is.null(cif$CORTEX_RIGHT))
+  }
 
   # SUBCORTICAL
   # Get the mask of non-zero labels, which should indicate the non-empty voxels.
@@ -35,7 +43,8 @@ flatten_cifti <- function(cif, brainstructures=c("subcortical", "everything")) {
     idx <- idx + length(p_idx)
   }
   # Mask the volume, and then order the voxels by parcel.
-  dat <- matrix(cif$VOL[mask], ncol=dim(cif$VOL)[4])
+  t <- ifelse(length(dim(cif$VOL)) == 4, dim(cif$VOL)[4], 1)
+  dat <- matrix(cif$VOL[mask], ncol=t)
   dat <- dat[parcel_order,]
 
   # CORTEX
@@ -48,4 +57,12 @@ flatten_cifti <- function(cif, brainstructures=c("subcortical", "everything")) {
   }
 
   dat
+}
+
+#' @rdname flatten_cifti
+#' @export
+flattenCIfTI <- flattencii <- function(
+  cif, brainstructures=c("subcortical", "everything")){
+
+  flatten_cifti(cif, brainstructures)
 }

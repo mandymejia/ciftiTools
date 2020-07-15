@@ -5,7 +5,7 @@
 \title{sphereL_fname}
 \arguments{
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is only required for resampling.}
+as the CIFTI data. It is required for resampling.}
 }
 \description{
 sphereL_fname

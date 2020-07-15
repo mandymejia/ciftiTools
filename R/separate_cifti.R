@@ -18,7 +18,7 @@
 #' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
 #' @inheritParams wb_path_Param
 #'
-#' @return A data frame with column names "label", "fname", and "existed", and rows corresponding to each separate file.
+#' @return A data frame with column names "label" and "fname", and rows corresponding to each separate file.
 #' @export
 #'
 #' @details This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
@@ -98,6 +98,17 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   )
   sep_files <- sep_files[sep_files$fname != "",]
 
+  if (length(unique(sep_files$fname)) != nrow(sep_files)) {
+    print(sep_files)
+    stop(paste0(
+      "The file paths for the separated components are printed above. ",
+      "Some file paths were identical, but ",
+      "the same path cannot be used to write out different components. ",
+      "Check if identical file names were specified, or if any provided ",
+      "file name overlapped with a default file name.\n\n"
+    ))
+  }
+
   # Build the Connectome Workbench command. 
   cmd <- paste(sys_path(wb_cmd), "-cifti-separate", sys_path(cifti_fname), "COLUMN")
   if (do['left']) {
@@ -120,5 +131,21 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
       ". The command was:\n", cmd))
   }
 
-  invisible(sep_files) # column names are "label", "fname", and "existed"
+  invisible(sep_files) # column names are "label" and "fname"
+}
+
+#' @rdname separate_cifti
+#' @export
+separateCIfTI <- separatecii <- function(
+  cifti_fname, brainstructures=c("left","right"), 
+  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
+  ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
+  write_dir=NULL, wb_path=NULL){
+
+  separate_cifti(
+    cifti_fname, brainstructures, 
+    cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname, 
+    ROI_brainstructures, ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname, 
+    write_dir, wb_path
+  )
 }

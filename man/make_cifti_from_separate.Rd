@@ -2,9 +2,22 @@
 % Please edit documentation in R/make_cifti.R
 \name{make_cifti_from_separate}
 \alias{make_cifti_from_separate}
+\alias{makeCIfTI}
 \title{Get CIFTI data from separate GIfTI and NIfTI files}
 \usage{
 make_cifti_from_separate(
+  cortexL = NULL,
+  cortexR = NULL,
+  subcortVol = NULL,
+  subcortMat = NULL,
+  subcortMask = NULL,
+  subcortLab = NULL,
+  surfL = NULL,
+  surfR = NULL,
+  read_dir = NULL
+)
+
+makeCIfTI(
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,

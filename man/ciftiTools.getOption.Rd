@@ -3,9 +3,8 @@
 \name{ciftiTools.getOption}
 \alias{ciftiTools.getOption}
 \title{Gets an R option (with prefix "ciftiTools_") value. Right now, the ciftiTool
- options are "wb_path" (path to Workbench Command), "make_dirs"
- (Should a directory to write in be made if it does not exist, or should an 
- error be raised?), and "EPS" (Threshold for detecting constant voxels).}
+ options are "wb_path" (path to Workbench Command)
+ and "EPS" (Threshold for detecting constant voxels).}
 \usage{
 ciftiTools.getOption(opt)
 }
@@ -17,7 +16,6 @@ The value, \code{val}.
 }
 \description{
 Gets an R option (with prefix "ciftiTools_") value. Right now, the ciftiTool
- options are "wb_path" (path to Workbench Command), "make_dirs"
- (Should a directory to write in be made if it does not exist, or should an 
- error be raised?), and "EPS" (Threshold for detecting constant voxels).
+ options are "wb_path" (path to Workbench Command)
+ and "EPS" (Threshold for detecting constant voxels).
 }

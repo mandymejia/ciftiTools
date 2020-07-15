@@ -27,19 +27,13 @@ separate_cifti_wrapper <- function(
   # Get expected file names.
   expected_labs <- get_kwargs(ciftiTools::separate_cifti)
   expected_labs <- expected_labs[grepl("fname", expected_labs, fixed=TRUE)]
+  expected_labs <- expected_labs[expected_labs != "cifti_fname"]
   # Check file names.
-  for (ii in 1:length(sep_fnames)) {
-    lab <- names(sep_fnames)[[ii]]
-    if (!(paste0(lab, "_fname") %in% expected_labs)) {
-      stop(paste0(
-        "An entry in `sep_fnames` was not recognized. The entry name was ",
-        lab, " whereas the expected labels for `separate_cifti` are:\n\t",
-        paste(gsub("_fname", "", expected_labs), collapse="\n\t"), ".\n",
-      ))
-    }
-    sep_kwargs[paste0(lab, "_fname")] <- lab
+  if (!is.null(sep_fnames)) {
+    match_input(names(sep_fnames), gsub("_.*", "", expected_labs), 
+      user_value_label="sep_fnames")
+    sep_kwargs[names(sep_fnames)] <- sep_fnames
   }
-
   # Do separate_cifti.
   sep_kwargs[sapply(sep_kwargs, is.null)] <- NULL
   do.call(separate_cifti, sep_kwargs)
@@ -58,6 +52,9 @@ separate_cifti_wrapper <- function(
 #' @inheritParams sphereR_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
+#' @param surfL_target_fname,surfR_target_fname (Optional) File path for
+#'  the resampled GIFTI surface geometry file representing the left/right 
+#'  cortex. If NULL (default),
 #' @inheritParams read_dir_Param_separated
 #' @inheritParams write_dir_Param_resampled
 #' @inheritParams wb_path_Param
@@ -66,51 +63,40 @@ separate_cifti_wrapper <- function(
 #'
 #' @details Currently used by read_cifti and resample_cifti.
 resample_cifti_wrapper <- function(
+  resamp_res,
   original_fnames, resamp_fnames,
-  resamp_res, sphereL_fname, sphereR_fname, 
+  sphereL_fname, sphereR_fname, 
   surfL_fname=NULL, surfR_fname=NULL, 
+  surfL_target_fname=NULL, surfR_target_fname=NULL, 
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
+
+  # [TO DO]: Decide: add "original"/"target" to sphere and surf?
   
   # Get kwargs.
   resamp_kwargs <- list(
     resamp_res=resamp_res, 
     sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
     surfL_original_fname=surfL_fname, surfR_original_fname=surfR_fname,
+    surfL_target_fname=surfL_target_fname, 
+    surfR_target_fname=surfR_target_fname, 
     read_dir=read_dir, write_dir=write_dir, wb_path=wb_path
   )
 
   # Get expected file names.
   expected_labs <- get_kwargs(ciftiTools::resample_cifti_separate)
   expected_labs <- expected_labs[grepl("fname", expected_labs, fixed=TRUE)]
-  # Check original file names.
-  for (ii in 1:length(original_fnames)){
-    lab <- names(original_fnames)[[ii]]
-    if (!(paste0(lab, "_original_fname") %in% expected_labs)) {
-      stop(paste0(
-        "An entry in `original_fnames` was not recognized. The entry name was ",
-        lab, " whereas the expected labels for original files ",
-        "for `resample_cifti_separate` are:\n\t",
-        paste(gsub("_fname", "", 
-          expected_labs[grepl("original", expected_labs)]), collapse="\n\t"), 
-        ".\n",
-      ))
-    }
-    resamp_kwargs[paste0(lab, "_original_fname")] <- lab
+
+  # Check and add original file names to the kwargs.
+  if (!is.null(original_fnames)) {
+    match_input(names(original_fnames), gsub("_.*", "", expected_labs), 
+      user_value_label="original_fnames")
+    resamp_kwargs[paste0(names(original_fnames), "_original_fname")] <- original_fnames
   }
-  # Check resampled/target file names.
-  for (ii in 1:length(resamp_fnames)){
-    lab <- names(resamp_fnames)[[ii]]
-    if (!(paste0(lab, "_target_fname") %in% expected_labs)) {
-      stop(paste0(
-        "An entry in `resamp_fnames` was not recognized. The entry name was ",
-        lab, " whereas the expected labels for target files ",
-        "for `resample_cifti_separate` are:\n\t",
-        paste(gsub("_fname", "", 
-          expected_labs[grepl("resamp", expected_labs)]), collapse="\n\t"), 
-        ".\n",
-      ))
-    }
-    resamp_kwargs[paste0(lab, "_target_fname")] <- lab
+  # Check and add resampled/target file names to the kwargs.
+  if (!is.null(resamp_fnames)) {
+    match_input(names(resamp_fnames), gsub("_.*", "", expected_labs), 
+      user_value_label="resamp_fnames")
+    resamp_kwargs[paste0(names(resamp_fnames), "_target_fname")] <- resamp_fnames
   }
 
   # Do resample_cifti_separate.

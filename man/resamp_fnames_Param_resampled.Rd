@@ -4,7 +4,8 @@
 \alias{resamp_fnames_Param_resampled}
 \title{resamp_fnames: for resampling}
 \arguments{
-\item{resamp_fnames}{Where to write the resampled files. This is a named list 
+\item{resamp_fnames}{Where to write the resampled files (override
+their default file names). This is a named list 
 where each element's name is a file type label, and each element's value
 is a file name. Labels must be one of the following: "cortexL", "cortexR", 
 "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 

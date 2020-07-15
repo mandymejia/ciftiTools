@@ -5,10 +5,10 @@
 \title{write_dir: separated files}
 \arguments{
 \item{write_dir}{Where should the separated
- files be placed? \code{NULL} (default) will write the files to
+ files be placed? \code{NULL} (default) will write them to
  the current working directory. 
 
- \code{write_dir} must already exist, or an error will be raised.}
+ \code{write_dir} must already exist, or an error will occur.}
 }
 \description{
 write_dir: separated files
