@@ -9,7 +9,7 @@ Tools for reading and visualizing CIFTI brain imaging files. CIFTI files contain
 # Wishlist
 
 * static images (e.g. for Markdown documents)
-* color bar for images (completed draft)
 * cifti_write function
+* tests
 * CRAN
 * Neuroconductor

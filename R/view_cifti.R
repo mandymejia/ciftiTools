@@ -379,20 +379,26 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param idx The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 #'  or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
-#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window (exception: see \code{both_lateral_together}).
+#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window.
 #' @param view Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
 #'  will be shown in a separate panel row within the RGL window.
-#' @param both_lateral_together If only the lateral views of both hemisphers are to be shown, the hemispheres can be viewed together spatially
-#'  by setting this argument to \code{TRUE}. Otherwise, they are displayed in separate panels (default). This argument will not affect the layout in 
-#'  other situations.
 #' @param mode One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
 #'  of the RGL window, save it to a file in \code{write_dir} namedial by \code{fname_prefix} and close it. "video" will take a series of screenshots
 #'  of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} namedial by \code{fname_prefix}, and then close 
 #'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro. Only the "widget" view mode is
 #'  supported right now.
-#' @param width,height The dimensions of the RGL window, in pixels. If both are \code{NULL} (default), it will use a 7x9 aspect ratio for each panel and
-#'  the largest size that fits within a 1600x900 pixel area (a standard monitor size) . If one of these arguments is \code{NULL}, the other will be set 
-#'  to make each panel have a 7x9 aspect ratio.
+#' @param width,height The dimensions of the RGL window, in pixels. If both are 
+#'  \code{NULL} (default), the dimensions will be set to 
+#'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
+#'  1500 x 525 for 2x1 subplots, and
+#'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
+#'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+#'  the same aspect ratio. Both could be specified to set the dimensions exactly.
+#' @param bg Background color. \code{NULL} will not color the background (white).
+#' @param title Optional title for the plot. It will be printed at the top in
+#'  a separate subplot with 1/4 the height of the brain cortex subplots.
+#'  \code{NULL} (default) will not make a title.
+#' @param text_color Color for text in title and colorbar legend. Default: "black".
 #' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
 #'  Default: "cifti". Note: only the "widget" view mode is supported right now.
 #' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
@@ -408,8 +414,10 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param surfL,surfR (Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
 #'  for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
 #'  \code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.
-#' @param colorbar_position "bottom" (default), "right", or "separate" from the RGL window.
-#' @param colorbar_label A title for the colorbar (none by default).
+#' @param colorbar_embedded Should the colorbar be embedded in the RGL window?
+#'  It will be positioned in the bottom-left corner, in a separate subplot 
+#'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
+#'  If \code{FALSE}, print it separately instead.
 #' @param colorbar_digits The number of digits for the colorbar legend ticks. 
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
 #'
@@ -417,13 +425,14 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @importFrom fields image.plot
 #' @importFrom grDevices dev.list dev.off
 view_cifti_surface <- function(cifti, idx=1, 
-  hemisphere=NULL, view=c("both", "lateral", "medial"), both_lateral_together=FALSE,
+  hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
+  bg=NULL, title=NULL, text_color="black",
   fname_prefix="cifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL,
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), 
+  color_values=NULL,
   surfL=NULL, surfR=NULL,
-  colorbar_position=c("bottom", "right", "separate"), colorbar_label="", 
-  colorbar_digits=NULL) {
+  colorbar_embedded=TRUE, colorbar_digits=NULL) {
 
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("Package \"rgl\" needed to use `view_cifti_surface`. Please install it.", call. = FALSE)
@@ -460,6 +469,7 @@ view_cifti_surface <- function(cifti, idx=1,
     }
   } else { surfR <- make_cifti_surface(surfR) }
   if (is.null(surfL) & is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
+  
   # hemisphere and view.
   if (is.null(hemisphere)) {
     hemisphere <- c("left", "right", "both")[1*(!is.null(surfL)) + 2*(!is.null(surfR))]
@@ -467,20 +477,19 @@ view_cifti_surface <- function(cifti, idx=1,
   view <- match.arg(view, c("both", "lateral", "medial"))
   if (hemisphere=="both") { hemisphere=c("left", "right") } # reformat
   if (view=="both") { view=c("lateral", "medial") } # reformat
-  # both_lateral_together
-  if (length(hemisphere)==2 & identical(view, "lateral") & both_lateral_together) {
-    stop("both_lateral_together==TRUE is not supported yet.")
-  } else {
-    panel_nrow <- length(view)
-    panel_ncol <- length(hemisphere)
-  }
+  brain_panels_nrow <- length(view)
+  brain_panels_ncol <- length(hemisphere)
+
+  all_panels_nrow <- brain_panels_nrow + 1*(!is.null(title)) + 1*colorbar_embedded
+  all_panels_ncol <- brain_panels_ncol
+
   # others...
   mode <- match.arg(mode, c("widget", "image", "video"))
   if (mode != "widget") { stop("Only the widget view mode is supported right now.") }
   if (is.null(width) | is.null(height)) {
-    DEF_ASPECT_PER_PANEL <- c(9, 7) # 7:9 aspect ratio
-    def_aspect <- DEF_ASPECT_PER_PANEL * c(panel_ncol, panel_nrow)
-    DEF_MAX_SIZE <- c(1600, 900)
+    DEF_ASPECT_PER_PANEL <- c(10, 7) # aspect ratio
+    def_aspect <- DEF_ASPECT_PER_PANEL * c(brain_panels_ncol, brain_panels_nrow)
+    DEF_MAX_SIZE <- c(1500, 700)
 
     if (is.null(width) & is.null(height)) {
       window_dims <- def_aspect*floor(min(DEF_MAX_SIZE/def_aspect))
@@ -491,12 +500,22 @@ view_cifti_surface <- function(cifti, idx=1,
       width <- as.integer(width)
       window_dims <- c(width, floor(width*def_aspect[2]/def_aspect[1]))
     }
-    width <- window_dims[1]; height <- window_dims[2]
+    brain_panels_width <- window_dims[1]
+    brain_panels_height <- window_dims[2]
   } else {
-    width <- as.integer(width); height <- as.integer(height)
+    brain_panels_width <- as.integer(width)
+    brain_panels_height <- as.integer(height)
   }
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
-  colorbar_position <- match.arg(colorbar_position, c("bottom", "right", "separate"))
+
+  indiv_panel_width <- brain_panels_width/brain_panels_ncol
+  indiv_panel_height <- brain_panels_height/brain_panels_nrow
+
+  TITLE_AND_LEGEND_HEIGHT_RATIO <- 1/6
+  all_panels_width <- brain_panels_width
+  all_panels_height <- brain_panels_height + 
+    (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) * 
+      (all_panels_nrow - brain_panels_nrow)
 
   #################################################################
   # Get the data values and surface models, and construct the mesh.
@@ -621,21 +640,28 @@ view_cifti_surface <- function(cifti, idx=1,
   # To-do: use colorbar_position argument.
   colorbar_kwargs = list(
     legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
-    breaks=colorbar_breaks, legend.lab=colorbar_label,
+    breaks=colorbar_breaks, #legend.lab=colorbar_label,
     axis.args=list(cex.axis=1.7, at=colorbar_labs, 
+                   col=text_color, col.ticks=text_color, col.axis=text_color,
                    labels=format(colorbar_labs, digits=colorbar_digits))
   )
-  if (colorbar_position=="right") {
-    colorbar_kwargs <- c(
-      colorbar_kwargs, 
-      list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
+  #if (colorbar_position=="right") {
+  #  colorbar_kwargs <- c(
+  #    colorbar_kwargs, 
+  #    list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
+  #  )
+  #} else if (colorbar_position=="bottom") {
+  colorbar_kwargs <- c(colorbar_kwargs, 
+    list(
+      horizontal=TRUE, # horizontal legend
+      legend.cex=2, # double size of labels (numeric limits)
+      #legend.shrink=.5, # half the width of the legend #override by smallplot
+      #legend.width=1.67, # height of colorbar #override by smallplot
+      legend.line=5, # height of lines between labels and colorbar
+      #legend.mar=4, # legend margin #override by smallplot
+      smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
     )
-  } else if (colorbar_position=="bottom") {
-    colorbar_kwargs <- c(
-      colorbar_kwargs, 
-      list(horizontal=TRUE, legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=4)
-    )
-  }
+  )
 
 
   ############################################################
@@ -644,18 +670,39 @@ view_cifti_surface <- function(cifti, idx=1,
 
   # Open a new RGL window.
   rgl::open3d()
-  rgl::par3d(windowRect = c(20, 20, width, height))
+  if (is.null(bg)) { bg <- "white" }
+  rgl::bg3d(color=bg)
+  rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
   Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
   
+  all_panels_heights <- rep.int(1, brain_panels_nrow)
+  if (!is.null(title)) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
+  if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+
   # Determine the panel layout.
-  rgl::mfrow3d(panel_nrow, panel_ncol, byrow = TRUE, parent = NA, sharedMouse = TRUE)
-  panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
-  n_panels <- length(panels)
-  legend_panel <- switch(colorbar_position,
-    bottom = ((panel_nrow-1) * panel_ncol) + 1,
-    right = n_panels,
-    separate = 0
+  rgl::layout3d(
+    matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
+    widths=rep.int(1, all_panels_ncol),
+    heights=all_panels_heights,
+    parent = NA, sharedMouse = TRUE
   )
+  brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
+  n_brain_panels <- length(brain_panels)
+
+  if (!is.null(title)) {
+    rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
+                cex=2.5, # 250% font size,
+                adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
+                font=2,
+                color=text_color,
+                text=title
+    )
+    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+
+    if(all_panels_ncol==2){
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+    }
+  }
 
   # Rotation matrices to orient meshes.
   rot <- list(
@@ -673,8 +720,8 @@ view_cifti_surface <- function(cifti, idx=1,
   )
 
   # Populate the RGL window.
-  for(ii in 1:n_panels) {
-    p <- panels[ii]
+  for(ii in 1:n_brain_panels) {
+    p <- brain_panels[ii]
 
     # Select the mesh for this panel, and determine the orientation.
     if (grepl("left", p)) {
@@ -695,30 +742,34 @@ view_cifti_surface <- function(cifti, idx=1,
         this_rot <- rot$left
       } else { this_rot <- rot$ID }
     }
-    # Make room for color bar if positioned on the right.
-    if (colorbar_position=="right") { #to-do: lateral_together
-      displacement <- .25 * diff(range(this_surf$vertices[,2]))
-      if (grepl("lateral", p)) { displacement <- -displacement }
-      if (grepl("left", p)) { displacement <- -displacement }
-      this_trans <- t(rgl::translationMatrix(0, displacement, 0))
-      # to-do: also displace meshes upward if colorbar_position=="bottom"
-    } else {
-      this_trans <- diag(4)
-    }
+
+    ## shift brains to left to make room for legend on right
+    #displacement <- .25 * diff(range(this_surf$vertices[,2]))
+    #if (grepl("lateral", p)) { displacement <- -displacement }
+    #if (grepl("left", p)) { displacement <- -displacement }
+    #this_trans <- t(rgl::translationMatrix(0, displacement, 0))
+    this_trans <- diag(4)
+
     this_mat <- this_rot %*% this_trans
-    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0)
-
-    # Suppress this warning: "calling par(new=TRUE) with no plot"
-    if (ii == legend_panel) { 
-      rgl::bgplot3d(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)))
-    }
-
+    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=3/5) #167% size
     rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
-  if (colorbar_position=="separate") {
-    # Suppress this warning: "calling par(new=TRUE) with no plot"
-    suppressWarnings(do.call(fields::image.plot, colorbar_kwargs))
+  if (colorbar_embedded) {
+    rgl::bgplot3d(
+      # Warning: calling par(new=TRUE) with no plot
+      # Error in par(old.par) : 
+      #   invalid value specified for graphical parameter "pin"
+      try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
+      bg.color=bg
+    )
+    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+    if(all_panels_ncol==2){
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+    }
+  } else {
+    colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
+    try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
   }
 
   invisible()
@@ -810,40 +861,46 @@ view_cifti <- function(cifti, what=NULL, ...) {
   else{ stop() }
 }
 
-#' @rdname view_cifti
+#' S3 method: use view_cifti to plot a cifti
+#'
+#' @param x The "cifti" object
+#' @param ... Additional arguments to \code{\link{view_cifti}}, except 
+#'  \code{what}, which will be set to \code{NULL}.
+#'
 #' @method plot cifti 
 #' @export
-plot.cifti <- function(cifti, what=NULL, ...){
-  view_cifti(cifti, what=NULL, ...)
+plot.cifti <- function(x, ...){
+  view_cifti(x, what=NULL, ...)
 }
 
 #' @rdname view_cifti
 #' @export
 viewCIfTI <- viewcii <- function(cifti, what=NULL, ...){
 
-  view_cifti(cifti, what=NULL, ...)
+  view_cifti(cifti, what=what, ...)
 }
 
 #' @rdname view_cifti_surface
 #' @export
-viewCIfTI_surface <- viewcii_surface <- function(
-  cifti, idx=1, 
-  hemisphere=NULL, view=c("both", "lateral", "medial"), both_lateral_together=FALSE,
+viewCIfTI_surface <- viewcii_surface <- function(cifti, idx=1, 
+  hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
+  bg=NULL, title=NULL,
   fname_prefix="cifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), color_values=NULL,
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), 
+  color_values=NULL,
   surfL=NULL, surfR=NULL,
-  colorbar_position=c("bottom", "right", "separate"), colorbar_label="", 
-  colorbar_digits=NULL){
+  colorbar_embedded=TRUE, colorbar_digits=NULL){
 
   view_cifti_surface(
     cifti, idx, 
-    hemisphere, view, both_lateral_together,
+    hemisphere, view, 
     mode, width, height,
+    bg, title,
     fname_prefix, write_dir,
     colors, color_mode, color_values,
     surfL, surfR,
-    colorbar_position, colorbar_label, 
+    colorbar_embedded, 
     colorbar_digits
   )
 }

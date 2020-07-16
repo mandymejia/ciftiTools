@@ -2,13 +2,10 @@
 % Please edit documentation in R/view_cifti.R
 \name{view_cifti}
 \alias{view_cifti}
-\alias{plot.cifti}
 \alias{viewCIfTI}
 \title{Switch for \code{\link{view_cifti_surface}} or \code{\link{view_cifti_volume}}}
 \usage{
 view_cifti(cifti, what = NULL, ...)
-
-\method{plot}{cifti}(cifti, what = NULL, ...)
 
 viewCIfTI(cifti, what = NULL, ...)
 }
