@@ -25,14 +25,14 @@
 #' Step 3: Use cifti-create to form a template CIFTI file in the target resolution based on the components created in Steps 2a and 2b.
 #' Step 4: Use cifti-resample to resample cifti_orig to the target resolution
 #'
-cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd=NULL, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE, outdir=NULL){
+cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_R, target_res, wb_cmd=NULL, make_helper_files=TRUE, delete_helper_files=FALSE, overwrite=FALSE, verbose=TRUE, outdir=NULL) {
 
   wb_cmd <- get_wb_cmd_path(wb_cmd)
 
-  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+  if (!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
-  if(file.exists(cifti_target)){
-    if(!overwrite){
+  if (file.exists(cifti_target)) {
+    if (!overwrite) {
       message('cifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')
       return(NULL)
     } else {
@@ -40,9 +40,9 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
     }
   }
   
-  if(is.null(outdir)){
+  if (is.null(outdir)) {
     outdir <- getwd()
-  } else if(!file.exists(outdir)){
+  } else if (!file.exists(outdir)) {
     stop('outdir does not exist, check and try again.')
   }
   #TO DO: Check that the user has write permissions in outdir
@@ -52,25 +52,25 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   
   
   #location of helper files
-  if(make_helper_files==FALSE & delete_helper_files==TRUE){
+  if (make_helper_files==FALSE & delete_helper_files==TRUE) {
     warning('Since make_helper_files is FALSE, I will not delete the helper files.  Setting delete_helper_files to FALSE.')
     delete_helper_files <- FALSE
   }
-  if(make_helper_files==FALSE) dir2 <- file.path(outdir,'helper_files_resampling') #expected location of existing helper files
-  if(make_helper_files==TRUE){
-    if(delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
-    if(!delete_helper_files){
+  if (make_helper_files==FALSE) dir2 <- file.path(outdir,'helper_files_resampling') #expected location of existing helper files
+  if (make_helper_files==TRUE) {
+    if (delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
+    if (!delete_helper_files) {
       dir2 <- file.path(outdir,'helper_files_resampling') #location to save helper files
-      if(dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
-      if(!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
+      if (dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
+      if (!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
     }
   }
 
   # Step 1. Create new spherical GIFTI files using wb_command -surface-create-sphere
   sphere_target_R <- file.path(dir2,'Sphere.target.R.surf.gii')
   sphere_target_L <- file.path(dir2,'Sphere.target.L.surf.gii')
-  if(make_helper_files) {
-    if(verbose) cat('\nCreating spherical surfaces in target resolution... \n')
+  if (make_helper_files) {
+    if (verbose) cat('\nCreating spherical surfaces in target resolution... \n')
     make_helper_spheres(sphere_target_R, sphere_target_L, target_res, wb_cmd)
   }
 
@@ -87,8 +87,8 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   surf_orig_R <- file.path(dir2, 'surf.orig.R.func.gii')
   roi_orig_L <- file.path(dir2, 'roi.orig.L.func.gii')
   roi_orig_R <- file.path(dir2, 'roi.orig.R.func.gii')
-  if(make_helper_files) {
-    if(verbose) cat('Separating cifti_orig into components... \n')
+  if (make_helper_files) {
+    if (verbose) cat('Separating cifti_orig into components... \n')
     system(paste(wb_cmd, '-cifti-separate', cifti_orig, 'COLUMN -volume-all', vol_orig, '-label', labels_orig, '-metric CORTEX_LEFT', surf_orig_L, '-roi', roi_orig_L, '-metric CORTEX_RIGHT', surf_orig_R, '-roi', roi_orig_R, sep=' '))
   }
 
@@ -100,8 +100,8 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   roi_target_R <- file.path(dir2, 'roi.10k.R.func.gii')
   surf_target_L <- file.path(dir2, 'surf.target.L.func.gii')
   surf_target_R <- file.path(dir2, 'surf.target.R.func.gii')
-  if(make_helper_files){
-    if(verbose) cat('Resampling components to target resolution... \n')
+  if (make_helper_files) {
+    if (verbose) cat('Resampling components to target resolution... \n')
     system(paste(wb_cmd, '-metric-resample', surf_orig_L, sphere_orig_L, sphere_target_L, 'BARYCENTRIC', surf_target_L, '-current-roi', roi_orig_L, '-valid-roi-out', validroi_target_L, sep=' '))
     system(paste(wb_cmd, '-metric-resample', surf_orig_R, sphere_orig_R, sphere_target_R, 'BARYCENTRIC', surf_target_R, '-current-roi', roi_orig_R, '-valid-roi-out', validroi_target_R, sep=' '))
     system(paste(wb_cmd, '-metric-resample', roi_orig_L,  sphere_orig_L, sphere_target_L, 'BARYCENTRIC', roi_target_L, sep=' '))
@@ -114,11 +114,11 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   cifti_template_target <- paste0('cifti.target.',cifti_extn)
   # Step 3. Create a template CIFTI dense timeseries.
   cifti_template_target <- file.path(dir2, cifti_template_target)
-  if(grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'
-  if(grepl('dscalar',cifti_extn)) create_cmd <- '-cifti-create-dense-scalar'
-  if(grepl('dlabel',cifti_extn)) create_cmd <- '-cifti-create-label'
-  if(make_helper_files) {
-    if(verbose) cat('Creating template CIFTI file in target resolution... \n')
+  if (grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'
+  if (grepl('dscalar',cifti_extn)) create_cmd <- '-cifti-create-dense-scalar'
+  if (grepl('dlabel',cifti_extn)) create_cmd <- '-cifti-create-label'
+  if (make_helper_files) {
+    if (verbose) cat('Creating template CIFTI file in target resolution... \n')
     system(paste(wb_cmd, create_cmd, cifti_template_target, '-volume', vol_orig, labels_orig, '-left-metric', surf_target_L, '-roi-left', roi_target_L, '-right-metric', surf_target_R, '-roi-right', roi_target_R, sep=' '))
   }
 
@@ -126,15 +126,15 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
   # Step 4.  Perform resampling with cifti-resample
 
   #delete existing cifti_target
-  if(file.exists(cifti_target) & overwrite==TRUE) file.remove(cifti_target)
+  if (file.exists(cifti_target) & overwrite==TRUE) file.remove(cifti_target)
 
   #peform resampling
-  if(verbose) cat('Resampling cifti_orig to target resolution... \n')
+  if (verbose) cat('Resampling cifti_orig to target resolution... \n')
   cmd = paste(wb_cmd, '-cifti-resample', cifti_orig, 'COLUMN', cifti_template_target, 'COLUMN BARYCENTRIC CUBIC', cifti_target, '-left-spheres',  sphere_orig_L, sphere_target_L, '-right-spheres', sphere_orig_R, sphere_target_R, sep=' ')
   system(cmd)
 
   #check whether operation successful and return result
-  if(verbose) cat('Checking if resampled CIFTI was written. \n')
+  if (verbose) cat('Checking if resampled CIFTI was written. \n')
   file.exists(cifti_target)
 }
 
@@ -161,16 +161,16 @@ cifti_resample <- function(cifti_orig, cifti_target, sphere_orig_L, sphere_orig_
 #' @export
 #'
 gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target, target_res, wb_cmd, make_helper_files=TRUE, 
-  delete_helper_files=FALSE, overwrite=FALSE, verbose=FALSE){
+  delete_helper_files=FALSE, overwrite=FALSE, verbose=FALSE) {
 
   #TO DO: Update this function with similar changes to cifti_resample (e.g. use of outdir argument, delete created files)
   
-  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+  if (!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
-  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+  if (!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
-  if(file.exists(gifti_target)){
-    if(!overwrite){
+  if (file.exists(gifti_target)) {
+    if (!overwrite) {
       message('gifti_target already exists and will not be overwritten.  Set overwrite=TRUE to overwrite.')
       return(NULL)
     } else {
@@ -179,11 +179,11 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
   }
 
   #delete existing gifti_target
-  if(file.exists(gifti_target) & overwrite==TRUE) file.remove(gifti_target)
+  if (file.exists(gifti_target) & overwrite==TRUE) file.remove(gifti_target)
 
-  if(is.null(outdir)){
+  if (is.null(outdir)) {
     outdir <- getwd()
-  } else if(!file.exists(outdir)){
+  } else if (!file.exists(outdir)) {
     stop('outdir does not exist, check and try again.')
   }
   #TO DO: Check that the user has write permissions in outdir
@@ -193,25 +193,25 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
 
     
   #location of helper files
-  if(make_helper_files==FALSE & delete_helper_files==TRUE){
+  if (make_helper_files==FALSE & delete_helper_files==TRUE) {
     warning('Since make_helper_files is FALSE, I will not delete the helper files.  Setting delete_helper_files to FALSE.')
     delete_helper_files <- FALSE
   }
-  if(make_helper_files==FALSE) dir2 <- file.path(outdir,'helper_files_resampling') #expected location of existing helper files
-  if(make_helper_files==TRUE){
-    if(delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
-    if(!delete_helper_files){
+  if (make_helper_files==FALSE) dir2 <- file.path(outdir,'helper_files_resampling') #expected location of existing helper files
+  if (make_helper_files==TRUE) {
+    if (delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
+    if (!delete_helper_files) {
       dir2 <- file.path(outdir,'helper_files_resampling') #location to save helper files
-      if(dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
-      if(!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
+      if (dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
+      if (!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
     }
   }
   
   # Step 1. Create new spherical GIFTI files using wb_command -surface-create-sphere
   sphere_target_R <- file.path(dir2,'Sphere.target.R.surf.gii')
   sphere_target_L <- file.path(dir2,'Sphere.target.L.surf.gii')
-  if(make_helper_files) {
-    if(verbose) cat('\nCreating spherical surfaces in target resolution... \n')
+  if (make_helper_files) {
+    if (verbose) cat('\nCreating spherical surfaces in target resolution... \n')
     make_helper_spheres(sphere_target_R, sphere_target_L, target_res, wb_cmd)
   }
   
@@ -237,9 +237,9 @@ gifti_resample <- function(gifti_orig, gifti_target, sphere_orig, sphere_target,
 #' @return Logical indicating whether output files exist
 #' @export
 #'
-make_helper_spheres <- function(sphere_R, sphere_L, target_res, wb_cmd){
+make_helper_spheres <- function(sphere_R, sphere_L, target_res, wb_cmd) {
 
-  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+  if (!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
   system(paste(wb_cmd,'-surface-create-sphere', target_res, sphere_R, sep=' '))
   system(paste(wb_cmd, '-surface-flip-lr', sphere_R, sphere_L, sep=' '))

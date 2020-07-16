@@ -48,14 +48,14 @@
 cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_right=NULL, 
   surf_names=NULL, brainstructures=c('left','right','subcortical'), wb_cmd=NULL, 
   make_helper_files=TRUE, delete_helper_files=FALSE, outdir=NULL, 
-  resample=NULL, sphere_orig_L, sphere_orig_R, verbose=FALSE){
+  resample=NULL, sphere_orig_L, sphere_orig_R, verbose=FALSE) {
 
   wb_cmd <- get_wb_cmd_path(wb_cmd)
-  if(!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
+  if (!file.exists(wb_cmd)) stop(paste0(wb_cmd, ' does not exist.  Check path and try again.'))
 
-  if(is.null(outdir)){
+  if (is.null(outdir)) {
     outdir <- getwd()
-  } else if(!file.exists(outdir)){
+  } else if (!file.exists(outdir)) {
     stop('outdir does not exist, check and try again.')
   }
   #TO DO: Check that the user has write permissions in outdir
@@ -70,13 +70,13 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   ### Check surface argument compatibility
   do_left_surf <- (!is.null(fname_gifti_left))
   do_right_surf <- (!is.null(fname_gifti_right))
-  if(do_left_surf){ 
-    if(is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_left))
-    if(length(fname_gifti_left) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') 
+  if (do_left_surf) { 
+    if (is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_left))
+    if (length(fname_gifti_left) != length(surf_names)) stop('Length of fname_gifti_left and surf_names must match.') 
   }
-  if(do_right_surf){ 
-    if(is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_right))
-    if(length(fname_gifti_right) != length(surf_names)) stop('Length of fname_gifti_right and surf_names must match.') 
+  if (do_right_surf) { 
+    if (is.null(surf_names)) surf_names <- paste0('surface', 1:length(fname_gifti_right))
+    if (length(fname_gifti_right) != length(surf_names)) stop('Length of fname_gifti_right and surf_names must match.') 
   }
   num_surf <- length(surf_names) #number of surface types provided
 
@@ -91,21 +91,21 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   ### 1. Use -cifti-separate to separate the CIFTI file into left cortex, right cortex, subcortical volumetric data, and subcortical labels
   
   ### Check whether original cifti file exists
-  if(!file.exists(fname_cifti)) stop('fname_cifti does not exist')
+  if (!file.exists(fname_cifti)) stop('fname_cifti does not exist')
   
   # Make full file paths
   fname_cifti <- normalizePath(fname_cifti)
-  if(do_left_surf) fname_gifti_left <- normalizePath(fname_gifti_left) 
-  if(do_right_surf) fname_gifti_right <- normalizePath(fname_gifti_right) 
-  if(!is.null(resample)) sphere_orig_L <- normalizePath(sphere_orig_L)
-  if(!is.null(resample)) sphere_orig_R <- normalizePath(sphere_orig_R)
+  if (do_left_surf) fname_gifti_left <- normalizePath(fname_gifti_left) 
+  if (do_right_surf) fname_gifti_right <- normalizePath(fname_gifti_right) 
+  if (!is.null(resample)) sphere_orig_L <- normalizePath(sphere_orig_L)
+  if (!is.null(resample)) sphere_orig_R <- normalizePath(sphere_orig_R)
   
   # Create file names for separated cifti components
   basename_cifti <- basename(fname_cifti) #extract file name component of file path to cifti data
   extn <- get_cifti_extn(fname_cifti)  #get extension of cifti file (e.g. "dtseries.nii", "dscalar.nii")
-  if(do_left) surf_L <- gsub(extn,'L.func.gii',basename_cifti, fixed=TRUE)
-  if(do_right) surf_R <- gsub(extn,'R.func.gii',basename_cifti, fixed=TRUE)
-  if(do_sub) {
+  if (do_left) surf_L <- gsub(extn,'L.func.gii',basename_cifti, fixed=TRUE)
+  if (do_right) surf_R <- gsub(extn,'R.func.gii',basename_cifti, fixed=TRUE)
+  if (do_sub) {
     fname_vol <- gsub(extn,'nii',basename_cifti, fixed=TRUE)
     fname_labels <- gsub(extn,'labels.nii',basename_cifti, fixed=TRUE)
   }
@@ -113,16 +113,16 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   ### Check whether separated files already exist in outdir <-- THIS IS DANGEROUS. HCP SUBJECTS ALL HAVE SAME FILE NAME, SO SEPARATED FILE COULD EXIST BUT FOR ANOTHER SUBJECT/SESSION.
   #need_left <- need_right <- need_sub <- FALSE
   #all_files <- list.files(outdir)
-  #if(do_left) if(!(surf_L %in% all_files)) need_left <- TRUE
-  #if(do_right) if(!(surf_R %in% all_files)) need_right <- TRUE
-  #if(do_sub) if(!(fname_vol %in% all_files & fname_labels %in% all_files)) need_sub <- TRUE
+  #if (do_left) if (!(surf_L %in% all_files)) need_left <- TRUE
+  #if (do_right) if (!(surf_R %in% all_files)) need_right <- TRUE
+  #if (do_sub) if (!(fname_vol %in% all_files & fname_labels %in% all_files)) need_sub <- TRUE
 
   ### Construct system command to create needed files
 
-  if(do_left) surf_L <- file.path(outdir,surf_L)
-  if(do_right) surf_R <- file.path(outdir,surf_R)
-  if(do_sub) fname_vol <- file.path(outdir,fname_vol)
-  if(do_sub) fname_labels <- file.path(outdir,fname_labels)
+  if (do_left) surf_L <- file.path(outdir,surf_L)
+  if (do_right) surf_R <- file.path(outdir,surf_R)
+  if (do_sub) fname_vol <- file.path(outdir,fname_vol)
+  if (do_sub) fname_labels <- file.path(outdir,fname_labels)
   
   #TO DO: Deal with the possibility of spaces in file paths. 
   #I tried adding quotes around the file paths, but that resulted in an error (e.g., "Unable to open ~/tfMRI_MOTOR_LR_Atlas.L.func.gii for writing.")
@@ -130,11 +130,11 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   #Would need to make sure it works on Windows and Linux
 
   cmd_left <- cmd_right <- cmd_sub <- NULL
-  if(do_left) cmd_left <- paste('-metric CORTEX_LEFT', surf_L, sep=' ')
-  if(do_right) cmd_right <- paste('-metric CORTEX_RIGHT', surf_R, sep=' ')
-  if(do_sub) cmd_sub <- paste('-volume-all', fname_vol, '-label', fname_labels, sep=' ')
+  if (do_left) cmd_left <- paste('-metric CORTEX_LEFT', surf_L, sep=' ')
+  if (do_right) cmd_right <- paste('-metric CORTEX_RIGHT', surf_R, sep=' ')
+  if (do_sub) cmd_sub <- paste('-volume-all', fname_vol, '-label', fname_labels, sep=' ')
 
-  if(do_left | do_right | do_sub){
+  if (do_left | do_right | do_sub) {
     cmd <- paste(wb_cmd, '-cifti-separate', fname_cifti, 'COLUMN', cmd_left, cmd_right, cmd_sub, sep=' ')
     system(cmd)
   }
@@ -147,28 +147,28 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   ###    b) Use -metric-resample to resample surface/cortex files into target resolution
   ###    c) Use -surface-resample to resample gifti files (if provided) into target resolution
 
-  if(!is.null(resample)){
+  if (!is.null(resample)) {
     
     #location of helper files
-    if(make_helper_files==FALSE & delete_helper_files==TRUE){
+    if (make_helper_files==FALSE & delete_helper_files==TRUE) {
       warning('Since make_helper_files is FALSE, I will not delete the helper files.  Setting delete_helper_files to FALSE.')
       delete_helper_files <- FALSE
     }
-    if(make_helper_files==FALSE) dir2 <- file.path(outdir,'helper_files_resampling') #expected location of existing helper files
-    if(make_helper_files==TRUE){
-      if(delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
-      if(!delete_helper_files){
+    if (make_helper_files==FALSE) dir2 <- file.path(outdir,'helper_files_resampling') #expected location of existing helper files
+    if (make_helper_files==TRUE) {
+      if (delete_helper_files) dir2 <- tempdir() #if helper files will be deleted, put them in a temporary directory
+      if (!delete_helper_files) {
         dir2 <- file.path(outdir,'helper_files_resampling') #location to save helper files
-        if(dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
-        if(!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
+        if (dir.exists(dir2)) warning('helper_files_resampling directory already exists and make_helper_files==TRUE. Helper files may be overwritten.')
+        if (!dir.exists(dir2)) dir.create(dir2) #create directory to make and keep helper files
       }
     }
     
     #a) Generate spheres in target resolution using -surface-create-sphere
     sphere_target_R <- file.path(dir2,'Sphere.target.R.surf.gii')
     sphere_target_L <- file.path(dir2,'Sphere.target.L.surf.gii')
-    if(make_helper_files) {
-      if(verbose) cat('Creating spherical surfaces in target resolution... \n')
+    if (make_helper_files) {
+      if (verbose) cat('Creating spherical surfaces in target resolution... \n')
       make_helper_spheres(sphere_target_R, sphere_target_L, target_res=resample, wb_cmd)
     }
     
@@ -180,13 +180,13 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     surf_target_L <- file.path(outdir, 'surf.target.L.func.gii')
     surf_target_R <- file.path(outdir, 'surf.target.R.func.gii')
 
-    if(do_left){
-      if(verbose) cat('Resampling components to target resolution... \n')
+    if (do_left) {
+      if (verbose) cat('Resampling components to target resolution... \n')
       system(paste(wb_cmd, '-metric-resample', surf_L, sphere_orig_L, sphere_target_L, 'BARYCENTRIC', surf_target_L, sep=' '))
     }
     
-    if(do_right){
-      if(verbose) cat('Resampling components to target resolution... \n')
+    if (do_right) {
+      if (verbose) cat('Resampling components to target resolution... \n')
       system(paste(wb_cmd, '-metric-resample', surf_R, sphere_orig_R, sphere_target_R, 'BARYCENTRIC', surf_target_R, sep=' '))
     }
     
@@ -201,8 +201,8 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     ### Read in GIFTI surface geometry files if provided
     
     #left hemisphere
-    if(do_left_surf){
-      for(ii in 1:num_surf){
+    if (do_left_surf) {
+      for(ii in 1:num_surf) {
         gifti_target_L <- file.path(outdir, paste0('gifti',ii,'.target.L.surf.gii'))
         cmd = paste(wb_cmd, '-surface-resample', fname_gifti_left[ii], sphere_orig_L, sphere_target_L, 'BARYCENTRIC', gifti_target_L, sep=' ')
         system(cmd)
@@ -211,8 +211,8 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     }
     
     #right hemisphere
-    if(do_right_surf){
-      for(ii in 1:num_surf){
+    if (do_right_surf) {
+      for(ii in 1:num_surf) {
         gifti_target_R <- file.path(outdir, paste0('gifti',ii,'.target.R.surf.gii'))
         cmd = paste(wb_cmd, '-surface-resample', fname_gifti_right[ii], sphere_orig_R, sphere_target_R, 'BARYCENTRIC', gifti_target_R, sep=' ')
         system(cmd)
@@ -227,32 +227,32 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
   ### Read in gifti and nifti files
   result <- vector('list', length=4)
   names(result) <- c('CORTEX_LEFT','CORTEX_RIGHT','VOL','LABELS')
-  if(do_left) {
-    if(verbose) cat('Reading in left cortical data ... \n')
+  if (do_left) {
+    if (verbose) cat('Reading in left cortical data ... \n')
     result$CORTEX_LEFT <- do.call(cbind, readGIfTI(surf_L)$data)
   }
-  if(do_right) {
-    if(verbose) cat('Reading in right cortical data ... \n')
+  if (do_right) {
+    if (verbose) cat('Reading in right cortical data ... \n')
     result$CORTEX_RIGHT <- do.call(cbind, readGIfTI(surf_R)$data)
   }
-  if(do_sub){
-    if(verbose) cat('Reading in volumetric data ... \n')
+  if (do_sub) {
+    if (verbose) cat('Reading in volumetric data ... \n')
     result$VOL <- readNIfTI(fname_vol, reorient=FALSE)
     result$LABELS <- readNIfTI(fname_labels, reorient=FALSE)
     result$LABELS[result$LABELS > 0] <- result$LABELS[result$LABELS > 0] + 2 #shift by 2 to be consistent with Matlab ft_read_cifti function, which labels 1=CORTEX_LEFT and 2=CORTEX_RIGHT
   }
 
 
-  if(do_left_surf){
+  if (do_left_surf) {
 
     result$SURF_LEFT <- vector('list', num_surf)
     names(result$SURF_LEFT) <- surf_names
 
-    for(ii in 1:num_surf){
+    for(ii in 1:num_surf) {
       surf_left_ii <- readGIfTI(fname_gifti_left[ii])$data
       verts_left_ii <- surf_left_ii$pointset
       faces_left_ii <- surf_left_ii$triangle
-      if(min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
+      if (min(faces_left_ii)==0) faces_left_ii <- faces_left_ii + 1 #start vertex indexing at 1 instead of 0
       surf_left_ii <- list(vertices = verts_left_ii, faces = faces_left_ii)
       class(surf_left_ii) <- 'surface'
       result$SURF_LEFT[[ii]] <- surf_left_ii
@@ -262,16 +262,16 @@ cifti_read_separate <- function(fname_cifti, fname_gifti_left=NULL, fname_gifti_
     result$SURF_LEFT <- NULL
   }
 
-  if(do_right_surf){
+  if (do_right_surf) {
 
     result$SURF_RIGHT <- vector('list', num_surf)
     names(result$SURF_RIGHT) <- surf_names
 
-    for(ii in 1:num_surf){
+    for(ii in 1:num_surf) {
       surf_right_ii <- readGIfTI(fname_gifti_right[ii])$data
       verts_right_ii <- surf_right_ii$pointset
       faces_right_ii <- surf_right_ii$triangle
-      if(min(faces_right_ii)==0) faces_right_ii <- faces_right_ii + 1 #start vertex indexing at 1 instead of 0
+      if (min(faces_right_ii)==0) faces_right_ii <- faces_right_ii + 1 #start vertex indexing at 1 instead of 0
       surf_right_ii <- list(vertices = verts_right_ii, faces = faces_right_ii)
       class(surf_right_ii) <- 'surface'
       result$SURF_RIGHT[[ii]] <- surf_right_ii

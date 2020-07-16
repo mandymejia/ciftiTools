@@ -7,16 +7,16 @@
 #' @return Logical indicating whether CIFTI file was created.
 #' @export
 #'
-# cifti_save <- function(cifti, fname_out, wb_cmd=NULL){
+# cifti_save <- function(cifti, fname_out, wb_cmd=NULL) {
 #
 #   wb_cmd <- get_wb_cmd_path(wb_cmd)
 #
 #   cifti_extn <- get_cifti_extn(fname_out)
-#   if(grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'
-#   if(grepl('dscalar',cifti_extn)) create_cmd <- '-cifti-create-dense-scalar'
-#   if(grepl('dlabel',cifti_extn)) create_cmd <- '-cifti-create-label'
+#   if (grepl('dtseries',cifti_extn)) create_cmd <- '-cifti-create-dense-timeseries'
+#   if (grepl('dscalar',cifti_extn)) create_cmd <- '-cifti-create-dense-scalar'
+#   if (grepl('dlabel',cifti_extn)) create_cmd <- '-cifti-create-label'
 #
-#   if(!is.null(cifti$CORTEX_LEFT)) cmd_left <- paste
+#   if (!is.null(cifti$CORTEX_LEFT)) cmd_left <- paste
 #
 #   system(paste(wb_cmd, create_cmd, fname_out,
 #                '-volume', vol_orig, labels_orig,

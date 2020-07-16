@@ -9,10 +9,12 @@ cifti_view_surface(
   idx = 1,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  both_lateral_together = FALSE,
   mode = c("widget", "image", "video"),
   width = NULL,
   height = NULL,
+  bg = NULL,
+  title = NULL,
+  text_color = "black",
   fname_prefix = "cifti",
   write_dir = NULL,
   colors = NULL,
@@ -20,25 +22,21 @@ cifti_view_surface(
   color_values = NULL,
   surfL = NULL,
   surfR = NULL,
-  colorbar_position = c("bottom", "right", "separate"),
-  colorbar_label = ""
+  colorbar_embedded = TRUE,
+  colorbar_digits = NULL
 )
 }
 \arguments{
-\item{cifti}{Object of class "cifti". See \code{help(cifti_read_separate)}, \code{help(cifti_make)}, and \code{help(is.cifti)}.}
+\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is.cifti)}.}
 
-\item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default is the first index.}
+\item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.}
 
 \item{hemisphere}{Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
-colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window (exception: see \code{both_lateral_together}).}
+colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window.}
 
 \item{view}{Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
-
-\item{both_lateral_together}{If only the lateral views of both hemisphers are to be shown, the hemispheres can be viewed together spatially
-by setting this argument to \code{TRUE}. Otherwise, they are displayed in separate panels (default). This argument will not affect the layout in 
-other situations.}
 
 \item{mode}{One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
 of the RGL window, save it to a file in \code{write_dir} namedial by \code{fname_prefix} and close it. "video" will take a series of screenshots
@@ -46,12 +44,24 @@ of the RGL window, while rotating the brain surface(s), saving each to a file in
 the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro. Only the "widget" view mode is
 supported right now.}
 
-\item{width, height}{The dimensions of the RGL window, in pixels. If both are \code{NULL} (default), it will use a 7x9 aspect ratio for each panel and
-the largest size that fits within a 1600x900 pixel area (a standard monitor size) . If one of these arguments is \code{NULL}, the other will be set 
-to make each panel have a 7x9 aspect ratio.}
+\item{width, height}{The dimensions of the RGL window, in pixels. If both are 
+\code{NULL} (default), the dimensions will be set to 
+1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
+1500 x 525 for 2x1 subplots, and
+500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
+within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+the same aspect ratio. Both could be specified to set the dimensions exactly.}
+
+\item{bg}{Background color. \code{NULL} will not color the background (white).}
+
+\item{title}{Optional title for the plot. It will be printed at the top in
+a separate subplot with 1/4 the height of the brain cortex subplots.
+\code{NULL} (default) will not make a title.}
+
+\item{text_color}{Color for text in title and colorbar legend. Default: "black".}
 
 \item{fname_prefix}{An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-Default is "cifti". Note: only the "widget" view mode is supported right now.}
+Default: "cifti". Note: only the "widget" view mode is supported right now.}
 
 \item{write_dir}{Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
 supported right now.}
@@ -60,7 +70,7 @@ supported right now.}
 and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 See the \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default is sequential. See the
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default: sequential. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
@@ -71,9 +81,13 @@ one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the valu
 for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
 \code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.}
 
-\item{colorbar_position}{"bottom" (default), "right", or "separate" from the RGL window.}
+\item{colorbar_embedded}{Should the colorbar be embedded in the RGL window?
+It will be positioned in the bottom-left corner, in a separate subplot 
+with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
+If \code{FALSE}, print it separately instead.}
 
-\item{colorbar_label}{A title for the colorbar (none by default).}
+\item{colorbar_digits}{The number of digits for the colorbar legend ticks. 
+If \code{NULL} (default), let \code{\link{format}} decide.}
 }
 \description{
 Visualize cifti brain data. The \code{rgl} package is required.

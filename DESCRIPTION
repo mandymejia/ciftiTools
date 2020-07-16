@@ -24,6 +24,6 @@ Imports:
 Suggests:
     papayar,
     testthat
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 URL: https://github.com/mandymejia/ciftiTools
 BugReports: https://github.com/mandymejia/ciftiTools/issues
