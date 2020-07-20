@@ -12,7 +12,7 @@
 #'  defaults to the current working directory.
 #' @inheritParams wb_path_Param
 #' 
-#' @importFrom gifti readGIfTI
+#' @importFrom gifti readgii
 #'
 #' @return A T x B matrix, where T is the number of time points and B is the number of brainordinates in the CIFTI file.
 #' @export
@@ -69,7 +69,7 @@ read_cifti_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL,
     stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
                 ". The command was:\n", cmd))
   }
-  result <- readGIfTI(gifti_fname)
+  result <- readgii(gifti_fname)
   result <- result$data$normal
 
   # [TO DO]: don't delete since it's in tempdir(). Better way? safe to read (above line)?

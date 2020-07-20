@@ -31,7 +31,7 @@ makeCIfTI(
 }
 \arguments{
 \item{cortexL, cortexR}{(Optional) [Left/right] cortical data. Can be a file
-path for GIFTI data, an object from \code{\link[gifti]{readGIfTI}}, or an 
+path for GIFTI data, an object from \code{\link[gifti]{readgii}}, or an 
 object of class "ciftiTools_cortex".}
 
 \item{subcortVol}{(Optional) Volumetric subcortical data. Can 
@@ -54,7 +54,7 @@ be a file path for NIFTI data, an object from
 ciftiTools_subcortical" object.}
 
 \item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
-path for GIFTI data, an object from \code{\link[gifti]{readGIfTI}}, or an 
+path for GIFTI data, an object from \code{\link[gifti]{readgii}}, or an 
 object of class "cifti_surface".}
 
 \item{read_dir}{(Optional) Append a directory to all file names. If \code{NULL}
@@ -69,7 +69,7 @@ An object of type "cifti", a list containing at least 4 elements:
 }
 \description{
 Make a "cifti" object from the separated left and right cortical 
- GIfTI data and surface geometry files (\code{\link[gifti]{readGIfTI}}), 
+ GIfTI data and surface geometry files (\code{\link[gifti]{readgii}}), 
  as well as the subcortical NIfTI file (\code{\link[RNifti]{readNifti}}).
  Objects can be provided as file names, GIFTI/NIFTI objects, or "cifti_[...]"
  objects.

@@ -100,7 +100,7 @@ one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the valu
 \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{surfL, surfR}{(Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
-for a GIfTI, a file read by gifti::readGIfTI, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
+for a GIfTI, a file read by gifti::readgii, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
 \code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.}
 
 \item{colorbar_embedded}{Should the colorbar be embedded in the RGL window?

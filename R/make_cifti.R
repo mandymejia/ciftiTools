@@ -6,11 +6,11 @@
 #' @return The "cifti_cortex" object.
 #' @export
 #'
-#' @importFrom gifti readGIfTI is.gifti
+#' @importFrom gifti readgii is.gifti
 make_cifti_cortex <- function(cortex) {
   # File path.
   if (is.fname(cortex)) {
-    cortex <- readGIfTI(cortex)
+    cortex <- readgii(cortex)
   }
   # GIFTI,
   if (is.gifti(cortex)) { 
@@ -93,10 +93,10 @@ make_cifti_vol <- function(mat, mask) {
 #' @return The "cifti_surface" object.
 #' @export
 #'
-#' @importFrom gifti readGIfTI is.gifti
+#' @importFrom gifti readgii is.gifti
 make_cifti_surface <- function(surf) {
   # file path
-  if (is.fname(surf)){ surf <- readGIfTI(surf) }
+  if (is.fname(surf)){ surf <- readgii(surf) }
   # GIFTI
   gifti_to_surf <- function(gifti) {
     surf <- gifti$data
@@ -118,13 +118,13 @@ make_cifti_surface <- function(surf) {
 #' Get CIFTI data from separate GIfTI and NIfTI files
 #'
 #' @description Make a "cifti" object from the separated left and right cortical 
-#'  GIfTI data and surface geometry files (\code{\link[gifti]{readGIfTI}}), 
+#'  GIfTI data and surface geometry files (\code{\link[gifti]{readgii}}), 
 #'  as well as the subcortical NIfTI file (\code{\link[RNifti]{readNifti}}).
 #'  Objects can be provided as file names, GIFTI/NIFTI objects, or "cifti_[...]"
 #'  objects. 
 #'
 #' @param cortexL,cortexR (Optional) [Left/right] cortical data. Can be a file
-#'  path for GIFTI data, an object from \code{\link[gifti]{readGIfTI}}, or an 
+#'  path for GIFTI data, an object from \code{\link[gifti]{readgii}}, or an 
 #'  object of class "ciftiTools_cortex".
 #' @param subcortVol (Optional) Volumetric subcortical data. Can 
 #'  be a file path for NIFTI data, an object from 
@@ -143,7 +143,7 @@ make_cifti_surface <- function(surf) {
 #'  \code{\link[RNifti]{readNifti}}, or the "labels" component of a 
 #'  ciftiTools_subcortical" object.
 #' @param surfL,surfR (Optional) [Left/right] brain surface model. Can be a file
-#'  path for GIFTI data, an object from \code{\link[gifti]{readGIfTI}}, or an 
+#'  path for GIFTI data, an object from \code{\link[gifti]{readgii}}, or an 
 #'  object of class "cifti_surface". 
 #' @param read_dir (Optional) Append a directory to all file names. If \code{NULL}
 #'  (default), do not modify file names. 
