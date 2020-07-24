@@ -47,11 +47,14 @@ Other updates:
     * Please contact the developers if you are interested in this functionality.
     * A workaround would be to separate/resample the ROIs, and then read them in with `make_cifti_from_separate()` (haven't tested this yet).
 * Add option to store a zero-value threshold, `EPS`. Set it with `ciftiTools.setOption("EPS", 1e-8)`. This is used by `view_cifti()` and `flatten_cifti()` to detect constant zero brainordinates.
+* Several function aliases, for example `readCIfTI()` and `readcii()` for `read_cifti()`.
+* `plot()` method for `"cifti"` objects.
 
 ## Removed functionality
 
 * The `overwrite` and `make_helper_files` arguments were removed. All functions will overwrite existing files, and this cannot be changed.
 * A `"cifti"` object will only support one surface geometry model at a time.
+    * `view_cifti()` can accept a surface GIFTI file directly. 
 * The default brainstructures are `left` and `right` only (excludes the subcortical data).
 
 ## Notes for developers
