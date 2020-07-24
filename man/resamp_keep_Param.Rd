@@ -5,7 +5,10 @@
 \title{resamp_keep}
 \arguments{
 \item{resamp_keep}{If resampled files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).}
+deleted at the end of this function call? Default: \code{FALSE} (delete).
+Keeping the resampled files may help speed up certain tasks, for example
+when repeatedly iterating over subjects--the CIFTI will only be resampled
+once instead of at each iteration.}
 }
 \description{
 resamp_keep

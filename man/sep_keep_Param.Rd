@@ -4,8 +4,11 @@
 \alias{sep_keep_Param}
 \title{sep_keep}
 \arguments{
-\item{sep_keep}{If separated files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).}
+\item{sep_keep}{If separated files are created, should they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).
+Keeping the separated files may help speed up certain tasks, for example
+when repeatedly iterating over subjects--the CIFTI will only be separated
+once instead of at each iteration.}
 }
 \description{
 sep_keep

@@ -84,8 +84,11 @@ as the CIFTI data. It is required for resampling.}
 \item{sphereR_fname}{The right GIFTI sphere file in the same resolution
 as the CIFTI data. It is required for resampling.}
 
-\item{sep_keep}{If separated files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).}
+\item{sep_keep}{If separated files are created, should they be kept or 
+deleted at the end of this function call? Default: \code{FALSE} (delete).
+Keeping the separated files may help speed up certain tasks, for example
+when repeatedly iterating over subjects--the CIFTI will only be separated
+once instead of at each iteration.}
 
 \item{sep_fnames}{(Optional) Where to write the separated files (override
  their default file names). This is a named list 
@@ -108,7 +111,10 @@ deleted at the end of this function call? Default: \code{FALSE} (delete).}
  the same directory.}
 
 \item{resamp_keep}{If resampled files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).}
+deleted at the end of this function call? Default: \code{FALSE} (delete).
+Keeping the resampled files may help speed up certain tasks, for example
+when repeatedly iterating over subjects--the CIFTI will only be resampled
+once instead of at each iteration.}
 
 \item{resamp_fnames}{Where to write the resampled files. This is a named list 
  where each entry's name is a file type label, and each entry's value

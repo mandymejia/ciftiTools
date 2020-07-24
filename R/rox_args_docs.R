@@ -67,6 +67,9 @@ NULL
 #'
 #' @param resamp_keep If resampled files are created, will they be kept or 
 #'  deleted at the end of this function call? Default: \code{FALSE} (delete).
+#'  Keeping the resampled files may help speed up certain tasks, for example
+#'  when repeatedly iterating over subjects--the CIFTI will only be resampled
+#'  once instead of at each iteration.
 #' @name resamp_keep_Param
 NULL
 
@@ -124,8 +127,11 @@ NULL
 
 #' sep_keep
 #'
-#' @param sep_keep If separated files are created, will they be kept or 
+#' @param sep_keep If separated files are created, should they be kept or 
 #'  deleted at the end of this function call? Default: \code{FALSE} (delete).
+#'  Keeping the separated files may help speed up certain tasks, for example
+#'  when repeatedly iterating over subjects--the CIFTI will only be separated
+#'  once instead of at each iteration.
 #' @name sep_keep_Param
 NULL
 
