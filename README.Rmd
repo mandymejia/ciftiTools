@@ -44,10 +44,12 @@ ciftiTools.setOption('wb_path', 'Desktop/workbench')
 # Read in the CIFTI file, and resample it to 8000 vertices per hemisphere.
 cii <- read_cifti(
   cifti_fname='Desktop/data/my_CIFTI_file.dtseries.nii', 
-  surfL_fname='Desktop/data/32k_inflated_left.gii', surfR_fname='Desktop/data/32k_inflated_right.gii', 
+  surfL_fname='Desktop/data/32k_inflated_left.gii', 
+  surfR_fname='Desktop/data/32k_inflated_right.gii', 
   resamp_res=8000, 
   # The spheres are only required for resampling.
-  sphereL_fname='Desktop/data/32k_left_sphere.gii', sphereR_fname='Desktop/data/32k_right_sphere.gii'
+  sphereL_fname='Desktop/data/32k_left_sphere.gii', 
+  sphereR_fname='Desktop/data/32k_right_sphere.gii'
 )
 
 # Visualize the surface.
@@ -56,8 +58,10 @@ plot(cii)
 
 ## Wishlist
 
-* static images (e.g. for Markdown documents)
-* `cifti_write()` function
+* static images in `view_cifti()`
+* slider in `view_cifti()` to change column/time
+* `write_cifti()` 
+* `unflatten_cifti()`
 * tests
 * CRAN
 * Neuroconductor
