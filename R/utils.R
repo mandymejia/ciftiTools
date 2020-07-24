@@ -1,165 +1,199 @@
-#' Summarise cifti objects
+#' Format a path
 #'
-#' Summary method for class "cifti"
+#' Normalize and validate a path. Optionally, place it in a directory. 
 #'
-#' @param object an object of class "cifti"
-#' @param ... further arguments passed to or from other methods.
-#' @export
-#' @method summary cifti
-summary.cifti <- function(object, ...) {
-  out <- list()
-  class(out) <- "summary.cifti"
-  out$includes <- names(object)[!sapply(object, is.null)]
-  if ('VOL' %in% out$includes) out$includes <- c(out$includes[!(out$includes %in% c('VOL','LABELS'))],'SUBCORTICAL')
-  if ('CORTEX_LEFT' %in% out$includes) out$CORTEX_LEFT <- dim(object$CORTEX_LEFT)
-  if ('CORTEX_RIGHT' %in% out$includes) out$CORTEX_RIGHT <- dim(object$CORTEX_RIGHT)
-  if ('SURF_LEFT' %in% out$includes) out$SURF_LEFT <- names(out$SURF_LEFT)
-  if ('SURF_RIGHT' %in% out$includes) out$SURF_RIGHT <- names(out$SURF_RIGHT)
-  if ('SUBCORTICAL' %in% out$includes) out$VOL <- list(dim_vol=dim(object$VOL), nvox_vol=sum(object$LABELS>0))
-  if ('SUBCORTICAL' %in% out$includes) out$LABELS <- table(object$LABELS[object$LABELS>0])
-  return(out)
-}
+#' @param path The path to normalize.
+#' @param dir (Optional) the directory to append to the beginning of the path.
+#'  \code{NULL} (default) to not append any directory, leaving \code{path}
+#'  unchanged.
+#' @param mode The mode for \code{\link{file.access}} to verify existence, 
+#'  writing permission, or reading permission. Use NA (default) to not perform 
+#'  any check.
+#' 
+#' @return The normalized path, or \code{NULL} if the path was \code{NULL}.
+#' 
+format_path <- function(path, dir=NULL, mode=NA) {
 
+  # Do nothing if the path is NULL.
+  if (is.null(path)) { return(path) }
 
-#' @param x an object of class "summary.cifti"
-#' @export
-#' @method print summary.cifti
-#' @rdname summary.cifti
-print.summary.cifti <- function(x, ...) {
-  cat("Brain Structures: ", paste(x$includes, collapse=', '), " \n")
-  if ('CORTEX_LEFT' %in% x$includes) cat("Left Cortex: ", x$CORTEX_LEFT[1], "surface vertices, ", x$CORTEX_LEFT[2], "measurements \n")
-  if ('CORTEX_RIGHT' %in% x$includes) cat("Right Cortex: ", x$CORTEX_RIGHT[1], "surface vertices, ", x$CORTEX_RIGHT[2], "measurements \n")
-  if ('SURF_LEFT' %in% x$includes) cat("Left Surface Models: ", paste(x$SURF_LEFT, collapse=', '))
-  if ('SURF_RIGHT' %in% x$includes) cat("Right Surface Models: ", paste(x$SURF_RIGHT, collapse=', '))
-  if ('SUBCORTICAL' %in% x$includes) {
-    cat("Subcortical: ", x$VOL[[2]], "voxels, ", x$VOL[[1]][4], "measurements \n")
-    cat("Subcortical Labels:")
-    print(x$LABELS)
-  }
-}
+  # Append dir if provided.
+  if (!is.null(dir)) { path <- file.path(dir, path) }
+  path <- normalizePath(path, mustWork=FALSE)
 
-#' @export
-#' @method print cifti
-#' @rdname summary.cifti
-print.cifti <- function(x, ...) {
-  print.summary.cifti(summary(x))
-}
+  # Get the full file path (for Linux: previous normalizePath() does not get 
+  #   full file path if dir did not exist.)
+  path <- file.path(
+    normalizePath(dirname(path), mustWork=FALSE), 
+    basename(path)
+  )
 
-
-#' Checks whether object is a valid cifti object
-#'
-#' @param x A list in the format of a cifti object.
-#'
-#' @return Logical indicating whether x is a valid cifti object
-#' @export
-#'
-is.cifti <- function(x) {
-  if (!is.list(x)) {message('x is not a list'); return(FALSE)}
-  names_x <- names(x)
-  if (length(names_x) != 6) { message('x must contain 6 elements (CORTEX_LEFT, CORTEX_RIGHT, SURF_LEFT, SURF_RIGHT, VOL, LABELS)'); return(FALSE) }
-  names_ok <- sapply(names_x, function(name) return(name %in% c('CORTEX_LEFT','CORTEX_RIGHT','SURF_LEFT','SURF_RIGHT','VOL','LABELS')))
-  if (min(names_ok) == 0) {
-    message('Elements of x must be named CORTEX_LEFT, CORTEX_RIGHT, SURF_LEFT, SURF_RIGHT, VOL, LABELS'); return(FALSE)
-  }
-  if (!is.null(x$CORTEX_LEFT)) { if (!is.matrix(x$CORTEX_LEFT)) { message('x$CORTEX_LEFT not a matrix.'); return(FALSE) } }
-  if (!is.null(x$CORTEX_RIGHT)) { if (!is.matrix(x$CORTEX_RIGHT)) { message('x$CORTEX_RIGHT not a matrix.'); return(FALSE) } }
-
-  if (!is.null(x$SURF_LEFT)) {
-    nsurf_left <- length(x$SURF_LEFT)
-    if (!is.list(x$SURF_LEFT)) { message('x$SURF_LEFT not a list'); return(FALSE) }
-    if (min(sapply(x$SURF_LEFT, is.cifti_surface)) == 0) { message('At least one element of x$SURF_LEFT not a valid surface object.'); return(FALSE) }
-    nvert_left <- sapply(x$SURF_LEFT, function(x) nrow(x$vertices))
-    if ((min(nvert_left) != max(nvert_left))) { message('All surfaces in x$SURF_LEFT must have the same number of vertices.'); return(FALSE) }
-    if (!is.null(x$CORTEX_LEFT)) { if (nvert_left[1] != nrow(x$CORTEX_LEFT)) { message('Number of vertices in x$CORTEX_LEFT and surfaces in x$SURF_LEFT must match.'); return(FALSE) } }
+  # Check existence/writing permission/reading permission of the path.
+  #   [TO DO]: Resolve-- "Please note that it is not a good idea to use this 
+  #   function to test before trying to open a file. On a multi-tasking system, 
+  #   it is possible that the accessibility of a file will change between the  
+  #   time you call file.access() and the time you try to open the file. It is 
+  #   better to wrap file open attempts in try.
+  stopifnot(all(mode %in% c(NA, 0, 2, 4)))
+  for(m in mode) {
+    if (is.na(mode)) { next }
+    if (any(file.access(dirname(path), m) != 0)) { 
+      stop(paste0(
+        "The directory \"", dirname(path), "\"",
+        c(
+          " doesn't exist. ", "", 
+          " is not writeable. Does it exist? ", "", 
+          "is not readable. Does it exist? "
+        )[m+1],
+        "Check and try again.\n"
+      ))
+    }
   }
 
-  if (!is.null(x$SURF_RIGHT)) {
-    nsurf_right <- length(x$SURF_RIGHT)
-    if (!is.list(x$SURF_RIGHT)) { message('x$SURF_RIGHT not a list'); return(FALSE) }
-    if (min(sapply(x$SURF_RIGHT, is.cifti_surface)) == 0) { message('At least one element of x$SURF_RIGHT not a valid surface object.'); return(FALSE) }
-    nvert_right <- sapply(x$SURF_RIGHT, function(x) nrow(x$vertices))
-    if ((min(nvert_right) != max(nvert_right))) { message('All surfaces in x$SURF_RIGHT must have the same number of vertices.'); return(FALSE) }
-    if (!is.null(x$CORTEX_RIGHT)) { if (nvert_right[1] != nrow(x$CORTEX_RIGHT)) { message('Number of vertices in x$CORTEX_RIGHT and surfaces in x$SURF_RIGHT must match.'); return(FALSE) } }
-  }
-
-  if (!is.null(x$SURF_RIGHT) & !is.null(x$SURF_LEFT)) {
-    if (nsurf_left != nsurf_right) warning('The number of surface models in x$SURF_RIGHT and x$SURF_LEFT are not the same.')
-  }
-
-  if (!is.null(x$VOL)) { if (!is.array(x$VOL) | !is.numeric(x$VOL)) { message('x$VOL not a numeric array'); return(FALSE) } }
-  if (!is.null(x$LABELS)) { if (!is.array(x$LABELS)  | !is.numeric(x$LABELS)) { message('x$LABELS not a numeric array'); return(FALSE) } }
-
-  return(TRUE)
+  path
 }
 
-#' Checks whether object is a valid cifti_surface object
+#' File name check
 #'
-#' @param x A list in the format of a cifti_surface object.
+#' Simple check if something is an existing file.
 #'
-#' @return Logical indicating whether x is a valid cifti_surface object
-#' @export
-is.cifti_surface <- function(x) {
-  if (!is.list(x)) { message('Not a list'); return(FALSE) }
-  if (length(x) != 2) { message('Must be a list with 2 elements'); return(FALSE) }
-  if (!all.equal(names(x), c('vertices','faces'))) { message('Elements of x must be named "vertices" and "faces"'); return(FALSE) }
-  if (ncol(x$vertices) != 3) { message('x$vertices must have 3 columns'); return(FALSE) }
-  if (ncol(x$faces) != 3) { message('x$faces must have 3 columns'); return(FALSE) }
-  if (!is.numeric(x$faces)) { message('x$faces must be numeric'); return(FALSE) }
-  if (!is.numeric(x$vertices)) { message('x$vertices must be numeric'); return(FALSE) }
-  if (!all.equal(x$faces, round(x$faces), check.attributes=FALSE)) { message('x$faces must be only integers'); return(FALSE) }
-
-  V <- nrow(x$vertices)
-  if (max(x$faces) > V) { message('Max vertex index in x$faces is too high'); return(FALSE) }
-  if (min(x$faces) < 1) { message('Min vertex index in x$faces is too low'); return(FALSE) }
-
-  return(TRUE)
+#' @param x The potential file name
+#'
+#' @return Whether \code{x} is an existing file.
+#'
+is.fname <- function(x){
+  if(!(length(x)==1 & is.character(x))){ return(FALSE) }
+  file.exists(x) & !dir.exists(x)
 }
 
-#' Converts a file path, GIFTI object, or cifti_surface object to a cifti_surface object.
+#' Format a path for \code{\link{system}}. Right now, it just escapes spaces and
+#'  parentheses with \code{"\\\\"}.
 #'
-#' @param surf What to make a cifti_surface from
+#' @param R_path The name of the file. It should be properly formatted: if it 
+#'  exists, \code{file.exists(R_path)} should be \code{TRUE}.
 #'
-#' @return The cifti_surface object.
-#' @export
+#' @return The name of the file.
 #'
-#' @importFrom gifti readGIfTI is.gifti
-make_cifti_surface <- function(surf) {
-  gifti_to_surf <- function(gifti) {
-    surf <- gifti$data
-    verts <- surf$pointset
-    faces <- surf$triangle
-    if (min(faces)==0) faces <- faces + 1 #start vertex indexing at 1 instead of 0
-    surf <- list(vertices = verts, faces = faces)
-    class(surf) <- "cifti_surface"
-    return(surf)
+sys_path <- function(R_path) {
+  R_path <- gsub("(", "\\(", R_path, fixed=TRUE)
+  R_path <- gsub(")", "\\)", R_path, fixed=TRUE)
+  gsub(" ", "\\ ", R_path, fixed=TRUE)
+}
+
+#' Get the names of the arguments of a function as a character vector.
+#'
+#' @param fun The function to get the argument names for.
+#'
+#' @return The names of the arguments of \code{fun} as a character vector.
+#'
+get_kwargs <- function(fun) {
+  kwargs <- names(as.list(args(fun)))
+  kwargs <- kwargs[1:(length(kwargs)-1)] # last is empty
+  kwargs
+}
+
+#' Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
+#' an error is raised.
+#' @param kwargsA The first list of kwargs.
+#' @param kwargsB The second list of kwargs. If duplicates are present, the default
+#'  message recommends the user to remove the kwarg here in favor of placing the
+#'  correct one in \code{kwargsA}.
+#' @param labelA (Optional) Descriptor of \code{kwargsA} for error statement. Default "first kwarg(s)".
+#' @param labelB (Optional) Descriptor of \code{kwargsB} for error statement. Default "second kwarg(s)".
+#' @param extraMsg (Optional) Extra text for error statement. "[DEFAULT]" (default) will use this message: 
+#'  "Note that a kwarg only has to be provided to one of these. Place the correct value in the first 
+#'  location and remove the kwarg from the second location".
+#'
+#' @return A list with the union of \code{kwargsA} and \code{kwargsB}.
+#'
+merge_kwargs <- function(kwargsA, kwargsB, 
+  labelA="first kwarg(s)", labelB="second kwarg(s)", 
+  extraMsg="[DEFAULT]") {
+
+  # Identify repeated kwargs.
+  repeatedB_bool <- names(kwargsB) %in% names(kwargsA)
+  repeated <- names(kwargsB)[repeatedB_bool]
+  # Stop if any repeated kwargs differ.
+  kwargs_mismatch <- !mapply(identical, kwargsA[repeated], kwargsB[repeated])
+  if (sum(kwargs_mismatch) > 0) {
+    if(identical(extraMsg, "[DEFAULT]")){
+      extraMsg <- "Note that a kwarg only has to be provided to one of these. \
+        Place the correct value in the first location and remove the kwarg \
+        from the second location"
+    }
+    stop(paste0(
+      "A keyword argument(s) was provided twice with different values. Here is the kwarg(s) in disagreement:\n",
+      "The ", labelA, " was:\n",
+      "\"", paste0(kwargsA[kwargs_mismatch], collapse="\", \""), "\".\n",
+      "The ", labelB, " was:\n",
+      "\"", paste0(kwargsB[kwargs_mismatch], collapse="\", \""), "\".\n",
+      extraMsg
+    ))
   }
-  # file path
-  if (is.character(surf) & length(surf)==1 & file.exists(surf) & !dir.exists(surf)) {
-    surf <- gifti::readGIfTI(surf)
+  kwargs <- c(kwargsA, kwargsB[!repeatedB_bool])
+}
+
+#' Match user inputs to expected values
+#'
+#' Match each user input to an expected/allowed value. Raise a warning if either 
+#'  several user inputs match the same expected value, or at least one could not
+#'  be matched to any expected value. \code{ciftiTools} uses this function to 
+#'  match keyword arguments for a function call. Another use is to match 
+#'  brainstructure labels ("left", "right", or "subcortical").
+#'
+#' @param user Character vector of user input. These will be matched to 
+#'  \code{expected} using \code{match.arg()}.
+#' @param expected Character vector of expected/allowed values.
+#' @param unrecognized_action If any value in \code{user} could not be 
+#'  matched, or repeated matches occured, what should happen? Possible values 
+#'  are \code{"stop"} (default; raises an error), \code{"warning"}, and 
+#'  \code{"nothing"}. 
+#' @param user_value_label How to refer to the user input in a stop or warning
+#'  message. If \code{NULL}, no label is used.
+#'
+#' @return The matched user inputs.
+#'
+match_input <- function(
+  user, expected, 
+  unrecognized_action=c("stop", "warning", "nothing"),
+  user_value_label=NULL) {
+
+  unrecognized_action <- match.arg(
+    unrecognized_action, 
+    c("stop", "warning", "nothing")
+  )
+  unrecognized_FUN <- switch(unrecognized_action,
+    warning=warning,
+    stop=stop,
+    nothing=invisible
+  )
+
+  if (!is.null(user_value_label)) {
+    user_value_label <- paste0("\"", user_value_label, "\" ")
   }
-  # GIFTI
-  if (is.gifti(surf)) { surf <- gifti_to_surf(surf) }
-  # Return cifti_surface or error.
-  if (!is.cifti_surface(surf)) { 
-    stop("The object could not be converted into a cifti_surface object.")
-  } 
-  return(surf)
+  msg <- paste0(
+    "The user-input values ", user_value_label,
+    "did not match their expected values. ",
+    "Either several matched the same value, ",
+    "or at least one did not match any.\n\n",
+    "The user inputs were:\n",
+    "\t\"", paste0(user, collapse="\", \""), "\".\n",
+    "The expected values were:\n",
+    "\t\"", paste0(expected, collapse="\", \""), "\".\n"
+  )
+
+  tryCatch(
+    { 
+      matched <- match.arg(user, expected, several.ok=TRUE) 
+      if (length(matched) != length(user)) { stop() }
+      return(matched)
+    },
+    error = function(e) { 
+      unrecognized_FUN(msg)
+    },
+    finally = {
+    }
+  )
+
+  invisible(NULL)
 }
-
-#' Gets CIFTI file extension
-#'
-#' @param fname_cifti Path to CIFTI file, including full file name and extension
-#'
-#' @return Character file extension of CIFTI file, e.g. 'dtseries.nii', 'dscalar.nii'.
-#' @export
-#'
-get_cifti_extn <- function(fname_cifti) {
-
-  fname_cifti <- basename(fname_cifti)
-  fname_parts <- unlist(strsplit(fname_cifti, split='.', fixed = TRUE)) #split by "."
-  extn <- paste(rev(fname_parts)[c(2,1)], collapse='.') #"dtseries.nii", "dscalar.nii", etc.
-  return(extn)
-
-}
-
-
