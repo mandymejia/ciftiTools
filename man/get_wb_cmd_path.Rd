@@ -2,27 +2,21 @@
 % Please edit documentation in R/wb_cmd_path.R
 \name{get_wb_cmd_path}
 \alias{get_wb_cmd_path}
-\title{Retrieves the Connectome Workbench path from the ciftiTools_wb_path option or the provided argument.
-This path can be the Connectome Workbench folder or the executable directly.}
+\title{Retrieves the Connectome Workbench path from the \code{ciftiTools_wb_path} 
+ option or the provided argument. This path can be the Connectome Workbench
+ folder or the `wb_command` executable.}
 \usage{
-<<<<<<< HEAD
 get_wb_cmd_path(wb_path = NULL, verbose = FALSE)
 }
 \arguments{
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
-=======
-get_wb_cmd_path(wb_path, verbose = FALSE)
-}
-\arguments{
-\item{wb_path}{The path to the Connectome Workbench folder or executable. Ignored if the 
-ciftiTools_wb_path option has been set.}
->>>>>>> master
 
-\item{verbose}{Default FALSE.}
+\item{verbose}{Default: \code{FALSE}.}
 }
 \description{
-Retrieves the Connectome Workbench path from the ciftiTools_wb_path option or the provided argument.
-This path can be the Connectome Workbench folder or the executable directly.
+Retrieves the Connectome Workbench path from the \code{ciftiTools_wb_path} 
+ option or the provided argument. This path can be the Connectome Workbench
+ folder or the `wb_command` executable.
 }
