@@ -45,7 +45,7 @@ Other updates:
 * Handling of spaces and parentheses in file names.
 * The ROI data can be separated and resampled. However, the `"cifti"` object does not support ROIs, so they are ultimately not loaded. 
     * Please contact the developers if you are interested in this functionality.
-    * A workaround would be to separate/resample the ROIs, and then read them in with `make_cifti_from_separate()` (haven't tested this yet).
+    * A workaround would be to separate/resample the ROIs, and then read them in with `make_cifti()` (haven't tested this yet).
 * Add option to store a zero-value threshold, `EPS`. Set it with `ciftiTools.setOption("EPS", 1e-8)`. This is used by `view_cifti()` and `flatten_cifti()` to detect constant zero brainordinates.
 * Several function aliases, for example `readCIfTI()` and `readcii()` for `read_cifti()`.
 * `plot()` method for `"cifti"` objects.

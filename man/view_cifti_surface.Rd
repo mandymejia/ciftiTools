@@ -49,22 +49,40 @@ viewCIfTI_surface(
 )
 }
 \arguments{
-\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.}
+\item{cifti}{Object of class "cifti". 
+See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
+and \code{\link{is_cifti}}.}
 
-\item{idx}{The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.}
+\item{idx}{The time/column index of the cifti data to plot. 
+Currently one a single time point is supported. Default: the first index.}
 
-\item{hemisphere}{Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
-or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
-colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window.}
+\item{hemisphere}{Which brain cortex to display: "both", "left", or "right". 
+If \code{NULL} (default), each available surface (e.g. if \code{surfL}
+or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without
+data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
+colored by \code{color_NA}. Each cortex will be shown in a separate panel
+column within the RGL window.}
 
-\item{view}{Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
+\item{view}{Which view to display: "lateral", "medial", or "both". 
+If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
 
-\item{mode}{One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
-of the RGL window, save it to a file in \code{write_dir} namedial by \code{fname_prefix} and close it. "video" will take a series of screenshots
-of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} namedial by \code{fname_prefix}, and then close 
-the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro. Only the "widget" view mode is
-supported right now.}
+\item{mode}{One of "widget" (Default), "image", or "video":
+
+ "widget" will open an interactive RGL window. Left click and drag to rotate.
+ Use the scroll wheel to zoom. Run the R function 
+ \code{rgl::rgl.snapshot("my_file.png")} to save the RGL window as a png. 
+ See \code{\link[rgl]{rgl.snapshot}} for more information.
+ 
+ "image" will open the RGL window, take a screenshot using
+ \code{\link[rgl]{rgl.snapshot}}, and close it. The screenshot will be saved
+ as a png in \code{write_dir} and its name will be \code{fname_prefix}.
+
+ "video" will take a series of screenshots of the RGL window, while 
+ rotating the brain surface(s), saving each to a file in \code{write_dir} 
+ named by \code{fname_prefix}, and then close the RGL window. The frames can 
+ be converted to a video file using multimedia software such as Adobe 
+ Premiere Pro. The "video" mode is not yet supported.}
 
 \item{width, height}{The dimensions of the RGL window, in pixels. If both are 
 \code{NULL} (default), the dimensions will be set to 
@@ -80,28 +98,41 @@ the same aspect ratio. Both could be specified to set the dimensions exactly.}
 a separate subplot with 1/4 the height of the brain cortex subplots.
 \code{NULL} (default) will not make a title.}
 
-\item{text_color}{Color for text in title and colorbar legend. Default: "black".}
+\item{text_color}{Color for text in title and colorbar legend. Default: 
+"black".}
 
-\item{fname_prefix}{An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-Default: "cifti". Note: only the "widget" view mode is supported right now.}
+\item{fname_prefix}{An identifier to use for naming the saved images 
+("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+Default: "cifti".}
 
-\item{write_dir}{Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
-supported right now.}
+\item{write_dir}{Where should any output images be written. NULL (default) 
+ will write them to the current working directory. 
 
-\item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+ \code{write_dir} must already exist, or an error will occur.}
+
+\item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use, 
+OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
+and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), 
+\code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 See the \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default: sequential. See the
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, 
+or \code{"diverging"}. Default: sequential. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_values}{(Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
-one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
+\item{color_values}{(Optional) Controls the mapping of values to each 
+color in \code{colors}. If the length is longer than
+one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
+the value to \code{DATA_MAX}. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{surfL, surfR}{(Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
-for a GIfTI, a file read by gifti::readgii, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
-\code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.}
+\item{surfL, surfR}{(Optional if \code{cifti$SURF_LEFT} and 
+\code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. 
+Each can be a file path for a GIfTI, a file read by gifti::readgii, 
+or an object of class "cifti_surface". If provided, they will override 
+\code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} if they exist. 
+Otherwise, leave these arguments as \code{NULL} (default) to use 
+\code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.}
 
 \item{colorbar_embedded}{Should the colorbar be embedded in the RGL window?
 It will be positioned in the bottom-left corner, in a separate subplot 

@@ -72,7 +72,7 @@ NOTE: ROIs are currently
 not fully supported by ciftiTools, since "cifti" objects will not contain
 the ROIs. A workaround would be to keep the separated/resampled files
 with \code{sep_keep}/\code{resamp_keep} and then read those in with
-\code{make_cifti_from_separate}.}
+\code{make_cifti}.}
 
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
@@ -173,7 +173,7 @@ If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
 Read a CIFTI file by separating it into GIfTI and NIfTI files 
  (\code{\link{separate_cifti}}), optionally resampling them 
  (\code{\link{resample_cifti_separate}}), and then reading each separated 
- component into R  (\code{\link{make_cifti_from_separate}}).
+ component into R  (\code{\link{make_cifti}}).
 }
 \details{
 This function uses a system wrapper for the "wb_command"

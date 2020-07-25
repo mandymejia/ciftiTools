@@ -156,7 +156,7 @@ make_cifti_surface <- function(surf) {
 #'
 #' @export
 #'
-make_cifti_from_separate <- function(
+make_cifti <- function(
   cortexL=NULL, cortexR=NULL, 
   subcortVol=NULL, subcortMat=NULL, subcortMask=NULL, subcortLab=NULL, 
   surfL=NULL, surfR=NULL, 
@@ -222,7 +222,7 @@ make_cifti_from_separate <- function(
   cif
 }
 
-#' @rdname make_cifti_from_separate
+#' @rdname make_cifti
 #' @export
 makeCIfTI <- makecii <- function(
   cortexL=NULL, cortexR=NULL, 
@@ -230,7 +230,7 @@ makeCIfTI <- makecii <- function(
   surfL=NULL, surfR=NULL, 
   read_dir=NULL) {
 
-  make_cifti_from_separate(
+  make_cifti(
     cortexL, cortexR, 
     subcortVol, subcortMat, subcortMask, subcortLab, 
     surfL, surfR, 

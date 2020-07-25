@@ -375,18 +375,34 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 
 #' Visualize cifti brain data. The \code{rgl} package is required.
 #'
-#' @param cifti Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.
-#' @param idx The time/column index of the cifti data to plot. Currently one a single time point is supported. Default: the first index.
-#' @param hemisphere Which brain cortex to display: "both", "left", or "right". If \code{NULL} (default), each available surface (e.g. if \code{surfL}
-#'  or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
-#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel column within the RGL window.
-#' @param view Which view to display: "lateral", "medial", or "both". If \code{NULL} (default), both views will be shown. Each view
+#' @inheritParams cifti_Param
+#' @param idx The time/column index of the cifti data to plot. 
+#'  Currently one a single time point is supported. Default: the first index.
+#' @param hemisphere Which brain cortex to display: "both", "left", or "right". 
+#'  If \code{NULL} (default), each available surface (e.g. if \code{surfL}
+#'  or \code{cifti$SURF_LEFT} is not empty) will be displayed. Surfaces without
+#'  data (e.g. \code{cifti$CORTEX_LEFT} is empty) will still be displayed,
+#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel
+#'  column within the RGL window.
+#' @param view Which view to display: "lateral", "medial", or "both". 
+#'  If \code{NULL} (default), both views will be shown. Each view
 #'  will be shown in a separate panel row within the RGL window.
-#' @param mode One of "widget" (Default), "image", or "video". "widget" will open an interactive RGL window. "image" will take a screenshot
-#'  of the RGL window, save it to a file in \code{write_dir} namedial by \code{fname_prefix} and close it. "video" will take a series of screenshots
-#'  of the RGL window, while rotating the brain surface(s), saving each to a file in \code{write_dir} namedial by \code{fname_prefix}, and then close 
-#'  the RGL window. The frames can be converted to a video file using multimedia software such as Adobe Premiere Pro. Only the "widget" view mode is
-#'  supported right now.
+#' @param mode One of "widget" (Default), "image", or "video":
+#' 
+#'  "widget" will open an interactive RGL window. Left click and drag to rotate.
+#'  Use the scroll wheel to zoom. Run the R function 
+#'  \code{rgl::rgl.snapshot("my_file.png")} to save the RGL window as a png. 
+#'  See \code{\link[rgl]{rgl.snapshot}} for more information.
+#'  
+#'  "image" will open the RGL window, take a screenshot using
+#'  \code{\link[rgl]{rgl.snapshot}}, and close it. The screenshot will be saved
+#'  as a png in \code{write_dir} and its name will be \code{fname_prefix}.
+#' 
+#'  "video" will take a series of screenshots of the RGL window, while 
+#'  rotating the brain surface(s), saving each to a file in \code{write_dir} 
+#'  named by \code{fname_prefix}, and then close the RGL window. The frames can 
+#'  be converted to a video file using multimedia software such as Adobe 
+#'  Premiere Pro. The "video" mode is not yet supported.
 #' @param width,height The dimensions of the RGL window, in pixels. If both are 
 #'  \code{NULL} (default), the dimensions will be set to 
 #'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
@@ -398,22 +414,35 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param title Optional title for the plot. It will be printed at the top in
 #'  a separate subplot with 1/4 the height of the brain cortex subplots.
 #'  \code{NULL} (default) will not make a title.
-#' @param text_color Color for text in title and colorbar legend. Default: "black".
-#' @param fname_prefix An identifier to use for naming the saved images ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
-#'  Default: "cifti". Note: only the "widget" view mode is supported right now.
-#' @param write_dir Where to save image or video files. If NULL (default), uses the current working directory. Note: only the "widget" view mode is 
-#'  supported right now.
-#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-#'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+#' @param text_color Color for text in title and colorbar legend. Default: 
+#'  "black".
+#' @param fname_prefix An identifier to use for naming the saved images 
+#'  ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+#'  Default: "cifti". 
+#' @param write_dir Where should any output images be written. NULL (default) 
+#'  will write them to the current working directory. 
+#' 
+#'  \code{write_dir} must already exist, or an error will occur.
+#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, 
+#'  OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
+#'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), 
+#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
-#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default: sequential. See the
+#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, 
+#'  or \code{"diverging"}. Default: sequential. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param color_values (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer than
-#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
+#' @param color_values (Optional) Controls the mapping of values to each 
+#'  color in \code{colors}. If the length is longer than
+#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
+#'  the value to \code{DATA_MAX}. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param surfL,surfR (Optional if \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. Each can be a file path
-#'  for a GIfTI, a file read by gifti::readgii, or an object of class "cifti_surface". If provided, they will override \code{cifti$SURF_LEFT} and 
-#'  \code{cifti$SURF_RIGHT} if they exist. Otherwise, leave these arguments as \code{NULL} (default) to use \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.
+#' @param surfL,surfR (Optional if \code{cifti$SURF_LEFT} and 
+#'  \code{cifti$SURF_RIGHT} are not empty) The brain surface model to use. 
+#'  Each can be a file path for a GIfTI, a file read by gifti::readgii, 
+#'  or an object of class "cifti_surface". If provided, they will override 
+#'  \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT} if they exist. 
+#'  Otherwise, leave these arguments as \code{NULL} (default) to use 
+#'  \code{cifti$SURF_LEFT} and \code{cifti$SURF_RIGHT}.
 #' @param colorbar_embedded Should the colorbar be embedded in the RGL window?
 #'  It will be positioned in the bottom-left corner, in a separate subplot 
 #'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
@@ -446,17 +475,20 @@ view_cifti_surface <- function(cifti, idx=1,
   #   invalid value specified for graphical parameter "pin"
   while (!is.null(dev.list()))  dev.off()
 
-  # Check that the arguments are valid.
+  # ----------------------------------------------------------------------------
+  # Check arguments ------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+  # Check CIFTI, idx, and surfaces.
   if (!is_cifti(cifti)) stop("cifti argument is not a valid cifti object. See is_cifti().")
-  #if (length(idx) > 1) stop("Only one time/column index is supported right now.")
-  # surfaces.
+  if (length(idx) > 1) stop("Only one time/column index is supported right now.")
   if (is.null(surfL)) {
     if (is.null(cifti$SURF_LEFT) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "left")) {
         stop("The left hemisphere was requested, but no surface data was provided (cifti$SURF_LEFT or the surfL argument).")
       }
     } else {
-      surfL <- cifti$SURF_LEFT # to-edit
+      surfL <- cifti$SURF_LEFT
     }
   } else { surfL <- make_cifti_surface(surfL) }
   if (is.null(surfR)) {
@@ -465,12 +497,12 @@ view_cifti_surface <- function(cifti, idx=1,
         stop("The right hemisphere was requested, but no surface data was provided (cifti$SURF_RIGHT or the surfR argument).")
       }    
     } else {
-      surfR <- cifti$SURF_RIGHT # to-edit
+      surfR <- cifti$SURF_RIGHT
     }
   } else { surfR <- make_cifti_surface(surfR) }
   if (is.null(surfL) & is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
-  
-  # hemisphere and view.
+
+  # Check hemisphere and view.
   if (is.null(hemisphere)) {
     hemisphere <- c("left", "right", "both")[1*(!is.null(surfL)) + 2*(!is.null(surfR))]
   }
@@ -482,10 +514,19 @@ view_cifti_surface <- function(cifti, idx=1,
 
   all_panels_nrow <- brain_panels_nrow + 1*(!is.null(title)) + 1*colorbar_embedded
   all_panels_ncol <- brain_panels_ncol
-
-  # others...
+  
+  # Check other arguments.
   mode <- match.arg(mode, c("widget", "image", "video"))
-  if (mode != "widget") { stop("Only the widget view mode is supported right now.") }
+  if (mode == "video") { stop("The video mode is not yet supported.") }
+
+  if (mode=="image") {
+    if (!endsWith(prefix, ".png")) { prefix <- paste0(prefix, ".png") }
+    img_fname <- format_path(prefix, write_dir, mode=2)
+  }
+
+  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
+
+  # Check width and height.
   if (is.null(width) | is.null(height)) {
     DEF_ASPECT_PER_PANEL <- c(10, 7) # aspect ratio
     def_aspect <- DEF_ASPECT_PER_PANEL * c(brain_panels_ncol, brain_panels_nrow)
@@ -506,7 +547,6 @@ view_cifti_surface <- function(cifti, idx=1,
     brain_panels_width <- as.integer(width)
     brain_panels_height <- as.integer(height)
   }
-  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
 
   indiv_panel_width <- brain_panels_width/brain_panels_ncol
   indiv_panel_height <- brain_panels_height/brain_panels_nrow
@@ -517,9 +557,9 @@ view_cifti_surface <- function(cifti, idx=1,
     (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) * 
       (all_panels_nrow - brain_panels_nrow)
 
-  #################################################################
-  # Get the data values and surface models, and construct the mesh.
-  #################################################################
+  # ----------------------------------------------------------------------------
+  # Get the data values and surface models, and construct the mesh. ------------
+  # ----------------------------------------------------------------------------
 
   EPS <- ciftiTools.getOption("EPS")
 
@@ -583,9 +623,9 @@ view_cifti_surface <- function(cifti, idx=1,
   values <- unlist(list(left=valuesL, right=valuesR)[hemisphere], use.names=FALSE)
   if (all(is.na(values))) { stop("No non-constant zero data with valid surface.") }
 
-  ###############################################
-  # Assign colors to vertices based on intensity.
-  ###############################################
+  # ----------------------------------------------------------------------------
+  # Assign colors to vertices based on intensity. ------------------------------
+  # ----------------------------------------------------------------------------
 
   # Get the base palette.
   if (color_mode=="qualitative") {
@@ -616,9 +656,9 @@ view_cifti_surface <- function(cifti, idx=1,
   }
   rm(cols)
 
-  ###################
-  # Make the colorbar
-  ###################
+  # ----------------------------------------------------------------------------
+  # Make the colorbar ----------------------------------------------------------
+  # ----------------------------------------------------------------------------
 
   colorbar_min <- ifelse(
     color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
@@ -664,9 +704,9 @@ view_cifti_surface <- function(cifti, idx=1,
   )
 
 
-  ############################################################
-  # Color and arrange the meshes according to the layout.
-  ############################################################
+  # ----------------------------------------------------------------------------
+  # Color and arrange the meshes according to the layout. ----------------------
+  # ----------------------------------------------------------------------------
 
   # Open a new RGL window.
   rgl::open3d()
@@ -693,7 +733,7 @@ view_cifti_surface <- function(cifti, idx=1,
     rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
                 cex=2.5, # 250% font size,
                 adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
-                font=2,
+                font=2, # Forget if this made a difference...
                 color=text_color,
                 text=title
     )
@@ -772,12 +812,16 @@ view_cifti_surface <- function(cifti, idx=1,
     try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
   }
 
+  if (mode=="image") {
+    rgl::rgl.snapshot(img_fname)
+  }
+
   invisible()
 }
 
 #' Visualize cifti brain data
 #'
-#' @param cifti Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.
+#' @inheritParams cifti_Param
 #' @param structural_img The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
 #' @param idx The time/column index of the cifti data to plot.
 #' @param plane If use_papaya=FALSE, the plane to display. Default: "axial". Other options are "sagittal" and "coronal".
@@ -837,7 +881,7 @@ view_cifti_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
 
 #' Switch for \code{\link{view_cifti_surface}} or \code{\link{view_cifti_volume}}
 #'
-#' @param cifti Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.
+#' @inheritParams cifti_Param
 #' @param what Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and
 #'  volume otherwise
 #' @param ... Additional arguments to pass to either view function.
