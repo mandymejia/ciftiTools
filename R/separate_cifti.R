@@ -4,7 +4,7 @@
 #'  subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param
+#' @inheritParams brainstructures_Param_LR
 #' @param cortexL_fname,cortexR_fname (Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
 #'  defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 #'  relative, they will be saved in \code{write_dir}.

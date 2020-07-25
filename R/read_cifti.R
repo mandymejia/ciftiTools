@@ -13,8 +13,8 @@
 #'  below except \code{wb_path} will be ignored.
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param
-#' @inheritParams ROI_brainstructures_Param
+#' @inheritParams brainstructures_Param_LR
+#' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param
@@ -100,7 +100,7 @@ read_cifti <- function(
 
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical"),
-    user_value_label="ROI_brainstructures"
+    user_value_label="brainstructures"
   )
   if (!is.null(ROI_brainstructures)) {
     ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,

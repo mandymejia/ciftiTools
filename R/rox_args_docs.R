@@ -3,8 +3,18 @@
 #' @param brainstructures Character vector indicating which brain structure(s) 
 #'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 #'  cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
+#'  gray matter). Default: \code{c("left","right", "subcortical")} 
+#'  (all).
+#' @name brainstructures_Param_all
+NULL
+
+#' brainstructures
+#'
+#' @param brainstructures Character vector indicating which brain structure(s) 
+#'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+#'  cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
 #'  gray matter). Default: \code{c("left","right")} (brain surface only).
-#' @name brainstructures_Param
+#' @name brainstructures_Param_LR
 NULL
 
 #' cifti
@@ -130,7 +140,7 @@ NULL
 #'  the ROIs. A workaround would be to keep the separated/resampled files
 #'  with \code{sep_keep}/\code{resamp_keep} and then read those in with
 #'  \code{make_cifti}. 
-#' @name ROI_brainstructures_Param
+#' @name ROI_brainstructures_Param_LR
 NULL
 
 #' sep_keep
