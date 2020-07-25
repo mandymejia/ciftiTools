@@ -11,7 +11,8 @@
 #'  any check.
 #'
 #' @return The normalized path, or \code{NULL} if the path was \code{NULL}.
-#'
+#' @export 
+#' 
 format_path <- function(path, dir=NULL, mode=NA) {
 
   # Do nothing if the path is NULL.
@@ -60,6 +61,7 @@ format_path <- function(path, dir=NULL, mode=NA) {
 #' @param x The potential file name
 #'
 #' @return Whether \code{x} is an existing file.
+#' @export
 #'
 is.fname <- function(x){
   if(!(length(x)==1 & is.character(x))){ return(FALSE) }
@@ -85,7 +87,8 @@ sys_path <- function(R_path) {
 #' @param fun The function to get the argument names for.
 #'
 #' @return The names of the arguments of \code{fun} as a character vector.
-#'
+#' @export
+#' 
 get_kwargs <- function(fun) {
   kwargs <- names(as.list(args(fun)))
   kwargs <- kwargs[1:(length(kwargs)-1)] # last is empty
@@ -105,7 +108,8 @@ get_kwargs <- function(fun) {
 #'  location and remove the kwarg from the second location".
 #'
 #' @return A list with the union of \code{kwargsA} and \code{kwargsB}.
-#'
+#' @export
+#' 
 merge_kwargs <- function(kwargsA, kwargsB,
   labelA="first kwarg(s)", labelB="second kwarg(s)",
   extraMsg="[DEFAULT]") {
@@ -151,10 +155,9 @@ merge_kwargs <- function(kwargsA, kwargsB,
 #' @param user_value_label How to refer to the user input in a stop or warning
 #'  message. If \code{NULL}, no label is used.
 #'
-#' @export
-#'
 #' @return The matched user inputs.
-#'
+#' @export
+#' 
 match_input <- function(
   user, expected,
   unrecognized_action=c("stop", "warning", "nothing"),
