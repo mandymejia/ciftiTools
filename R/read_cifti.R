@@ -1,9 +1,9 @@
 #' Read in CIFTI data
 #'
-#' @description Read a CIFTI file by separating it into GIfTI and NIfTI files
-#'  (\code{\link{separate_cifti}}), optionally resampling them
-#'  (\code{\link{resample_cifti_separate}}), and then reading each separated
-#'  component into R  (\code{\link{make_cifti_from_separate}}).
+#' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
+#'  (\code{\link{separate_cifti}}), optionally resampling them 
+#'  (\code{\link{resample_cifti_separate}}), and then reading each separated 
+#'  component into R  (\code{\link{make_cifti}}).
 #'
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the cortical and subcortical data be obtained as one T x B
@@ -13,8 +13,8 @@
 #'  below except \code{wb_path} will be ignored.
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param
-#' @inheritParams ROI_brainstructures_Param
+#' @inheritParams brainstructures_Param_LR
+#' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param
@@ -168,7 +168,7 @@ read_cifti <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # make_cifti_from_separate() -------------------------------------------------
+  # make_cifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
   # ROIs are not supported yet.
@@ -187,7 +187,7 @@ read_cifti <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
-  result <- do.call(make_cifti_from_separate, to_read)
+  result <- do.call(make_cifti, to_read)
 
   if (verbose) {
     print(Sys.time() - exec_time)

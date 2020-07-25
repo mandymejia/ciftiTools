@@ -3,8 +3,26 @@
 #' @param brainstructures Character vector indicating which brain structure(s) 
 #'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 #'  cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
+#'  gray matter). Default: \code{c("left","right", "subcortical")} 
+#'  (all).
+#' @name brainstructures_Param_all
+NULL
+
+#' brainstructures
+#'
+#' @param brainstructures Character vector indicating which brain structure(s) 
+#'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+#'  cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
 #'  gray matter). Default: \code{c("left","right")} (brain surface only).
-#' @name brainstructures_Param
+#' @name brainstructures_Param_LR
+NULL
+
+#' cifti
+#' 
+#' @param cifti Object of class "cifti". 
+#'  See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
+#'  and \code{\link{is_cifti}}.
+#' @name cifti_Param
 NULL
 
 #' cifti_fname
@@ -121,8 +139,8 @@ NULL
 #'  not fully supported by ciftiTools, since "cifti" objects will not contain
 #'  the ROIs. A workaround would be to keep the separated/resampled files
 #'  with \code{sep_keep}/\code{resamp_keep} and then read those in with
-#'  \code{make_cifti_from_separate}. 
-#' @name ROI_brainstructures_Param
+#'  \code{make_cifti}. 
+#' @name ROI_brainstructures_Param_LR
 NULL
 
 #' sep_keep

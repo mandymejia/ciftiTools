@@ -10,7 +10,9 @@ view_cifti(cifti, what = NULL, ...)
 viewCIfTI(cifti, what = NULL, ...)
 }
 \arguments{
-\item{cifti}{Object of class "cifti". See \code{help(read_separate_cifti)}, \code{help(make_cifti)}, and \code{help(is_cifti)}.}
+\item{cifti}{Object of class "cifti". 
+See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
+and \code{\link{is_cifti}}.}
 
 \item{what}{Either "surface" or "volume". If NULL (default), view the surface if present in the cifti file, and
 volume otherwise}

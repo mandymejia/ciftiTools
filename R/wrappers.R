@@ -4,8 +4,8 @@
 #'  argument \code{sep_fnames}. 
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param
-#' @inheritParams ROI_brainstructures_Param
+#' @inheritParams brainstructures_Param_LR
+#' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams sep_fnames_Param
 #' @inheritParams write_dir_Param_separated
 #' @inheritParams wb_path_Param
