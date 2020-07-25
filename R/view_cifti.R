@@ -417,7 +417,8 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param text_color Color for text in title and colorbar legend. Default: 
 #'  "black".
 #' @param fname_prefix An identifier to use for naming the saved images 
-#'  ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+#'  ("[fname_prefix].png") and video frames 
+#'  ("[fname_prefix]_1.png", "[fname_prefix]_2.png", ...).
 #'  Default: "cifti". 
 #' @param write_dir Where should any output images be written. NULL (default) 
 #'  will write them to the current working directory. 
@@ -520,8 +521,8 @@ view_cifti_surface <- function(cifti, idx=1,
   if (mode == "video") { stop("The video mode is not yet supported.") }
 
   if (mode=="image") {
-    if (!endsWith(prefix, ".png")) { prefix <- paste0(prefix, ".png") }
-    img_fname <- format_path(prefix, write_dir, mode=2)
+    if (!endsWith(fname_prefix, ".png")) { fname_prefix <- paste0(fname_prefix, ".png") }
+    img_fname <- format_path(fname_prefix, write_dir, mode=2)
   }
 
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
@@ -814,6 +815,7 @@ view_cifti_surface <- function(cifti, idx=1,
 
   if (mode=="image") {
     rgl::rgl.snapshot(img_fname)
+    rgl::rgl.close()
   }
 
   invisible()

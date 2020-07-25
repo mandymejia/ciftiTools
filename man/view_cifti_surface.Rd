@@ -102,7 +102,8 @@ a separate subplot with 1/4 the height of the brain cortex subplots.
 "black".}
 
 \item{fname_prefix}{An identifier to use for naming the saved images 
-("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+("[fname_prefix].png") and video frames 
+("[fname_prefix]_1.png", "[fname_prefix]_2.png", ...).
 Default: "cifti".}
 
 \item{write_dir}{Where should any output images be written. NULL (default) 
