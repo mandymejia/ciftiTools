@@ -1,17 +1,17 @@
 #' Flatten a "cifti" object into a single matrix
 #'
-#' @description Flattens data in a "cifti" object into a single matrix. This 
-#'  matrix is identical to that obtained by \code{\link{read_cifti_flat}}, 
+#' @description Flattens data in a "cifti" object into a single matrix. This
+#'  matrix is identical to that obtained by \code{\link{read_cifti_flat}},
 #'  which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
-#'  
+#'
 #' @aliases flattenCIfTI
 #'
 #' @param cif Object of class "cifti"
-#' @param brainstructures "subcortical" for just the subcortical voxels 
+#' @param brainstructures "subcortical" for just the subcortical voxels
 #'  (default), or "everything" to include non-zero brainordinates from the left
 #'  and right cortices.
 #'
-#' @return A T x B matrix, where T is the number of time points and B is the 
+#' @return A T x B matrix, where T is the number of time points and B is the
 #'  number of brainordinates in the CIFTI.
 #' @export
 #'
@@ -50,8 +50,8 @@ flatten_cifti <- function(cif, brainstructures=c("subcortical", "everything")) {
   # CORTEX
   if (brainstructures=="everything") {
     dat <- rbind(
-      cif$CORTEX_LEFT[apply(cif$CORTEX_LEFT, 1, stats::sd) > EPS,],
-      cif$CORTEX_RIGHT[apply(cif$CORTEX_RIGHT, 1, stats::sd) > EPS,],
+      cif$CORTEX_LEFT[rowSums(cif$CORTEX_LEFT) > EPS,],
+      cif$CORTEX_RIGHT[rowSums(cif$CORTEX_RIGHT) > EPS,],
       dat
     )
   }

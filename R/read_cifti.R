@@ -1,15 +1,15 @@
 #' Read in CIFTI data
 #'
-#' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
-#'  (\code{\link{separate_cifti}}), optionally resampling them 
-#'  (\code{\link{resample_cifti_separate}}), and then reading each separated 
+#' @description Read a CIFTI file by separating it into GIfTI and NIfTI files
+#'  (\code{\link{separate_cifti}}), optionally resampling them
+#'  (\code{\link{resample_cifti_separate}}), and then reading each separated
 #'  component into R  (\code{\link{make_cifti_from_separate}}).
 #'
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the cortical and subcortical data be obtained as one T x B
 #'  matrix (T measurements, B brainordinates)? This will be much faster but the
-#'  output will not include any spatial information, including whether a 
-#'  brainordinate corresponds to cortical or subcortical data. All arguments 
+#'  output will not include any spatial information, including whether a
+#'  brainordinate corresponds to cortical or subcortical data. All arguments
 #'  below except \code{wb_path} will be ignored.
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
@@ -27,21 +27,21 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
-#'  with T measurements and B brainordinates. If not \code{flat}, 
-#'  an object of type \code{cifti}, a list containing 6 elements: 
+#'  with T measurements and B brainordinates. If not \code{flat},
+#'  an object of type \code{cifti}, a list containing 6 elements:
 #'  \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} \code{LABELS},
 #'  \code{SURF_LEFT} and \code{SURF_RIGHT}.
 #'
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome 
-#'  Workbench, available from 
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder 
+#'  executable. The user must first download and install the Connectome
+#'  Workbench, available from
+#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
+#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
 #'  or executable.
 #'
-#' The subcortical brain structure labels (LABELS element of returned list) take 
+#' The subcortical brain structure labels (LABELS element of returned list) take
 #'  on integer values 3-21 and represent:
 #'  \describe{
 #'    \item{3}{Accumbens-L}
@@ -70,10 +70,10 @@ read_cifti <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), ROI_brainstructures=NULL,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
-  sep_keep=FALSE, sep_fnames=NULL, 
+  sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
-  
+
   if (flat) { return(read_cifti_flat(cifti_fname, wb_path=wb_path)) }
 
   # ----------------------------------------------------------------------------
@@ -87,20 +87,20 @@ read_cifti <- function(
     }
   }
 
-  if (sep_keep) { 
-    write_dir_sep <- write_dir 
-  } else { 
+  if (sep_keep) {
+    write_dir_sep <- write_dir
+  } else {
     write_dir_sep <- tempdir()
   }
-  if (resamp_keep) { 
-    write_dir_resamp <- write_dir 
-  } else { 
-    write_dir_resamp <- tempdir() 
+  if (resamp_keep) {
+    write_dir_resamp <- write_dir
+  } else {
+    write_dir_resamp <- tempdir()
   }
 
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical"),
-    user_value_label="ROI_brainstructures"
+    user_value_label="brainstructures"
   )
   if (!is.null(ROI_brainstructures)) {
     ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,
@@ -116,7 +116,7 @@ read_cifti <- function(
   if (verbose) { cat("Separating CIFTI file.\n") }
 
   sep_result <- separate_cifti_wrapper(
-    cifti_fname=cifti_fname, 
+    cifti_fname=cifti_fname,
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
     sep_fnames=sep_fnames, write_dir=write_dir_sep, wb_path=wb_path
   )
@@ -124,7 +124,7 @@ read_cifti <- function(
   to_read <- sep_result$fname
   names(to_read) <- sep_result$label
 
-  if (verbose) { 
+  if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
@@ -139,12 +139,12 @@ read_cifti <- function(
   do_resamp <- do_resamp & length(to_resample) > 0
   if (do_resamp) {
     if (verbose) { cat("Resampling CIFTI file.\n") }
-    
+
     # Do resample_cifti_separate.
     resamp_result <- resample_cifti_wrapper(
-      resamp_res=resamp_res, original_fnames=to_resample, 
-      resamp_fnames=resamp_fnames, 
-      sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname, 
+      resamp_res=resamp_res, original_fnames=to_resample,
+      resamp_fnames=resamp_fnames,
+      sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       read_dir=NULL, write_dir=write_dir_resamp, wb_path=wb_path
     )
@@ -154,28 +154,28 @@ read_cifti <- function(
     to_read[to_read_resampled] <- resamp_result$fname[
       resamp_result$label %in% to_read_resampled]
 
-    if (!is.null(surfL_fname)) { 
-      surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"] 
+    if (!is.null(surfL_fname)) {
+      surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"]
     }
-    if (!is.null(surfR_fname)) { 
-      surfR_fname <- resamp_result$fname[resamp_result$label == "surfR"] 
+    if (!is.null(surfR_fname)) {
+      surfR_fname <- resamp_result$fname[resamp_result$label == "surfR"]
     }
 
-    if (verbose) { 
+    if (verbose) {
       print(Sys.time() - exec_time)
       exec_time <- Sys.time()
     }
   }
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # make_cifti_from_separate() -------------------------------------------------
   # ----------------------------------------------------------------------------
 
   # ROIs are not supported yet.
   is_ROI <- grepl("ROI", names(to_read))
-  if(any(is_ROI)){ 
+  if(any(is_ROI)){
     warning(paste(
-      "ROIs are not supported by ciftiTools yet.", 
+      "ROIs are not supported by ciftiTools yet.",
       "The separated ROI file(s) has been created but will not be read in.\n"
     ))
   }
@@ -189,17 +189,17 @@ read_cifti <- function(
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
   result <- do.call(make_cifti_from_separate, to_read)
 
-  if (verbose) { 
+  if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
-  
+
   # ----------------------------------------------------------------------------
   # Finish ---------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
   ## [TO DO]: The files are in tempdir(), so no need to manually delete?
-  # Delete the separated files, unless otherwise requested. 
+  # Delete the separated files, unless otherwise requested.
   # if (!sep_keep) {
   #   for(f in sep_result$fname) {
   #     file.remove(f)
@@ -228,7 +228,7 @@ readCIfTI <- readcii <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), ROI_brainstructures=NULL,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
-  sep_keep=FALSE, sep_fnames=NULL, 
+  sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
   write_dir=NULL, verbose=TRUE, wb_path=NULL){
 
@@ -237,8 +237,8 @@ readCIfTI <- readcii <- function(
     surfL_fname, surfR_fname,
     brainstructures, ROI_brainstructures,
     resamp_res, sphereL_fname, sphereR_fname,
-    sep_keep, sep_fnames, 
+    sep_keep, sep_fnames,
     resamp_keep, resamp_fnames,
-    write_dir, verbose, wb_path 
+    write_dir, verbose, wb_path
   )
 }

@@ -1,17 +1,17 @@
 #' Format a path
 #'
-#' Normalize and validate a path. Optionally, place it in a directory. 
+#' Normalize and validate a path. Optionally, place it in a directory.
 #'
 #' @param path The path to normalize.
 #' @param dir (Optional) the directory to append to the beginning of the path.
 #'  \code{NULL} (default) to not append any directory, leaving \code{path}
 #'  unchanged.
-#' @param mode The mode for \code{\link{file.access}} to verify existence, 
-#'  writing permission, or reading permission. Use NA (default) to not perform 
+#' @param mode The mode for \code{\link{file.access}} to verify existence,
+#'  writing permission, or reading permission. Use NA (default) to not perform
 #'  any check.
-#' 
+#'
 #' @return The normalized path, or \code{NULL} if the path was \code{NULL}.
-#' 
+#'
 format_path <- function(path, dir=NULL, mode=NA) {
 
   # Do nothing if the path is NULL.
@@ -21,28 +21,28 @@ format_path <- function(path, dir=NULL, mode=NA) {
   if (!is.null(dir)) { path <- file.path(dir, path) }
   path <- normalizePath(path, mustWork=FALSE)
 
-  # Get the full file path (for Linux: previous normalizePath() does not get 
+  # Get the full file path (for Linux: previous normalizePath() does not get
   #   full file path if dir did not exist.)
   path <- file.path(
-    normalizePath(dirname(path), mustWork=FALSE), 
+    normalizePath(dirname(path), mustWork=FALSE),
     basename(path)
   )
 
   # Check existence/writing permission/reading permission of the path.
-  #   [TO DO]: Resolve-- "Please note that it is not a good idea to use this 
-  #   function to test before trying to open a file. On a multi-tasking system, 
-  #   it is possible that the accessibility of a file will change between the  
-  #   time you call file.access() and the time you try to open the file. It is 
+  #   [TO DO]: Resolve-- "Please note that it is not a good idea to use this
+  #   function to test before trying to open a file. On a multi-tasking system,
+  #   it is possible that the accessibility of a file will change between the
+  #   time you call file.access() and the time you try to open the file. It is
   #   better to wrap file open attempts in try.
   stopifnot(all(mode %in% c(NA, 0, 2, 4)))
   for(m in mode) {
     if (is.na(mode)) { next }
-    if (any(file.access(dirname(path), m) != 0)) { 
+    if (any(file.access(dirname(path), m) != 0)) {
       stop(paste0(
         "The directory \"", dirname(path), "\"",
         c(
-          " doesn't exist. ", "", 
-          " is not writeable. Does it exist? ", "", 
+          " doesn't exist. ", "",
+          " is not writeable. Does it exist? ", "",
           "is not readable. Does it exist? "
         )[m+1],
         "Check and try again.\n"
@@ -69,7 +69,7 @@ is.fname <- function(x){
 #' Format a path for \code{\link{system}}. Right now, it just escapes spaces and
 #'  parentheses with \code{"\\\\"}.
 #'
-#' @param R_path The name of the file. It should be properly formatted: if it 
+#' @param R_path The name of the file. It should be properly formatted: if it
 #'  exists, \code{file.exists(R_path)} should be \code{TRUE}.
 #'
 #' @return The name of the file.
@@ -100,14 +100,14 @@ get_kwargs <- function(fun) {
 #'  correct one in \code{kwargsA}.
 #' @param labelA (Optional) Descriptor of \code{kwargsA} for error statement. Default "first kwarg(s)".
 #' @param labelB (Optional) Descriptor of \code{kwargsB} for error statement. Default "second kwarg(s)".
-#' @param extraMsg (Optional) Extra text for error statement. "[DEFAULT]" (default) will use this message: 
-#'  "Note that a kwarg only has to be provided to one of these. Place the correct value in the first 
+#' @param extraMsg (Optional) Extra text for error statement. "[DEFAULT]" (default) will use this message:
+#'  "Note that a kwarg only has to be provided to one of these. Place the correct value in the first
 #'  location and remove the kwarg from the second location".
 #'
 #' @return A list with the union of \code{kwargsA} and \code{kwargsB}.
 #'
-merge_kwargs <- function(kwargsA, kwargsB, 
-  labelA="first kwarg(s)", labelB="second kwarg(s)", 
+merge_kwargs <- function(kwargsA, kwargsB,
+  labelA="first kwarg(s)", labelB="second kwarg(s)",
   extraMsg="[DEFAULT]") {
 
   # Identify repeated kwargs.
@@ -135,31 +135,33 @@ merge_kwargs <- function(kwargsA, kwargsB,
 
 #' Match user inputs to expected values
 #'
-#' Match each user input to an expected/allowed value. Raise a warning if either 
+#' Match each user input to an expected/allowed value. Raise a warning if either
 #'  several user inputs match the same expected value, or at least one could not
-#'  be matched to any expected value. \code{ciftiTools} uses this function to 
-#'  match keyword arguments for a function call. Another use is to match 
+#'  be matched to any expected value. \code{ciftiTools} uses this function to
+#'  match keyword arguments for a function call. Another use is to match
 #'  brainstructure labels ("left", "right", or "subcortical").
 #'
-#' @param user Character vector of user input. These will be matched to 
+#' @param user Character vector of user input. These will be matched to
 #'  \code{expected} using \code{match.arg()}.
 #' @param expected Character vector of expected/allowed values.
-#' @param unrecognized_action If any value in \code{user} could not be 
-#'  matched, or repeated matches occured, what should happen? Possible values 
-#'  are \code{"stop"} (default; raises an error), \code{"warning"}, and 
-#'  \code{"nothing"}. 
+#' @param unrecognized_action If any value in \code{user} could not be
+#'  matched, or repeated matches occured, what should happen? Possible values
+#'  are \code{"stop"} (default; raises an error), \code{"warning"}, and
+#'  \code{"nothing"}.
 #' @param user_value_label How to refer to the user input in a stop or warning
 #'  message. If \code{NULL}, no label is used.
+#'
+#' @export
 #'
 #' @return The matched user inputs.
 #'
 match_input <- function(
-  user, expected, 
+  user, expected,
   unrecognized_action=c("stop", "warning", "nothing"),
   user_value_label=NULL) {
 
   unrecognized_action <- match.arg(
-    unrecognized_action, 
+    unrecognized_action,
     c("stop", "warning", "nothing")
   )
   unrecognized_FUN <- switch(unrecognized_action,
@@ -183,12 +185,12 @@ match_input <- function(
   )
 
   tryCatch(
-    { 
-      matched <- match.arg(user, expected, several.ok=TRUE) 
+    {
+      matched <- match.arg(user, expected, several.ok=TRUE)
       if (length(matched) != length(user)) { stop() }
       return(matched)
     },
-    error = function(e) { 
+    error = function(e) {
       unrecognized_FUN(msg)
     },
     finally = {
