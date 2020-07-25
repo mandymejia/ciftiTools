@@ -396,11 +396,11 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  
 #'  "image" will open the RGL window, take a screenshot using
 #'  \code{\link[rgl]{rgl.snapshot}}, and close it. The screenshot will be saved
-#'  as a png in \code{write_dir} and its name will be \code{fname_prefix}.
+#'  as a png in \code{write_dir} and its name will be \code{fname}.
 #' 
 #'  "video" will take a series of screenshots of the RGL window, while 
 #'  rotating the brain surface(s), saving each to a file in \code{write_dir} 
-#'  named by \code{fname_prefix}, and then close the RGL window. The frames can 
+#'  named by \code{fname}, and then close the RGL window. The frames can 
 #'  be converted to a video file using multimedia software such as Adobe 
 #'  Premiere Pro. The "video" mode is not yet supported.
 #' @param width,height The dimensions of the RGL window, in pixels. If both are 
@@ -416,8 +416,8 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  \code{NULL} (default) will not make a title.
 #' @param text_color Color for text in title and colorbar legend. Default: 
 #'  "black".
-#' @param fname_prefix An identifier to use for naming the saved images 
-#'  ("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+#' @param fname An identifier to use for naming the saved images 
+#'  ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
 #'  Default: "cifti". 
 #' @param write_dir Where should any output images be written. NULL (default) 
 #'  will write them to the current working directory. 
@@ -457,7 +457,7 @@ view_cifti_surface <- function(cifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
   bg=NULL, title=NULL, text_color="black",
-  fname_prefix="cifti", write_dir=NULL,
+  fname="cifti", write_dir=NULL,
   colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), 
   color_values=NULL,
   surfL=NULL, surfR=NULL,
@@ -520,8 +520,8 @@ view_cifti_surface <- function(cifti, idx=1,
   if (mode == "video") { stop("The video mode is not yet supported.") }
 
   if (mode=="image") {
-    if (!endsWith(prefix, ".png")) { prefix <- paste0(prefix, ".png") }
-    img_fname <- format_path(prefix, write_dir, mode=2)
+    if (!endsWith(fname, ".png")) { fname <- paste0(fname, ".png") }
+    img_fname <- format_path(fname, write_dir, mode=2)
   }
 
   color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
@@ -814,6 +814,7 @@ view_cifti_surface <- function(cifti, idx=1,
 
   if (mode=="image") {
     rgl::rgl.snapshot(img_fname)
+    rgl::rgl.close()
   }
 
   invisible()
@@ -930,7 +931,7 @@ viewCIfTI_surface <- viewcii_surface <- function(cifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
   bg=NULL, title=NULL,
-  fname_prefix="cifti", write_dir=NULL,
+  fname="cifti", write_dir=NULL,
   colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), 
   color_values=NULL,
   surfL=NULL, surfR=NULL,
@@ -941,7 +942,7 @@ viewCIfTI_surface <- viewcii_surface <- function(cifti, idx=1,
     hemisphere, view, 
     mode, width, height,
     bg, title,
-    fname_prefix, write_dir,
+    fname, write_dir,
     colors, color_mode, color_values,
     surfL, surfR,
     colorbar_embedded, 

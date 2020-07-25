@@ -16,7 +16,7 @@ view_cifti_surface(
   bg = NULL,
   title = NULL,
   text_color = "black",
-  fname_prefix = "cifti",
+  fname = "cifti",
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
@@ -37,7 +37,7 @@ viewCIfTI_surface(
   height = NULL,
   bg = NULL,
   title = NULL,
-  fname_prefix = "cifti",
+  fname = "cifti",
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
@@ -76,11 +76,11 @@ will be shown in a separate panel row within the RGL window.}
  
  "image" will open the RGL window, take a screenshot using
  \code{\link[rgl]{rgl.snapshot}}, and close it. The screenshot will be saved
- as a png in \code{write_dir} and its name will be \code{fname_prefix}.
+ as a png in \code{write_dir} and its name will be \code{fname}.
 
  "video" will take a series of screenshots of the RGL window, while 
  rotating the brain surface(s), saving each to a file in \code{write_dir} 
- named by \code{fname_prefix}, and then close the RGL window. The frames can 
+ named by \code{fname}, and then close the RGL window. The frames can 
  be converted to a video file using multimedia software such as Adobe 
  Premiere Pro. The "video" mode is not yet supported.}
 
@@ -101,8 +101,8 @@ a separate subplot with 1/4 the height of the brain cortex subplots.
 \item{text_color}{Color for text in title and colorbar legend. Default: 
 "black".}
 
-\item{fname_prefix}{An identifier to use for naming the saved images 
-("prefix.png") and video frames ("prefix_1.png", "prefix_2.png", ...).
+\item{fname}{An identifier to use for naming the saved images 
+("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
 Default: "cifti".}
 
 \item{write_dir}{Where should any output images be written. NULL (default) 
