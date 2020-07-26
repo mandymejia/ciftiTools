@@ -298,10 +298,10 @@ is_cifti <- function(x) {
     }
   }
 
-  check_cols <- c(ncol(x$CORTEX_LEFT), ncol(x$CORTEX_RIGHT), ncol(x$SUBCORT$VOL))
+  check_cols <- c(ncol(x$CORTEX_LEFT), ncol(x$CORTEX_RIGHT), ncol(x$SUBCORT$DAT))
   if (length(unique(check_cols)) > 1) {
     warning(paste(
-      "If provided, x$CORTEX_LEFT, x$CORTEX_RIGHT, and x$SUBCORT$VOL must all have",
+      "If provided, x$CORTEX_LEFT, x$CORTEX_RIGHT, and x$SUBCORT$DAT must all have",
       "the same number of columns (measurements), but they do not\n."
     ))
   }
@@ -325,7 +325,7 @@ isCIfTI <- is.cifti <- function(x){
 #' "META" must be a list with 1-3 of these components: "CORTEX_LEFT",
 #'  "CORTEX_RIGHT", and "SUBCORT". The cortical components are lists with
 #'  elements "rows" (the first and last rows in $DAT which they occupy) and 
-#'  "NA_mask" (vector of original brainordinates, with FALSE values indicating
+#'  "mask" (vector of original brainordinates, with FALSE values indicating
 #'  the medial wall). "SUBCORT" is a list with the "rows" element as well as 
 #'  "labels" (the vector of labels for the subcortical data).
 #'
@@ -368,15 +368,15 @@ is_cifti_flat <- function(x){
     return(FALSE)
   }
   if (!is.null(x$META$CORTEX_LEFT)) {
-    if (!identical(names(x$META$CORTEX_LEFT), c("rows", "NA_mask"))) {
-      message("x$META$CORTEX_LEFT must be a list with components \"rows\" and \"NA_mask\".")
+    if (!identical(names(x$META$CORTEX_LEFT), c("rows", "mask"))) {
+      message("x$META$CORTEX_LEFT must be a list with components \"rows\" and \"mask\".")
       return(FALSE)
     }
     # [TO DO]: Detailed check within this component.
   }
   if (!is.null(x$META$CORTEX_RIGHT)) {
-    if (!identical(names(x$META$CORTEX_RIGHT), c("rows", "NA_mask"))) {
-      message("x$META$CORTEX_RIGHT must be a list with components \"rows\" and \"NA_mask\".")
+    if (!identical(names(x$META$CORTEX_RIGHT), c("rows", "mask"))) {
+      message("x$META$CORTEX_RIGHT must be a list with components \"rows\" and \"mask\".")
       return(FALSE)
     }
     # [TO DO]: Detailed check within this component.

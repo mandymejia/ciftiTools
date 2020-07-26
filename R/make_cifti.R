@@ -92,39 +92,6 @@ make_cifti_subcort_fromvol <- function(vol, labels, check_empty=FALSE) {
   subcort
 }
 
-#' Use a mask to transform a flattened matrix to a volume. 
-#'  They should both be numeric with compatible dimensions.
-#'  ciftiTools uses \code{unflatten_cifti_vol} to unflatten the data in 
-#'  \code{cifti$SUBCORT}, but this function should work for any matrix + mask
-#'  pair.
-#'
-#' @param dat Data matrix for subcortical locations, with voxels along the rows 
-#'  and measurements along the columns. If only one set of measurements were
-#'  made, this may be a vector.
-#' @param mask Volumetric brain mask for subcortical locations. See
-#'  \code{\link{is_cifti_subcort_mask}}.
-#'
-#' @return The 3D or 4D unflattened volume array
-#' @export
-#'
-unflatten_cifti_vol <- function(dat, mask) {
-  # If dat is a vector, make it a matrix.
-  if (is.vector(dat)) { dat <- matrix(dat, ncol=1) }
-  
-  # Check arguments.
-  stopifnot(is_cifti_subcort_dat(dat))
-  stopifnot(is_cifti_subcort_mask(mask))
-  stopifnot(sum(mask) == nrow(dat))
-
-  # Make volume and fill.
-  vol <- array(NA, dim=c(dim(mask), ncol(dat)))
-  for(ii in 1:ncol(dat)) {
-    vol[,,,ii][mask] <- dat[,ii]
-  }
-
-  vol
-}
-
 #' Coerce a file path, GIFTI object, or "cifti_surface" object to a
 #'  "cifti_surface" object.
 #'

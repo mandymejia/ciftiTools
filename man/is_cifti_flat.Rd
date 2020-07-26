@@ -21,7 +21,7 @@ Requirements: must be a list of two components: "DAT" and "META".
 "META" must be a list with 1-3 of these components: "CORTEX_LEFT",
  "CORTEX_RIGHT", and "SUBCORT". The cortical components are lists with
  elements "rows" (the first and last rows in $DAT which they occupy) and 
- "NA_mask" (vector of original brainordinates, with FALSE values indicating
+ "mask" (vector of original brainordinates, with FALSE values indicating
  the medial wall). "SUBCORT" is a list with the "rows" element as well as 
  "labels" (the vector of labels for the subcortical data).
 }

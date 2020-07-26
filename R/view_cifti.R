@@ -363,13 +363,13 @@ expand_color_pal <- function(pal, MIN_COLOR_RES=255) {
 #'
 #' @return A character vector of color names
 use_color_pal <- function(data_values, pal, color_NA="white") {
-  NA_mask <- is.na(data_values)
+  mask <- is.na(data_values)
   colors <- as.character(pal$color)
   pal$cut <- -Inf
   pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
   out <- vector("character", length(data_values))
-  out[!NA_mask] <- colors[apply(outer(as.numeric(data_values[!NA_mask]), pal$cut, '>='), 1, sum)]
-  out[NA_mask] <- color_NA
+  out[!mask] <- colors[apply(outer(as.numeric(data_values[!mask]), pal$cut, '>='), 1, sum)]
+  out[mask] <- color_NA
   out
 }
 
@@ -576,8 +576,8 @@ view_cifti_surface <- function(cifti, idx=1,
     else if (!all(idx %in% 1:ncol(cifti$CORTEX_LEFT))) { valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices)) }
     else {
       # Mask out (near-)constant zero voxels.
-      NA_mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < EPS
-      cifti$CORTEX_LEFT[NA_mask_left,] <- NA
+      mask_left <- apply(abs(cifti$CORTEX_LEFT), 1, sum) < EPS
+      cifti$CORTEX_LEFT[mask_left,] <- NA
       valuesL <- matrix(cifti$CORTEX_LEFT[,idx], ncol=length(idx))
       #valuesL <- apply(matrix(cifti$CORTEX_LEFT[,idx][surfL$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
       cifti$CORTEX_LEFT <- NULL #save memory
@@ -602,8 +602,8 @@ view_cifti_surface <- function(cifti, idx=1,
       else if (!all(idx %in% 1:ncol(cifti$CORTEX_RIGHT))) { valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices)) }
       else {
       # Mask out (near-)constant zero voxels.
-      NA_mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < EPS
-      cifti$CORTEX_RIGHT[NA_mask_right,] <- NA
+      mask_right <- apply(abs(cifti$CORTEX_RIGHT), 1, sum) < EPS
+      cifti$CORTEX_RIGHT[mask_right,] <- NA
       valuesR <- matrix(cifti$CORTEX_RIGHT[,idx], ncol=length(idx))
       #valuesR <- apply(matrix(cifti$CORTEX_RIGHT[,idx][surfR$surface$faces], ncol=3), 1, mean, na.rm=TRUE) # FACES
       cifti$CORTEX_RIGHT <- NULL #save memory
