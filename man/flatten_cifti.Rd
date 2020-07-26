@@ -5,23 +5,47 @@
 \alias{flattenCIfTI}
 \title{Flatten a "cifti" object into a single matrix}
 \usage{
-flatten_cifti(cif, brainstructures = c("subcortical", "everything"))
+flatten_cifti(
+  cifti,
+  brainstructures = c("left", "right", "subcortical"),
+  meta = TRUE
+)
 
-flattenCIfTI(cif, brainstructures = c("subcortical", "everything"))
+flattenCIfTI(
+  cifti,
+  brainstructures = c("left", "right", "subcortical"),
+  meta = TRUE
+)
 }
 \arguments{
-\item{cif}{Object of class "cifti"}
+\item{cifti}{Object of class "cifti". 
+See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
+and \code{\link{is_cifti}}.}
 
-\item{brainstructures}{"subcortical" for just the subcortical voxels 
-(default), or "everything" to include non-zero brainordinates from the left
-and right cortices.}
+\item{brainstructures}{Character vector indicating which brain structure(s) 
+to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
+gray matter). Default: \code{c("left","right", "subcortical")} 
+(all).}
+
+\item{meta}{Should the metadata be obtained too? Default: 
+\code{TRUE}. If \code{FALSE}, return the data matrix only.}
 }
 \value{
-A T x B matrix, where T is the number of time points and B is the 
- number of brainordinates in the CIFTI.
+If \code{meta}, a list containing the components "DAT" and 
+ "META". "DAT" will be a T x B matrix, where T is the number of time points 
+ and B is the number of non-empty brainordinates in the CIFTI (no medial wall
+ from the cortical data). "META" will contain information about the row
+ indices each brainstructure occupies, which medial wall values were masked
+ (for the cortical data), and the labels and mask (for the subcortical data).
 }
 \description{
-Flattens data in a "cifti" object into a single matrix. This 
- matrix is identical to that obtained by \code{\link{read_cifti_flat}}, 
+Flattens data in a "cifti" object into a single matrix. 
+ Besides the row order for the subcortical brainordinates, this
+ matrix is identical to that obtained by \code{\link{read_cifti_flat}},
  which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
+
+ If \code{meta}, some information from the "cifti" will be retained
+ and the result will be a "cifti_flat" object. Otherwise, only the data
+ matrix will be returned.
 }

@@ -48,7 +48,7 @@ gray matter). Default: \code{c("left","right")} (brain surface only).}
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 relative, they will be saved in \code{write_dir}.}
 
-\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and label NIfTIs. If not 
+\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and labels NIfTIs. If not 
 provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 path is relative, they will be saved in \code{write_dir}.}
 

@@ -13,5 +13,9 @@ is_cifti_surface(x)
 Logical indicating whether x is a valid "cifti_surface" object
 }
 \description{
-Check whether object is a valid "cifti_surface" object.
+Requirements: must be a list of two components: "vertices" and "faces".
+ Each must be a numeric matrix with three columns. The values in "vertices"
+ represent spatial coordinates whereas the values in "faces" represent
+ vertex indices defining the face. Thus, values in "faces" should be integers
+ between 1 and the number of vertices.
 }

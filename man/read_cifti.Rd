@@ -49,8 +49,8 @@ in.}
 
 \item{flat}{Should the cortical and subcortical data be obtained as one T x B
 matrix (T measurements, B brainordinates)? This will be much faster but the
-output will not include any spatial information, including whether a 
-brainordinate corresponds to cortical or subcortical data. All arguments 
+output will not include any spatial information, including whether a
+brainordinate corresponds to cortical or subcortical data. All arguments
 below except \code{wb_path} will be ignored.}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
@@ -164,8 +164,8 @@ If not provided, should be set with
 }
 \value{
 If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
- with T measurements and B brainordinates. If not \code{flat}, 
- an object of type \code{cifti}, a list containing 6 elements: 
+ with T measurements and B brainordinates. If not \code{flat},
+ an object of type \code{cifti}, a list containing 6 elements:
  \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} \code{LABELS},
  \code{SURF_LEFT} and \code{SURF_RIGHT}.
 }
@@ -177,13 +177,13 @@ Read a CIFTI file by separating it into GIfTI and NIfTI files
 }
 \details{
 This function uses a system wrapper for the "wb_command"
- executable. The user must first download and install the Connectome 
- Workbench, available from 
- \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
- The \code{wb_path} argument is the path to the Connectime Workbench folder 
+ executable. The user must first download and install the Connectome
+ Workbench, available from
+ \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
+ The \code{wb_path} argument is the path to the Connectime Workbench folder
  or executable.
 
-The subcortical brain structure labels (LABELS element of returned list) take 
+The subcortical brain structure labels (LABELS element of returned list) take
  on integer values 3-21 and represent:
  \describe{
    \item{3}{Accumbens-L}

@@ -10,13 +10,16 @@ summary.cifti <- function(object, ...) {
   out <- list()
   class(out) <- "summary.cifti"
   out$includes <- names(object)[!sapply(object, is.null)]
-  if ("VOL" %in% out$includes) out$includes <- c(out$includes[!(out$includes %in% c("VOL","LABELS"))],"SUBCORTICAL")
   if ("CORTEX_LEFT" %in% out$includes) out$CORTEX_LEFT <- dim(object$CORTEX_LEFT)
   if ("CORTEX_RIGHT" %in% out$includes) out$CORTEX_RIGHT <- dim(object$CORTEX_RIGHT)
-  if ("SURF_LEFT" %in% out$includes) out$SURF_LEFT <- names(out$SURF_LEFT)
-  if ("SURF_RIGHT" %in% out$includes) out$SURF_RIGHT <- names(out$SURF_RIGHT)
-  if ("SUBCORTICAL" %in% out$includes) out$VOL <- list(dim_vol=dim(object$VOL), nvox_vol=sum(object$LABELS>0))
-  if ("SUBCORTICAL" %in% out$includes) out$LABELS <- table(object$LABELS[object$LABELS>0])
+  if ("SURF_LEFT" %in% out$includes) out$SURF_LEFT <- TRUE
+  if ("SURF_RIGHT" %in% out$includes) out$SURF_RIGHT <- TRUE
+  if ("SUBCORT" %in% out$includes) {
+    out$SUBCORT <- list()
+    out$SUBCORT$DAT <- dim(object$SUBCORT$DAT)
+    out$SUBCORT$LABELS <- table(object$SUBCORT$LABELS)
+    out$SUBCORT$MASK <- dim(object$SUBCORT$MASK)
+  }
   return(out)
 }
 
@@ -25,15 +28,25 @@ summary.cifti <- function(object, ...) {
 #' @method print summary.cifti
 #' @rdname summary.cifti
 print.summary.cifti <- function(x, ...) {
-  cat("Brain Structures: ", paste(x$includes, collapse=", "), " \n")
-  if ("CORTEX_LEFT" %in% x$includes) cat("Left Cortex: ", x$CORTEX_LEFT[1], "surface vertices, ", x$CORTEX_LEFT[2], "measurements \n")
-  if ("CORTEX_RIGHT" %in% x$includes) cat("Right Cortex: ", x$CORTEX_RIGHT[1], "surface vertices, ", x$CORTEX_RIGHT[2], "measurements \n")
-  if ("SURF_LEFT" %in% x$includes) cat("Left Surface Model is present.")
-  if ("SURF_RIGHT" %in% x$includes) cat("Right Surface Model is present.")
-  if ("SUBCORTICAL" %in% x$includes) {
-    cat("Subcortical: ", x$VOL[[2]], "voxels, ", x$VOL[[1]][4], "measurements \n")
-    cat("Subcortical Labels:")
-    print(x$LABELS)
+  cat("Brain Structures:", paste(x$includes, collapse=", "), " \n")
+
+  if ("CORTEX_LEFT" %in% x$includes) {
+    cat("Left Cortex:", x$CORTEX_LEFT[1], "surface vertices,", 
+      x$CORTEX_LEFT[2], "measurements.\n")
+    if ("SURF_LEFT" %in% x$includes) cat("\tLeft surface model is present.\n")
+  }
+
+  if ("CORTEX_RIGHT" %in% x$includes) {
+    cat("Right Cortex:", x$CORTEX_RIGHT[1], "surface vertices,", 
+      x$CORTEX_RIGHT[2], "measurements.\n")
+    if ("SURF_RIGHT" %in% x$includes) cat("\tRight surface model is present.\n")
+  }
+
+  if ("SUBCORT" %in% x$includes) {
+    cat("Subcortical:", x$SUBCORT$DAT[[1]], "voxels,",
+      x$SUBCORT$DAT[[2]], "measurements.\n")
+    cat("Subcortical Labels:\n")
+    print(x$SUBCORT$LABELS)
   }
 }
 

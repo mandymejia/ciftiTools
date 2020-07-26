@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_cifti.R
 \name{make_cifti_surface}
 \alias{make_cifti_surface}
-\title{Coerce a file path, GIFTI object, or "cifti_surface" object to a 
+\title{Coerce a file path, GIFTI object, or "cifti_surface" object to a
  "cifti_surface" object.}
 \usage{
 make_cifti_surface(surf)
@@ -14,6 +14,6 @@ make_cifti_surface(surf)
 The "cifti_surface" object.
 }
 \description{
-Coerce a file path, GIFTI object, or "cifti_surface" object to a 
+Coerce a file path, GIFTI object, or "cifti_surface" object to a
  "cifti_surface" object.
 }

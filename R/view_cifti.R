@@ -834,7 +834,10 @@ view_cifti_surface <- function(cifti, idx=1,
 #' @export
 #' 
 #' @importFrom oro.nifti overlay readNIfTI
-view_cifti_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial", num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+view_cifti_volume <- function(
+  cifti, structural_img="MNI", idx=1, plane="axial", 
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+
   if (use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
       stop("Package \"papayar\" needed for this function to work. Please install it.",
@@ -842,13 +845,14 @@ view_cifti_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
     }
   }
 
+  vol <- unflatten_cifti_vol(cifti$SUBCORT$DAT, cifti$SUBCORT$MASK)
+  labs <- unflatten_cifti_vol(cifti$SUBCORT$LABELS, cifti$SUBCORT$MASK)
+
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
-    labs <- cifti$LABELS
-    mask <- (labs > 0)
-    if (plane=="axial") mask_count <- apply(mask, 3, sum)
-    if (plane=="coronal") mask_count <- apply(mask, 2, sum)
-    if (plane=="sagittal") mask_count <- apply(mask, 1, sum)
+    if (plane=="axial") mask_count <- apply(cifti$SUBCORT$MASK, 3, sum)
+    if (plane=="coronal") mask_count <- apply(cifti$SUBCORT$MASK, 2, sum)
+    if (plane=="sagittal") mask_count <- apply(cifti$SUBCORT$MASK, 1, sum)
 
     slices <- which(mask_count > max(mask_count)/2)
     inds <- round(seq(1,length(slices), length.out=num.slices))
@@ -863,21 +867,24 @@ view_cifti_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
     T1w <- readNIfTI(structural_img, reorient=FALSE)
   }
 
-  values <- cifti$VOL[,,,idx]
+  values <- vol[,,,idx]
   if (!is.null(z_min)) values[values < z_min] <- z_min
   if (!is.null(z_max)) values[values > z_max] <- z_max
-  cat(paste0("Values to be plotted range from ",min(values[cifti$LABELS > 0])," to ",max(values[cifti$LABELS > 0]), "\n"))
+  cat(paste0("Values to be plotted range from ",min(cifti$SUBCORT$DAT[,idx])," to ",max(cifti$SUBCORT$DAT[,idx]), "\n"))
 
   img_overlay <- T1w*0
   img_overlay@.Data <- values
-  img_overlay@.Data[cifti$LABELS==0] <- NA
+  img_overlay@.Data[labs==0] <- NA
 
   img_labels <- T1w*0
-  img_labels@.Data <- cifti$LABELS
-  img_labels@.Data[cifti$LABELS==0] <- NA
+  img_labels@.Data <- labs
+  img_labels@.Data[labs==0] <- NA
 
-  if (use_papaya==FALSE) oro.nifti::overlay(x=T1w, y=img_overlay, plot.type="single", plane=plane, z=slices)#, col.y=pal)
-  if (use_papaya==TRUE) papayar::papaya(list(T1w, img_overlay, img_labels))
+  if (use_papaya) {
+    oro.nifti::overlay(x=T1w, y=img_overlay, plot.type="single", plane=plane, z=slices)#, col.y=pal)
+  } else {
+    papayar::papaya(list(T1w, img_overlay, img_labels))
+  }
 }
 
 #' Switch for \code{\link{view_cifti_surface}} or \code{\link{view_cifti_volume}}
@@ -894,8 +901,10 @@ view_cifti_volume <- function(cifti, structural_img="MNI", idx=1, plane="axial",
 #'
 view_cifti <- function(cifti, what=NULL, ...) {
   if (is.null(what)) {
-    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) && (!is.null(cifti$SURF_LEFT))
-    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) && (!is.null(cifti$SURF_RIGHT))
+    has_left_surf <- (!is.null(cifti$SURF_LEFT)) || ("surfL" %in% names(list(...)))
+    can_do_left <- (!is.null(cifti$CORTEX_LEFT)) && has_left_surf
+    has_right_surf <- (!is.null(cifti$SURF_RIGHT)) || ("surfR" %in% names(list(...)))
+    can_do_right <- (!is.null(cifti$CORTEX_RIGHT)) && has_right_surf
     what <- ifelse(can_do_left | can_do_right, "surface", "volume")
   }
   hemispheres=c("left", "right", "both")

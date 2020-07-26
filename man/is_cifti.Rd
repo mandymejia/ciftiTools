@@ -16,5 +16,9 @@ isCIfTI(x)
 Logical indicating whether x is a valid "cifti" object
 }
 \description{
-Validate a "cifti" object.
+Requirements: must be a list of five components: "CORTEX_LEFT", 
+ "CORTEX_RIGHT", "SUBCORT", "SURF_LEFT" and "SURF_RIGHT". Each non-empty
+ entry must be valid. The number of brainordinates in "CORTEX_LEFT", 
+ "CORTEX_RIGHT", "SURF_LEFT" and "SURF_RIGHT" must match. The number of 
+ measurements in "CORTEX_LEFT", "CORTEX_RIGHT", and "SUBCORT$VOL" must match.
 }

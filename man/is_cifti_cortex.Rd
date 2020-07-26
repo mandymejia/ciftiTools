@@ -10,10 +10,13 @@ is_cifti_cortex(x)
 \item{x}{The object to check}
 }
 \value{
-Logical indicating whther x is valid cortex data
+Logical indicating whether x is valid cortex data
 }
 \description{
-Check if object is valid for \code{cifti$CORTEX_LEFT} or 
- \code{cifti$CORTEX_RIGHT}. This is a helper function for 
+Check if object is valid for \code{cifti$CORTEX_LEFT} or
+ \code{cifti$CORTEX_RIGHT}. This is a helper function for
  \code{\link{is_cifti}}.
+}
+\details{
+Requirements: the cortical data must be a numeric matrix.
 }

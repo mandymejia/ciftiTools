@@ -13,8 +13,8 @@ format_path(path, dir = NULL, mode = NA)
 \code{NULL} (default) to not append any directory, leaving \code{path}
 unchanged.}
 
-\item{mode}{The mode for \code{\link{file.access}} to verify existence, 
-writing permission, or reading permission. Use NA (default) to not perform 
+\item{mode}{The mode for \code{\link{file.access}} to verify existence,
+writing permission, or reading permission. Use NA (default) to not perform
 any check.}
 }
 \value{
