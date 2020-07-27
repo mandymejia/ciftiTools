@@ -467,7 +467,7 @@ view_cifti_surface <- function(cifti, idx=1,
     stop("Package \"rgl\" needed to use `view_cifti_surface`. Please install it.", call. = FALSE)
   }
   if (!capabilities("X11")) {
-    stop("X11 capability is needed to open the rgl window for `view_cifti_surface`.")
+    warning("X11 capability is needed to open the rgl window for `view_cifti_surface`.")
   }
 
   # Try to avoid this error with colorbar: 
