@@ -120,32 +120,42 @@ flattenCIfTI <- flattencii <- function(
   flatten_cifti(cifti, brainstructures, meta)
 }
 
-#' Use a mask to transform a flattened matrix to a volume. 
-#'  They should both be numeric with compatible dimensions.
-#'  ciftiTools uses \code{unflatten_cifti_vol} to unflatten the data in 
-#'  \code{cifti$SUBCORT}, but this function should work for any matrix + mask
-#'  pair.
-#'
-#' @param dat Data matrix for subcortical locations, with voxels along the rows 
-#'  and measurements along the columns. If only one set of measurements were
-#'  made, this may be a vector.
+#' Undo a mask
+#' 
+#' Applies a mask to vectorized data to yield its volumetric representation.
+#'  The mask and data should have compatible dimensions: the number of rows in
+#'  \code{dat} should equal the number of locations within the \code{mask}.
+#' 
+#' @param dat Data matrix with locations along the rows and measurements along 
+#'  the columns. If only one set of measurements were made, this may be a 
+#'  vector.
 #' @param mask Volumetric brain mask for subcortical locations. See
 #'  \code{\link{is_cifti_subcort_mask}}.
+#' @param fill The value for locations outside the mask. Default: \code{NA}.
 #'
 #' @return The 3D or 4D unflattened volume array
-#' @export
 #'
-unflatten_cifti_vol <- function(dat, mask) {
-  # If dat is a vector, make it a matrix.
+unmask <- function(dat, mask, fill=NA) {
+
+  # Check that dat is a vector or matrix.
   if (is.vector(dat)) { dat <- matrix(dat, ncol=1) }
-  
-  # Check arguments.
-  stopifnot(is_cifti_subcort_dat(dat))
-  stopifnot(is_cifti_subcort_mask(mask))
+  stopifnot(length(dim(dat)) == 2)
+
+  # Check that mask is numeric {0, 1} or logical, and is 3D.
+  if (is.numeric(mask)) {
+    mask_vals <- unique(as.vector(mask))
+    stopifnot(length(mask_vals) <= 2)
+    stopifnot(all(mask_vals %in% c(0,1)))
+  }
+  mask <- as.logical(mask)
+  stopifnot(length(dim(mask)) == 3)
+
+  # Other checks.
+  stopifnot(is.vector(fill) && length(fill)==1)
   stopifnot(sum(mask) == nrow(dat))
 
   # Make volume and fill.
-  vol <- array(NA, dim=c(dim(mask), ncol(dat)))
+  vol <- array(fill, dim=c(dim(mask), ncol(dat)))
   for(ii in 1:ncol(dat)) {
     vol[,,,ii][mask] <- dat[,ii]
   }
