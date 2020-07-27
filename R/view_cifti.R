@@ -391,11 +391,11 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' 
 #'  "widget" will open an interactive RGL window. Left click and drag to rotate.
 #'  Use the scroll wheel to zoom. Run the R function 
-#'  \code{rgl::rgl.snapshot("my_file.png")} to save the RGL window as a png. 
-#'  See \code{\link[rgl]{rgl.snapshot}} for more information.
+#'  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png. 
+#'  See \code{\link[rgl]{snapshot}} for more information.
 #'  
 #'  "image" will open the RGL window, take a screenshot using
-#'  \code{\link[rgl]{rgl.snapshot}}, and close it. The screenshot will be saved
+#'  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
 #'  as a png in \code{write_dir} and its name will be \code{fname}.
 #' 
 #'  "video" will take a series of screenshots of the RGL window, while 
