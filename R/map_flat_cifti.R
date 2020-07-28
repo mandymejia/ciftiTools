@@ -11,6 +11,8 @@
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
+#' @importFrom utils read.csv
+#'
 #' @return A data.frame with brainordinates along the rows, and columns 
 #'  indicating the brainstructure label ("label"), its index in the
 #'  flattened CIFTI ("idx_flat"), and spatial coordinates for the subcortical 
@@ -32,7 +34,7 @@ map_flat_cifti <- function(cifti_fname, wb_path=NULL){
   cortexR_fname <- file.path(write_dir, "CORTEX_RIGHT.txt")
   subcort_fname <- file.path(write_dir, "SUBCORT.txt")
 
-  cmd_code <- system(paste(
+  cmd <- paste(
     wb_cmd,
     "-cifti-export-dense-mapping",
       sys_path(cifti_fname),
@@ -46,7 +48,8 @@ map_flat_cifti <- function(cifti_fname, wb_path=NULL){
       "-surface",
         "CORTEX_RIGHT",
         sys_path(cortexR_fname)
-  ))
+  )
+  cmd_code <- system(cmd)
   if (cmd_code != 0) {
     stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
       ". The command was:\n", cmd))
