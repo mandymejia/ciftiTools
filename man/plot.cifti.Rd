@@ -7,7 +7,7 @@
 \method{plot}{cifti}(x, ...)
 }
 \arguments{
-\item{x}{The "cifti" object}
+\item{x}{The \code{"cifti"} object}
 
 \item{...}{Additional arguments to \code{\link{view_cifti}}, except 
 \code{what}, which will be set to \code{NULL}.}

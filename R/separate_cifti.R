@@ -1,7 +1,9 @@
-#' Separate and save CIFTI data as NIfTI and GIfTI files
+#' Separate a CIFTI as its NIfTI and GIfTI component files
 #'
-#' @description Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 
-#'  subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
+#' @description Separates a CIFTI file into GIfTIs for the cortical 
+#'  (left and right) structures, and NIfTIs for the 
+#'  subcortical structures. 
+#'  This uses the \code{-cifti-separate} command from Connectome Workbench.
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR

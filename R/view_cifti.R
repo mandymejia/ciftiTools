@@ -480,7 +480,7 @@ view_cifti_surface <- function(cifti, idx=1,
   # ----------------------------------------------------------------------------
 
   # Check CIFTI, idx, and surfaces.
-  if (!is_cifti(cifti)) stop("cifti argument is not a valid cifti object. See is_cifti().")
+  if (!is.cifti(cifti)) stop("cifti argument is not a valid cifti object. See is.cifti().")
   if (length(idx) > 1) stop("Only one time/column index is supported right now.")
   if (is.null(surfL)) {
     if (is.null(cifti$SURF_LEFT) & !is.null(hemisphere)) {
@@ -845,14 +845,14 @@ view_cifti_volume <- function(
     }
   }
 
-  vol <- unmask(cifti$SUBCORT$DAT, cifti$SUBCORT$MASK)
-  labs <- unmask(cifti$SUBCORT$LABELS, cifti$SUBCORT$MASK)
+  vol <- unmask(cifti$DAT[cifti$LABELS$BRAINSTRUCTURE=="SUBCORT",], cifti$SUBCORT_MASK)
+  labs <- unmask(cifti$LABELS$SUBCORT, cifti$SUBCORT_MASK)
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
-    if (plane=="axial") mask_count <- apply(cifti$SUBCORT$MASK, 3, sum)
-    if (plane=="coronal") mask_count <- apply(cifti$SUBCORT$MASK, 2, sum)
-    if (plane=="sagittal") mask_count <- apply(cifti$SUBCORT$MASK, 1, sum)
+    if (plane=="axial") mask_count <- apply(cifti$SUBCORT_MASK, 3, sum)
+    if (plane=="coronal") mask_count <- apply(cifti$SUBCORT_MASK, 2, sum)
+    if (plane=="sagittal") mask_count <- apply(cifti$SUBCORT_MASK, 1, sum)
 
     slices <- which(mask_count > max(mask_count)/2)
     inds <- round(seq(1,length(slices), length.out=num.slices))
@@ -917,7 +917,7 @@ view_cifti <- function(cifti, what=NULL, ...) {
 
 #' S3 method: use view_cifti to plot a cifti
 #'
-#' @param x The "cifti" object
+#' @param x The \code{"cifti"} object
 #' @param ... Additional arguments to \code{\link{view_cifti}}, except 
 #'  \code{what}, which will be set to \code{NULL}.
 #'

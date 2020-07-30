@@ -1,12 +1,12 @@
-#' Flatten a "cifti" object into a single matrix
+#' Flatten a \code{"cifti"} object into a single matrix
 #'
-#' @description Flattens data in a "cifti" object into a single matrix. 
+#' @description Flattens data in a \code{"cifti"} object into a single matrix. 
 #'  Besides the row order for the subcortical brainordinates, this
 #'  matrix is identical to that obtained by \code{\link{read_cifti_flat}},
 #'  which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
 #'
 #'  If \code{meta}, some information from the "cifti" will be retained
-#'  and the result will be a "cifti_flat" object. Otherwise, only the data
+#'  and the result will be a \code{"cifti_flat"} object. Otherwise, only the data
 #'  matrix will be returned.
 #'
 #' @inheritParams cifti_Param
@@ -28,7 +28,7 @@ flatten_cifti <- function(cifti,
   brainstructures=c("left","right","subcortical"),
   meta=TRUE) {
 
-  if (!is_cifti(cifti)) { stop("`cifti` is not a valid CIFTI object.") }
+  if (!is.cifti(cifti)) { stop("`cifti` is not a valid \"cifti\" object.") }
 
   EPS <- ciftiTools.getOption("EPS")
 
@@ -51,13 +51,13 @@ flatten_cifti <- function(cifti,
   if ("left" %in% brainstructures) { 
     stopifnot(!is.null(cifti$CORTEX_LEFT))
     cortexL_mask <- rowSums(abs(cifti$CORTEX_LEFT), na.rm=TRUE) > EPS
-    to_flat[[1]] <- matrix(cifti$CORTEX_LEFT[cortexL_mask,], ncol=ncol(cifti$CORTEX_LEFT))
+    to_flat[[1]] <- cifti$CORTEX_LEFT[cortexL_mask,, drop=FALSE]
   }
 
   if ("right" %in% brainstructures) { 
     stopifnot(!is.null(cifti$CORTEX_RIGHT))
     cortexR_mask <- rowSums(abs(cifti$CORTEX_RIGHT), na.rm=TRUE) > EPS
-    to_flat[[2]] <- matrix(cifti$CORTEX_RIGHT[cortexR_mask,], ncol=ncol(cifti$CORTEX_RIGHT))
+    to_flat[[2]] <- cifti$CORTEX_RIGHT[cortexR_mask,, drop=FALSE]
   }
 
   if ("subcortical" %in% brainstructures) {
@@ -104,8 +104,31 @@ flatten_cifti <- function(cifti,
     )
   }
 
+  # ##############################################################
+  # } else if (method == "separate") {
+  #   cifti_components <- read_cifti_separate(
+  #     cifti_fname,
+  #     surfL_fname=NULL, surfR_fname=NULL,
+  #     map=cifti_map,
+  #     brainstructures=brainstructures,
+  #     wb_path=wb_path, ...
+  #   )
+
+  #   if (format == "regular") {
+  #     cifti$CORTEX_LEFT <- cifti_components$CORTEX_LEFT
+  #     cifti$CORTEX_RIGHT <- cifti_components$CORTEX_RIGHT
+  #     cifti$SUBCORT <- cifti_components$SUBCORT
+
+  #   } else if (format=="flat") {
+  #     cifti$DAT <- rbind(
+  #       cifti_components$CORTEX_LEFT,
+  #       cifti_components$CORTEX_RIGHT,
+  #       cifti_components$SUBCORT
+  #     )[cifti$LABELS$SUBSTRUCTURE != "MEDIAL_WALL",]
+  # ##############################################################
+
   # Return cifti_flat or error.
-  if (!is_cifti_flat(cifti_flat)) {
+  if (!is.cifti(cifti_flat, flat=TRUE)) {
     stop("The object could not be converted into a cifti_flat object.")
   }
   class(cifti_flat) <- "cifti_flat"
@@ -129,8 +152,7 @@ flattenCIfTI <- flattencii <- function(
 #' @param dat Data matrix with locations along the rows and measurements along 
 #'  the columns. If only one set of measurements were made, this may be a 
 #'  vector.
-#' @param mask Volumetric brain mask for subcortical locations. See
-#'  \code{\link{is_cifti_subcort_mask}}.
+#' @param mask Volumetric brain mask for subcortical locations.
 #' @param fill The value for locations outside the mask. Default: \code{NA}.
 #'
 #' @return The 3D or 4D unflattened volume array
@@ -161,64 +183,4 @@ unmask <- function(dat, mask, fill=NA) {
   }
 
   vol
-}
-
-#' Unflatten a flattened CIFTI
-#'
-#' Yields a "cifti" object from a "cifti_flat" object.
-#'
-#' @param cifti_flat The flattened CIFTI.
-#'
-#' @return A "cifti_flat" object.
-#' @export
-#'
-unflatten_cifti <- function(cifti_flat) {
-  stopifnot(is_cifti_flat(cifti_flat))
-
-  cifti <- list(
-    CORTEX_LEFT=NULL,
-    CORTEX_RIGHT=NULL,
-    SUBCORT=NULL,
-    SURF_LEFT=NULL,
-    SURF_RIGHT=NULL
-  )
-
-  if (!is.null(cifti_flat$META$CORTEX_LEFT)) {
-    meta <- cifti_flat$META$CORTEX_LEFT
-    cifti$CORTEX_LEFT <- matrix(
-      NA, 
-      nrow=length(meta$mask), 
-      ncol=ncol(cifti_flat$DAT)
-    )
-    cifti$CORTEX_LEFT[meta$mask,] <- cifti_flat$DAT[meta$rows[1]:meta$rows[2],]
-    class(cifti$CORTEX_LEFT) <- "cifti_cortex"
-  }
-
-  if (!is.null(cifti_flat$META$CORTEX_RIGHT)) {
-    meta <- cifti_flat$META$CORTEX_RIGHT
-    cifti$CORTEX_RIGHT <- matrix(
-      NA, 
-      nrow=length(meta$mask), 
-      ncol=ncol(cifti_flat$DAT)
-    )
-    cifti$CORTEX_RIGHT[meta$mask,] <- cifti_flat$DAT[meta$rows[1]:meta$rows[2],]
-    class(cifti$CORTEX_RIGHT) <- "cifti_cortex"
-  }
-
-  if (!is.null(cifti_flat$META$SUBCORT)) {
-    meta <- cifti_flat$META$SUBCORT
-    cifti$SUBCORT <- list(
-      DAT = matrix(cifti_flat$DAT[meta$rows[1]:meta$rows[2],], ncol=ncol(cifti_flat$DAT)),
-      LABELS = meta$labels,
-      MASK = meta$mask
-    )
-    class(cifti$SUBCORT) <- "cifti_subcort"
-  }
-
-  # Return cifti or error.
-  if (!is_cifti(cifti)) {
-    stop("The object could not be converted into a cifti object.")
-  }
-  class(cifti) <- "cifti"
-  cifti
 }

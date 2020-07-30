@@ -3,7 +3,7 @@
 \name{separate_cifti}
 \alias{separate_cifti}
 \alias{separateCIfTI}
-\title{Separate and save CIFTI data as NIfTI and GIfTI files}
+\title{Separate a CIFTI as its NIfTI and GIfTI component files}
 \usage{
 separate_cifti(
   cifti_fname,
@@ -41,8 +41,9 @@ in.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
-gray matter). Default: \code{c("left","right")} (brain surface only).}
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+Default: \code{c("left","right")} (brain surface only).}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
@@ -69,8 +70,10 @@ If not provided, should be set with
 A data frame with column names "label" and "fname", and rows corresponding to each separate file.
 }
 \description{
-Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 
- subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
+Separates a CIFTI file into GIfTIs for the cortical 
+ (left and right) structures, and NIfTIs for the 
+ subcortical structures. 
+ This uses the \code{-cifti-separate} command from Connectome Workbench.
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and 

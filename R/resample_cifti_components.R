@@ -1,7 +1,9 @@
-#' Resample CIFTI data from separate GIfTI and NIfTI files
+#' Resample a series of GIFTIs related to a CIFTI file
 #'
 #' @description Performs spatial resampling of various CIFTI file components on 
-#'  the cortical surface.
+#'  the cortical surface. (The subcortical data is not resampled here.) 
+#'  GIFTI surface geometry files can additionally be included: see 
+#' \code{surfL_original_fname} and \code{surfR_original_fname}.
 #'
 #' @inheritParams resamp_res_Param_required
 #' @inheritParams sphereL_fname_Param
@@ -40,7 +42,7 @@
 #'  Step 1: Generate spheres in the target resolution
 #'  Step 2: Use -metric-resample to resample surface/cortex files 
 #'  Step 3: Use -surface-resample to resample gifti files
-resample_cifti_separate <- function(
+resample_cifti_components <- function(
   resamp_res, 
   sphereL_fname, sphereR_fname, 
   cortexL_original_fname=NULL, cortexR_original_fname=NULL, 

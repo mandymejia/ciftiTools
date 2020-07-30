@@ -6,9 +6,9 @@
 \arguments{
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
-gray matter). Default: \code{c("left","right", "subcortical")} 
-(all).}
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+Default: \code{"all"}.}
 }
 \description{
 brainstructures

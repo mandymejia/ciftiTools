@@ -83,7 +83,7 @@ resample_cifti_wrapper <- function(
   )
 
   # Get expected file names.
-  expected_labs <- get_kwargs(ciftiTools::resample_cifti_separate)
+  expected_labs <- get_kwargs(ciftiTools::resample_cifti_components)
   expected_labs <- expected_labs[grepl("fname", expected_labs, fixed=TRUE)]
 
   # Check and add original file names to the kwargs.
@@ -99,7 +99,7 @@ resample_cifti_wrapper <- function(
     resamp_kwargs[paste0(names(resamp_fnames), "_target_fname")] <- resamp_fnames
   }
 
-  # Do resample_cifti_separate.
+  # Do resample_cifti_components.
   resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
-  do.call(resample_cifti_separate, resamp_kwargs)
+  do.call(resample_cifti_components, resamp_kwargs)
 }

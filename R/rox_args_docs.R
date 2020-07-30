@@ -1,10 +1,51 @@
+#' labels
+#' 
+#' @section Label Levels:
+#'  \code{LABELS$CORTEX_LEFT} and \code{LABELS$CORTEX_RIGHT} in
+#'  a \code{"cifti"} object, as well as \code{LABELS$SUBSTRUCTURE} in a 
+#'  "cifti_flat" object, are factors with the following levels:
+#' 
+#'  \describe{
+#'    \item{1}{Cortex-L}
+#'    \item{2}{Cortex-R}
+#'    \item{3}{Accumbens-L}
+#'    \item{4}{Accumbens-R}
+#'    \item{5}{Amygdala-L}
+#'    \item{6}{Amygdala-R}
+#'    \item{7}{Brain Stem}
+#'    \item{8}{Caudate-L}
+#'    \item{9}{Caudate-R}
+#'    \item{10}{Cerebellum-L}
+#'    \item{11}{Cerebellum-R}
+#'    \item{12}{Diencephalon-L}
+#'    \item{13}{Diencephalon-R}
+#'    \item{14}{Hippocampus-L}
+#'    \item{15}{Hippocampus-R}
+#'    \item{16}{Pallidum-L}
+#'    \item{17}{Pallidum-R}
+#'    \item{18}{Putamen-L}
+#'    \item{19}{Putamen-R}
+#'    \item{20}{Thalamus-L}
+#'    \item{21}{Thalamus-R}
+#'    \item{22}{Medial Wall}
+#'  }
+#' 
+#'  Levels 1-21 correspond to the same structures as given by 
+#'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Here, the 
+#'  22nd level ("Medial Wall") was added because it is necessary for converting 
+#'  a  \code{"cifti_flat"} object to a  \code{"cifti"} object, in which the 
+#'  latter's cortical data have empty rows corresponding to vertices which
+#'  comprise the medial wall. These are absent in the \code{"cifti_flat"} data.
+#' @name labels_Description
+NULL
+
 #' brainstructures
 #'
 #' @param brainstructures Character vector indicating which brain structure(s) 
 #'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-#'  cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
-#'  gray matter). Default: \code{c("left","right", "subcortical")} 
-#'  (all).
+#'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+#'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+#'  Default: \code{"all"}. 
 #' @name brainstructures_Param_all
 NULL
 
@@ -12,8 +53,9 @@ NULL
 #'
 #' @param brainstructures Character vector indicating which brain structure(s) 
 #'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-#'  cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
-#'  gray matter). Default: \code{c("left","right")} (brain surface only).
+#'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+#'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+#'  Default: \code{c("left","right")} (brain surface only).
 #' @name brainstructures_Param_LR
 NULL
 
@@ -21,7 +63,7 @@ NULL
 #' 
 #' @param cifti Object of class "cifti". 
 #'  See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
-#'  and \code{\link{is_cifti}}.
+#'  and \code{\link{is.cifti}}.
 #' @name cifti_Param
 NULL
 
@@ -136,7 +178,7 @@ NULL
 #'  be a subset of the \code{brainstructures} argument. 
 #'  
 #'  NOTE: ROIs are currently
-#'  not fully supported by ciftiTools, since "cifti" objects will not contain
+#'  not fully supported by ciftiTools, since \code{"cifti"} objects will not contain
 #'  the ROIs. A workaround would be to keep the separated/resampled files
 #'  with \code{sep_keep}/\code{resamp_keep} and then read those in with
 #'  \code{make_cifti}. 
@@ -235,8 +277,14 @@ NULL
 
 #' verbose
 #'
+#' @param verbose Should occasional updates be printed? Default: \code{FALSE}.
+#' @name verbose_Param_FALSE
+NULL
+
+#' verbose
+#'
 #' @param verbose Should occasional updates be printed? Default: \code{TRUE}.
-#' @name verbose_Param
+#' @name verbose_Param_TRUE
 NULL
 
 #' wb_path

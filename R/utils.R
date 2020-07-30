@@ -148,7 +148,7 @@ merge_kwargs <- function(kwargsA, kwargsB,
 #' @param user Character vector of user input. These will be matched to
 #'  \code{expected} using \code{match.arg()}.
 #' @param expected Character vector of expected/allowed values.
-#' @param unrecognized_action If any value in \code{user} could not be
+#' @param fail_action If any value in \code{user} could not be
 #'  matched, or repeated matches occured, what should happen? Possible values
 #'  are \code{"stop"} (default; raises an error), \code{"warning"}, and
 #'  \code{"nothing"}.
@@ -160,14 +160,14 @@ merge_kwargs <- function(kwargsA, kwargsB,
 #' 
 match_input <- function(
   user, expected,
-  unrecognized_action=c("stop", "warning", "nothing"),
+  fail_action=c("stop", "warning", "nothing"),
   user_value_label=NULL) {
 
-  unrecognized_action <- match.arg(
-    unrecognized_action,
+  fail_action <- match.arg(
+    fail_action,
     c("stop", "warning", "nothing")
   )
-  unrecognized_FUN <- switch(unrecognized_action,
+  unrecognized_FUN <- switch(fail_action,
     warning=warning,
     stop=stop,
     nothing=invisible
@@ -201,4 +201,31 @@ match_input <- function(
   )
 
   invisible(NULL)
+}
+
+#' Validates a list.
+#' 
+#' Checks whether \code{list} is a list with names \code{expected_names}.
+#' 
+#' @param list The putative list.
+#' @param expected_names The expected names in \code{list}, in order.
+#' @param user_value_label How to refer to the user input in the
+#'  message. If \code{NULL}, no label is used.
+#' 
+#' @return Logical indicating whether the list was valid.
+#' @export
+#' 
+valid_list <- function(list, expected_names, user_value_label=NULL) {
+  if (is.null(user_value_label)) { user_value_label <- "the list"}
+  if (!is.list(list) || !identical(expected_names, names(list))) {
+    message(paste0(
+      "The entry names of ", user_value_label, " must be exactly:\n",
+      "\t\"", paste(expected_names, collapse="\", \""), "\".\n",
+      "Instead, the entries are:\n",
+      "\t\"", paste(names(list), collapse="\", \""), "\".\n"
+    ))
+    return(FALSE)
+  }
+
+  return(TRUE)
 }

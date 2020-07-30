@@ -7,7 +7,7 @@
 match_input(
   user,
   expected,
-  unrecognized_action = c("stop", "warning", "nothing"),
+  fail_action = c("stop", "warning", "nothing"),
   user_value_label = NULL
 )
 }
@@ -17,7 +17,7 @@ match_input(
 
 \item{expected}{Character vector of expected/allowed values.}
 
-\item{unrecognized_action}{If any value in \code{user} could not be
+\item{fail_action}{If any value in \code{user} could not be
 matched, or repeated matches occured, what should happen? Possible values
 are \code{"stop"} (default; raises an error), \code{"warning"}, and
 \code{"nothing"}.}

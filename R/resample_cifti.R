@@ -1,4 +1,4 @@
-#' Resample CIFTI data
+#' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
 #'
@@ -19,7 +19,7 @@
 #' @inheritParams resamp_fnames_Param
 #' @inheritParams resamp_keep_Param
 #' @inheritParams write_dir_Param_intermediate
-#' @inheritParams verbose_Param
+#' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
 #' @return A list of output files written. The elements are "cifti" and
@@ -97,14 +97,14 @@ resample_cifti <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # resample_cifti_separate() --------------------------------------------------
+  # resample_cifti_components() --------------------------------------------------
   # ----------------------------------------------------------------------------
   
   # Do not resample the subcortical data.
   to_resample <- to_cif[!grepl("subcort", names(to_cif))]
   if (verbose) { cat("Resampling CIFTI file.\n") }
 
-  # Do resample_cifti_separate.
+  # Do resample_cifti_components.
   resamp_result <- resample_cifti_wrapper(
     resamp_res=resamp_res, original_fnames=to_resample, 
     resamp_fnames=resamp_fnames, 

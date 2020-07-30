@@ -51,7 +51,7 @@ viewCIfTI_surface(
 \arguments{
 \item{cifti}{Object of class "cifti". 
 See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
-and \code{\link{is_cifti}}.}
+and \code{\link{is.cifti}}.}
 
 \item{idx}{The time/column index of the cifti data to plot. 
 Currently one a single time point is supported. Default: the first index.}

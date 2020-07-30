@@ -3,7 +3,7 @@
 \name{flatten_cifti}
 \alias{flatten_cifti}
 \alias{flattenCIfTI}
-\title{Flatten a "cifti" object into a single matrix}
+\title{Flatten a \code{"cifti"} object into a single matrix}
 \usage{
 flatten_cifti(
   cifti,
@@ -20,13 +20,13 @@ flattenCIfTI(
 \arguments{
 \item{cifti}{Object of class "cifti". 
 See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
-and \code{\link{is_cifti}}.}
+and \code{\link{is.cifti}}.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
-gray matter). Default: \code{c("left","right", "subcortical")} 
-(all).}
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+Default: \code{"all"}.}
 
 \item{meta}{Should the metadata be obtained too? Default: 
 \code{TRUE}. If \code{FALSE}, return the data matrix only.}
@@ -40,12 +40,12 @@ If \code{meta}, a list containing the components "DAT" and
  (for the cortical data), and the labels and mask (for the subcortical data).
 }
 \description{
-Flattens data in a "cifti" object into a single matrix. 
+Flattens data in a \code{"cifti"} object into a single matrix. 
  Besides the row order for the subcortical brainordinates, this
  matrix is identical to that obtained by \code{\link{read_cifti_flat}},
  which uses the \code{-cifti-convert -to-gifti-ext} Workbench Command.
 
  If \code{meta}, some information from the "cifti" will be retained
- and the result will be a "cifti_flat" object. Otherwise, only the data
+ and the result will be a \code{"cifti_flat"} object. Otherwise, only the data
  matrix will be returned.
 }

@@ -2,50 +2,46 @@
 % Please edit documentation in R/read_cifti_flat.R
 \name{read_cifti_flat}
 \alias{read_cifti_flat}
-\alias{readCIfTI_flat}
-\title{Read in CIFTI data as a single matrix}
+\title{Read Flat CIFTI Data}
 \usage{
 read_cifti_flat(
   cifti_fname,
-  keep = FALSE,
-  gifti_fname = NULL,
-  write_dir = NULL,
-  wb_path = NULL
-)
-
-readCIfTI_flat(
-  cifti_fname,
-  keep = FALSE,
-  gifti_fname = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  brainstructures = c("left", "right"),
+  wb_path = NULL,
+  ...
 )
 }
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
 in.}
 
-\item{keep}{\code{read_cifti_flat} works by saving the CIFTI as a GIFTI file, 
-and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
-(default), write it in a temporary directory regardless of \code{write_dir}.}
+\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
+file representing the left cortex.}
 
-\item{gifti_fname}{File path of GIfTI-format data to save the CIFTI as. 
-Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
+\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
+file representing the right cortex.}
 
-\item{write_dir}{The directory in which to save the GIfTI, if it is being 
-kept. If \code{NULL} (default), use the current working directory.}
+\item{brainstructures}{Character vector indicating which brain structure(s) 
+to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+Default: \code{c("left","right")} (brain surface only).}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
+
+\item{...}{Additional arguments to \code{read_cifti_minimal}.}
 }
 \value{
-A T x B matrix, where T is the number of time points and B is the 
- number of brainordinates in the CIFTI file.
+A \code{"cifti_flat"} object. See \code{\link{is.cifti}}.
 }
 \description{
-Reads CIFTI data as a single large matrix. This uses the
- \code{-cifti-convert -to-gifti-ext} Connectome Workbench command.
+Read a CIFTI file by exporting it as a single GIFTI 
+ using the \code{-cifti-convert -to-gifti-ext}, and obtaining the
+ brainordinate mapping using \code{-cifti-export-dense-mapping}.
 }
 \details{
 This function uses a system wrapper for the "wb_command"
@@ -54,8 +50,4 @@ This function uses a system wrapper for the "wb_command"
  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
  The \code{wb_path} argument is the path to the Connectime Workbench folder
  or executable.
-
-Constant zero or NA values in the cortical data (i.e. for the medial wall)
- are often not included in the output. This is likely due to censoring within
- \code{-cifti-convert -to-gifti-ext}.
 }

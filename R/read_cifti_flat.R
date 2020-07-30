@@ -1,22 +1,17 @@
-#' Read in CIFTI data as a single matrix
+#' Read Flat CIFTI Data
 #'
-#' @description Reads CIFTI data as a single large matrix. This uses the
-#'  \code{-cifti-convert -to-gifti-ext} Connectome Workbench command.
+#' @description Read a CIFTI file by exporting it as a single GIFTI 
+#'  using the \code{-cifti-convert -to-gifti-ext}, and obtaining the
+#'  brainordinate mapping using \code{-cifti-export-dense-mapping}. 
 #'
 #' @inheritParams cifti_fname_Param
-#' @param keep \code{read_cifti_flat} works by saving the CIFTI as a GIFTI file, 
-#'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
-#'  (default), write it in a temporary directory regardless of \code{write_dir}.
-#' @param gifti_fname File path of GIfTI-format data to save the CIFTI as. 
-#'  Default: the CIFTI_fname but with the extension replaced with "flat.gii".
-#' @param write_dir The directory in which to save the GIfTI, if it is being 
-#'  kept. If \code{NULL} (default), use the current working directory.
+#' @inheritParams surfL_fname_Param
+#' @inheritParams surfR_fname_Param
+#' @inheritParams brainstructures_Param_LR
 #' @inheritParams wb_path_Param
+#' @param ... Additional arguments to \code{read_cifti_minimal}.
 #'
-#' @importFrom gifti readgii
-#'
-#' @return A T x B matrix, where T is the number of time points and B is the 
-#'  number of brainordinates in the CIFTI file.
+#' @return A \code{"cifti_flat"} object. See \code{\link{is.cifti}}.
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
@@ -26,73 +21,68 @@
 #'  The \code{wb_path} argument is the path to the Connectime Workbench folder
 #'  or executable.
 #'
-#' Constant zero or NA values in the cortical data (i.e. for the medial wall)
-#'  are often not included in the output. This is likely due to censoring within
-#'  \code{-cifti-convert -to-gifti-ext}.
-#'
-read_cifti_flat <- function(cifti_fname, keep=FALSE, gifti_fname=NULL,
-  write_dir=NULL, wb_path=NULL) {
+read_cifti_flat <- function(
+  cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), 
+  wb_path=NULL, ...){
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
-  # ----------------------------------------------------------------------------
-  # Get the output file name ---------------------------------------------------
-  # ----------------------------------------------------------------------------
-
-  cifti_fname <- format_path(cifti_fname)
-  if (!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
-  # Get the components of the CIFTI file path.
-  bname_cifti <- basename(cifti_fname)
-  extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
-
-  # If gifti_fname is not provided, use the CIFTI_fname but replace the 
-  #   extension with "flat.gii".
-  if (identical(gifti_fname, NULL)) {
-    gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
-  }
-  if (!keep) { write_dir <- tempdir() }
-  gifti_fname <- format_path(gifti_fname, write_dir, mode=2)
-  
-  # ----------------------------------------------------------------------------
-  # Write the file and read it in. ---------------------------------------------
-  # ----------------------------------------------------------------------------
-  
-  cmd <- paste(
-    sys_path(wb_cmd), 
-    "-cifti-convert -to-gifti-ext", 
-    sys_path(cifti_fname), 
-    sys_path(gifti_fname)
+  # Check arguments.
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical","all"),
+    user_value_label="brainstructures"
   )
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code,
-      ". The command was:\n", cmd
-    ))
+  if ("all" %in% brainstructures) { 
+    brainstructures <- c("left","right","subcortical")
   }
-  result <- readgii(gifti_fname)
-  result <- result$data$normal
-
-  # [TO DO]: don't delete since it's in tempdir(). Better way? safe to read (above line)?
-  # # Delete the GIfTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
-  # if (!keep) {
-  #   file.remove(gifti_fname)
-  #   if (file.exists(paste0(gifti_fname, ".data"))) {
-  #     file.remove(paste0(gifti_fname, ".data"))
-  #   }
-  # }
-
-  result
-}
-
-#' @rdname read_cifti_flat
-#' @export
-readCIfTI_flat <- readcii_flat <- function(
-  cifti_fname, keep=FALSE, gifti_fname=NULL,
-  write_dir=NULL, wb_path=NULL){
-
-  read_cifti_flat(
-    cifti_fname, keep=FALSE, gifti_fname=NULL,
-    write_dir=NULL, wb_path=NULL
+  
+  # Rename the brainstructures.
+  brainstructures_rename <- list(
+    left="CORTEX_LEFT",
+    right="CORTEX_RIGHT",
+    subcortical="SUBCORT"
   )
+  brainstructures <- as.character(brainstructures_rename[brainstructures])
+
+  # Create the template.
+  cifti <- list(
+    DAT = NULL,
+    LABELS = NULL,
+    SURF_LEFT = NULL, 
+    SURF_RIGHT = NULL, 
+    META = list(
+      CORTEX_RESOLUTION = NULL,
+      SUBCORT_MASK = NULL,
+      SUBCORT_MASK_PADDING = NULL
+    )
+  )
+
+  # Map the CIFTI.
+  cifti_map <- map_cifti(cifti_fname, wb_path)
+  cifti$META$SUBCORT_MASK <- cifti_map$SUBCORT_MASK
+  cifti$LABELS <- cifti_map$LABELS
+
+  # Read the CIFTI data.
+  cifti$DAT <- read_cifti_minimal(cifti_fname, wb_path=wb_path, ...)
+
+  # If there is subcortical data, re-order it spatially (vs. alphabetically).
+  if ("SUBCORT" %in% brainstructures) {
+    subcort_mask <- cifti$LABELS$BRAINSTRUCTURE == "SUBCORT"
+    cifti$DAT[subcort_mask,] <- cifti$DAT[subcort_mask,, drop=FALSE]#[order(order(cifti$LABELS)),]
+  }
+
+  # Remove undesired brainstructures.
+  brainstructure_mask <- cifti$LABELS$BRAINSTRUCTURE %in% brainstructures
+  medialwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
+  cifti$DAT <- cifti$DAT[brainstructure_mask[medialwall_mask],, drop=FALSE]
+  cifti$LABELS <- cifti$LABELS[brainstructure_mask,]
+  
+  # Read surfaces.
+  if (!is.null(surfL_fname)) { cifti$SURF_LEFT <- make_cifti_surface(surfL_fname) }
+  if (!is.null(surfR_fname)) { cifti$SURF_RIGHT <- make_cifti_surface(surfR_fname) }
+
+  # Finish.
+  if (!is.cifti(cifti, flat=TRUE)) { stop("The \"cifti_flat\" object was invalid.") }
+  class(cifti) <- "cifti_flat"
+  cifti
 }

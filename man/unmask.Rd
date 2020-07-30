@@ -11,8 +11,7 @@ unmask(dat, mask, fill = NA)
 the columns. If only one set of measurements were made, this may be a 
 vector.}
 
-\item{mask}{Volumetric brain mask for subcortical locations. See
-\code{\link{is_cifti_subcort_mask}}.}
+\item{mask}{Volumetric brain mask for subcortical locations.}
 
 \item{fill}{The value for locations outside the mask. Default: \code{NA}.}
 }

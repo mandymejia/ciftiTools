@@ -3,15 +3,14 @@
 \name{make_cifti}
 \alias{make_cifti}
 \alias{makeCIfTI}
-\title{Get CIFTI data from separate GIfTI and NIfTI files}
+\title{Assemble CIFTI components together.}
 \usage{
 make_cifti(
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,
-  subcortDat = NULL,
-  subcortMask = NULL,
   subcortLab = NULL,
+  subcortMask = NULL,
   surfL = NULL,
   surfR = NULL,
   read_dir = NULL
@@ -21,7 +20,6 @@ makeCIfTI(
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,
-  subcortDat = NULL,
   subcortMask = NULL,
   subcortLab = NULL,
   surfL = NULL,
@@ -31,48 +29,36 @@ makeCIfTI(
 }
 \arguments{
 \item{cortexL, cortexR}{(Optional) [Left/right] cortical data. Can be a file
-path for GIFTI data, an object from \code{\link[gifti]{readgii}}, or an
-object of class "ciftiTools_cortex".}
+path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
 
 \item{subcortVol}{(Optional) Volumetric subcortical data. Can
-be a file path for NIFTI data, an object from
-\code{\link[RNifti]{readNifti}}, or more generally a 3D/4D array. If it is 
-provided then \code{subcortDat} and \code{subcortMask} should not be, and 
-vice versa. Requires \code{subcortLab}.}
-
-\item{subcortDat, subcortMask}{(Optional) Alternatively to \code{subcortVol},
-the vectorized subcortical data can be provided with a volumetric mask. If
-these are provided then \code{subcortVol} should not be, and vice versa.
-Requires \code{subcortLab}. \code{subcortDat} should be a data matrix
-with voxels in rows (see \code{is_cifti_subcort_dat}), and 
-\code{subcortMask} should be a volumetric brain mask for subcortical
-locations (see \code{is_cifti_subcort_mask}).}
-
-\item{subcortLab}{(Required if \code{subcortVol} or [\code{subcortDat} and
-\code{subcortMask}] are provided) Labels for subcortical ROIs. Can
 be a file path for NIFTI data or an object from
-\code{\link[RNifti]{readNifti}}. 
+\code{\link[RNifti]{readNifti}}.}
 
-If [\code{subcortDat} and \code{subcortMask}] are provided, this may also be
-a numeric vector, since the mask should have the spatial information. 
-But if \code{subcortVol} is provided, it must represent 3D data because it 
-is used to make the 3D mask.}
+\item{subcortLab}{(Required if \code{subcortVol} is present) Labels for 
+subcortical ROIs. Can be a file path for NIFTI data or an object from
+\code{\link[RNifti]{readNifti}}.}
+
+\item{subcortMask}{(Optional) the volumetric mask for the subcortical data.
+If not provided, the mask will be inferred from \code{subcortLab}.}
 
 \item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
-path for GIFTI data, an object from \code{\link[gifti]{readgii}}, or an
-object of class "cifti_surface".}
+path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
 
 \item{read_dir}{(Optional) Append a directory to all file names in the
 arguments. If \code{NULL} (default), do not modify file names.}
 }
 \value{
-An object of type "cifti", a list containing these five elements:
- CORTEX_LEFT, CORTX_RIGHT, SUBCORT, SURF_LEFT and SURF_RIGHT.
+A list containing these eight elements:
+ CORTEX_LEFT, CORTEX_RIGHT, SUBCORT, SUBCORT_LABELS, SUBCORT_MASK, 
+ SUBCORT_MASK_PADDING, SURF_LEFT and SURF_RIGHT. 
+
+ The subcortical labels will be ordered spatially (not by alphabetical label).
 }
 \description{
-Make a "cifti" object from the separated left and right cortical
+Assembles the separated left and right cortical
  GIfTI data and surface geometry files (\code{\link[gifti]{readgii}}),
  as well as the subcortical NIfTI file (\code{\link[RNifti]{readNifti}}).
  Objects can be provided as file names, GIFTI/NIFTI objects, or "cifti_[...]"
- objects.
+ objects. This is a helper function for \code{\link{make_cifti}}.
 }
