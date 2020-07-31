@@ -2,9 +2,12 @@
 % Please edit documentation in R/unflatten_cifti.R
 \name{unflatten_cifti}
 \alias{unflatten_cifti}
+\alias{unflattenCIfTI}
 \title{Unflatten a "cifti_flat" object.}
 \usage{
 unflatten_cifti(cifti_flat, fill = 0)
+
+unflattenCIfTI(cifti_flat, fill = 0)
 }
 \arguments{
 \item{cifti_flat}{The flattened CIFTI.}

@@ -6,7 +6,6 @@
 \usage{
 read_cifti_separate(
   cifti_fname,
-  cifti_map = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
@@ -26,8 +25,6 @@ read_cifti_separate(
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
 in.}
-
-\item{cifti_map}{The output of \code{\link{map_cifti}}.}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -140,11 +137,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
- with T measurements and B brainordinates. If not \code{flat},
- an object of type \code{cifti}, a list containing 6 elements:
- \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} \code{LABELS},
- \code{SURF_LEFT} and \code{SURF_RIGHT}.
+A \code{"cifti"} object. See \code{\link{is.cifti}}.
 }
 \description{
 Read a CIFTI file by separating it into GIfTI and NIfTI files 
@@ -159,28 +152,4 @@ This function uses a system wrapper for the "wb_command"
  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
  The \code{wb_path} argument is the path to the Connectime Workbench folder
  or executable.
-
-The subcortical brain structure labels (LABELS element of returned list) take
- on integer values 3-21 and represent:
- \describe{
-   \item{3}{Accumbens-L}
-   \item{4}{Accumbens-R}
-   \item{5}{Amygdala-L}
-   \item{6}{Amygdala-R}
-   \item{7}{Brain Stem}
-   \item{8}{Caudate-L}
-   \item{9}{Caudate-R}
-   \item{10}{Cerebellum-L}
-   \item{11}{Cerebellum-R}
-   \item{12}{Diencephalon-L}
-   \item{13}{Diencephalon-R}
-   \item{14}{Hippocampus-L}
-   \item{15}{Hippocampus-R}
-   \item{16}{Pallidum-L}
-   \item{17}{Pallidum-R}
-   \item{18}{Putamen-L}
-   \item{19}{Putamen-R}
-   \item{20}{Thalamus-L}
-   \item{21}{Thalamus-R}
- }
 }

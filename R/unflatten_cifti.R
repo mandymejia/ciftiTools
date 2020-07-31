@@ -9,7 +9,9 @@
 #' @export
 #'
 unflatten_cifti <- function(cifti_flat, fill=0) {
-  stopifnot(is.cifti(cifti_flat, flat=TRUE))
+  if (!is.cifti(cifti, flat=TRUE)) { 
+    stop("Input is not a valid \"cifti_flat\" object.")
+  }
 
   # Create the template.
   cifti <- c(
@@ -45,4 +47,10 @@ unflatten_cifti <- function(cifti_flat, fill=0) {
   }
   class(cifti) <- "cifti"
   cifti
+}
+
+#' @rdname unflatten_cifti
+#' @export
+unflattenCIfTI <- unflattencii <- function(cifti_flat, fill=0){
+  unflatten_cifti(cifti_flat)
 }

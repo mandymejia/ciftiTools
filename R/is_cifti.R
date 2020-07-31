@@ -1,3 +1,5 @@
+## [TO DO]: is.cifti_map
+
 #' Validate a "cifti_data" object.
 #'
 #' Check if object is valid for

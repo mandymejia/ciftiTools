@@ -6,7 +6,6 @@
 #'  component into R (\code{\link{make_cifti}}).
 #'
 #' @inheritParams cifti_fname_Param
-#' @param cifti_map The output of \code{\link{map_cifti}}.
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
@@ -22,11 +21,7 @@
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return If \code{flat}, an object of type \code{cifti_flat}: a T x B matrix
-#'  with T measurements and B brainordinates. If not \code{flat},
-#'  an object of type \code{cifti}, a list containing 6 elements:
-#'  \code{CORTEX_LEFT}, \code{CORTEX_RIGHT}, \code{VOL} \code{LABELS},
-#'  \code{SURF_LEFT} and \code{SURF_RIGHT}.
+#' @return A \code{"cifti"} object. See \code{\link{is.cifti}}.
 #'
 #' @export
 #'
@@ -37,40 +32,14 @@
 #'  The \code{wb_path} argument is the path to the Connectime Workbench folder
 #'  or executable.
 #'
-#' The subcortical brain structure labels (LABELS element of returned list) take
-#'  on integer values 3-21 and represent:
-#'  \describe{
-#'    \item{3}{Accumbens-L}
-#'    \item{4}{Accumbens-R}
-#'    \item{5}{Amygdala-L}
-#'    \item{6}{Amygdala-R}
-#'    \item{7}{Brain Stem}
-#'    \item{8}{Caudate-L}
-#'    \item{9}{Caudate-R}
-#'    \item{10}{Cerebellum-L}
-#'    \item{11}{Cerebellum-R}
-#'    \item{12}{Diencephalon-L}
-#'    \item{13}{Diencephalon-R}
-#'    \item{14}{Hippocampus-L}
-#'    \item{15}{Hippocampus-R}
-#'    \item{16}{Pallidum-L}
-#'    \item{17}{Pallidum-R}
-#'    \item{18}{Putamen-L}
-#'    \item{19}{Putamen-R}
-#'    \item{20}{Thalamus-L}
-#'    \item{21}{Thalamus-R}
-#'  }
-#'
 read_cifti_separate <- function(
-  cifti_fname, cifti_map=NULL,
+  cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), ROI_brainstructures=NULL,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
   sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
-
-  stop("Doesn't work.")
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -170,6 +139,8 @@ read_cifti_separate <- function(
   # make_cifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  cifti_map <- map_cifti(cifti_fname)
+
   # ROIs are not supported yet.
   is_ROI <- grepl("ROI", names(to_read))
   if(any(is_ROI)){
@@ -186,7 +157,7 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
-  result <- do.call(make_cifti, to_read)
+  result <- do.call(make_cifti, c(list(cifti_map=cifti_map), to_read))
 
   if (verbose) {
     print(Sys.time() - exec_time)

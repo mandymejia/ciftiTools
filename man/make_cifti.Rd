@@ -6,13 +6,14 @@
 \title{Assemble CIFTI components together.}
 \usage{
 make_cifti(
+  cifti_map = NULL,
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,
   subcortLab = NULL,
-  subcortMask = NULL,
   surfL = NULL,
   surfR = NULL,
+  flat = FALSE,
   read_dir = NULL
 )
 
@@ -28,6 +29,8 @@ makeCIfTI(
 )
 }
 \arguments{
+\item{cifti_map}{The CIFTI mapping: \code{map_cifti(cifti_fname)}.}
+
 \item{cortexL, cortexR}{(Optional) [Left/right] cortical data. Can be a file
 path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
 
@@ -39,21 +42,22 @@ be a file path for NIFTI data or an object from
 subcortical ROIs. Can be a file path for NIFTI data or an object from
 \code{\link[RNifti]{readNifti}}.}
 
-\item{subcortMask}{(Optional) the volumetric mask for the subcortical data.
-If not provided, the mask will be inferred from \code{subcortLab}.}
-
 \item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
 path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
+
+\item{flat}{Flatten the CIFTI?}
 
 \item{read_dir}{(Optional) Append a directory to all file names in the
 arguments. If \code{NULL} (default), do not modify file names.}
 }
 \value{
-A list containing these eight elements:
- CORTEX_LEFT, CORTEX_RIGHT, SUBCORT, SUBCORT_LABELS, SUBCORT_MASK, 
- SUBCORT_MASK_PADDING, SURF_LEFT and SURF_RIGHT. 
+The output will be a "cifti" object if \code{!flat} and a 
+ "cifti_flat" object if \code{flat}. 
 
- The subcortical labels will be ordered spatially (not by alphabetical label).
+ If \code{cifti_map} was provided the medial wall locations and subcortical 
+ mask will be inferred from constant 0/NA values and 0-valued labels, 
+ respectively. This should work but is prone to error, especially if there
+ is only one or a few observations per brainordinate.
 }
 \description{
 Assembles the separated left and right cortical
