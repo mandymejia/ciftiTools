@@ -197,7 +197,7 @@ resample_cifti <- function(
   
   stopifnot(file.exists(cifti_template_fname))
   stopifnot(all(file.exists(c(sphereL_fname, sphereR_fname))))
-  cmd = paste(
+  cmd <- paste(
     sys_path(wb_cmd), "-cifti-resample", sys_path(cifti_original_fname), 
     "COLUMN", sys_path(cifti_template_fname), 
     "COLUMN BARYCENTRIC CUBIC", sys_path(cifti_target_fname), 
