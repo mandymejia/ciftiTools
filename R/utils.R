@@ -207,7 +207,7 @@ match_input <- function(
 #' 
 #' Checks whether \code{list} is a list with names \code{expected_names}.
 #' 
-#' @param list The putative list.
+#' @param x The putative list.
 #' @param expected_names The expected names in \code{list}, in order.
 #' @param user_value_label How to refer to the user input in the
 #'  message. If \code{NULL}, no label is used.
@@ -215,14 +215,15 @@ match_input <- function(
 #' @return Logical indicating whether the list was valid.
 #' @export
 #' 
-valid_list <- function(list, expected_names, user_value_label=NULL) {
+valid_list <- function(x, expected_names, user_value_label=NULL) {
   if (is.null(user_value_label)) { user_value_label <- "the list"}
-  if (!is.list(list) || !identical(expected_names, names(list))) {
+  length_mismatch <- length(x)!=length(expected_names)
+  if (!is.list(x) || length_mismatch || !all(expected_names == names(list))) {
     message(paste0(
       "The entry names of ", user_value_label, " must be exactly:\n",
       "\t\"", paste(expected_names, collapse="\", \""), "\".\n",
       "Instead, the entries are:\n",
-      "\t\"", paste(names(list), collapse="\", \""), "\".\n"
+      "\t\"", paste(names(x), collapse="\", \""), "\".\n"
     ))
     return(FALSE)
   }

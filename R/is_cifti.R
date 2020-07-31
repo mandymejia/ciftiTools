@@ -48,12 +48,13 @@ is.cifti_substructures <- function(x) {
   }
 
   substructure_levels <- substructure_table()$ciftiTools_Name
-  if (!identical(levels(x), substructure_levels)) {
+  length_mismatch <- length(levels(x))!=length(substructure_levels)
+  if (length_mismatch || !all(levels(x) == substructure_levels)) {
     message(paste0(
       "The labels must have the following factor levels:\n",
-      "\t\"", paste(substructure_levels, sep="\", \""), "\".\n",
+      "\t\"", paste(substructure_levels, collapse="\", \""), "\".\n",
       "Instead, its levels are:\n",
-      "\t\"", paste(levels(x), sep="\", \""), "\".\n"
+      "\t\"", paste(levels(x), collapse="\", \""), "\".\n"
     ))
     return(FALSE)
   }

@@ -141,6 +141,13 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
   subcort$j <- subcort$j + 1
   subcort$k <- subcort$k + 1
 
+  ## Get the vectorized spatial index for the subcortical data.
+  #subcort$idx_spatial <- order(
+  #  subcort$i + 
+  #  (1+max(subcort$i))*subcort$j + 
+  #  (1+(1+max(subcort$i)*max(subcort$j)))*subcort$k
+  #)
+
   # Re-level the subcortical labels, and then temporarily use integers.
   labels_original <- substructure_table()$Original_Name
   labels_ciftiTools <- substructure_table()$ciftiTools_Name
@@ -164,11 +171,11 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
   # Use "unflat" index for the cortical data.
   # Make the cortical labels factors too.
   cortexL <- ifelse(
-    cortexL$idx_unflat %in% cortexL$idx_flat, "Cortex-L", "Medial Wall"
+    1:max(cortexL$idx_unflat) %in% cortexL$idx_unflat, "Cortex-L", "Medial Wall"
   )
   cortexL <- factor(cortexL, levels=labels_ciftiTools)
   cortexR <- ifelse(
-    cortexR$idx_unflat %in% cortexR$idx_flat, "Cortex-R", "Medial Wall"
+    1:max(cortexR$idx_unflat) %in% cortexR$idx_unflat, "Cortex-R", "Medial Wall"
   )
   cortexR <- factor(cortexR, levels=labels_ciftiTools)
 

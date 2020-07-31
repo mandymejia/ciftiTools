@@ -4,10 +4,10 @@
 \alias{valid_list}
 \title{Validates a list.}
 \usage{
-valid_list(list, expected_names, user_value_label = NULL)
+valid_list(x, expected_names, user_value_label = NULL)
 }
 \arguments{
-\item{list}{The putative list.}
+\item{x}{The putative list.}
 
 \item{expected_names}{The expected names in \code{list}, in order.}
 

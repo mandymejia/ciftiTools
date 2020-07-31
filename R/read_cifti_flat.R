@@ -66,14 +66,15 @@ read_cifti_flat <- function(
   cifti$DAT <- read_cifti_minimal(cifti_fname, wb_path=wb_path, ...)
 
   # If there is subcortical data, re-order it spatially (vs. alphabetically).
+  medialwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
   if ("SUBCORT" %in% brainstructures) {
-    subcort_mask <- cifti$LABELS$BRAINSTRUCTURE == "SUBCORT"
-    cifti$DAT[subcort_mask,] <- cifti$DAT[subcort_mask,, drop=FALSE]#[order(order(cifti$LABELS)),]
+    subcort_mask <- c(cifti$LABELS$BRAINSTRUCTURE == "SUBCORT")[medialwall_mask]
+    subcort_order <- order(order(cifti$LABELS[cifti$LABELS$BRAINSTRUCTURE == "SUBCORT", "SUBSTRUCTURE"]))
+    cifti$DAT[subcort_mask,] <- cifti$DAT[subcort_mask,, drop=FALSE][subcort_order,, drop=FALSE]
   }
 
   # Remove undesired brainstructures.
   brainstructure_mask <- cifti$LABELS$BRAINSTRUCTURE %in% brainstructures
-  medialwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
   cifti$DAT <- cifti$DAT[brainstructure_mask[medialwall_mask],, drop=FALSE]
   cifti$LABELS <- cifti$LABELS[brainstructure_mask,]
   
