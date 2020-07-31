@@ -90,7 +90,13 @@ read_cifti <- function(
   # ----------------------------------------------------------------------------
 
   format <- match.arg(format, c("regular", "flat", "minimal"))
-  if (format == "minimal") { method = "convert" }
+  if (format == "minimal" && method == "separate") { 
+    if (!is.null(resamp_res)) {
+      stop("Not implemented. For now, use minimize_cifti(read_cifti(cifti_fname, ...))")
+    }
+    warning( "Minimal format efficiently obtained with convert method, not separate. Using convert method." )
+    method = "convert" 
+  }
   method <- match.arg(method, c("convert", "separate"))
 
   brainstructures <- match_input(
@@ -100,9 +106,14 @@ read_cifti <- function(
   if ("all" %in% brainstructures) { 
     brainstructures <- c("left","right","subcortical")
   }
-  do_left <- "left" %in% brainstructures
-  do_right <- "right" %in% brainstructures
-  do_sub <- "subcortical" %in% brainstructures
+  #if (format == "minimal") {
+  #  if (!all(c("left","right","subcortical") %in% brainstructures)) {
+  #    stop(paste(
+  #      "Minimal format must yield all brainstructures.",
+  #      "Change `format` or `brainstructures` argument.\n"
+  #    ))
+  #  }
+  #}
 
   dots <- list(...)
   if (!is.null(resamp_res) && method == "convert") {
@@ -114,12 +125,12 @@ read_cifti <- function(
   # ----------------------------------------------------------------------------
 
   if (format=="minimal") {
-    return(read_cifti_minimal(
+    cifti = read_cifti_minimal(
       cifti_fname, wb_path=wb_path
-    ))
+    )
 
-  } else if (format=="regular") {
-    return(read_cifti_separate(
+  } else if (method=="separate") {
+    cifti = read_cifti_separate(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures,
@@ -127,17 +138,26 @@ read_cifti <- function(
       sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
       wb_path=wb_path,
       ...
-    ))
+    )
+    if (format=="flat") {
+      cifti <- flatten_cifti(cifti)
+    }
 
-  } else if (format=="flat") {
-    return(read_cifti_flat(
+  } else if (method=="convert") {
+    cifti = read_cifti_flat(
       cifti_fname, 
       surfL_fname=surfL_fname, surfR_fname=surfR_fname, 
       brainstructures=brainstructures, 
       wb_path=wb_path,
       ...
-    ))
+    )
+    if (format=="regular") {
+      cifti <- unflatten_cifti(cifti)
+    }
+
   } else { stop() }
+
+  cifti
 }
 
 #' @rdname read_cifti
@@ -155,6 +175,7 @@ readCIfTI <- readcii <- function(
     surfL_fname, surfR_fname,
     brainstructures, 
     method,
+    resamp_res, sphereL_fname, sphereR_fname,
     wb_path, ...
   )
 }

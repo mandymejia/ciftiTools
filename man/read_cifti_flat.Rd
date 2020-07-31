@@ -10,6 +10,7 @@ read_cifti_flat(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   wb_path = NULL,
+  verbose = FALSE,
   ...
 )
 }
@@ -32,6 +33,8 @@ Default: \code{c("left","right")} (brain surface only).}
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
+
+\item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
 
 \item{...}{Additional arguments to \code{read_cifti_minimal}.}
 }

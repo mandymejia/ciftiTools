@@ -1,26 +1,26 @@
-#' Convert a "cifti_flat" to a "cifti_minimal"
+#' Convert a "cifti" or "cifti_flat" to a "cifti_minimal"
 #'
-#' Convert a "cifti_flat" to a "cifti_minimal" by reordering the subcortical
-#'  voxels alphabetically.
+#' Convert a "cifti" or "cifti_flat" to a "cifti_minimal" by reordering the 
+#'  subcortical voxels alphabetically.
 #'
-#' @param cifti_flat The "cifti_flat" object
+#' @param cifti The "cifti" object
 #'
 #' @return The "cifti_minimal" object
 #' @export
 #'
-minimize_cifti <- function(cifti_flat) {
-  if (!(check_cifti(cifti_flat, flat=TRUE))) {
-    if (check_cifti(cifti_flat, flat=FALSE)) {
-      message("Input was a \"cifti\", so flattening first.")
-      cifti_flat <- flatten_cifti(cifti_flat)
+minimize_cifti <- function(cifti) {
+  if (!(check_cifti(cifti, flat=TRUE))) {
+    if (check_cifti(cifti, flat=FALSE)) {
+      # Input was a "cifti", so flattening first.
+      cifti <- flatten_cifti(cifti)
     } else {
-      temp <- is.cifti(cifti_flat, flat=TRUE)
+      temp <- is.cifti(cifti, flat=TRUE)
       stop("Not a \"cifti_flat\" (or a \"cifti\")")
     }
   }
-  subcort_mask <- cifti_flat$LABELS$BRAINSTRUCTURE=="SUBCORT"
-  dat_sc_mask <- subcort_mask[cifti_flat$LABELS$SUBSTRUCTURE!="Medial Wall"]
-  back <- order(cifti_flat$LABELS[subcort_mask,"SUBSTRUCTURE"])
-  cifti_flat$DAT[dat_sc_mask,] <- cifti_flat$DAT[dat_sc_mask,, drop=FALSE][back,, drop=FALSE]
-  cifti_flat$DAT
+  subcort_mask <- cifti$LABELS$BRAINSTRUCTURE=="SUBCORT"
+  dat_sc_mask <- subcort_mask[cifti$LABELS$SUBSTRUCTURE!="Medial Wall"]
+  back <- order(cifti$LABELS[subcort_mask,"SUBSTRUCTURE"])
+  cifti$DAT[dat_sc_mask,] <- cifti$DAT[dat_sc_mask,, drop=FALSE][back,, drop=FALSE]
+  cifti$DAT
 }

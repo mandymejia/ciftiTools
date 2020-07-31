@@ -139,7 +139,9 @@ read_cifti_separate <- function(
   # make_cifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  cifti_map <- map_cifti(cifti_fname)
+  if (is.null(resamp_res)) {
+    to_read <- c(list(cifti_map=map_cifti(cifti_fname)), to_read)
+  } 
 
   # ROIs are not supported yet.
   is_ROI <- grepl("ROI", names(to_read))
@@ -157,7 +159,7 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
-  result <- do.call(make_cifti, c(list(cifti_map=cifti_map), to_read))
+  result <- do.call(make_cifti, to_read)
 
   if (verbose) {
     print(Sys.time() - exec_time)
