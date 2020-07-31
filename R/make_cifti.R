@@ -74,6 +74,7 @@ make_cifti <- function(
         validate_mask=TRUE
       )
     }
+    cifti$SUBCORT <- subcort$DAT
   } else { 
     subcort <- list(DAT = NULL, LABELS = NULL, MASK = NULL, PADDING = NULL) 
     subcort$PADDING <- list(
@@ -82,7 +83,6 @@ make_cifti <- function(
       k = c(NA, NA)
     )
   }
-  cifti$SUBCORT <- subcort$DAT
 
   # Surfaces.
   if (!is.null(surfL)) { surfL <- make_cifti_surface(surfL) }
