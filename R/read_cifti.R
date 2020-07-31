@@ -114,12 +114,12 @@ read_cifti <- function(
   # ----------------------------------------------------------------------------
 
   if (format=="minimal") {
-    return(read_cifti_minimal(
+    cifti = read_cifti_minimal(
       cifti_fname, wb_path=wb_path
-    ))
+    )
 
-  } else if (format=="regular") {
-    return(read_cifti_separate(
+  } else if (method=="convert") {
+    cifti = read_cifti_separate(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures,
@@ -127,17 +127,26 @@ read_cifti <- function(
       sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
       wb_path=wb_path,
       ...
-    ))
+    )
+    if (format=="regular") {
+      cifti <- unflatten_cifti(cifti)
+    }
 
-  } else if (format=="flat") {
-    return(read_cifti_flat(
+  } else if (method=="separate") {
+    cifti = read_cifti_flat(
       cifti_fname, 
       surfL_fname=surfL_fname, surfR_fname=surfR_fname, 
       brainstructures=brainstructures, 
       wb_path=wb_path,
       ...
-    ))
+    )
+    if (format=="minimal") {
+      cifti <- flatten_cifti(cifti)
+    }
+
   } else { stop() }
+
+  cifti
 }
 
 #' @rdname read_cifti
