@@ -58,16 +58,22 @@ make_cifti <- function(
   if (!is.null(subcortVol)) {
     if (!is.null(cifti_map)) {
       subcort <- make_cifti_subcort_fromvol(
-        subcortVol, 
-        subcortLab, 
-        cifti_map$SUBCORT_MASK,
-        validate_mask=FALSE
+        subcortVol, subcortLab, 
+        cifti_map$SUBCORT_MASK, validate_mask=FALSE
       )
     } else {
-      subcort <- make_cifti_subcort_fromvol(subcortVol, subcortLab, validate_mask=TRUE)
+      subcort <- make_cifti_subcort_fromvol(
+        subcortVol, subcortLab, 
+        validate_mask=TRUE
+      )
     }
   } else { 
     subcort <- list(DAT = NULL, LABELS = NULL, MASK = NULL, PADDING = NULL) 
+    subcort$PADDING <- list(
+      i = c(NA, NA), 
+      j = c(NA, NA), 
+      k = c(NA, NA)
+    )
   }
 
   # Surfaces.
@@ -75,18 +81,29 @@ make_cifti <- function(
   if (!is.null(surfR)) { surfR <- make_cifti_surface(surfR) }
 
   # Labels.
+  labs <- list(
+    CORTEX_LEFT=NULL,
+    CORTEX_RIGHT=NULL,
+    SUBCORT=NULL
+  )
+  bs_names <- c("CORTEX_LEFT", "CORTEX_RIGHT", "SUBCORT")
+  bs_list <- list(cortexL, cortexR, subcort$DAT)
+  names(bs_list) <- bs_names
   if (!is.null(cifti_map)) {
-    labs = list(
-      CORTEX_LEFT = cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCUTRE=="CORTEX_LEFT","SUBSTRUCTURE"],
-      CORTEX_RIGHT = cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCUTRE=="CORTEX_RIGHT","SUBSTRUCTURE"],
-      SUBCORT = cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCUTRE=="SUBCORT","SUBSTRUCTURE"],
-    )
+    for (bs_name in bs_names) {
+      if(!is.null(bs_list[[bs_name]])){ 
+        labs[[bs_name]] <- cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCTURE==bs_name,"SUBSTRUCTURE"]
+      }
+    }
+    
+    # Set empty to NULL and check match.
+    if (!is.null(subcortVol)) {
+      stopifnot(all.equal(as.numeric(labs$SUBCORT), as.numeric(subcort$LABELS)))
+    }
 
-    # Check match.
-    stopifnot(labs$SUBCORT == subcort$LABELS)
   } else {
     warning("No cifti map was provided, so inferring the medial wall.")
-    labs = list(
+    labs <- list(
       CORTEX_LEFT = factor(
         ifelse(apply(cortexL==0 | is.na(cortexL), 1, all), "Medial Wall", "Cortex-L"),
         levels=substructure_table()$ciftiTools_Name
@@ -99,6 +116,10 @@ make_cifti <- function(
     )
   }
 
+  # Apply label mask to cortex data.
+  cortexL <- cortexL[labs$CORTEX_LEFT != "Medial Wall",, drop=FALSE]
+  cortexR <- cortexR[labs$CORTEX_RIGHT != "Medial Wall",, drop=FALSE]
+
   cifti <- list(
     CORTEX_LEFT = cortexL,
     CORTEX_RIGHT = cortexR,
@@ -109,11 +130,11 @@ make_cifti <- function(
     META = list(
       CORTEX_RESOLUTION = NULL,
       SUBCORT_MASK = subcort$MASK,
-      SUBCORT_MASK_PADDING = subcort$MASK_PADDING
+      SUBCORT_MASK_PADDING = subcort$PADDING
     )
   )
 
-  if (!is.cifti(cifti)) { stop("Could not make a valid \"cifti\" object.") }
+  #if (!is.cifti(cifti)) { stop("Could not make a valid \"cifti\" object.") }
   class(cifti) <- "cifti"
   cifti
 }

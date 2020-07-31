@@ -53,13 +53,20 @@ read_cifti_flat <- function(
     META = list(
       CORTEX_RESOLUTION = NULL,
       SUBCORT_MASK = NULL,
-      SUBCORT_MASK_PADDING = NULL
+      SUBCORT_MASK_PADDING = list(
+        i = c(NA, NA), 
+        j = c(NA, NA), 
+        k = c(NA, NA)
+      )
     )
   )
 
   # Map the CIFTI.
   cifti_map <- map_cifti(cifti_fname, wb_path)
-  cifti$META$SUBCORT_MASK <- cifti_map$SUBCORT_MASK
+  # Need to crop the subcortical mask. But, there may have been extra padding
+  #   in the NIFTI but absent in the mapping. So, do not fill the
+  #   SUBCORT_MASK_PADDING field.
+  cifti$META$SUBCORT_MASK <- crop_array(cifti_map$SUBCORT_MASK)$dat
   cifti$LABELS <- cifti_map$LABELS
 
   # Read the CIFTI data.

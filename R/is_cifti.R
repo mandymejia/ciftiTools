@@ -250,7 +250,8 @@ is.cifti_subcort_mask_padding <- function(x) {
   }
 
   for (name in dim_names) {
-    if (!is.vector(x[[name]]) || !is.numeric(x[[name]]) || length(x[[name]]) != 2) {
+    # [TO DO]: Check for NA or numeric.
+    if (!is.vector(x[[name]]) || length(x[[name]]) != 2) {
       message(paste("Entry", name, "must be valid substructure labels.\n"))
       return(FALSE)
     }
@@ -302,7 +303,7 @@ is.cifti_meta <- function(x) {
     }
   }
 
-  if (!is.cifti_subcort_mask(x$SUBCORT_MASK)) {
+  if (!is.null(x$SUBCORT_MASK) && !is.cifti_subcort_mask(x$SUBCORT_MASK)) {
     message("x$SUBCORT_MASK is not a \"cifti_subcort_mask\".\n")
     return(FALSE)
   }
@@ -435,9 +436,9 @@ is.cifti <- function(x, flat=FALSE) {
         message(paste(dat, "is present, but its LABELS entry is empty.\n"))
         return(FALSE)
       }
-      if (nrow(x[[dat]]) != nrow(x$LABELS[[dat]])) {
+      if (nrow(x[[dat]]) != sum(x$LABELS[[dat]] != "Medial Wall")) {
         message(paste(
-          "The data matrix and the labels of", dat, "have different lengths.\n"
+          "The data matrix and the labels of", dat, "have different lengths (not including medial wall).\n"
         ))
         return(FALSE)
       }
@@ -471,25 +472,14 @@ is.cifti <- function(x, flat=FALSE) {
   }
 
   # Each cortex must have the same number of vertices.
-  if (!flat) {
-    if (!is.null(x$CORTEX_LEFT) && !is.null(x$CORTEX_RIGHT)) {
-      if (nrow(x$CORTEX_RIGHT) != nrow(x$CORTEX_LEFT)) {
-        message(paste0(
-          "Number of vertices in CORTEX_LEFT and CORTEX_RIGHT must match.\n"
-        ))
-        return(FALSE)
-      }
-    }
-  } else {
-    cortexL_num_vert <- sum(x$LABELS$BRAINSTRUCTURE == "CORTEX_LEFT")
-    cortexR_num_vert <- sum(x$LABELS$BRAINSTRUCTURE == "CORTEX_RIGHT")
-    if (cortexL_num_vert > 0 && cortexR_num_vert > 0) {
-      if (cortexL_num_vert != cortexR_num_vert) {
-        message(paste0(
-          "Number of vertices in CORTEX_LEFT and CORTEX_RIGHT must match.\n"
-        ))
-        return(FALSE)
-      }
+  cortexL_num_vert <- sum(x$LABELS$BRAINSTRUCTURE == "CORTEX_LEFT")
+  cortexR_num_vert <- sum(x$LABELS$BRAINSTRUCTURE == "CORTEX_RIGHT")
+  if (cortexL_num_vert > 0 && cortexR_num_vert > 0) {
+    if (cortexL_num_vert != cortexR_num_vert) {
+      message(paste0(
+        "Number of vertices in CORTEX_LEFT and CORTEX_RIGHT must match.\n"
+      ))
+      return(FALSE)
     }
   }
 
@@ -515,12 +505,19 @@ is.cifti <- function(x, flat=FALSE) {
     }
   }
 
+  # The data must have the same number of measurements.
   if (!flat) {
-    if (length(unique(sapply(x[dat_names], ncol))) > 1) {
+    n_meas <- sapply(x[dat_names], ncol)
+    n_meas <- n_meas[[!is.null(n_meas)]]
+    if (length(unique(n_meas)) > 1) {
+      # [TO DO]: Clean this up.
       message(paste(
-        "If present, CORTEX_LEFT, CORTEX_RIGHT, and SUBCORT$DAT must all",
-        "have the same number of columns (measurements), but they do not.\n"
+        "If present, CORTEX_LEFT, CORTEX_RIGHT, and SUBCORT must all",
+        "have the same number of columns (measurements), but they do not."
       ))
+      message(paste("Column counts:"))
+      message(paste(n_meas, collapse=","))
+      message("\n")
       return(FALSE)
     }
   }
