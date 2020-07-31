@@ -18,6 +18,8 @@ minimize_cifti <- function(cifti_flat) {
     }
   }
   subcort_mask <- cifti_flat$LABELS$BRAINSTRUCTURE=="SUBCORT"
+  dat_sc_mask <- subcort_mask[cifti_flat$LABELS$SUBSTRUCTURE!="Medial Wall"]
   back = order(cifti_flat$LABELS[subcort_mask,"SUBSTRUCTURE"])
-  cifti_flat$DAT[subcort_mask[cifti_flat$LABELS$SUBSTRUCTURE!="Medial Wall"],][back,]
+  cifti_flat$DAT[dat_sc_mask,] = cifti_flat$DAT[dat_sc_mask,, drop=FALSE][back,, drop=FALSE]
+  cifti_flat$DAT
 }
