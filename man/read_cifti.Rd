@@ -2,6 +2,7 @@
 % Please edit documentation in R/read_cifti.R
 \name{read_cifti}
 \alias{read_cifti}
+\alias{readCIfTI}
 \title{Read in CIFTI data}
 \usage{
 read_cifti(
@@ -11,6 +12,23 @@ read_cifti(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   method = c("convert", "separate"),
+  resamp_res = NULL,
+  sphereL_fname = NULL,
+  sphereR_fname = NULL,
+  wb_path = NULL,
+  ...
+)
+
+readCIfTI(
+  cifti_fname,
+  format = c("regular", "flat", "minimal"),
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  brainstructures = c("left", "right"),
+  method = c("convert", "separate"),
+  resamp_res = NULL,
+  sphereL_fname = NULL,
+  sphereR_fname = NULL,
   wb_path = NULL,
   ...
 )
@@ -21,13 +39,14 @@ in.}
 
 \item{format}{One of \code{"regular"}, \code{"flat"}, or \code{"minimal"}.
 
- If \code{"regular"}, the result will be a "cifti" object. See 
- \code{\link{is.cifti}} with \code{flat==FALSE}.
+ If \code{"regular"}, the result will be a \code{"cifti"} object. See 
+ \code{\link{is.cifti}} with \code{flat==FALSE}. 
 
- If \code{"flat"}, the result will be a "cifti_flat" object. See 
+ If \code{"flat"}, the result will be a \code{"cifti_flat"} object. See 
  \code{\link{is.cifti}} with \code{flat==TRUE}. If 
  \code{brainstructures=="all"}, the "DAT" component will be identical to the
- data matrix created by \code{-cifti-convert -to-gifti-ext}.
+ data matrix created by \code{-cifti-convert -to-gifti-ext}, except the 
+ order of the subcortical voxels will be spatial instead of alphabetical.
 
  If \code{"minimal"}, the result will be a T x B matrix (T measurements, B 
  non-empty brainordinates). The \code{method} and \code{brainstructures} 
@@ -59,10 +78,22 @@ Default: \code{c("left","right")} (brain surface only).}
  If \code{"convert"}, the CIFTI will be read in using the 
  \code{-cifti-convert -to-gifti-ext} Workbench Command. If \code{"separate"},
  it will be read in using the \code{-cifti-separate} Workbench Command. 
- The former is much faster, but the latter is necessary for resampling, 
+ The former is faster and memory-efficient if the subcortical data are
+ requested, but the latter is necessary for resampling, 
  obtaining the full NIFTI volume (without cropping empty edge slices), or 
  working with the ROIs. Aside from those limitations the results are 
  identical, so the more efficient method \code{"convert"} is the default.}
+
+\item{resamp_res}{Resolution to resample the cortical data and surface to.
+Resampling is only possible if \code{method=="separate"}. Spheres in the
+original resolution are required (\code{sphereL_fname} and 
+\code{sphereR_fname}).}
+
+\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
+as the CIFTI data. It is required for resampling.}
+
+\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
+as the CIFTI data. It is required for resampling.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
