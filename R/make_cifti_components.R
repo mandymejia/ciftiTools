@@ -80,30 +80,34 @@ make_cifti_subcort_fromvol <- function(
     if (!(is.array(labels) && (length(dim(labels)) != 3))) { 
       stop("The labels should be a 3D array. It shouldn't be vectorized.")
     }
-
-    stopifnot(min(labels[labels > 0]) == 3 && max(labels) == 21) 
   }
 
   # Get mask.
-  if (is.null(mask)) {
-    mask <- labels > 0
-  } else {
-    if (is.numeric(mask)) { 
-      cat("Numeric mask detected. Binarizing: values > 0 will be included.\n")
-      mask <- mask > 0 
-    }
-  }
-  if (validate_mask) {
-    mask_vol <- apply(vol, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
-    if (max(abs( mask - mask_vol )) > 0) {
-      warning("The mask did not match the mask inferred from the volume (NA/0 values).")
-    }
+  mask <- labels > 0
+  ## [TO DO]: Infer mask.
+  #if (is.null(mask)) {
+  #  mask <- labels > 0
+  #} else {
+  #  if (is.numeric(mask)) { 
+  #    message("Numeric mask detected. Binarizing: values > 0 will be included.\n")
+  #    mask <- mask > 0 
+  #  }
+  #}
+  ## Validate mask.
+  #if (validate_mask) {
+  #  mask_vol <- apply(vol, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
+  #  if (max(abs( mask - mask_vol )) > 0) {
+  #    warning("The mask did not match the mask inferred from the volume (NA/0 values).")
+  #  }
+  #
+  #  mask_labs <- apply(labels, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
+  #  if (max(abs( mask - mask_labs )) > 0) {
+  #    warning("The mask did not match the mask inferred from the labels (NA/0 values).")
+  #  }
+  #}
 
-    mask_labs <- apply(labels, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
-    if (max(abs( mask - mask_labs )) > 0) {
-      warning("The mask did not match the mask inferred from the labels (NA/0 values).")
-    }
-  }
+  # Crop mask.
+  mask_crop <- crop_array(mask)
 
   # Use mask.
   substructure_levels <- substructure_table()$ciftiTools_Name
@@ -115,38 +119,15 @@ make_cifti_subcort_fromvol <- function(
   stopifnot(is.cifti_substructures(labels))
   vol <- matrix(vol[mask], nrow=sum(mask))
 
-  # Crop mask.
-  padding <- list(
-    i = c(0,0), 
-    j = c(0,0), 
-    k = c(0,0)
-  )
-  empty_slice <- list(
-    i = apply(mask, 1, sum, na.rm=TRUE) == 0,
-    j = apply(mask, 2, sum, na.rm=TRUE) == 0,
-    k = apply(mask, 3, sum, na.rm=TRUE) == 0
-  )
-  for (ii in names(padding)) {
-    first_slice <- min(which(!empty_slice[[ii]]))
-    last_slice <- max(which(!empty_slice[[ii]]))
-    # Compute padding at beginning.
-    if (first_slice != 1) {
-      padding[[ii]][1] <- first_slice - 1
-    }
-    # Compute pading at end.
-    if (last_slice != length(empty_slice[[ii]])) {
-      padding[[ii]][2] <- length(empty_slice) - last_slice 
-    }
-  }
-  # Apply crop.
-  mask <- mask[!empty_slice[[1]], !empty_slice[[2]], !empty_slice[[3]]]
-
   list(
     DAT = make_cifti_data(vol),
     LABELS = labels,
-    MASK = mask,
-    PADDING = padding
+    MASK = mask_crop$dat,
+    PADDING = mask_crop$padding
   )
+
+  # [TO DO]: Confirm:
+  # all(dim(cifti$MASK) + sapply(cifti$PADDING, sum) == c(91, 109, 91))
 }
 
 #' Coerce a file path, GIFTI object, or "cifti_surface" object to a

@@ -26,13 +26,12 @@ flatten_cifti <- function(cifti) {
   # Flatten the data.
   to_dat <- vector(mode="list", length=3)
   to_lab <- vector(mode="list", length=3)
-  mwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
   if (!is.null(cifti$CORTEX_LEFT)) { 
-    to_dat[[1]] <- cifti$CORTEX_LEFT[cifti$LABELS$CORTEX_LEFT != "Medial Wall",, drop=FALSE]
+    to_dat[[1]] <- cifti$CORTEX_LEFT
     to_lab[[1]] <- data.frame(BRAINSTRUCTURE="CORTEX_LEFT", SUBSTRUCTURE=cifti$LABELS$CORTEX_LEFT)
   }
   if (!is.null(cifti$CORTEX_RIGHT)) { 
-    to_dat[[2]] <- cifti$CORTEX_RIGHT[cifti$LABELS$CORTEX_RIGHT != "Medial Wall",, drop=FALSE]
+    to_dat[[2]] <- cifti$CORTEX_RIGHT
     to_lab[[2]] <- data.frame(BRAINSTRUCTURE="CORTEX_RIGHT", SUBSTRUCTURE=cifti$LABELS$CORTEX_RIGHT)
   }
   if (!is.null(cifti$SUBCORT)) {
@@ -41,6 +40,7 @@ flatten_cifti <- function(cifti) {
   }
   cifti_flat$DAT <- do.call(rbind, to_dat)
   cifti_flat$LABELS <- do.call(rbind, to_lab)
+  cifti_flat$LABELS$BRAINSTRUCTURE <- factor(cifti_flat$LABELS$BRAINSTRUCTURE, levels=c("CORTEX_LEFT", "CORTEX_RIGHT", "SUBCORT"))
 
   # Return cifti_flat or error.
   if (!is.cifti(cifti_flat, flat=TRUE)) {

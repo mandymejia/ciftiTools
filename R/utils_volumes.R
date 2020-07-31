@@ -85,3 +85,37 @@ coordlist_to_vol <- function(coords, fill=FALSE){
   vol[as.matrix(coords[,1:3])] <- coords[,4]
   vol
 }
+
+#' Crop a 3D array
+#' 
+#' Remove empty edge slices from a 3D array.
+#'
+#' @param x The 3D array to crop.
+#'
+crop_array <- function(x) {
+  d <- length(dim(x))
+
+  if (all(unique(as.vector(x)) %in% c(NA, 0))) { stop("The array is empty.") }
+
+  padding <- rep(list(c(NA, NA)), d)
+  empty_slice <- vector("list", d)
+  for (ii in 1:d) {
+    names(padding)[ii] <- substr(rep("ijklmnopqrstuvwxyz", ceiling(d/15)), ii, ii)
+    empty_slice[[ii]] <- apply(x, ii, sum, na.rm=TRUE) == 0
+    first_slice <- min(which(!empty_slice[[ii]]))
+    last_slice <- max(which(!empty_slice[[ii]]))
+    padding[[ii]][1] <- ifelse(
+      first_slice != 1, 
+      first_slice - 1, 
+      0
+    )
+    padding[[ii]][2] <- ifelse(
+      last_slice != length(empty_slice[[ii]]), 
+      length(empty_slice[[ii]]) - last_slice, 
+      0
+    )
+  }
+  x <- x[!empty_slice[[1]], !empty_slice[[2]], !empty_slice[[3]]]
+
+  return(list(dat=x, padding=padding))
+}

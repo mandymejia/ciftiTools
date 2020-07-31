@@ -9,7 +9,7 @@
 #' @export
 #'
 unflatten_cifti <- function(cifti_flat, fill=0) {
-  if (!is.cifti(cifti, flat=TRUE)) { 
+  if (!is.cifti(cifti_flat, flat=TRUE)) { 
     stop("Input is not a valid \"cifti_flat\" object.")
   }
 
@@ -33,13 +33,12 @@ unflatten_cifti <- function(cifti_flat, fill=0) {
   for (bs in c("CORTEX_LEFT", "CORTEX_RIGHT", "SUBCORT")) {
     bs_mask <- cifti_flat$LABELS$BRAINSTRUCTURE == bs
     if (any(bs_mask)) {
-      cifti[[bs]] <- matrix(fill, nrow=length(mwall_mask), ncol=ncol(cifti_flat$DAT))
-      cifti[[bs]][mwall_mask,] <- cifti_flat$DAT[bs_mask[mwall_mask],, drop=FALSE]
+      cifti[[bs]] <- matrix(fill, nrow=sum(mwall_mask), ncol=ncol(cifti_flat$DAT))
+      cifti[[bs]] <- cifti_flat$DAT[bs_mask[mwall_mask],, drop=FALSE]
       cifti$LABELS[[bs]] <- cifti_flat$LABELS$SUBSTRUCTURE[bs_mask]
+      class(cifti[[bs]]) <- "cifti_data"
     }
   }
-
-  return(cifti)
 
   # Return cifti or error.
   if (!is.cifti(cifti)) {
