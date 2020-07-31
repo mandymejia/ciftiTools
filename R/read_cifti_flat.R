@@ -9,6 +9,7 @@
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams wb_path_Param
+#' @inheritParams verbose_Param_FALSE
 #' @param ... Additional arguments to \code{read_cifti_minimal}.
 #'
 #' @return A \code{"cifti_flat"} object. See \code{\link{is.cifti}}.
@@ -25,7 +26,7 @@ read_cifti_flat <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  wb_path=NULL, ...){
+  wb_path=NULL, verbose=FALSE, ...){
 
   # Check arguments.
   brainstructures <- match_input(
@@ -61,6 +62,12 @@ read_cifti_flat <- function(
     )
   )
 
+  # ----------------------------------------------------------------------------
+  # Read files. ----------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  if (verbose) { exec_time <- Sys.time() }
+  if (verbose) { cat("Reading CIFTI file.\n") }
+
   # Map the CIFTI.
   cifti_map <- map_cifti(cifti_fname, wb_path)
   # Need to crop the subcortical mask. But, there may have been extra padding
@@ -72,6 +79,19 @@ read_cifti_flat <- function(
   # Read the CIFTI data.
   cifti$DAT <- read_cifti_minimal(cifti_fname, wb_path=wb_path, ...)
 
+  # Read surfaces.
+  if (!is.null(surfL_fname) | !is.null(surfR_fname)) { cat("...and surface(s).\n") }
+  if (!is.null(surfL_fname)) { cifti$SURF_LEFT <- make_cifti_surface(surfL_fname) }
+  if (!is.null(surfR_fname)) { cifti$SURF_RIGHT <- make_cifti_surface(surfR_fname) }
+
+  # ----------------------------------------------------------------------------
+  # Format. --------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  if (verbose) {
+    print(Sys.time() - exec_time)
+    exec_time <- Sys.time()
+  }
+  if (verbose) { cat("Formatting.\n") }
   # If there is subcortical data, re-order it spatially (vs. alphabetically).
   medialwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
   if ("SUBCORT" %in% brainstructures) {
@@ -84,13 +104,15 @@ read_cifti_flat <- function(
   brainstructure_mask <- cifti$LABELS$BRAINSTRUCTURE %in% brainstructures
   cifti$DAT <- cifti$DAT[brainstructure_mask[medialwall_mask],, drop=FALSE]
   cifti$LABELS <- cifti$LABELS[brainstructure_mask,]
-  
-  # Read surfaces.
-  if (!is.null(surfL_fname)) { cifti$SURF_LEFT <- make_cifti_surface(surfL_fname) }
-  if (!is.null(surfR_fname)) { cifti$SURF_RIGHT <- make_cifti_surface(surfR_fname) }
 
   # Finish.
   if (!is.cifti(cifti, flat=TRUE)) { stop("The \"cifti_flat\" object was invalid.") }
   class(cifti) <- "cifti_flat"
+
+  if (verbose) {
+    print(Sys.time() - exec_time)
+    exec_time <- Sys.time()
+  }
+
   cifti
 }

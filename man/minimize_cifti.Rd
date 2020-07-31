@@ -2,17 +2,17 @@
 % Please edit documentation in R/minimize_cifti.R
 \name{minimize_cifti}
 \alias{minimize_cifti}
-\title{Convert a "cifti_flat" to a "cifti_minimal"}
+\title{Convert a "cifti" or "cifti_flat" to a "cifti_minimal"}
 \usage{
-minimize_cifti(cifti_flat)
+minimize_cifti(cifti)
 }
 \arguments{
-\item{cifti_flat}{The "cifti_flat" object}
+\item{cifti}{The "cifti" object}
 }
 \value{
 The "cifti_minimal" object
 }
 \description{
-Convert a "cifti_flat" to a "cifti_minimal" by reordering the subcortical
- voxels alphabetically.
+Convert a "cifti" or "cifti_flat" to a "cifti_minimal" by reordering the 
+ subcortical voxels alphabetically.
 }

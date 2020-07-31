@@ -479,13 +479,7 @@ view_cifti_surface <- function(cifti, idx=1,
   # Check arguments ------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  if (check_cifti(cifti)) {
-    flat <- FALSE
-  } else if (check_cifti(cifti, flat=TRUE)){
-    flat <- TRUE
-  } else {
-    stop("cifti argument is not a valid \"cifti\" or \"cifti_flat\" object. See `is.cifti`.")
-  }
+  if (check_cifti(cifti, flat=TRUE)) { cifti <- unflatten_cifti(cifti) }
   # Check CIFTI, idx, and surfaces.
   if (length(idx) > 1) stop("Only one time/column index is supported right now.")
   if (is.null(surfL)) {
@@ -569,7 +563,6 @@ view_cifti_surface <- function(cifti, idx=1,
 
   EPS <- ciftiTools.getOption("EPS")
 
-  mwall_mask <- cifti$LABELS$SUBSTRUCTURES != "Medial Wall"
   # Left cortex:
   if ("left" %in% hemisphere) {
 
@@ -581,16 +574,10 @@ view_cifti_surface <- function(cifti, idx=1,
 
     # Get data values.
     valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices))
-    bs_mask <- cifti$LABELS$BRAINSTRUCTURES=="CORTEX_LEFT"
-    if (flat) {
-      if (any(bs_mask)) {
-        valuesL <- cifti$DAT[bs_mask && mwall_mask,, drop=FALSE]
-      }
-    } else {
-      if (!is.null(cifti$CORTEX_LEFT)) { 
-        valuesL <- cifti$CORTEX_LEFT[mwall_mask[bs_mask]]
-      }
+    if (!is.null(cifti$CORTEX_LEFT)) { 
+      valuesL[cifti$LABELS$CORTEX_LEFT!="Medial Wall",] <- cifti$CORTEX_LEFT[,idx, drop=FALSE]
     }
+    nvoxL <- nrow(valuesL)
 
     ## Construct the mesh.
     mesh_left <- rgl::tmesh3d(t(cbind(surfL$vertices,
@@ -598,7 +585,7 @@ view_cifti_surface <- function(cifti, idx=1,
                               t(surfL$faces),
                               meshColor = "vertices")
     mesh_left <- rgl::addNormals(mesh_left) # for smooth coloring
-  }
+  } 
   # Right cortex:
   if ("right" %in% hemisphere) {
 
@@ -610,16 +597,10 @@ view_cifti_surface <- function(cifti, idx=1,
 
     # Get data values.
     valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices))
-    bs_mask <- cifti$LABELS$BRAINSTRUCTURES=="CORTEX_RIGHT"
-    if (flat) {
-      if (any(bs_mask)) {
-        valuesR <- cifti$DAT[bs_mask && mwall_mask,, drop=FALSE]
-      }
-    } else {
-      if (!is.null(cifti$CORTEX_RIGHT)) { 
-        valuesR <- cifti$CORTEX_RIGHT[mwall_mask[bs_mask]]
-      }
+    if (!is.null(cifti$CORTEX_RIGHT)) { 
+      valuesR[cifti$LABELS$CORTEX_RIGHT!="Medial Wall",] <- cifti$CORTEX_RIGHT[,idx, drop=FALSE]
     }
+    nvoxR <- nrow(valuesR)
 
     ## Construct the mesh.
     mesh_right <- rgl::tmesh3d(t(cbind(surfR$vertices,
@@ -630,9 +611,15 @@ view_cifti_surface <- function(cifti, idx=1,
   }
 
   # Put the values together.
-  nvoxL <- nrow(valuesL)
-  nvoxR <- nrow(valuesR)
-  values <- unlist(list(left=valuesL, right=valuesR)[hemisphere], use.names=FALSE)
+  if ("left" %in% hemisphere){
+    if ("right" %in% hemisphere) {
+      values <- unlist(list(left=valuesL, right=valuesR)[hemisphere], use.names=FALSE)
+    } else {
+      values <- valuesL
+    }
+  } else if ("right" %in% hemisphere) {
+    values <- valuesR
+  }
   if (all(is.na(values))) { stop("No non-constant zero data with valid surface.") }
 
   # ----------------------------------------------------------------------------
@@ -856,30 +843,19 @@ view_cifti_volume <- function(
     }
   }
 
-  if (check_cifti(cifti)) {
-    flat = FALSE
-  } else if (check_cifti(cifti, flat=TRUE)) {
-    flat = TRUE
-  } else {
-    stop("cifti argument is not a valid \"cifti\" or \"cifti_flat\" object. See `is.cifti`.")
-  }
+  if (check_cifti(cifti, flat=TRUE)) { cifti <- unflatten_cifti(cifti) }
 
   # Get volume and labels.
-  if (!flat) {
-    vol <- cifti$SUBCORT
-    labs <- cifti$LABELS$SUBCORT
-  } else {
-    mwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
-    subcort_mask <- cifti$LABELS$BRAINSTRUCTURE == "SUBCORT"
-    vol <- cifti$DAT[subcort_mask[mwall_mask],, drop=FALSE]
-    labs <- cifti$LABELS$SUBSTRUCTURE[subcort_mask,, drop=FALSE]
-  }
+  mwall_mask <- cifti$LABELS$SUBSTRUCTURE != "Medial Wall"
+  subcort_mask <- cifti$LABELS$BRAINSTRUCTURE == "SUBCORT"
+  vol <- cifti$DAT[subcort_mask[mwall_mask],, drop=FALSE]
+  labs <- cifti$LABELS$SUBSTRUCTURE[subcort_mask]
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
-    if (plane=="axial") mask_count <- apply(cifti$SUBCORT_MASK, 3, sum)
-    if (plane=="coronal") mask_count <- apply(cifti$SUBCORT_MASK, 2, sum)
-    if (plane=="sagittal") mask_count <- apply(cifti$SUBCORT_MASK, 1, sum)
+    if (plane=="axial") mask_count <- apply(cifti$META$SUBCORT_MASK, 3, sum)
+    if (plane=="coronal") mask_count <- apply(cifti$META$SUBCORT_MASK, 2, sum)
+    if (plane=="sagittal") mask_count <- apply(cifti$META$SUBCORT_MASK, 1, sum)
 
     slices <- which(mask_count > max(mask_count)/2)
     inds <- round(seq(1,length(slices), length.out=num.slices))
@@ -927,6 +903,7 @@ view_cifti_volume <- function(
 #' @export
 #'
 view_cifti <- function(cifti, what=NULL, ...) {
+  if (check_cifti(cifti, flat=TRUE)) { cifti <- unflatten_cifti(cifti) }
   if (is.null(what)) {
     has_left_surf <- (!is.null(cifti$SURF_LEFT)) || ("surfL" %in% names(list(...)))
     can_do_left <- (!is.null(cifti$CORTEX_LEFT)) && has_left_surf
@@ -951,6 +928,18 @@ view_cifti <- function(cifti, what=NULL, ...) {
 #' @method plot cifti 
 #' @export
 plot.cifti <- function(x, ...){
+  view_cifti(x, what=NULL, ...)
+}
+
+#' S3 method: use view_cifti to plot a cifti_flat
+#'
+#' @param x The \code{"cifti_flat"} object
+#' @param ... Additional arguments to \code{\link{view_cifti}}, except 
+#'  \code{what}, which will be set to \code{NULL}.
+#'
+#' @method plot cifti_flat 
+#' @export
+plot.cifti_flat <- function(x, ...){
   view_cifti(x, what=NULL, ...)
 }
 

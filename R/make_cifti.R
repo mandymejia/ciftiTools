@@ -47,9 +47,16 @@ make_cifti <- function(
   if (is.fname(surfL)) { surfL <- format_path(surfL, read_dir, mode=4) }
   if (is.fname(surfR)) { surfR <- format_path(surfR, read_dir, mode=4) }
 
+  # Template.
+  cifti <- list(
+    CORTEX_LEFT = NULL,
+    CORTEX_RIGHT = NULL,
+    SUBCORT = NULL
+  )
+
   # Cortical data.
-  if (!is.null(cortexL)) { cortexL <- make_cifti_cortex(cortexL) }
-  if (!is.null(cortexR)) { cortexR <- make_cifti_cortex(cortexR) }
+  if (!is.null(cortexL)) { cifti$CORTEX_LEFT <- make_cifti_cortex(cortexL) }
+  if (!is.null(cortexR)) { cifti$CORTEX_RIGHT <- make_cifti_cortex(cortexR) }
 
   # Subcortical data.
   if (xor(is.null(subcortVol), is.null(subcortLab))) {
@@ -67,6 +74,7 @@ make_cifti <- function(
         validate_mask=TRUE
       )
     }
+    cifti$SUBCORT <- subcort$DAT
   } else { 
     subcort <- list(DAT = NULL, LABELS = NULL, MASK = NULL, PADDING = NULL) 
     subcort$PADDING <- list(
@@ -86,51 +94,60 @@ make_cifti <- function(
     CORTEX_RIGHT=NULL,
     SUBCORT=NULL
   )
-  bs_names <- c("CORTEX_LEFT", "CORTEX_RIGHT", "SUBCORT")
-  bs_list <- list(cortexL, cortexR, subcort$DAT)
-  names(bs_list) <- bs_names
-  if (!is.null(cifti_map)) {
-    for (bs_name in bs_names) {
-      if(!is.null(bs_list[[bs_name]])){ 
-        labs[[bs_name]] <- cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCTURE==bs_name,"SUBSTRUCTURE"]
+  bs_names <- names(cifti)
+  # For each present brainstructure...
+  for (bs_name in bs_names) {
+    if(!is.null(cifti[[bs_name]])){ 
+      # Use the cifti_map if possible.
+      if (!is.null(cifti_map)) {
+        bs_count <- sum(cifti_map$LABELS$BRAINSTRUCTURE==bs_name)
+        if (bs_count == nrow(cifti[[bs_name]])) {
+          labs[[bs_name]] <- cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCTURE==bs_name,"SUBSTRUCTURE"]
+        } else {
+          # Otherwise, inform the user about a discrepency 
+          # between the cifti_map and the GIFTI/NIFTI component
+          # if the cifti_map was provided...
+          warning(paste0(
+            "The brainordinate count for ", bs_name, " from the GIFTI/NIFTI (",
+            nrow(cifti[[bs_name]]), ") did not match that which was inferred ",
+            "from the CIFTI mapping metadata (", bs_count, ").\n",
+            "The medial wall will have to be inferred, and the results may not ",
+            "match if read_cifti_flat() was used.\n"
+          ))
+        }
       }
+      if (is.null(labs[[bs_name]])) {
+        # And infer the medial wall.
+        if (bs_name=="CORTEX_LEFT") {
+          bs_labs <- ifelse(
+            apply(cifti[[bs_name]]==0 | is.na(cifti[[bs_name]]), 1, all), 
+            "Medial Wall", "Cortex-L"
+          )
+        } else if(bs_name=="CORTEX_RIGHT") {
+          bs_labs <- ifelse(
+            apply(cifti[[bs_name]]==0 | is.na(cifti[[bs_name]]), 1, all), 
+            "Medial Wall", "Cortex-R"
+          )
+        } else {
+          bs_labs <- subcort$LABELS
+        }
+        labs[[bs_name]] <- factor(bs_labs, levels=substructure_table()$ciftiTools_Name)
+      }
+      cifti[[bs_name]] <- cifti[[bs_name]][labs[[bs_name]] != "Medial Wall",, drop=FALSE]
     }
-    
-    # Set empty to NULL and check match.
-    if (!is.null(subcortVol)) {
-      stopifnot(all.equal(as.numeric(labs$SUBCORT), as.numeric(subcort$LABELS)))
-    }
-
-  } else {
-    warning("No cifti map was provided, so inferring the medial wall.")
-    labs <- list(
-      CORTEX_LEFT = factor(
-        ifelse(apply(cortexL==0 | is.na(cortexL), 1, all), "Medial Wall", "Cortex-L"),
-        levels=substructure_table()$ciftiTools_Name
-      ),
-      CORTEX_RIGHT = factor(
-        ifelse(apply(cortexR==0 | is.na(cortexR), 1, all), "Medial Wall", "Cortex-R"),
-        levels=substructure_table()$ciftiTools_Name
-      ),
-      SUBCORT = subcort$LABELS
-    )
   }
 
-  # Apply label mask to cortex data.
-  cortexL <- cortexL[labs$CORTEX_LEFT != "Medial Wall",, drop=FALSE]
-  cortexR <- cortexR[labs$CORTEX_RIGHT != "Medial Wall",, drop=FALSE]
-
-  cifti <- list(
-    CORTEX_LEFT = cortexL,
-    CORTEX_RIGHT = cortexR,
-    SUBCORT = subcort$DAT,
-    LABELS = labs,
-    SURF_LEFT = surfL,
-    SURF_RIGHT = surfR,
-    META = list(
-      CORTEX_RESOLUTION = NULL,
-      SUBCORT_MASK = subcort$MASK,
-      SUBCORT_MASK_PADDING = subcort$PADDING
+  cifti <- c(
+    cifti,
+    list(
+      LABELS = labs,
+      SURF_LEFT = surfL,
+      SURF_RIGHT = surfR,
+      META = list(
+        CORTEX_RESOLUTION = NULL,
+        SUBCORT_MASK = subcort$MASK,
+        SUBCORT_MASK_PADDING = subcort$PADDING
+      )
     )
   )
 
