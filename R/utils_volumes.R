@@ -82,6 +82,6 @@ coordlist_to_vol <- function(coords, fill=FALSE){
   }
 
   vol <- array(fill, dim=sapply(coords[,1:3], max, na.rm=TRUE))
-  vol[as.matrix(coords[,1:3])] = coords[,4]
+  vol[as.matrix(coords[,1:3])] <- coords[,4]
   vol
 }

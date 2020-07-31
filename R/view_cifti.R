@@ -479,10 +479,10 @@ view_cifti_surface <- function(cifti, idx=1,
   # Check arguments ------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  if (is.cifti(cifti)) {
-    flat = FALSE
-  } else if (is.cifti(cifti, flat=TRUE)){
-    flat = TRUE
+  if (check_cifti(cifti)) {
+    flat <- FALSE
+  } else if (check_cifti(cifti, flat=TRUE)){
+    flat <- TRUE
   } else {
     stop("cifti argument is not a valid \"cifti\" or \"cifti_flat\" object. See `is.cifti`.")
   }
@@ -690,7 +690,7 @@ view_cifti_surface <- function(cifti, idx=1,
                 pal_base$value[nrow(pal_base)])
   )
   # To-do: use colorbar_position argument.
-  colorbar_kwargs = list(
+  colorbar_kwargs <- list(
     legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
     breaks=colorbar_breaks, #legend.lab=colorbar_label,
     axis.args=list(cex.axis=1.7, at=colorbar_labs, 
@@ -856,9 +856,9 @@ view_cifti_volume <- function(
     }
   }
 
-  if (is.cifti(cifti)) {
+  if (check_cifti(cifti)) {
     flat = FALSE
-  } else if (is.cifti(cifti, flat=TRUE)) {
+  } else if (check_cifti(cifti, flat=TRUE)) {
     flat = TRUE
   } else {
     stop("cifti argument is not a valid \"cifti\" or \"cifti_flat\" object. See `is.cifti`.")

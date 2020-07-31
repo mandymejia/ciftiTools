@@ -531,13 +531,23 @@ is.cifti <- function(x, flat=FALSE) {
 #' @rdname is.cifti
 #' @export
 isCIfTI <- is_cifti <- function(x, flat=FALSE){
-
   is.cifti(x, flat=flat)
 }
 
 #' @rdname is.cifti
 #' @export
 isCIfTI_flat <- is_cifti_flat <- function(x){
-
   is.cifti(x, flat=TRUE)
+}
+
+#' Check CIFTI
+#' 
+#' Checks that a "cifti" or "cifti_flat" is valid. Wrapper for 
+#'  \code{\link{is.cifti}} except it doesn't print messages.
+#' 
+#' @param cifti The "cifti" or "cifti_flat"
+#' @param flat Check for "cifti_flat"? If \code{FALSE} (default), check for 
+#'  "cifti".
+check_cifti <- function(cifti, flat=FALSE){
+  suppressMessages(is.cifti(cifti, flat=flat))
 }

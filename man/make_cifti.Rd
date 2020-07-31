@@ -18,10 +18,10 @@ make_cifti(
 )
 
 makeCIfTI(
+  cifti_map = NULL,
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,
-  subcortMask = NULL,
   subcortLab = NULL,
   surfL = NULL,
   surfR = NULL,

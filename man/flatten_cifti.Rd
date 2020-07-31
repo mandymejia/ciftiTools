@@ -15,7 +15,7 @@ See \code{\link{read_cifti}}, \code{\link{make_cifti}},
 and \code{\link{is.cifti}}.}
 }
 \value{
-
+The "cifti_flat"
 }
 \description{
 Yields a \code{"cifti_flat"} object from a \code{"cifti"} object.

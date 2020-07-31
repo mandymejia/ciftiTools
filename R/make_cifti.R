@@ -76,7 +76,7 @@ make_cifti <- function(
 
   # Labels.
   if (!is.null(cifti_map)) {
-    labs = list(
+    labs <- list(
       CORTEX_LEFT = cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCUTRE=="CORTEX_LEFT","SUBSTRUCTURE"],
       CORTEX_RIGHT = cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCUTRE=="CORTEX_RIGHT","SUBSTRUCTURE"],
       SUBCORT = cifti_map$LABELS[cifti_map$LABELS$BRAINSTRUCUTRE=="SUBCORT","SUBSTRUCTURE"],
@@ -86,7 +86,7 @@ make_cifti <- function(
     stopifnot(labs$SUBCORT == subcort$LABELS)
   } else {
     warning("No cifti map was provided, so inferring the medial wall.")
-    labs = list(
+    labs <- list(
       CORTEX_LEFT = factor(
         ifelse(apply(cortexL==0 | is.na(cortexL), 1, all), "Medial Wall", "Cortex-L"),
         levels=substructure_table()$ciftiTools_Name
@@ -122,14 +122,16 @@ make_cifti <- function(
 #' @rdname make_cifti
 #' @export
 makeCIfTI <- makecii <- function(
+  cifti_map=NULL,
   cortexL=NULL, cortexR=NULL,
-  subcortVol=NULL,subcortMask=NULL, subcortLab=NULL,
+  subcortVol=NULL, subcortLab=NULL,
   surfL=NULL, surfR=NULL,
   read_dir=NULL) {
 
   make_cifti(
+    cifti_map,
     cortexL, cortexR, 
-    subcortVol, subcortMask, subcortLab, 
+    subcortVol, subcortLab, 
     surfL, surfR, 
     read_dir
   )

@@ -4,7 +4,7 @@
 #'
 #' @inheritParams cifti_Param
 #'
-#' @return
+#' @return The "cifti_flat"
 #' @export
 #'
 #' @importFrom stats sd
