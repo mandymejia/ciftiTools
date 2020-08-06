@@ -36,8 +36,7 @@ readCIfTI(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{flat}{Should the result be flattened into a single matrix? If \code{TRUE},
  the result will be a T x B matrix (T measurements, B brainordinates not including
@@ -101,7 +100,7 @@ If not provided, should be set with
 If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 
  (T measurements, B brainordinates). 
 
- See \code{\link{check_xifti}} for details about \code{"xifti"} objects.
+ See \code{\link{is.xifti}} for details about \code{"xifti"} objects.
 }
 \description{
 Make a "xifti" from CIFTI data either by exporting it as a single 

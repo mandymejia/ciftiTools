@@ -13,15 +13,15 @@
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param
-#' @inheritParams sep_fnames_Param
 #' @inheritParams sep_keep_Param
+#' @inheritParams sep_fnames_Param
 #' @inheritParams resamp_keep_Param
 #' @inheritParams resamp_fnames_Param
 #' @inheritParams write_dir_Param_intermediate
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return A \code{"xifti"} object. See \code{\link{check_xifti}}.
+#' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #'
 #' @export
 #'

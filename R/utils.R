@@ -8,7 +8,7 @@
 #'  unchanged.
 #' @param mode The mode for \code{\link{file.access}} to verify existence,
 #'  writing permission, or reading permission. Use NA (default) to not perform
-#'  any check_
+#'  any is.
 #'
 #' @return The normalized path, or \code{NULL} if the path was \code{NULL}.
 #' @export 

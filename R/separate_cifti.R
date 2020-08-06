@@ -45,8 +45,13 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
   # Validate the brainstructures.
-  brainstructures <- match.arg(brainstructures, c("left","right","subcortical"), several.ok=TRUE)
-  stopifnot(length(unique(brainstructures)) == length(brainstructures))
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical","all"),
+    user_value_label="brainstructures"
+  )
+  if ("all" %in% brainstructures) { 
+    brainstructures <- c("left","right","subcortical")
+  }
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")
   # Validate the ROI brainstructures.
@@ -59,7 +64,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
 
   # Use default file names if not provided. Relative paths will be placed in write_dir.
   default_fname <- function(label, extn_cifti, bname_cifti) { 
-    gsub(extn_cifti, separate_cifti_default_suffix(label), bname_cifti, fixed=TRUE)
+    gsub(extn_cifti, cifti_component_suffix(label), bname_cifti, fixed=TRUE)
   }
   if (do['left']) {
     if (is.null(cortexL_fname)) { cortexL_fname <- default_fname("cortexL", extn_cifti, bname_cifti) }

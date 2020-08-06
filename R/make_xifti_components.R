@@ -134,7 +134,7 @@ make_xifti_subcort <- function(
     levels=1:length(substructure_levels), 
     labels=substructure_levels
   )
-  stopifnot(check_subcort_labels(labels))
+  stopifnot(is.subcort_labels(labels))
 
   # Use mask on volume and return.
   list(
@@ -147,12 +147,13 @@ make_xifti_subcort <- function(
 
 #' Make "xifti" Surface Components
 #' 
-#' Coerce a file path, GIFTI object, or "cifti_surface" object to a
-#'  "cifti_surface" object.
+#' Coerce a file path, GIFTI object, or surface (list of vertices + faces)
+#'  to a surface.
 #'
-#' @param surf What to coerce as a "cifti_surface" object.
+#' @param surf What to coerce to a surface.
 #'
-#' @return The "cifti_surface" object.
+#' @return The surface, a list of vertices (spatial locations) and faces
+#'  (defined by three vertices).
 #' @export
 #'
 #' @importFrom gifti readgii is.gifti
@@ -170,9 +171,8 @@ make_xifti_surface <- function(surf) {
   if (is.gifti(surf)) { surf <- gifti_to_surf(surf) }
 
   # Return cifti_surface or error.
-  if (!check_xifti_surface(surf)) {
-    stop("The object could not be converted into a cifti_surface object.")
+  if (!is.xifti_surface(surf)) {
+    stop("The object could not be converted into a surface.")
   }
-  class(surf) <- "cifti_surface"
   surf
 }

@@ -52,24 +52,15 @@ NULL
 #' @name brainstructures_Param_LR
 NULL
 
-#' xifti
-#' 
-#' @param xifti Object of class "xifti". 
-#'  See \code{\link{read_cifti}}, \code{\link{make_xifti}}, 
-#'  and \code{\link{is.xifti}}.
-#' @name xifti_Param_either
-NULL
-
 #' cifti_fname
 #'
-#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii) to read 
-#'  in.
+#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
 #' @name cifti_fname_Param
 NULL
 
 #' original_fnames: for resampling
 #'
-#' @param original_fnames The original files to resample. This is a named list 
+#' @param original_fnames The files to resample. This is a named list 
 #'  where each element's name is a file type label, and each element's value
 #'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
 #'  "ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
@@ -79,51 +70,14 @@ NULL
 #' @name original_fnames_Param_resampled
 NULL
 
-#'  read_dir: resampled files
-#'  
-#' @param read_dir Directory to append to the path of every file name in
-#'  \code{original_fnames}. If \code{NULL} 
-#'  (default), do not append any directory to the path.
-#' 
-#'  \code{read_dir} must already exist, or an error will be raised.
-#' @name read_dir_Param_separated
-NULL
-
 #'  read_dir: separated files
 #'  
-#' @param read_dir Directory to append to the path of every file name in
-#'  \code{original_fnames}. If \code{NULL} 
-#'  (default), do not append any directory to the path.
+#' @param read_dir Directory to append to the path of every original file name,
+#'  e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
+#'  any directory to the path.
 #' 
 #'  \code{read_dir} must already exist, or an error will be raised.
 #' @name read_dir_Param_separated
-NULL
-
-#' resamp_fnames: for resampling
-#'
-#' @param resamp_fnames Where to write the resampled files (override
-#'  their default file names). This is a named list 
-#'  where each element's name is a file type label, and each element's value
-#'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
-#'  "sphereL", "sphereR", "surfL", or "surfR". All except "validROIcortex[L/R]"
-#'  must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
-#'  "cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
-#'  File names can be \code{NULL}, in which case a default file name based on the
-#'  original file name will be used: see \code{\link{resample_cifti_default_fname}}.
-#'  If \code{write_dir} is not \code{NULL}, then all these file names should be
-#'  relative to \code{write_dir}.
-#' @name resamp_fnames_Param_resampled
-NULL
-
-#' resamp_keep
-#'
-#' @param resamp_keep If resampled files are created, will they be kept or 
-#'  deleted at the end of this function call? Default: \code{FALSE} (delete).
-#'  Keeping the resampled files may help speed up certain tasks, for example
-#'  when repeatedly iterating over subjects--the CIFTI will only be resampled
-#'  once instead of at each iteration.
-#' @name resamp_keep_Param
 NULL
 
 #' resamp_fnames
@@ -147,6 +101,16 @@ NULL
 #'  The \code{write_dir} argument can be used to place each resampled file in
 #'  the same directory. 
 #' @name resamp_fnames_Param
+NULL
+
+#' resamp_keep
+#'
+#' @param resamp_keep If resampled files are created, will they be kept or 
+#'  deleted at the end of this function call? Default: \code{FALSE} (delete).
+#'  Keeping the resampled files may help speed up certain tasks, for example
+#'  when repeatedly iterating over CIFTI files--resampling will only be done
+#'  once instead of every new iteration.
+#' @name resamp_keep_Param
 NULL
 
 #' resamp_res: required
@@ -198,7 +162,7 @@ NULL
 #'  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
 #'  
 #'  Entry values can be \code{NULL}, in which case a default file name will be 
-#'  used: see \code{\link{separate_cifti_default_suffix}}. Default file names
+#'  used: see \code{\link{cifti_component_suffix}}. Default file names
 #'  will also be used for files that need to be separated/written but without a
 #'  corresponding entry in \code{sep_fnames}.
 #'  
@@ -268,13 +232,13 @@ NULL
 #' @name surfR_target_fname_Param
 NULL
 
-#' verbose
+#' verbose: FALSE
 #'
 #' @param verbose Should occasional updates be printed? Default: \code{FALSE}.
 #' @name verbose_Param_FALSE
 NULL
 
-#' verbose
+#' verbose: TRUE
 #'
 #' @param verbose Should occasional updates be printed? Default: \code{TRUE}.
 #' @name verbose_Param_TRUE
@@ -299,7 +263,7 @@ NULL
 #'  \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
 #'  and later deleted. \code{resamp_keep} works similarly. 
 #'
-#'  For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+#'  For \code{read_cifti_separate}, the surface files (\code{surfL} or \code{surfR})
 #'  are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
 #'  be written to \code{tempdir()}. But for \code{resample_cifti}, the
 #'  surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
@@ -317,7 +281,8 @@ NULL
 #'  
 #' @param write_dir Where should the resampled
 #'  files be placed? \code{NULL} (default) will write them to
-#'  the current working directory. 
+#'  the current working directory if \code{keep}, and a temporary directory
+#'  if \code{!keep}. 
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_resampled
@@ -327,8 +292,23 @@ NULL
 #'  
 #' @param write_dir Where should the separated
 #'  files be placed? \code{NULL} (default) will write them to
-#'  the current working directory. 
+#'  the current working directory if \code{keep}, and a temporary directory
+#'  if \code{!keep}. 
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_separated
+NULL
+
+#' xifti
+#' 
+#' @param xifti Object of class "xifti". 
+#'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
+#' @name xifti_Param
+NULL
+
+#' x: xifti
+#' 
+#' @param x Object of class "xifti". 
+#'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
+#' @name x_Param_xifti
 NULL

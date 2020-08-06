@@ -13,8 +13,7 @@ read_cifti_flat(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{keep}{\code{read_cifti_minimal} works by saving the CIFTI as a GIFTI file, 
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}

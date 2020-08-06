@@ -15,8 +15,7 @@ read_cifti_convert(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -39,7 +38,7 @@ If not provided, should be set with
 \item{...}{Additional arguments to \code{read_cifti_flat}.}
 }
 \value{
-A \code{"xifti"} object. See \code{\link{check_xifti}}.
+A \code{"xifti"} object. See \code{\link{is.xifti}}.
 }
 \description{
 Read a CIFTI file by exporting it as a single GIFTI 

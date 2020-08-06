@@ -7,11 +7,12 @@
 flatten_xifti(xifti, medial_wall = NULL, subcort_order = "alphabetical")
 }
 \arguments{
-\item{xifti}{The "xifti" object}
+\item{xifti}{Object of class "xifti". 
+See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{medial_wall}{For the cortical data, should vertices for the
-medial wall be included? If \code{NULL} (default), do not include medial
-wall vertices. If any other value, use that value to fill rows corresponding
+\item{medial_wall}{Should vertices for the medial wall be included with the
+cortical data? If \code{NULL} (default), do not include them. If any other 
+value, use that value to fill rows corresponding
 to the medial wall mask.}
 
 \item{subcort_order}{"alphabetical" (default) to match 
@@ -23,4 +24,10 @@ The flattened "xifti", a data matrix.
 }
 \description{
 Concatenates the data in a "xifti" object into a single matrix.
+}
+\details{
+If all brain structures are present, and if 
+ \code{medial_wall==NULL} and \code{subcort_order=="alphabetical"}
+ (the default arguments), then the result will be identical to the matrix
+ obtained with \code{-cifti-export-dense-mapping}.
 }

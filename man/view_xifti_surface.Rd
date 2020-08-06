@@ -50,15 +50,14 @@ viewXIfTI_surface(
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
-See \code{\link{read_cifti}}, \code{\link{make_xifti}}, 
-and \code{\link{is.xifti}}.}
+See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{idx}{The time/column index of the xifti data to plot. 
 Currently one a single time point is supported. Default: the first index.}
 
 \item{hemisphere}{Which brain cortex to display: "both", "left", or "right". 
 If \code{NULL} (default), each available surface (e.g. if \code{surfL}
-or \code{xifti$SURF_LEFT} is not empty) will be displayed. Surfaces without
+or \code{xifti$surf$cortex_right} is not empty) will be displayed. Surfaces without
 data (e.g. \code{xifti$CORTEX_LEFT} is empty) will still be displayed,
 colored by \code{color_NA}. Each cortex will be shown in a separate panel
 column within the RGL window.}
@@ -126,13 +125,13 @@ one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
 the value to \code{DATA_MAX}. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{surfL, surfR}{(Optional if \code{xifti$SURF_LEFT} and 
-\code{xifti$SURF_RIGHT} are not empty) The brain surface model to use. 
+\item{surfL, surfR}{(Optional if \code{xifti$surf$cortex_left} and 
+\code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
 Each can be a file path for a GIfTI, a file read by gifti::readgii, 
 or an object of class "xifti_surface". If provided, they will override 
-\code{xifti$SURF_LEFT} and \code{xifti$SURF_RIGHT} if they exist. 
+\code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
 Otherwise, leave these arguments as \code{NULL} (default) to use 
-\code{xifti$SURF_LEFT} and \code{xifti$SURF_RIGHT}.}
+\code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.}
 
 \item{colorbar_embedded}{Should the colorbar be embedded in the RGL window?
 It will be positioned in the bottom-left corner, in a separate subplot 

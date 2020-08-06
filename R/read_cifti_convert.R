@@ -13,7 +13,7 @@
 #' @inheritParams verbose_Param_FALSE
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
-#' @return A \code{"xifti"} object. See \code{\link{check_xifti}}.
+#' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
@@ -88,14 +88,14 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$left_cortex <- make_xifti_surface(surfL_fname) 
+    xifti$surf$cortex_left <- make_xifti_surface(surfL_fname) 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$right_cortex <- make_xifti_surface(surfR_fname) 
+    xifti$surf$cortex_right <- make_xifti_surface(surfR_fname) 
   }
 
   # Finish.
-  if (!check_xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
+  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
 
   if (verbose) {
     print(Sys.time() - exec_time)

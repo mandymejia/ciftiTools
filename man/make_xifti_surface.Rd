@@ -7,12 +7,13 @@
 make_xifti_surface(surf)
 }
 \arguments{
-\item{surf}{What to coerce as a "cifti_surface" object.}
+\item{surf}{What to coerce to a surface.}
 }
 \value{
-The "cifti_surface" object.
+The surface, a list of vertices (spatial locations) and faces
+ (defined by three vertices).
 }
 \description{
-Coerce a file path, GIFTI object, or "cifti_surface" object to a
- "cifti_surface" object.
+Coerce a file path, GIFTI object, or surface (list of vertices + faces)
+ to a surface.
 }

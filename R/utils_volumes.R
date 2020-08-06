@@ -7,7 +7,8 @@
 #' @param dat Data matrix with locations along the rows and measurements along 
 #'  the columns. If only one set of measurements were made, this may be a 
 #'  vector.
-#' @param mask Volumetric brain mask for subcortical locations.
+#' @param mask Volumetric binary mask. \code{TRUE} indicates voxels inside the
+#'  mask.
 #' @param fill The value for locations outside the mask. Default: \code{NA}.
 #'
 #' @return The 3D or 4D unflattened volume array

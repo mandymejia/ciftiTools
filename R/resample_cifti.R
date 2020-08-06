@@ -54,7 +54,7 @@ resample_cifti <- function(
 
   wb_cmd <- get_wb_cmd_path(wb_path)
 
-  # [TO DO]: more extensive preliminary check_
+  # [TO DO]: more extensive preliminary is.
   if (!is.null(resamp_res)) {
     if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
       stop("`sphereL_fname` and `sphereR_fname` are required for resampling.")

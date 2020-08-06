@@ -6,7 +6,8 @@
 \arguments{
 \item{write_dir}{Where should the resampled
  files be placed? \code{NULL} (default) will write them to
- the current working directory. 
+ the current working directory if \code{keep}, and a temporary directory
+ if \code{!keep}. 
 
  \code{write_dir} must already exist, or an error will occur.}
 }

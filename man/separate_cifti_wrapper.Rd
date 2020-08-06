@@ -14,8 +14,7 @@ separate_cifti_wrapper(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
@@ -41,7 +40,7 @@ with \code{sep_keep}/\code{resamp_keep} and then read those in with
  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
  
  Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{separate_cifti_default_suffix}}. Default file names
+ used: see \code{\link{cifti_component_suffix}}. Default file names
  will also be used for files that need to be separated/written but without a
  corresponding entry in \code{sep_fnames}.
  
@@ -55,7 +54,8 @@ with \code{sep_keep}/\code{resamp_keep} and then read those in with
 
 \item{write_dir}{Where should the separated
  files be placed? \code{NULL} (default) will write them to
- the current working directory. 
+ the current working directory if \code{keep}, and a temporary directory
+ if \code{!keep}. 
 
  \code{write_dir} must already exist, or an error will occur.}
 

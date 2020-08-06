@@ -64,7 +64,7 @@ make_xifti <- function(
   
   # Use `read_cifti` if `cifti_fname` was provided.
   if (!is.null(cifti_fname)) {
-    if (!all(sapply(is.null, list(cortexL, cortexR, subcortVol, subcortLab, cifti_map)))) {
+    if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLab, cifti_map), is.null))) {
       warning("`cifti_fname` was provided, so separate GIFTI/NIFTI data and `cifti_map` will be ignored.")
     }
     return( read_cifti(cifti_fname, brainstructures=cifti_brainstructures, ...) )
@@ -123,10 +123,10 @@ make_xifti <- function(
   }
 
   # Surfaces.
-  if (!is.null(surfL)) { xifti$surf$left_cortex <- make_xifti_surface(surfL) }
-  if (!is.null(surfR)) { xifti$surf$right_cortex <- make_xifti_surface(surfR) }
+  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_xifti_surface(surfL) }
+  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_xifti_surface(surfR) }
 
-  if (!check_xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
+  if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   structure(xifti, class="xifti")
 }
 

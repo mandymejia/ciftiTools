@@ -43,7 +43,7 @@ GIFTI data for [left/right] cortex to resample.}
 \item{cortexL_target_fname, cortexR_target_fname}{(Optional) File path to 
 save the resampled GIFTI data for [left/right] cortex as.
 If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{separate_cifti_default_suffix}}.}
+will be named by \code{\link{cifti_component_suffix}}.}
 
 \item{ROIcortexL_original_fname, ROIcortexR_original_fname}{(Optional) File 
 path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
@@ -53,12 +53,12 @@ resample.}
 of to save the resampled GIFTI ROI corresponding to 
 \code{cortex[L/R]_target_fname} as.
 If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{separate_cifti_default_suffix}}.}
+will be named by \code{\link{cifti_component_suffix}}.}
 
 \item{validROIcortexL_target_fname, validROIcortexR_target_fname}{(Optional) 
 Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
 If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{separate_cifti_default_suffix}}.}
+will be named by \code{\link{cifti_component_suffix}}.}
 
 \item{surfL_original_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -72,15 +72,16 @@ surface geometry file representing the left cortex at.}
 \item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI 
 surface geometry file representing the right cortex at.}
 
-\item{read_dir}{Directory to append to the path of every file name in
- \code{original_fnames}. If \code{NULL} 
- (default), do not append any directory to the path.
+\item{read_dir}{Directory to append to the path of every original file name,
+ e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
+ any directory to the path.
 
  \code{read_dir} must already exist, or an error will be raised.}
 
 \item{write_dir}{Where should the resampled
  files be placed? \code{NULL} (default) will write them to
- the current working directory. 
+ the current working directory if \code{keep}, and a temporary directory
+ if \code{!keep}. 
 
  \code{write_dir} must already exist, or an error will occur.}
 

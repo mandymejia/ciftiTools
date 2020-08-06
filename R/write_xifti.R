@@ -60,9 +60,9 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #' @export
 #' @importFrom RNifti writeNifti
 # '
-write_xifti <- function(xifti, intent="NIFTI_INTENT_VECTOR", fname_out, wb_path=NULL) {
+write_xifti <- function(xifti, intent="NIFTI_INTENT_NORMAL", fname_out, wb_path=NULL) {
   stop("Does not work yet.")
-  stopifnot(check_xifti(xifti))
+  stopifnot(is.xifti(xifti))
   stopifnot(any(sapply(xifti$data, is.null)))
 
   wb_cmd <- get_wb_cmd_path(wb_path)
@@ -71,7 +71,7 @@ write_xifti <- function(xifti, intent="NIFTI_INTENT_VECTOR", fname_out, wb_path=
     tempdir(), paste0(basename(fname_out), "-separated")
   )
   sep_names <- c("cortexL", "cortexR", "subcortVol", "subcortLabs")
-  sep_fnames <- lapply(sep_fnames, separate_cifti_default_suffix)
+  sep_fnames <- lapply(sep_fnames, cifti_component_suffix)
   sep_fnames <- lapply(sep_fnames, function(x){file.path(write_dir, x)})
   names(sep_fnames) <- sep_fnames
 

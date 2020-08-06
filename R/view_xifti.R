@@ -375,12 +375,12 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 
 #' Visualize xifti brain data. The \code{rgl} package is required.
 #'
-#' @inheritParams xifti_Param_either
+#' @inheritParams xifti_Param
 #' @param idx The time/column index of the xifti data to plot. 
 #'  Currently one a single time point is supported. Default: the first index.
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right". 
 #'  If \code{NULL} (default), each available surface (e.g. if \code{surfL}
-#'  or \code{xifti$SURF_LEFT} is not empty) will be displayed. Surfaces without
+#'  or \code{xifti$surf$cortex_right} is not empty) will be displayed. Surfaces without
 #'  data (e.g. \code{xifti$CORTEX_LEFT} is empty) will still be displayed,
 #'  colored by \code{color_NA}. Each cortex will be shown in a separate panel
 #'  column within the RGL window.
@@ -436,13 +436,13 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
 #'  the value to \code{DATA_MAX}. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param surfL,surfR (Optional if \code{xifti$SURF_LEFT} and 
-#'  \code{xifti$SURF_RIGHT} are not empty) The brain surface model to use. 
+#' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and 
+#'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
 #'  Each can be a file path for a GIfTI, a file read by gifti::readgii, 
 #'  or an object of class "xifti_surface". If provided, they will override 
-#'  \code{xifti$SURF_LEFT} and \code{xifti$SURF_RIGHT} if they exist. 
+#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
 #'  Otherwise, leave these arguments as \code{NULL} (default) to use 
-#'  \code{xifti$SURF_LEFT} and \code{xifti$SURF_RIGHT}.
+#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.
 #' @param colorbar_embedded Should the colorbar be embedded in the RGL window?
 #'  It will be positioned in the bottom-left corner, in a separate subplot 
 #'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
@@ -479,25 +479,25 @@ view_xifti_surface <- function(xifti, idx=1,
   # Check arguments ------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  stopifnot(check_xifti(xifti))
-  # Check xIFTI, idx, and surfaces.
+  # Check xifti, idx, and surfaces.
+  stopifnot(is.xifti(xifti))
   if (length(idx) > 1) stop("Only one time/column index is supported right now.")
   if (is.null(surfL)) {
-    if (is.null(xifti$SURF_LEFT) & !is.null(hemisphere)) {
+    if (is.null(xifti$surf$cortex_left) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "left")) {
-        stop("The left hemisphere was requested, but no surface data was provided (xifti$SURF_LEFT or the surfL argument).")
+        stop("The left hemisphere was requested, but no surface data was provided (xifti$surf$cortex_left or the surfL argument).")
       }
     } else {
-      surfL <- xifti$SURF_LEFT
+      surfL <- xifti$surf$cortex_left
     }
   } else { surfL <- make_xifti_surface(surfL) }
   if (is.null(surfR)) {
-    if (is.null(xifti$SURF_RIGHT) & !is.null(hemisphere)) {
+    if (is.null(xifti$surf$cortex_right) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "right")) {
-        stop("The right hemisphere was requested, but no surface data was provided (xifti$SURF_RIGHT or the surfR argument).")
+        stop("The right hemisphere was requested, but no surface data was provided (xifti$surf$cortex_right or the surfR argument).")
       }    
     } else {
-      surfR <- xifti$SURF_RIGHT
+      surfR <- xifti$surf$cortex_right
     }
   } else { surfR <- make_xifti_surface(surfR) }
   if (is.null(surfL) & is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
@@ -561,21 +561,19 @@ view_xifti_surface <- function(xifti, idx=1,
   # Get the data values and surface models, and construct the mesh. ------------
   # ----------------------------------------------------------------------------
 
-  EPS <- ciftiTools.getOption("EPS")
-
   # Left cortex:
   if ("left" %in% hemisphere) {
 
     # Check for surface data.
     if (is.null(surfL)) { 
       stop(paste0("The left hemisphere was requested, but no surface data ",
-        "(xifti$SURF_LEFT or the surfL argument to view_xifti) was provided."))
+        "(xifti$surf$cortex_left or the surfL argument to view_xifti) was provided."))
     }
 
     # Get data values.
     valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices))
-    if (!is.null(xifti$CORTEX_LEFT)) { 
-      valuesL[xifti$LABELS$CORTEX_LEFT!="Medial Wall",] <- xifti$CORTEX_LEFT[,idx, drop=FALSE]
+    if (!is.null(xifti$data$cortex_left)) { 
+      valuesL[xifti$meta$cortex$medial_wall_mask$left,] <- xifti$data$cortex_left[,idx, drop=FALSE]
     }
     nvoxL <- nrow(valuesL)
 
@@ -590,15 +588,15 @@ view_xifti_surface <- function(xifti, idx=1,
   if ("right" %in% hemisphere) {
 
     # Check for surface data.
-    if (is.null(surfL)) { 
-      stop(paste0("The left hemisphere was requested, but no surface data ",
-        "(xifti$SURF_LEFT or the surfL argument to view_xifti) was provided."))
+    if (is.null(surfR)) { 
+      stop(paste0("The right hemisphere was requested, but no surface data ",
+        "(xifti$surf$cortex_right or the surfR argument to view_xifti) was provided."))
     }
 
     # Get data values.
     valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices))
-    if (!is.null(xifti$CORTEX_RIGHT)) { 
-      valuesR[xifti$LABELS$CORTEX_RIGHT!="Medial Wall",] <- xifti$CORTEX_RIGHT[,idx, drop=FALSE]
+    if (!is.null(xifti$data$cortex_right)) { 
+      valuesR[xifti$meta$cortex$medial_wall_mask$right,] <- xifti$data$cortex_right[,idx, drop=FALSE]
     }
     nvoxR <- nrow(valuesR)
 
@@ -820,7 +818,7 @@ view_xifti_surface <- function(xifti, idx=1,
 
 #' Visualize xifti brain data
 #'
-#' @inheritParams xifti_Param_either
+#' @inheritParams xifti_Param
 #' @param structural_img The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
 #' @param idx The time/column index of the xifti data to plot.
 #' @param plane If use_papaya=FALSE, the plane to display. Default: "axial". Other options are "sagittal" and "coronal".
@@ -843,19 +841,17 @@ view_xifti_volume <- function(
     }
   }
 
-  stopifnot(check_xifti(xifti))
+  stopifnot(is.xifti(xifti))
 
   # Get volume and labels.
-  mwall_mask <- xifti$LABELS$SUBSTRUCTURE != "Medial Wall"
-  subcort_mask <- xifti$LABELS$BRAINSTRUCTURE == "SUBCORT"
-  vol <- xifti$DAT[subcort_mask[mwall_mask],, drop=FALSE]
-  labs <- xifti$LABELS$SUBSTRUCTURE[subcort_mask]
+  vol <- unmask(xifti$data$subcort, xifti$meta$subcort$mask)
+  labs <- unmask(xifti$meta$subcort$labels, xifti$meta$subcort$mask)
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
-    if (plane=="axial") mask_count <- apply(xifti$META$SUBCORT_MASK, 3, sum)
-    if (plane=="coronal") mask_count <- apply(xifti$META$SUBCORT_MASK, 2, sum)
-    if (plane=="sagittal") mask_count <- apply(xifti$META$SUBCORT_MASK, 1, sum)
+    if (plane=="axial") mask_count <- apply(xifti$meta$subcort$mask, 3, sum)
+    if (plane=="coronal") mask_count <- apply(xifti$meta$subcort$mask, 2, sum)
+    if (plane=="sagittal") mask_count <- apply(xifti$meta$subcort$mask, 1, sum)
 
     slices <- which(mask_count > max(mask_count)/2)
     inds <- round(seq(1,length(slices), length.out=num.slices))
@@ -873,7 +869,7 @@ view_xifti_volume <- function(
   values <- vol[,,,idx]
   if (!is.null(z_min)) values[values < z_min] <- z_min
   if (!is.null(z_max)) values[values > z_max] <- z_max
-  cat(paste0("Values to be plotted range from ",min(xifti$SUBCORT$DAT[,idx])," to ",max(xifti$SUBCORT$DAT[,idx]), "\n"))
+  cat(paste0("Values to be plotted range from ",min(xifti$data$subcort[,idx])," to ",max(xifti$data$subcort[,idx]), "\n"))
 
   img_overlay <- T1w*0
   img_overlay@.Data <- values
@@ -892,7 +888,7 @@ view_xifti_volume <- function(
 
 #' Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}
 #'
-#' @inheritParams xifti_Param_either
+#' @inheritParams xifti_Param
 #' @param what Either "surface" or "volume". If NULL (default), view the surface if present in the xifti file, and
 #'  volume otherwise
 #' @param ... Additional arguments to pass to either view function.
@@ -903,12 +899,12 @@ view_xifti_volume <- function(
 #' @export
 #'
 view_xifti <- function(xifti, what=NULL, ...) {
-  stopifnot(check_xifti(xifti))
+  stopifnot(is.xifti(xifti))
   if (is.null(what)) {
-    has_left_surf <- (!is.null(xifti$SURF_LEFT)) || ("surfL" %in% names(list(...)))
-    can_do_left <- (!is.null(xifti$CORTEX_LEFT)) && has_left_surf
-    has_right_surf <- (!is.null(xifti$SURF_RIGHT)) || ("surfR" %in% names(list(...)))
-    can_do_right <- (!is.null(xifti$CORTEX_RIGHT)) && has_right_surf
+    has_left_surf <- (!is.null(xifti$surf$cortex_left)) || ("surfL" %in% names(list(...)))
+    can_do_left <- (!is.null(xifti$data$cortex_left)) && has_left_surf
+    has_right_surf <- (!is.null(xifti$surf$cortex_right)) || ("surfR" %in% names(list(...)))
+    can_do_right <- (!is.null(xifti$data$cortex_right)) && has_right_surf
     what <- ifelse(can_do_left | can_do_right, "surface", "volume")
   }
   hemispheres=c("left", "right", "both")
@@ -921,7 +917,7 @@ view_xifti <- function(xifti, what=NULL, ...) {
 
 #' S3 method: use view_xifti to plot a xifti
 #'
-#' @param x The \code{"xifti"} object
+#' @inheritParams x_Param_xifti
 #' @param ... Additional arguments to \code{\link{view_xifti}}, except 
 #'  \code{what}, which will be set to \code{NULL}.
 #'

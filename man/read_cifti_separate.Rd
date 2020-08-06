@@ -23,8 +23,7 @@ read_cifti_separate(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -72,7 +71,7 @@ once instead of at each iteration.}
  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
  
  Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{separate_cifti_default_suffix}}. Default file names
+ used: see \code{\link{cifti_component_suffix}}. Default file names
  will also be used for files that need to be separated/written but without a
  corresponding entry in \code{sep_fnames}.
  
@@ -87,8 +86,8 @@ once instead of at each iteration.}
 \item{resamp_keep}{If resampled files are created, will they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).
 Keeping the resampled files may help speed up certain tasks, for example
-when repeatedly iterating over subjects--the CIFTI will only be resampled
-once instead of at each iteration.}
+when repeatedly iterating over CIFTI files--resampling will only be done
+once instead of every new iteration.}
 
 \item{resamp_fnames}{Where to write the resampled files. This is a named list 
  where each entry's name is a file type label, and each entry's value
@@ -118,7 +117,7 @@ once instead of at each iteration.}
  \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
  and later deleted. \code{resamp_keep} works similarly. 
 
- For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+ For \code{read_cifti_separate}, the surface files (\code{surfL} or \code{surfR})
  are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
  be written to \code{tempdir()}. But for \code{resample_cifti}, the
  surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
@@ -137,7 +136,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A \code{"xifti"} object. See \code{\link{check_xifti}}.
+A \code{"xifti"} object. See \code{\link{is.xifti}}.
 }
 \description{
 Read a CIFTI file by separating it into GIfTI and NIfTI files 

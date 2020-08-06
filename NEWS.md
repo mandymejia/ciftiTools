@@ -35,7 +35,7 @@ And, a few new arguments:
 
 * `sep_keep` and `resamp_keep` indicate whether separated or resampled files should be deleted after reading in the CIFTI data (`read_cifti()`) or writing the resampled CIFTI file (`resample_cifti()`). Their default values are `FALSE`. in which case these files are written to a temporary directory (regardless of `write_dir`). 
 * `sep_fnames` and `resamp_fnames` can be used to set the file names for the respective files made by `read_cifti` and `resample_cifti`.
-    * The default separated and resampled file names have been updated; see `separate_cifti_default_suffix`.
+    * The default separated and resampled file names have been updated; see `cifti_component_suffix`.
 
 Other updates:
 

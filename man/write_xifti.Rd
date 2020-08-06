@@ -4,7 +4,7 @@
 \alias{write_xifti}
 \title{Save cifti object as cifti file}
 \usage{
-write_xifti(xifti, intent = "NIFTI_INTENT_VECTOR", fname_out, wb_path = NULL)
+write_xifti(xifti, intent = "NIFTI_INTENT_NORMAL", fname_out, wb_path = NULL)
 }
 \arguments{
 \item{xifti}{A "xifti" object.}

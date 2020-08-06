@@ -36,8 +36,7 @@ separateCIfTI(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 

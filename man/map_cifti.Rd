@@ -10,8 +10,7 @@ map_cifti(cifti_fname, wb_path = NULL, verbose = FALSE)
 mapCIfTI(cifti_fname, wb_path = NULL)
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

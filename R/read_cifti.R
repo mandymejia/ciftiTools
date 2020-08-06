@@ -54,7 +54,7 @@
 #' @return If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 
 #'  (T measurements, B brainordinates). 
 #' 
-#'  See \code{\link{check_xifti}} for details about \code{"xifti"} objects.
+#'  See \code{\link{is.xifti}} for details about \code{"xifti"} objects.
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
