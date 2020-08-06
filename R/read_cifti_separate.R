@@ -21,7 +21,7 @@
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return A \code{"cifti"} object. See \code{\link{is.cifti}}.
+#' @return A \code{"xifti"} object. See \code{\link{check_xifti}}.
 #'
 #' @export
 #'
@@ -45,7 +45,7 @@ read_cifti_separate <- function(
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # [TO DO]: more extensive preliminary check.
+  # [TO DO]: more extensive preliminary check
   if (!is.null(resamp_res)) {
     if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
       stop("`sphereL_fname` and `sphereR_fname` are required for resampling.")
@@ -136,7 +136,7 @@ read_cifti_separate <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # make_cifti() ---------------------------------------------------------------
+  # make_xifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
   if (is.null(resamp_res)) {
@@ -159,7 +159,7 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
-  result <- do.call(make_cifti, to_read)
+  result <- do.call(make_xifti, to_read)
 
   if (verbose) {
     print(Sys.time() - exec_time)

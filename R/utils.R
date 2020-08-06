@@ -8,7 +8,7 @@
 #'  unchanged.
 #' @param mode The mode for \code{\link{file.access}} to verify existence,
 #'  writing permission, or reading permission. Use NA (default) to not perform
-#'  any check.
+#'  any check_
 #'
 #' @return The normalized path, or \code{NULL} if the path was \code{NULL}.
 #' @export 
@@ -203,30 +203,53 @@ match_input <- function(
   invisible(NULL)
 }
 
-#' Validates a list.
-#' 
-#' Checks whether \code{list} is a list with names \code{expected_names}.
-#' 
-#' @param x The putative list.
-#' @param expected_names The expected names in \code{list}, in order.
-#' @param user_value_label How to refer to the user input in the
-#'  message. If \code{NULL}, no label is used.
-#' 
-#' @return Logical indicating whether the list was valid.
+#' Check if two character vectors match
+#'
+#' Checks if a user-defined character vector matches an expected character
+#'  vector. That is, they share the same lengths and entries in the same order.
+#'  For vectors of the same lengths, the result is \code{all(a == b)}.
+#'
+#' @param user Character vector of user input. 
+#' @param expected Character vector of expected/allowed values.
+#' @param fail_action If any value in \code{user} could not be
+#'  matched, or repeated matches occured, what should happen? Possible values
+#'  are \code{"message"} (default), \code{"warning"}, \code{"stop"}, and
+#'  \code{"nothing"}.
+#'
+#' @return Whether the two character vectors match
 #' @export
 #' 
-valid_list <- function(x, expected_names, user_value_label=NULL) {
-  if (is.null(user_value_label)) { user_value_label <- "the list"}
-  length_mismatch <- length(x)!=length(expected_names)
-  if (!is.list(x) || length_mismatch || !all(expected_names == names(list))) {
-    message(paste0(
-      "The entry names of ", user_value_label, " must be exactly:\n",
-      "\t\"", paste(expected_names, collapse="\", \""), "\".\n",
-      "Instead, the entries are:\n",
-      "\t\"", paste(names(x), collapse="\", \""), "\".\n"
-    ))
-    return(FALSE)
-  }
+match_exactly <- function(
+  user, expected,
+  fail_action=c("message", "warning", "stop", "nothing")) {
 
-  return(TRUE)
+  fail_action <- match.arg(
+    fail_action,
+    c("stop", "warning", "nothing")
+  )
+  unrecognized_FUN <- switch(fail_action,
+    warning=warning,
+    stop=stop,
+    nothing=invisible
+  )
+
+  msg <- paste0(
+    "Mismatch between:\n",
+    "\t\"", paste0(user, collapse="\", \""), "\".\n",
+    "and:\n",
+    "\t\"", paste0(expected, collapse="\", \""), "\".\n"
+  )
+
+  tryCatch(
+    {
+      if (length(user) != length(expected)) { stop("Different lengths.") }
+      if (!all(user == expected)) { stop("At least one different entry.") }
+    },
+    error = function(e) {
+      unrecognized_FUN(msg)
+    },
+    finally = {}
+  )
+
+  invisible(NULL)
 }

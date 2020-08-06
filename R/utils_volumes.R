@@ -88,7 +88,7 @@ coordlist_to_vol <- function(coords, fill=FALSE){
 
 #' Crop a 3D array
 #' 
-#' Remove empty edge slices from a 3D array.
+#' Remove empty (zero-valued) edge slices from a 3D array.
 #'
 #' @param x The 3D array to crop.
 #'
@@ -117,5 +117,5 @@ crop_array <- function(x) {
   }
   x <- x[!empty_slice[[1]], !empty_slice[[2]], !empty_slice[[3]]]
 
-  return(list(dat=x, padding=padding))
+  return(list(data=x, padding=padding))
 }

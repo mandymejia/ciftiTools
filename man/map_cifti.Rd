@@ -20,14 +20,11 @@ If not provided, should be set with
 \item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
 }
 \value{
-A list with two entries: 
-
- "LABELS" is data.frame with brainordinates along the rows, and two columns 
- indicating the brainstructure and substructure. See 
- \code{\link{is.cifti_labels}} with \code{flat==TRUE}.
-
- "SUBCORT_MASK" is a logical 3D array where \code{TRUE} indicates voxels
- that are subcortical.
+A list with the following metadata: 
+ cortex$medial_wall_mask$left,
+ cortex$medial_wall_mask$right,
+ subcort$labels,
+ subcort$mask
 }
 \description{
 Wrapper for the Connectome Workbench command 
@@ -39,9 +36,7 @@ Wrapper for the Connectome Workbench command
 }
 \section{Label Levels}{
 
- \code{LABELS$CORTEX_LEFT} and \code{LABELS$CORTEX_RIGHT} in
- a \code{"cifti"} object, as well as \code{LABELS$SUBSTRUCTURE} in a 
- "cifti_flat" object, are factors with the following levels:
+ \code{xifti$meta$subcort$labels} is a factor with the following levels:
 
  \describe{
    \item{1}{Cortex-L}
@@ -65,14 +60,9 @@ Wrapper for the Connectome Workbench command
    \item{19}{Putamen-R}
    \item{20}{Thalamus-L}
    \item{21}{Thalamus-R}
-   \item{22}{Medial Wall}
  }
 
  Levels 1-21 correspond to the same structures as given by 
- \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Here, the 
- 22nd level ("Medial Wall") was added because it is necessary for converting 
- a  \code{"cifti_flat"} object to a  \code{"cifti"} object, in which the 
- latter's cortical data have empty rows corresponding to vertices which
- comprise the medial wall. These are absent in the \code{"cifti_flat"} data.
+ \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 

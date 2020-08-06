@@ -28,8 +28,7 @@ substructure_table <- function(){
     c("PUTAMEN_LEFT",               "Putamen-L"),
     c("PUTAMEN_RIGHT",              "Putamen-R"),
     c("THALAMUS_LEFT",              "Thalamus-L"),
-    c("THALAMUS_RIGHT",             "Thalamus-R"),
-    c("MEDIAL_WALL",                "Medial Wall")
+    c("THALAMUS_RIGHT",             "Thalamus-R")
   ))
   colnames(table) <- c("Original_Name", "ciftiTools_Name")
   table$Index <- 1:nrow(table)
@@ -51,14 +50,11 @@ substructure_table <- function(){
 #'
 #' @importFrom utils read.csv
 #'
-#' @return A list with two entries: 
-#' 
-#'  "LABELS" is data.frame with brainordinates along the rows, and two columns 
-#'  indicating the brainstructure and substructure. See 
-#'  \code{\link{is.cifti_labels}} with \code{flat==TRUE}.
-#' 
-#'  "SUBCORT_MASK" is a logical 3D array where \code{TRUE} indicates voxels
-#'  that are subcortical. 
+#' @return A list with the following metadata: 
+#'  cortex$medial_wall_mask$left,
+#'  cortex$medial_wall_mask$right,
+#'  subcort$labels,
+#'  subcort$mask
 #' @export
 #' 
 #' @inheritSection labels_Description Label Levels
@@ -84,9 +80,9 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
     tempdir(), paste0(basename(cifti_fname), "-dense-mapping")
   )
   if (!dir.exists(write_dir)) { dir.create(write_dir) }
-  cortexL_fname <- file.path(write_dir, "CORTEX_LEFT.txt")
-  cortexR_fname <- file.path(write_dir, "CORTEX_RIGHT.txt")
-  subcort_fname <- file.path(write_dir, "SUBCORT.txt")
+  cortexL_fname <- file.path(write_dir, "cortexL.txt")
+  cortexR_fname <- file.path(write_dir, "cortexR.txt")
+  subcort_fname <- file.path(write_dir, "subcort.txt")
 
   # Workbench command.
   cmd <- paste(
@@ -158,8 +154,8 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
 
   # Assemble the subcortical mask, and use it to order the labels spatially.
   subcort2 <- coordlist_to_vol(subcort[,c("i", "j", "k","label")], fill=0)
-  SUBCORT_MASK <- subcort2 != 0
-  subcort$label <- subcort2[SUBCORT_MASK]
+  subcort_mask <- crop_array(subcort2 != 0)
+  subcort$label <- subcort2[subcort_mask]
 
   # Re-level the subcortical labels.
   subcort$label <- factor(
@@ -170,29 +166,8 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
 
   # Use "unflat" index for the cortical data.
   # Make the cortical labels factors too.
-  cortexL <- ifelse(
-    1:max(cortexL$idx_unflat) %in% cortexL$idx_unflat, "Cortex-L", "Medial Wall"
-  )
-  cortexL <- factor(cortexL, levels=labels_ciftiTools)
-  cortexR <- ifelse(
-    1:max(cortexR$idx_unflat) %in% cortexR$idx_unflat, "Cortex-R", "Medial Wall"
-  )
-  cortexR <- factor(cortexR, levels=labels_ciftiTools)
-
-  # Assemble the labels data.frame.
-  LABELS <- data.frame(
-    BRAINSTRUCTURE = factor(
-      c(
-        rep("CORTEX_LEFT", length(cortexL)), 
-        rep("CORTEX_RIGHT", length(cortexR)),
-        rep("SUBCORT", nrow(subcort))
-      ),
-      levels = c("CORTEX_LEFT", "CORTEX_RIGHT", "SUBCORT")
-    ),
-    SUBSTRUCTURE = unlist(list(
-      cortexL, cortexR, subcort$label
-    ))
-  )
+  cortexL_mask <- 1:max(cortexL$idx_unflat) %in% cortexL$idx_unflat
+  cortexR_mask <- 1:max(cortexR$idx_unflat) %in% cortexR$idx_unflat
 
   if (verbose) {
     print(Sys.time() - exec_time)
@@ -200,8 +175,16 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
   }
 
   list(
-    LABELS=LABELS, 
-    SUBCORT_MASK=SUBCORT_MASK
+    cortex = list(
+      medial_wall_mask = list(
+        left = cortexL_mask,
+        right = cortexR_mask
+      )
+    ),
+    subcort = list(
+      labels = subcort$label, 
+      mask = subcort_mask
+    )
   )
 }
 

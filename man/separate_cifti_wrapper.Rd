@@ -21,7 +21,7 @@ in.}
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (brain surface only).}
+Default: \code{c("left","right")} (cortical surface only).}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be 
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 

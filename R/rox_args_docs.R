@@ -1,9 +1,7 @@
 #' labels
 #' 
 #' @section Label Levels:
-#'  \code{LABELS$CORTEX_LEFT} and \code{LABELS$CORTEX_RIGHT} in
-#'  a \code{"cifti"} object, as well as \code{LABELS$SUBSTRUCTURE} in a 
-#'  "cifti_flat" object, are factors with the following levels:
+#'  \code{xifti$meta$subcort$labels} is a factor with the following levels:
 #' 
 #'  \describe{
 #'    \item{1}{Cortex-L}
@@ -27,15 +25,10 @@
 #'    \item{19}{Putamen-R}
 #'    \item{20}{Thalamus-L}
 #'    \item{21}{Thalamus-R}
-#'    \item{22}{Medial Wall}
 #'  }
 #' 
 #'  Levels 1-21 correspond to the same structures as given by 
-#'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Here, the 
-#'  22nd level ("Medial Wall") was added because it is necessary for converting 
-#'  a  \code{"cifti_flat"} object to a  \code{"cifti"} object, in which the 
-#'  latter's cortical data have empty rows corresponding to vertices which
-#'  comprise the medial wall. These are absent in the \code{"cifti_flat"} data.
+#'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. 
 #' @name labels_Description
 NULL
 
@@ -55,16 +48,16 @@ NULL
 #'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 #'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 #'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-#'  Default: \code{c("left","right")} (brain surface only).
+#'  Default: \code{c("left","right")} (cortical surface only).
 #' @name brainstructures_Param_LR
 NULL
 
-#' cifti
+#' xifti
 #' 
-#' @param cifti Object of class "cifti". 
-#'  See \code{\link{read_cifti}}, \code{\link{make_cifti}}, 
-#'  and \code{\link{is.cifti}}.
-#' @name cifti_Param
+#' @param xifti Object of class "xifti". 
+#'  See \code{\link{read_xifti}}, \code{\link{make_xifti}}, 
+#'  and \code{\link{is.xifti}}.
+#' @name xifti_Param_either
 NULL
 
 #' cifti_fname

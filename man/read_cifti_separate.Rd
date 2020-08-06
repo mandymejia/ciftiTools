@@ -36,7 +36,7 @@ file representing the right cortex.}
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (brain surface only).}
+Default: \code{c("left","right")} (cortical surface only).}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be 
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
@@ -137,7 +137,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A \code{"cifti"} object. See \code{\link{is.cifti}}.
+A \code{"xifti"} object. See \code{\link{check_xifti}}.
 }
 \description{
 Read a CIFTI file by separating it into GIfTI and NIfTI files 

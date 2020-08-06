@@ -43,7 +43,7 @@ in.}
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (brain surface only).}
+Default: \code{c("left","right")} (cortical surface only).}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 

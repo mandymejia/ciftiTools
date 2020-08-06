@@ -8,7 +8,7 @@
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
 cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (brain surface only).}
+Default: \code{c("left","right")} (cortical surface only).}
 }
 \description{
 brainstructures

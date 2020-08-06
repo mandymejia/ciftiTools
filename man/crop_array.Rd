@@ -10,5 +10,5 @@ crop_array(x)
 \item{x}{The 3D array to crop.}
 }
 \description{
-Remove empty edge slices from a 3D array.
+Remove empty (zero-valued) edge slices from a 3D array.
 }

@@ -25,6 +25,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     fields,
+    freesurferformats,
     gifti,
     grDevices,
     oro.nifti,
