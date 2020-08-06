@@ -84,18 +84,18 @@ make_xifti <- function(
   # Cortical data.
   if (!is.null(cortexL)) { 
     if (!is.null(cifti_map)) {
-      cortexL <- make_xifti_cortex(cortex, cifti_map$cortex$medial_wall_mask$left)
+      cortexL <- make_xifti_cortex(cortexL, cifti_map$cortex$medial_wall_mask$left)
     } else {
-      cortexL <- make_xifti_cortex(cortex, TRUE)
+      cortexL <- make_xifti_cortex(cortexL, TRUE)
     }
     xifti$data$cortex_left <- cortexL$data
     xifti$meta$cortex$medial_wall_mask$left <- cortexL$medial_wall_mask
   }
   if (!is.null(cortexR)) { 
     if (!is.null(cifti_map)) {
-      cortexR <- make_xifti_cortex(cortex, cifti_map$cortex$medial_wall_mask$right)
+      cortexR <- make_xifti_cortex(cortexR, cifti_map$cortex$medial_wall_mask$right)
     } else {
-      cortexR <- make_xifti_cortex(cortex, TRUE)
+      cortexR <- make_xifti_cortex(cortexR, TRUE)
     }
     xifti$data$cortex_right <- cortexR$data
     xifti$meta$cortex$medial_wall_mask$right <- cortexR$medial_wall_mask
@@ -109,11 +109,11 @@ make_xifti <- function(
     if (!is.null(cifti_map)) {
       # [TO DO]: support for cifti_map$subcort$mask
       subcort <- make_xifti_subcort(
-        subcortVol, subcortLab, validate_mask=TRUE
+        subcortVol, subcortLab, validate_mask=FALSE
       )
     } else {
       subcort <- make_xifti_subcort(
-        subcortVol, subcortLab, validate_mask=TRUE
+        subcortVol, subcortLab, validate_mask=FALSE
       )
     }
     xifti$data$subcort <- subcort$data

@@ -38,11 +38,9 @@ substructure_table <- function(){
 #' Map CIFTI Brainordinates
 #'
 #' Wrapper for the Connectome Workbench command 
-#'  \code{-cifti-export-dense-mapping}. For each brainordinate in a CIFTI, gives
-#'  the brainstructure (left cortex, right cortex, or subcortical) and
-#'  substructure (left/right cortex or medial wall; or, one of the 19
-#'  subcortical structures). It also obtains the spatial coordinates of the
-#'  subcortical voxels.
+#'  \code{-cifti-export-dense-mapping}. It retrives the medial wall masks for
+#'  the left and right cortex, and the subcortical labels (ordered spatially) 
+#'  and mask.
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
@@ -154,8 +152,9 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
 
   # Assemble the subcortical mask, and use it to order the labels spatially.
   subcort2 <- coordlist_to_vol(subcort[,c("i", "j", "k","label")], fill=0)
-  subcort_mask <- crop_array(subcort2 != 0)
+  subcort_mask <- subcort2 != 0
   subcort$label <- subcort2[subcort_mask]
+  subcort_mask <- crop_array(subcort_mask)
 
   # Re-level the subcortical labels.
   subcort$label <- factor(
@@ -183,7 +182,7 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
     ),
     subcort = list(
       labels = subcort$label, 
-      mask = subcort_mask
+      mask = subcort_mask$data
     )
   )
 }

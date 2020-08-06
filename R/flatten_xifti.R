@@ -29,10 +29,10 @@ flatten_xifti <- function(xifti, medial_wall=NULL, subcort_order="alphabetical")
     }
     if (!is.null(xifti$data$cortex_right)) {
       cortex_dat <- matrix(medial_wall,
-        nrow=length(xifti$meta$cortex$medial_wall_mask$left), 
+        nrow=length(xifti$meta$cortex$medial_wall_mask$right), 
         ncol=ncol(xifti$data$cortex_right)
       )
-      cortex_dat[xifti$meta$cortex$medial_wall_mask$left,] <- xifti$data$cortex_right
+      cortex_dat[xifti$meta$cortex$medial_wall_mask$right,] <- xifti$data$cortex_right
       xifti$data$cortex_right <- cortex_dat
     }
   }

@@ -28,11 +28,9 @@ A list with the following metadata:
 }
 \description{
 Wrapper for the Connectome Workbench command 
- \code{-cifti-export-dense-mapping}. For each brainordinate in a CIFTI, gives
- the brainstructure (left cortex, right cortex, or subcortical) and
- substructure (left/right cortex or medial wall; or, one of the 19
- subcortical structures). It also obtains the spatial coordinates of the
- subcortical voxels.
+ \code{-cifti-export-dense-mapping}. It retrives the medial wall masks for
+ the left and right cortex, and the subcortical labels (ordered spatially) 
+ and mask.
 }
 \section{Label Levels}{
 

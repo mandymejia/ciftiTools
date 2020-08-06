@@ -3,7 +3,7 @@
 #' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
 #'  (\code{\link{separate_cifti}}), optionally resampling them 
 #'  (\code{\link{resample_cifti_components}}), and then reading each separated 
-#'  component into R (\code{\link{make_cifti}}).
+#'  component into R (\code{\link{make_xifti}}).
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param

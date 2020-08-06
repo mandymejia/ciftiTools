@@ -4,10 +4,18 @@
 \alias{write_xifti}
 \title{Save cifti object as cifti file}
 \usage{
-write_xifti(cifti, intent = NULL, fname_out, wb_cmd = NULL)
+write_xifti(xifti, intent = "NIFTI_INTENT_VECTOR", fname_out, wb_path = NULL)
 }
 \arguments{
+\item{xifti}{A "xifti" object.}
+
+\item{intent}{The NIFTI intent. https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view}
+
 \item{fname_out}{Name of cifti file to write, ending in .dtseries.nii, .dscalar.nii or .dlabel.nii}
+
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 Logical indicating whether CIFTI file was created.

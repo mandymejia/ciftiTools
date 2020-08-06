@@ -6,7 +6,7 @@
 #'  (subcortical data) using the \code{-cifti-separate} Workbench Command. The 
 #'  former is much faster, so the latter is only used when necessary:
 #'  if resampling is to be performed, or if the NIFTI volume must be 
-#'  obtained without cropping. See \code{\link{read_cifti_export}} to directly
+#'  obtained without cropping. See \code{\link{read_cifti_convert}} to directly
 #'  use the former, and \code{\link{read_cifti_separate}} to directly
 #'  use the latter.
 #' 
@@ -48,8 +48,8 @@
 #' @inheritParams sphereR_fname_Param
 #' @inheritParams wb_path_Param
 #' @inheritParams verbose_Param_FALSE
-#' @param ... Additional arguments to \code{read_cifti_export} or 
-#'  \code{read_cifti_separate}.
+#' @param ... Additional arguments to \code{\link{read_cifti_convert}} or 
+#'  \code{\link{read_cifti_separate}}.
 #'
 #' @return If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 
 #'  (T measurements, B brainordinates). 

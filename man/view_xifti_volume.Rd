@@ -17,7 +17,7 @@ view_xifti_volume(
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
-See \code{\link{read_xifti}}, \code{\link{make_xifti}}, 
+See \code{\link{read_cifti}}, \code{\link{make_xifti}}, 
 and \code{\link{is.xifti}}.}
 
 \item{structural_img}{The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.}

@@ -57,32 +57,35 @@ read_cifti_convert <- function(
 
   # Map the CIFTI.
   cifti_map <- map_cifti(cifti_fname, wb_path)
-  # Need to crop the subcortical mask. But, there may have been extra padding
-  #   in the NIFTI but absent in the mapping. So, do not fill the
-  #   SUBCORT_MASK_PADDING field.
-  xifti$meta$cortex$medial_wall_mask <- cifti_map$cortex$medial_wall_mask
-  xifti$meta$subcort$labels <- cifti_map$subcort$labels
-  xifti$meta$subcort$mask <- crop_array(cifti_map$subcort$mask)$data
 
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
-  last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
-  last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
+  last_left <- sum(cifti_map$cortex$medial_wall_mask$left)
+  last_right <- last_left + sum(cifti_map$cortex$medial_wall_mask$right)
+
+  # Place into the xifti object.
   if ("cortex_left" %in% brainstructures) {
     xifti$data$cortex_left <- xifti_data[1:last_left,, drop=FALSE]
+    xifti$meta$cortex$medial_wall_mask$left <- cifti_map$cortex$medial_wall_mask$left
   }
   if ("cortex_right" %in% brainstructures) {
     xifti$data$cortex_right <- xifti_data[(1+last_left):last_right,, drop=FALSE]
+    xifti$meta$cortex$medial_wall_mask$right <- cifti_map$cortex$medial_wall_mask$right
   }
   if ("subcort" %in% brainstructures) {
-    spatial_order <- order(order(xifti$meta$subcort$labels))
-    spatial_order <- c((1+last_right):nrow(xifti_data))[spatial_order]
-    xifti$data$subcort <- xifti_data[spatial_order,, drop=FALSE]
-  }
+    alpha_to_spatial <- order(order(cifti_map$subcort$labels))
+    subcort_order <- c((1+last_right):nrow(xifti_data))[alpha_to_spatial]
+    xifti$data$subcort <- xifti_data[subcort_order,, drop=FALSE]
+    xifti$meta$subcort$labels <- cifti_map$subcort$labels
+    # Need to crop the subcortical mask. But, there may have been extra padding
+    #   in the NIFTI but absent in the mapping. So, do not fill the
+    #   SUBCORT_MASK_PADDING field.
+    xifti$meta$subcort$mask <- crop_array(cifti_map$subcort$mask)$data
+  } 
 
   # Read surfaces.
   if (!is.null(surfL_fname) | !is.null(surfR_fname)) { 
-    cat("...and surface(s).\n") 
+    if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
     xifti$surf$left_cortex <- make_xifti_surface(surfL_fname) 

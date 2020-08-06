@@ -51,17 +51,21 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 
 #' Save cifti object as cifti file
 # '
-#' @inheritParams cifti_fname_Param
+#' @param xifti A "xifti" object.
+#' @param intent The NIFTI intent. https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
 #' @param fname_out Name of cifti file to write, ending in .dtseries.nii, .dscalar.nii or .dlabel.nii
 #' @inheritParams wb_path_Param
-# '
+#'
 #' @return Logical indicating whether CIFTI file was created.
 #' @export
 #' @importFrom RNifti writeNifti
 # '
-write_xifti <- function(cifti, intent=NULL, fname_out, wb_cmd=NULL) {
-  stopifnot(is.cifti(cifti))
-  stopifnot(any(sapply(cifti$data, is.null)))
+write_xifti <- function(xifti, intent="NIFTI_INTENT_VECTOR", fname_out, wb_path=NULL) {
+  stop("Does not work yet.")
+  stopifnot(check_xifti(xifti))
+  stopifnot(any(sapply(xifti$data, is.null)))
+
+  wb_cmd <- get_wb_cmd_path(wb_path)
 
   write_dir <- file.path(
     tempdir(), paste0(basename(fname_out), "-separated")
@@ -71,14 +75,14 @@ write_xifti <- function(cifti, intent=NULL, fname_out, wb_cmd=NULL) {
   sep_fnames <- lapply(sep_fnames, function(x){file.path(write_dir, x)})
   names(sep_fnames) <- sep_fnames
 
-  write_gifti_component_of_cifti(cifti$data$cortex_left, sep_names$cortexL)
-  write_gifti_component_of_cifti(cifti$data$cortex_left, sep_names$cortexR)
+  write_gifti_component_of_cifti(xifti$data$cortex_left, sep_names$cortexL)
+  write_gifti_component_of_cifti(xifti$data$cortex_left, sep_names$cortexR)
   writeNifti(
-    unmask(cifti$data$subcort, cifti$meta$subcort$mask, fill=0), 
+    unmask(xifti$data$subcort, xifti$meta$subcort$mask, fill=0), 
     sep_names$subcortVol
   )
   writeNifti(
-    unmask(cifti$meta$subcort$labels, cifti$meta$subcort$mask, fill=0), 
+    unmask(xifti$meta$subcort$labels, xifti$meta$subcort$mask, fill=0), 
     sep_names$subcortLab
   )
 

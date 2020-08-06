@@ -160,16 +160,17 @@ merge_kwargs <- function(kwargsA, kwargsB,
 #' 
 match_input <- function(
   user, expected,
-  fail_action=c("stop", "warning", "nothing"),
+  fail_action=c("stop", "warning", "message", "nothing"),
   user_value_label=NULL) {
 
   fail_action <- match.arg(
     fail_action,
-    c("stop", "warning", "nothing")
+    c("stop", "warning", "message", "nothing")
   )
   unrecognized_FUN <- switch(fail_action,
-    warning=warning,
     stop=stop,
+    warning=warning,
+    message=message,
     nothing=invisible
   )
 
@@ -223,11 +224,9 @@ match_exactly <- function(
   user, expected,
   fail_action=c("message", "warning", "stop", "nothing")) {
 
-  fail_action <- match.arg(
-    fail_action,
-    c("stop", "warning", "nothing")
-  )
+  fail_action <- match.arg(fail_action)
   unrecognized_FUN <- switch(fail_action,
+    message=message,
     warning=warning,
     stop=stop,
     nothing=invisible
@@ -247,9 +246,10 @@ match_exactly <- function(
     },
     error = function(e) {
       unrecognized_FUN(msg)
+      return(FALSE)
     },
     finally = {}
   )
 
-  invisible(NULL)
+  return(TRUE)
 }

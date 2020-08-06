@@ -50,7 +50,7 @@ viewXIfTI_surface(
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
-See \code{\link{read_xifti}}, \code{\link{make_xifti}}, 
+See \code{\link{read_cifti}}, \code{\link{make_xifti}}, 
 and \code{\link{is.xifti}}.}
 
 \item{idx}{The time/column index of the xifti data to plot. 

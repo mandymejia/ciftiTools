@@ -53,14 +53,6 @@ check_xifti_data <- function(x) {
   not_null <- names(x)[!sapply(x, is.null)]
   for (ii in not_null) { if (!check_nummat(x[[ii]])) { return(FALSE) } }
 
-  # If both left and right cortex are present, check for the same vertex count.
-  if ("cortex_left" %in% not_null && "cortex_right" %in% not_null) {
-    if (nrow(x$cortex_left) != nrow(x$cortex_right)) {
-      message("Number of vertices in left and right cortex must match.\n")
-      return(FALSE)
-    }
-  }
-
   # Present entries must have the same number of measurements (columns).
   n_meas <- sapply(x[not_null], ncol)
   if (length(unique(n_meas)) > 1) {
@@ -220,8 +212,8 @@ check_xifti_subcort_mask_padding <- function(x) {
 
   for (name in dim_names) {
     pad <- x[[name]]
-    if (!is.vector(pad) || length(pad) != 2 || !is.numeric(pad)) {
-      message(paste("Entry", name, "must be a length-2 numeric vector.\n"))
+    if (!is.vector(pad) || length(pad) != 2 || (!all(is.na(pad)) && !is.numeric(pad))) {
+      message(paste("Entry", name, "must be a length-2 numeric/NA vector.\n"))
       return(FALSE)
     }
   }
@@ -302,8 +294,10 @@ check_xifti_meta <- function(x) {
     message("Subcortical mask is invalid.\n"); return(FALSE)
   }
   if (!is.null(x$subcort$labels) && !is.null(x$subcort$mask)) {
-    message("Number of subcortical labels doesn't match the mask size.\n")
-    return(FALSE)
+    if (length(x$subcort$labels) != sum(x$subcort$mask)) {
+      message("Number of subcortical labels doesn't match the mask size.\n")
+      return(FALSE)
+    }
   }
   if (!is.null(x$subcort$mask_padding) && !check_xifti_subcort_mask_padding(x$subcort$mask_padding)) {
     message("Subcortical mask padding is invalid.\n"); return(FALSE)
@@ -333,7 +327,7 @@ check_xifti_meta <- function(x) {
 #' @inheritSection labels_Description Label Levels
 #' 
 check_xifti <- function(x) {
-  y <- template_xifti()$meta
+  y <- template_xifti()
   if (!match_exactly(names(x), names(y))) { 
     message("List names are not correct.\n"); return(FALSE) 
   }
@@ -354,17 +348,23 @@ check_xifti <- function(x) {
   # Check compatibility between components. ------------------------------------
   # ----------------------------------------------------------------------------
 
-  # Each non-empty data entry must have its corresponding labels.
+  # Metadata should be present if and only if the corresponding data is present.
   if (!is.null(x$data$cortex_left)) { 
     if (is.null(x$meta$cortex$medial_wall_mask$left)) {
       message("Left cortex is missing the medial wall mask.\n"); return(FALSE)
     }
     if (nrow(x$data$cortex_left) != sum(x$meta$cortex$medial_wall_mask$left)) {
-      message(paste(
-        "Number of left cortex vertices (rows) doesn't match",
-        "the number of non-medial wall locations in the mask.\n"
+      message(paste0(
+        "Number of left cortex vertices (rows), ", nrow(x$data$cortex_left), 
+        ", doesn't match ",
+        "the number of non-medial wall locations in the mask, ", 
+        sum(x$meta$cortex$medial_wall_mask$left), ".\n"
       ))
       return(FALSE)
+    }
+  } else {
+    if (!is.null(x$meta$cortex$medial_wall_mask$left)) {
+      message("Left medial wall mask is present, but the data is not.\n"); return(FALSE)
     }
   }
   if (!is.null(x$data$cortex_right)) { 
@@ -372,11 +372,17 @@ check_xifti <- function(x) {
       message("Right cortex is missing the medial wall mask.\n"); return(FALSE)
     }
     if (nrow(x$data$cortex_right) != sum(x$meta$cortex$medial_wall_mask$right)) {
-      message(paste(
-        "Number of right cortex vertices (rows) doesn't match",
-        "the number of non-medial wall locations in the mask.\n"
+      message(paste0(
+        "Number of right cortex vertices (rows), ", nrow(x$data$cortex_right), 
+        ", doesn't match ",
+        "the number of non-medial wall locations in the mask, ", 
+        sum(x$meta$cortex$medial_wall_mask$right), ".\n"
       ))
       return(FALSE)
+    }
+  } else {
+    if (!is.null(x$meta$cortex$medial_wall_mask$right)) {
+      message("Right medial wall mask is present, but the data is not.\n"); return(FALSE)
     }
   }
   if (!is.null(x$data$subcort)) {
@@ -387,8 +393,15 @@ check_xifti <- function(x) {
       message("Number of subcortical observations (rows) doesn't match its mask size.\n")
       return(FALSE)
     }
-    if (is.null(x$meta$subcort$mask)) {
+    if (is.null(x$meta$subcort$labels)) {
       message("Subcortical data is missing its labels.\n"); return(FALSE)
+    }
+  } else {
+    if (!is.null(x$meta$subcort$mask)) {
+      message("Subcortical mask is present, but the data is not.\n"); return(FALSE)
+    }
+    if (!is.null(x$meta$subcort$labels)) {
+      message("Subcortical labels is present, but the data is not.\n"); return(FALSE)
     }
   }
 
