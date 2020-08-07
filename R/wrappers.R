@@ -46,7 +46,7 @@ separate_cifti_wrapper <- function(
 #'  listed in the \code{resamp_fnames} argument. 
 #'
 #' @inheritParams original_fnames_Param_resampled
-#' @inheritParams resamp_fnames_Param_resampled
+#' @inheritParams resamp_fnames_Param
 #' @inheritParams resamp_res_Param_required
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param

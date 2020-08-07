@@ -12,7 +12,7 @@ NOTE: ROIs are currently
 not fully supported by ciftiTools, since \code{"cifti"} objects will not contain
 the ROIs. A workaround would be to keep the separated/resampled files
 with \code{sep_keep}/\code{resamp_keep} and then read those in with
-\code{make_cifti}.}
+\code{make_xifti}.}
 }
 \description{
 ROI_brainstructures

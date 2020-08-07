@@ -29,7 +29,7 @@ There are a few new functions:
     * It works by using the Connectome Workbench command `-cifti-convert -to-gifti-ext`. 
     * `flatten_cifti()` converts a `"cifti"` object to this same matrix. 
     * `read_cifti()` with `flat==TRUE` will call `read_cifti_flat()`.
-* `make_cifti()` creates a `"cifti"` object from its components.
+* `make_xifti()` creates a `"cifti"` object from its components.
     * Each component can be provided as a file name or R object.
 * `view_cifti()` plots the CIFTI data.
     * It calls `view_cifti_surface()` unless no cortical data exists, in which case it will try `view_cifti_volume()`.
@@ -39,7 +39,7 @@ And, a few new arguments:
 
 * `sep_keep` and `resamp_keep` indicate whether separated or resampled files should be deleted after reading in the CIFTI data (`read_cifti()`) or writing the resampled CIFTI file (`resample_cifti()`). Their default values are `FALSE`. in which case these files are written to a temporary directory (regardless of `write_dir`). 
 * `sep_fnames` and `resamp_fnames` can be used to set the file names for the respective files made by `read_cifti` and `resample_cifti`.
-    * The default separated and resampled file names have been updated; see `separate_cifti_default_suffix`.
+    * The default separated and resampled file names have been updated; see `cifti_component_suffix`.
 
 Other updates:
 
@@ -49,7 +49,7 @@ Other updates:
 * Handling of spaces and parentheses in file names.
 * The ROI data can be separated and resampled. However, the `"cifti"` object does not support ROIs, so they are ultimately not loaded. 
     * Please contact the developers if you are interested in this functionality.
-    * A workaround would be to separate/resample the ROIs, and then read them in with `make_cifti()` (haven't tested this yet).
+    * A workaround would be to separate/resample the ROIs, and then read them in with `make_xifti()` (haven't tested this yet).
 * Add option to store a zero-value threshold, `EPS`. Set it with `ciftiTools.setOption("EPS", 1e-8)`. This is used by `view_cifti()` and `flatten_cifti()` to detect constant zero brainordinates.
 * Several function aliases, for example `readCIfTI()` and `readcii()` for `read_cifti()`.
 * `plot()` method for `"cifti"` objects.
@@ -65,7 +65,7 @@ Other updates:
 
 * Replaced `oro.nifti::readNIfTI()` with `RNifti::readNifti()` for faster reading of subcortical data.
 * Made formal classes for each CIFTI file component: `"cifti_surface"`, `"cifti_subcortical"`, `"cifti_cortex"`, `"cifti_volume"` and `"cifti_label"`.
-* Replaced `read_separate_cifti()` with `read_cifti()`, which calls `separate_cifti()`, `resample_cifti_components()` (optionally), and `make_cifti()` in that order. 
+* Replaced `read_separate_cifti()` with `read_cifti()`, which calls `separate_cifti()`, `resample_cifti_components()` (optionally), and `make_xifti()` in that order. 
 * Rewrote `resample_cifti()`. The new version calls `separate_cifti()`, `resample_cifti_components()`, and then uses a template to create the new CIFTI file. (The first half is nearly identical to `read_separate_cifti()`.)
 * Moved common argument/parameter descriptions to `rox_args_docs.R`. Use `@inheritParams` to reference these descriptions. This should make maintaining them across the entire package easier.
 * Wrapper functions `separate_cifti_wrapper()` and `resample_cifti_wrapper()` to avoid duplicate code across `read_cifti()` and `resample_cifti()`. These should not be used by end-users, so they are not exported.

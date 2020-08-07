@@ -2,10 +2,10 @@
 % Please edit documentation in R/rox_args_docs.R
 \name{verbose_Param_TRUE}
 \alias{verbose_Param_TRUE}
-\title{verbose}
+\title{verbose: TRUE}
 \arguments{
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 }
 \description{
-verbose
+verbose: TRUE
 }

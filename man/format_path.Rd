@@ -15,7 +15,7 @@ unchanged.}
 
 \item{mode}{The mode for \code{\link{file.access}} to verify existence,
 writing permission, or reading permission. Use NA (default) to not perform
-any check_}
+any is.}
 }
 \value{
 The normalized path, or \code{NULL} if the path was \code{NULL}.

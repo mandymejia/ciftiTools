@@ -1,6 +1,6 @@
 #' Make a template "xifti" object.
 #' 
-#' @return A "xifti" object with a valid list structure
+#' @return An empty "xifti" object with a valid list structure
 #' 
 template_xifti <- function(){
   xifti <- list(

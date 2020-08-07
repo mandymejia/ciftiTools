@@ -2,51 +2,59 @@
 #'
 #' Summary method for class "xifti"
 #'
-#' @param object an object of class "xifti"
+#' @param object Object of class "xifti". 
+#'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
 #' @param ... further arguments passed to or from other methods.
 #' @export
 #' @method summary xifti
 summary.xifti <- function(object, ...) {
   out <- list()
   class(out) <- "summary.xifti"
-  out$includes <- names(object)[!sapply(object, is.null)]
-  if ("CORTEX_LEFT" %in% out$includes) out$CORTEX_LEFT <- dim(object$CORTEX_LEFT)
-  if ("CORTEX_RIGHT" %in% out$includes) out$CORTEX_RIGHT <- dim(object$CORTEX_RIGHT)
-  if ("SURF_LEFT" %in% out$includes) out$SURF_LEFT <- TRUE
-  if ("SURF_RIGHT" %in% out$includes) out$SURF_RIGHT <- TRUE
-  if ("SUBCORT" %in% out$includes) {
-    out$SUBCORT <- list()
-    out$SUBCORT$DAT <- dim(object$SUBCORT$DAT)
-    out$SUBCORT$LABELS <- table(object$SUBCORT$LABELS)
-    out$SUBCORT$MASK <- dim(object$SUBCORT$MASK)
+  out$includes <- c(
+    !is.null(object$data$cortex_left),
+    !is.null(object$data$cortex_right),
+    !is.null(object$data$subcort),
+    !is.null(object$surf$cortex_left),
+    !is.null(object$surf$cortex_right)
+  )
+  names(out$includes) <- c("left cortex", "right cortex", "subcortex", "left geometry", "right geometry")
+  if (out$includes["left cortex"]) out$cortex_left <- dim(object$data$cortex_left)
+  if (out$includes["right cortex"]) out$cortex_right <- dim(object$data$cortex_right)
+  if (out$includes["left geometry"]) out$surf_left <- TRUE
+  if (out$includes["right geometry"]) out$surf_right <- TRUE
+  if (out$includes["subcortex"]){
+    out$subcort <- list()
+    out$subcort$dat <- dim(object$data$subcort)
+    out$subcort$labels <- table(object$meta$subcort$labels)
+    out$subcort$mask <- dim(object$meta$subcort$mask)
   }
   return(out)
 }
 
-#' @param x an object of class "summary.xifti"
+#' @inheritParams x_Param_xifti
 #' @export
 #' @method print summary.xifti
 #' @rdname summary.xifti
 print.summary.xifti <- function(x, ...) {
-  cat("Brain Structures:", paste(x$includes, collapse=", "), " \n")
+  cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
 
-  if ("CORTEX_LEFT" %in% x$includes) {
-    cat("Left Cortex:", x$CORTEX_LEFT[1], "surface vertices,", 
-      x$CORTEX_LEFT[2], "measurements.\n")
-    if ("SURF_LEFT" %in% x$includes) cat("\tLeft surface model is present.\n")
+  if (x$includes["left cortex"]) {
+    cat("left cortex:", x$cortex_left[1], "surface vertices,", 
+      x$cortex_left[2], "measurements.\n")
+    if (x$includes["left geometry"]) cat("\tleft surface model is present.\n")
   }
 
-  if ("CORTEX_RIGHT" %in% x$includes) {
-    cat("Right Cortex:", x$CORTEX_RIGHT[1], "surface vertices,", 
-      x$CORTEX_RIGHT[2], "measurements.\n")
-    if ("SURF_RIGHT" %in% x$includes) cat("\tRight surface model is present.\n")
+  if (x$includes["right cortex"]) {
+    cat("right cortex:", x$cortex_right[1], "surface vertices,", 
+      x$cortex_right[2], "measurements.\n")
+    if (x$includes["right geometry"]) cat("\tright surface model is present.\n")
   }
 
-  if ("SUBCORT" %in% x$includes) {
-    cat("Subcortical:", x$SUBCORT$DAT[[1]], "voxels,",
-      x$SUBCORT$DAT[[2]], "measurements.\n")
-    cat("Subcortical Labels:\n")
-    print(x$SUBCORT$LABELS)
+  if (x$includes["subcortex"]) {
+    cat("subcortical:", x$subcort$dat[[1]], "voxels,",
+      x$subcort$dat[[2]], "measurements.\n")
+    cat("subcortical labels:\n")
+    print(x$subcort$labels)
   }
 }
 
@@ -59,14 +67,13 @@ print.xifti <- function(x, ...) {
 
 #' Get CIFTI file extension
 #'
-#' @param fname_cifti Path to CIFTI file, including full file name and extension
+#' @inheritParams cifti_fname_Param
 #'
 #' @return Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii".
 #' @export
 #'
-get_cifti_extn <- function(fname_cifti) {
-  fname_cifti <- basename(fname_cifti)
-  fname_parts <- unlist(strsplit(fname_cifti, split=".", fixed = TRUE)) #split by "."
+get_cifti_extn <- function(cifti_fname) {
+  fname_parts <- unlist(strsplit(basename(cifti_fname), split=".", fixed = TRUE)) #split by "."
   extn <- paste(rev(fname_parts)[c(2,1)], collapse=".") #'dtseries.nii", "dscalar.nii", etc.
 }
 
@@ -82,7 +89,7 @@ get_cifti_extn <- function(fname_cifti) {
 #'
 #' @return The default file name suffix.
 #'
-separate_cifti_default_suffix <- function(label, GIFTI_type="func") {
+cifti_component_suffix <- function(label, GIFTI_type="func") {
   label <- match.arg(label, c(
     "cortexL", "cortexR", "subcortVol", "subcortLab",
     "ROIcortexL", "ROIcortexR", "ROIsubcortVol", 

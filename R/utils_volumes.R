@@ -7,7 +7,8 @@
 #' @param dat Data matrix with locations along the rows and measurements along 
 #'  the columns. If only one set of measurements were made, this may be a 
 #'  vector.
-#' @param mask Volumetric brain mask for subcortical locations.
+#' @param mask Volumetric binary mask. \code{TRUE} indicates voxels inside the
+#'  mask.
 #' @param fill The value for locations outside the mask. Default: \code{NA}.
 #'
 #' @return The 3D or 4D unflattened volume array
@@ -15,7 +16,7 @@
 unmask <- function(dat, mask, fill=NA) {
 
   # Check that dat is a vector or matrix.
-  if (is.vector(dat)) { dat <- matrix(dat, ncol=1) }
+  if (is.vector(dat) | is.factor(dat)) { dat <- matrix(dat, ncol=1) }
   stopifnot(length(dim(dat)) == 2)
 
   # Check that mask is numeric {0, 1} or logical, and is 3D.
@@ -23,8 +24,8 @@ unmask <- function(dat, mask, fill=NA) {
     mask_vals <- unique(as.vector(mask))
     stopifnot(length(mask_vals) <= 2)
     stopifnot(all(mask_vals %in% c(0,1)))
+    mask <- array(as.logical(mask), dim=dim(mask))
   }
-  mask <- as.logical(mask)
   stopifnot(length(dim(mask)) == 3)
 
   # Other checks.
@@ -38,6 +39,38 @@ unmask <- function(dat, mask, fill=NA) {
   }
 
   vol
+}
+
+#' Pad a 3D Array
+#'
+#' Pad a 3D array by a certain amount in each direction, along each dimension.
+#'  This effectively undoes a crop.
+#'
+#' @param x A 3D array, e.g. \code{unmask(xifti$data$subcort, xifti$meta$subcort$mask)}.
+#' @param padding A length-d list of length-2 vectors indicating the number of 
+#'  slices to add at the beginning and end of each of the d dimensions, e.g.
+#'  \code{xifti$meta$subcort$mask_padding}.
+#' @param fill Values to pad with. Default: \code{NA}.
+#'
+#' @return The padded array
+pad_vol <- function(x, padding, fill=NA){
+  new_dim <- vector("numeric", 3)
+  for (ii in 1:length(dim(x))) {
+    new_dim[ii] <- dim(x)[ii] + padding[[ii]][1] + padding[[ii]][2]
+  }
+  y <- array(fill, dim=new_dim)
+  y[
+    seq(padding[[1]][1]+1, padding[[1]][1]+dim(x)[1]),
+    seq(padding[[2]][1]+1, padding[[2]][1]+dim(x)[2]),
+    seq(padding[[3]][1]+1, padding[[3]][1]+dim(x)[3])
+  ] <- x
+  y
+}
+
+#' @rdname pad_vol
+#' @export
+uncrop_vol <- function(x, padding, fill=NA){
+  pad_vol(x, padding, fill)
 }
 
 #' Convert sparse coordinate list to non-sparse volume.
@@ -92,7 +125,7 @@ coordlist_to_vol <- function(coords, fill=FALSE){
 #'
 #' @param x The 3D array to crop.
 #'
-crop_array <- function(x) {
+crop_vol <- function(x) {
   d <- length(dim(x))
 
   if (all(unique(as.vector(x)) %in% c(NA, 0))) { stop("The array is empty.") }

@@ -7,7 +7,7 @@
 match_input(
   user,
   expected,
-  fail_action = c("stop", "warning", "nothing"),
+  fail_action = c("stop", "warning", "message", "nothing"),
   user_value_label = NULL
 )
 }

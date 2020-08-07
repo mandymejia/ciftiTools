@@ -10,8 +10,7 @@ map_cifti(cifti_fname, wb_path = NULL, verbose = FALSE)
 mapCIfTI(cifti_fname, wb_path = NULL)
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -28,11 +27,9 @@ A list with the following metadata:
 }
 \description{
 Wrapper for the Connectome Workbench command 
- \code{-cifti-export-dense-mapping}. For each brainordinate in a CIFTI, gives
- the brainstructure (left cortex, right cortex, or subcortical) and
- substructure (left/right cortex or medial wall; or, one of the 19
- subcortical structures). It also obtains the spatial coordinates of the
- subcortical voxels.
+ \code{-cifti-export-dense-mapping}. It retrives the medial wall masks for
+ the left and right cortex, and the subcortical labels (ordered spatially) 
+ and mask.
 }
 \section{Label Levels}{
 

@@ -2,16 +2,14 @@
 % Please edit documentation in R/rox_args_docs.R
 \name{read_dir_Param_separated}
 \alias{read_dir_Param_separated}
-\title{read_dir: resampled files}
+\title{read_dir: separated files}
 \arguments{
-\item{read_dir}{Directory to append to the path of every file name in
- \code{original_fnames}. If \code{NULL} 
- (default), do not append any directory to the path.
+\item{read_dir}{Directory to append to the path of every original file name,
+ e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
+ any directory to the path.
 
  \code{read_dir} must already exist, or an error will be raised.}
 }
 \description{
-read_dir: resampled files
-
 read_dir: separated files
 }

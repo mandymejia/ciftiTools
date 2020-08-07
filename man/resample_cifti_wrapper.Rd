@@ -23,7 +23,7 @@ resample_cifti_wrapper(
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
 
-\item{original_fnames}{The original files to resample. This is a named list 
+\item{original_fnames}{The files to resample. This is a named list 
 where each element's name is a file type label, and each element's value
 is a file name. Labels must be one of the following: "cortexL", "cortexR", 
 "ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
@@ -31,18 +31,24 @@ Both "sphereL" and "sphereR" are required; all others are optional. If
 \code{read_dir} is not \code{NULL}, then all these file names should be
 relative to \code{read_dir}.}
 
-\item{resamp_fnames}{Where to write the resampled files (override
-their default file names). This is a named list 
-where each element's name is a file type label, and each element's value
-is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-"ROIcortexL", "ROIcortexR", "validROIcortexL", "validROIcortexR", 
-"sphereL", "sphereR", "surfL", or "surfR". All except "validROIcortex[L/R]"
-must be in \code{original_fnames}: if "validROIcortex[L/R]" is present, 
-"cortex[L/R]" and "ROIcortex[L/R]" must be in \code{original_fnames}. 
-File names can be \code{NULL}, in which case a default file name based on the
-original file name will be used: see \code{\link{resample_cifti_default_fname}}.
-If \code{write_dir} is not \code{NULL}, then all these file names should be
-relative to \code{write_dir}.}
+\item{resamp_fnames}{Where to write the resampled files. This is a named list 
+ where each entry's name is a file type label, and each entry's value
+ is a file name indicating where to write the corresponding resampled file. 
+ The recognized file type labels are: "cortexL", "cortexR", 
+ "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
+ 
+ Entry values can be \code{NULL}, in which case a default file name will be 
+ used: see \code{\link{resample_cifti_default_fname}}. Default file names
+ will also be used for files that need to be resampled/written but without a
+ corresponding entry in \code{resamp_fnames}.
+ 
+ Entries in \code{resamp_fnames} will be ignored if they are not needed
+ based on \code{[ROI_]brainstructures}. For example, if
+ \code{brainstructures="left"}, then \code{resamp_fnames$cortexR} will be 
+ ignored if specified. 
+
+ The \code{write_dir} argument can be used to place each resampled file in
+ the same directory.}
 
 \item{sphereL_fname}{The left GIFTI sphere file in the same resolution
 as the CIFTI data. It is required for resampling.}
@@ -60,15 +66,16 @@ file representing the right cortex.}
 the resampled GIFTI surface geometry file representing the left/right 
 cortex. If NULL (default),}
 
-\item{read_dir}{Directory to append to the path of every file name in
- \code{original_fnames}. If \code{NULL} 
- (default), do not append any directory to the path.
+\item{read_dir}{Directory to append to the path of every original file name,
+ e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
+ any directory to the path.
 
  \code{read_dir} must already exist, or an error will be raised.}
 
 \item{write_dir}{Where should the resampled
  files be placed? \code{NULL} (default) will write them to
- the current working directory. 
+ the current working directory if \code{keep}, and a temporary directory
+ if \code{!keep}. 
 
  \code{write_dir} must already exist, or an error will occur.}
 

@@ -11,7 +11,8 @@ unmask(dat, mask, fill = NA)
 the columns. If only one set of measurements were made, this may be a 
 vector.}
 
-\item{mask}{Volumetric brain mask for subcortical locations.}
+\item{mask}{Volumetric binary mask. \code{TRUE} indicates voxels inside the
+mask.}
 
 \item{fill}{The value for locations outside the mask. Default: \code{NA}.}
 }

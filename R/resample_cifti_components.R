@@ -13,7 +13,7 @@
 #' @param cortexL_target_fname,cortexR_target_fname (Optional) File path to 
 #'  save the resampled GIFTI data for [left/right] cortex as.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{separate_cifti_default_suffix}}.
+#'  will be named by \code{\link{cifti_component_suffix}}.
 #' @param ROIcortexL_original_fname,ROIcortexR_original_fname (Optional) File 
 #'  path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
 #'  resample.
@@ -21,11 +21,11 @@
 #'  of to save the resampled GIFTI ROI corresponding to 
 #'  \code{cortex[L/R]_target_fname} as.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{separate_cifti_default_suffix}}.
+#'  will be named by \code{\link{cifti_component_suffix}}.
 #' @param validROIcortexL_target_fname,validROIcortexR_target_fname (Optional) 
 #'  Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{separate_cifti_default_suffix}}.
+#'  will be named by \code{\link{cifti_component_suffix}}.
 #' @inheritParams surfL_original_fname_Param
 #' @inheritParams surfR_original_fname_Param
 #' @inheritParams surfL_target_fname_Param
@@ -142,7 +142,7 @@ resample_cifti_components <- function(
     lab <- names(original_fnames)[ii]
     if (is.null(target_fnames[[lab]])) {
       if (grepl("validROI", lab)) {
-        # [TO DO]: check if this works. use separate_cifti_default_suffix?
+        # [TO DO]: check if this works. use cifti_component_suffix?
         target_fnames[[lab]] <- paste0(
           "validROI_", resample_cifti_default_fname(
             original_fnames[[gsub("validROI", "", lab)]], resamp_res)

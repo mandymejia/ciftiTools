@@ -33,9 +33,10 @@ make_xifti_cortex <- function(cortex, medial_wall_mask=FALSE) {
     medial_wall_mask <- !apply(cortex==0 | is.na(cortex), 1, all)
   } else if (identical(medial_wall_mask, FALSE)) {
     medial_wall_mask <- NULL
-  }
+  } 
   if (!is.null(medial_wall_mask)) {
     stopifnot(length(medial_wall_mask) == nrow(cortex))
+    cortex <- cortex[medial_wall_mask,, drop=FALSE]
   }
 
   # Return value.
@@ -113,7 +114,7 @@ make_xifti_subcort <- function(
   if (validate_mask) {
    mask_vol <- apply(vol, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
    if (max(abs( mask - mask_vol )) > 0) {
-     warning("The mask did not match the mask inferred from the volume (NA/0 values).")
+     warning("The mask did not match the mask inferred from the volume (NA/0 values)\n.")
    }
   
   #  mask_labs <- apply(labels, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
@@ -123,7 +124,8 @@ make_xifti_subcort <- function(
   }
 
   # Get the cropped mask.
-  mask_cropped <- crop_array(mask)
+  mask_cropped <- crop_vol(mask)
+  names(dim(mask_cropped$data)) <- c("i", "j", "k")
 
   # Use mask on labels.
   substructure_levels <- substructure_table()$ciftiTools_Name
@@ -132,25 +134,26 @@ make_xifti_subcort <- function(
     levels=1:length(substructure_levels), 
     labels=substructure_levels
   )
-  stopifnot(check_subcort_labels(labels))
+  stopifnot(is.subcort_labels(labels))
 
   # Use mask on volume and return.
   list(
-    DAT = matrix(vol[mask], nrow=sum(mask)),
-    LABELS = labels,
-    MASK = mask_cropped$data,
-    PADDING = mask_cropped$padding
+    data = matrix(vol[mask], nrow=sum(mask)),
+    labels = labels,
+    mask = mask_cropped$data,
+    mask_padding = mask_cropped$padding
   )
 }
 
 #' Make "xifti" Surface Components
 #' 
-#' Coerce a file path, GIFTI object, or "cifti_surface" object to a
-#'  "cifti_surface" object.
+#' Coerce a file path, GIFTI object, or surface (list of vertices + faces)
+#'  to a surface.
 #'
-#' @param surf What to coerce as a "cifti_surface" object.
+#' @param surf What to coerce to a surface.
 #'
-#' @return The "cifti_surface" object.
+#' @return The surface, a list of vertices (spatial locations) and faces
+#'  (defined by three vertices).
 #' @export
 #'
 #' @importFrom gifti readgii is.gifti
@@ -168,9 +171,8 @@ make_xifti_surface <- function(surf) {
   if (is.gifti(surf)) { surf <- gifti_to_surf(surf) }
 
   # Return cifti_surface or error.
-  if (!check_xifti_surface(surf)) {
-    stop("The object could not be converted into a cifti_surface object.")
+  if (!is.xifti_surface(surf)) {
+    stop("The object could not be converted into a surface.")
   }
-  class(surf) <- "cifti_surface"
   surf
 }

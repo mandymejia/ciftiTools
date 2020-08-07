@@ -6,7 +6,7 @@
 #'  (subcortical data) using the \code{-cifti-separate} Workbench Command. The 
 #'  former is much faster, so the latter is only used when necessary:
 #'  if resampling is to be performed, or if the NIFTI volume must be 
-#'  obtained without cropping. See \code{\link{read_cifti_export}} to directly
+#'  obtained without cropping. See \code{\link{read_cifti_convert}} to directly
 #'  use the former, and \code{\link{read_cifti_separate}} to directly
 #'  use the latter.
 #' 
@@ -48,13 +48,13 @@
 #' @inheritParams sphereR_fname_Param
 #' @inheritParams wb_path_Param
 #' @inheritParams verbose_Param_FALSE
-#' @param ... Additional arguments to \code{read_cifti_export} or 
-#'  \code{read_cifti_separate}.
+#' @param ... Additional arguments to \code{\link{read_cifti_convert}} or 
+#'  \code{\link{read_cifti_separate}}.
 #'
 #' @return If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 
 #'  (T measurements, B brainordinates). 
 #' 
-#'  See \code{\link{check_xifti}} for details about \code{"xifti"} objects.
+#'  See \code{\link{is.xifti}} for details about \code{"xifti"} objects.
 #' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
@@ -115,7 +115,7 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
-      wb_path=NULL, verbose=verbose,
+      wb_path=wb_path, verbose=verbose,
       ...
     ))
 
@@ -124,8 +124,8 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
-      resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
-      wb_path=NULL, verbose=verbose,
+      resamp_res=resamp_res, sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
+      wb_path=wb_path, verbose=verbose,
       ...
     ))
   }

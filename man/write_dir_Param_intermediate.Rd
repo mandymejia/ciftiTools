@@ -13,7 +13,7 @@
  \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
  and later deleted. \code{resamp_keep} works similarly. 
 
- For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+ For \code{read_cifti_separate}, the surface files (\code{surfL} or \code{surfR})
  are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
  be written to \code{tempdir()}. But for \code{resample_cifti}, the
  surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 

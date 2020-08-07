@@ -3,7 +3,7 @@
 #' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
 #'  (\code{\link{separate_cifti}}), optionally resampling them 
 #'  (\code{\link{resample_cifti_components}}), and then reading each separated 
-#'  component into R (\code{\link{make_cifti}}).
+#'  component into R (\code{\link{make_xifti}}).
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
@@ -13,15 +13,15 @@
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param
-#' @inheritParams sep_fnames_Param
 #' @inheritParams sep_keep_Param
+#' @inheritParams sep_fnames_Param
 #' @inheritParams resamp_keep_Param
 #' @inheritParams resamp_fnames_Param
 #' @inheritParams write_dir_Param_intermediate
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return A \code{"xifti"} object. See \code{\link{check_xifti}}.
+#' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #'
 #' @export
 #'
@@ -101,10 +101,11 @@ read_cifti_separate <- function(
   # resample_cifti_separate() --------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  do_resamp <- !is.null(resamp_res) && !identical(resamp_res, FALSE)
+  do_resamp <- !(is.null(resamp_res) || identical(resamp_res, FALSE))
   # Do not resample the subcortical data.
   to_resample <- to_read[!grepl("subcort", names(to_read))]
-  do_resamp <- do_resamp & length(to_resample) > 0
+
+  do_resamp <- do_resamp && length(to_resample) > 0
   if (do_resamp) {
     if (verbose) { cat("Resampling CIFTI file.\n") }
 

@@ -11,8 +11,7 @@ viewXIfTI(xifti, what = NULL, ...)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
-See \code{\link{read_xifti}}, \code{\link{make_xifti}}, 
-and \code{\link{is.xifti}}.}
+See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{what}{Either "surface" or "volume". If NULL (default), view the surface if present in the xifti file, and
 volume otherwise}
