@@ -1,3 +1,7 @@
+# 1.2
+
+Subcortical color table link: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
+
 # 1.1
 
 ## New names
