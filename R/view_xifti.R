@@ -878,7 +878,7 @@ view_xifti_volume <- function(
   cat(paste0("Values to be plotted range from ",min(xifti$data$subcort[,idx])," to ",max(xifti$data$subcort[,idx]), "\n"))
 
   img_overlay <- T1w*0
-  img_overlay@.Data <- vol[,,,1]
+  img_overlay@.Data <- vol
   img_overlay@.Data[labs==0] <- NA
 
   img_labels <- T1w*0

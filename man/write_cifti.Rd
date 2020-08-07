@@ -4,7 +4,7 @@
 \alias{write_cifti}
 \title{Write CIFTI}
 \usage{
-write_cifti(xifti, cifti_fname, verbose = FALSE, wb_path = NULL)
+write_cifti(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
@@ -12,7 +12,7 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
-\item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
