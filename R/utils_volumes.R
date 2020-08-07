@@ -16,7 +16,7 @@
 unmask <- function(dat, mask, fill=NA) {
 
   # Check that dat is a vector or matrix.
-  if (is.vector(dat) | is.factor(dat)) { dat <- matrix(dat, ncol=1) }
+  if (is.vector(dat) || is.factor(dat)) { dat <- matrix(dat, ncol=1) }
   stopifnot(length(dim(dat)) == 2)
 
   # Check that mask is numeric {0, 1} or logical, and is 3D.
@@ -37,6 +37,7 @@ unmask <- function(dat, mask, fill=NA) {
   for(ii in 1:ncol(dat)) {
     vol[,,,ii][mask] <- dat[,ii]
   }
+  if (ncol(dat)==1) { vol <- vol[,,,1] }
 
   vol
 }

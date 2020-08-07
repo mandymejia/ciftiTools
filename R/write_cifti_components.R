@@ -54,7 +54,7 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #' Save cifti object as cifti file
 #'
 #' @param xifti A "xifti" object.
-#' @param cifti_fname Name of cifti file to write, ending in .dtseries.nii, .dscalar.nii or .dlabel.nii
+# #' @param cifti_fname Name of cifti file to write, ending in .dtseries.nii, .dscalar.nii or .dlabel.nii
 #' @inheritParams verbose_Param_FALSE
 #' @inheritParams wb_path_Param
 #'
@@ -63,7 +63,7 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 # #' @importFrom oro.nifti writeNIfTI
 #' @importFrom RNifti writeNifti
 #'
-write_cifti <- function(xifti, cifti_fname, verbose=FALSE, wb_path=NULL) {
+write_cifti_components <- function(xifti, verbose=FALSE, wb_path=NULL) {
   stopifnot(is.xifti(xifti))
   stopifnot(!any(sapply(xifti$data, is.null)))
 
@@ -71,7 +71,7 @@ write_cifti <- function(xifti, cifti_fname, verbose=FALSE, wb_path=NULL) {
 
   # Get intermediate file names.
   write_dir <- file.path(
-    tempdir(), paste0(sub("\\..*", "", basename(cifti_fname)), "-components")
+    tempdir()#, paste0(sub("\\..*", "", basename(cifti_fname)), "-components")
   )
   if (!dir.exists(write_dir)) { dir.create(write_dir) }
   sep_names <- c("cortexL", "cortexR", "subcortVol", "subcortLab")
@@ -99,7 +99,7 @@ write_cifti <- function(xifti, cifti_fname, verbose=FALSE, wb_path=NULL) {
   
   if (verbose) {cat("Writing subcortex.\n")}
   if (!any(is.na(do.call(rbind, xifti$meta$subcort$mask_padding)))) {
-    mask <- pad_vol(xifti$meta$subcort$mask, xifti$meta$subcort$mask_padding)
+    mask <- pad_vol(xifti$meta$subcort$mask, xifti$meta$subcort$mask_padding, FALSE)
   } else {
     mask <- xifti$meta$subcort$mask
   }
@@ -112,13 +112,5 @@ write_cifti <- function(xifti, cifti_fname, verbose=FALSE, wb_path=NULL) {
     sep_fnames$subcortLab
   )
 
-  # Make the CIFTI.
-  if (verbose) {cat("Making CIFTI file from the component files.\n")}
-  make_cifti(
-    cifti_fname, 
-    cortexL_fname = sep_fnames$cortexL,
-    cortexR_fname = sep_fnames$cortexR,
-    subcortVol_fname = sep_fnames$subcortVol,
-    subcortLab_fname = sep_fnames$subcortLab
-  )
+  return(sep_fnames)
 }
