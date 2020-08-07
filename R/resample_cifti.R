@@ -149,44 +149,19 @@ resample_cifti <- function(
   # Resample with template -----------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # [TO DO]: move to separate function
-
   # Create a template CIFTI dense timeseries.
   if (verbose) cat("Creating template CIFTI file in target resolution... \n")
   cifti_template_fname <- format_path(
     paste0("template_", basename(cifti_original_fname)), tempdir(), mode=4)
-  cifti_extn <- get_cifti_extn(cifti_original_fname)
-  if (grepl("dtseries", cifti_extn)) create_cmd <- "-cifti-create-dense-timeseries"
-  else if (grepl("dscalar", cifti_extn)) create_cmd <- "-cifti-create-dense-scalar"
-  else if (grepl("dlabel", cifti_extn)) create_cmd <- "-cifti-create-label"
-  else {
-    stop(paste(
-      "The data type of cifti_original_fname", cifti_original_fname, 
-      "could not be determined. The file name should end in e.g. \
-      \".dtseries.nii\""
-    ))
-  }
-
-  cmd <- paste(
-    sys_path(wb_cmd), create_cmd, sys_path(cifti_template_fname), 
-    "-volume", sys_path(to_cif["subcortVol"]), sys_path(to_cif["subcortLab"]), 
-    "-left-metric", sys_path(to_cif["cortexL"])
+  make_cifti(
+    cifti_template_fname, 
+    cortexL_fname = to_cif["cortexL"],
+    cortexR_fname = to_cif["cortexR"],
+    ROIcortexL_fname = to_cif["ROIcortexL"],
+    ROIcortexR_fname = to_cif["ROIcortexR"],
+    subcortVol_fname = to_cif["subcortVol"],
+    subcortLab_fname = to_cif["subcortLab"]
   )
-  if ("ROIcortexL" %in% names(to_cif)) {
-    cmd <- paste(cmd, "-roi-left", sys_path(to_cif["ROIcortexL"]))
-  }
-  cmd <- paste(cmd, "-right-metric", sys_path(to_cif["cortexR"]) )
-  if ("ROIcortexR" %in% names(to_cif)) {
-    cmd <- paste(cmd, "-roi-right", sys_path(to_cif["ROIcortexR"]))
-  }
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd
-    ))
-  }
-
   if (verbose) { 
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()

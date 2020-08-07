@@ -80,7 +80,7 @@ read_cifti_convert <- function(
     # Need to crop the subcortical mask. But, there may have been extra padding
     #   in the NIFTI but absent in the mapping. So, do not fill the
     #   SUBCORT_MASK_PADDING field.
-    xifti$meta$subcort$mask <- crop_array(cifti_map$subcort$mask)$data
+    xifti$meta$subcort$mask <- crop_vol(cifti_map$subcort$mask)$data
   } 
 
   # Read surfaces.

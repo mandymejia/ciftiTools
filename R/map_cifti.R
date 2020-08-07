@@ -154,7 +154,7 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
   subcort2 <- coordlist_to_vol(subcort[,c("i", "j", "k","label")], fill=0)
   subcort_mask <- subcort2 != 0
   subcort$label <- subcort2[subcort_mask]
-  subcort_mask <- crop_array(subcort_mask)
+  subcort_mask <- crop_vol(subcort_mask)
 
   # Re-level the subcortical labels.
   subcort$label <- factor(

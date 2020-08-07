@@ -373,7 +373,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
   out
 }
 
-#' Visualize xifti brain data. The \code{rgl} package is required.
+#' Visualize "xifti" cortical data. The \code{rgl} package is required.
 #'
 #' @inheritParams xifti_Param
 #' @param idx The time/column index of the xifti data to plot. 
@@ -841,11 +841,17 @@ view_xifti_volume <- function(
     }
   }
 
+  #stop("Does not work.")
+
   stopifnot(is.xifti(xifti))
+  if (any(is.na(do.call(rbind, xifti$meta$subcort$mask_padding)))) {
+    stop("The subcortical mask padding must be known. Use `cifti_read_separate` or `make_cifti` with a NIFTI file.")
+  }
 
   # Get volume and labels.
-  vol <- unmask(xifti$data$subcort, xifti$meta$subcort$mask)
-  labs <- unmask(xifti$meta$subcort$labels, xifti$meta$subcort$mask)
+  values <- xifti$data$subcort[,idx]
+  vol <- unmask(values, pad_vol(xifti$meta$subcort$mask, xifti$meta$subcort$mask_padding, fill=FALSE), fill=0)
+  labs <- unmask(as.numeric(xifti$meta$subcort$labels), pad_vol(xifti$meta$subcort$mask, xifti$meta$subcort$mask_padding, fill=FALSE), fill=0)
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
@@ -863,23 +869,23 @@ view_xifti_volume <- function(
   } else if (structural_img=="T1w") {
     T1w <- readNIfTI(system.file("extdata/MNI152_T1_2mm.nii.gz", package="ciftiTools"), reorient=FALSE)
   } else {
+    stop("MNI not supported.")
     T1w <- readNIfTI(structural_img, reorient=FALSE)
   }
 
-  values <- vol[,,,idx]
   if (!is.null(z_min)) values[values < z_min] <- z_min
   if (!is.null(z_max)) values[values > z_max] <- z_max
   cat(paste0("Values to be plotted range from ",min(xifti$data$subcort[,idx])," to ",max(xifti$data$subcort[,idx]), "\n"))
 
   img_overlay <- T1w*0
-  img_overlay@.Data <- values
+  img_overlay@.Data <- vol[,,,1]
   img_overlay@.Data[labs==0] <- NA
 
   img_labels <- T1w*0
   img_labels@.Data <- labs
   img_labels@.Data[labs==0] <- NA
-
-  if (use_papaya) {
+  
+  if (!use_papaya) {
     oro.nifti::overlay(x=T1w, y=img_overlay, plot.type="single", plane=plane, z=slices)#, col.y=pal)
   } else {
     papayar::papaya(list(T1w, img_overlay, img_labels))

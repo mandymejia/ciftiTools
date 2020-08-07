@@ -412,8 +412,8 @@ is.xifti <- function(x, messages=TRUE) {
   # The surface geometry of each cortex, if present, must be compatible with it.
   for (side in c("left", "right")) {
     cortex <- paste0("cortex_", side)
-    if (!is.null(x$meta$cortex$medial_wall_mask[[side]])) {
-      if (is.null(x$surf[[cortex]])) {
+    if (!is.null(x$surf[[cortex]])) {
+      if (is.null(x$meta$cortex$medial_wall_mask[[side]])) {
         message(paste0("The ", side, " cortex surface geometry is present, but the data is not.\n"))
         return(FALSE)
       }

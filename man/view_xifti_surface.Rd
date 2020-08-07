@@ -3,7 +3,7 @@
 \name{view_xifti_surface}
 \alias{view_xifti_surface}
 \alias{viewXIfTI_surface}
-\title{Visualize xifti brain data. The \code{rgl} package is required.}
+\title{Visualize "xifti" cortical data. The \code{rgl} package is required.}
 \usage{
 view_xifti_surface(
   xifti,
@@ -142,5 +142,5 @@ If \code{FALSE}, print it separately instead.}
 If \code{NULL} (default), let \code{\link{format}} decide.}
 }
 \description{
-Visualize xifti brain data. The \code{rgl} package is required.
+Visualize "xifti" cortical data. The \code{rgl} package is required.
 }

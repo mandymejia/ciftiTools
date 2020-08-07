@@ -124,7 +124,7 @@ make_xifti_subcort <- function(
   }
 
   # Get the cropped mask.
-  mask_cropped <- crop_array(mask)
+  mask_cropped <- crop_vol(mask)
   names(dim(mask_cropped$data)) <- c("i", "j", "k")
 
   # Use mask on labels.

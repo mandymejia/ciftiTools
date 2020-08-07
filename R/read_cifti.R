@@ -115,7 +115,7 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
-      wb_path=NULL, verbose=verbose,
+      wb_path=wb_path, verbose=verbose,
       ...
     ))
 
@@ -124,8 +124,8 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
-      resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
-      wb_path=NULL, verbose=verbose,
+      resamp_res=resamp_res, sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
+      wb_path=wb_path, verbose=verbose,
       ...
     ))
   }

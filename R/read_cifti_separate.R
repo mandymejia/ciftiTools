@@ -101,10 +101,11 @@ read_cifti_separate <- function(
   # resample_cifti_separate() --------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  do_resamp <- !is.null(resamp_res) && !identical(resamp_res, FALSE)
+  do_resamp <- !(is.null(resamp_res) || identical(resamp_res, FALSE))
   # Do not resample the subcortical data.
   to_resample <- to_read[!grepl("subcort", names(to_read))]
-  do_resamp <- do_resamp & length(to_resample) > 0
+
+  do_resamp <- do_resamp && length(to_resample) > 0
   if (do_resamp) {
     if (verbose) { cat("Resampling CIFTI file.\n") }
 
