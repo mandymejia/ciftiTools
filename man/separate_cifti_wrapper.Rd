@@ -54,8 +54,7 @@ with \code{sep_keep}/\code{resamp_keep} and then read those in with
 
 \item{write_dir}{Where should the separated
  files be placed? \code{NULL} (default) will write them to
- the current working directory if \code{keep}, and a temporary directory
- if \code{!keep}. 
+ the current working directory.
 
  \code{write_dir} must already exist, or an error will occur.}
 

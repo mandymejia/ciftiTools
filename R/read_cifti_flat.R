@@ -35,8 +35,6 @@ read_cifti_flat <- function(
   cifti_fname, keep=FALSE, gifti_fname=NULL,
   write_dir=NULL, wb_path=NULL) {
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   # ----------------------------------------------------------------------------
   # Get the output file name ---------------------------------------------------
   # ----------------------------------------------------------------------------
@@ -60,18 +58,11 @@ read_cifti_flat <- function(
   # ----------------------------------------------------------------------------
   
   cmd <- paste(
-    sys_path(wb_cmd), 
     "-cifti-convert -to-gifti-ext", 
     sys_path(cifti_fname), 
     sys_path(gifti_fname)
   )
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code,
-      ". The command was:\n", cmd
-    ))
-  }
+  run_wb_cmd(cmd, wb_path)
   result <- readgii(gifti_fname)
   result <- result$data$normal
 

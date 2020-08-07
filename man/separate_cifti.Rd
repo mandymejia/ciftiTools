@@ -59,7 +59,11 @@ path is relative, they will be saved in \code{write_dir}.}
 
 \item{ROIsubcortVol_fname}{File name for volume ROI.}
 
-\item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
+\item{write_dir}{Where should the separated
+ files be placed? \code{NULL} (default) will write them to
+ the current working directory.
+
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

@@ -52,8 +52,6 @@ resample_cifti <- function(
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   # [TO DO]: more extensive preliminary is.
   if (!is.null(resamp_res)) {
     if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
@@ -173,19 +171,13 @@ resample_cifti <- function(
   stopifnot(file.exists(cifti_template_fname))
   stopifnot(all(file.exists(c(sphereL_fname, sphereR_fname))))
   cmd <- paste(
-    sys_path(wb_cmd), "-cifti-resample", sys_path(cifti_original_fname), 
+    "-cifti-resample", sys_path(cifti_original_fname), 
     "COLUMN", sys_path(cifti_template_fname), 
     "COLUMN BARYCENTRIC CUBIC", sys_path(cifti_target_fname), 
-    "-left-spheres", sys_path(sphereL_fname), 
-    sys_path(sphereL_target_fname), 
-    "-right-spheres", sys_path(sphereR_fname), 
-    sys_path(sphereL_target_fname)
+    "-left-spheres", sys_path(sphereL_fname), sys_path(sphereL_target_fname), 
+    "-right-spheres", sys_path(sphereR_fname), sys_path(sphereL_target_fname)
   )
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd))
-  }
+  run_wb_cmd(cmd, wb_path)
 
   if (verbose) { 
     print(Sys.time() - exec_time)

@@ -31,7 +31,7 @@
 #' @inheritParams surfL_target_fname_Param
 #' @inheritParams surfR_target_fname_Param
 #' @inheritParams read_dir_Param_separated
-#' @inheritParams write_dir_Param_resampled
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return A data frame with column names "label" and "fname", and 

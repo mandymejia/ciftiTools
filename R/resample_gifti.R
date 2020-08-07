@@ -35,8 +35,6 @@ resample_gifti <- function(original_fname, target_fname, file_type=NULL,
   resamp_res, sphere_original_fname, sphere_target_fname, 
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   # Check arguments.
   original_fname <- format_path(original_fname, read_dir, mode=4)
   stopifnot(file.exists(original_fname))
@@ -80,7 +78,7 @@ resample_gifti <- function(original_fname, target_fname, file_type=NULL,
   )
 
   cmd <- paste(
-    sys_path(wb_cmd), cmd_name, 
+    cmd_name, 
     sys_path(original_fname), sys_path(sphere_original_fname), 
     sys_path(sphere_target_fname), "BARYCENTRIC", sys_path(target_fname)
   )
@@ -90,16 +88,7 @@ resample_gifti <- function(original_fname, target_fname, file_type=NULL,
       "-valid-roi-out", sys_path(validROIcortex_target_fname)
     )
   }
-  # Run it! Raise an error if it fails.
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd
-    ))
-  }
-  
-  invisible(cmd_code)
+  run_wb_cmd(cmd, wb_path)
 }
 
 #' Resample a metric GIFTI file (ends with "func.gii")
@@ -170,31 +159,25 @@ make_helper_spheres <- function(
   sphereL_fname, sphereR_fname, resamp_res, 
   write_dir=NULL, wb_path=NULL) {
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   sphereL_fname <- format_path(sphereL_fname, write_dir, mode=2)
   sphereR_fname <- format_path(sphereR_fname, write_dir, mode=2)
 
-  system(paste(
-    sys_path(wb_cmd), "-surface-create-sphere", 
-    resamp_res, sys_path(sphereL_fname), 
-    sep=" "
-  ))
-  system(paste(
-    sys_path(wb_cmd), "-surface-flip-lr", 
-    sys_path(sphereL_fname), sys_path(sphereR_fname), 
-    sep=" "
-  ))
-  system(paste(
-    sys_path(wb_cmd), "-set-structure", 
-    sys_path(sphereL_fname), "CORTEX_LEFT", 
-    sep=" "
-  ))
-  system(paste(
-    sys_path(wb_cmd), "-set-structure", 
-    sys_path(sphereR_fname), "CORTEX_RIGHT", 
-    sep=" "
-  ))
+  run_wb_cmd(
+    paste("-surface-create-sphere", resamp_res, sys_path(sphereL_fname)), 
+    wb_path
+  )
+  run_wb_cmd(
+    paste("-surface-flip-lr", sys_path(sphereL_fname), sys_path(sphereR_fname)), 
+    wb_path
+  )
+  run_wb_cmd(
+    paste("-set-structure", sys_path(sphereL_fname), "CORTEX_LEFT"), 
+    wb_path
+  )
+  run_wb_cmd(
+    paste("-set-structure", sys_path(sphereR_fname), "CORTEX_RIGHT"), 
+    wb_path
+  )
 
   invisible(file.exists(sphereL_fname) & file.exists(sphereR_fname))
 }

@@ -253,3 +253,28 @@ match_exactly <- function(
 
   return(TRUE)
 }
+
+#' Wrapper for Connectome Workbench Commands
+#'
+#' Runs a Connectome Workbench command that has already been formatted.
+#'
+#' @param cmd The full command, beginning after the workbench path.
+#' @inheritParams wb_path_Param
+#'
+#' @return Logical indicating if the command finished successfully.
+#'
+run_wb_cmd <- function(cmd, wb_path){
+  wb_cmd <- get_wb_cmd_path(wb_path)
+  cmd <- paste(sys_path(wb_cmd), cmd)
+
+  cmd_code <- system(cmd)
+  success <- cmd_code == 0
+  if (!success) {
+    message(paste0(
+      "The Connectome Workbench command failed with code ", cmd_code, 
+      ". The command was:\n", cmd
+    ))
+  }
+
+  success
+}

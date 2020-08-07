@@ -17,7 +17,7 @@
 #'  \code{brainstructures} argument.
 #' @param ROIcortexL_fname,ROIcortexR_fname File names for cortex ROIs.
 #' @param ROIsubcortVol_fname File name for volume ROI.
-#' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return A data frame with column names "label" and "fname", and rows corresponding to each separate file.
@@ -32,8 +32,6 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL) {
-
-  wb_cmd <- get_wb_cmd_path(wb_path)
 
   cifti_fname <- format_path(cifti_fname)
   if (!file.exists(cifti_fname)) {
@@ -120,7 +118,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   }
 
   # Build the Connectome Workbench command. 
-  cmd <- paste(sys_path(wb_cmd), "-cifti-separate", sys_path(cifti_fname), "COLUMN")
+  cmd <- paste("-cifti-separate", sys_path(cifti_fname), "COLUMN")
   if (do['left']) {
     cmd <- paste(cmd, '-metric CORTEX_LEFT', sys_path(cortexL_fname))
     if (ROI_do['left']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexL_fname)) }
@@ -134,12 +132,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
     if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(ROIsubcortVol_fname)) }
     cmd <- paste(cmd, '-label', sys_path(subcortLab_fname))
   }
-  # Run it! Raise an error if it fails.
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd))
-  }
+  run_wb_cmd(cmd, wb_path)
 
   invisible(sep_files) # column names are "label" and "fname"
 }

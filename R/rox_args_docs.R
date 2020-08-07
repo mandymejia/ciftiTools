@@ -252,7 +252,7 @@ NULL
 #' @name wb_path_Param
 NULL
 
-#'  write_dir: intermediate separated/resampled files
+#' write_dir: intermediate separated/resampled files
 #'  
 #' @param write_dir Where should any output files be written? \code{NULL}
 #'  (default) will write them to the current working directory.
@@ -277,26 +277,14 @@ NULL
 #' @name write_dir_Param_intermediate
 NULL
 
-#'  write_dir: resampled files
-#'  
-#' @param write_dir Where should the resampled
-#'  files be placed? \code{NULL} (default) will write them to
-#'  the current working directory if \code{keep}, and a temporary directory
-#'  if \code{!keep}. 
-#' 
-#'  \code{write_dir} must already exist, or an error will occur.
-#' @name write_dir_Param_resampled
-NULL
-
-#'  write_dir: separated files
+#' write_dir: generic
 #'  
 #' @param write_dir Where should the separated
 #'  files be placed? \code{NULL} (default) will write them to
-#'  the current working directory if \code{keep}, and a temporary directory
-#'  if \code{!keep}. 
+#'  the current working directory.
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
-#' @name write_dir_Param_separated
+#' @name write_dir_Param_generic
 NULL
 
 #' xifti

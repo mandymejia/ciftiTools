@@ -78,10 +78,9 @@ surface geometry file representing the right cortex at.}
 
  \code{read_dir} must already exist, or an error will be raised.}
 
-\item{write_dir}{Where should the resampled
+\item{write_dir}{Where should the separated
  files be placed? \code{NULL} (default) will write them to
- the current working directory if \code{keep}, and a temporary directory
- if \code{!keep}. 
+ the current working directory.
 
  \code{write_dir} must already exist, or an error will occur.}
 

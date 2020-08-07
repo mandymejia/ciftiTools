@@ -21,8 +21,6 @@ make_cifti <- function(
   subcortVol_fname, subcortLab_fname,
   wb_path=NULL){
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   # Determine what kind of CIFTI is being written.
   cifti_extn <- get_cifti_extn(cifti_fname)
   if (grepl("dtseries", cifti_extn)) create_cmd <- "-cifti-create-dense-timeseries"
@@ -39,7 +37,7 @@ make_cifti <- function(
 
   # Do the Connectome Workbench Command
   cmd <- paste(
-    sys_path(wb_cmd), create_cmd, sys_path(cifti_fname), 
+    create_cmd, sys_path(cifti_fname), 
     "-volume", sys_path(subcortVol_fname), sys_path(subcortLab_fname), 
     "-left-metric", sys_path(cortexL_fname)
   )
@@ -50,11 +48,5 @@ make_cifti <- function(
   if (!is.null(ROIcortexR_fname)) {
     cmd <- paste(cmd, "-roi-right", sys_path(ROIcortexR_fname))
   }
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd
-    ))
-  }
+  run_wb_cmd(cmd, wb_path)
 }

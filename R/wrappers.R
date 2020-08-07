@@ -7,7 +7,7 @@
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams sep_fnames_Param
-#' @inheritParams write_dir_Param_separated
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return The return value of the separate_cifti call.
@@ -56,7 +56,7 @@ separate_cifti_wrapper <- function(
 #'  the resampled GIFTI surface geometry file representing the left/right 
 #'  cortex. If NULL (default),
 #' @inheritParams read_dir_Param_separated
-#' @inheritParams write_dir_Param_resampled
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return The return value of the resample_cifti call.

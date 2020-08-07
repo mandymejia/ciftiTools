@@ -58,8 +58,6 @@ substructure_table <- function(){
 #' @inheritSection labels_Description Label Levels
 #' 
 map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   cifti_fname <- format_path(cifti_fname)
   if (!file.exists(cifti_fname)) {
     stop(paste("cifti_fname", cifti_fname, "does not exist."))
@@ -84,7 +82,6 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
 
   # Workbench command.
   cmd <- paste(
-    wb_cmd,
     "-cifti-export-dense-mapping",
       sys_path(cifti_fname),
       "COLUMN",
@@ -98,11 +95,7 @@ map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
         "CORTEX_RIGHT",
         sys_path(cortexR_fname)
   )
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd))
-  }
+  run_wb_cmd(cmd, wb_path)
 
   # Read in files.
   cortexL <- read.csv(cortexL_fname, sep=" ", header=FALSE)
