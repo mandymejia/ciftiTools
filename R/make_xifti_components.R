@@ -1,24 +1,23 @@
-#' Make "xifti" Cortex Components
+#' Make "xifti" Cortical Components
 #' 
 #' Coerce a file path, GIFTI object, or data matrix to a data matrix
 #'  representing cortical data (and optionally a corresponding mask). That is,
 #'  entries for \code{xifti$data$cortex_[left/right]} and 
-#'  \code{xifti$meta$cortex}.
+#'  \code{xifti$meta$cortex}. 
 #'
 #' @param cortex A file path, GIFTI object, or data matrix representing
 #'  cortical data.
-#' @param medial_wall_mask \code{FALSE} (default) to return the data matrix
-#'  without inferring/applying a mask for the medial wall; \code{TRUE} to
-#'  infer the medial wall mask from vertices with constant 0- or NA-values.
-#'  Alternatively, this can be a mask which has been pre-determined: it should
-#'  be boolean with \code{FALSE} values indicating vertices that make up the
-#'  medial wall.
+#' @param side Left or right? (Character). Just used to print warnings.
+#' @param medial_wall_mask A pre-determined mask for the medial wall: it should
+#'  be logical with \code{FALSE} values indicating vertices that make up the
+#'  medial wall. It will be verified, and overwritten/removed if inaccurate.
+#'  Default: \code{NULL} will try to infer the medial wall mask, or leave it
+#'  blank.
 #'
 #' @return A list with components "data" and "medial_wall_mask".
-#' @export
 #'
 #' @importFrom gifti readgii is.gifti
-make_xifti_cortex <- function(cortex, medial_wall_mask=FALSE) {
+make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
   # File --> GIFTI.
   if (is.fname(cortex)) {
     cortex <- readgii(cortex)
@@ -28,22 +27,51 @@ make_xifti_cortex <- function(cortex, medial_wall_mask=FALSE) {
     cortex <- do.call(cbind, cortex$data)
   }
 
-  # Medial wall.
-  if (identical(medial_wall_mask, TRUE)) {
-    medial_wall_mask <- !apply(cortex==0 | is.na(cortex), 1, all)
-  } else if (identical(medial_wall_mask, FALSE)) {
-    medial_wall_mask <- NULL
-  } 
+  # Check if medial wall mask is valid.
+  MIN_TO_INFER_MWALL <- 2
+  enough_measurements = ncol(cortex) > MIN_TO_INFER_MWALL
+  at_least_one_mwall_vert <- !all(medial_wall_mask)
   if (!is.null(medial_wall_mask)) {
-    stopifnot(length(medial_wall_mask) == nrow(cortex))
-    cortex <- cortex[medial_wall_mask,, drop=FALSE]
+    if (!at_least_one_mwall_vert) {
+        warning(paste(
+          "Metadata in CIFTI dense mapping did not indicate any medial wall",
+          "vertices for", side, "cortex. Deleting this mask mask.\n"
+        ))
+        medial_wall_mask <- NULL
+    } else {
+      if (length(medial_wall_mask) == nrow(cortex)) {
+        cortex <- cortex[medial_wall_mask,, drop=TRUE]
+      } else {
+        warning(paste(
+          "The medial wall mask from the CIFTI metadata was not the same",
+          "length as the", side, "cortex. Deleting.\n"
+        ))
+        medial_wall_mask <- NULL
+      }
+    }
   }
-
-  # Return value.
-  list(
-    data = cortex,
-    medial_wall_mask = medial_wall_mask
-  )
+  if (is.null(medial_wall_mask)) {
+    if (enough_measurements) {
+      new_medial_wall_mask <- !apply(cortex==0 | is.na(cortex), 1, all)
+      if (any(!new_medial_wall_mask)) {
+        warning(paste(
+          "Inferring medial wall from constant 0/NA columns in", side, "cortex.\n"
+        ))
+        medial_wall_mask <- new_medial_wall_mask
+        cortex <- cortex[medial_wall_mask,, drop=TRUE]
+      } else {
+        warning(paste(
+          "No medial wall vertices inferred from data. Leaving the medial",
+          "wall mask field empty for", side, "cortex.\n"
+        ))
+      }
+    } else {
+      warning(paste(
+        "Leaving medial wall mask field empty for", side, "cortex.\n"
+      ))
+    }
+  }
+  list(data = cortex, medial_wall_mask = medial_wall_mask)
 }
 
 #' Make "xifti" Subcortical Components

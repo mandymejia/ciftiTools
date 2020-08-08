@@ -352,11 +352,11 @@ is.xifti <- function(x, messages=TRUE) {
   # Check compatibility between components. ------------------------------------
   # ----------------------------------------------------------------------------
 
-  # Metadata should be present if and only if the corresponding data is present.
-  if (!is.null(x$data$cortex_left)) { 
-    if (is.null(x$meta$cortex$medial_wall_mask$left)) {
-      message("Left cortex is missing the medial wall mask.\n"); return(FALSE)
-    }
+  # Metadata should be present only if the corresponding data is present.
+  # Note: okay if cortex data is present but medial wall is not, because
+  #   read_cifti_convert() sometimes the metadata does not indicate the
+  #   medial wall.
+  if (!is.null(x$data$cortex_left) && !is.null(x$meta$cortex$medial_wall_mask$left)) {
     if (nrow(x$data$cortex_left) != sum(x$meta$cortex$medial_wall_mask$left)) {
       message(paste0(
         "Number of left cortex vertices (rows), ", nrow(x$data$cortex_left), 
@@ -366,15 +366,11 @@ is.xifti <- function(x, messages=TRUE) {
       ))
       return(FALSE)
     }
-  } else {
-    if (!is.null(x$meta$cortex$medial_wall_mask$left)) {
-      message("Left medial wall mask is present, but the data is not.\n"); return(FALSE)
-    }
   }
-  if (!is.null(x$data$cortex_right)) { 
-    if (is.null(x$meta$cortex$medial_wall_mask$right)) {
-      message("Right cortex is missing the medial wall mask.\n"); return(FALSE)
-    }
+  if (is.null(x$data$cortex_left) && !is.null(x$meta$cortex$medial_wall_mask$left)) {
+    message("Left medial wall mask is present, but the data is not.\n"); return(FALSE)
+  }
+  if (!is.null(x$data$cortex_right) && !is.null(x$meta$cortex$medial_wall_mask$right)) {
     if (nrow(x$data$cortex_right) != sum(x$meta$cortex$medial_wall_mask$right)) {
       message(paste0(
         "Number of right cortex vertices (rows), ", nrow(x$data$cortex_right), 
@@ -384,10 +380,9 @@ is.xifti <- function(x, messages=TRUE) {
       ))
       return(FALSE)
     }
-  } else {
-    if (!is.null(x$meta$cortex$medial_wall_mask$right)) {
-      message("Right medial wall mask is present, but the data is not.\n"); return(FALSE)
-    }
+  }
+  if (is.null(x$data$cortex_right) && !is.null(x$meta$cortex$medial_wall_mask$right)) {
+    message("Right medial wall mask is present, but the data is not.\n"); return(FALSE)
   }
   if (!is.null(x$data$subcort)) {
     if (is.null(x$meta$subcort$mask)) {

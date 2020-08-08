@@ -65,7 +65,7 @@ make_xifti <- function(
   # Use `read_cifti` if `cifti_fname` was provided.
   if (!is.null(cifti_fname)) {
     if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLab, cifti_map), is.null))) {
-      warning("`cifti_fname` was provided, so separate GIFTI/NIFTI data and `cifti_map` will be ignored.")
+      warning("`cifti_fname` was provided, so it will be read. separate GIFTI/NIFTI data and `cifti_map` will be ignored.")
     }
     return( read_cifti(cifti_fname, brainstructures=cifti_brainstructures, ...) )
   }
@@ -81,24 +81,19 @@ make_xifti <- function(
   # Template.
   xifti <- template_xifti()
 
-  # Cortical data.
   if (!is.null(cortexL)) { 
-    if (!is.null(cifti_map)) {
-      cortexL <- make_xifti_cortex(cortexL, cifti_map$cortex$medial_wall_mask$left)
-    } else {
-      cortexL <- make_xifti_cortex(cortexL, TRUE)
-    }
+    cortexL <- make_xifti_cortex(
+      cortexL, "left", cifti_map$cortex$medial_wall_mask$left
+    )
     xifti$data$cortex_left <- cortexL$data
-    xifti$meta$cortex$medial_wall_mask$left <- cortexL$medial_wall_mask
+    xifti$meta$cortex$medial_wall_mask["left"] <- list(cortexL$medial_wall_mask)
   }
   if (!is.null(cortexR)) { 
-    if (!is.null(cifti_map)) {
-      cortexR <- make_xifti_cortex(cortexR, cifti_map$cortex$medial_wall_mask$right)
-    } else {
-      cortexR <- make_xifti_cortex(cortexR, TRUE)
-    }
+    cortexR <- make_xifti_cortex(
+      cortexR, "right", cifti_map$cortex$medial_wall_mask$right
+    )
     xifti$data$cortex_right <- cortexR$data
-    xifti$meta$cortex$medial_wall_mask$right <- cortexR$medial_wall_mask
+    xifti$meta$cortex$medial_wall_mask["right"] <- list(cortexR$medial_wall_mask)
   }
 
   # Subcortical data. 

@@ -2,20 +2,21 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_xifti_cortex}
 \alias{make_xifti_cortex}
-\title{Make "xifti" Cortex Components}
+\title{Make "xifti" Cortical Components}
 \usage{
-make_xifti_cortex(cortex, medial_wall_mask = FALSE)
+make_xifti_cortex(cortex, side = NULL, medial_wall_mask = NULL)
 }
 \arguments{
 \item{cortex}{A file path, GIFTI object, or data matrix representing
 cortical data.}
 
-\item{medial_wall_mask}{\code{FALSE} (default) to return the data matrix
-without inferring/applying a mask for the medial wall; \code{TRUE} to
-infer the medial wall mask from vertices with constant 0- or NA-values.
-Alternatively, this can be a mask which has been pre-determined: it should
-be boolean with \code{FALSE} values indicating vertices that make up the
-medial wall.}
+\item{side}{Left or right? (Character). Just used to print warnings.}
+
+\item{medial_wall_mask}{A pre-determined mask for the medial wall: it should
+be logical with \code{FALSE} values indicating vertices that make up the
+medial wall. It will be verified, and overwritten/removed if inaccurate.
+Default: \code{NULL} will try to infer the medial wall mask, or leave it
+blank.}
 }
 \value{
 A list with components "data" and "medial_wall_mask".

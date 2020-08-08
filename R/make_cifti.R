@@ -35,6 +35,10 @@ make_cifti <- function(
   }
   # TO-DO: adjust GIFTI/NIFTI written files accordingly?
 
+  # [TO DO]: Resolve the warning about orientation metadata, 
+  # qform_code/sform_code:
+  # https://brainder.org/2012/09/23/the-nifti-file-format/
+  
   # Do the Connectome Workbench Command
   cmd <- paste(
     create_cmd, sys_path(cifti_fname), 
