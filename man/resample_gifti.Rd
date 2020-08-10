@@ -75,6 +75,6 @@ If not provided, should be set with
 Logical indicating whether resampled file was created.
 }
 \description{
-Performs spatial resampling of NIfTI/GIfTI data on the cortical 
+Performs spatial resampling of NIFTI/GIFTI data on the cortical 
  surface.
 }

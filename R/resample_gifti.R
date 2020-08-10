@@ -1,6 +1,6 @@
 #' Resample an individual GIFTI file (with its ROI)
 #'
-#' @description Performs spatial resampling of NIfTI/GIfTI data on the cortical 
+#' @description Performs spatial resampling of NIFTI/GIFTI data on the cortical 
 #'  surface.
 #'
 #' @param original_fname The GIFTI file to resample.

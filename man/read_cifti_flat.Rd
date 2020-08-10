@@ -19,10 +19,10 @@ read_cifti_flat(
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 (default), write it in a temporary directory regardless of \code{write_dir}.}
 
-\item{gifti_fname}{File path of GIfTI-format data to save the CIFTI as. 
+\item{gifti_fname}{File path of GIFTI-format data to save the CIFTI as. 
 Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
 
-\item{write_dir}{The directory in which to save the GIfTI, if it is being 
+\item{write_dir}{The directory in which to save the GIFTI, if it is being 
 kept. If \code{NULL} (default), use the current working directory.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 

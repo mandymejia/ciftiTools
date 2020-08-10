@@ -1,7 +1,7 @@
 #' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
-#'  by separating it into GIfTI and NIfTI files 
+#'  by separating it into GIFTI and NIFTI files 
 #'  (\code{\link{separate_cifti}}), optionally resampling them 
 #'  (\code{\link{resample_cifti_components}}), and then using the 
 #'  \code{-cifti-resample} Workbench Command with a template.

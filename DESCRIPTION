@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 1.1.0
+Version: 1.2.1
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",

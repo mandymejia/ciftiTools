@@ -438,7 +438,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  \code{ciftiTools::make_color_pal()} description for more details.
 #' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and 
 #'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
-#'  Each can be a file path for a GIfTI, a file read by gifti::readgii, 
+#'  Each can be a file path for a GIFTI, a file read by gifti::readgii, 
 #'  or an object of class "xifti_surface". If provided, they will override 
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
 #'  Otherwise, leave these arguments as \code{NULL} (default) to use 
@@ -877,14 +877,16 @@ view_xifti_volume <- function(
   if (!is.null(z_max)) values[values > z_max] <- z_max
   cat(paste0("Values to be plotted range from ",min(xifti$data$subcort[,idx])," to ",max(xifti$data$subcort[,idx]), "\n"))
 
-  img_overlay <- T1w*0
-  img_overlay@.Data <- vol
-  img_overlay@.Data[labs==0] <- NA
+  if (!is.null(structural_img)) {
+    img_overlay <- T1w*0
+    img_overlay@.Data <- vol
+    img_overlay@.Data[labs==0] <- NA
 
-  img_labels <- T1w*0
-  img_labels@.Data <- labs
-  img_labels@.Data[labs==0] <- NA
-  
+    img_labels <- T1w*0
+    img_labels@.Data <- labs
+    img_labels@.Data[labs==0] <- NA
+  }
+
   if (!use_papaya) {
     oro.nifti::overlay(x=T1w, y=img_overlay, plot.type="single", plane=plane, z=slices)#, col.y=pal)
   } else {

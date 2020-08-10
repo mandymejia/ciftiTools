@@ -1,16 +1,16 @@
-#' Separate a CIFTI as its NIfTI and GIfTI component files
+#' Separate a CIFTI as its NIFTI and GIFTI component files
 #'
-#' @description Separates a CIFTI file into GIfTIs for the cortical 
-#'  (left and right) structures, and NIfTIs for the 
+#' @description Separates a CIFTI file into GIFTIs for the cortical 
+#'  (left and right) structures, and NIFTIs for the 
 #'  subcortical structures. 
 #'  This uses the \code{-cifti-separate} command from Connectome Workbench.
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR
-#' @param cortexL_fname,cortexR_fname (Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
+#' @param cortexL_fname,cortexR_fname (Optional) the files to save the left and right cortex GIFTIs to. If not provided, 
 #'  defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 #'  relative, they will be saved in \code{write_dir}.
-#' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and labels NIfTIs. If not 
+#' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and labels NIFTIs. If not 
 #'  provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 #'  path is relative, they will be saved in \code{write_dir}.
 #' @param ROI_brainstructures Which ROIs should be obtained? NULL (default) to not get any ROIs. This should be a subset of the

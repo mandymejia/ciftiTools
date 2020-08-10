@@ -3,7 +3,7 @@
 \name{separate_cifti}
 \alias{separate_cifti}
 \alias{separateCIfTI}
-\title{Separate a CIFTI as its NIfTI and GIfTI component files}
+\title{Separate a CIFTI as its NIFTI and GIFTI component files}
 \usage{
 separate_cifti(
   cifti_fname,
@@ -44,11 +44,11 @@ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 Default: \code{c("left","right")} (cortical surface only).}
 
-\item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
+\item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIFTIs to. If not provided, 
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 relative, they will be saved in \code{write_dir}.}
 
-\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and labels NIfTIs. If not 
+\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and labels NIFTIs. If not 
 provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 path is relative, they will be saved in \code{write_dir}.}
 
@@ -73,8 +73,8 @@ If not provided, should be set with
 A data frame with column names "label" and "fname", and rows corresponding to each separate file.
 }
 \description{
-Separates a CIFTI file into GIfTIs for the cortical 
- (left and right) structures, and NIfTIs for the 
+Separates a CIFTI file into GIFTIs for the cortical 
+ (left and right) structures, and NIFTIs for the 
  subcortical structures. 
  This uses the \code{-cifti-separate} command from Connectome Workbench.
 }

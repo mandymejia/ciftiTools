@@ -1,6 +1,6 @@
 #' Read in CIFTI Data
 #'
-#' @description Read a CIFTI file by separating it into GIfTI and NIfTI files 
+#' @description Read a CIFTI file by separating it into GIFTI and NIFTI files 
 #'  (\code{\link{separate_cifti}}), optionally resampling them 
 #'  (\code{\link{resample_cifti_components}}), and then reading each separated 
 #'  component into R (\code{\link{make_xifti}}).
@@ -159,7 +159,7 @@ read_cifti_separate <- function(
   if (!is.null(surfR_fname)) { to_read$surfR <- surfR_fname }
 
   # Read the CIFTI file from the separated files.
-  if (verbose) { cat("Reading GIfTI and NIfTI files to form the CIFTI.\n") }
+  if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
   result <- do.call(make_xifti, to_read)
 
   if (verbose) {

@@ -12,9 +12,9 @@
 #' @param keep \code{read_cifti_minimal} works by saving the CIFTI as a GIFTI file, 
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 #'  (default), write it in a temporary directory regardless of \code{write_dir}.
-#' @param gifti_fname File path of GIfTI-format data to save the CIFTI as. 
+#' @param gifti_fname File path of GIFTI-format data to save the CIFTI as. 
 #'  Default: the CIFTI_fname but with the extension replaced with "flat.gii".
-#' @param write_dir The directory in which to save the GIfTI, if it is being 
+#' @param write_dir The directory in which to save the GIFTI, if it is being 
 #'  kept. If \code{NULL} (default), use the current working directory.
 #' @inheritParams wb_path_Param
 #'
@@ -67,7 +67,7 @@ read_cifti_flat <- function(
   result <- result$data$normal
 
   # [TO DO]: don't delete since it's in tempdir(). Better way? safe to read (above line)?
-  # # Delete the GIfTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
+  # # Delete the GIFTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
   # if (!keep) {
   #   file.remove(gifti_fname)
   #   if (file.exists(paste0(gifti_fname, ".data"))) {

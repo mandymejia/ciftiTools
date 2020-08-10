@@ -25,6 +25,8 @@ make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
   # GIFTI --> matrix.
   if (is.gifti(cortex)) {
     cortex <- do.call(cbind, cortex$data)
+  } else {
+    stop("`cortex` was not an existing file (check file name?), nor was it an object made by `gifti::read_gifti()`.")
   }
 
   # Check if medial wall mask is valid.
@@ -196,7 +198,11 @@ make_xifti_surface <- function(surf) {
     if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
     surf <- list(vertices = verts, faces = faces)
   }
-  if (is.gifti(surf)) { surf <- gifti_to_surf(surf) }
+  if (is.gifti(surf)) { 
+    surf <- gifti_to_surf(surf) 
+  } else {
+    stop("`surf` was not an existing file (check file name?), nor was it an object made by `gifti::read_gifti()`.")
+  }
 
   # Return cifti_surface or error.
   if (!is.xifti_surface(surf)) {
