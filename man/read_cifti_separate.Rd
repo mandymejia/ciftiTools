@@ -140,8 +140,8 @@ A \code{"xifti"} object. See \code{\link{is.xifti}}.
 }
 \description{
 Read a CIFTI file by separating it into GIFTI and NIFTI files 
- (\code{\link{separate_cifti}}), optionally resampling them 
- (\code{\link{resample_cifti_components}}), and then reading each separated 
+ (\code{\link{separate_cifti}}), optionally resampling them, 
+ and then reading each separated 
  component into R (\code{\link{make_xifti}}).
 }
 \details{

@@ -67,7 +67,6 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #' @inheritParams wb_path_Param
 #'
 #' @return List of written files
-#' @export
 #' @importFrom RNifti writeNifti
 #'
 write_xifti_components <- function(
@@ -180,12 +179,23 @@ write_cifti <- function(
   )
 
   if (verbose) { cat("Creating CIFTI file from separated components.\n") }
-  make_cifti(
+  write_cifti_from_separate(
     cifti_fname=cifti_fname, 
     cortexL_fname=sep_fnames$cortexL, 
     cortexR_fname=sep_fnames$cortexR,
     subcortVol_fname=sep_fnames$subcortVol, 
     subcortLab_fname=sep_fnames$subcortLab,
     wb_path=wb_path
+  )
+}
+
+#' @rdname write_cifti
+#' @export
+writeCIfTI <- writecii <- write_xifti <- function(
+  xifti, cifti_fname, 
+  verbose=TRUE, wb_path=NULL) {
+  write_cifti(
+    xifti=xifti, cifti_fname=cifti_fname, 
+    verbose=verbose, wb_path=wb_path
   )
 }

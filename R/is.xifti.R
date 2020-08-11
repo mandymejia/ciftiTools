@@ -431,6 +431,26 @@ is.xifti <- function(x, messages=TRUE) {
 
 #' @rdname is.xifti
 #' @export
-isXIfTI <- is_xifti <- function(x){
-  is.xifti(x)
+is_xifti <- function(x, messages=TRUE){
+  is.xifti(x, messages=messages)
+}
+
+#' Validate a \code{"xifti"} object.
+#' 
+#' Check if object is valid for a \code{"xifti"} object. This alias for 
+#' \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
+#' the user. We recommend using \code{\link{is.xifti}} instead.
+#' 
+#' @param x The putative \code{"xifti"} object.
+#' @param messages If \code{x} is not a \code{"xifti"}, print messages 
+#'  explaining the problem? Default is \code{TRUE}.
+#' 
+#' @return Logical indicating whether x is a valid \code{"xifti"} object.
+#' @export
+#' 
+#' @inheritSection labels_Description Label Levels
+#' 
+is.cifti <- is_cifti <- isCIfTI <- function(x, messages=TRUE){
+  warning("is.cifti() is an alias for is.xifti().\n")
+  is.xifti(x, messages=messages)
 }

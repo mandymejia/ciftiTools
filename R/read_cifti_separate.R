@@ -1,8 +1,8 @@
 #' Read in CIFTI Data
 #'
 #' @description Read a CIFTI file by separating it into GIFTI and NIFTI files 
-#'  (\code{\link{separate_cifti}}), optionally resampling them 
-#'  (\code{\link{resample_cifti_components}}), and then reading each separated 
+#'  (\code{\link{separate_cifti}}), optionally resampling them, 
+#'  and then reading each separated 
 #'  component into R (\code{\link{make_xifti}}).
 #'
 #' @inheritParams cifti_fname_Param
@@ -22,8 +22,6 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#'
-#' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
 #'  executable. The user must first download and install the Connectome

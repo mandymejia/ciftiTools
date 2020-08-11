@@ -32,7 +32,7 @@
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR 
-#' @param require_full_subcort_vol Is the full subcortical volume required, or
+#' @param full_volume Is the full subcortical volume required, or
 #'  is it okay to crop it by removing empty edge slices? Default: \code{FALSE}.
 #'  If \code{TRUE}, the data will have to be read in with 
 #'  \code{-cifti-separate}, which is slower than 
@@ -68,7 +68,7 @@ read_cifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  require_full_subcort_vol=FALSE,
+  full_volume=FALSE,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
   wb_path=NULL, verbose=FALSE, ...){
 
@@ -77,10 +77,10 @@ read_cifti <- function(
   # ----------------------------------------------------------------------------
 
   if (flat) {
-    if (require_full_subcort_vol) {
+    if (full_volume) {
       warning(paste(
         "No subcortical mask can be computed with the flat method.",
-        "Ignoring `require_full_subcort_vol==TRUE`.\n"
+        "Ignoring `full_volume==TRUE`.\n"
       ))
     }
     if (!is.null(resamp_res)) {
@@ -96,7 +96,7 @@ read_cifti <- function(
   # Check arguments. -----------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  require_separate_method <- require_full_subcort_vol || !is.null(resamp_res)
+  require_separate_method <- full_volume || !is.null(resamp_res)
 
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical","all"),
@@ -133,11 +133,11 @@ read_cifti <- function(
 
 #' @rdname read_cifti
 #' @export
-readCIfTI <- readcii <- function(
+readCIfTI <- readcii <- read_xifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  require_full_subcort_vol=FALSE,
+  full_volume=FALSE,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
   wb_path=NULL, verbose=verbose, ...){
 
@@ -145,7 +145,7 @@ readCIfTI <- readcii <- function(
     cifti_fname, flat,
     surfL_fname, surfR_fname,
     brainstructures, 
-    require_full_subcort_vol,
+    full_volume,
     resamp_res, sphereL_fname, sphereR_fname,
     wb_path, verbose, ...
   )

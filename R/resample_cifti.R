@@ -1,10 +1,8 @@
 #' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
-#'  by separating it into GIFTI and NIFTI files 
-#'  (\code{\link{separate_cifti}}), optionally resampling them 
-#'  (\code{\link{resample_cifti_components}}), and then using the 
-#'  \code{-cifti-resample} Workbench Command with a template.
+#'  by separating it into GIFTI and NIFTI files, optionally resampling them, 
+#'  and then using the \code{-cifti-resample} Workbench Command with a template.
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
@@ -151,7 +149,7 @@ resample_cifti <- function(
   if (verbose) cat("Creating template CIFTI file in target resolution... \n")
   cifti_template_fname <- format_path(
     paste0("template_", basename(cifti_original_fname)), tempdir(), mode=4)
-  make_cifti(
+  write_cifti_from_separate(
     cifti_template_fname, 
     cortexL_fname = to_cif["cortexL"],
     cortexR_fname = to_cif["cortexR"],
@@ -224,7 +222,7 @@ resample_cifti <- function(
 
 #' @rdname resample_cifti
 #' @export
-resampleCIfTI <- resamplecii <- function(
+resampleCIfTI <- resamplecii <- resample_xifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,

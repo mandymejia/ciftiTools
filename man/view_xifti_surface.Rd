@@ -2,7 +2,7 @@
 % Please edit documentation in R/view_xifti.R
 \name{view_xifti_surface}
 \alias{view_xifti_surface}
-\alias{viewXIfTI_surface}
+\alias{view_cifti_surface}
 \title{Visualize "xifti" cortical data. The \code{rgl} package is required.}
 \usage{
 view_xifti_surface(
@@ -27,7 +27,7 @@ view_xifti_surface(
   colorbar_digits = NULL
 )
 
-viewXIfTI_surface(
+view_cifti_surface(
   xifti,
   idx = 1,
   hemisphere = NULL,
