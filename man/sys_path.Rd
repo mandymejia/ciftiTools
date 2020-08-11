@@ -8,7 +8,7 @@
 sys_path(R_path)
 }
 \arguments{
-\item{R_path}{The name of the file. It should be properly formatted: if it 
+\item{R_path}{The name of the file. It should be properly formatted: if it
 exists, \code{file.exists(R_path)} should be \code{TRUE}.}
 }
 \value{

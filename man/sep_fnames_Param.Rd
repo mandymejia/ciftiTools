@@ -12,7 +12,7 @@
  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
  
  Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{separate_cifti_default_suffix}}. Default file names
+ used: see \code{\link{cifti_component_suffix}}. Default file names
  will also be used for files that need to be separated/written but without a
  corresponding entry in \code{sep_fnames}.
  

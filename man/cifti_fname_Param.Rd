@@ -4,8 +4,7 @@
 \alias{cifti_fname_Param}
 \title{cifti_fname}
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 }
 \description{
 cifti_fname

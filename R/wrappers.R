@@ -4,15 +4,18 @@
 #'  argument \code{sep_fnames}. 
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param
-#' @inheritParams ROI_brainstructures_Param
+#' @inheritParams brainstructures_Param_LR
+#' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams sep_fnames_Param
-#' @inheritParams write_dir_Param_separated
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return The return value of the separate_cifti call.
 #'
 #' @details Currently used by read_cifti and resample_cifti.
+#'
+#' @keywords internal
+#' 
 separate_cifti_wrapper <- function(
   cifti_fname, brainstructures=NULL, ROI_brainstructures=NULL,
   sep_fnames=NULL, write_dir=NULL, wb_path=NULL) {
@@ -46,7 +49,7 @@ separate_cifti_wrapper <- function(
 #'  listed in the \code{resamp_fnames} argument. 
 #'
 #' @inheritParams original_fnames_Param_resampled
-#' @inheritParams resamp_fnames_Param_resampled
+#' @inheritParams resamp_fnames_Param
 #' @inheritParams resamp_res_Param_required
 #' @inheritParams sphereL_fname_Param
 #' @inheritParams sphereR_fname_Param
@@ -56,12 +59,15 @@ separate_cifti_wrapper <- function(
 #'  the resampled GIFTI surface geometry file representing the left/right 
 #'  cortex. If NULL (default),
 #' @inheritParams read_dir_Param_separated
-#' @inheritParams write_dir_Param_resampled
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return The return value of the resample_cifti call.
 #'
 #' @details Currently used by read_cifti and resample_cifti.
+#'
+#' @keywords internal
+#' 
 resample_cifti_wrapper <- function(
   resamp_res,
   original_fnames, resamp_fnames,
@@ -83,7 +89,7 @@ resample_cifti_wrapper <- function(
   )
 
   # Get expected file names.
-  expected_labs <- get_kwargs(ciftiTools::resample_cifti_separate)
+  expected_labs <- get_kwargs(resample_cifti_components)
   expected_labs <- expected_labs[grepl("fname", expected_labs, fixed=TRUE)]
 
   # Check and add original file names to the kwargs.
@@ -99,7 +105,7 @@ resample_cifti_wrapper <- function(
     resamp_kwargs[paste0(names(resamp_fnames), "_target_fname")] <- resamp_fnames
   }
 
-  # Do resample_cifti_separate.
+  # Do resample_cifti_components.
   resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
-  do.call(resample_cifti_separate, resamp_kwargs)
+  do.call(resample_cifti_components, resamp_kwargs)
 }

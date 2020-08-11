@@ -24,8 +24,8 @@ correct one in \code{kwargsA}.}
 
 \item{labelB}{(Optional) Descriptor of \code{kwargsB} for error statement. Default "second kwarg(s)".}
 
-\item{extraMsg}{(Optional) Extra text for error statement. "[DEFAULT]" (default) will use this message: 
-"Note that a kwarg only has to be provided to one of these. Place the correct value in the first 
+\item{extraMsg}{(Optional) Extra text for error statement. "[DEFAULT]" (default) will use this message:
+"Note that a kwarg only has to be provided to one of these. Place the correct value in the first
 location and remove the kwarg from the second location".}
 }
 \value{
@@ -35,3 +35,4 @@ A list with the union of \code{kwargsA} and \code{kwargsB}.
 Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
 an error is raised.
 }
+\keyword{internal}

@@ -13,9 +13,9 @@ format_path(path, dir = NULL, mode = NA)
 \code{NULL} (default) to not append any directory, leaving \code{path}
 unchanged.}
 
-\item{mode}{The mode for \code{\link{file.access}} to verify existence, 
-writing permission, or reading permission. Use NA (default) to not perform 
-any check.}
+\item{mode}{The mode for \code{\link{file.access}} to verify existence,
+writing permission, or reading permission. Use NA (default) to not perform
+any is.}
 }
 \value{
 The normalized path, or \code{NULL} if the path was \code{NULL}.
@@ -23,3 +23,4 @@ The normalized path, or \code{NULL} if the path was \code{NULL}.
 \description{
 Normalize and validate a path. Optionally, place it in a directory.
 }
+\keyword{internal}

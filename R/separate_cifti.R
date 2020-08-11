@@ -1,21 +1,23 @@
-#' Separate and save CIFTI data as NIfTI and GIfTI files
+#' Separate a CIFTI as its NIFTI and GIFTI component files
 #'
-#' @description Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 
-#'  subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
+#' @description Separates a CIFTI file into GIFTIs for the cortical 
+#'  (left and right) structures, and NIFTIs for the 
+#'  subcortical structures. 
+#'  This uses the \code{-cifti-separate} command from Connectome Workbench.
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param
-#' @param cortexL_fname,cortexR_fname (Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
+#' @inheritParams brainstructures_Param_LR
+#' @param cortexL_fname,cortexR_fname (Optional) the files to save the left and right cortex GIFTIs to. If not provided, 
 #'  defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 #'  relative, they will be saved in \code{write_dir}.
-#' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and label NIfTIs. If not 
+#' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and labels NIFTIs. If not 
 #'  provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 #'  path is relative, they will be saved in \code{write_dir}.
 #' @param ROI_brainstructures Which ROIs should be obtained? NULL (default) to not get any ROIs. This should be a subset of the
 #'  \code{brainstructures} argument.
 #' @param ROIcortexL_fname,ROIcortexR_fname File names for cortex ROIs.
 #' @param ROIsubcortVol_fname File name for volume ROI.
-#' @param write_dir If a file name is relative, what directory should it be saved to? Defaults to the current working directory.
+#' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
 #' @return A data frame with column names "label" and "fname", and rows corresponding to each separate file.
@@ -31,8 +33,6 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL) {
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   cifti_fname <- format_path(cifti_fname)
   if (!file.exists(cifti_fname)) {
     stop(paste("cifti_fname", cifti_fname, "does not exist."))
@@ -43,8 +43,13 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
 
   # Validate the brainstructures.
-  brainstructures <- match.arg(brainstructures, c("left","right","subcortical"), several.ok=TRUE)
-  stopifnot(length(unique(brainstructures)) == length(brainstructures))
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical","all"),
+    user_value_label="brainstructures"
+  )
+  if ("all" %in% brainstructures) { 
+    brainstructures <- c("left","right","subcortical")
+  }
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")
   # Validate the ROI brainstructures.
@@ -57,7 +62,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
 
   # Use default file names if not provided. Relative paths will be placed in write_dir.
   default_fname <- function(label, extn_cifti, bname_cifti) { 
-    gsub(extn_cifti, separate_cifti_default_suffix(label), bname_cifti, fixed=TRUE)
+    gsub(extn_cifti, cifti_component_suffix(label), bname_cifti, fixed=TRUE)
   }
   if (do['left']) {
     if (is.null(cortexL_fname)) { cortexL_fname <- default_fname("cortexL", extn_cifti, bname_cifti) }
@@ -67,6 +72,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
       ROIcortexL_fname <- format_path(ROIcortexL_fname, write_dir, mode=2)
     } else { ROIcortexL_fname <- "" }
   } else { cortexL_fname <- ROIcortexL_fname <- "" }
+
   if (do['right']) {
     if (is.null(cortexR_fname)) { cortexR_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
     cortexR_fname <- format_path(cortexR_fname, write_dir, mode=2)
@@ -75,6 +81,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
       ROIcortexR_fname <- format_path(ROIcortexR_fname, write_dir, mode=2)
     } else { ROIcortexR_fname <- "" }
   } else { cortexR_fname <- ROIcortexR_fname <- "" }
+
   if (do['sub']) {
     if (is.null(subcortVol_fname)) { subcortVol_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
     subcortVol_fname <- format_path(subcortVol_fname, write_dir, mode=2)
@@ -84,6 +91,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
       if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort", extn_cifti, bname_cifti) }
       ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
     } else { ROIsubcortVol_fname <- "" }
+    
   } else { 
     subcortVol_fname <- subcortLab_fname <- ROIsubcortVol_fname <- "" 
   }
@@ -110,7 +118,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   }
 
   # Build the Connectome Workbench command. 
-  cmd <- paste(sys_path(wb_cmd), "-cifti-separate", sys_path(cifti_fname), "COLUMN")
+  cmd <- paste("-cifti-separate", sys_path(cifti_fname), "COLUMN")
   if (do['left']) {
     cmd <- paste(cmd, '-metric CORTEX_LEFT', sys_path(cortexL_fname))
     if (ROI_do['left']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexL_fname)) }
@@ -124,12 +132,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
     if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(ROIsubcortVol_fname)) }
     cmd <- paste(cmd, '-label', sys_path(subcortLab_fname))
   }
-  # Run it! Raise an error if it fails.
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd))
-  }
+  run_wb_cmd(cmd, wb_path)
 
   invisible(sep_files) # column names are "label" and "fname"
 }

@@ -42,7 +42,7 @@ library(ciftiTools)
 ciftiTools.setOption('wb_path', 'Desktop/workbench')
 
 # Read in the CIFTI file, and resample it to 8000 vertices per hemisphere.
-cii <- read_cifti(
+cifti <- read_cifti(
   cifti_fname='Desktop/data/my_CIFTI_file.dtseries.nii', 
   surfL_fname='Desktop/data/32k_inflated_left.gii', 
   surfR_fname='Desktop/data/32k_inflated_right.gii', 
@@ -53,7 +53,7 @@ cii <- read_cifti(
 )
 
 # Visualize the surface.
-plot(cii)
+plot(cifti)
 ```
 
 ## Wishlist

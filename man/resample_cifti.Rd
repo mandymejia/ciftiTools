@@ -3,7 +3,7 @@
 \name{resample_cifti}
 \alias{resample_cifti}
 \alias{resampleCIfTI}
-\title{Resample CIFTI data}
+\title{Resample CIFTI Data}
 \usage{
 resample_cifti(
   cifti_original_fname,
@@ -80,7 +80,7 @@ once instead of at each iteration.}
  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
  
  Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{separate_cifti_default_suffix}}. Default file names
+ used: see \code{\link{cifti_component_suffix}}. Default file names
  will also be used for files that need to be separated/written but without a
  corresponding entry in \code{sep_fnames}.
  
@@ -95,8 +95,8 @@ once instead of at each iteration.}
 \item{resamp_keep}{If resampled files are created, will they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).
 Keeping the resampled files may help speed up certain tasks, for example
-when repeatedly iterating over subjects--the CIFTI will only be resampled
-once instead of at each iteration.}
+when repeatedly iterating over CIFTI files--resampling will only be done
+once instead of every new iteration.}
 
 \item{resamp_fnames}{Where to write the resampled files. This is a named list 
  where each entry's name is a file type label, and each entry's value
@@ -126,7 +126,7 @@ once instead of at each iteration.}
  \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
  and later deleted. \code{resamp_keep} works similarly. 
 
- For \code{read_cifti}, the surface files (\code{surfL} or \code{surfR})
+ For \code{read_cifti_separate}, the surface files (\code{surfL} or \code{surfR})
  are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
  be written to \code{tempdir()}. But for \code{resample_cifti}, the
  surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
@@ -151,6 +151,8 @@ A list of output files written. The elements are "cifti" and
 }
 \description{
 Performs spatial resampling of CIFTI data on the cortical surface
+ by separating it into GIFTI and NIFTI files, optionally resampling them, 
+ and then using the \code{-cifti-resample} Workbench Command with a template.
 }
 \details{
 This function uses a system wrapper for the "wb_command"

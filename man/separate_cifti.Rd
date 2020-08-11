@@ -3,7 +3,7 @@
 \name{separate_cifti}
 \alias{separate_cifti}
 \alias{separateCIfTI}
-\title{Separate and save CIFTI data as NIfTI and GIfTI files}
+\title{Separate a CIFTI as its NIFTI and GIFTI component files}
 \usage{
 separate_cifti(
   cifti_fname,
@@ -36,19 +36,19 @@ separateCIfTI(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii) to read 
-in.}
+\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
 to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface), and/or \code{"subcortical"} (subcortical and cerebellar 
-gray matter). Default: \code{c("left","right")} (brain surface only).}
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+Default: \code{c("left","right")} (cortical surface only).}
 
-\item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIfTIs to. If not provided, 
+\item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIFTIs to. If not provided, 
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 relative, they will be saved in \code{write_dir}.}
 
-\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and label NIfTIs. If not 
+\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and labels NIFTIs. If not 
 provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 path is relative, they will be saved in \code{write_dir}.}
 
@@ -59,7 +59,11 @@ path is relative, they will be saved in \code{write_dir}.}
 
 \item{ROIsubcortVol_fname}{File name for volume ROI.}
 
-\item{write_dir}{If a file name is relative, what directory should it be saved to? Defaults to the current working directory.}
+\item{write_dir}{Where should the separated
+ files be placed? \code{NULL} (default) will write them to
+ the current working directory.
+
+ \code{write_dir} must already exist, or an error will occur.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -69,8 +73,10 @@ If not provided, should be set with
 A data frame with column names "label" and "fname", and rows corresponding to each separate file.
 }
 \description{
-Separates a CIFTI file into GIfTIs for the cortical (left and right) structures, and NIfTIs for the 
- subcortical structures. This uses the -cifti-separate command from Connectome Workbench.
+Separates a CIFTI file into GIFTIs for the cortical 
+ (left and right) structures, and NIFTIs for the 
+ subcortical structures. 
+ This uses the \code{-cifti-separate} command from Connectome Workbench.
 }
 \details{
 This function uses a system wrapper for the 'wb_command' executable. The user must first download and 

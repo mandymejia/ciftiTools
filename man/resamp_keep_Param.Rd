@@ -7,8 +7,8 @@
 \item{resamp_keep}{If resampled files are created, will they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).
 Keeping the resampled files may help speed up certain tasks, for example
-when repeatedly iterating over subjects--the CIFTI will only be resampled
-once instead of at each iteration.}
+when repeatedly iterating over CIFTI files--resampling will only be done
+once instead of every new iteration.}
 }
 \description{
 resamp_keep

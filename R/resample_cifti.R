@@ -1,6 +1,8 @@
-#' Resample CIFTI data
+#' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
+#'  by separating it into GIFTI and NIFTI files, optionally resampling them, 
+#'  and then using the \code{-cifti-resample} Workbench Command with a template.
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
@@ -19,7 +21,7 @@
 #' @inheritParams resamp_fnames_Param
 #' @inheritParams resamp_keep_Param
 #' @inheritParams write_dir_Param_intermediate
-#' @inheritParams verbose_Param
+#' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
 #' @return A list of output files written. The elements are "cifti" and
@@ -48,9 +50,7 @@ resample_cifti <- function(
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
-  # [TO DO]: more extensive preliminary check.
+  # [TO DO]: more extensive preliminary is.
   if (!is.null(resamp_res)) {
     if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
       stop("`sphereL_fname` and `sphereR_fname` are required for resampling.")
@@ -97,14 +97,14 @@ resample_cifti <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # resample_cifti_separate() --------------------------------------------------
+  # resample_cifti_components() --------------------------------------------------
   # ----------------------------------------------------------------------------
   
   # Do not resample the subcortical data.
   to_resample <- to_cif[!grepl("subcort", names(to_cif))]
   if (verbose) { cat("Resampling CIFTI file.\n") }
 
-  # Do resample_cifti_separate.
+  # Do resample_cifti_components.
   resamp_result <- resample_cifti_wrapper(
     resamp_res=resamp_res, original_fnames=to_resample, 
     resamp_fnames=resamp_fnames, 
@@ -145,44 +145,19 @@ resample_cifti <- function(
   # Resample with template -----------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # [TO DO]: move to separate function
-
   # Create a template CIFTI dense timeseries.
   if (verbose) cat("Creating template CIFTI file in target resolution... \n")
   cifti_template_fname <- format_path(
     paste0("template_", basename(cifti_original_fname)), tempdir(), mode=4)
-  cifti_extn <- get_cifti_extn(cifti_original_fname)
-  if (grepl("dtseries", cifti_extn)) create_cmd <- "-cifti-create-dense-timeseries"
-  else if (grepl("dscalar", cifti_extn)) create_cmd <- "-cifti-create-dense-scalar"
-  else if (grepl("dlabel", cifti_extn)) create_cmd <- "-cifti-create-label"
-  else {
-    stop(paste(
-      "The data type of cifti_original_fname", cifti_original_fname, 
-      "could not be determined. The file name should end in e.g. \
-      \".dtseries.nii\""
-    ))
-  }
-
-  cmd <- paste(
-    sys_path(wb_cmd), create_cmd, sys_path(cifti_template_fname), 
-    "-volume", sys_path(to_cif["subcortVol"]), sys_path(to_cif["subcortLab"]), 
-    "-left-metric", sys_path(to_cif["cortexL"])
+  write_cifti_from_separate(
+    cifti_template_fname, 
+    cortexL_fname = to_cif["cortexL"],
+    cortexR_fname = to_cif["cortexR"],
+    ROIcortexL_fname = to_cif["ROIcortexL"],
+    ROIcortexR_fname = to_cif["ROIcortexR"],
+    subcortVol_fname = to_cif["subcortVol"],
+    subcortLab_fname = to_cif["subcortLab"]
   )
-  if ("ROIcortexL" %in% names(to_cif)) {
-    cmd <- paste(cmd, "-roi-left", sys_path(to_cif["ROIcortexL"]))
-  }
-  cmd <- paste(cmd, "-right-metric", sys_path(to_cif["cortexR"]) )
-  if ("ROIcortexR" %in% names(to_cif)) {
-    cmd <- paste(cmd, "-roi-right", sys_path(to_cif["ROIcortexR"]))
-  }
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd
-    ))
-  }
-
   if (verbose) { 
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
@@ -193,20 +168,14 @@ resample_cifti <- function(
   
   stopifnot(file.exists(cifti_template_fname))
   stopifnot(all(file.exists(c(sphereL_fname, sphereR_fname))))
-  cmd = paste(
-    sys_path(wb_cmd), "-cifti-resample", sys_path(cifti_original_fname), 
+  cmd <- paste(
+    "-cifti-resample", sys_path(cifti_original_fname), 
     "COLUMN", sys_path(cifti_template_fname), 
     "COLUMN BARYCENTRIC CUBIC", sys_path(cifti_target_fname), 
-    "-left-spheres", sys_path(sphereL_fname), 
-    sys_path(sphereL_target_fname), 
-    "-right-spheres", sys_path(sphereR_fname), 
-    sys_path(sphereL_target_fname)
+    "-left-spheres", sys_path(sphereL_fname), sys_path(sphereL_target_fname), 
+    "-right-spheres", sys_path(sphereR_fname), sys_path(sphereL_target_fname)
   )
-  cmd_code <- system(cmd)
-  if (cmd_code != 0) {
-    stop(paste0("The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd))
-  }
+  run_wb_cmd(cmd, wb_path)
 
   if (verbose) { 
     print(Sys.time() - exec_time)
@@ -253,7 +222,7 @@ resample_cifti <- function(
 
 #' @rdname resample_cifti
 #' @export
-resampleCIfTI <- resamplecii <- function(
+resampleCIfTI <- resamplecii <- resample_xifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
