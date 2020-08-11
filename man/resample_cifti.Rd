@@ -151,10 +151,8 @@ A list of output files written. The elements are "cifti" and
 }
 \description{
 Performs spatial resampling of CIFTI data on the cortical surface
- by separating it into GIFTI and NIFTI files 
- (\code{\link{separate_cifti}}), optionally resampling them 
- (\code{\link{resample_cifti_components}}), and then using the 
- \code{-cifti-resample} Workbench Command with a template.
+ by separating it into GIFTI and NIFTI files, optionally resampling them, 
+ and then using the \code{-cifti-resample} Workbench Command with a template.
 }
 \details{
 This function uses a system wrapper for the "wb_command"
