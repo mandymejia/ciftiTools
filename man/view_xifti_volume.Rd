@@ -2,9 +2,21 @@
 % Please edit documentation in R/view_xifti.R
 \name{view_xifti_volume}
 \alias{view_xifti_volume}
+\alias{view_cifti_volume}
 \title{Visualize xifti brain data}
 \usage{
 view_xifti_volume(
+  xifti,
+  structural_img = "MNI",
+  idx = 1,
+  plane = "axial",
+  num.slices = 12,
+  use_papaya = FALSE,
+  z_min = NULL,
+  z_max = NULL
+)
+
+view_cifti_volume(
   xifti,
   structural_img = "MNI",
   idx = 1,

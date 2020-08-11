@@ -36,7 +36,6 @@
 #'
 #' @return A data frame with column names "label" and "fname", and 
 #'  rows corresponding to each resampled file.
-#' @export
 #'
 #' @details Performs resampling of CIFTI files using Connectome Workbench tools.  
 #'  Step 1: Generate spheres in the target resolution

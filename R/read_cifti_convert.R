@@ -14,7 +14,6 @@
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#' @export
 #'
 #' @details This function uses a system wrapper for the "wb_command"
 #'  executable. The user must first download and install the Connectome

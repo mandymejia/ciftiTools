@@ -11,7 +11,7 @@ read_cifti(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
-  require_full_subcort_vol = FALSE,
+  full_volume = FALSE,
   resamp_res = NULL,
   sphereL_fname = NULL,
   sphereR_fname = NULL,
@@ -26,7 +26,7 @@ readCIfTI(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
-  require_full_subcort_vol = FALSE,
+  full_volume = FALSE,
   resamp_res = NULL,
   sphereL_fname = NULL,
   sphereR_fname = NULL,
@@ -67,7 +67,7 @@ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 Default: \code{c("left","right")} (cortical surface only).}
 
-\item{require_full_subcort_vol}{Is the full subcortical volume required, or
+\item{full_volume}{Is the full subcortical volume required, or
 is it okay to crop it by removing empty edge slices? Default: \code{FALSE}.
 If \code{TRUE}, the data will have to be read in with 
 \code{-cifti-separate}, which is slower than 

@@ -2,9 +2,12 @@
 % Please edit documentation in R/write_cifti.R
 \name{write_cifti}
 \alias{write_cifti}
+\alias{writeCIfTI}
 \title{Write CIFTI}
 \usage{
 write_cifti(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
+
+writeCIfTI(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 

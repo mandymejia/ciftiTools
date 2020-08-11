@@ -17,7 +17,6 @@
 #'  ordering used in the "xifti".
 #'  
 #' @return The flattened "xifti", a data matrix.
-#' @export
 #'
 flatten_xifti <- function(xifti, medial_wall=NULL, subcort_order="alphabetical") {
   if (!(is.xifti(xifti))) { stop("Not a \"xifti\" object.") }

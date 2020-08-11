@@ -845,7 +845,7 @@ view_xifti_volume <- function(
 
   stopifnot(is.xifti(xifti))
   if (any(is.na(do.call(rbind, xifti$meta$subcort$mask_padding)))) {
-    stop("The subcortical mask padding must be known. Use `cifti_read_separate` or `make_cifti` with a NIFTI file.")
+    stop("The subcortical mask padding must be known. Use `cifti_read_separate` or `write_cifti_from_separate` with a NIFTI file.")
   }
 
   # Get volume and labels.
@@ -937,13 +937,13 @@ plot.xifti <- function(x, ...){
 
 #' @rdname view_xifti
 #' @export
-viewXIfTI <- viewcii <- function(xifti, what=NULL, ...){
+view_cifti <- viewCIfTI <- viewcii <- function(xifti, what=NULL, ...){
   view_xifti(xifti, what=what, ...)
 }
 
 #' @rdname view_xifti_surface
 #' @export
-viewXIfTI_surface <- viewcii_surface <- function(xifti, idx=1, 
+view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, idx=1, 
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
   bg=NULL, title=NULL,
@@ -963,5 +963,21 @@ viewXIfTI_surface <- viewcii_surface <- function(xifti, idx=1,
     surfL, surfR,
     colorbar_embedded, 
     colorbar_digits
+  )
+}
+
+#' @rdname view_xifti_volume
+#' @export
+view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
+  xifti, structural_img="MNI", idx=1, plane="axial", 
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+
+  view_xifti_volume(
+    xifti=xifti, 
+    structural_img=structural_img,
+    idx=idx, plane=plane,
+    num.slices=num.slices,
+    use_papaya=use_papaya,
+    z_min=z_min, z_max=z_max
   )
 }

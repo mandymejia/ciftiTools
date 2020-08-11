@@ -151,7 +151,7 @@ resample_cifti <- function(
   if (verbose) cat("Creating template CIFTI file in target resolution... \n")
   cifti_template_fname <- format_path(
     paste0("template_", basename(cifti_original_fname)), tempdir(), mode=4)
-  make_cifti(
+  write_cifti_from_separate(
     cifti_template_fname, 
     cortexL_fname = to_cif["cortexL"],
     cortexR_fname = to_cif["cortexR"],
@@ -224,7 +224,7 @@ resample_cifti <- function(
 
 #' @rdname resample_cifti
 #' @export
-resampleCIfTI <- resamplecii <- function(
+resampleCIfTI <- resamplecii <- resample_xifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,

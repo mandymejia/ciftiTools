@@ -70,7 +70,6 @@ print.xifti <- function(x, ...) {
 #' @inheritParams cifti_fname_Param
 #'
 #' @return Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii".
-#' @export
 #'
 get_cifti_extn <- function(cifti_fname) {
   fname_parts <- unlist(strsplit(basename(cifti_fname), split=".", fixed = TRUE)) #split by "."

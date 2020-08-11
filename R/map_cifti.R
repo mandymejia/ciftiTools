@@ -53,7 +53,6 @@ substructure_table <- function(){
 #'  cortex$medial_wall_mask$right,
 #'  subcort$labels,
 #'  subcort$mask
-#' @export
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 

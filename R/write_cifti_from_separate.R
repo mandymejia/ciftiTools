@@ -12,9 +12,7 @@
 #' @inheritParams verbose_Param_FALSE
 #' @inheritParams wb_path_Param
 #'
-#' @export
-#'
-make_cifti <- function(
+write_cifti_from_separate <- function(
   cifti_fname, 
   cortexL_fname, cortexR_fname,
   ROIcortexL_fname=NULL, ROIcortexR_fname=NULL,

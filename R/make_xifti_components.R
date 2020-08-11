@@ -101,8 +101,6 @@ make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
 #' 
 #'  The subcortical labels will be ordered spatially (not alphabetically
 #'  according to the corresponding \code{\link{substructure_table}}).
-#' 
-#' @export
 #'
 #' @importFrom RNifti readNifti
 make_xifti_subcort <- function(
