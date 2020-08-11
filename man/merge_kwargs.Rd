@@ -35,3 +35,4 @@ A list with the union of \code{kwargsA} and \code{kwargsB}.
 Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
 an error is raised.
 }
+\keyword{internal}

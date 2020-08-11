@@ -72,3 +72,4 @@ Calls \code{separate_cifti} using the file names listed in the
 \details{
 Currently used by read_cifti and resample_cifti.
 }
+\keyword{internal}

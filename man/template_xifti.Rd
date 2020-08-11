@@ -12,3 +12,4 @@ An empty "xifti" object with a valid list structure
 \description{
 Make a template "xifti" object.
 }
+\keyword{internal}

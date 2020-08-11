@@ -12,3 +12,4 @@ crop_vol(x)
 \description{
 Remove empty (zero-valued) edge slices from a 3D array.
 }
+\keyword{internal}

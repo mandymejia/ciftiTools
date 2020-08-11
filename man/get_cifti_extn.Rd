@@ -15,3 +15,4 @@ Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii".
 \description{
 Get CIFTI file extension
 }
+\keyword{internal}

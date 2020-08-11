@@ -15,6 +15,8 @@
 #'  "endian". 
 #' 
 #' @importFrom freesurferformats gifti_writer
+#'
+#' @keywords internal
 #' 
 write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) {
   # Check arguments.
@@ -69,6 +71,8 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #' @return List of written files
 #' @importFrom RNifti writeNifti
 #'
+#' @keywords internal
+#' 
 write_xifti_components <- function(
   xifti, write_dir=NULL, 
   medial_wall_val=NA, subcortex_fill_val=0,

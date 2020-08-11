@@ -93,3 +93,4 @@ Calls \code{resample_cifti} using the original file names
 \details{
 Currently used by read_cifti and resample_cifti.
 }
+\keyword{internal}

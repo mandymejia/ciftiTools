@@ -71,6 +71,8 @@ print.xifti <- function(x, ...) {
 #'
 #' @return Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii".
 #'
+#' @keywords internal
+#' 
 get_cifti_extn <- function(cifti_fname) {
   fname_parts <- unlist(strsplit(basename(cifti_fname), split=".", fixed = TRUE)) #split by "."
   extn <- paste(rev(fname_parts)[c(2,1)], collapse=".") #'dtseries.nii", "dscalar.nii", etc.
@@ -88,6 +90,8 @@ get_cifti_extn <- function(cifti_fname) {
 #'
 #' @return The default file name suffix.
 #'
+#' @keywords internal
+#' 
 cifti_component_suffix <- function(label, GIFTI_type="func") {
   label <- match.arg(label, c(
     "cortexL", "cortexR", "subcortVol", "subcortLab",
@@ -114,6 +118,8 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
 #'
 #' @return The default file name.
 #'
+#' @keywords internal
+#' 
 resample_cifti_default_fname <- function(original_fname, resamp_res) {
   stopifnot(!is.null(original_fname))
   bname <- basename(original_fname)

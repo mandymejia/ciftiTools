@@ -15,3 +15,4 @@ Whether \code{x} is an existing file.
 \description{
 Simple check if something is an existing file.
 }
+\keyword{internal}

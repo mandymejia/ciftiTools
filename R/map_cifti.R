@@ -55,6 +55,8 @@ substructure_table <- function(){
 #'  subcort$mask
 #' 
 #' @inheritSection labels_Description Label Levels
+#'
+#' @keywords internal
 #' 
 map_cifti <- function(cifti_fname, wb_path=NULL, verbose=FALSE){
   cifti_fname <- format_path(cifti_fname)

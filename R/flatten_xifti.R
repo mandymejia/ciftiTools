@@ -15,6 +15,7 @@
 #' @param subcort_order "alphabetical" (default) to match 
 #'  \code{-cifti-export-dense-mapping}, or "spatial" which is already the
 #'  ordering used in the "xifti".
+#' @keywords internal
 #'  
 #' @return The flattened "xifti", a data matrix.
 #'

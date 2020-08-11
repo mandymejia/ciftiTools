@@ -12,6 +12,8 @@
 #' @inheritParams verbose_Param_FALSE
 #' @inheritParams wb_path_Param
 #'
+#' @keywords internal
+#' 
 write_cifti_from_separate <- function(
   cifti_fname, 
   cortexL_fname, cortexR_fname,

@@ -13,6 +13,9 @@
 #' @return The return value of the separate_cifti call.
 #'
 #' @details Currently used by read_cifti and resample_cifti.
+#'
+#' @keywords internal
+#' 
 separate_cifti_wrapper <- function(
   cifti_fname, brainstructures=NULL, ROI_brainstructures=NULL,
   sep_fnames=NULL, write_dir=NULL, wb_path=NULL) {
@@ -62,6 +65,9 @@ separate_cifti_wrapper <- function(
 #' @return The return value of the resample_cifti call.
 #'
 #' @details Currently used by read_cifti and resample_cifti.
+#'
+#' @keywords internal
+#' 
 resample_cifti_wrapper <- function(
   resamp_res,
   original_fnames, resamp_fnames,

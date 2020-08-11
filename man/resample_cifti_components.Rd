@@ -104,3 +104,4 @@ Performs resampling of CIFTI files using Connectome Workbench tools.
  Step 2: Use -metric-resample to resample surface/cortex files 
  Step 3: Use -surface-resample to resample gifti files
 }
+\keyword{internal}

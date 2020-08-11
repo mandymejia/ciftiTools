@@ -37,3 +37,4 @@ If not provided, should be set with
 \description{
 Make a CIFTI file from components
 }
+\keyword{internal}

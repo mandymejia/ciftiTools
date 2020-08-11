@@ -152,3 +152,4 @@ This function uses a system wrapper for the "wb_command"
  The \code{wb_path} argument is the path to the Connectime Workbench folder
  or executable.
 }
+\keyword{internal}

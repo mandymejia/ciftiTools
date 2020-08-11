@@ -25,3 +25,4 @@ The volumetric data.
 \description{
 Converts a sparse coordinate list to its non-sparse volumetric representation.
 }
+\keyword{internal}

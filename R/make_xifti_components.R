@@ -16,6 +16,8 @@
 #'
 #' @return A list with components "data" and "medial_wall_mask".
 #'
+#' @keywords internal
+#' 
 #' @importFrom gifti readgii is.gifti
 make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
   # File --> GIFTI.

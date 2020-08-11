@@ -23,3 +23,4 @@ For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
 \description{
 Write GIFTI-format data.
 }
+\keyword{internal}

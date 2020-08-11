@@ -35,3 +35,4 @@ Match each user input to an expected/allowed value. Raise a warning if either
  match keyword arguments for a function call. Another use is to match
  brainstructure labels ("left", "right", or "subcortical").
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ The names of the arguments of \code{fun} as a character vector.
 \description{
 Get the names of the arguments of a function as a character vector.
 }
+\keyword{internal}

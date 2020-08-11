@@ -22,6 +22,8 @@
 #'  The \code{wb_path} argument is the path to the Connectime Workbench folder
 #'  or executable.
 #'
+#' @keywords internal
+#' 
 read_cifti_convert <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,

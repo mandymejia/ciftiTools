@@ -13,6 +13,8 @@
 #'
 #' @return The 3D or 4D unflattened volume array
 #'
+#' @export
+#' 
 unmask <- function(dat, mask, fill=NA) {
 
   # Check that dat is a vector or matrix.
@@ -70,6 +72,7 @@ pad_vol <- function(x, padding, fill=NA){
 
 #' @rdname pad_vol
 #' @export
+#' 
 uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
 }
@@ -90,7 +93,8 @@ uncrop_vol <- function(x, padding, fill=NA){
 #'  \code{FALSE}.
 #' 
 #' @return The volumetric data.
-#' @export 
+#'
+#' @keywords internal
 #' 
 coordlist_to_vol <- function(coords, fill=FALSE){
   stopifnot(length(fill)==1)
@@ -126,6 +130,8 @@ coordlist_to_vol <- function(coords, fill=FALSE){
 #'
 #' @param x The 3D array to crop.
 #'
+#' @keywords internal
+#' 
 crop_vol <- function(x) {
   d <- length(dim(x))
 

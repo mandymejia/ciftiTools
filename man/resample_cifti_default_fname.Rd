@@ -18,3 +18,4 @@ The default file name.
 \description{
 Get the default file name for a resampled file.
 }
+\keyword{internal}

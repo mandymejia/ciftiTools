@@ -27,3 +27,4 @@ Coerce a file path, GIFTI object, or data matrix to a data matrix
  entries for \code{xifti$data$cortex_[left/right]} and 
  \code{xifti$meta$cortex}.
 }
+\keyword{internal}

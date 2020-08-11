@@ -22,3 +22,4 @@ The default file name suffix.
 \description{
 Get the default file name suffix for a certain type of GIFTI/NIFTI file
 }
+\keyword{internal}

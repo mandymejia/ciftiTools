@@ -41,6 +41,10 @@
 #'  Step 1: Generate spheres in the target resolution
 #'  Step 2: Use -metric-resample to resample surface/cortex files 
 #'  Step 3: Use -surface-resample to resample gifti files
+#'
+#' @keywords internal
+#' 
+#' 
 resample_cifti_components <- function(
   resamp_res, 
   sphereL_fname, sphereR_fname, 
