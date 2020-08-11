@@ -819,20 +819,25 @@ view_xifti_surface <- function(xifti, idx=1,
 #' Visualize xifti brain data
 #'
 #' @inheritParams xifti_Param
-#' @param structural_img The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.
+#' @param structural_img The structural MRI image on which to overlay the
+#'  subcortical values. Can be a file name, \code{"MNI"} (default) to use
+#'  the MNI T1-weighted template, or \code{NULL} to use a blank image.
 #' @param idx The time/column index of the xifti data to plot.
-#' @param plane If use_papaya=FALSE, the plane to display. Default: "axial". Other options are "sagittal" and "coronal".
+#' @param plane If use_papaya=FALSE, the plane to display. 
+#'  Default: "axial". Other options are "sagittal" and "coronal".
 #' @param num.slices If use_papaya=FALSE, the number of slices to display.
 #' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
 #' @param z_min Floor value.
 #' @param z_max Ceiling value.
+#' @inheritParams verbose_Param_TRUE
 #'
 #' @export
 #' 
 #' @importFrom oro.nifti overlay readNIfTI
 view_xifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane="axial", 
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  verbose=TRUE) {
 
   if (use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
@@ -864,33 +869,47 @@ view_xifti_volume <- function(
     slices <- slices[inds]
   }
 
-  if (is.null(structural_img)) {
-    T1w <- NULL
-  } else if (structural_img=="T1w") {
-    T1w <- readNIfTI(system.file("extdata/MNI152_T1_2mm.nii.gz", package="ciftiTools"), reorient=FALSE)
-  } else {
-    stop("MNI not supported.")
-    T1w <- readNIfTI(structural_img, reorient=FALSE)
-  }
-
   if (!is.null(z_min)) values[values < z_min] <- z_min
   if (!is.null(z_max)) values[values > z_max] <- z_max
-  cat(paste0("Values to be plotted range from ",min(xifti$data$subcort[,idx])," to ",max(xifti$data$subcort[,idx]), "\n"))
+  if (verbose) {
+    cat(paste0(
+      "Values to be plotted range from ",
+      min(xifti$data$subcort[,idx])," to ",
+      max(xifti$data$subcort[,idx]), ".\n"
+    ))
+  }
 
   if (!is.null(structural_img)) {
-    img_overlay <- T1w*0
+    if (structural_img=="MNI") {
+      img <- readNIfTI(system.file("extdata/MNI152_T1_2mm.nii.gz", package="ciftiTools"), reorient=FALSE)
+    } else if (is.fname(structural_img)){
+      img <- readNIfTI(structural_img, reorient=FALSE)
+    } else {
+      stop("`structural_img` argument not one of: NULL, \"MNI\", or an existing file.")
+    }
+    img_overlay <- img*0
     img_overlay@.Data <- vol
     img_overlay@.Data[labs==0] <- NA
 
-    img_labels <- T1w*0
+    img_labels <- img*0
     img_labels@.Data <- labs
     img_labels@.Data[labs==0] <- NA
+  } else {
+    img <- img_overlay <- vol
+    #img_labels <- vol*0
+    #img_labels@.Data <- labs
+    #img_labels@.Data[labs==0] <- NA
   }
 
   if (!use_papaya) {
-    oro.nifti::overlay(x=T1w, y=img_overlay, plot.type="single", plane=plane, z=slices)#, col.y=pal)
+    oro.nifti::overlay(x=img, y=img_overlay, plane=plane, z=slices)
   } else {
-    papayar::papaya(list(T1w, img_overlay, img_labels))
+    if (is.null(structural_img)) {
+      stop("Doesn't work; use an overlay or not papaya.")
+      papayar::papaya(list(img, img_labels))
+    } else {
+      papayar::papaya(list(img, img_overlay, img_labels))
+    }
   }
 }
 

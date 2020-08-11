@@ -12,18 +12,22 @@ view_xifti_volume(
   num.slices = 12,
   use_papaya = FALSE,
   z_min = NULL,
-  z_max = NULL
+  z_max = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{structural_img}{The file name of the structural MRI image on which to overlay the subcortical values.  The MNI template is used by default.  Set to NULL to use a blank image.}
+\item{structural_img}{The structural MRI image on which to overlay the
+subcortical values. Can be a file name, \code{"MNI"} (default) to use
+the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 
 \item{idx}{The time/column index of the xifti data to plot.}
 
-\item{plane}{If use_papaya=FALSE, the plane to display. Default: "axial". Other options are "sagittal" and "coronal".}
+\item{plane}{If use_papaya=FALSE, the plane to display. 
+Default: "axial". Other options are "sagittal" and "coronal".}
 
 \item{num.slices}{If use_papaya=FALSE, the number of slices to display.}
 
@@ -32,6 +36,8 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 \item{z_min}{Floor value.}
 
 \item{z_max}{Ceiling value.}
+
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 }
 \description{
 Visualize xifti brain data
