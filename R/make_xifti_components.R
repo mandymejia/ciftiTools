@@ -32,7 +32,7 @@ make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
   }
 
   # Check if medial wall mask is valid.
-  MIN_TO_INFER_MWALL <- 2
+  MIN_TO_INFER_MWALL <- 1
   enough_measurements = ncol(cortex) > MIN_TO_INFER_MWALL
   at_least_one_mwall_vert <- !all(medial_wall_mask)
   if (!is.null(medial_wall_mask)) {

@@ -1,34 +1,20 @@
-#' Read a CIFTI File Quickly
+#' Make a "xifti" from a CIFTI Map and Flat 
 #'
-#' @description Read a CIFTI file by exporting it as a single GIFTI 
-#'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
-#'  and obtaining the brainordinate mapping using 
-#'  \code{-cifti-export-dense-mapping} (\code{\link{map_cifti}}). 
+#' @description Make a CIFTI from the brainordinate mapping obtained with
+#'  \code{-cifti-export-dense-mapping} and the flattened data obtained with
+#'  \code{-cifti-convert -to-gifti-ext}.
 #'
-#' @inheritParams cifti_fname_Param
-#' @inheritParams surfL_fname_Param
-#' @inheritParams surfR_fname_Param
+#' @param map The full CIFTI mapping
+#' @param cifti_flat The full flat CIFTI data
 #' @inheritParams brainstructures_Param_LR
-#' @inheritParams wb_path_Param
-#' @inheritParams verbose_Param_FALSE
-#' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome
-#'  Workbench, available from
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
-#'  or executable.
-#'
 #' @keywords internal
 #' 
-read_cifti_convert <- function(
-  cifti_fname, 
-  surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
-  wb_path=NULL, verbose=FALSE, ...){
+make_xifti_from_cifti_map_and_flat <- function(
+  map, cifti_flat, 
+  brainstructures=c("left","right")){
 
   # Check arguments.
   brainstructures <- match_input(
@@ -38,7 +24,7 @@ read_cifti_convert <- function(
   if ("all" %in% brainstructures) { 
     brainstructures <- c("left","right","subcortical")
   }
-  
+
   # Rename the brainstructures.
   brainstructures_rename <- list(
     left="cortex_left",
@@ -50,21 +36,9 @@ read_cifti_convert <- function(
   # Create the template.
   xifti <- template_xifti()
 
-  # ----------------------------------------------------------------------------
-  # Read files. ----------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-  if (verbose) { exec_time <- Sys.time() }
-  if (verbose) { cat("Reading CIFTI file.\n") }
-
-  # Map the CIFTI.
-  cifti_map <- map_cifti(cifti_fname, wb_path)
-
-  # Read the CIFTI data.
-  xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
-
   # Place cortex data into the "xifti" object.
-  last_left <- sum(cifti_map$cortex$medial_wall_mask$left)
-  last_right <- last_left + sum(cifti_map$cortex$medial_wall_mask$right)
+  last_left <- sum(map$cortex$medial_wall_mask$left)
+  last_right <- last_left + sum(map$cortex$medial_wall_mask$right)
   verify_cortex_and_mwall <- function(cortex, side, medial_wall_mask){
     if (sum(medial_wall_mask) != nrow(cortex)) {
       warning(paste(
@@ -106,18 +80,18 @@ read_cifti_convert <- function(
   }
   if ("cortex_left" %in% brainstructures) {
     cortex <- verify_cortex_and_mwall(
-      xifti_data[1:last_left,, drop=FALSE],
+      cifti_flat[1:last_left,, drop=FALSE],
       "left",
-      cifti_map$cortex$medial_wall_mask$left
+      map$cortex$medial_wall_mask$left
     )
     xifti$data$cortex_left <- cortex$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$medial_wall_mask)
   }
   if ("cortex_right" %in% brainstructures) {
     cortex <- verify_cortex_and_mwall(
-      xifti_data[(1+last_left):last_right,, drop=FALSE],
+      cifti_flat[(1+last_left):last_right,, drop=FALSE],
       "right",
-      cifti_map$cortex$medial_wall_mask$right
+      map$cortex$medial_wall_mask$right
     )
     xifti$data$cortex_right <- cortex$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$medial_wall_mask)
@@ -125,15 +99,70 @@ read_cifti_convert <- function(
 
   # Place subcortical data into the "xifti" object.
   if ("subcort" %in% brainstructures) {
-    alpha_to_spatial <- order(order(cifti_map$subcort$labels))
-    subcort_order <- c((1+last_right):nrow(xifti_data))[alpha_to_spatial]
-    xifti$data$subcort <- xifti_data[subcort_order,, drop=FALSE]
-    xifti$meta$subcort$labels <- cifti_map$subcort$labels
+    alpha_to_spatial <- order(order(map$subcort$labels))
+    subcort_order <- c((1+last_right):nrow(cifti_flat))[alpha_to_spatial]
+    xifti$data$subcort <- cifti_flat[subcort_order,, drop=FALSE]
+    xifti$meta$subcort$labels <- map$subcort$labels
     # Need to crop the subcortical mask. But, there may have been extra padding
     #   in the NIFTI but absent in the mapping. So, do not fill the
     #   SUBCORT_MASK_PADDING field.
-    xifti$meta$subcort$mask <- crop_vol(cifti_map$subcort$mask)$data
+    xifti$meta$subcort$mask <- crop_vol(map$subcort$mask)$data
   } 
+
+  # Finish.
+  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
+  structure(xifti, class="xifti")
+}
+
+#' Read a CIFTI File Quickly
+#'
+#' @description Read a CIFTI file by exporting it as a single GIFTI 
+#'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
+#'  and obtaining the brainordinate mapping using 
+#'  \code{-cifti-export-dense-mapping} (\code{\link{map_cifti}}). 
+#'
+#' @inheritParams cifti_fname_Param
+#' @inheritParams surfL_fname_Param
+#' @inheritParams surfR_fname_Param
+#' @inheritParams brainstructures_Param_LR
+#' @inheritParams wb_path_Param
+#' @inheritParams verbose_Param_FALSE
+#' @param ... Additional arguments to \code{read_cifti_flat}.
+#'
+#' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
+#'
+#' @details This function uses a system wrapper for the "wb_command"
+#'  executable. The user must first download and install the Connectome
+#'  Workbench, available from
+#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
+#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
+#'  or executable.
+#'
+#' @keywords internal
+#' 
+read_cifti_convert <- function(
+  cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), 
+  wb_path=NULL, verbose=FALSE, ...){
+
+  # ----------------------------------------------------------------------------
+  # Read files. ----------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  if (verbose) { exec_time <- Sys.time() }
+  if (verbose) { cat("Reading CIFTI file.\n") }
+
+  # Map the CIFTI.
+  cifti_map <- map_cifti(cifti_fname, wb_path)
+
+  # Read the CIFTI data.
+  cifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
+
+  xifti <- make_xifti_from_cifti_map_and_flat(
+    cifti_map, 
+    cifti_data, 
+    brainstructures
+  )
 
   # Read surfaces.
   if (!is.null(surfL_fname) | !is.null(surfR_fname)) { 
@@ -146,13 +175,12 @@ read_cifti_convert <- function(
     xifti$surf$cortex_right <- make_xifti_surface(surfR_fname) 
   }
 
-  # Finish.
-  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
-
   if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
 
+  # Finish.
+  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
   structure(xifti, class="xifti")
 }

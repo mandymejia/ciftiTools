@@ -54,7 +54,8 @@ unmask <- function(dat, mask, fill=NA) {
 #'  slices to add at the beginning and end of each of the d dimensions, e.g.
 #'  \code{xifti$meta$subcort$mask_padding}.
 #' @param fill Values to pad with. Default: \code{NA}.
-#'
+#' 
+#' @export
 #' @return The padded array
 pad_vol <- function(x, padding, fill=NA){
   new_dim <- vector("numeric", 3)
