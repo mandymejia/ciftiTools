@@ -1,6 +1,6 @@
 # 1.2
 
-Many functions were renamed and reorganized again. Here's a summary of the new workflow:
+Many functions were renamed and reorganized again. Here's a summary of the updates:
 
 * Read CIFTI data with `read_cifti`.
     * This will yield a [`"xifti"` object](https://github.com/mandymejia/ciftiTools/blob/master/R/template_xifti.R).
@@ -13,6 +13,7 @@ Many functions were renamed and reorganized again. Here's a summary of the new w
     * Use `resample_res=the_resolution` to resample while reading in. This also requires the old method, which is slow for large CIFTIs. 
 * GIFTI data can also be read with `make_xifti`, e.g. `make_xifti(cortexL=left_cortex, surfL=left_geom)`.
     * This will also yield a [`"xifti"` object](https://github.com/mandymejia/ciftiTools/blob/master/R/template_xifti.R). We named the object a `"xifti"` because it could originate from either a CIFTI or GIFTI. 
+* More generally, a set of data matrices in R can be assembled into a `"xifti"` object with `make_xifti`. We're working on making this function more user-friendly.
 * New `write_cifti` function.
 
 # 1.1
