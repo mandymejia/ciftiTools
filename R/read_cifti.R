@@ -10,7 +10,7 @@
 #'  use the former, and \code{\link{read_cifti_separate}} to directly
 #'  use the latter.
 #' 
-#'  With either method, metadata is obtained with \code{\link{header_cifti}}.
+#'  With either method, metadata is obtained with \code{\link{info_cifti}}.
 #'
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the result be flattened into a single matrix? If \code{TRUE},

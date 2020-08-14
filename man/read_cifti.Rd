@@ -113,7 +113,7 @@ Make a "xifti" from CIFTI data either by exporting it as a single
  use the former, and \code{\link{read_cifti_separate}} to directly
  use the latter.
 
- With either method, metadata is obtained with \code{\link{header_cifti}}.
+ With either method, metadata is obtained with \code{\link{info_cifti}}.
 }
 \details{
 This function uses a system wrapper for the "wb_command"

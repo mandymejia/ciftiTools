@@ -16,10 +16,6 @@ template_xifti <- function(){
       cortex_right = NULL
     ),
     meta = list(
-      cifti = list(
-        intent = NULL,
-        misc = NULL
-      ),
       cortex = list(
         medial_wall_mask = list(
           left = NULL,
@@ -30,11 +26,10 @@ template_xifti <- function(){
       subcort = list(
         labels = NULL,
         mask = NULL,
-        mask_padding = list(
-          i = c(NA, NA), 
-          j = c(NA, NA), 
-          k = c(NA, NA)
-        )
+        trans_mat = NULL
+      ),
+      cifti = list(
+        intent = NULL
       )
     )
   )

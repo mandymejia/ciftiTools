@@ -50,28 +50,29 @@ unmask <- function(dat, mask, fill=NA) {
 #'  This effectively undoes a crop.
 #'
 #' @param x A 3D array, e.g. \code{unmask(xifti$data$subcort, xifti$meta$subcort$mask)}.
-#' @param padding A length-d list of length-2 vectors indicating the number of 
+#' @param padding A dx2 matrix indicating the number of 
 #'  slices to add at the beginning and end of each of the d dimensions, e.g.
 #'  \code{xifti$meta$subcort$mask_padding}.
 #' @param fill Values to pad with. Default: \code{NA}.
+#'
+#' @keywords internal
 #'
 #' @return The padded array
 pad_vol <- function(x, padding, fill=NA){
   new_dim <- vector("numeric", 3)
   for (ii in 1:length(dim(x))) {
-    new_dim[ii] <- dim(x)[ii] + padding[[ii]][1] + padding[[ii]][2]
+    new_dim[ii] <- dim(x)[ii] + padding[ii,1] + padding[ii,2]
   }
   y <- array(fill, dim=new_dim)
   y[
-    seq(padding[[1]][1]+1, padding[[1]][1]+dim(x)[1]),
-    seq(padding[[2]][1]+1, padding[[2]][1]+dim(x)[2]),
-    seq(padding[[3]][1]+1, padding[[3]][1]+dim(x)[3])
+    seq(padding[1,1]+1, padding[1,1]+dim(x)[1]),
+    seq(padding[2,1]+1, padding[2,1]+dim(x)[2]),
+    seq(padding[3,1]+1, padding[3,1]+dim(x)[3])
   ] <- x
   y
 }
 
 #' @rdname pad_vol
-#' @export
 #' 
 uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
@@ -137,19 +138,19 @@ crop_vol <- function(x) {
 
   if (all(unique(as.vector(x)) %in% c(NA, 0))) { stop("The array is empty.") }
 
-  padding <- rep(list(c(NA, NA)), d)
+  padding <- matrix(NA, nrow=d, ncol=2)
+  rownames(padding) <- strsplit(rep("ijklmnopqrstuvwxyz", ceiling(d/15)), "")[[1]][1:d]
   empty_slice <- vector("list", d)
   for (ii in 1:d) {
-    names(padding)[ii] <- substr(rep("ijklmnopqrstuvwxyz", ceiling(d/15)), ii, ii)
     empty_slice[[ii]] <- apply(x, ii, sum, na.rm=TRUE) == 0
     first_slice <- min(which(!empty_slice[[ii]]))
     last_slice <- max(which(!empty_slice[[ii]]))
-    padding[[ii]][1] <- ifelse(
+    padding[ii,1] <- ifelse(
       first_slice != 1, 
       first_slice - 1, 
       0
     )
-    padding[[ii]][2] <- ifelse(
+    padding[ii,2] <- ifelse(
       last_slice != length(empty_slice[[ii]]), 
       length(empty_slice[[ii]]) - last_slice, 
       0

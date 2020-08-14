@@ -141,7 +141,7 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
 
   if (is.null(resamp_res)) {
-    to_read <- c(list(cifti_map=header_cifti(cifti_fname)), to_read)
+    to_read <- c(list(cifti_map=info_cifti(cifti_fname)), to_read)
   } 
 
   # ROIs are not supported yet.

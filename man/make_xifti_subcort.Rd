@@ -18,7 +18,7 @@ the voxels should correspond to one another. Thus, zero-valued labels
 should correspond to voxels in \code{vol} that are constant 0 or NA.}
 
 \item{mask}{A pre-computed mask for \code{vol} and \code{labels}, i.e. from
-\code{header_cifti}. If \code{NULL} (default), the mask will instead be
+\code{info_cifti}. If \code{NULL} (default), the mask will instead be
 inferred from the zero-valued voxels of \code{labels}. Not supported yet!}
 
 \item{validate_mask}{Set this to \code{TRUE} to check that the mask only

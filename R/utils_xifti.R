@@ -142,4 +142,5 @@ supported_intents <- function(){
     c("dlabel.nii",   "NIFTI_INTENT_CONNECTIVITY_DENSE_LABELS",   3007, "ConnDenseLabel")
   ))
   colnames(df) <- c("extension", "intent_code", "value", "intent_name")
+  df
 }

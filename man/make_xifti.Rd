@@ -68,7 +68,7 @@ makeXIfTI(
 subcortical ROIs. Can be a file path for NIFTI data or an object from
 \code{\link[RNifti]{readNifti}}.}
 
-\item{cifti_map}{(Optional) The result of \code{\link{header_cifti}}. If 
+\item{cifti_map}{(Optional) The result of \code{\link{info_cifti}}. If 
  GIFTI and/or NIFTI components from a CIFTI are being provided, 
  providing \code{cifti_map} gives metadata information that would otherwise
  have to be inferred. 
