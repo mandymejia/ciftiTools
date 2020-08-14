@@ -74,6 +74,15 @@ read_cifti_separate <- function(
     ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,
       user_value_label="ROI_brainstructures")
   }
+  if (is.null(resamp_res)) {
+    cifti_info <- info_cifti(cifti_fname, wb_path)
+    if (!all(brainstructures %in% cifti_info$meta$cifti$brainstructures)) {
+      stop(paste0(
+        "Only the following brainstructures are present in the CIFTI file:",
+        paste(cifti_info$meta$cifti$brainstructures, collapse=", ")
+      ))
+    }
+  }
 
   if (verbose) { exec_time <- Sys.time() }
 
@@ -141,8 +150,8 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
 
   if (is.null(resamp_res)) {
-    to_read <- c(list(cifti_map=info_cifti(cifti_fname)), to_read)
-  } 
+    to_read <- c(list(cifti_info=cifti_info), to_read)
+  }
 
   # ROIs are not supported yet.
   is_ROI <- grepl("ROI", names(to_read))

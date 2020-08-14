@@ -178,50 +178,6 @@ is.3D_mask <- function(x) {
   TRUE
 }
 
-#' Validate the subcortical mask padding metadata
-#' 
-#' Check if object is valid for \code{xifti$meta$subcort$mask_padding}, where 
-#'  \code{xifti} is a \code{"xifti"} object.
-#' 
-#'  If the subcortical data was read in with \code{-cifti-export-dense-mapping},
-#'  some unpredictable and incomplete cropping is done to the subcortical array. 
-#'  We haven't figured out how to recover the original dimensions, e.g. 
-#'  91 x 109 x 91. To make the result of reading in the data with 
-#'  \code{-cifti-export-dense-mapping} the same as using \code{-cifti-separate},
-#'  we crop each array completely by removing all zero-valued edge slices. 
-#'  \code{xifti$meta$subcort$mask_padding} stores the padding data to recover
-#'  the original volume if \code{-cifti-separate} was used. It cannot be
-#'  determined if \code{-cifti-export-dense-mapping} was used due to the 
-#'  unpredictable and incomplete cropping it performs.
-#' 
-#'  This is a helper function for \code{\link{is.xifti}}.
-#' 
-#'  Requirements: it must be a list with entries named "i", "j", and "k". Each
-#'  should be a length-2 integer vector indicating the number of slices removed
-#'  before and after the brain volume along the corresponding dimension.
-#'
-#' @param x The putative subcortical mask padding.
-#'
-#' @return Logical indicating whether x is a valid subcortical mask padding.
-#' 
-is.xifti_subcort_mask_padding <- function(x) {
-  dim_names <- c("i", "j", "k")
-  if (!match_exactly(names(x), dim_names)) {
-    return(FALSE)
-  }
-
-  for (name in dim_names) {
-    pad <- x[[name]]
-    if (!is.vector(pad) || length(pad) != 2 || (!all(is.na(pad)) && !is.numeric(pad))) {
-      message(paste("Entry", name, "must be a length-2 numeric/NA vector.\n"))
-      return(FALSE)
-    }
-  }
-
-  TRUE
-}
-
-
 #' Validate the "meta" component of a \code{"xifti"} object
 #'
 #' Check if object is valid for \code{xifti$meta}, where \code{xifti} is a 
@@ -299,9 +255,11 @@ is.xifti_meta <- function(x) {
       return(FALSE)
     }
   }
-  if (!is.null(x$subcort$mask_padding) && !is.xifti_subcort_mask_padding(x$subcort$mask_padding)) {
-    message("Subcortical mask padding is invalid.\n"); return(FALSE)
+  if (!is.null(x$subcort$trans_mat) && !is.nummat(x$subcort$trans_mat)) {
+    message("Subcortical transformation matrix is invalid.\n"); return(FALSE)
   }
+
+  # [TO DO]: Check `cifti` component
 
   TRUE
 }
@@ -313,8 +271,7 @@ is.xifti_meta <- function(x) {
 #'  Requirements: the structure must match that of \code{\link{template_xifti}}. 
 #'  The size of each data entry must be compatible with the corresponding mask.
 #'  Metadata should be present if and only if the corresponding data is also 
-#'  present (except for the cortex resampling resolution and subcortical
-#'  mask padding).
+#'  present (except for the cortex resampling resolution).
 #' 
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
@@ -408,6 +365,7 @@ is.xifti <- function(x, messages=TRUE) {
   for (side in c("left", "right")) {
     cortex <- paste0("cortex_", side)
     if (!is.null(x$surf[[cortex]])) {
+      # [TO DO]: Remove this check?
       if (is.null(x$meta$cortex$medial_wall_mask[[side]])) {
         message(paste0("The ", side, " cortex surface geometry is present, but the data is not.\n"))
         return(FALSE)

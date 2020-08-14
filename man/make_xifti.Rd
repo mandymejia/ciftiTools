@@ -12,7 +12,7 @@ make_xifti(
   cortexR = NULL,
   subcortVol = NULL,
   subcortLab = NULL,
-  cifti_map = NULL,
+  cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
   read_dir = NULL,
@@ -26,7 +26,7 @@ makeXIfTI(
   cortexR = NULL,
   subcortVol = NULL,
   subcortLab = NULL,
-  cifti_map = NULL,
+  cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
   read_dir = NULL,
@@ -37,7 +37,7 @@ makeXIfTI(
 \item{cifti_fname}{(Optional) Path to a CIFTI file. 
 
  If provided, none of \code{cortexL}, \code{cortexR}, \code{subcortVol},
- \code{subcortLab}, and \code{cifti_map} should not be provided, since the 
+ \code{subcortLab}, and \code{cifti_info} should not be provided, since the 
  data will come from the CIFTI file only.}
 
 \item{cifti_brainstructures}{If \code{cifti_fname} is provided, use this
@@ -68,14 +68,14 @@ makeXIfTI(
 subcortical ROIs. Can be a file path for NIFTI data or an object from
 \code{\link[RNifti]{readNifti}}.}
 
-\item{cifti_map}{(Optional) The result of \code{\link{info_cifti}}. If 
+\item{cifti_info}{(Optional) The result of \code{\link{info_cifti}}. If 
  GIFTI and/or NIFTI components from a CIFTI are being provided, 
- providing \code{cifti_map} gives metadata information that would otherwise
+ providing \code{cifti_info} gives metadata information that would otherwise
  have to be inferred. 
 
  This argument is probably not necessary for end users: reading a CIFTI
  should be done by providing \code{cifti_fname}, and for reading separate
- GIFTI/NIFTI components \code{cifti_map} is not applicable.}
+ GIFTI/NIFTI components \code{cifti_info} is not applicable.}
 
 \item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
 path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}

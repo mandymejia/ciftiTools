@@ -165,6 +165,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   bs_names <- gsub("CIFTI_STRUCTURE_", "", bs_names)
 
   meta <- list(
+    brainstructures=NULL,
     cortex_left_mwall=NULL,
     cortex_right_mwall=NULL,
     subcort_trans_mat=NULL,
@@ -174,6 +175,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 
   # Subcortical Transformation Matrix
   if ("Volume" %in% names(xml)) {
+    meta$brainstructures <- c(meta$brainstructures, "subcortical")
     vol_tmat <- strsplit(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ[[1]], "\n")[[1]]
     vol_tmat <- vol_tmat[vol_tmat != ""]
     vol_tmat <- do.call(rbind, lapply(vol_tmat, function(x){as.numeric(strsplit(x, " ")[[1]])}))
@@ -184,6 +186,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   
   # Left Cortex
   if ("CORTEX_LEFT" %in% bs_names) { 
+    meta$brainstructures <- c(meta$brainstructures, "left")
     c_idx <- xml[[which(bs_names=="CORTEX_LEFT")]] 
     meta$cortex_left_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
       1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
@@ -191,6 +194,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 
   # Right Cortex
   if ("CORTEX_RIGHT" %in% bs_names) { 
+    meta$brainstructures <- c(meta$brainstructures, "right")
     c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]] 
     meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
       1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
@@ -341,12 +345,13 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
         levels=1:nrow(substructure_table()),
         labels=substructure_table()$ciftiTools_Name
       ),
-      mask = pad_vol(meta$subcort$mask, mask_pad, fill=0),
+      mask = pad_vol(meta$subcort$mask, mask_pad, fill=FALSE),
       trans_mat = data$subcort_trans_mat
     )
   }
 
   meta$cifti$intent <- intent
+  meta$cifti$brainstructures <- data$brainstructures
   meta$cifti <- c(meta$cifti, intn, list(misc=misc))
 
   meta

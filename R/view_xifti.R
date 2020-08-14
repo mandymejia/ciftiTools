@@ -480,6 +480,7 @@ view_xifti_surface <- function(xifti, idx=1,
   # ----------------------------------------------------------------------------
 
   # Check xifti, idx, and surfaces.
+  # [TO DO]: Check input surface matches the cortex!
   stopifnot(is.xifti(xifti))
   if (length(idx) > 1) stop("Only one time/column index is supported right now.")
   if (is.null(surfL)) {
@@ -849,14 +850,11 @@ view_xifti_volume <- function(
   #stop("Does not work.")
 
   stopifnot(is.xifti(xifti))
-  if (any(is.na(do.call(rbind, xifti$meta$subcort$mask_padding)))) {
-    stop("The subcortical mask padding must be known. Use `cifti_read_separate` or `write_cifti_from_separate` with a NIFTI file.")
-  }
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx]
-  vol <- unmask(values, pad_vol(xifti$meta$subcort$mask, xifti$meta$subcort$mask_padding, fill=FALSE), fill=0)
-  labs <- unmask(as.numeric(xifti$meta$subcort$labels), pad_vol(xifti$meta$subcort$mask, xifti$meta$subcort$mask_padding, fill=FALSE), fill=0)
+  vol <- unmask(values, xifti$meta$subcort$mask, fill=NA)
+  labs <- unmask(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {

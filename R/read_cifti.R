@@ -68,7 +68,6 @@ read_cifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  full_volume=FALSE,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
   wb_path=NULL, verbose=FALSE, ...){
 
@@ -77,12 +76,6 @@ read_cifti <- function(
   # ----------------------------------------------------------------------------
 
   if (flat) {
-    if (full_volume) {
-      warning(paste(
-        "No subcortical mask can be computed with the flat method.",
-        "Ignoring `full_volume==TRUE`.\n"
-      ))
-    }
     if (!is.null(resamp_res)) {
       warning(paste(
         "Resampling is not possible with the flat method.",
@@ -96,7 +89,7 @@ read_cifti <- function(
   # Check arguments. -----------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  require_separate_method <- full_volume || !is.null(resamp_res)
+  require_separate_method <- !is.null(resamp_res)
 
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical","all"),

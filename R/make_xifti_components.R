@@ -153,10 +153,6 @@ make_xifti_subcort <- function(
   #  }
   }
 
-  # Get the cropped mask.
-  mask_cropped <- crop_vol(mask)
-  names(dim(mask_cropped$data)) <- c("i", "j", "k")
-
   # Use mask on labels.
   substructure_levels <- substructure_table()$ciftiTools_Name
   labels <- factor(
@@ -170,8 +166,7 @@ make_xifti_subcort <- function(
   list(
     data = matrix(vol[mask], nrow=sum(mask)),
     labels = labels,
-    mask = mask_cropped$data,
-    mask_padding = mask_cropped$padding
+    mask = mask
   )
 }
 

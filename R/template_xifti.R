@@ -29,7 +29,8 @@ template_xifti <- function(){
         trans_mat = NULL
       ),
       cifti = list(
-        intent = NULL
+        intent = NULL,
+        brainstructures = NULL
       )
     )
   )

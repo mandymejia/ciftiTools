@@ -11,7 +11,6 @@ read_cifti(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
-  full_volume = FALSE,
   resamp_res = NULL,
   sphereL_fname = NULL,
   sphereR_fname = NULL,
@@ -67,12 +66,6 @@ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 Default: \code{c("left","right")} (cortical surface only).}
 
-\item{full_volume}{Is the full subcortical volume required, or
-is it okay to crop it by removing empty edge slices? Default: \code{FALSE}.
-If \code{TRUE}, the data will have to be read in with 
-\code{-cifti-separate}, which is slower than 
-\code{-cifti-convert -to-gifti-ext}.}
-
 \item{resamp_res}{Resolution to resample the cortical data and surface to.
  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
  have to be read in with \code{-cifti-separate}, which is slower than 
@@ -95,6 +88,12 @@ If not provided, should be set with
 
 \item{...}{Additional arguments to \code{\link{read_cifti_convert}} or 
 \code{\link{read_cifti_separate}}.}
+
+\item{full_volume}{Is the full subcortical volume required, or
+is it okay to crop it by removing empty edge slices? Default: \code{FALSE}.
+If \code{TRUE}, the data will have to be read in with 
+\code{-cifti-separate}, which is slower than 
+\code{-cifti-convert -to-gifti-ext}.}
 }
 \value{
 If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 

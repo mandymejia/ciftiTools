@@ -8,7 +8,7 @@
 #' @param cifti_fname (Optional) Path to a CIFTI file. 
 #' 
 #'  If provided, none of \code{cortexL}, \code{cortexR}, \code{subcortVol},
-#'  \code{subcortLab}, and \code{cifti_map} should not be provided, since the 
+#'  \code{subcortLab}, and \code{cifti_info} should not be provided, since the 
 #'  data will come from the CIFTI file only.
 #' @param cifti_brainstructures If \code{cifti_fname} is provided, use this
 #'  argument to select only certain brain structures to read in. This should be
@@ -34,14 +34,14 @@
 #' @param subcortLab (Required if \code{subcortVol} is present) Labels for 
 #'  subcortical ROIs. Can be a file path for NIFTI data or an object from
 #'  \code{\link[RNifti]{readNifti}}.
-#' @param cifti_map (Optional) The result of \code{\link{info_cifti}}. If 
+#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If 
 #'  GIFTI and/or NIFTI components from a CIFTI are being provided, 
-#'  providing \code{cifti_map} gives metadata information that would otherwise
+#'  providing \code{cifti_info} gives metadata information that would otherwise
 #'  have to be inferred. 
 #' 
 #'  This argument is probably not necessary for end users: reading a CIFTI
 #'  should be done by providing \code{cifti_fname}, and for reading separate
-#'  GIFTI/NIFTI components \code{cifti_map} is not applicable.
+#'  GIFTI/NIFTI components \code{cifti_info} is not applicable.
 #' @param surfL,surfR (Optional) [Left/right] brain surface model. Can be a file
 #'  path for GIFTI data or an object from \code{\link[gifti]{readgii}}.
 #' @param read_dir (Optional) Append a directory to all file names in the
@@ -58,14 +58,14 @@ make_xifti <- function(
   cifti_brainstructures=c("left", "right"),
   cortexL=NULL, cortexR=NULL, 
   subcortVol=NULL, subcortLab=NULL,
-  cifti_map=NULL,
+  cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
   read_dir=NULL, ...) {
   
   # Use `read_cifti` if `cifti_fname` was provided.
   if (!is.null(cifti_fname)) {
-    if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLab, cifti_map), is.null))) {
-      warning("`cifti_fname` was provided, so it will be read. separate GIFTI/NIFTI data and `cifti_map` will be ignored.")
+    if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLab, cifti_info), is.null))) {
+      warning("`cifti_fname` was provided, so it will be read. separate GIFTI/NIFTI data and `cifti_info` will be ignored.")
     }
     return( read_cifti(cifti_fname, brainstructures=cifti_brainstructures, ...) )
   }
@@ -83,14 +83,14 @@ make_xifti <- function(
 
   if (!is.null(cortexL)) { 
     cortexL <- make_xifti_cortex(
-      cortexL, "left", cifti_map$cortex$medial_wall_mask$left
+      cortexL, "left", cifti_info$cortex$medial_wall_mask$left
     )
     xifti$data$cortex_left <- cortexL$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(cortexL$medial_wall_mask)
   }
   if (!is.null(cortexR)) { 
     cortexR <- make_xifti_cortex(
-      cortexR, "right", cifti_map$cortex$medial_wall_mask$right
+      cortexR, "right", cifti_info$cortex$medial_wall_mask$right
     )
     xifti$data$cortex_right <- cortexR$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(cortexR$medial_wall_mask)
@@ -101,21 +101,17 @@ make_xifti <- function(
     stop("subcortVol and subcortLab must be provided together.")
   }
   if (!is.null(subcortVol)) {
-    if (!is.null(cifti_map)) {
-      # [TO DO]: support for cifti_map$subcort$mask
-      subcort <- make_xifti_subcort(
-        subcortVol, subcortLab, validate_mask=FALSE
-      )
-    } else {
-      subcort <- make_xifti_subcort(
-        subcortVol, subcortLab, validate_mask=FALSE
-      )
-    }
+    subcort <- make_xifti_subcort(subcortVol, subcortLab, validate_mask=FALSE)
     xifti$data$subcort <- subcort$data
     xifti$meta$subcort$labels <- subcort$labels
     xifti$meta$subcort$mask <- subcort$mask
-    xifti$meta$subcort$mask_padding <- subcort$mask_padding
+    if (!is.null(cifti_info)) {
+      xifti$meta$subcort$trans_mat <- cifti_info$trans_mat
+    }
   }
+
+  # CIFTI metadata.
+  if (!is.null(cifti_info)) { xifti$meta$cifti <- cifti_info$cifti }
 
   # Surfaces.
   if (!is.null(surfL)) { xifti$surf$cortex_left <- make_xifti_surface(surfL) }
@@ -133,7 +129,7 @@ makeXIfTI <- makexii <- function(
   cifti_brainstructures=c("left", "right"),
   cortexL=NULL, cortexR=NULL, 
   subcortVol=NULL, subcortLab=NULL,
-  cifti_map=NULL,
+  cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
   read_dir=NULL, ...) {
 
@@ -142,7 +138,7 @@ makeXIfTI <- makexii <- function(
     cifti_brainstructures=c("left", "right"),
     cortexL=NULL, cortexR=NULL, 
     subcortVol=NULL, subcortLab=NULL,
-    cifti_map=NULL,
+    cifti_info=NULL,
     surfL=NULL, surfR=NULL, 
     read_dir=NULL, ...
   )

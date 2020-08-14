@@ -44,7 +44,7 @@ A \code{"xifti"} object. See \code{\link{is.xifti}}.
 Read a CIFTI file by exporting it as a single GIFTI 
  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
  and obtaining the brainordinate mapping using 
- \code{-cifti-export-dense-mapping} (\code{\link{map_cifti}}).
+ \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}).
 }
 \details{
 This function uses a system wrapper for the "wb_command"
