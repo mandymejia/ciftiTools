@@ -11,7 +11,7 @@ make_xifti(
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,
-  subcortLab = NULL,
+  subcortLabs = NULL,
   cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -25,7 +25,7 @@ makeXIfTI(
   cortexL = NULL,
   cortexR = NULL,
   subcortVol = NULL,
-  subcortLab = NULL,
+  subcortLabs = NULL,
   cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -37,7 +37,7 @@ makeXIfTI(
 \item{cifti_fname}{(Optional) Path to a CIFTI file. 
 
  If provided, none of \code{cortexL}, \code{cortexR}, \code{subcortVol},
- \code{subcortLab}, and \code{cifti_info} should not be provided, since the 
+ \code{subcortLabs}, and \code{cifti_info} should not be provided, since the 
  data will come from the CIFTI file only.}
 
 \item{cifti_brainstructures}{If \code{cifti_fname} is provided, use this
@@ -64,7 +64,7 @@ makeXIfTI(
  The subcortical data should only be provided by one argument, so if 
  \code{subcortVol} is provided, \code{cifti_fname} should not be.}
 
-\item{subcortLab}{(Required if \code{subcortVol} is present) Labels for 
+\item{subcortLabs}{(Required if \code{subcortVol} is present) Labels for 
 subcortical ROIs. Can be a file path for NIFTI data or an object from
 \code{\link[RNifti]{readNifti}}.}
 

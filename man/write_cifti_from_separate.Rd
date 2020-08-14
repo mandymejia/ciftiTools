@@ -11,7 +11,7 @@ write_cifti_from_separate(
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
   subcortVol_fname,
-  subcortLab_fname,
+  subcortLabs_fname,
   timestep = NULL,
   timestart = NULL,
   wb_path = NULL
@@ -30,7 +30,7 @@ write_cifti_from_separate(
 
 \item{subcortVol_fname}{The subcortical data file.}
 
-\item{subcortLab_fname}{The subcortical labels file.}
+\item{subcortLabs_fname}{The subcortical labels file.}
 
 \item{timestep}{If a dense time series (dtseries.nii) file is being written,
 this is the time between measurements. If \code{NULL}, use the Connectome

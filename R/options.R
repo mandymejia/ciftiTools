@@ -6,7 +6,7 @@
 #' @return \code{NULL}.
 #'
 ciftiTools.checkOption <- function(opt, val=NULL){
-  stopifnot(opt %in% c("wb_path", "EPS"))
+  stopifnot(opt %in% c("wb_path", "EPS", "suppress_msgs"))
   if(is.null(val)){ return(invisible(NULL)) }
   if (opt == "wb_path") {
     if (!file.exists(val)) { 
@@ -19,6 +19,10 @@ ciftiTools.checkOption <- function(opt, val=NULL){
     stopifnot(is.numeric(val))
     stopifnot(val > 0)
     stopifnot(val < 1)
+  } else if (opt == "suppress_msgs") {
+    stopifnot(is.logical(val))
+    stopifnot(length(val) == 1)
+  }
   } else { stop() }
   invisible(NULL)
 }
@@ -62,4 +66,5 @@ ciftiTools.getOption <- function(opt) {
     }
   }
   ciftiTools.setOption("EPS", 1e-8)
+  ciftiTools.setOption("suppress_msgs", FALSE)
 }

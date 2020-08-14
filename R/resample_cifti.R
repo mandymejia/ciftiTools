@@ -156,7 +156,7 @@ resample_cifti <- function(
     ROIcortexL_fname = to_cif["ROIcortexL"],
     ROIcortexR_fname = to_cif["ROIcortexR"],
     subcortVol_fname = to_cif["subcortVol"],
-    subcortLab_fname = to_cif["subcortLab"]
+    subcortLabs_fname = to_cif["subcortLabs"]
   )
   if (verbose) { 
     print(Sys.time() - exec_time)

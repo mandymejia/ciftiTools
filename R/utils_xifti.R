@@ -1,3 +1,21 @@
+#' Table of CIFTI File Types (Intents) Supported By ciftiTools
+#' 
+#' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
+#' 
+#' @return A data.frame with each supported file type along the rows.
+#' 
+#' @keywords internal
+#' 
+supported_intents <- function(){
+  df <- data.frame(rbind(
+    c("dtseries.nii", "NIFTI_INTENT_CONNECTIVITY_DENSE_SERIES",   3002, "ConnDenseSeries"),
+    c("dscalar.nii",  "NIFTI_INTENT_CONNECTIVITY_DENSE_SCALARS",  3006, "ConnDenseScalar"),
+    c("dlabel.nii",   "NIFTI_INTENT_CONNECTIVITY_DENSE_LABELS",   3007, "ConnDenseLabel")
+  ))
+  colnames(df) <- c("extension", "intent_code", "value", "intent_name")
+  df
+}
+
 #' Summarise cifti objects
 #'
 #' Summary method for class "xifti"
@@ -83,7 +101,7 @@ get_cifti_extn <- function(cifti_fname) {
 #'
 #' @param label the file type: one of 
 #'  \code{"cortexL"}, \code{"cortexR"}, 
-#'  \code{"subcortVol"}, \code{"subcortLab"},
+#'  \code{"subcortVol"}, \code{"subcortLabs"},
 #'  \code{"ROIcortexL"}, \code{"ROIcortexR"}, 
 #'  \code{"ROIsubcortVol"},
 #'  \code{"validROIcortexL"}, or \code{"validROIcortexR"}.
@@ -95,7 +113,7 @@ get_cifti_extn <- function(cifti_fname) {
 #' 
 cifti_component_suffix <- function(label, GIFTI_type="func") {
   label <- match.arg(label, c(
-    "cortexL", "cortexR", "subcortVol", "subcortLab",
+    "cortexL", "cortexR", "subcortVol", "subcortLabs",
     "ROIcortexL", "ROIcortexR", "ROIsubcortVol", 
     "validROIcortexL", "validROIcortexR"
   ))
@@ -103,7 +121,7 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
     cortexL = paste0("L.", GIFTI_type, ".gii"),
     cortexR = paste0("R.", GIFTI_type, ".gii"),
     subcortVol = "nii",
-    subcortLab = "labels.nii",
+    subcortLabs = "labels.nii",
     ROIcortexL = paste0("ROI_L.", GIFTI_type, ".gii"),
     ROIcortexR = paste0("ROI_R.", GIFTI_type, ".gii"),
     ROIsubcortVol = "ROI.nii",
@@ -127,20 +145,19 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
   paste("resampled", round(resamp_res), bname, sep="_")
 }
 
-#' Table of CIFTI File Types (Intents) Supported By ciftiTools
+#' Unmask Cortex
 #' 
-#' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
+#' Get cortex data with medial wall vertices
 #' 
-#' @return A data.frame with each supported file type along the rows.
+#' @param cortex V vertices x T measurements matrix
+#' @param mwall Logical vector with T \code{TRUE} values.
+#' @param mwall_val The value to use for medial wall vertices.
+#' @return The unmasked cortex data.
 #' 
-#' @keywords internal
+#' @export
 #' 
-supported_intents <- function(){
-  df <- data.frame(rbind(
-    c("dtseries.nii", "NIFTI_INTENT_CONNECTIVITY_DENSE_SERIES",   3002, "ConnDenseSeries"),
-    c("dscalar.nii",  "NIFTI_INTENT_CONNECTIVITY_DENSE_SCALARS",  3006, "ConnDenseScalar"),
-    c("dlabel.nii",   "NIFTI_INTENT_CONNECTIVITY_DENSE_LABELS",   3007, "ConnDenseLabel")
-  ))
-  colnames(df) <- c("extension", "intent_code", "value", "intent_name")
-  df
+unmask_cortex <- function(cortex, mwall, mwall_val=NA) {
+  cdat <- matrix(medial_wall_val, nrow=length(mwall),  ncol=ncol(cortex))
+  cdat[mwall,] <- cortex
+  cdat
 }
