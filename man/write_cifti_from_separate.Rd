@@ -12,6 +12,8 @@ write_cifti_from_separate(
   ROIcortexR_fname = NULL,
   subcortVol_fname,
   subcortLab_fname,
+  timestep = NULL,
+  timestart = NULL,
   wb_path = NULL
 )
 }
@@ -29,6 +31,14 @@ write_cifti_from_separate(
 \item{subcortVol_fname}{The subcortical data file.}
 
 \item{subcortLab_fname}{The subcortical labels file.}
+
+\item{timestep}{If a dense time series (dtseries.nii) file is being written,
+this is the time between measurements. If \code{NULL}, use the Connectome
+Workbench default (1.0).}
+
+\item{timestart}{If a dense time series (dtseries.nii) file is being written,
+this is starting time. If \code{NULL}, use the Connectome Workbench default 
+(0.0).}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

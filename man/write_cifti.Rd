@@ -5,7 +5,14 @@
 \alias{writeCIfTI}
 \title{Write CIFTI}
 \usage{
-write_cifti(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
+write_cifti(
+  xifti,
+  cifti_fname,
+  timestep = NULL,
+  timestart = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
 
 writeCIfTI(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
 }
@@ -14,6 +21,14 @@ writeCIfTI(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+
+\item{timestep}{If a dense time series (dtseries.nii) file is being written,
+this is the time between measurements. If \code{NULL}, use the Connectome
+Workbench default (1.0).}
+
+\item{timestart}{If a dense time series (dtseries.nii) file is being written,
+this is starting time. If \code{NULL}, use the Connectome Workbench default 
+(0.0).}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 

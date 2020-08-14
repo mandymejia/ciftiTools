@@ -16,6 +16,10 @@ template_xifti <- function(){
       cortex_right = NULL
     ),
     meta = list(
+      cifti = list(
+        intent = NULL,
+        misc = NULL
+      ),
       cortex = list(
         medial_wall_mask = list(
           left = NULL,

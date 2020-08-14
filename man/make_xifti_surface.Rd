@@ -17,3 +17,4 @@ The surface, a list of vertices (spatial locations) and faces
 Coerce a file path, GIFTI object, or surface (list of vertices + faces)
  to a surface.
 }
+\keyword{internal}

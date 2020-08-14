@@ -21,6 +21,6 @@ any is.}
 The normalized path, or \code{NULL} if the path was \code{NULL}.
 }
 \description{
-Normalize and validate a path. Optionally, place it in a directory.
+Normalize and validate a path (optionally, within a certain directory).
 }
 \keyword{internal}

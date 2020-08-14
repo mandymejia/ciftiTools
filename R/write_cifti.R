@@ -166,6 +166,12 @@ write_xifti_components <- function(
 #'
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
+#' @param timestep If a dense time series (dtseries.nii) file is being written,
+#'  this is the time between measurements. If \code{NULL}, use the Connectome
+#'  Workbench default (1.0).
+#' @param timestart If a dense time series (dtseries.nii) file is being written,
+#'  this is starting time. If \code{NULL}, use the Connectome Workbench default 
+#'  (0.0).
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
@@ -174,6 +180,7 @@ write_xifti_components <- function(
 #'
 write_cifti <- function(
   xifti, cifti_fname, 
+  timestep=NULL, timestart=NULL,
   verbose=TRUE, wb_path=NULL) {
   stopifnot(!any(sapply(xifti$data, is.null)))
 
@@ -189,6 +196,7 @@ write_cifti <- function(
     cortexR_fname=sep_fnames$cortexR,
     subcortVol_fname=sep_fnames$subcortVol, 
     subcortLab_fname=sep_fnames$subcortLab,
+    timestep=timestep, timestart=timestart,
     wb_path=wb_path
   )
 }

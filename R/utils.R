@@ -1,6 +1,6 @@
 #' Format a path
 #'
-#' Normalize and validate a path. Optionally, place it in a directory.
+#' Normalize and validate a path (optionally, within a certain directory).
 #'
 #' @param path The path to normalize.
 #' @param dir (Optional) the directory to append to the beginning of the path.
@@ -265,22 +265,28 @@ match_exactly <- function(
 #' Runs a Connectome Workbench command that has already been formatted.
 #'
 #' @param cmd The full command, beginning after the workbench path.
+#' @param intern Return printed output? If \code{FALSE} (default), return
+#'  logical indicating success instead.
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating if the command finished successfully.
+#' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
+#'  If \code{intern==TRUE}, the printed output fo the command.
 #'
-run_wb_cmd <- function(cmd, wb_path){
+run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
   wb_cmd <- get_wb_cmd_path(wb_path)
   cmd <- paste(sys_path(wb_cmd), cmd)
+  
+  out <- system(cmd, intern=intern)
 
-  cmd_code <- system(cmd)
-  success <- cmd_code == 0
-  if (!success) {
-    message(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd
-    ))
+  if (!intern) {
+    out <- out == 0
+    if (!out) {
+      message(paste0(
+        "The Connectome Workbench command failed with code ", out, 
+        ". The command was:\n", cmd
+      ))
+    }
   }
 
-  success
+  out
 }

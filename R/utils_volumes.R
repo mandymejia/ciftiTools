@@ -112,14 +112,14 @@ coordlist_to_vol <- function(coords, fill=FALSE){
       ifelse(logical_vals, TRUE, 1),
       ifelse(logical_vals, FALSE, 0)
     )
-    coords <- cbind(coords, rep(val, nrow(coords)))
+    coords <- cbind(coords, val)
   } else {
     if (any(coords[,4] == fill, na.rm=TRUE)) { 
       warning("The fill value occurs in the data.") 
     }
   }
 
-  vol <- array(fill, dim=sapply(coords[,1:3], max, na.rm=TRUE))
+  vol <- array(fill, dim=apply(coords[,1:3], 2, max, na.rm=TRUE))
   vol[as.matrix(coords[,1:3])] <- coords[,4]
   vol
 }

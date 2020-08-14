@@ -76,6 +76,7 @@ print.xifti <- function(x, ...) {
 get_cifti_extn <- function(cifti_fname) {
   fname_parts <- unlist(strsplit(basename(cifti_fname), split=".", fixed = TRUE)) #split by "."
   extn <- paste(rev(fname_parts)[c(2,1)], collapse=".") #'dtseries.nii", "dscalar.nii", etc.
+  extn
 }
 
 #' Get the default file name suffix for a certain type of GIFTI/NIFTI file
@@ -124,4 +125,21 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
   stopifnot(!is.null(original_fname))
   bname <- basename(original_fname)
   paste("resampled", round(resamp_res), bname, sep="_")
+}
+
+#' Table of CIFTI File Types (Intents) Supported By ciftiTools
+#' 
+#' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
+#' 
+#' @return A data.frame with each supported file type along the rows.
+#' 
+#' @keywords internal
+#' 
+supported_intents <- function(){
+  df <- data.frame(rbind(
+    c("dtseries.nii", "NIFTI_INTENT_CONNECTIVITY_DENSE_SERIES",   3002, "ConnDenseSeries"),
+    c("dscalar.nii",  "NIFTI_INTENT_CONNECTIVITY_DENSE_SCALARS",  3006, "ConnDenseScalar"),
+    c("dlabel.nii",   "NIFTI_INTENT_CONNECTIVITY_DENSE_LABELS",   3007, "ConnDenseLabel")
+  ))
+  colnames(df) <- c("extension", "intent_code", "value", "intent_name")
 }
