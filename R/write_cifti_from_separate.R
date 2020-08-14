@@ -31,14 +31,14 @@ write_cifti_from_separate <- function(
 
   # Determine what kind of CIFTI is being written.
   # Must be one of the following after the check in `cifti_info`
-  create_cmd <- switch(as.character(cifti_info$cifti%intent),
+  create_cmd <- switch(as.character(cifti_info$cifti$intent),
     `3002` = "-cifti-create-dense-timeseries",
     `3006` = "-cifti-create-dense-scalar",
     `3007` = "-cifti-create-label"
   )
-  if (is.null(create_cmd))
+  if (is.null(create_cmd)) {
     stop(paste(
-      "NIFTI intent code", cifti_info$cifti%intent, "is not supported."
+      "NIFTI intent code", cifti_info$cifti$intent, "is not supported."
     ))
   }
   # TO-DO: adjust GIFTI/NIFTI written files accordingly?

@@ -44,15 +44,15 @@
 #'  with components "verts" (V x 3 data matrix indicating spatial locations of 
 #'  each vertex) and "faces" (F x 3 data matrix indicating the indices of the 
 #'  three vertices defining each triangular face).
-as.cifti(
+as.cifti <- function(
   cortexL=NULL, cortexL_mwall=NULL,
   cortexR=NULL, cortexR_mwall=NULL,
-  subcort=NULL, subcortLabs=NULL, subcortMask=NULL,
+  subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   surfL=NULL, surfR=NULL){
 
   if (!is.null(cortexL)) { stopifnot(is.numeric(cortexL)) }
   if (!is.null(cortexR)) { stopifnot(is.numeric(cortexR)) }
-  if (!is.null(subcort)) { stopifnot(is.numeric(subcort)) }
+  if (!is.null(subcortVol)) { stopifnot(is.numeric(subcortVol)) }
   if (!is.null(subcortLabs)) { stopifnot(is.factor(subcortLabs) | is.numeric(subcortLabs)) }
   if (!is.null(subcortMask)) { stopifnot(is.logical(subcortMask) | is.numeric(subcortMask)) }
   if (!is.null(surfL)) { stopifnot(is.list(surfL)) }
@@ -61,7 +61,7 @@ as.cifti(
   make_xifti(
     cortexL=cortexL, cortexL_mwall=cortexL_mwall,
     cortexR=cortexR, cortexR_mwall=cortexR_mwall,
-    subcort=subcort, subcortLabs=subcortLabs, subcortMask=subcortMask,
+    subcortVol=subcortVol, subcortLabs=subcortLabs, subcortMask=subcortMask,
     surfL=surfL, surfR=surfR
   )
 }

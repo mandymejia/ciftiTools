@@ -22,7 +22,6 @@ ciftiTools.checkOption <- function(opt, val=NULL){
   } else if (opt == "suppress_msgs") {
     stopifnot(is.logical(val))
     stopifnot(length(val) == 1)
-  }
   } else { stop() }
   invisible(NULL)
 }

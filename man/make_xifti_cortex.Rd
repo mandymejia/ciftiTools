@@ -4,22 +4,46 @@
 \alias{make_xifti_cortex}
 \title{Make "xifti" Cortical Components}
 \usage{
-make_xifti_cortex(cortex, side = NULL, medial_wall_mask = NULL)
+make_xifti_cortex(
+  cortex,
+  mwall = NULL,
+  cortex_is_masked = NULL,
+  rm_blank_mwall = TRUE,
+  rm_bad_mwall = TRUE,
+  infer_mwall = TRUE,
+  side = NULL,
+  mwall_source = NULL
+)
 }
 \arguments{
 \item{cortex}{A file path, GIFTI object, or data matrix representing
 cortical data.}
 
-\item{side}{Left or right? (Character). Just used to print warnings.}
+\item{mwall}{The medial wall mask: a logical vector with \code{FALSE} values 
+indicating vertices that make up the medial wall. It will be verified, and 
+overwritten or removed if inaccurate.}
 
-\item{medial_wall_mask}{A pre-determined mask for the medial wall: it should
-be logical with \code{FALSE} values indicating vertices that make up the
-medial wall. It will be verified, and overwritten/removed if inaccurate.
-Default: \code{NULL} will try to infer the medial wall mask, or leave it
-blank.}
+\item{cortex_is_masked}{Has the cortex data been masked yet? \code{NULL}
+(default) indicates whether it has been masked or not unknown.}
+
+\item{rm_blank_mwall}{If the medial wall mask is all \code{TRUE} 
+(indicating no medial wall vertices), should it be discarded? Default:
+\code{TRUE}. If \code{FALSE}, keep it.}
+
+\item{rm_bad_mwall}{If the medial wall mask doesn't match up with the 
+data (e.g. the vertex count doesn't add up), should it be discarded?
+Default: \code{TRUE}. If \code{FALSE}, raise an error.}
+
+\item{infer_mwall}{If the medial wall mask was not provided (or if it was
+discarded) should it be inferred from 0/NA values? Default: \code{TRUE}.}
+
+\item{side}{"left" or "right"? Just used to print warnings.}
+
+\item{mwall_source}{Character describing where the mwall came from. Just used
+to print warnings.}
 }
 \value{
-A list with components "data" and "medial_wall_mask".
+A list with components "data" and "mwall".
 }
 \description{
 Coerce a file path, GIFTI object, or data matrix to a data matrix

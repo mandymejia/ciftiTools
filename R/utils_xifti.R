@@ -151,13 +151,13 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
 #' 
 #' @param cortex V vertices x T measurements matrix
 #' @param mwall Logical vector with T \code{TRUE} values.
-#' @param mwall_val The value to use for medial wall vertices.
+#' @param mwall_fill The fill value to use for medial wall vertices.
 #' @return The unmasked cortex data.
 #' 
 #' @export
 #' 
-unmask_cortex <- function(cortex, mwall, mwall_val=NA) {
-  cdat <- matrix(medial_wall_val, nrow=length(mwall),  ncol=ncol(cortex))
+unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
+  cdat <- matrix(mwall_fill, nrow=length(mwall),  ncol=ncol(cortex))
   cdat[mwall,] <- cortex
   cdat
 }

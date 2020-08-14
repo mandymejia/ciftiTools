@@ -223,7 +223,7 @@ make_xifti_subcort <- function(
       mask <- labs > 0 | !is.na(labs)
       if (validate_mask) {
         mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
-        if !(all.equal(mask, mask_vol)) { 
+        if(!(all.equal(mask, mask_vol))) { 
           stop("The mask inferred from the labels did not match the mask inferred from the volume (NA/0 values).")
         }
       }
@@ -240,13 +240,13 @@ make_xifti_subcort <- function(
       stop_msg <- ""
       if (!labs_is_vectorized) {
         mask_labs <- labs > 0 | !is.na(labs)
-        if !(all.equal(mask, mask_labs)) { 
+        if(!(all.equal(mask, mask_labs))) { 
           stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the labels (NA/0 values). ")
         }
       }
       if (!vol_is_vectorized) {
         mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
-        if !(all.equal(mask, mask_vol)) { 
+        if(!(all.equal(mask, mask_vol))) { 
           stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the volume (NA/0 values). ")
         }
       }

@@ -4,35 +4,61 @@
 \alias{make_xifti_subcort}
 \title{Make "xifti" Subcortical Components}
 \usage{
-make_xifti_subcort(vol, labels, mask = NULL, validate_mask = FALSE)
+make_xifti_subcort(vol, labs, mask = NULL, validate_mask = FALSE)
 }
 \arguments{
-\item{vol}{File path or array for the volumetric subcortical data.
-It should be a 3D or 4D array where the first three dimensions are spatial,
-and the fourth dimension is the measurements per voxel (so if one measurement
-is made per voxel, it will be a 3D array).}
+\item{vol}{represents the data values of the subcortical volume. It is either 
+a path to a NIFTI file, a 3D/4D data array (i x j x k x T), or a vectorized 
+data matrix (V_S voxels x T measurements). If it's vectorized, voxels should 
+be in spatial order.}
 
-\item{labels}{File path or array for the subcortical labels. The first three
-dimensions of \code{labels} should be the same as those of \code{vol}, and
-the voxels should correspond to one another. Thus, zero-valued labels
-should correspond to voxels in \code{vol} that are constant 0 or NA.}
+\item{labs}{represents the brainstructure labels of each voxel: see
+\code{\link{substructure_table}}. It is either a path to a NIFTI file, a 3D 
+data array (i x j x k) of brainstructure indices 3-21 with 0 representing 
+out-of-mask voxels; or, a V_S-length vector in spatial order with 
+brainstructure names as factors, or with brainstructure indices as integers.}
 
-\item{mask}{A pre-computed mask for \code{vol} and \code{labels}, i.e. from
-\code{info_cifti}. If \code{NULL} (default), the mask will instead be
-inferred from the zero-valued voxels of \code{labels}. Not supported yet!}
+\item{mask}{is a logical 3D data array (i x j x k) where \code{TRUE}
+values indicate voxels inside the brain mask. If it is not provided, the
+mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
+(or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
+\code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
+is not provided, the mask cannot be inferred so an error occur.}
 
-\item{validate_mask}{Set this to \code{TRUE} to check that the mask only
-removes zero-valued voxels in \code{vol} and \code{labels}.  
-Default: \code{FALSE} (saves time).}
+\item{validate_mask}{If \code{mask} is provided, set this to \code{TRUE} to 
+check that the mask only removes NA- and zero-valued voxels in \code{vol} 
+and \code{labs}. Default: \code{FALSE} (saves time).}
 }
 \value{
-A list with components "data", "labels", "mask", and "mask_padding".
+A list with components "data", "labels" and "mask". The first two
+ will be vectorized and ordered spatially.
 
- The subcortical labels will be ordered spatially (not alphabetically
- according to the corresponding \code{\link{substructure_table}}).
+ The volume can be recovered using: 
+   vol <- unmask(data, mask, fill=NA) 
+   labs <- unmask(labels, mask, fill=0)
 }
 \description{
-Coerce a volume and labels into valid entries for \code{xifti$data$subcort}
- and \code{xifti$meta$subcort}. They can both be file paths or arrays. 
- Neither should be flattened/vectorized. They must be compatible.
+Coerce subcortical data into valid entries for \code{xifti$data$subcort}
+ and \code{xifti$meta$subcort}. All data arguments can be matrices/arrays. 
+ Additionally, the subcortical volume and labels can be paths to NIFTI files.
+ If the mask is not provided, it will be inferred from the labels, or the 
+ volume if the labels are already vectorized.
 }
+\details{
+\code{subcortVol} is either a 3D/4D data array (i x j x k x T) or a 
+ vectorized data matrix (V_S voxels x T measurements). If it's vectorized, 
+ voxels should be in spatial order.
+
+ \code{subcortLabs} is either a 3D data array (i x j x k) or a V_S-length 
+ vector of subcortical brainstructure labels (as factors) or their indices 
+ (as integers): see \code{\link{substructure_table}}. If it's vectorized,
+ the labels should be in spatial order.
+ 
+ \code{subcortMask} is a logical 3D data array (i x j x k) where \code{TRUE}
+ values indicate voxels inside the brain mask. If it is not provided, the
+ mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
+ (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
+ \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
+ is not provided, the mask cannot be inferred so an error occur.
+}
+\keyword{internal}

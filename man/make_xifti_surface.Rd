@@ -14,7 +14,7 @@ The surface, a list of vertices (spatial locations) and faces
  (defined by three vertices).
 }
 \description{
-Coerce a file path, GIFTI object, or surface (list of vertices + faces)
- to a surface.
+Coerce a file path, GIFTI object (with entries "pointset" and "triangle"), 
+ or surface (list of vertices + faces) to a surface.
 }
 \keyword{internal}

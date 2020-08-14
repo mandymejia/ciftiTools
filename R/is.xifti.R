@@ -138,7 +138,7 @@ is.xifti_surface <- function(x) {
 #'
 #' @inheritSection labels_Description Label Levels
 #' 
-is.subcort_labels <- function(x) {
+is.subcort_labs <- function(x) {
   if (!is.factor(x)) {
     message("The labels must be a factor.\n"); return(FALSE)
   }
@@ -243,7 +243,7 @@ is.xifti_meta <- function(x) {
   if (!match_exactly(names(x$subcort), names(y$subcort))) { 
     message("Subcortical sublist names are not correct.\n"); return(FALSE) 
   }
-  if (!is.null(x$subcort$labels) && !is.subcort_labels(x$subcort$labels)) {
+  if (!is.null(x$subcort$labels) && !is.subcort_labs(x$subcort$labels)) {
     message("Subcortical labels are invalid.\n"); return(FALSE)
   }
   if (!is.null(x$subcort$mask) && !is.3D_mask(x$subcort$mask)) {

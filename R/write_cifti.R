@@ -82,9 +82,9 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #'
 #' @inheritParams xifti_Param
 #' @inheritParams write_dir_Param_generic
-#' @param medial_wall_val Value to use for the medial wall in the cortex GIFTIs. 
+#' @param mwall_fill Value to use for the medial wall in the cortex GIFTIs. 
 #'  Default: \code{NA}.
-#' @param subcortex_fill_val Value to use for out-of-mask voxels in the subcortex. 
+#' @param subcort_fill Value to use for out-of-mask voxels in the subcortex. 
 #'  Default: \code{0}.
 #' @inheritParams verbose_Param_FALSE
 #' @inheritParams wb_path_Param
@@ -96,11 +96,11 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #' 
 write_xifti_components <- function(
   xifti, write_dir=NULL, 
-  medial_wall_val=NA, subcortex_fill_val=0,
+  mwall_fill=NA, subcort_fill=0,
   verbose=FALSE, wb_path=NULL) {
   # Check arguments.
   stopifnot(is.xifti(xifti))
-  stopifnot(length(medial_wall_val)==1)
+  stopifnot(length(mwall_fill)==1)
 
   # Get intermediate file names.
   if (is.null(write_dir)) { write_dir <- getwd() }
@@ -153,12 +153,12 @@ write_xifti_components <- function(
     }
     ## Data.
     writeNifti(
-      unmask(xifti$data$subcort, mask, fill=subcortex_fill_val), 
+      unmask(xifti$data$subcort, mask, fill=subcort_fill), 
       sep_fnames$subcortVol
     )
     ## Labels..
     writeNifti(
-      unmask(as.numeric(xifti$meta$subcort$labels), mask, fill=subcortex_fill_val), 
+      unmask(as.numeric(xifti$meta$subcort$labels), mask, fill=subcort_fill), 
       sep_fnames$subcortLabs
     )
     # Add back subcortical label information.
