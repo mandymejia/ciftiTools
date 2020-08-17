@@ -202,9 +202,6 @@ is.xifti_meta <- function(x) {
   if (!match_exactly(names(x$cortex), names(y$cortex))) { 
     message("Cortex sublist names are not correct.\n"); return(FALSE) 
   }
-  if (!is.null(x$cortex$resamp_resolution) && !is.numeric(x$cortex$resamp_resolution)) {
-    message("Cortex resampling resolution must be numeric.\n"); return(FALSE)
-  }
   if (!is.null(x$cortex$medial_wall_mask$left)) {
     if (!is.logical(x$cortex$medial_wall_mask$left)) {
       message("Left cortex medial wall mask must be logical.\n"); return(FALSE)
@@ -259,7 +256,79 @@ is.xifti_meta <- function(x) {
     message("Subcortical transformation matrix is invalid.\n"); return(FALSE)
   }
 
-  # [TO DO]: Check `cifti` component
+  # cifti
+  if (!is.null(x$cifti)) {
+    if (!all(x$cifti$brainstructures %in% c("left", "right", "subcortical"))) {
+      message(paste(
+        "CIFTI brainstructures must be one or several of the following:",
+        "left, righ, subcortical.\n"
+      ))
+      return(FALSE)
+    }
+
+    if (!is.null(x$cifti$intent)) {
+      intent <- x$cifti$intent
+      # [TO DO]: Require these fields? No, right?
+      if (intent == 3002) {
+        if (!is.null(x$cifti$time_start)) {
+          if (!is.numeric(x$cifti$time_start) || length(x$cifti$time_start)!=1) {
+            message("cifti$time_start must be a number.\n"); return(FALSE)
+          }
+        }
+        if (!is.null(x$cifti$time_step)) {
+          if (!is.numeric(x$cifti$time_step) || length(x$cifti$time_step)!=1) {
+            message("cifti$time_step must be a number.\n"); return(FALSE)
+          }
+        }
+        if (!is.null(x$cifti$time_unit)) {
+          time_units <- c("second", "hertz", "meter", "radian")
+          if (!(x$cifti$time_unit %in% time_units)) {
+            message("cifti$time_unit must be second, hertz, meter, or radian.\n")
+            if (tolower(x$cifti_time_unit) %in% time_units) {
+              message("Use lowercase.\n")
+            }
+            return(FALSE)
+          }
+        }
+      } else if (intent == 3006) {
+        if (!is.null(x$cifti$names)) {
+          if (!is.character(x$cifti$names)) {
+            message("cifti$names must be a character vector.\n"); return(FALSE)
+          }
+        }
+        names_3006 <- c(cifti_meta_names, "names")
+        bad_names <- !(names(x$cifti) %in% names(3006))
+      } else if (intent == 3007) {
+        if (!is.null(x$cifti$labels)) {
+          if (!is.data.frame(x$cifti$labels)) {
+            message("cifti$labels must be a data.frame.\n"); return(FALSE)
+          }
+          if (!all(colnames(x$cifti$labels) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
+            message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
+            return(FALSE)
+          }
+        }
+      }
+      intent_specific_names <- switch(as.character(intent),
+        `3002` = c("time_start", "time_step", "time_unit"),
+        `3006` = c("names"),
+        `3007` = c("labels")
+      )
+      cifti_meta_names <- c(
+        "intent", "brainstructures", "misc", 
+        intent_specific_names
+      )
+      bad_names <- !(names(x$cifti) %in% cifti_meta_names)
+      if (any(bad_names)) {
+        extn_name <- supported_intents()$extension[which(supported_intents()$value == x$cifti$intent)]
+        message(paste0(
+          "The following metadata field(s) in $cifti is invalid for ",
+          "intent ", x$cifti$intent, " (", extn_name, "):",
+          paste(names(x$cifti)[bad_names], collapse=", ")
+        ))
+      }
+    }
+  }
 
   TRUE
 }
@@ -271,7 +340,7 @@ is.xifti_meta <- function(x) {
 #'  Requirements: the structure must match that of \code{\link{template_xifti}}. 
 #'  The size of each data entry must be compatible with the corresponding mask.
 #'  Metadata should be present if and only if the corresponding data is also 
-#'  present (except for the cortex resampling resolution).
+#'  present.
 #' 
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
@@ -383,6 +452,17 @@ is.xifti <- function(x, messages=TRUE) {
       }
     }
   }
+
+  # For intent 3006 (.dscalar.nii), each measurement should be named.
+  if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3006)) {
+    if (!is.null(x$meta$cifti$names)) {
+      if (length(x$meta$cifti$names) != ncol(do.call(cbind, x$data))) {
+        message("There must be as many meta$cifti$names as there are data columns.\n")
+        return(FALSE)
+      }
+    }
+  }
+  # [TO DO]: Check label values for .dlabel? All data values must be in label table?
 
   TRUE
 }

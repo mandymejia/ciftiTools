@@ -439,7 +439,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and 
 #'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
 #'  Each can be a file path for a GIFTI, a file read by gifti::readgii, 
-#'  or an object of class "xifti_surface". If provided, they will override 
+#'  or a list with components "vertices" and "faces". If provided, they will override 
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
 #'  Otherwise, leave these arguments as \code{NULL} (default) to use 
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.

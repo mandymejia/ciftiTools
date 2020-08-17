@@ -140,7 +140,7 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
     rownames(labs) <- as.character(sapply(xml$NamedMap$LabelTable, function(x){x[[1]]}))
     colnames(labs) <- c("Key", "Red", "Green", "Blue", "Alpha")
     meta <- list(
-      labels=labs
+      labels=  as.data.frame(labs)
     )
   } else { stop("Internal error: CIFTI intent not supported.") }
   meta
@@ -172,17 +172,6 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     subcort_labs=NULL,
     subcort_dims=NULL
   )
-
-  # Subcortical Transformation Matrix
-  if ("Volume" %in% names(xml)) {
-    meta$brainstructures <- c(meta$brainstructures, "subcortical")
-    vol_tmat <- strsplit(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ[[1]], "\n")[[1]]
-    vol_tmat <- vol_tmat[vol_tmat != ""]
-    vol_tmat <- do.call(rbind, lapply(vol_tmat, function(x){as.numeric(strsplit(x, " ")[[1]])}))
-    meta$subcort_trans_mat <- vol_tmat
-
-    meta$subcort_dims <- as.numeric(strsplit(attr(xml$Volume, "VolumeDimensions"), ",")[[1]])
-  }
   
   # Left Cortex
   if ("CORTEX_LEFT" %in% bs_names) { 
@@ -198,6 +187,17 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]] 
     meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
       1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
+  }
+
+  # Subcortical Transformation Matrix
+  if ("Volume" %in% names(xml)) {
+    meta$brainstructures <- c(meta$brainstructures, "subcortical")
+    vol_tmat <- strsplit(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ[[1]], "\n")[[1]]
+    vol_tmat <- vol_tmat[vol_tmat != ""]
+    vol_tmat <- do.call(rbind, lapply(vol_tmat, function(x){as.numeric(strsplit(x, " ")[[1]])}))
+    meta$subcort_trans_mat <- vol_tmat
+
+    meta$subcort_dims <- as.numeric(strsplit(attr(xml$Volume, "VolumeDimensions"), ",")[[1]])
   }
 
   # Subcortical
@@ -230,8 +230,8 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     "OTHER", "OTHER_GREY_MATTER", "OTHER_WHITE_MATTER"
   )
   if (any(bs_names %in% unsupported_bs)) {
-    warning(paste(
-      "These brainstructures are not supported by ciftiTools:",
+    ciftiTools_warn(paste(
+      "Some brainstructures present in the CIFTI file are not supported by ciftiTools:",
       paste(bs_names[bs_names %in% unsupported_bs], collapse=" ")
     ))
   }
@@ -334,10 +334,11 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
 
   meta <- template_xifti()$meta
 
-  meta$cortex$medial_wall_mask$left <- data$cortex_left_mwall
-  meta$cortex$medial_wall_mask$right <- data$cortex_right_mwall
+  meta$cortex$medial_wall_mask["left"] <- list(data$cortex_left_mwall)
+  meta$cortex$medial_wall_mask["right"] <- list(data$cortex_right_mwall)
   if (!is.null(data$subcort_labs)) {
     meta$subcort$mask <- data$subcort_labs != 0
+    # Add back slices so subcortical dimensions match NIFTI header
     mask_pad <- cbind(0, data$subcort_dims-dim(meta$subcort$mask))
     meta$subcort <- list(
       labels = factor(
