@@ -63,64 +63,27 @@ read_cifti_convert <- function(
   # Place cortex data into the "xifti" object.
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
-  verify_cortex_and_mwall <- function(cortex, side, medial_wall_mask){
-    if (sum(medial_wall_mask) != nrow(cortex)) {
-      warning(paste(
-        "The medial wall mask obtained from the dense mapping metadata",
-        "was length", length(medial_wall_mask), "and had",
-        sum(medial_wall_mask), "vertices within the mask (non-medial wall).",
-        "But there are", nrow(cortex), "rows in the flat", side, 
-        "cortex, which doesn't match the number of vertices in the mask.",
-        "If the medial wall mask is needed, try read_cifti_separate() instead",
-        "which doesn't depend on the dense mapping metadata. For now, the medial",
-        "wall mask will not be included in the \"xifti\".\n"
-      ))
-      medial_wall_mask <- NULL
-    } else if (all(medial_wall_mask)) {
-      if (ncol(cortex) > 1) {
-        new_medial_wall_mask <- !apply(cortex==0 | is.na(cortex), 1, all)
-        if (any(!new_medial_wall_mask)) {
-          warning(paste(
-            "The length of the medial wall mask from the", side, "cortex metadata",
-            "was equal to the number of vertices, and it was all TRUE",
-            "(indicating no medial wall).",
-            "But, constant 0/NA rows were detected. Discarding the mask from",
-            "the metadata and inferring from the", side, "cortex data instead.\n"
-          ))
-          medial_wall_mask <- new_medial_wall_mask
-          cortex <- cortex[new_medial_wall_mask,, drop=FALSE]
-        }
-      } else {
-        warning(paste(
-          "The length of the medial wall mask from the", side, "cortex metadata",
-          "was equal to the number of vertices, and it was all TRUE",
-          "(indicating no medial wall).",
-          "The", side, "medial wall mask will not be included in the \"xifti\".\n"
-        ))
-        medial_wall_mask <- NULL
-      }
-    }
-    list(data = cortex, medial_wall_mask = medial_wall_mask)
-  }
   if ("left" %in% brainstructures) {
-    cortex <- verify_cortex_and_mwall(
+    cortex <- make_xifti_cortex(
       xifti_data[1:last_left,, drop=FALSE],
-      "left",
-      xifti$meta$cortex$medial_wall_mask$left
+      side = "left", #cortex_is_masked=TRUE,
+      mwall = xifti$meta$cortex$medial_wall_mask$left,
+      mwall_source="the CIFTI being read in"
     )
     xifti$data$cortex_left <- cortex$data
-    xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$medial_wall_mask)
+    xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$mwall)
   } else {
     xifti$meta$cortex$medial_wall_mask["left"] <- list(template_xifti()$meta$cortex$medial_wall_mask$left)
   }
   if ("right" %in% brainstructures) {
-    cortex <- verify_cortex_and_mwall(
+    cortex <- make_xifti_cortex(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
-      "right",
-      xifti$meta$cortex$medial_wall_mask$right
+      side = "right", #cortex_is_masked=TRUE,
+      mwall = xifti$meta$cortex$medial_wall_mask$right,
+      mwall_source="the CIFTI being read in"
     )
     xifti$data$cortex_right <- cortex$data
-    xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$medial_wall_mask)
+    xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$mwall)
   } else {
     xifti$meta$cortex$medial_wall_mask["right"] <- list(template_xifti()$meta$cortex$medial_wall_mask$right)
   }

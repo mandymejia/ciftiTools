@@ -42,7 +42,7 @@ make_xifti_cortex <- function(
   if (is.null(mwall_source)) {mwall_source <- ""}
 
   # Cannot infer the medial wall if the cortex has been masked.
-  if (cortex_is_masked) { infer_mwall <- FALSE }
+  if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
 
   # File --> GIFTI.
   if (is.fname(cortex)) {
@@ -52,7 +52,13 @@ make_xifti_cortex <- function(
   if (is.gifti(cortex)) {
     cortex <- do.call(cbind, cortex$data)
   } else {
-    stop("`cortex` was not an existing file (check file name?), nor was it an object made by `gifti::read_gifti()`.")
+    if (!is.numeric(cortex) && !is.matrix(cortex)) {
+      stop(paste(
+        "`cortex` was not an existing file (check file name?),",
+        "a result of `gifti::read_gifti()`,",
+        "or a numeric matrix."
+      ))
+    }
   }
 
   # Check if medial wall mask is valid.
@@ -129,7 +135,7 @@ make_xifti_cortex <- function(
   if (!(msg == "")) { ciftiTools_msg(msg) }
 
   # Apply a valid medial wall mask to an unmasked cortex.
-  if (!is.null(mwall) && !cortex_is_masked) {
+  if (!is.null(mwall) && (is.null(cortex_is_masked) || (!is.null(cortex_is_masked) && !cortex_is_masked))) {
     cortex <- cortex[mwall,, drop=FALSE]
     cortex_is_masked <- TRUE
   }
@@ -300,7 +306,13 @@ make_xifti_surface <- function(surf) {
   if (is.gifti(surf)) { 
     surf <- gifti_to_surf(surf) 
   } else {
-    stop("`surf` was not an existing file (check file name?), nor was it an object made by `gifti::read_gifti()`.")
+    if (!(is.list(surf) && names(surf)==c("vertices", "faces"))) {
+      stop(paste(
+        "`surf` was not an existing file (check file name?),",
+        "a result of `gifti::read_gifti()`,",
+        "or a list with components `vertices` and `faces`."
+      ))
+    }
   }
 
   # Return cifti_surface or error.

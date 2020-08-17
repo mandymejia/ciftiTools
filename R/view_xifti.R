@@ -570,6 +570,13 @@ view_xifti_surface <- function(xifti, idx=1,
         "(xifti$surf$cortex_left or the surfL argument to view_xifti) was provided."))
     }
 
+    if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+      xifti$meta$cortex$medial_wall_mask$left <- rep(TRUE, nrow(surfL$vertices))
+    }
+    if (nrow(surfL$vertices) != length(xifti$meta$cortex$medial_wall_mask$left)) {
+      stop("The left surface does not have the same number of vertices as the data (length of medial wall mask, or rows in data if medial wall mask is absent.)")
+    }
+
     # Get data values.
     valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices))
     if (!is.null(xifti$data$cortex_left)) { 
@@ -591,6 +598,13 @@ view_xifti_surface <- function(xifti, idx=1,
     if (is.null(surfR)) { 
       stop(paste0("The right hemisphere was requested, but no surface data ",
         "(xifti$surf$cortex_right or the surfR argument to view_xifti) was provided."))
+    }
+
+    if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+      xifti$meta$cortex$medial_wall_mask$right <- rep(TRUE, nrow(surfR$vertices))
+    }
+    if (nrow(surfR$vertices) != length(xifti$meta$cortex$medial_wall_mask$right)) {
+      stop("The right surface does not have the same number of vertices as the data (length of medial wall mask, or rows in data if medial wall mask is absent.)")
     }
 
     # Get data values.

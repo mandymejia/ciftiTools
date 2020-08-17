@@ -27,18 +27,16 @@ write_cifti_from_separate <- function(
   timestep=NULL, timestart=NULL,
   wb_path=NULL){
 
-  cifti_info <- info_cifti(cifti_fname, wb_path)
-
   # Determine what kind of CIFTI is being written.
   # Must be one of the following after the check in `cifti_info`
-  create_cmd <- switch(as.character(cifti_info$cifti$intent),
-    `3002` = "-cifti-create-dense-timeseries",
-    `3006` = "-cifti-create-dense-scalar",
-    `3007` = "-cifti-create-label"
+  create_cmd <- switch(get_cifti_extn(cifti_fname),
+    "dtseries.nii" = "-cifti-create-dense-timeseries",
+    "dscalar.nii" = "-cifti-create-dense-scalar",
+    "dlabel.nii" = "-cifti-create-label"
   )
   if (is.null(create_cmd)) {
     stop(paste(
-      "NIFTI intent code", cifti_info$cifti$intent, "is not supported."
+      "CIFTI extension", get_cifti_extn(cifti_fname), "is not yet supported by ciftiTools."
     ))
   }
   # TO-DO: adjust GIFTI/NIFTI written files accordingly?
@@ -50,7 +48,7 @@ write_cifti_from_separate <- function(
   # Volume
   cmd <- paste(
     create_cmd, sys_path(cifti_fname), 
-    "-volume", sys_path(subcortVol_fname), sys_path(subcortLabs_fname), 
+    "-volume", sys_path(subcortVol_fname), sys_path(subcortLabs_fname)
   )
 
   # Left
@@ -60,7 +58,7 @@ write_cifti_from_separate <- function(
   }
 
   # Right
-  cmd <- paste(cmd, "-right-metric", sys_path(cortexR_fname) )
+  cmd <- paste(cmd, "-right-metric", sys_path(cortexR_fname))
   if (!is.null(ROIcortexR_fname)) {
     cmd <- paste(cmd, "-roi-right", sys_path(ROIcortexR_fname))
   }

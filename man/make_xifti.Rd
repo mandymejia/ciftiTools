@@ -2,7 +2,6 @@
 % Please edit documentation in R/make_xifti.R
 \name{make_xifti}
 \alias{make_xifti}
-\alias{makeXIfTI}
 \title{Assemble a CIFTI or GIFTI/NIFTI Components into a "xifti"}
 \usage{
 make_xifti(
@@ -15,20 +14,6 @@ make_xifti(
   subcortVol = NULL,
   subcortLabs = NULL,
   subcortMask = NULL,
-  cifti_info = NULL,
-  surfL = NULL,
-  surfR = NULL,
-  read_dir = NULL,
-  ...
-)
-
-makeXIfTI(
-  cifti_fname = NULL,
-  cifti_brainstructures = c("left", "right"),
-  cortexL = NULL,
-  cortexR = NULL,
-  subcortVol = NULL,
-  subcortLabs = NULL,
   cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,

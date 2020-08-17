@@ -44,7 +44,7 @@
 #'  with components "verts" (V x 3 data matrix indicating spatial locations of 
 #'  each vertex) and "faces" (F x 3 data matrix indicating the indices of the 
 #'  three vertices defining each triangular face).
-as.cifti <- function(
+as.xifti <- function(
   cortexL=NULL, cortexL_mwall=NULL,
   cortexR=NULL, cortexR_mwall=NULL,
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
@@ -59,6 +59,22 @@ as.cifti <- function(
   if (!is.null(surfR)) { stopifnot(is.list(surfR)) }
 
   make_xifti(
+    cortexL=cortexL, cortexL_mwall=cortexL_mwall,
+    cortexR=cortexR, cortexR_mwall=cortexR_mwall,
+    subcortVol=subcortVol, subcortLabs=subcortLabs, subcortMask=subcortMask,
+    surfL=surfL, surfR=surfR
+  )
+}
+
+#' @rdname as.xifti
+#' @export
+as_xifti <- as.cifti <- as_cifti <- function(
+  cortexL=NULL, cortexL_mwall=NULL,
+  cortexR=NULL, cortexR_mwall=NULL,
+  subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
+  surfL=NULL, surfR=NULL){
+
+  as.xifti(
     cortexL=cortexL, cortexL_mwall=cortexL_mwall,
     cortexR=cortexR, cortexR_mwall=cortexR_mwall,
     subcortVol=subcortVol, subcortLabs=subcortLabs, subcortMask=subcortMask,

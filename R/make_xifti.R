@@ -157,26 +157,3 @@ make_xifti <- function(
   if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   structure(xifti, class="xifti")
 }
-
-
-#' @rdname make_xifti
-#' @export
-makeXIfTI <- makexii <- function(
-  cifti_fname=NULL,
-  cifti_brainstructures=c("left", "right"),
-  cortexL=NULL, cortexR=NULL, 
-  subcortVol=NULL, subcortLabs=NULL,
-  cifti_info=NULL,
-  surfL=NULL, surfR=NULL, 
-  read_dir=NULL, ...) {
-
-  make_xifti(
-    cifti_fname=NULL,
-    cifti_brainstructures=c("left", "right"),
-    cortexL=NULL, cortexR=NULL, 
-    subcortVol=NULL, subcortLabs=NULL,
-    cifti_info=NULL,
-    surfL=NULL, surfR=NULL, 
-    read_dir=NULL, ...
-  )
-}
