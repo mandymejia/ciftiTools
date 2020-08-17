@@ -7,19 +7,43 @@
 #'
 #' @param cortex A file path, GIFTI object, or data matrix representing
 #'  cortical data.
-#' @param side Left or right? (Character). Just used to print warnings.
-#' @param medial_wall_mask A pre-determined mask for the medial wall: it should
-#'  be logical with \code{FALSE} values indicating vertices that make up the
-#'  medial wall. It will be verified, and overwritten/removed if inaccurate.
-#'  Default: \code{NULL} will try to infer the medial wall mask, or leave it
-#'  blank.
+#' @param mwall The medial wall mask: a logical vector with \code{FALSE} values 
+#'  indicating vertices that make up the medial wall. It will be verified, and 
+#'  overwritten or removed if inaccurate.
+#' @param cortex_is_masked Has the cortex data been masked yet? \code{NULL}
+#'  (default) indicates whether it has been masked or not unknown.
+#' @param rm_blank_mwall If the medial wall mask is all \code{TRUE} 
+#'  (indicating no medial wall vertices), should it be discarded? Default:
+#'  \code{TRUE}. If \code{FALSE}, keep it.
+#' @param rm_bad_mwall If the medial wall mask doesn't match up with the 
+#'  data (e.g. the vertex count doesn't add up), should it be discarded?
+#'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
+#' @param infer_mwall If the medial wall mask was not provided (or if it was
+#'  discarded) should it be inferred from 0/NA values? Default: \code{TRUE}.
+#' @param side "left" or "right"? Just used to print warnings.
+#' @param mwall_source Character describing where the mwall came from. Just used
+#'  to print warnings.
 #'
-#' @return A list with components "data" and "medial_wall_mask".
+#' @return A list with components "data" and "mwall".
 #'
 #' @keywords internal
 #' 
 #' @importFrom gifti readgii is.gifti
-make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
+make_xifti_cortex <- function(
+  cortex, mwall=NULL,
+  cortex_is_masked=NULL,
+  rm_blank_mwall=TRUE,
+  rm_bad_mwall=TRUE,
+  infer_mwall=TRUE,
+  side=NULL,
+  mwall_source=NULL) {
+
+  if (is.null(side)) {side <- ""}
+  if (is.null(mwall_source)) {mwall_source <- ""}
+
+  # Cannot infer the medial wall if the cortex has been masked.
+  if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
+
   # File --> GIFTI.
   if (is.fname(cortex)) {
     cortex <- readgii(cortex)
@@ -28,141 +52,223 @@ make_xifti_cortex <- function(cortex, side=NULL, medial_wall_mask=NULL) {
   if (is.gifti(cortex)) {
     cortex <- do.call(cbind, cortex$data)
   } else {
-    stop("`cortex` was not an existing file (check file name?), nor was it an object made by `gifti::read_gifti()`.")
-  }
-
-  # Check if medial wall mask is valid.
-  MIN_TO_INFER_MWALL <- 2
-  enough_measurements = ncol(cortex) > MIN_TO_INFER_MWALL
-  at_least_one_mwall_vert <- !all(medial_wall_mask)
-  if (!is.null(medial_wall_mask)) {
-    if (!at_least_one_mwall_vert) {
-        warning(paste(
-          "Metadata in CIFTI dense mapping did not indicate any medial wall",
-          "vertices for", side, "cortex. Deleting this mask mask.\n"
-        ))
-        medial_wall_mask <- NULL
-    } else {
-      if (length(medial_wall_mask) == nrow(cortex)) {
-        cortex <- cortex[medial_wall_mask,, drop=TRUE]
-      } else {
-        warning(paste(
-          "The medial wall mask from the CIFTI metadata was not the same",
-          "length as the", side, "cortex. Deleting.\n"
-        ))
-        medial_wall_mask <- NULL
-      }
-    }
-  }
-  if (is.null(medial_wall_mask)) {
-    if (enough_measurements) {
-      new_medial_wall_mask <- !apply(cortex==0 | is.na(cortex), 1, all)
-      if (any(!new_medial_wall_mask)) {
-        warning(paste(
-          "Inferring medial wall from constant 0/NA columns in", side, "cortex.\n"
-        ))
-        medial_wall_mask <- new_medial_wall_mask
-        cortex <- cortex[medial_wall_mask,, drop=TRUE]
-      } else {
-        warning(paste(
-          "No medial wall vertices inferred from data. Leaving the medial",
-          "wall mask field empty for", side, "cortex.\n"
-        ))
-      }
-    } else {
-      warning(paste(
-        "Leaving medial wall mask field empty for", side, "cortex.\n"
+    if (!is.numeric(cortex) && !is.matrix(cortex)) {
+      stop(paste(
+        "`cortex` was not an existing file (check file name?),",
+        "a result of `gifti::read_gifti()`,",
+        "or a numeric matrix."
       ))
     }
   }
-  list(data = cortex, medial_wall_mask = medial_wall_mask)
+
+  # Check if medial wall mask is valid.
+  msg <- ""
+  if (!is.null(mwall)) {
+    if (all(mwall)) {
+      msg <- paste0(msg,
+        "The ",side," medial wall mask obtained from ",mwall_source,
+        " was all TRUE (indicating no medial wall vertices). "
+      )
+      if (rm_blank_mwall) {
+        msg <- paste0(msg,"It was deleted. ")
+        mwall <- NULL
+      }
+    } else {
+      same_len <- length(mwall) == nrow(cortex)
+      same_pos <- sum(mwall) == nrow(cortex)
+      if (!is.null(cortex_is_masked)) {
+        if (cortex_is_masked) {
+          if (!same_pos) {
+            msg <- paste0(msg,
+              "The ",side," medial wall mask obtained from ",mwall_source," has ",
+              sum(mwall)," non-medial-wall locations,but there are ",nrow(cortex),
+              " vertices in the masked data matrix."
+            )
+            if (rm_bad_mwall) {
+              msg <- paste0(msg,"The ",side," medial wall mask was deleted. ")
+              mwall <- NULL
+            } else { stop(msg) }
+          }
+        } else if (!cortex_is_masked) {
+          if (!same_len) {
+            msg <- paste0(msg,
+              "The ",side," medial wall mask obtained from ",mwall_source," has ",
+              length(mwall)," total locations,but there are ",nrow(cortex),
+              " total vertices in the data matrix."
+            )
+            if (rm_bad_mwall) {
+              msg <- paste0(msg,"The ",side," medial wall mask was deleted. ")
+              mwall <- NULL
+            } else { stop(msg) }
+          }
+        }
+      } else {
+        # Only one of `same_len` and `same_pos` will be TRUE b/c !all(mwall) 
+        cortex_is_masked <- same_pos
+      }
+    }
+  }
+
+  # If no valid medial wall mask, optionally infer it.
+  if (is.null(mwall)) {
+    if (infer_mwall) {
+      new_mwall <- !apply(cortex==0 | is.na(cortex), 1, all)
+      if (any(!new_mwall)) {
+        msg <- paste0(
+          msg,"A new medial wall mask for the ",side," cortex was inferred from ",
+          "constant 0/NA columns."
+        )
+        mwall <- new_mwall
+      } else {
+        msg <- paste0(
+          msg,"No medial wall vertices inferred from data. Leaving the medial ",
+          "wall mask field empty for ", side, " cortex. "
+        )
+      }
+    } else {
+      msg <- paste0(
+        msg,"Leaving medial wall mask field empty for ", side, " cortex. "
+      )
+    }
+  }
+
+  if (!(msg == "")) { ciftiTools_msg(msg) }
+
+  # Apply a valid medial wall mask to an unmasked cortex.
+  if (!is.null(mwall) && (is.null(cortex_is_masked) || (!is.null(cortex_is_masked) && !cortex_is_masked))) {
+    cortex <- cortex[mwall,, drop=FALSE]
+    cortex_is_masked <- TRUE
+  }
+
+  list(data = cortex, mwall = mwall)
 }
 
 #' Make "xifti" Subcortical Components
 #' 
-#' Coerce a volume and labels into valid entries for \code{xifti$data$subcort}
-#'  and \code{xifti$meta$subcort}. They can both be file paths or arrays. 
-#'  Neither should be flattened/vectorized. They must be compatible.
+#' Coerce subcortical data into valid entries for \code{xifti$data$subcort}
+#'  and \code{xifti$meta$subcort}. All data arguments can be matrices/arrays. 
+#'  Additionally, the subcortical volume and labels can be paths to NIFTI files.
+#'  If the mask is not provided, it will be inferred from the labels, or the 
+#'  volume if the labels are already vectorized.
 #' 
-#' @param vol File path or array for the volumetric subcortical data.
-#'  It should be a 3D or 4D array where the first three dimensions are spatial,
-#'  and the fourth dimension is the measurements per voxel (so if one measurement
-#'  is made per voxel, it will be a 3D array).
-#' @param labels File path or array for the subcortical labels. The first three
-#'  dimensions of \code{labels} should be the same as those of \code{vol}, and
-#'  the voxels should correspond to one another. Thus, zero-valued labels
-#'  should correspond to voxels in \code{vol} that are constant 0 or NA.
-#' @param mask A pre-computed mask for \code{vol} and \code{labels}, i.e. from
-#'  \code{info_cifti}. If \code{NULL} (default), the mask will instead be
-#'  inferred from the zero-valued voxels of \code{labels}. Not supported yet!
-#' @param validate_mask Set this to \code{TRUE} to check that the mask only
-#'  removes zero-valued voxels in \code{vol} and \code{labels}.  
-#'  Default: \code{FALSE} (saves time).
+#' \code{subcortVol} is either a 3D/4D data array (i x j x k x T) or a 
+#'  vectorized data matrix (V_S voxels x T measurements). If it's vectorized, 
+#'  voxels should be in spatial order.
+#' 
+#'  \code{subcortLabs} is either a 3D data array (i x j x k) or a V_S-length 
+#'  vector of subcortical brainstructure labels (as factors) or their indices 
+#'  (as integers): see \code{\link{substructure_table}}. If it's vectorized,
+#'  the labels should be in spatial order.
+#'  
+#'  \code{subcortMask} is a logical 3D data array (i x j x k) where \code{TRUE}
+#'  values indicate voxels inside the brain mask. If it is not provided, the
+#'  mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
+#'  (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
+#'  \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
+#'  is not provided, the mask cannot be inferred so an error occur.
+#' 
+#' @param vol represents the data values of the subcortical volume. It is either 
+#'  a path to a NIFTI file, a 3D/4D data array (i x j x k x T), or a vectorized 
+#'  data matrix (V_S voxels x T measurements). If it's vectorized, voxels should 
+#'  be in spatial order.
+#' @param labs represents the brainstructure labels of each voxel: see
+#'  \code{\link{substructure_table}}. It is either a path to a NIFTI file, a 3D 
+#'  data array (i x j x k) of brainstructure indices 3-21 with 0 representing 
+#'  out-of-mask voxels; or, a V_S-length vector in spatial order with 
+#'  brainstructure names as factors, or with brainstructure indices as integers.
+#' @param mask is a logical 3D data array (i x j x k) where \code{TRUE}
+#'  values indicate voxels inside the brain mask. If it is not provided, the
+#'  mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
+#'  (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
+#'  \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
+#'  is not provided, the mask cannot be inferred so an error occur.
+#' @param validate_mask If \code{mask} is provided, set this to \code{TRUE} to 
+#'  check that the mask only removes NA- and zero-valued voxels in \code{vol} 
+#'  and \code{labs}. Default: \code{FALSE} (saves time).
 #'
-#' @return A list with components "data", "labels", "mask", and "mask_padding".
+#' @keywords internal
 #' 
-#'  The subcortical labels will be ordered spatially (not alphabetically
-#'  according to the corresponding \code{\link{substructure_table}}).
+#' @return A list with components "data", "labels" and "mask". The first two
+#'  will be vectorized and ordered spatially.
+#' 
+#'  The volume can be recovered using: 
+#'    vol <- unmask(data, mask, fill=NA) 
+#'    labs <- unmask(labels, mask, fill=0) 
 #'
 #' @importFrom RNifti readNifti
 make_xifti_subcort <- function(
-  vol, labels, mask=NULL, validate_mask=FALSE) {
-  stopifnot(is.null(mask))
+  vol, labs, mask=NULL, validate_mask=FALSE) {
 
   # Get vol.
   if (is.fname(vol)) {
     vol <- readNifti(vol)
-  } else {
-    if (!(is.array(vol) && (length(dim(vol)) > 2))) { 
-      stop("The volume should be a 3D or 4D array. It shouldn't be vectorized.")
-    }
   }
+  vol_ndims <- length(dim(vol))
+  if (vol_ndims == 1) { vol <- matrix(vol, ncol=1) }
+  vol_is_vectorized <- vol_ndims < 3
 
   # Get labels.
-  if (is.fname(labels)) {
-    labels <- readNifti(labels)
-    labels[labels > 0] <- labels[labels > 0] + 2
+  if (is.fname(labs)) {
+    labs <- readNifti(labs)
+    labs_vals <- order(unique(labs))
+    if (!all(labs_vals %in% 0:19)) { stop("The labels read from a NIFTI file should be integers 0-19.") }
+    labs[labs > 0] <- labs[labs > 0] + 2
+  }
+  if (!is.numeric(labs) || !is.factor(labs)) { 
+    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`")
+  }
+  if (!all(as.integer(labs_vals) %in% c(0, 3:21))) { 
+    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`")
+  }
+  labs_ndims <- length(dim(labs))
+  labs_is_vectorized <- labs_ndims < 3
+
+  # Infer mask if not provided.
+  if (is.null(mask)) {
+    if (!labs_is_vectorized) {
+      mask <- labs > 0 | !is.na(labs)
+      if (validate_mask) {
+        mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
+        if(!(all.equal(mask, mask_vol))) { 
+          stop("The mask inferred from the labels did not match the mask inferred from the volume (NA/0 values).")
+        }
+      }
+    } else if (!vol_is_vectorized) {
+      mask <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
+    } else {
+      stop("The mask could not be inferred. At least one of the volume or labels must not be vectorized, if the mask is not provided.")
+    }
+  # Otherwise, validate it if requested.
   } else {
-    if (!(is.array(labels) && (length(dim(labels)) != 3))) { 
-      stop("The labels should be a 3D array. It shouldn't be vectorized.")
+    if (is.numeric(mask)) { mask <- mask > 0 }
+    stopifnot( is.logical(mask) )
+    if (validate_mask) {
+      stop_msg <- ""
+      if (!labs_is_vectorized) {
+        mask_labs <- labs > 0 | !is.na(labs)
+        if(!(all.equal(mask, mask_labs))) { 
+          stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the labels (NA/0 values). ")
+        }
+      }
+      if (!vol_is_vectorized) {
+        mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
+        if(!(all.equal(mask, mask_vol))) { 
+          stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the volume (NA/0 values). ")
+        }
+      }
+      if (stop_msg != "") { stop(stop_msg) }
     }
   }
 
-  # Get mask.
-  mask <- labels > 0
-  ## [TO DO]: Support providing a mask (would need to infer padding if from map).
-  #if (is.null(mask)) {
-  #  mask <- labels > 0
-  #} else {
-  #  if (is.numeric(mask)) { 
-  #    message("Numeric mask detected. Binarizing: values > 0 will be included.\n")
-  #    mask <- mask > 0 
-  #  }
-  #}
-  
-  # Validate mask.
-  if (validate_mask) {
-   mask_vol <- apply(vol, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
-   if (max(abs( mask - mask_vol )) > 0) {
-     warning("The mask did not match the mask inferred from the volume (NA/0 values)\n.")
-   }
-  
-  #  mask_labs <- apply(labels, c(1,2,3), sum, na.rm=TRUE) > ciftiTools.getOption("EPS")
-  #  if (max(abs( mask - mask_labs )) > 0) {
-  #    warning("The mask did not match the mask inferred from the labels (NA/0 values).")
-  #  }
-  }
-
-  # Use mask on labels.
+  # Apply mask.
   substructure_levels <- substructure_table()$ciftiTools_Name
-  labels <- factor(
-    labels[mask], 
+  labs <- factor(
+    labs[mask], 
     levels=1:length(substructure_levels), 
-    labels=substructure_levels
+    labs=substructure_levels
   )
-  stopifnot(is.subcort_labels(labels))
+  stopifnot(is.subcort_labs(labs))
 
-  # Use mask on volume and return.
   list(
     data = matrix(vol[mask], nrow=sum(mask)),
     labels = labels,
@@ -172,8 +278,8 @@ make_xifti_subcort <- function(
 
 #' Make "xifti" Surface Components
 #' 
-#' Coerce a file path, GIFTI object, or surface (list of vertices + faces)
-#'  to a surface.
+#' Coerce a file path, GIFTI object (with entries "pointset" and "triangle"), 
+#'  or surface (list of vertices + faces) to a surface.
 #'
 #' @param surf What to coerce to a surface.
 #'
@@ -186,18 +292,27 @@ make_xifti_subcort <- function(
 make_xifti_surface <- function(surf) {
   # File --> GIFTI.
   if (is.fname(surf)){ surf <- readgii(surf) }
+
   # GIFTI --> list of vertices and faces.
-  gifti_to_surf <- function(gifti) {
-    surf <- gifti$data
-    verts <- surf$pointset
-    faces <- surf$triangle
+  gifti_to_surf <- function(gii) {
+    stopifnot(is.list(gii))
+    if ("data" %in% names(gii)) { gii <- gii$data }
+    stopifnot(all(c("pointset", "triangle") %in% names(gii)))
+    verts <- gii$pointset
+    faces <- gii$triangle
     if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
     surf <- list(vertices = verts, faces = faces)
   }
   if (is.gifti(surf)) { 
     surf <- gifti_to_surf(surf) 
   } else {
-    stop("`surf` was not an existing file (check file name?), nor was it an object made by `gifti::read_gifti()`.")
+    if (!(is.list(surf) && names(surf)==c("vertices", "faces"))) {
+      stop(paste(
+        "`surf` was not an existing file (check file name?),",
+        "a result of `gifti::read_gifti()`,",
+        "or a list with components `vertices` and `faces`."
+      ))
+    }
   }
 
   # Return cifti_surface or error.

@@ -37,7 +37,7 @@ with \code{sep_keep}/\code{resamp_keep} and then read those in with
  where each entry's name is a file type label, and each entry's value
  is a file name indicating where to write the corresponding separated file. 
  The recognized file type labels are: "cortexL", "cortexR", 
- "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLab".
+ "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLabs".
  
  Entry values can be \code{NULL}, in which case a default file name will be 
  used: see \code{\link{cifti_component_suffix}}. Default file names

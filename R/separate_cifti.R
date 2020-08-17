@@ -10,7 +10,7 @@
 #' @param cortexL_fname,cortexR_fname (Optional) the files to save the left and right cortex GIFTIs to. If not provided, 
 #'  defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 #'  relative, they will be saved in \code{write_dir}.
-#' @param subcortVol_fname,subcortLab_fname (Optional) where to save the subcortical volume and labels NIFTIs. If not 
+#' @param subcortVol_fname,subcortLabs_fname (Optional) where to save the subcortical volume and labels NIFTIs. If not 
 #'  provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 #'  path is relative, they will be saved in \code{write_dir}.
 #' @param ROI_brainstructures Which ROIs should be obtained? NULL (default) to not get any ROIs. This should be a subset of the
@@ -29,7 +29,7 @@
 #'  executable also works.)
 #'
 separate_cifti <- function(cifti_fname, brainstructures=c("left","right"), 
-  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
+  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLabs_fname=NULL, 
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL) {
 
@@ -85,22 +85,22 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   if (do['sub']) {
     if (is.null(subcortVol_fname)) { subcortVol_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
     subcortVol_fname <- format_path(subcortVol_fname, write_dir, mode=2)
-    if (is.null(subcortLab_fname)) { subcortLab_fname <- default_fname("subcortLab", extn_cifti, bname_cifti) }
-    subcortLab_fname <- format_path(subcortLab_fname, write_dir, mode=2)
+    if (is.null(subcortLabs_fname)) { subcortLabs_fname <- default_fname("subcortLabs", extn_cifti, bname_cifti) }
+    subcortLabs_fname <- format_path(subcortLabs_fname, write_dir, mode=2)
     if (ROI_do['sub']) {
       if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort", extn_cifti, bname_cifti) }
       ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
     } else { ROIsubcortVol_fname <- "" }
     
   } else { 
-    subcortVol_fname <- subcortLab_fname <- ROIsubcortVol_fname <- "" 
+    subcortVol_fname <- subcortLabs_fname <- ROIsubcortVol_fname <- "" 
   }
 
   # Collect the paths to each file in a data.frame to return later. 
   sep_files <- data.frame(
-    label = c("cortexL", "cortexR", "subcortVol", "subcortLab", 
+    label = c("cortexL", "cortexR", "subcortVol", "subcortLabs", 
       "ROIcortexL", "ROIcortexR", "ROIsubcortVol"),
-    fname = c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname,
+    fname = c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLabs_fname,
       ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname),
     stringsAsFactors=FALSE
   )
@@ -130,7 +130,7 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
   if (do['sub']) {
     cmd <- paste(cmd, '-volume-all', sys_path(subcortVol_fname))
     if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(ROIsubcortVol_fname)) }
-    cmd <- paste(cmd, '-label', sys_path(subcortLab_fname))
+    cmd <- paste(cmd, '-label', sys_path(subcortLabs_fname))
   }
   run_wb_cmd(cmd, wb_path)
 
@@ -141,13 +141,13 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
 #' @export
 separateCIfTI <- separatecii <- function(
   cifti_fname, brainstructures=c("left","right"), 
-  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLab_fname=NULL, 
+  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLabs_fname=NULL, 
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL){
 
   separate_cifti(
     cifti_fname, brainstructures, 
-    cortexL_fname, cortexR_fname, subcortVol_fname, subcortLab_fname, 
+    cortexL_fname, cortexR_fname, subcortVol_fname, subcortLabs_fname, 
     ROI_brainstructures, ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname, 
     write_dir, wb_path
   )

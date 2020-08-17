@@ -8,7 +8,7 @@
 #' @param ROIcortexL_fname The left cortex ROI file.
 #' @param ROIcortexR_fname The right cortex ROI file.
 #' @param subcortVol_fname The subcortical data file.
-#' @param subcortLab_fname The subcortical labels file.
+#' @param subcortLabs_fname The subcortical labels file.
 #' @param timestep If a dense time series (dtseries.nii) file is being written,
 #'  this is the time between measurements. If \code{NULL}, use the Connectome
 #'  Workbench default (1.0).
@@ -23,20 +23,20 @@ write_cifti_from_separate <- function(
   cifti_fname, 
   cortexL_fname, cortexR_fname,
   ROIcortexL_fname=NULL, ROIcortexR_fname=NULL,
-  subcortVol_fname, subcortLab_fname,
+  subcortVol_fname, subcortLabs_fname,
   timestep=NULL, timestart=NULL,
   wb_path=NULL){
 
   # Determine what kind of CIFTI is being written.
-  cifti_extn <- get_cifti_extn(cifti_fname)
-  if (grepl("dtseries", cifti_extn)) create_cmd <- "-cifti-create-dense-timeseries"
-  else if (grepl("dscalar", cifti_extn)) create_cmd <- "-cifti-create-dense-scalar"
-  else if (grepl("dlabel", cifti_extn)) create_cmd <- "-cifti-create-label"
-  else {
+  # Must be one of the following after the check in `cifti_info`
+  create_cmd <- switch(get_cifti_extn(cifti_fname),
+    "dtseries.nii" = "-cifti-create-dense-timeseries",
+    "dscalar.nii" = "-cifti-create-dense-scalar",
+    "dlabel.nii" = "-cifti-create-label"
+  )
+  if (is.null(create_cmd)) {
     stop(paste(
-      "The data type of cifti_original_fname", cifti_fname, 
-      "could not be determined. The file name should end in e.g. \
-      \".dtseries.nii\""
+      "CIFTI extension", get_cifti_extn(cifti_fname), "is not yet supported by ciftiTools."
     ))
   }
   # TO-DO: adjust GIFTI/NIFTI written files accordingly?
@@ -48,7 +48,7 @@ write_cifti_from_separate <- function(
   # Volume
   cmd <- paste(
     create_cmd, sys_path(cifti_fname), 
-    "-volume", sys_path(subcortVol_fname), sys_path(subcortLab_fname), 
+    "-volume", sys_path(subcortVol_fname), sys_path(subcortLabs_fname)
   )
 
   # Left
@@ -58,7 +58,7 @@ write_cifti_from_separate <- function(
   }
 
   # Right
-  cmd <- paste(cmd, "-right-metric", sys_path(cortexR_fname) )
+  cmd <- paste(cmd, "-right-metric", sys_path(cortexR_fname))
   if (!is.null(ROIcortexR_fname)) {
     cmd <- paste(cmd, "-roi-right", sys_path(ROIcortexR_fname))
   }

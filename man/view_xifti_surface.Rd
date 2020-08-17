@@ -20,7 +20,7 @@ view_xifti_surface(
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
-  color_values = NULL,
+  zlim = NULL,
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
@@ -41,7 +41,7 @@ view_cifti_surface(
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
-  color_values = NULL,
+  zlim = NULL,
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
@@ -119,7 +119,7 @@ See the \code{ciftiTools::make_color_pal()} description for more details.}
 or \code{"diverging"}. Default: sequential. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_values}{(Optional) Controls the mapping of values to each 
+\item{zlim}{(Optional) Controls the mapping of values to each 
 color in \code{colors}. If the length is longer than
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
 the value to \code{DATA_MAX}. See the

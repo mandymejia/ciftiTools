@@ -2,30 +2,18 @@
 % Please edit documentation in R/make_xifti.R
 \name{make_xifti}
 \alias{make_xifti}
-\alias{makeXIfTI}
 \title{Assemble a CIFTI or GIFTI/NIFTI Components into a "xifti"}
 \usage{
 make_xifti(
   cifti_fname = NULL,
   cifti_brainstructures = c("left", "right"),
   cortexL = NULL,
+  cortexL_mwall = NULL,
   cortexR = NULL,
+  cortexR_mwall = NULL,
   subcortVol = NULL,
-  subcortLab = NULL,
-  cifti_info = NULL,
-  surfL = NULL,
-  surfR = NULL,
-  read_dir = NULL,
-  ...
-)
-
-makeXIfTI(
-  cifti_fname = NULL,
-  cifti_brainstructures = c("left", "right"),
-  cortexL = NULL,
-  cortexR = NULL,
-  subcortVol = NULL,
-  subcortLab = NULL,
+  subcortLabs = NULL,
+  subcortMask = NULL,
   cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -37,7 +25,7 @@ makeXIfTI(
 \item{cifti_fname}{(Optional) Path to a CIFTI file. 
 
  If provided, none of \code{cortexL}, \code{cortexR}, \code{subcortVol},
- \code{subcortLab}, and \code{cifti_info} should not be provided, since the 
+ \code{subcortLabs}, and \code{cifti_info} should not be provided, since the 
  data will come from the CIFTI file only.}
 
 \item{cifti_brainstructures}{If \code{cifti_fname} is provided, use this
@@ -50,23 +38,53 @@ makeXIfTI(
 
  Ignored it \code{cifti_fname} is not provided.}
 
-\item{cortexL, cortexR}{(Optional) [Left/right] cortical data. Can be a file
- path to a GIFTI file, or an object from \code{\link[gifti]{readgii}}.
+\item{cortexL, cortexL_mwall}{\code{cortexL} is a data matrix (V_L vertices x 
+ T measurements) representing the left cortex. If it's provided, \code{cortexL_mwall}
+ can be provided too. V_L is equal to either the length of \code{cortexL_mwall} 
+ (if the left cortex data is unmasked) or the sum of \code{TRUE} values 
+ (if the left cortex data is masked).
+
+ If \code{cortexL_mwall} is not provided, ...
+
+ Since the unmasked cortices must have the same number of vertices,
+ \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.
 
  The data for each cortex should only be provided by one argument, so if 
  \code{cortexL} is provided, \code{cifti_fname} should not be (and same for
  the right cortex).}
 
-\item{subcortVol}{(Optional) Volumetric subcortical data. Can
- be a file path for NIFTI data or an object from
- \code{\link[RNifti]{readNifti}}.
+\item{cortexR, cortexR_mwall}{\code{cortexR} is a data matrix (V_R vertices x 
+ T measurements) representing the right cortex. If it's provided, \code{cortexR_mwall}
+ can be provided too. V_R is equal to either the length of \code{cortexR_mwall} 
+ (if the right cortex data is unmasked) or the sum of \code{TRUE} values 
+ (if the right cortex data is masked).
 
- The subcortical data should only be provided by one argument, so if 
- \code{subcortVol} is provided, \code{cifti_fname} should not be.}
+ If \code{cortexR_mwall} is not provided, ...
 
-\item{subcortLab}{(Required if \code{subcortVol} is present) Labels for 
-subcortical ROIs. Can be a file path for NIFTI data or an object from
-\code{\link[RNifti]{readNifti}}.}
+ Since the unmasked cortices must have the same number of vertices,
+ \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.
+
+ The data for each cortex should only be provided by one argument, so if 
+ \code{cortexL} is provided, \code{cifti_fname} should not be (and same for
+ the right cortex).}
+
+\item{subcortVol, subcortLabs, subcortMask}{\code{subcortVol} represents the
+ data values of the subcortical volume. It is either a 3D/4D data array
+ (i x j x k x T) or a vectorized data matrix (V_S voxels x T measurements). 
+If it's vectorized, voxels should be in spatial order.
+
+ \code{subcortLabs} represents the brainstructure labels of each voxel: see
+ \code{\link{substructure_table}}. It is either a 3D data array (i x j x k)
+ of brainstructure indices 3-21 with 0 representing out-of-mask voxels; or,
+ a V_S-length vector in spatial order with brainstructure names as factors, 
+ or with  brainstructure indices as integers.
+ 
+ \code{subcortMask} is a logical 3D data array (i x j x k) where \code{TRUE}
+ values indicate voxels inside the brain mask. If it is not provided, the
+ mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
+ (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
+ \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
+ is not provided, the mask cannot be inferred so an error occur.}
 
 \item{cifti_info}{(Optional) The result of \code{\link{info_cifti}}. If 
  GIFTI and/or NIFTI components from a CIFTI are being provided, 
@@ -77,8 +95,11 @@ subcortical ROIs. Can be a file path for NIFTI data or an object from
  should be done by providing \code{cifti_fname}, and for reading separate
  GIFTI/NIFTI components \code{cifti_info} is not applicable.}
 
-\item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
-path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
+\item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex. 
+Can be a file path for GIFTI data, a GIFTI representing surface geometry 
+which has been read in, or a list with components "verts" (V x 3 data matrix 
+indicating spatial locations of each vertex) and "faces" (F x 3 data matrix 
+indicating the indices of the three vertices defining each triangular face).}
 
 \item{read_dir}{(Optional) Append a directory to all file names in the
 arguments. If \code{NULL} (default), do not modify file names.}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_cifti.R
 \name{write_gifti_component_of_cifti}
 \alias{write_gifti_component_of_cifti}
-\title{Write out a GIFTI File}
+\title{Write CIFTI Surface Data to GIFTI}
 \usage{
 write_gifti_component_of_cifti(data, out_fname, datatype = NULL, ...)
 }
