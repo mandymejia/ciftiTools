@@ -286,25 +286,16 @@ make_xifti_subcort <- function(
 #' @return The surface, a list of vertices (spatial locations) and faces
 #'  (defined by three vertices).
 #'
-#' @keywords internal
+#' @export
 #' 
 #' @importFrom gifti readgii is.gifti
-make_xifti_surface <- function(surf) {
+make_surface <- function(surf) {
   # File --> GIFTI.
   if (is.fname(surf)){ surf <- readgii(surf) }
 
   # GIFTI --> list of vertices and faces.
-  gifti_to_surf <- function(gii) {
-    stopifnot(is.list(gii))
-    if ("data" %in% names(gii)) { gii <- gii$data }
-    stopifnot(all(c("pointset", "triangle") %in% names(gii)))
-    verts <- gii$pointset
-    faces <- gii$triangle
-    if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
-    surf <- list(vertices = verts, faces = faces)
-  }
   if (is.gifti(surf)) { 
-    surf <- gifti_to_surf(surf) 
+    surf <- gifti_to_surface(surf) 
   } else {
     if (!(is.list(surf) && names(surf)==c("vertices", "faces"))) {
       stop(paste(
@@ -320,4 +311,14 @@ make_xifti_surface <- function(surf) {
     stop("The object could not be converted into a surface.")
   }
   surf
+}
+
+gifti_to_surface <- function(gii) {
+  stopifnot(is.list(gii))
+  if ("data" %in% names(gii)) { gii <- gii$data }
+  stopifnot(all(c("pointset", "triangle") %in% names(gii)))
+  verts <- gii$pointset
+  faces <- gii$triangle
+  if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
+  surf <- list(vertices = verts, faces = faces)
 }

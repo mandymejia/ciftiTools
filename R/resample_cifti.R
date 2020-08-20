@@ -42,6 +42,7 @@ resample_cifti <- function(
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, sphereL_fname, sphereR_fname,
+  cifti_template_fname=NULL,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
