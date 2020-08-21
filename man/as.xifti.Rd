@@ -76,6 +76,9 @@ with components "verts" (V x 3 data matrix indicating spatial locations of
 each vertex) and "faces" (F x 3 data matrix indicating the indices of the 
 three vertices defining each triangular face).}
 }
+\value{
+A "xifti" object.
+}
 \description{
 Merge separate data objects into a "xifti"
 }

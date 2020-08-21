@@ -45,6 +45,7 @@
 #'  each vertex) and "faces" (F x 3 data matrix indicating the indices of the 
 #'  three vertices defining each triangular face).
 #'
+#' @return A "xifti" object.
 #' @export
 #'
 as.xifti <- function(
