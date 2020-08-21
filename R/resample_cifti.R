@@ -1,8 +1,8 @@
 #' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
-#'  by separating it into GIFTI and NIFTI files, optionally resampling them, 
-#'  and then using the \code{-cifti-resample} Workbench Command with a template.
+#'  by separating it into GIFTI and NIFTI files, resampling them, then putting
+#'  them together.
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
@@ -42,7 +42,6 @@ resample_cifti <- function(
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, sphereL_fname, sphereR_fname,
-  cifti_template_fname=NULL,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
@@ -143,13 +142,11 @@ resample_cifti <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # Resample with template -----------------------------------------------------
+  # Put together ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # Create a template CIFTI dense timeseries.
+  # Create target CIFTI dense timeseries.
   if (verbose) cat("Merging components into a CIFTI file... \n")
-  cifti_target_fname <- format_path(
-    paste0("template_", basename(cifti_original_fname)), tempdir(), mode=4)
   write_cifti_from_separate(
     cifti_target_fname, 
     cortexL_fname = to_cif["cortexL"],

@@ -84,7 +84,7 @@
 #'
 #' @return A "xifti" object; see \code{\link{template_xifti}}. 
 #'
-#' @export
+#' @keywords internal
 #'
 make_xifti <- function(
   cifti_fname=NULL,
@@ -117,7 +117,7 @@ make_xifti <- function(
 
   # Cortex data.
   if (!is.null(cortexL)) {
-    x <- make_xifti_cortex(
+    x <- make_cortex(
       cortexL, cortexL_mwall,
       side="left", mwall_source="the input `cortexL_mwall`"
     )
@@ -125,7 +125,7 @@ make_xifti <- function(
     xii$meta$cortex$medial_wall_mask["left"] <- list(x$mwall)
   }
   if (!is.null(cortexR)) {
-    x <- make_xifti_cortex(
+    x <- make_cortex(
       cortexR, cortexR_mwall,
       side="right", mwall_source="the input `cortexR_mwall`"
     )
@@ -138,7 +138,7 @@ make_xifti <- function(
     stop("subcortVol and subcortLabs must be provided together.")
   }
   if (!is.null(subcortVol)) {
-    x <- make_xifti_subcort(subcortVol, subcortLabs, subcortMask, validate_mask=FALSE)
+    x <- make_subcort(subcortVol, subcortLabs, subcortMask, validate_mask=FALSE)
     xifti$data$subcort <- x$data
     xifti$meta$subcort$labels <- x$labels
     xifti$meta$subcort$mask <- x$mask
@@ -151,8 +151,8 @@ make_xifti <- function(
   if (!is.null(cifti_info)) { xifti$meta$cifti <- cifti_info$cifti }
 
   # Surfaces.
-  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_xifti_surface(surfL) }
-  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_xifti_surface(surfR) }
+  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_surface(surfL) }
+  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_surface(surfR) }
 
   if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   structure(xifti, class="xifti")

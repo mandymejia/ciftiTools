@@ -15,6 +15,9 @@
 #'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
   if (min==max) { stop("The minimum and maximum value should not be equal.") }
+  # if (min==max) {
+  #   return( data.frame(color = c("white", "white"), value = c(min, max)) )
+  # }
   rev_order <- min > max
   if (rev_order) {
     temp <- min
@@ -490,7 +493,9 @@ view_xifti_surface <- function(xifti, idx=1,
     } else {
       surfL <- xifti$surf$cortex_left
     }
-  } else { surfL <- make_xifti_surface(surfL) }
+  } else { 
+    surfL <- make_surface(surfL) 
+  }
   if (is.null(surfR)) {
     if (is.null(xifti$surf$cortex_right) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "right")) {
@@ -499,8 +504,10 @@ view_xifti_surface <- function(xifti, idx=1,
     } else {
       surfR <- xifti$surf$cortex_right
     }
-  } else { surfR <- make_xifti_surface(surfR) }
-  if (is.null(surfL) & is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
+  } else { 
+    surfR <- make_surface(surfR) 
+  }
+  if (is.null(surfL) && is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
 
   # Check hemisphere and view.
   if (is.null(hemisphere)) {
@@ -574,7 +581,11 @@ view_xifti_surface <- function(xifti, idx=1,
       xifti$meta$cortex$medial_wall_mask$left <- rep(TRUE, nrow(surfL$vertices))
     }
     if (nrow(surfL$vertices) != length(xifti$meta$cortex$medial_wall_mask$left)) {
-      stop("The left surface does not have the same number of vertices as the data (length of medial wall mask, or rows in data if medial wall mask is absent.)")
+      warning(paste(
+        "The left surface does not have the same number of vertices as the data",
+        "(length of medial wall mask, or rows in data if medial wall mask is absent). Resampling."
+      ))
+      surfL <- resample_gifti()
     }
 
     # Get data values.
@@ -604,7 +615,10 @@ view_xifti_surface <- function(xifti, idx=1,
       xifti$meta$cortex$medial_wall_mask$right <- rep(TRUE, nrow(surfR$vertices))
     }
     if (nrow(surfR$vertices) != length(xifti$meta$cortex$medial_wall_mask$right)) {
-      stop("The right surface does not have the same number of vertices as the data (length of medial wall mask, or rows in data if medial wall mask is absent.)")
+      warning(paste(
+        "The right surface does not have the same number of vertices as the data",
+        "(length of medial wall mask, or rows in data if medial wall mask is absent). Resampling."
+      ))
     }
 
     # Get data values.
@@ -631,88 +645,97 @@ view_xifti_surface <- function(xifti, idx=1,
     }
   } else if ("right" %in% hemisphere) {
     values <- valuesR
+  } 
+  if (all(is.na(values))) {
+    values <- NULL
   }
-  if (all(is.na(values))) { stop("No non-constant zero data with valid surface.") }
 
-  # ----------------------------------------------------------------------------
-  # Assign colors to vertices based on intensity. ------------------------------
-  # ----------------------------------------------------------------------------
+  if (!is.null(values)) {
 
-  # Get the base palette.
-  if (color_mode=="qualitative") {
-    warning("Qualitative values must be integers 1:N_VALUES. Will be fixed in future.") # will fix in future.
-    N_VALUES <- length(unique(values))
-    if (N_VALUES > 30) {stop("Too many qualitative values.")} #fix
-    pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
-      DATA_MIN=1, DATA_MAX=N_VALUES)
-  } else {
-    pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
-      DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE))
-  }
-  # Interpolate colors in the base palette for higher color resolution.
-  if (color_mode %in% c("sequential", "diverging")) {
-    pal <- expand_color_pal(pal_base)
-  } else {
-    pal <- pal_base
-  }
-  # Map each vertex to a color by its value.
-  cols <- use_color_pal(values, pal) # color_NA?
-  if (length(hemisphere)==2) {
-    cols_left <- cols[1:nvoxL]
-    cols_right <- cols[(nvoxL+1):(nvoxL+nvoxR)]
-  } else if (hemisphere=="left") {
-    cols_left <- cols
-  } else if (hemisphere=="right") {
-    cols_right <- cols
-  }
-  rm(cols)
+    # ----------------------------------------------------------------------------
+    # Assign colors to vertices based on intensity. ------------------------------
+    # ----------------------------------------------------------------------------
 
-  # ----------------------------------------------------------------------------
-  # Make the colorbar ----------------------------------------------------------
-  # ----------------------------------------------------------------------------
+    # Get the base palette.
+    if (color_mode=="qualitative") {
+      warning("Qualitative values must be integers 1:N_VALUES. Will be fixed in future.") # will fix in future.
+      N_VALUES <- length(unique(values))
+      if (N_VALUES > 30) {stop("Too many qualitative values.")} #fix
+      pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
+        DATA_MIN=1, DATA_MAX=N_VALUES)
+    } else {
+      pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
+        DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE))
+    }
+    # Interpolate colors in the base palette for higher color resolution.
+    if (color_mode %in% c("sequential", "diverging")) {
+      pal <- expand_color_pal(pal_base)
+    } else {
+      pal <- pal_base
+    }
+    # Map each vertex to a color by its value.
+    cols <- use_color_pal(values, pal) # color_NA?
+    if (length(hemisphere)==2) {
+      cols_left <- cols[1:nvoxL]
+      cols_right <- cols[(nvoxL+1):(nvoxL+nvoxR)]
+    } else if (hemisphere=="left") {
+      cols_left <- cols
+    } else if (hemisphere=="right") {
+      cols_right <- cols
+    }
+    rm(cols)
 
-  colorbar_min <- ifelse(
-    color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
-    pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
-    pal_base$value[1])
-  colorbar_breaks <- c(
-    colorbar_min,
-    pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
-    pal$value[length(pal$value)]
-  )
-  colorbar_labs <- switch(color_mode,
-    sequential=c(colorbar_min, 
-                 pal_base$value[nrow(pal_base)]),
-    qualitative=1:N_VALUES,
-    diverging=c(colorbar_min,
-                pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
-                pal_base$value[nrow(pal_base)])
-  )
-  # To-do: use colorbar_position argument.
-  colorbar_kwargs <- list(
-    legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
-    breaks=colorbar_breaks, #legend.lab=colorbar_label,
-    axis.args=list(cex.axis=1.7, at=colorbar_labs, 
-                   col=text_color, col.ticks=text_color, col.axis=text_color,
-                   labels=format(colorbar_labs, digits=colorbar_digits))
-  )
-  #if (colorbar_position=="right") {
-  #  colorbar_kwargs <- c(
-  #    colorbar_kwargs, 
-  #    list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
-  #  )
-  #} else if (colorbar_position=="bottom") {
-  colorbar_kwargs <- c(colorbar_kwargs, 
-    list(
-      horizontal=TRUE, # horizontal legend
-      legend.cex=2, # double size of labels (numeric limits)
-      #legend.shrink=.5, # half the width of the legend #override by smallplot
-      #legend.width=1.67, # height of colorbar #override by smallplot
-      legend.line=5, # height of lines between labels and colorbar
-      #legend.mar=4, # legend margin #override by smallplot
-      smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
+    # ----------------------------------------------------------------------------
+    # Make the colorbar ----------------------------------------------------------
+    # ----------------------------------------------------------------------------
+
+    colorbar_min <- ifelse(
+      color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
+      pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
+      pal_base$value[1])
+    colorbar_breaks <- c(
+      colorbar_min,
+      pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
+      pal$value[length(pal$value)]
     )
-  )
+    colorbar_labs <- switch(color_mode,
+      sequential=c(colorbar_min, 
+                  pal_base$value[nrow(pal_base)]),
+      qualitative=1:N_VALUES,
+      diverging=c(colorbar_min,
+                  pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
+                  pal_base$value[nrow(pal_base)])
+    )
+    # To-do: use colorbar_position argument.
+    colorbar_kwargs <- list(
+      legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
+      breaks=colorbar_breaks, #legend.lab=colorbar_label,
+      axis.args=list(cex.axis=1.7, at=colorbar_labs, 
+                    col=text_color, col.ticks=text_color, col.axis=text_color,
+                    labels=format(colorbar_labs, digits=colorbar_digits))
+    )
+    #if (colorbar_position=="right") {
+    #  colorbar_kwargs <- c(
+    #    colorbar_kwargs, 
+    #    list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
+    #  )
+    #} else if (colorbar_position=="bottom") {
+    colorbar_kwargs <- c(colorbar_kwargs, 
+      list(
+        horizontal=TRUE, # horizontal legend
+        legend.cex=2, # double size of labels (numeric limits)
+        #legend.shrink=.5, # half the width of the legend #override by smallplot
+        #legend.width=1.67, # height of colorbar #override by smallplot
+        legend.line=5, # height of lines between labels and colorbar
+        #legend.mar=4, # legend margin #override by smallplot
+        smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
+      )
+    )
+
+  } else {
+    cols_left <- "white"
+    cols_right <- "white"
+  }
 
   # ----------------------------------------------------------------------------
   # Color and arrange the meshes according to the layout. ----------------------
@@ -805,21 +828,24 @@ view_xifti_surface <- function(xifti, idx=1,
     rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
-  if (colorbar_embedded) {
-    rgl::bgplot3d(
-      # Warning: calling par(new=TRUE) with no plot
-      # Error in par(old.par) : 
-      #   invalid value specified for graphical parameter "pin"
-      try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
-      bg.color=bg
-    )
-    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-    if(all_panels_ncol==2){
-      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+  if (!is.null(values)) {
+    if (colorbar_embedded) {
+      rgl::bgplot3d(
+        # Warning: calling par(new=TRUE) with no plot
+        # Error in par(old.par) : 
+        #   invalid value specified for graphical parameter "pin"
+        try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
+        bg.color=bg
+      )
+    } else {
+      colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
+      try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
     }
-  } else {
-    colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
-    try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
+  }
+
+  rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+  if(all_panels_ncol==2){
+    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
   if (mode=="image") {
@@ -939,18 +965,15 @@ view_xifti_volume <- function(
 view_xifti <- function(xifti, what=NULL, ...) {
   stopifnot(is.xifti(xifti))
   if (is.null(what)) {
-    has_left_surf <- (!is.null(xifti$surf$cortex_left)) || ("surfL" %in% names(list(...)))
-    can_do_left <- (!is.null(xifti$data$cortex_left)) && has_left_surf
-    has_right_surf <- (!is.null(xifti$surf$cortex_right)) || ("surfR" %in% names(list(...)))
-    can_do_right <- (!is.null(xifti$data$cortex_right)) && has_right_surf
+    can_do_left <- (!is.null(xifti$surf$cortex_left)) || ("surfL" %in% names(list(...)))
+    can_do_right <- (!is.null(xifti$surf$cortex_right)) || ("surfR" %in% names(list(...)))
     what <- ifelse(can_do_left | can_do_right, "surface", "volume")
   }
-  hemispheres=c("left", "right", "both")
   if (what == "surface") { 
     return(view_xifti_surface(xifti, ...)) 
-  }
-  else if (what == "volume") { return(view_xifti_volume(xifti, ...)) }
-  else{ stop() }
+  } else if (what == "volume") { 
+    return(view_xifti_volume(xifti, ...)) 
+  } else { stop() }
 }
 
 #' S3 method: use view_xifti to plot a xifti

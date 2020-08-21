@@ -116,3 +116,4 @@ Puts cortical and/or subcortical data together into a "xifti".
  \code{\link{separate_cifti}}, or read in individual GIFTIs and NIFTIs
  independent of any CIFTI file.
 }
+\keyword{internal}

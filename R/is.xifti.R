@@ -96,6 +96,13 @@ is.xifti_surface <- function(x) {
     return(FALSE)
   }
 
+  if (!is.matrix(x$vertices)) {
+    message("x$vertices must be a 3-column matrix.\n"); return(FALSE)
+  }
+  if (!is.matrix(x$faces)) {
+    message("x$faces must be a 3-column matrix.\n"); return(FALSE)
+  }
+
   if (ncol(x$vertices) != 3) {
     message("x$vertices must have 3 columns.\n"); return(FALSE)
   }
@@ -296,8 +303,6 @@ is.xifti_meta <- function(x) {
             message("cifti$names must be a character vector.\n"); return(FALSE)
           }
         }
-        names_3006 <- c(cifti_meta_names, "names")
-        bad_names <- !(names(x$cifti) %in% names(3006))
       } else if (intent == 3007) {
         if (!is.null(x$cifti$labels)) {
           if (!is.data.frame(x$cifti$labels)) {
@@ -433,13 +438,7 @@ is.xifti <- function(x, messages=TRUE) {
   # The surface geometry of each cortex, if present, must be compatible with it.
   for (side in c("left", "right")) {
     cortex <- paste0("cortex_", side)
-    if (!is.null(x$surf[[cortex]])) {
-      # [TO DO]: Remove this check?
-      if (is.null(x$meta$cortex$medial_wall_mask[[side]])) {
-        message(paste0("The ", side, " cortex surface geometry is present, but the data is not.\n"))
-        return(FALSE)
-      }
-
+    if (!is.null(x$surf[[cortex]]) && !is.null(x$meta$cortex$medial_wall_mask[[side]])) {
       if (length(x$meta$cortex$medial_wall_mask[[side]]) != nrow(x$surf[[cortex]]$vertices)) {
         message(paste0(
           "Number of vertices in", side, 
@@ -456,13 +455,21 @@ is.xifti <- function(x, messages=TRUE) {
   # For intent 3006 (.dscalar.nii), each measurement should be named.
   if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3006)) {
     if (!is.null(x$meta$cifti$names)) {
-      if (length(x$meta$cifti$names) != ncol(do.call(cbind, x$data))) {
+      if (length(x$meta$cifti$names) != ncol(do.call(rbind, x$data))) {
         message("There must be as many meta$cifti$names as there are data columns.\n")
         return(FALSE)
       }
     }
   }
-  # [TO DO]: Check label values for .dlabel? All data values must be in label table?
+  # # [TO DO]: Add +1 to data from read_cifti_separate. Then add this back.
+  # if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
+  #   if (!is.null(x$meta$cifti$labels)) {
+  #     if (!(all( unique(as.vector(do.call(rbind, x$data))) %in% 1:nrow(x$meta$cifti$labels) ))) {
+  #       message("All data values must be correspond to an index in the label table.\n")
+  #       return(FALSE)
+  #     }
+  #   }
+  # }
 
   TRUE
 }

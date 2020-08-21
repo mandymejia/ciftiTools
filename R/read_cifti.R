@@ -32,11 +32,6 @@
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR 
-#' @param full_volume Is the full subcortical volume required, or
-#'  is it okay to crop it by removing empty edge slices? Default: \code{FALSE}.
-#'  If \code{TRUE}, the data will have to be read in with 
-#'  \code{-cifti-separate}, which is slower than 
-#'  \code{-cifti-convert -to-gifti-ext}.
 #' @param resamp_res Resolution to resample the cortical data and surface to.
 #'  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 #'  have to be read in with \code{-cifti-separate}, which is slower than 
@@ -130,15 +125,13 @@ readCIfTI <- readcii <- read_xifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  full_volume=FALSE,
   resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
-  wb_path=NULL, verbose=verbose, ...){
+  wb_path=NULL, verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname, flat,
     surfL_fname, surfR_fname,
     brainstructures, 
-    full_volume,
     resamp_res, sphereL_fname, sphereR_fname,
     wb_path, verbose, ...
   )

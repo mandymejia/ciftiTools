@@ -1,0 +1,25 @@
+---
+title: "Template GIFTIs"
+author: "Damon Pham"
+date: "8/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+# devtools::install_github("damondpham/gifti")
+library(gifti)
+gifti_surf_template <- readgii("template.surf.gii")
+gifti_surf_template["transformations"] <- list(NULL)
+save(gifti_surf_template, file="../R/sysdata.rda")
+
+# # Demo
+# g <- gifti_surf_template
+# g$data_meta[[1]][1,2] <- "CortexLeft"
+# g$data <- list(pointset=new_pointset, triangle=new_triangle)
+# g$data_info$Dim0 <- c(nrow(new_pointset), nrow(new_triangle))
+```
+

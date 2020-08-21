@@ -60,11 +60,15 @@ read_cifti_convert <- function(
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
 
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+    xifti_data <- xifti_data + 1
+  }
+
   # Place cortex data into the "xifti" object.
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
   if ("left" %in% brainstructures) {
-    cortex <- make_xifti_cortex(
+    cortex <- make_cortex(
       xifti_data[1:last_left,, drop=FALSE],
       side = "left", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$left,
@@ -76,7 +80,7 @@ read_cifti_convert <- function(
     xifti$meta$cortex$medial_wall_mask["left"] <- list(template_xifti()$meta$cortex$medial_wall_mask$left)
   }
   if ("right" %in% brainstructures) {
-    cortex <- make_xifti_cortex(
+    cortex <- make_cortex(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
       side = "right", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$right,
@@ -89,7 +93,7 @@ read_cifti_convert <- function(
   }
 
   # Place subcortical data into the "xifti" object.
-  if ("subcort" %in% brainstructures) {
+  if ("subcortical" %in% brainstructures) {
     alpha_to_spatial <- order(order(xifti$meta$subcort$labels))
     subcort_order <- c((1+last_right):nrow(xifti_data))[alpha_to_spatial]
     xifti$data$subcort <- xifti_data[subcort_order,, drop=FALSE]
@@ -102,10 +106,10 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_xifti_surface(surfL_fname) 
+    xifti$surf$cortex_left <- make_surface(surfL_fname) 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_xifti_surface(surfR_fname) 
+    xifti$surf$cortex_right <- make_surface(surfR_fname) 
   }
 
   # Finish.

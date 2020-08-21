@@ -15,13 +15,13 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_left)) { 
       ciftiTools_msg("Overwriting existing geometry for left cortex.\n") 
     }
-    xifti$surf$cortex_left <- make_xifti_surface(surfL)
+    xifti$surf$cortex_left <- make_surface(surfL)
   }
   if (!is.null(surfR)) {
     if (!is.null(xifti$surf$cortex_right)) { 
       ciftiTools_msg("Overwriting existing geometry for right cortex.\n") 
     }
-    xifti$surf$cortex_right <- make_xifti_surface(surfR)
+    xifti$surf$cortex_right <- make_surface(surfR)
   }
 
   if (!is.xifti(xifti)) { stop("The resulting \"xifti\" object was invalid.") }

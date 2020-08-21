@@ -25,12 +25,11 @@ readCIfTI(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
-  full_volume = FALSE,
   resamp_res = NULL,
   sphereL_fname = NULL,
   sphereR_fname = NULL,
   wb_path = NULL,
-  verbose = verbose,
+  verbose = FALSE,
   ...
 )
 }
@@ -88,12 +87,6 @@ If not provided, should be set with
 
 \item{...}{Additional arguments to \code{\link{read_cifti_convert}} or 
 \code{\link{read_cifti_separate}}.}
-
-\item{full_volume}{Is the full subcortical volume required, or
-is it okay to crop it by removing empty edge slices? Default: \code{FALSE}.
-If \code{TRUE}, the data will have to be read in with 
-\code{-cifti-separate}, which is slower than 
-\code{-cifti-convert -to-gifti-ext}.}
 }
 \value{
 If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 

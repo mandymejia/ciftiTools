@@ -29,7 +29,7 @@
 #' @keywords internal
 #' 
 #' @importFrom gifti readgii is.gifti
-make_xifti_cortex <- function(
+make_cortex <- function(
   cortex, mwall=NULL,
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
@@ -196,7 +196,7 @@ make_xifti_cortex <- function(
 #'    labs <- unmask(labels, mask, fill=0) 
 #'
 #' @importFrom RNifti readNifti
-make_xifti_subcort <- function(
+make_subcort <- function(
   vol, labs, mask=NULL, validate_mask=FALSE) {
 
   # Get vol.
@@ -210,15 +210,22 @@ make_xifti_subcort <- function(
   # Get labels.
   if (is.fname(labs)) {
     labs <- readNifti(labs)
-    labs_vals <- order(unique(labs))
-    if (!all(labs_vals %in% 0:19)) { stop("The labels read from a NIFTI file should be integers 0-19.") }
-    labs[labs > 0] <- labs[labs > 0] + 2
+    labs_vals <- sort(unique(as.vector(labs)))
+    if (all(labs_vals %in% 0:19)) {
+      labs[labs > 0] <- labs[labs > 0] + 2
+      labs_vals <- sort(unique(as.vector(labs)))
+    } else if (all(labs_vals %in% c(0, 3:21))) {
+      warning("The nonzero labels from a NIFTI file should be integers 1-19. But, they were already 3-21.")
+    } else {
+      stop("The labels from a NIFTI file should be integers 0-19.")
+    }
   }
-  if (!is.numeric(labs) || !is.factor(labs)) { 
-    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`")
+
+  if (!(is.numeric(as.vector(labs)) || is.factor(labs))) { 
+    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
   }
   if (!all(as.integer(labs_vals) %in% c(0, 3:21))) { 
-    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`")
+    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
   }
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
@@ -226,7 +233,7 @@ make_xifti_subcort <- function(
   # Infer mask if not provided.
   if (is.null(mask)) {
     if (!labs_is_vectorized) {
-      mask <- labs > 0 | !is.na(labs)
+      mask <- labs > 0 & !is.na(labs)
       if (validate_mask) {
         mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
         if(!(all.equal(mask, mask_vol))) { 
@@ -265,60 +272,78 @@ make_xifti_subcort <- function(
   labs <- factor(
     labs[mask], 
     levels=1:length(substructure_levels), 
-    labs=substructure_levels
+    labels=substructure_levels
   )
   stopifnot(is.subcort_labs(labs))
 
   list(
     data = matrix(vol[mask], nrow=sum(mask)),
-    labels = labels,
+    labels = labs,
     mask = mask
   )
 }
 
+#' Convert GIFTI to "xifti" Surface Components
+#'
+#' Convert a GIFTI that has been read in to a "surface" object.
+#'
+#' @param surf The GIFTI that has been read in. It should be a list with components
+#'  "pointset" and "triangle", optionally as subentries to the entry "data".
+#'
+#' @return The "surface" object, a list of vertices (spatial locations) and faces
+#'  (defined by three vertices).
+#'
+#' @importFrom gifti readgii is.gifti
+#'
+#' @export
+#' 
+gifti_to_surface <- function(surf) {
+  # File --> GIFTI.
+  if (is.fname(surf)){ surf <- readgii(surf) }
+
+  # GIFTI --> list of vertices and faces.
+  if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::read_gifti()`.") }
+  stopifnot(is.list(surf))
+  if ("data" %in% names(surf)) { surf <- surf$data }
+  stopifnot(all(c("pointset", "triangle") %in% names(surf)))
+  verts <- surf$pointset
+  faces <- surf$triangle
+  if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
+  surf <- list(vertices = verts, faces = faces)
+
+  # Return cifti_surface or error.
+  if (!is.xifti_surface(surf)) {
+    stop("The object could not be converted into a surface.")
+  }
+
+  structure(surf, class="surface")
+}
+
 #' Make "xifti" Surface Components
 #' 
-#' Coerce a file path, GIFTI object (with entries "pointset" and "triangle"), 
-#'  or surface (list of vertices + faces) to a surface.
+#' Coerce a file path, GIFTI object (list with entries "pointset" and "triangle",
+#'  optionally as subentries to the entry "data"), or "surface" object (list of 
+#'  vertices + faces) to a "surface" object.
 #'
 #' @param surf What to coerce to a surface.
 #'
-#' @return The surface, a list of vertices (spatial locations) and faces
+#' @return The "surface" object, a list of vertices (spatial locations) and faces
 #'  (defined by three vertices).
 #'
 #' @export
 #' 
 #' @importFrom gifti readgii is.gifti
 make_surface <- function(surf) {
-  # File --> GIFTI.
-  if (is.fname(surf)){ surf <- readgii(surf) }
 
-  # GIFTI --> list of vertices and faces.
-  if (is.gifti(surf)) { 
-    surf <- gifti_to_surface(surf) 
-  } else {
-    if (!(is.list(surf) && names(surf)==c("vertices", "faces"))) {
-      stop(paste(
-        "`surf` was not an existing file (check file name?),",
-        "a result of `gifti::read_gifti()`,",
-        "or a list with components `vertices` and `faces`."
-      ))
-    }
-  }
+  x <- tryCatch(
+    { surf <- gifti_to_surface(surf) },
+    error = function(e){}
+  )
 
   # Return cifti_surface or error.
   if (!is.xifti_surface(surf)) {
     stop("The object could not be converted into a surface.")
   }
-  surf
-}
 
-gifti_to_surface <- function(gii) {
-  stopifnot(is.list(gii))
-  if ("data" %in% names(gii)) { gii <- gii$data }
-  stopifnot(all(c("pointset", "triangle") %in% names(gii)))
-  verts <- gii$pointset
-  faces <- gii$triangle
-  if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
-  surf <- list(vertices = verts, faces = faces)
+  structure(surf, class="surface")
 }

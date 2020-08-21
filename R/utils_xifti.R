@@ -1,21 +1,3 @@
-#' Table of CIFTI File Types (Intents) Supported By ciftiTools
-#' 
-#' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
-#' 
-#' @return A data.frame with each supported file type along the rows.
-#' 
-#' @keywords internal
-#' 
-supported_intents <- function(){
-  df <- data.frame(rbind(
-    c("dtseries.nii", "NIFTI_INTENT_CONNECTIVITY_DENSE_SERIES",   3002, "ConnDenseSeries"),
-    c("dscalar.nii",  "NIFTI_INTENT_CONNECTIVITY_DENSE_SCALARS",  3006, "ConnDenseScalar"),
-    c("dlabel.nii",   "NIFTI_INTENT_CONNECTIVITY_DENSE_LABELS",   3007, "ConnDenseLabel")
-  ))
-  colnames(df) <- c("extension", "intent_code", "value", "intent_name")
-  df
-}
-
 #' Summarise cifti objects
 #'
 #' Summary method for class "xifti"
