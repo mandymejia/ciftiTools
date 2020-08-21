@@ -33,7 +33,8 @@ template_xifti <- function(){
         medial_wall_mask = list(
           left = NULL,
           right = NULL
-        )
+        ),
+        resamp_res = NULL
       ),
       subcort = list(
         labels = NULL,

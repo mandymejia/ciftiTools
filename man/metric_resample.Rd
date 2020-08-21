@@ -16,3 +16,4 @@ Logical indicating whether resampled file was created.
 \description{
 Resample a metric GIFTI file (ends with "func.gii")
 }
+\keyword{internal}

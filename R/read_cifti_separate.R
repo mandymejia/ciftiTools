@@ -169,36 +169,16 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
-  result <- do.call(make_xifti, to_read)
+  xifti <- do.call(make_xifti, to_read)
 
   if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
 
-  # ----------------------------------------------------------------------------
-  # Finish ---------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  if ("left" %in% brainstructures | "right" %in% brainstructures) {
+    xifti$meta$cortex$resamp_res <- resamp_res
+  }
 
-  ## [TO DO]: The files are in tempdir(), so no need to manually delete?
-  # Delete the separated files, unless otherwise requested.
-  # if (!sep_keep) {
-  #   for(f in sep_result$fname) {
-  #     file.remove(f)
-  #     if (file.exists(paste0(f, ".data"))) {
-  #       file.remove(paste0(f, ".data"))
-  #     }
-  #   }
-  # }
-  # # Same for resampled files.
-  # if (do_resamp && !resamp_keep) {
-  #   for(f in resamp_result$fname) {
-  #     file.remove(f)
-  #     if (file.exists(paste0(f, ".data"))) {
-  #       file.remove(paste0(f, ".data"))
-  #     }
-  #   }
-  # }
-
-  result
+  xifti
 }

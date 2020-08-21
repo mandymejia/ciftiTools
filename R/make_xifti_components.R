@@ -204,6 +204,7 @@ make_subcort <- function(
     vol <- readNifti(vol)
   }
   vol_ndims <- length(dim(vol))
+  if (vol_ndims == 0) { stop("`vol` did not have any dimensions. Check that it is a matrix or array?") }
   if (vol_ndims == 1) { vol <- matrix(vol, ncol=1) }
   vol_is_vectorized <- vol_ndims < 3
 

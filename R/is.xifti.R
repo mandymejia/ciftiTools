@@ -441,11 +441,11 @@ is.xifti <- function(x, messages=TRUE) {
     if (!is.null(x$surf[[cortex]]) && !is.null(x$meta$cortex$medial_wall_mask[[side]])) {
       if (length(x$meta$cortex$medial_wall_mask[[side]]) != nrow(x$surf[[cortex]]$vertices)) {
         message(paste0(
-          "Number of vertices in", side, 
-          "cortex data (including the medial wall)",
-          "(length(x$meta$cortex$medial_wall_mask$[side]))",
-          "does not match its corresponding surface geometry.",
-          "(nrow(x$surf$cortex_[side]))", "\n"
+          "Number of vertices in ", side, 
+          " cortex data (including the medial wall), ",
+          length(x$meta$cortex$medial_wall_mask[[side]]),
+          ", does not match the number of vertices in the corresponding surface, ",
+          nrow(x$surf[[cortex]]$vertices), ". Are they the same resolution?\n"
         ))
         return(FALSE)
       }
