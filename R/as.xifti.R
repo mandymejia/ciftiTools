@@ -25,7 +25,7 @@
 #' @param subcortVol,subcortLabs,subcortMask \code{subcortVol} represents the
 #'  data values of the subcortical volume. It is either a 3D/4D data array
 #'  (i x j x k x T) or a vectorized data matrix (V_S voxels x T measurements). 
-#' If it's vectorized, voxels should be in spatial order.
+#'  If it's vectorized, voxels should be in spatial order.
 #' 
 #'  \code{subcortLabs} represents the brainstructure labels of each voxel: see
 #'  \code{\link{substructure_table}}. It is either a 3D data array (i x j x k)

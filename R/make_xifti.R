@@ -121,16 +121,16 @@ make_xifti <- function(
       cortexL, cortexL_mwall,
       side="left", mwall_source="the input `cortexL_mwall`"
     )
-    xii$data$cortex_left <- x$data
-    xii$meta$cortex$medial_wall_mask["left"] <- list(x$mwall)
+    xifti$data$cortex_left <- x$data
+    xifti$meta$cortex$medial_wall_mask["left"] <- list(x$mwall)
   }
   if (!is.null(cortexR)) {
     x <- make_cortex(
       cortexR, cortexR_mwall,
       side="right", mwall_source="the input `cortexR_mwall`"
     )
-    xii$data$cortex_right <- x$data
-    xii$meta$cortex$medial_wall_mask["right"] <- list(x$mwall)
+    xifti$data$cortex_right <- x$data
+    xifti$meta$cortex$medial_wall_mask["right"] <- list(x$mwall)
   }
 
   # Subcortical data. 
@@ -142,9 +142,6 @@ make_xifti <- function(
     xifti$data$subcort <- x$data
     xifti$meta$subcort$labels <- x$labels
     xifti$meta$subcort$mask <- x$mask
-    if (!is.null(cifti_info)) {
-      xifti$meta$subcort$trans_mat <- cifti_info$trans_mat
-    }
   }
 
   # CIFTI metadata.

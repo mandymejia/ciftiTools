@@ -210,21 +210,19 @@ make_subcort <- function(
   # Get labels.
   if (is.fname(labs)) {
     labs <- readNifti(labs)
+  }
+  ## Add 2 to non-zero label values.
+  labs_vals <- sort(unique(as.numeric(labs)))
+  if (all(labs_vals %in% 0:19)) {
+    labs[labs > 0] <- labs[labs > 0] + 2
     labs_vals <- sort(unique(as.vector(labs)))
-    if (all(labs_vals %in% 0:19)) {
-      labs[labs > 0] <- labs[labs > 0] + 2
-      labs_vals <- sort(unique(as.vector(labs)))
-    } else if (all(labs_vals %in% c(0, 3:21))) {
-      warning("The nonzero labels from a NIFTI file should be integers 1-19. But, they were already 3-21.")
-    } else {
-      stop("The labels from a NIFTI file should be integers 0-19.")
-    }
+  } else if (all(labs_vals %in% c(0, 3:21))) {
+    invisible()
+    #warning("The nonzero labels from a NIFTI file should be integers 1-19. But, they were already 3-21.")
+  } else {
+    stop("The labels should be integers 0-19, or 0 and 3-21. See `substructure_table()`.")
   }
-
   if (!(is.numeric(as.vector(labs)) || is.factor(labs))) { 
-    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
-  }
-  if (!all(as.integer(labs_vals) %in% c(0, 3:21))) { 
     stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
   }
   labs_ndims <- length(dim(labs))
@@ -235,13 +233,13 @@ make_subcort <- function(
     if (!labs_is_vectorized) {
       mask <- labs > 0 & !is.na(labs)
       if (validate_mask) {
-        mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
+        mask_vol <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
         if(!(all.equal(mask, mask_vol))) { 
           stop("The mask inferred from the labels did not match the mask inferred from the volume (NA/0 values).")
         }
       }
     } else if (!vol_is_vectorized) {
-      mask <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
+      mask <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
     } else {
       stop("The mask could not be inferred. At least one of the volume or labels must not be vectorized, if the mask is not provided.")
     }
@@ -268,16 +266,19 @@ make_subcort <- function(
   }
 
   # Apply mask.
+  if (!vol_is_vectorized) { vol <- matrix(vol[mask], nrow=sum(mask)) }
+  if (!labs_is_vectorized) { labs <- labs[mask] }
+
   substructure_levels <- substructure_table()$ciftiTools_Name
   labs <- factor(
-    labs[mask], 
+    labs, 
     levels=1:length(substructure_levels), 
     labels=substructure_levels
   )
   stopifnot(is.subcort_labs(labs))
 
   list(
-    data = matrix(vol[mask], nrow=sum(mask)),
+    data = vol,
     labels = labs,
     mask = mask
   )
