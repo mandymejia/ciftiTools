@@ -44,6 +44,9 @@
 #'  with components "verts" (V x 3 data matrix indicating spatial locations of 
 #'  each vertex) and "faces" (F x 3 data matrix indicating the indices of the 
 #'  three vertices defining each triangular face).
+#'
+#' @export
+#'
 as.xifti <- function(
   cortexL=NULL, cortexL_mwall=NULL,
   cortexR=NULL, cortexR_mwall=NULL,
