@@ -31,6 +31,10 @@
          <Name><![CDATA[GeometricType]]></Name>
          <Value><![CDATA[Anatomical]]></Value>
       </MD>
+      <MD>
+         <Name><![CDATA[Name]]></Name>
+         <Value><![CDATA[#1]]></Value>
+      </MD>
    </MetaData>
    <CoordinateSystemTransformMatrix>
       <DataSpace><![CDATA[NIFTI_XFORM_TALAIRACH]]></DataSpace>
@@ -55,6 +59,14 @@
            ExternalFileName=""
            ExternalFileOffset="0">
    <MetaData>
+      <MD>
+         <Name><![CDATA[Name]]></Name>
+         <Value><![CDATA[#2]]></Value>
+      </MD>
+      <MD>
+         <Name><![CDATA[TopologicalType]]></Name>
+         <Value><![CDATA[Closed]]></Value>
+      </MD>
    </MetaData>
    <Data>0
    0

@@ -7,9 +7,9 @@
 #' @param out_fname The path to the GIFTI file to write
 # #' @param intent The NIFTI intent. Default is \code{"NIFTI_INTENT_NORMAL"}. See:
 # #'  https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
-#' @param datatype A vector corresponding to the NIFTI types of \code{data}.
+#' @param data_type A vector corresponding to the NIFTI types of \code{data}.
 #'  For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
-#'  (default), the datatype will be inferred. 
+#'  (default), the data_type will be inferred. 
 #' @param ... Other vectors of options to 
 #'  \code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and
 #'  "endian". 
@@ -62,7 +62,7 @@ write_xifti_components <- function(
       xifti$data$cortex_left,
       xifti$meta$cortex$medial_wall_mask$left
     )
-    write_gifti_component_of_cifti(cdat, sep_fnames$cortexL)
+    write_gifti(cdat, sep_fnames$cortexL)
   } else {
     sep_fnames$cortexL <- NULL
   }
@@ -74,7 +74,7 @@ write_xifti_components <- function(
       xifti$data$cortex_right,
       xifti$meta$cortex$medial_wall_mask$right
     )
-    write_gifti_component_of_cifti(cdat, sep_fnames$cortexR)
+    write_gifti(cdat, sep_fnames$cortexR)
   } else {
     sep_fnames$cortexR <- NULL
   }

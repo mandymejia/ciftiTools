@@ -40,9 +40,9 @@ If not provided, should be set with
 
 \item{out_fname}{The path to the GIFTI file to write}
 
-\item{datatype}{A vector corresponding to the NIFTI types of \code{data}.
+\item{data_type}{A vector corresponding to the NIFTI types of \code{data}.
 For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
-(default), the datatype will be inferred.}
+(default), the data_type will be inferred.}
 
 \item{...}{Other vectors of options to 
 \code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and

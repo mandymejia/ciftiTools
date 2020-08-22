@@ -230,7 +230,7 @@ match_exactly <- function(
   user, expected,
   fail_action=c("message", "warning", "stop", "nothing")) {
 
-  fail_action <- match.arg(fail_action)
+  fail_action <- match.arg(fail_action, c("message", "warning", "stop", "nothing"))
   unrecognized_FUN <- switch(fail_action,
     message=message,
     warning=warning,
@@ -317,4 +317,18 @@ ciftiTools_msg <- function(msg){
 ciftiTools_warn <- function(warn){
   if(ciftiTools.getOption("suppress_msgs")) { warning(warn) }
   invisible(NULL)
+}
+
+#' All Integers?
+#'
+#' Check if a data vector or matrix is all integers.
+#'
+#' @param x The data vector or matrix
+#' @keywords internal
+#'
+#' @return TRUE or FALSE indicating if x is all integers
+#'
+all_integers <- function(x){
+  non_integer <- max(abs(x - round(x)))
+  non_integer==0 && !is.na(non_integer)
 }

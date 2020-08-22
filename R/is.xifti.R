@@ -91,7 +91,7 @@ is.xifti_data <- function(x) {
 #' @return Logical indicating whether x is a valid surface.
 #' @export
 #' 
-is.xifti_surface <- function(x) {
+is.surface <- function(x) {
   if (!match_exactly(names(x), c("vertices", "faces"))) {
     return(FALSE)
   }
@@ -373,7 +373,7 @@ is.xifti <- function(x, messages=TRUE) {
 
   if (!is.xifti_data(x$data)) { message('"data" is invalid.\n'); return(FALSE) }
   for (s in names(x$surf)) {
-    if (!is.null(x$surf[[s]]) && !is.xifti_surface(x$surf[[s]])) {
+    if (!is.null(x$surf[[s]]) && !is.surface(x$surf[[s]])) {
       message(paste(s, "is invalid.\n")); return(FALSE)
     }
   }

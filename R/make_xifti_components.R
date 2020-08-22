@@ -51,6 +51,7 @@ make_cortex <- function(
   # GIFTI --> matrix.
   if (is.gifti(cortex)) {
     cortex <- do.call(cbind, cortex$data)
+    dimnames(cortex) <- NULL # [TO DO]: Keep if dscalar or dlabels?
   } else {
     if (!is.numeric(cortex) && !is.matrix(cortex)) {
       stop(paste(
@@ -311,10 +312,11 @@ gifti_to_surface <- function(surf) {
   verts <- surf$pointset
   faces <- surf$triangle
   if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
+  mode(faces) <- "integer"
   surf <- list(vertices = verts, faces = faces)
 
   # Return cifti_surface or error.
-  if (!is.xifti_surface(surf)) {
+  if (!is.surface(surf)) {
     stop("The object could not be converted into a surface.")
   }
 
@@ -343,7 +345,7 @@ make_surface <- function(surf) {
   )
 
   # Return cifti_surface or error.
-  if (!is.xifti_surface(surf)) {
+  if (!is.surface(surf)) {
     stop("The object could not be converted into a surface.")
   }
 

@@ -273,7 +273,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' @keywords internal
 #'
 info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
-  what <- match.arg(what)
+  what <- match.arg(what, c("header", "xml"))
   what <- paste0("-print-", what)
   out <- run_wb_cmd(
     paste("-nifti-information", sys_path(cifti_fname), what),
