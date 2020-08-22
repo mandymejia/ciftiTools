@@ -36,7 +36,7 @@ as.metric_gifti <- function(
     side_idx <- names(data$file_meta) == "AnatomicalStructurePrimary"
     side_idx <- which(side_idx)[1]
     other_side <- list(right="left", left="right")[side]
-    meta_side <- gsub("cortex", "", tolower(c1_left$file_meta[[side_idx]]))
+    meta_side <- gsub("cortex", "", tolower(data$file_meta[[side_idx]]))
     if (grepl(other_side, meta_side)) {
       stop(paste0(
         "The requested side, ", side, 
@@ -83,7 +83,8 @@ as.metric_gifti <- function(
   # Form the "gifti".
   gii <- gifti_metric_template # from ciftiTools sysdata
   gii$data <- data
-  gii$file_meta[1]<- list(left="CortexLeft", right="CortexRight")[side]
+  side_idx <- which(names(gii$file_meta)=="AnatomicalStructurePrimary")[1]
+  gii$file_meta[side_idx] <- list(left="CortexLeft", right="CortexRight")[side]
   gii$data_meta <- gii$data_meta[rep(1, length(data))]
   gii$data_info$Intent <- intent
   gii$data_info$DataType <- data_type

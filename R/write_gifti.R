@@ -64,7 +64,8 @@ write_metric_gifti <- function(
   gii$data_info$DataType <- paste0("NIFTI_TYPE_", gsub("NIFTI_TYPE_", "", toupper(data_type)))
   gii$data_info$Encoding <- encoding
   gii$data_info$Endian <- endian
-  gii$file_meta[1]<- list(left="CortexLeft", right="CortexRight")[side]
+  side_idx <- which(names(gii$file_meta)=="AnatomicalStructurePrimary")[1]
+  gii$file_meta[side_idx] <- list(left="CortexLeft", right="CortexRight")[side]
 
   write_gifti(gii, gifti_fname, use_parsed_transformations=TRUE)
 }
