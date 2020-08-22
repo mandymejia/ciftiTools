@@ -53,15 +53,19 @@ write_xifti_components <- function(
   )
   names(sep_fnames) <- sep_names
 
+  print(sep_names)
+
   # Write the intermediate files.
   # TO DO: is it possible to indicate the medial wall?
   ## Left cortex: add back medial wall.
   if (!is.null(xifti$data$cortex_left)){
     if (verbose) {cat("Writing left cortex.\n")}
-    cdat <- unmask_cortex(
-      xifti$data$cortex_left,
-      xifti$meta$cortex$medial_wall_mask$left
-    )
+    if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+      mwall <- rep(TRUE, nrow(xifti$data$cortex_left))
+    } else {
+      mwall <- xifti$meta$cortex$medial_wall_mask$left
+    }
+    cdat <- unmask_cortex(xifti$data$cortex_left, mwall)
     write_metric_gifti(cdat, sep_fnames$cortexL, "left")
   } else {
     sep_fnames$cortexL <- NULL
@@ -70,10 +74,12 @@ write_xifti_components <- function(
   ## Right cortex: add back medial wall.
   if (!is.null(xifti$data$cortex_right)){
     if (verbose) {cat("Writing right cortex.\n")}
-    cdat <- unmask_cortex(
-      xifti$data$cortex_right,
-      xifti$meta$cortex$medial_wall_mask$right
-    )
+    if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+      mwall <- rep(TRUE, nrow(xifti$data$cortex_right))
+    } else {
+      mwall <- xifti$meta$cortex$medial_wall_mask$right
+    }
+    cdat <- unmask_cortex(xifti$data$cortex_right, mwall)
     write_metric_gifti(cdat, sep_fnames$cortexR, "right")
   } else {
     sep_fnames$cortexR <- NULL
@@ -88,6 +94,7 @@ write_xifti_components <- function(
       xifti$meta$subcort$mask, 
       sep_fnames$subcortVol, 
       sep_fnames$subcortLabs, 
+      fill=0,
       wb_path
     )
   } else {
@@ -147,7 +154,7 @@ write_cifti <- function(
     }
   }
 
-  TRUE
+  invisible(TRUE)
 }
 
 #' @rdname write_cifti

@@ -34,6 +34,8 @@ Imports:
     RColorBrewer,
     rgl,
     xml2
+Remotes:
+    damondpham/gifti
 Suggests:
     papayar,
     testthat,

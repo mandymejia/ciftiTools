@@ -234,9 +234,11 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
           lapply(strsplit(
             strsplit(xml[[xml_idx]]$VoxelIndicesIJK[[1]], "\n")[[1]], " "
           ), as.numeric)
-        ), ii+2)
+          # Add two to skip cortex L/R. Line after already adds the other 1.
+        ), ii+1)
       }
     }
+    # Add one to start indexing at 1 instead of zero
     subcort_dat <- do.call(rbind, subcort_dat) + 1
     meta$subcort_labs <- coordlist_to_vol(subcort_dat, fill=0)
   }

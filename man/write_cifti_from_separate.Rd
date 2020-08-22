@@ -6,12 +6,12 @@
 \usage{
 write_cifti_from_separate(
   cifti_fname,
-  cortexL_fname,
-  cortexR_fname,
+  cortexL_fname = NULL,
+  cortexR_fname = NULL,
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
-  subcortVol_fname,
-  subcortLabs_fname,
+  subcortVol_fname = NULL,
+  subcortLabs_fname = NULL,
   timestep = NULL,
   timestart = NULL,
   wb_path = NULL

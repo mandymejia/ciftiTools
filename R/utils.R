@@ -270,7 +270,7 @@ match_exactly <- function(
 #' @inheritParams wb_path_Param
 #'
 #' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
-#'  If \code{intern==TRUE}, the printed output fo the command.
+#'  If \code{intern==TRUE}, the printed output of the command.
 #'
 run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
   wb_cmd <- get_wb_cmd_path(wb_path)
@@ -288,7 +288,7 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
     }
   }
 
-  out
+  invisible(out)
 }
 
 #' Print Suppressable Message

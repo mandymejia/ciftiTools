@@ -22,13 +22,13 @@ resample_surf <- function(
   sphereL_target_fname <- format_path("sphereL.surf.gii", tdir, mode=2)
   sphereR_target_fname <- format_path("sphereR.surf.gii", tdir, mode=2)
   make_helper_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
-  sphere_target_fname <- list(left=sphereL_target_fname, right=sphereR_target_fname)[side]
+  sphere_target_fname <- switch(side, left=sphereL_target_fname, right=sphereR_target_fname)
 
   gii_pre <- format_path("to_resample.surf.gii", tdir, 2)
   gii_post <- format_path("to_read.surf.gii", tdir, 2)
   write_surf_gifti(surf, gii_pre, side)
   resample_gifti(
-    gii_pre, gii_post, 
+    gii_pre, gii_post, resamp_res=resamp_res,
     sphere_original_fname=sphere_original_fname, 
     sphere_target_fname=sphere_target_fname
   )

@@ -18,7 +18,7 @@ logical indicating success instead.}
 }
 \value{
 If \code{intern==FALSE}, a logical indicating if the command finished successfully.
- If \code{intern==TRUE}, the printed output fo the command.
+ If \code{intern==TRUE}, the printed output of the command.
 }
 \description{
 Runs a Connectome Workbench command that has already been formatted.

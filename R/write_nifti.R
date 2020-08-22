@@ -23,6 +23,8 @@ write_subcort_nifti <- function(
   writeNifti(unmask(subcortVol, subcortMask, fill=fill), subcortVol_fname)
 
   # Labels...
+  stopifnot(is.subcort_labs(subcortLabs))
+  subcortLabs <- as.numeric(subcortLabs) #- 2
   writeNifti(unmask(subcortLabs, subcortMask, fill=fill), subcortLabs_fname)
   
   # ...Add back subcortical label information.

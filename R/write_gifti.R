@@ -84,7 +84,7 @@ write_metric_gifti <- function(
 #'  "pointset" and "ASCII" for the "traingles" if \code{data} is not already
 #'  a GIFTI.
 #' @param endian "LittleEndian" (default) or "BigEndian".
-#' 
+#'
 #' @importFrom gifti write_gifti
 #' 
 write_surf_gifti <- function(
@@ -104,7 +104,7 @@ write_surf_gifti <- function(
   } else {
     gii <- as.surf_gifti(gii, side=side)
     if (is.null(encoding)) { 
-      encoding <- list(pointset="GZipBase64Binary", triangle="ASCII")[names(gii$data)] 
+      encoding <- as.character(list(pointset="GZipBase64Binary", triangle="ASCII")[names(gii$data)])
     }
   }
 
