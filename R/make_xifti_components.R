@@ -343,6 +343,7 @@ make_surface <- function(surf) {
     { surf <- gifti_to_surface(surf) },
     error = function(e){}
   )
+  # TO DO because of tryCatch, need useful error message if file does not exist.
 
   # Return cifti_surface or error.
   if (!is.surface(surf)) {

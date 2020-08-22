@@ -13,8 +13,6 @@
 #' @param ... Other vectors of options to 
 #'  \code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and
 #'  "endian". 
-#' 
-#' @importFrom freesurferformats gifti_writer
 #'
 #' @keywords internal
 #' 
@@ -52,8 +50,6 @@ write_xifti_components <- function(
     function(x){format_path(paste0("sep.", x), write_dir, mode=2)}
   )
   names(sep_fnames) <- sep_names
-
-  print(sep_names)
 
   # Write the intermediate files.
   # TO DO: is it possible to indicate the medial wall?
@@ -150,7 +146,7 @@ write_cifti <- function(
       write_surf_gifti(xifti$surf$cortex_left, surfL_fname, "left")
     }
     if (do_right_surf) {
-      write_surf_gifti(xifti$surf$cortex_right, surfL_fname, "right")
+      write_surf_gifti(xifti$surf$cortex_right, surfR_fname, "right")
     }
   }
 

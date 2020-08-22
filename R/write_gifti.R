@@ -27,6 +27,8 @@
 #'  "gifti" object, it will overwrite the existing endian.
 #'
 #' @return Whether the GIFTI was successfully written
+#'
+#' @importFrom gifti write_gifti
 #' @export
 write_metric_gifti <- function(
   gii, gifti_fname, side=c("left", "right"),
@@ -85,8 +87,10 @@ write_metric_gifti <- function(
 #'  a GIFTI.
 #' @param endian "LittleEndian" (default) or "BigEndian".
 #'
+#' @return Whether the GIFTI was successfully written
+#'
 #' @importFrom gifti write_gifti
-#' 
+#' @export
 write_surf_gifti <- function(
   gii, gifti_fname, side=c("left", "right"),
   encoding=NULL, endian=c("LittleEndian", "BigEndian")){
