@@ -16,6 +16,8 @@ resample_surf <- function(
   surf, resamp_res, side=c("left", "right"), 
   sphere_original_fname){
 
+  stopifnot(is.surface(surf))
+
   side <- match.arg(side, c("left", "right"))
 
   tdir <- tempdir()
