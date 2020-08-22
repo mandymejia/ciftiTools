@@ -14,7 +14,14 @@ write_cifti(
   wb_path = NULL
 )
 
-writeCIfTI(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
+writeCIfTI(
+  xifti,
+  cifti_fname,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
@@ -33,7 +40,8 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Logical indicating whether the CIFTI file was successfully written
+Logical indicating whether the CIFTI file (and any surfaces) was 
+ successfully written
 }
 \description{
 Write out a CIFTI file from a "xifti" object.

@@ -581,11 +581,11 @@ view_xifti_surface <- function(xifti, idx=1,
       xifti$meta$cortex$medial_wall_mask$left <- rep(TRUE, nrow(surfL$vertices))
     }
     if (nrow(surfL$vertices) != length(xifti$meta$cortex$medial_wall_mask$left)) {
-      warning(paste(
+      stop(paste(
         "The left surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if medial wall mask is absent). Resampling."
+        "(length of medial wall mask, or rows in data if medial wall mask is absent)."
       ))
-      surfL <- resample_gifti()
+      #surfL <- resample_surf(surfL, length(xifti$meta$cortex$medial_wall_mask$left), "left", sphereL_fname)
     }
 
     # Get data values.
@@ -615,9 +615,9 @@ view_xifti_surface <- function(xifti, idx=1,
       xifti$meta$cortex$medial_wall_mask$right <- rep(TRUE, nrow(surfR$vertices))
     }
     if (nrow(surfR$vertices) != length(xifti$meta$cortex$medial_wall_mask$right)) {
-      warning(paste(
+      stop(paste(
         "The right surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if medial wall mask is absent). Resampling."
+        "(length of medial wall mask, or rows in data if medial wall mask is absent)."
       ))
     }
 

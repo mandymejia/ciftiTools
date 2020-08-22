@@ -13,7 +13,6 @@
 #'  inferred. If not \code{NULL} and \code{data} is a "gifti" object, it will
 #'  overwrite the existing intent. See 
 #'  https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view .
-#'  
 #' @param data_type the type of \code{data}:
 #'  "NIFTI_TYPE_*" where * is "INT32" or "FLOAT32". If \code{NULL} (default), the 
 #'  data type will be inferred. If not \code{NULL} and \code{data} is a "gifti" 

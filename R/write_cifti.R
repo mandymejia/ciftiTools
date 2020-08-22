@@ -62,7 +62,7 @@ write_xifti_components <- function(
       xifti$data$cortex_left,
       xifti$meta$cortex$medial_wall_mask$left
     )
-    write_gifti(cdat, sep_fnames$cortexL)
+    write_metric_gifti(cdat, sep_fnames$cortexL, "left")
   } else {
     sep_fnames$cortexL <- NULL
   }
@@ -74,44 +74,22 @@ write_xifti_components <- function(
       xifti$data$cortex_right,
       xifti$meta$cortex$medial_wall_mask$right
     )
-    write_gifti(cdat, sep_fnames$cortexR)
+    write_metric_gifti(cdat, sep_fnames$cortexR, "right")
   } else {
     sep_fnames$cortexR <- NULL
   }
 
   ## Subcortex: unmask to get volumetric array.
   if (!is.null(xifti$data$subcort)) {
-    if (verbose) {cat("Writing subcortex.\n")}
-    ## (first pad the mask if the cropping is known.)
-    if (!any(is.na(do.call(rbind, xifti$meta$subcort$mask_padding)))) {
-      mask <- pad_vol(
-        xifti$meta$subcort$mask, 
-        xifti$meta$subcort$mask_padding, 
-        FALSE
-      )
-    } else {
-      mask <- xifti$meta$subcort$mask
-    }
-    ## Data.
-    writeNifti(
-      unmask(xifti$data$subcort, mask, fill=subcort_fill), 
-      sep_fnames$subcortVol
+    if (verbose) {cat("Writing subcortical data and labels.\n")}
+    write_subcort_nifti(
+      xifti$data$subcort, 
+      xifti$meta$subcort$labels, 
+      xifti$meta$subcort$mask, 
+      sep_fnames$subcortVol, 
+      sep_fnames$subcortLabs, 
+      wb_path
     )
-    ## Labels..
-    writeNifti(
-      unmask(as.numeric(xifti$meta$subcort$labels), mask, fill=subcort_fill), 
-      sep_fnames$subcortLabs
-    )
-    # Add back subcortical label information.
-    # https://www.humanconnectome.org/software/workbench-command/-volume-help
-    subcort_lab_list <- system.file("subcort_label_list.txt", package="ciftiTools")
-    cmd <- paste(
-      "-volume-label-import", 
-      sys_path(sep_fnames$subcortLabs), 
-      sys_path(subcort_lab_list), 
-      sys_path(sep_fnames$subcortLabs)
-    )
-    run_wb_cmd(cmd, wb_path)
   } else {
     sep_fnames$subcortVol <- sep_fnames$subcortLabs <- NULL
   }
@@ -131,7 +109,8 @@ write_xifti_components <- function(
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether the CIFTI file was successfully written
+#' @return Logical indicating whether the CIFTI file (and any surfaces) was 
+#'  successfully written
 #' @export
 #'
 write_cifti <- function(
@@ -153,15 +132,33 @@ write_cifti <- function(
     timestep=xifti$meta$cifti$time_step, timestart=xifti$meta$cifti$time_start,
     wb_path=wb_path
   )
+
+  do_left_surf <- !is.null(surfL_fname) && !is.null(xifti$surf$cortex_left)
+  do_right_surf <- !is.null(surfR_fname) && !is.null(xifti$surf$cortex_right)
+
+  if (do_left_surf || do_right_surf) {
+    if (verbose) { cat("Writing surface geometry GIFTI(s).\n") }
+
+    if (do_left_surf) {
+      write_surf_gifti(xifti$surf$cortex_left, surfL_fname, "left")
+    }
+    if (do_right_surf) {
+      write_surf_gifti(xifti$surf$cortex_right, surfL_fname, "right")
+    }
+  }
+
+  TRUE
 }
 
 #' @rdname write_cifti
 #' @export
 writeCIfTI <- writecii <- write_xifti <- function(
   xifti, cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {
   write_cifti(
     xifti=xifti, cifti_fname=cifti_fname, 
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     verbose=verbose, wb_path=wb_path
   )
 }
