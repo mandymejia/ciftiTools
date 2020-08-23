@@ -29,6 +29,9 @@ a GIFTI.}
 
 \item{endian}{"LittleEndian" (default) or "BigEndian".}
 }
+\value{
+Whether the GIFTI was successfully written
+}
 \description{
 Write the data for the left or right surface to a surface GIFTI file.
 }
