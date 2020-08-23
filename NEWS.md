@@ -8,7 +8,7 @@
     * This allows for reading in more metadata such as time start/step for `.dtseries.nii`
 * `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::write_gifti`
     * Currently depends on `damondpham/gifti` but this will hopefully be merged to main repo soon
-* `write_subcort_nifti` to write out subcortical components form `"xifti"` to a NIFTI file
+* `write_subcort_nifti` to write out subcortical components from `"xifti"` to a NIFTI file
     * TO DO: add orientation and transformation matrix metadata
 * `write_cifti` can also write the surfaces attached to the `"xifti"`
 * `"xifti"` objects can contain surfaces without any data. 
