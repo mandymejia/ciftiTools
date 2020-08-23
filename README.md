@@ -16,12 +16,9 @@ contain brain imaging data in “gray-ordinates”, which includes all the
 gray matter of the brain. The gray matter is divided into cortical
 surface (left and right) and subcortical (cerebellum, basal ganglia, and
 other deep gray matter). `ciftiTools` uses the Connectome Workbench to
-separate CIFTI files into two GIFTI files representing the cortical
-surface data and one NIFTI file representing the subcortical data, and
-reads the data into R. It also provides visualization tools for the
-surface and subcortical data. `ciftiTools` also includes processing
-functions to apply common preprocessing steps to the CIFTI data
-(e.g. smoothing, resampling).
+read the data into R. It also provides visualization tools for the
+surface and subcortical data, and processing functions to apply common
+preprocessing steps (e.g. smoothing, resampling).
 
 ## Installation
 
@@ -60,10 +57,7 @@ plot(cifti)
 
 ## Wishlist
 
-  - static images in `view_cifti()`
   - slider in `view_cifti()` to change column/time
-  - `write_cifti()`
-  - `unflatten_cifti()`
   - tests
   - CRAN
   - Neuroconductor
