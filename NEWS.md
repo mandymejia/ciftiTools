@@ -1,4 +1,4 @@
-# 1.3
+# 1.3 (August 24, 2020)
 
 * introduce `"xifti"` object: can be made from CIFTI file, GIFTI surfaces, or new data
     * To make a `"xifti"` from data: `as.xifti(...)`
@@ -15,7 +15,7 @@
     * `view_xifti_surface` can view a surface without any data: `plot(as.xifti(surfL=left_surf))`
 * `resample_surf` to resample a surface object 
 
-# 1.2
+# 1.2 (August 7, 2020)
 
 * `read_cifti_flat` and `read_cifti_separate`
 * flatten subcortical data in `"cifti"` object. unflattening functions.
@@ -24,7 +24,7 @@
 * better handling of medial wall
 * Subcortical color table added for writing CIFTIs. Taken from: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
 
-# 1.1
+# 1.1 (July 24, 2020)
 
 ## New names
 

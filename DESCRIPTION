@@ -34,7 +34,7 @@ Imports:
     rgl,
     xml2
 Remotes:
-    damondpham/gifti
+    muschellij2/gifti
 Suggests:
     papayar,
     testthat,
