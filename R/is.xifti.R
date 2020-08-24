@@ -360,7 +360,7 @@ is.xifti_meta <- function(x) {
 #' @inheritSection labels_Description Label Levels
 #' 
 is.xifti <- function(x, messages=TRUE) {
-  if (!messages) { return(suppressMessages(is.xifti(x, messages=FALSE))) }
+  if (!messages) { return(suppressMessages(is.xifti(x, messages=TRUE))) }
 
   y <- template_xifti()
   if (!match_exactly(names(x), names(y))) { 
