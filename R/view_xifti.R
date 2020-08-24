@@ -583,7 +583,8 @@ view_xifti_surface <- function(xifti, idx=1,
     if (nrow(surfL$vertices) != length(xifti$meta$cortex$medial_wall_mask$left)) {
       stop(paste(
         "The left surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if medial wall mask is absent)."
+        "(length of medial wall mask, or rows in data if medial wall mask is absent).",
+        "Are they in the same resolution?"
       ))
       #surfL <- resample_surf(surfL, length(xifti$meta$cortex$medial_wall_mask$left), "left", sphereL_fname)
     }
@@ -617,7 +618,8 @@ view_xifti_surface <- function(xifti, idx=1,
     if (nrow(surfR$vertices) != length(xifti$meta$cortex$medial_wall_mask$right)) {
       stop(paste(
         "The right surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if medial wall mask is absent)."
+        "(length of medial wall mask, or rows in data if medial wall mask is absent).",
+        "Are they in the same resolution?"
       ))
     }
 

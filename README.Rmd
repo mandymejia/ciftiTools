@@ -44,12 +44,12 @@ ciftiTools.setOption('wb_path', 'Desktop/workbench')
 # Read in the CIFTI file, and resample it to 8000 vertices per hemisphere.
 cifti <- read_cifti(
   cifti_fname='Desktop/data/my_CIFTI_file.dtseries.nii', 
-  surfL_fname='Desktop/data/32k_inflated_left.gii', 
-  surfR_fname='Desktop/data/32k_inflated_right.gii', 
+  surfL_fname='Desktop/data/32k_inflated_left.surf.gii', 
+  surfR_fname='Desktop/data/32k_inflated_right.surf.gii', 
   resamp_res=8000, 
   # The spheres are only required for resampling.
-  sphereL_fname='Desktop/data/32k_left_sphere.gii', 
-  sphereR_fname='Desktop/data/32k_right_sphere.gii'
+  sphereL_fname='Desktop/data/32k_left_sphere.surf.gii', 
+  sphereR_fname='Desktop/data/32k_right_sphere.surf.gii'
 )
 
 # Visualize the surface.
