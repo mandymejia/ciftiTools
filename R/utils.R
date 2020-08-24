@@ -1,6 +1,6 @@
 #' Format a path
 #'
-#' Normalize and validate a path. Optionally, place it in a directory.
+#' Normalize and validate a path (optionally, within a certain directory).
 #'
 #' @param path The path to normalize.
 #' @param dir (Optional) the directory to append to the beginning of the path.
@@ -230,7 +230,7 @@ match_exactly <- function(
   user, expected,
   fail_action=c("message", "warning", "stop", "nothing")) {
 
-  fail_action <- match.arg(fail_action)
+  fail_action <- match.arg(fail_action, c("message", "warning", "stop", "nothing"))
   unrecognized_FUN <- switch(fail_action,
     message=message,
     warning=warning,
@@ -265,22 +265,70 @@ match_exactly <- function(
 #' Runs a Connectome Workbench command that has already been formatted.
 #'
 #' @param cmd The full command, beginning after the workbench path.
+#' @param intern Return printed output? If \code{FALSE} (default), return
+#'  logical indicating success instead.
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating if the command finished successfully.
+#' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
+#'  If \code{intern==TRUE}, the printed output of the command.
 #'
-run_wb_cmd <- function(cmd, wb_path){
+run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
   wb_cmd <- get_wb_cmd_path(wb_path)
   cmd <- paste(sys_path(wb_cmd), cmd)
+  
+  out <- system(cmd, intern=intern)
 
-  cmd_code <- system(cmd)
-  success <- cmd_code == 0
-  if (!success) {
-    message(paste0(
-      "The Connectome Workbench command failed with code ", cmd_code, 
-      ". The command was:\n", cmd
-    ))
+  if (!intern) {
+    out <- out == 0
+    if (!out) {
+      message(paste0(
+        "The Connectome Workbench command failed with code ", out, 
+        ". The command was:\n", cmd
+      ))
+    }
   }
 
-  success
+  invisible(out)
+}
+
+#' Print Suppressable Message
+#' 
+#' Print Message only if ciftiTools Option "suppress_msgs" is TRUE
+#' 
+#' @param msg The message
+#' @keywords internal
+#' 
+#' @return NULL, invisibly.
+#' 
+ciftiTools_msg <- function(msg){
+  if(ciftiTools.getOption("suppress_msgs")) { message(msg) }
+  invisible(NULL)
+}
+
+#' Print Suppressable Warning
+#' 
+#' Print warning only if ciftiTools Option "suppress_msgs" is TRUE
+#' 
+#' @param msg The warning message
+#' @keywords internal
+#' 
+#' @return NULL, invisibly.
+#' 
+ciftiTools_warn <- function(warn){
+  if(ciftiTools.getOption("suppress_msgs")) { warning(warn) }
+  invisible(NULL)
+}
+
+#' All Integers?
+#'
+#' Check if a data vector or matrix is all integers.
+#'
+#' @param x The data vector or matrix
+#' @keywords internal
+#'
+#' @return TRUE or FALSE indicating if x is all integers
+#'
+all_integers <- function(x){
+  non_integer <- max(abs(x - round(x)))
+  non_integer==0 && !is.na(non_integer)
 }

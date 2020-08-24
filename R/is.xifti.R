@@ -91,9 +91,16 @@ is.xifti_data <- function(x) {
 #' @return Logical indicating whether x is a valid surface.
 #' @export
 #' 
-is.xifti_surface <- function(x) {
+is.surface <- function(x) {
   if (!match_exactly(names(x), c("vertices", "faces"))) {
     return(FALSE)
+  }
+
+  if (!is.matrix(x$vertices)) {
+    message("x$vertices must be a 3-column matrix.\n"); return(FALSE)
+  }
+  if (!is.matrix(x$faces)) {
+    message("x$faces must be a 3-column matrix.\n"); return(FALSE)
   }
 
   if (ncol(x$vertices) != 3) {
@@ -138,7 +145,7 @@ is.xifti_surface <- function(x) {
 #'
 #' @inheritSection labels_Description Label Levels
 #' 
-is.subcort_labels <- function(x) {
+is.subcort_labs <- function(x) {
   if (!is.factor(x)) {
     message("The labels must be a factor.\n"); return(FALSE)
   }
@@ -178,50 +185,6 @@ is.3D_mask <- function(x) {
   TRUE
 }
 
-#' Validate the subcortical mask padding metadata
-#' 
-#' Check if object is valid for \code{xifti$meta$subcort$mask_padding}, where 
-#'  \code{xifti} is a \code{"xifti"} object.
-#' 
-#'  If the subcortical data was read in with \code{-cifti-export-dense-mapping},
-#'  some unpredictable and incomplete cropping is done to the subcortical array. 
-#'  We haven't figured out how to recover the original dimensions, e.g. 
-#'  91 x 109 x 91. To make the result of reading in the data with 
-#'  \code{-cifti-export-dense-mapping} the same as using \code{-cifti-separate},
-#'  we crop each array completely by removing all zero-valued edge slices. 
-#'  \code{xifti$meta$subcort$mask_padding} stores the padding data to recover
-#'  the original volume if \code{-cifti-separate} was used. It cannot be
-#'  determined if \code{-cifti-export-dense-mapping} was used due to the 
-#'  unpredictable and incomplete cropping it performs.
-#' 
-#'  This is a helper function for \code{\link{is.xifti}}.
-#' 
-#'  Requirements: it must be a list with entries named "i", "j", and "k". Each
-#'  should be a length-2 integer vector indicating the number of slices removed
-#'  before and after the brain volume along the corresponding dimension.
-#'
-#' @param x The putative subcortical mask padding.
-#'
-#' @return Logical indicating whether x is a valid subcortical mask padding.
-#' 
-is.xifti_subcort_mask_padding <- function(x) {
-  dim_names <- c("i", "j", "k")
-  if (!match_exactly(names(x), dim_names)) {
-    return(FALSE)
-  }
-
-  for (name in dim_names) {
-    pad <- x[[name]]
-    if (!is.vector(pad) || length(pad) != 2 || (!all(is.na(pad)) && !is.numeric(pad))) {
-      message(paste("Entry", name, "must be a length-2 numeric/NA vector.\n"))
-      return(FALSE)
-    }
-  }
-
-  TRUE
-}
-
-
 #' Validate the "meta" component of a \code{"xifti"} object
 #'
 #' Check if object is valid for \code{xifti$meta}, where \code{xifti} is a 
@@ -245,9 +208,6 @@ is.xifti_meta <- function(x) {
   # Cortex.
   if (!match_exactly(names(x$cortex), names(y$cortex))) { 
     message("Cortex sublist names are not correct.\n"); return(FALSE) 
-  }
-  if (!is.null(x$cortex$resamp_resolution) && !is.numeric(x$cortex$resamp_resolution)) {
-    message("Cortex resampling resolution must be numeric.\n"); return(FALSE)
   }
   if (!is.null(x$cortex$medial_wall_mask$left)) {
     if (!is.logical(x$cortex$medial_wall_mask$left)) {
@@ -287,7 +247,7 @@ is.xifti_meta <- function(x) {
   if (!match_exactly(names(x$subcort), names(y$subcort))) { 
     message("Subcortical sublist names are not correct.\n"); return(FALSE) 
   }
-  if (!is.null(x$subcort$labels) && !is.subcort_labels(x$subcort$labels)) {
+  if (!is.null(x$subcort$labels) && !is.subcort_labs(x$subcort$labels)) {
     message("Subcortical labels are invalid.\n"); return(FALSE)
   }
   if (!is.null(x$subcort$mask) && !is.3D_mask(x$subcort$mask)) {
@@ -299,8 +259,80 @@ is.xifti_meta <- function(x) {
       return(FALSE)
     }
   }
-  if (!is.null(x$subcort$mask_padding) && !is.xifti_subcort_mask_padding(x$subcort$mask_padding)) {
-    message("Subcortical mask padding is invalid.\n"); return(FALSE)
+  if (!is.null(x$subcort$trans_mat) && !is.nummat(x$subcort$trans_mat)) {
+    message("Subcortical transformation matrix is invalid.\n"); return(FALSE)
+  }
+
+  # cifti
+  if (!is.null(x$cifti)) {
+    if (!all(x$cifti$brainstructures %in% c("left", "right", "subcortical"))) {
+      message(paste(
+        "CIFTI brainstructures must be one or several of the following:",
+        "left, righ, subcortical.\n"
+      ))
+      return(FALSE)
+    }
+
+    if (!is.null(x$cifti$intent)) {
+      intent <- x$cifti$intent
+      # [TO DO]: Require these fields? No, right?
+      if (intent == 3002) {
+        if (!is.null(x$cifti$time_start)) {
+          if (!is.numeric(x$cifti$time_start) || length(x$cifti$time_start)!=1) {
+            message("cifti$time_start must be a number.\n"); return(FALSE)
+          }
+        }
+        if (!is.null(x$cifti$time_step)) {
+          if (!is.numeric(x$cifti$time_step) || length(x$cifti$time_step)!=1) {
+            message("cifti$time_step must be a number.\n"); return(FALSE)
+          }
+        }
+        if (!is.null(x$cifti$time_unit)) {
+          time_units <- c("second", "hertz", "meter", "radian")
+          if (!(x$cifti$time_unit %in% time_units)) {
+            message("cifti$time_unit must be second, hertz, meter, or radian.\n")
+            if (tolower(x$cifti_time_unit) %in% time_units) {
+              message("Use lowercase.\n")
+            }
+            return(FALSE)
+          }
+        }
+      } else if (intent == 3006) {
+        if (!is.null(x$cifti$names)) {
+          if (!is.character(x$cifti$names)) {
+            message("cifti$names must be a character vector.\n"); return(FALSE)
+          }
+        }
+      } else if (intent == 3007) {
+        if (!is.null(x$cifti$labels)) {
+          if (!is.data.frame(x$cifti$labels)) {
+            message("cifti$labels must be a data.frame.\n"); return(FALSE)
+          }
+          if (!all(colnames(x$cifti$labels) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
+            message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
+            return(FALSE)
+          }
+        }
+      }
+      intent_specific_names <- switch(as.character(intent),
+        `3002` = c("time_start", "time_step", "time_unit"),
+        `3006` = c("names"),
+        `3007` = c("labels")
+      )
+      cifti_meta_names <- c(
+        "intent", "brainstructures", "misc", 
+        intent_specific_names
+      )
+      bad_names <- !(names(x$cifti) %in% cifti_meta_names)
+      if (any(bad_names)) {
+        extn_name <- supported_intents()$extension[which(supported_intents()$value == x$cifti$intent)]
+        message(paste0(
+          "The following metadata field(s) in $cifti is invalid for ",
+          "intent ", x$cifti$intent, " (", extn_name, "):",
+          paste(names(x$cifti)[bad_names], collapse=", ")
+        ))
+      }
+    }
   }
 
   TRUE
@@ -313,8 +345,7 @@ is.xifti_meta <- function(x) {
 #'  Requirements: the structure must match that of \code{\link{template_xifti}}. 
 #'  The size of each data entry must be compatible with the corresponding mask.
 #'  Metadata should be present if and only if the corresponding data is also 
-#'  present (except for the cortex resampling resolution and subcortical
-#'  mask padding).
+#'  present.
 #' 
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
@@ -342,7 +373,7 @@ is.xifti <- function(x, messages=TRUE) {
 
   if (!is.xifti_data(x$data)) { message('"data" is invalid.\n'); return(FALSE) }
   for (s in names(x$surf)) {
-    if (!is.null(x$surf[[s]]) && !is.xifti_surface(x$surf[[s]])) {
+    if (!is.null(x$surf[[s]]) && !is.surface(x$surf[[s]])) {
       message(paste(s, "is invalid.\n")); return(FALSE)
     }
   }
@@ -407,24 +438,38 @@ is.xifti <- function(x, messages=TRUE) {
   # The surface geometry of each cortex, if present, must be compatible with it.
   for (side in c("left", "right")) {
     cortex <- paste0("cortex_", side)
-    if (!is.null(x$surf[[cortex]])) {
-      if (is.null(x$meta$cortex$medial_wall_mask[[side]])) {
-        message(paste0("The ", side, " cortex surface geometry is present, but the data is not.\n"))
-        return(FALSE)
-      }
-
+    if (!is.null(x$surf[[cortex]]) && !is.null(x$meta$cortex$medial_wall_mask[[side]])) {
       if (length(x$meta$cortex$medial_wall_mask[[side]]) != nrow(x$surf[[cortex]]$vertices)) {
         message(paste0(
-          "Number of vertices in", side, 
-          "cortex data (including the medial wall)",
-          "(length(x$meta$cortex$medial_wall_mask$[side]))",
-          "does not match its corresponding surface geometry.",
-          "(nrow(x$surf$cortex_[side]))", "\n"
+          "Number of vertices in ", side, 
+          " cortex data (including the medial wall), ",
+          length(x$meta$cortex$medial_wall_mask[[side]]),
+          ", does not match the number of vertices in the corresponding surface, ",
+          nrow(x$surf[[cortex]]$vertices), ". Are they the same resolution?\n"
         ))
         return(FALSE)
       }
     }
   }
+
+  # For intent 3006 (.dscalar.nii), each measurement should be named.
+  if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3006)) {
+    if (!is.null(x$meta$cifti$names)) {
+      if (length(x$meta$cifti$names) != ncol(do.call(rbind, x$data))) {
+        message("There must be as many meta$cifti$names as there are data columns.\n")
+        return(FALSE)
+      }
+    }
+  }
+  # # [TO DO]: Add +1 to data from read_cifti_separate. Then add this back.
+  # if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
+  #   if (!is.null(x$meta$cifti$labels)) {
+  #     if (!(all( unique(as.vector(do.call(rbind, x$data))) %in% 1:nrow(x$meta$cifti$labels) ))) {
+  #       message("All data values must be correspond to an index in the label table.\n")
+  #       return(FALSE)
+  #     }
+  #   }
+  # }
 
   TRUE
 }

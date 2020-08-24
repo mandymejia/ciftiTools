@@ -76,13 +76,14 @@ print.xifti <- function(x, ...) {
 get_cifti_extn <- function(cifti_fname) {
   fname_parts <- unlist(strsplit(basename(cifti_fname), split=".", fixed = TRUE)) #split by "."
   extn <- paste(rev(fname_parts)[c(2,1)], collapse=".") #'dtseries.nii", "dscalar.nii", etc.
+  extn
 }
 
 #' Get the default file name suffix for a certain type of GIFTI/NIFTI file
 #'
 #' @param label the file type: one of 
 #'  \code{"cortexL"}, \code{"cortexR"}, 
-#'  \code{"subcortVol"}, \code{"subcortLab"},
+#'  \code{"subcortVol"}, \code{"subcortLabs"},
 #'  \code{"ROIcortexL"}, \code{"ROIcortexR"}, 
 #'  \code{"ROIsubcortVol"},
 #'  \code{"validROIcortexL"}, or \code{"validROIcortexR"}.
@@ -94,7 +95,7 @@ get_cifti_extn <- function(cifti_fname) {
 #' 
 cifti_component_suffix <- function(label, GIFTI_type="func") {
   label <- match.arg(label, c(
-    "cortexL", "cortexR", "subcortVol", "subcortLab",
+    "cortexL", "cortexR", "subcortVol", "subcortLabs",
     "ROIcortexL", "ROIcortexR", "ROIsubcortVol", 
     "validROIcortexL", "validROIcortexR"
   ))
@@ -102,7 +103,7 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
     cortexL = paste0("L.", GIFTI_type, ".gii"),
     cortexR = paste0("R.", GIFTI_type, ".gii"),
     subcortVol = "nii",
-    subcortLab = "labels.nii",
+    subcortLabs = "labels.nii",
     ROIcortexL = paste0("ROI_L.", GIFTI_type, ".gii"),
     ROIcortexR = paste0("ROI_R.", GIFTI_type, ".gii"),
     ROIsubcortVol = "ROI.nii",
@@ -124,4 +125,21 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
   stopifnot(!is.null(original_fname))
   bname <- basename(original_fname)
   paste("resampled", round(resamp_res), bname, sep="_")
+}
+
+#' Unmask Cortex
+#' 
+#' Get cortex data with medial wall vertices
+#' 
+#' @param cortex V vertices x T measurements matrix
+#' @param mwall Logical vector with T \code{TRUE} values.
+#' @param mwall_fill The fill value to use for medial wall vertices.
+#' @return The unmasked cortex data.
+#' 
+#' @export
+#' 
+unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
+  cdat <- matrix(mwall_fill, nrow=length(mwall),  ncol=ncol(cortex))
+  cdat[mwall,] <- cortex
+  cdat
 }

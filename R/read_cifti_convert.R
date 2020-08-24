@@ -1,8 +1,9 @@
 #' Make a "xifti" from a CIFTI Map and Flat 
 #'
-#' @description Make a CIFTI from the brainordinate mapping obtained with
-#'  \code{-cifti-export-dense-mapping} and the flattened data obtained with
-#'  \code{-cifti-convert -to-gifti-ext}.
+#' @description Read a CIFTI file by exporting it as a single GIFTI 
+#'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
+#'  and obtaining the brainordinate mapping using 
+#'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
 #'
 #' @param map The full CIFTI mapping
 #' @param cifti_flat The full flat CIFTI data
@@ -25,89 +26,67 @@ make_xifti_from_cifti_map_and_flat <- function(
     brainstructures <- c("left","right","subcortical")
   }
 
-  # Rename the brainstructures.
-  brainstructures_rename <- list(
-    left="cortex_left",
-    right="cortex_right",
-    subcortical="subcort"
-  )
-  brainstructures <- as.character(brainstructures_rename[brainstructures])
-
   # Create the template.
   xifti <- template_xifti()
 
-  # Place cortex data into the "xifti" object.
-  last_left <- sum(map$cortex$medial_wall_mask$left)
-  last_right <- last_left + sum(map$cortex$medial_wall_mask$right)
-  verify_cortex_and_mwall <- function(cortex, side, medial_wall_mask){
-    if (sum(medial_wall_mask) != nrow(cortex)) {
-      warning(paste(
-        "The medial wall mask obtained from the dense mapping metadata",
-        "was length", length(medial_wall_mask), "and had",
-        sum(medial_wall_mask), "vertices within the mask (non-medial wall).",
-        "But there are", nrow(cortex), "rows in the flat", side, 
-        "cortex, which doesn't match the number of vertices in the mask.",
-        "If the medial wall mask is needed, try read_cifti_separate() instead",
-        "which doesn't depend on the dense mapping metadata. For now, the medial",
-        "wall mask will not be included in the \"xifti\".\n"
-      ))
-      medial_wall_mask <- NULL
-    } else if (all(medial_wall_mask)) {
-      if (ncol(cortex) > 1) {
-        new_medial_wall_mask <- !apply(cortex==0 | is.na(cortex), 1, all)
-        if (any(!new_medial_wall_mask)) {
-          warning(paste(
-            "The length of the medial wall mask from the", side, "cortex metadata",
-            "was equal to the number of vertices, and it was all TRUE",
-            "(indicating no medial wall).",
-            "But, constant 0/NA rows were detected. Discarding the mask from",
-            "the metadata and inferring from the", side, "cortex data instead.\n"
-          ))
-          medial_wall_mask <- new_medial_wall_mask
-          cortex <- cortex[new_medial_wall_mask,, drop=FALSE]
-        }
-      } else {
-        warning(paste(
-          "The length of the medial wall mask from the", side, "cortex metadata",
-          "was equal to the number of vertices, and it was all TRUE",
-          "(indicating no medial wall).",
-          "The", side, "medial wall mask will not be included in the \"xifti\".\n"
-        ))
-        medial_wall_mask <- NULL
-      }
-    }
-    list(data = cortex, medial_wall_mask = medial_wall_mask)
+  # ----------------------------------------------------------------------------
+  # Read files. ----------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  if (verbose) { exec_time <- Sys.time() }
+  if (verbose) { cat("Reading CIFTI file.\n") }
+
+  # Read the CIFTI info.
+  xifti$meta <- info_cifti(cifti_fname, wb_path)
+  if (!all(brainstructures %in% xifti$meta$cifti$brainstructures)) {
+    stop(paste0(
+      "Only the following brainstructures are present in the CIFTI file:",
+      paste(xifti$meta$cifti$brainstructures, collapse=", ")
+    ))
   }
-  if ("cortex_left" %in% brainstructures) {
-    cortex <- verify_cortex_and_mwall(
-      cifti_flat[1:last_left,, drop=FALSE],
-      "left",
-      map$cortex$medial_wall_mask$left
+
+  # Read the CIFTI data.
+  xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
+
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+    xifti_data <- xifti_data + 1
+  }
+
+  # Place cortex data into the "xifti" object.
+  last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
+  last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
+  if ("left" %in% brainstructures) {
+    cortex <- make_cortex(
+      xifti_data[1:last_left,, drop=FALSE],
+      side = "left", #cortex_is_masked=TRUE,
+      mwall = xifti$meta$cortex$medial_wall_mask$left,
+      mwall_source="the CIFTI being read in"
     )
     xifti$data$cortex_left <- cortex$data
-    xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$medial_wall_mask)
+    xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$mwall)
+  } else {
+    xifti$meta$cortex$medial_wall_mask["left"] <- list(template_xifti()$meta$cortex$medial_wall_mask$left)
   }
-  if ("cortex_right" %in% brainstructures) {
-    cortex <- verify_cortex_and_mwall(
-      cifti_flat[(1+last_left):last_right,, drop=FALSE],
-      "right",
-      map$cortex$medial_wall_mask$right
+  if ("right" %in% brainstructures) {
+    cortex <- make_cortex(
+      xifti_data[(1+last_left):last_right,, drop=FALSE],
+      side = "right", #cortex_is_masked=TRUE,
+      mwall = xifti$meta$cortex$medial_wall_mask$right,
+      mwall_source="the CIFTI being read in"
     )
     xifti$data$cortex_right <- cortex$data
-    xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$medial_wall_mask)
+    xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$mwall)
+  } else {
+    xifti$meta$cortex$medial_wall_mask["right"] <- list(template_xifti()$meta$cortex$medial_wall_mask$right)
   }
 
   # Place subcortical data into the "xifti" object.
-  if ("subcort" %in% brainstructures) {
-    alpha_to_spatial <- order(order(map$subcort$labels))
-    subcort_order <- c((1+last_right):nrow(cifti_flat))[alpha_to_spatial]
-    xifti$data$subcort <- cifti_flat[subcort_order,, drop=FALSE]
-    xifti$meta$subcort$labels <- map$subcort$labels
-    # Need to crop the subcortical mask. But, there may have been extra padding
-    #   in the NIFTI but absent in the mapping. So, do not fill the
-    #   SUBCORT_MASK_PADDING field.
-    xifti$meta$subcort$mask <- crop_vol(map$subcort$mask)$data
-  } 
+  if ("subcortical" %in% brainstructures) {
+    alpha_to_spatial <- order(order(xifti$meta$subcort$labels))
+    subcort_order <- c((1+last_right):nrow(xifti_data))[alpha_to_spatial]
+    xifti$data$subcort <- xifti_data[subcort_order,, drop=FALSE]
+  } else {
+    xifti$meta$subcort <- template_xifti()$meta$subcort
+  }
 
   # Finish.
   if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
@@ -169,10 +148,10 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_xifti_surface(surfL_fname) 
+    xifti$surf$cortex_left <- make_surface(surfL_fname) 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_xifti_surface(surfR_fname) 
+    xifti$surf$cortex_right <- make_surface(surfR_fname) 
   }
 
   if (verbose) {

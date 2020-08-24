@@ -2,13 +2,13 @@
 % Please edit documentation in R/write_cifti.R
 \name{write_xifti_components}
 \alias{write_xifti_components}
-\title{Write Out Each Present Component in a "xifti"}
+\title{Write out a GIFTI File}
 \usage{
 write_xifti_components(
   xifti,
   write_dir = NULL,
-  medial_wall_val = NA,
-  subcortex_fill_val = 0,
+  mwall_fill = NA,
+  subcort_fill = 0,
   verbose = FALSE,
   wb_path = NULL
 )
@@ -23,10 +23,10 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
  \code{write_dir} must already exist, or an error will occur.}
 
-\item{medial_wall_val}{Value to use for the medial wall in the cortex GIFTIs. 
+\item{mwall_fill}{Value to use for the medial wall in the cortex GIFTIs. 
 Default: \code{NA}.}
 
-\item{subcortex_fill_val}{Value to use for out-of-mask voxels in the subcortex. 
+\item{subcort_fill}{Value to use for out-of-mask voxels in the subcortex. 
 Default: \code{0}.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
@@ -34,11 +34,32 @@ Default: \code{0}.}
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
+
+\item{data}{A data matrix to write out as a GIFTI, i.e. a V (vertices) by T
+(measurements) matrix correpsonding to the left or right cortex.}
+
+\item{out_fname}{The path to the GIFTI file to write}
+
+\item{data_type}{A vector corresponding to the NIFTI types of \code{data}.
+For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
+(default), the data_type will be inferred.}
+
+\item{...}{Other vectors of options to 
+\code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and
+"endian".}
 }
 \value{
 List of written files
 }
 \description{
-Write Out Each Present Component in a "xifti"
+Write GIFTI-format data.
 }
+\keyword{"xifti"}
+\keyword{Component}
+\keyword{Each}
+\keyword{Out}
+\keyword{Present}
+\keyword{Write}
+\keyword{a}
+\keyword{in}
 \keyword{internal}

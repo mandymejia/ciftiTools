@@ -1,4 +1,21 @@
-# 1.2
+# 1.3 (August 24, 2020)
+
+* introduce `"xifti"` object: can be made from CIFTI file, GIFTI surfaces, or new data
+    * To make a `"xifti"` from data: `as.xifti(...)`
+    * To make a `"xifti"` from a CIFTI file: `read_cifti(cifti_fname)`
+    * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surface(surfL_fname))`
+* `read_cifti_flat` now uses XML metadata directly (but still obtains XML via Connectome Workbench)
+    * This allows for reading in more metadata such as time start/step for `.dtseries.nii`
+* `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::write_gifti`
+    * Currently depends on `damondpham/gifti` but this will hopefully be merged to main repo soon
+* `write_subcort_nifti` to write out subcortical components from `"xifti"` to a NIFTI file
+    * TO DO: add orientation and transformation matrix metadata
+* `write_cifti` can also write the surfaces attached to the `"xifti"`
+* `"xifti"` objects can contain surfaces without any data. 
+    * `view_xifti_surface` can view a surface without any data: `plot(as.xifti(surfL=left_surf))`
+* `resample_surf` to resample a surface object 
+
+# 1.2 (August 7, 2020)
 
 Many functions were renamed and reorganized again. Here's a summary of the updates:
 
@@ -15,8 +32,12 @@ Many functions were renamed and reorganized again. Here's a summary of the updat
     * This will also yield a [`"xifti"` object](https://github.com/mandymejia/ciftiTools/blob/master/R/template_xifti.R). We named the object a `"xifti"` because it could originate from either a CIFTI or GIFTI. 
 * More generally, a set of data matrices in R can be assembled into a `"xifti"` object with `make_xifti`. We're working on making this function more user-friendly.
 * New `write_cifti` function.
+    * Subcortical color table added for writing CIFTIs. Taken from: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
+* Flattened the subcortical data in `"xifti"` object. Use `unmask()` to unflatten.
+* Image view mode.
+* Better handling of medial wall.
 
-# 1.1
+# 1.1 (July 24, 2020)
 
 ## New names
 

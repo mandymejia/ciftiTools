@@ -4,6 +4,19 @@
 #'
 #' @keywords internal
 #' 
+#'  Additional metadata depends on the type of CIFTI file:
+#' 
+#'  For "dtseries" files:
+#'    cifti$time_start
+#'    cifti$time_step
+#'    cifti$time_unit
+#' 
+#'  For "dscalar" files:
+#'    cifti$names       (Name of each data column)
+#' 
+#'  For "dlabels" files:
+#'    cifti$labels      (L x 5 data.frame. Rows are named. Cols: KRGBA)
+#' 
 template_xifti <- function(){
   xifti <- list(
     data = list(
@@ -21,16 +34,16 @@ template_xifti <- function(){
           left = NULL,
           right = NULL
         ),
-        resamp_resolution = NULL
+        resamp_res = NULL
       ),
       subcort = list(
         labels = NULL,
         mask = NULL,
-        mask_padding = list(
-          i = c(NA, NA), 
-          j = c(NA, NA), 
-          k = c(NA, NA)
-        )
+        trans_mat = NULL
+      ),
+      cifti = list(
+        intent = NULL,
+        brainstructures = NULL
       )
     )
   )

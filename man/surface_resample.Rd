@@ -16,3 +16,4 @@ Logical indicating whether resampled file was created.
 \description{
 Resample a surface GIFTI file
 }
+\keyword{internal}

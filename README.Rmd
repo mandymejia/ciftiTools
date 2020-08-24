@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
 <!-- badges: end -->
 
-Tools for reading and visualizing CIFTI brain imaging files. CIFTI files contain brain imaging data in "gray-ordinates", which includes all the gray matter of the brain. The gray matter is divided into cortical surface (left and right) and subcortical (cerebellum, basal ganglia, and other deep gray matter). `ciftiTools` uses the Connectome Workbench to separate CIFTI files into two GIFTI files representing the cortical surface data and one NIFTI file representing the subcortical data, and reads the data into R. It also provides visualization tools for the surface and subcortical data. `ciftiTools` also includes processing functions to apply common preprocessing steps to the CIFTI data (e.g. smoothing, resampling).
+Tools for reading and visualizing CIFTI brain imaging files. CIFTI files contain brain imaging data in "gray-ordinates", which includes all the gray matter of the brain. The gray matter is divided into cortical surface (left and right) and subcortical (cerebellum, basal ganglia, and other deep gray matter). `ciftiTools` uses the Connectome Workbench to read the data into R. It also provides visualization tools for the surface and subcortical data, and processing functions to apply common preprocessing steps (e.g. smoothing, resampling).
 
 ## Installation
 
@@ -44,12 +44,12 @@ ciftiTools.setOption('wb_path', 'Desktop/workbench')
 # Read in the CIFTI file, and resample it to 8000 vertices per hemisphere.
 cifti <- read_cifti(
   cifti_fname='Desktop/data/my_CIFTI_file.dtseries.nii', 
-  surfL_fname='Desktop/data/32k_inflated_left.gii', 
-  surfR_fname='Desktop/data/32k_inflated_right.gii', 
+  surfL_fname='Desktop/data/32k_inflated_left.surf.gii', 
+  surfR_fname='Desktop/data/32k_inflated_right.surf.gii', 
   resamp_res=8000, 
   # The spheres are only required for resampling.
-  sphereL_fname='Desktop/data/32k_left_sphere.gii', 
-  sphereR_fname='Desktop/data/32k_right_sphere.gii'
+  sphereL_fname='Desktop/data/32k_left_sphere.surf.gii', 
+  sphereR_fname='Desktop/data/32k_right_sphere.surf.gii'
 )
 
 # Visualize the surface.
@@ -58,10 +58,7 @@ plot(cifti)
 
 ## Wishlist
 
-* static images in `view_cifti()`
 * slider in `view_cifti()` to change column/time
-* `write_cifti()` 
-* `unflatten_cifti()`
 * tests
 * CRAN
 * Neuroconductor

@@ -1,8 +1,8 @@
 #' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
-#'  by separating it into GIFTI and NIFTI files, optionally resampling them, 
-#'  and then using the \code{-cifti-resample} Workbench Command with a template.
+#'  by separating it into GIFTI and NIFTI files, resampling them, then putting
+#'  them together.
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
@@ -142,76 +142,24 @@ resample_cifti <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # Resample with template -----------------------------------------------------
+  # Put together ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # Create a template CIFTI dense timeseries.
-  if (verbose) cat("Creating template CIFTI file in target resolution... \n")
-  cifti_template_fname <- format_path(
-    paste0("template_", basename(cifti_original_fname)), tempdir(), mode=4)
+  # Create target CIFTI dense timeseries.
+  if (verbose) cat("Merging components into a CIFTI file... \n")
   write_cifti_from_separate(
-    cifti_template_fname, 
+    cifti_target_fname, 
     cortexL_fname = to_cif["cortexL"],
     cortexR_fname = to_cif["cortexR"],
     ROIcortexL_fname = to_cif["ROIcortexL"],
     ROIcortexR_fname = to_cif["ROIcortexR"],
     subcortVol_fname = to_cif["subcortVol"],
-    subcortLab_fname = to_cif["subcortLab"]
+    subcortLabs_fname = to_cif["subcortLabs"]
   )
   if (verbose) { 
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
-
-  # Use the template to resample.
-  if (verbose) cat("Resampling cifti_original_fname to target resolution... \n")
-  
-  stopifnot(file.exists(cifti_template_fname))
-  stopifnot(all(file.exists(c(sphereL_fname, sphereR_fname))))
-  cmd <- paste(
-    "-cifti-resample", sys_path(cifti_original_fname), 
-    "COLUMN", sys_path(cifti_template_fname), 
-    "COLUMN BARYCENTRIC CUBIC", sys_path(cifti_target_fname), 
-    "-left-spheres", sys_path(sphereL_fname), sys_path(sphereL_target_fname), 
-    "-right-spheres", sys_path(sphereR_fname), sys_path(sphereL_target_fname)
-  )
-  run_wb_cmd(cmd, wb_path)
-
-  if (verbose) { 
-    print(Sys.time() - exec_time)
-    exec_time <- Sys.time()
-  }
-
-  # [TO DO]: need to delete?
-  # file.remove(cifti_template_fname)
-
-  # ----------------------------------------------------------------------------
-  # Finish ---------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-
-  # [TO DO] Is this necessary? how do temporary directories work?
-  #file.remove(sphereL_target_fname)
-  #file.remove(sphereR_target_fname)
-
-  # # Delete the separated files, unless otherwise requested. 
-  # if (!sep_keep) {
-  #   for(f in sep_result$fname) {
-  #     file.remove(f)
-  #     if (file.exists(paste0(f, ".data"))) {
-  #       file.remove(paste0(f, ".data"))
-  #     }
-  #   }
-  # }
-
-  # # Same for resampled files.
-  # if (!resamp_keep) {
-  #   for(f in resamp_result$fname) {
-  #     file.remove(f)
-  #     if (file.exists(paste0(f, ".data"))) {
-  #       file.remove(paste0(f, ".data"))
-  #     }
-  #   }
-  # }
 
   out <- list(
     cifti=cifti_target_fname, 

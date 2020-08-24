@@ -20,7 +20,7 @@
 #' @return The flattened "xifti", a data matrix.
 #'
 flatten_xifti <- function(xifti, medial_wall=NULL, subcort_order="alphabetical") {
-  if (!(is.xifti(xifti))) { stop("Not a \"xifti\" object.") }
+  if (!is.xifti(xifti)) { stop("The input \"xifti\" object is invalid.") }
 
   if (!is.null(medial_wall)) {
     stopifnot(length(medial_wall) == 1)
