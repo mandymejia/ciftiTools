@@ -68,8 +68,8 @@ resample_cifti <- function(
     write_dir_resamp <- tempdir() 
   }
 
-
-  brainstructures <- ROI_brainstructures <- c("left","right","subcortical")
+  cifti_info <- info_cifti(cifti_original_fname, wb_path)
+  brainstructures <- ROI_brainstructures <- cifti_info$cifti$brainstructures
 
   # [TO DO]: consider auto-generating cifti_target_fname & make it optional
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
@@ -147,7 +147,7 @@ resample_cifti <- function(
 
   # Create target CIFTI dense timeseries.
   if (verbose) cat("Merging components into a CIFTI file... \n")
-  write_cifti_from_separate(
+  wcfs_kwargs <- list(
     cifti_target_fname, 
     cortexL_fname = to_cif["cortexL"],
     cortexR_fname = to_cif["cortexR"],
@@ -156,6 +156,10 @@ resample_cifti <- function(
     subcortVol_fname = to_cif["subcortVol"],
     subcortLabs_fname = to_cif["subcortLabs"]
   )
+  wcfs_kwargs <- wcfs_kwargs[!is.na(wcfs_kwargs)]
+  wcfs_kwargs <- wcfs_kwargs[!is.null(wcfs_kwargs)]
+  do.call(write_cifti_from_separate, wcfs_kwargs)
+  
   if (verbose) { 
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()

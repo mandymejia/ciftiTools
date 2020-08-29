@@ -107,5 +107,6 @@ resample_cifti_wrapper <- function(
 
   # Do resample_cifti_components.
   resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
+
   do.call(resample_cifti_components, resamp_kwargs)
 }
