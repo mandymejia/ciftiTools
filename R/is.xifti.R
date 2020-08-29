@@ -304,13 +304,15 @@ is.xifti_meta <- function(x) {
           }
         }
       } else if (intent == 3007) {
-        if (!is.null(x$cifti$labels)) {
-          if (!is.data.frame(x$cifti$labels)) {
-            message("cifti$labels must be a data.frame.\n"); return(FALSE)
-          }
-          if (!all(colnames(x$cifti$labels) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
-            message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
-            return(FALSE)
+        for (lab in x$cifti$labels) {
+          if (!is.null(lab)) {
+            if (!is.data.frame(lab)) {
+              message("cifti$labels must be a data.frame.\n"); return(FALSE)
+            }
+            if (!all(colnames(lab) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
+              message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
+              return(FALSE)
+            }
           }
         }
       }

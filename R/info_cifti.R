@@ -154,13 +154,17 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
       names=as.character(sapply(xml, function(x){x$MapName[[1]]}))
     )
   } else if (intent == 3007) {
-    # [TO DO]: Names?
-    labs <- do.call(rbind, lapply(xml$NamedMap$LabelTable, function(x){as.numeric(attributes(x))}))
-    rownames(labs) <- as.character(sapply(xml$NamedMap$LabelTable, function(x){x[[1]]}))
-    colnames(labs) <- c("Key", "Red", "Green", "Blue", "Alpha")
-    meta <- list(
-      labels=  as.data.frame(labs)
-    )
+    xml <- xml[names(xml) == "NamedMap"]
+    labs <- vector("list", length(xml))
+    for (ii in 1:length(xml)) {
+      xml_ii <- xml[[ii]]
+      labs[[ii]] <- do.call(rbind, lapply(xml_ii$LabelTable, function(x){as.numeric(attributes(x))}))
+      rownames(labs[[ii]]) <- as.character(sapply(xml_ii$LabelTable, function(x){x[[1]]}))
+      colnames(labs[[ii]]) <- c("Key", "Red", "Green", "Blue", "Alpha")
+      labs[[ii]] <- as.data.frame(labs[[ii]])
+    }
+    names(labs) <- sapply(xml, function(x){x$MapName[[1]]})
+    meta <- list(labels = labs)
   } else { stop("Internal error: CIFTI intent not supported.") }
   meta
 }
