@@ -8,6 +8,8 @@
 #' 
 #' @return The "xifti" with added surface geometry components
 #' 
+#' @export
+#'
 add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
   if (!is.xifti(xifti)) { stop("The input \"xifti\" object is invalid.") }
 

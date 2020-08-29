@@ -1001,10 +1001,9 @@ view_cifti <- viewCIfTI <- viewcii <- function(xifti, what=NULL, ...){
 view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, idx=1, 
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
-  bg=NULL, title=NULL,
+  bg=NULL, title=NULL, text_color="black",
   fname="xifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), 
-  zlim=NULL,
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL){
 
@@ -1012,7 +1011,7 @@ view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, id
     xifti, idx, 
     hemisphere, view, 
     mode, width, height,
-    bg, title,
+    bg, title, text_color,
     fname, write_dir,
     colors, color_mode, zlim,
     surfL, surfR,
@@ -1025,7 +1024,8 @@ view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, id
 #' @export
 view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
   xifti, structural_img="MNI", idx=1, plane="axial", 
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  verbose=TRUE) {
 
   view_xifti_volume(
     xifti=xifti, 
@@ -1033,6 +1033,7 @@ view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
     idx=idx, plane=plane,
     num.slices=num.slices,
     use_papaya=use_papaya,
-    z_min=z_min, z_max=z_max
+    z_min=z_min, z_max=z_max,
+    verbose=verbose
   )
 }
