@@ -1,21 +1,34 @@
-#' Make a "xifti" from a CIFTI Map and Flat 
+#' Read a CIFTI File Quickly
 #'
 #' @description Read a CIFTI file by exporting it as a single GIFTI 
 #'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
 #'  and obtaining the brainordinate mapping using 
 #'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
 #'
-#' @param map The full CIFTI mapping
-#' @param cifti_flat The full flat CIFTI data
+#' @inheritParams cifti_fname_Param
+#' @inheritParams surfL_fname_Param
+#' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
+#' @inheritParams wb_path_Param
+#' @inheritParams verbose_Param_FALSE
+#' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #'
+#' @details This function uses a system wrapper for the "wb_command"
+#'  executable. The user must first download and install the Connectome
+#'  Workbench, available from
+#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
+#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
+#'  or executable.
+#'
 #' @keywords internal
 #' 
-make_xifti_from_cifti_map_and_flat <- function(
-  map, cifti_flat, 
-  brainstructures=c("left","right")){
+read_cifti_convert <- function(
+  cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), 
+  wb_path=NULL, verbose=FALSE, ...){
 
   # Check arguments.
   brainstructures <- match_input(
@@ -99,12 +112,13 @@ make_xifti_from_cifti_map_and_flat <- function(
     xifti$surf$cortex_right <- make_surface(surfR_fname) 
   }
 
+  # Finish.
+  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
+
   if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
 
-  # Finish.
-  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
   structure(xifti, class="xifti")
 }
