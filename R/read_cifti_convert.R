@@ -88,61 +88,6 @@ make_xifti_from_cifti_map_and_flat <- function(
     xifti$meta$subcort <- template_xifti()$meta$subcort
   }
 
-  # Finish.
-  if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }
-  structure(xifti, class="xifti")
-}
-
-#' Read a CIFTI File Quickly
-#'
-#' @description Read a CIFTI file by exporting it as a single GIFTI 
-#'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
-#'  and obtaining the brainordinate mapping using 
-#'  \code{-cifti-export-dense-mapping} (\code{\link{map_cifti}}). 
-#'
-#' @inheritParams cifti_fname_Param
-#' @inheritParams surfL_fname_Param
-#' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param_LR
-#' @inheritParams wb_path_Param
-#' @inheritParams verbose_Param_FALSE
-#' @param ... Additional arguments to \code{read_cifti_flat}.
-#'
-#' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome
-#'  Workbench, available from
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
-#'  or executable.
-#'
-#' @keywords internal
-#' 
-read_cifti_convert <- function(
-  cifti_fname, 
-  surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
-  wb_path=NULL, verbose=FALSE, ...){
-
-  # ----------------------------------------------------------------------------
-  # Read files. ----------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-  if (verbose) { exec_time <- Sys.time() }
-  if (verbose) { cat("Reading CIFTI file.\n") }
-
-  # Map the CIFTI.
-  cifti_map <- map_cifti(cifti_fname, wb_path)
-
-  # Read the CIFTI data.
-  cifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
-
-  xifti <- make_xifti_from_cifti_map_and_flat(
-    cifti_map, 
-    cifti_data, 
-    brainstructures
-  )
-
   # Read surfaces.
   if (!is.null(surfL_fname) | !is.null(surfR_fname)) { 
     if(verbose) { cat("...and surface(s).\n") }

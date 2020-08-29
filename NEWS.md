@@ -17,25 +17,12 @@
 
 # 1.2 (August 7, 2020)
 
-Many functions were renamed and reorganized again. Here's a summary of the updates:
-
-* Read CIFTI data with `read_cifti`.
-    * This will yield a [`"xifti"` object](https://github.com/mandymejia/ciftiTools/blob/master/R/template_xifti.R).
-        * Cortical data is stored in a matrix (vertices x measurements).
-        * The medial wall mask is inferred from the CIFTI metadata, or from 0/NA values if that fails. If both fail, the medial wall mask entry will be empty.
-        * Subcortical data is stored in a matrix (voxels x measurements) in which the voxels are ordered spatially. The subcortical volume can be recovered using the mask provided in the metadata: `ciftiTools::unmask()` does this job.
-    * Can add surface geometry via `surfL_fname` and `surfR_fname` arguments.
-    * Set `flat==TRUE` to read in just the data as a single matrix. Left cortex data will be on top, right cortex data will be in the center, and subcortical data will be on the bottom, but where each brainstructure begins cannot be determined. Cortex data will _not_ include the medial wall, and subcortical data will be ordered by alphabetical label. This will be a bit faster than `flat==FALSE`.
-    * Set `full_volume==TRUE` if the full subcortical volumetric mask is needed. (Otherwise, it is cropped.) `read_cifti` uses a faster method by default now, but the new method cannot obtain the full volumetric mask, so the old method is needed in this situation. This will be much slower for large CIFTIs.
-    * Use `resample_res=the_resolution` to resample while reading in. This also requires the old method, which is slow for large CIFTIs. 
-* GIFTI data can also be read with `make_xifti`, e.g. `make_xifti(cortexL=left_cortex, surfL=left_geom)`.
-    * This will also yield a [`"xifti"` object](https://github.com/mandymejia/ciftiTools/blob/master/R/template_xifti.R). We named the object a `"xifti"` because it could originate from either a CIFTI or GIFTI. 
-* More generally, a set of data matrices in R can be assembled into a `"xifti"` object with `make_xifti`. We're working on making this function more user-friendly.
-* New `write_cifti` function.
-    * Subcortical color table added for writing CIFTIs. Taken from: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
-* Flattened the subcortical data in `"xifti"` object. Use `unmask()` to unflatten.
-* Image view mode.
-* Better handling of medial wall.
+* `read_cifti_flat` and `read_cifti_separate`
+* flatten subcortical data in `"cifti"` object. unflattening functions.
+* image view mode
+* `write_cifti`
+* better handling of medial wall
+* Subcortical color table added for writing CIFTIs. Taken from: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
 
 # 1.1 (July 24, 2020)
 
