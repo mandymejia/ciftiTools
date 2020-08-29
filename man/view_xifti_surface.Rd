@@ -37,6 +37,7 @@ view_cifti_surface(
   height = NULL,
   bg = NULL,
   title = NULL,
+  text_color = "black",
   fname = "xifti",
   write_dir = NULL,
   colors = NULL,

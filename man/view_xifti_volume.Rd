@@ -25,7 +25,8 @@ view_cifti_volume(
   num.slices = 12,
   use_papaya = FALSE,
   z_min = NULL,
-  z_max = NULL
+  z_max = NULL,
+  verbose = TRUE
 )
 }
 \arguments{

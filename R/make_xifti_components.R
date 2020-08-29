@@ -62,6 +62,8 @@ make_cortex <- function(
     }
   }
 
+  if (is.vector(cortex)) { cortex <- matrix(cortex, ncol=1) }
+
   # Check if medial wall mask is valid.
   msg <- ""
   if (!is.null(mwall)) {
@@ -136,9 +138,12 @@ make_cortex <- function(
   if (!(msg == "")) { ciftiTools_msg(msg) }
 
   # Apply a valid medial wall mask to an unmasked cortex.
-  if (!is.null(mwall) && (is.null(cortex_is_masked) || (!is.null(cortex_is_masked) && !cortex_is_masked))) {
-    cortex <- cortex[mwall,, drop=FALSE]
-    cortex_is_masked <- TRUE
+  if (!is.null(mwall)) {
+    if (is.null(cortex_is_masked)) { cortex_is_masked <- FALSE }
+    if (!cortex_is_masked) {
+      cortex <- cortex[mwall,, drop=FALSE]
+      cortex_is_masked <- TRUE
+    }
   }
 
   list(data = cortex, mwall = mwall)
@@ -229,6 +234,8 @@ make_subcort <- function(
   }
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
+
+  labs <- as.numeric(labs)
 
   # Infer mask if not provided.
   if (is.null(mask)) {
