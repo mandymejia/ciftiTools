@@ -33,7 +33,7 @@
 #'
 #' @keywords internal
 #' 
-write_xifti_components <- function(
+write_cifti_components <- function(
   xifti, write_dir=NULL, 
   mwall_fill=NA, subcort_fill=0,
   verbose=FALSE, wb_path=NULL) {
@@ -120,7 +120,7 @@ write_cifti <- function(
   xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {
 
-  sep_fnames <- write_xifti_components(
+  sep_fnames <- write_cifti_components(
     xifti=xifti, write_dir=tempdir(), 
     verbose=verbose, wb_path=wb_path
   )

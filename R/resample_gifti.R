@@ -91,52 +91,6 @@ resample_gifti <- function(original_fname, target_fname, file_type=NULL,
   run_wb_cmd(cmd, wb_path)
 }
 
-#' Resample a metric GIFTI file (ends with "func.gii")
-#'
-#' @param ... Arguments to \code{\link{resample_gifti}}. All except 
-#'  \code{file_type} (which is "metric") can be provided.
-#'
-#' @return Logical indicating whether resampled file was created.
-#' @keywords internal
-#'
-metric_resample <- function(...) {
-  # Check that the arguments are valid.
-  kwargs_allowed <- c("", get_kwargs(ciftiTools::resample_gifti))
-  kwargs <- names(list(...))
-  if ("file_type" %in% kwargs) { 
-    stop(paste(
-      "file_type==\"metric\" for metric_resample and therefore",
-      "should not be provided as an argument."
-    ))
-  }
-  stopifnot(all(kwargs %in% kwargs_allowed))
-
-  resample_gifti(..., file_type="metric")
-}
-
-#' Resample a surface GIFTI file
-#'
-#' @param ... Arguments to \code{\link{resample_gifti}}. All except 
-#'  \code{file_type} (which is "surface") can be provided.
-#'
-#' @return Logical indicating whether resampled file was created.
-#' @keywords internal
-#'
-surface_resample <- function(...) {
-  # Check that the arguments are valid.
-  kwargs_allowed <- c("", get_kwargs(ciftiTools::resample_gifti))
-  kwargs <- names(list(...))
-  if ("file_type" %in% kwargs) { 
-    stop(paste(
-      "file_type==\"surface\" for surface_resample and therefore",
-      "should not be provided as an argument."
-    ))
-  }
-  stopifnot(all(kwargs %in% kwargs_allowed))
-
-  resample_gifti(..., file_type="surface")
-}
-
 #' Generate GIFTI sphere surface files
 #'
 #' @description This function generates a pair of GIFTI vertex-matched left and 

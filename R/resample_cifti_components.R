@@ -216,11 +216,11 @@ resample_cifti_components <- function(
         )
       }
 
-      do.call(metric_resample, c(resample_kwargs))
+      do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
     } else if (lab %in% c("ROIcortexL", "ROIcortexR")) {
-      do.call(metric_resample, c(resample_kwargs))
+      do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
     } else if (lab %in% c("surfL", "surfR")) {
-      do.call(surface_resample, c(resample_kwargs))
+      do.call(resample_gifti, c(resample_kwargs, list(file_type="surface")))
     }
   }
   
