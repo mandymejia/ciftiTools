@@ -20,7 +20,7 @@ view_xifti_surface(
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
-  color_values = NULL,
+  zlim = NULL,
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
@@ -41,7 +41,7 @@ view_cifti_surface(
   write_dir = NULL,
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
-  color_values = NULL,
+  zlim = NULL,
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
@@ -119,7 +119,7 @@ See the \code{ciftiTools::make_color_pal()} description for more details.}
 or \code{"diverging"}. Default: sequential. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_values}{(Optional) Controls the mapping of values to each 
+\item{zlim}{(Optional) Controls the mapping of values to each 
 color in \code{colors}. If the length is longer than
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
 the value to \code{DATA_MAX}. See the
@@ -128,7 +128,7 @@ the value to \code{DATA_MAX}. See the
 \item{surfL, surfR}{(Optional if \code{xifti$surf$cortex_left} and 
 \code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
 Each can be a file path for a GIFTI, a file read by gifti::readgii, 
-or an object of class "xifti_surface". If provided, they will override 
+or a list with components "vertices" and "faces". If provided, they will override 
 \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
 Otherwise, leave these arguments as \code{NULL} (default) to use 
 \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.}

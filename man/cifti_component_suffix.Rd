@@ -9,7 +9,7 @@ cifti_component_suffix(label, GIFTI_type = "func")
 \arguments{
 \item{label}{the file type: one of 
 \code{"cortexL"}, \code{"cortexR"}, 
-\code{"subcortVol"}, \code{"subcortLab"},
+\code{"subcortVol"}, \code{"subcortLabs"},
 \code{"ROIcortexL"}, \code{"ROIcortexR"}, 
 \code{"ROIsubcortVol"},
 \code{"validROIcortexL"}, or \code{"validROIcortexR"}.}

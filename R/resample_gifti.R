@@ -97,7 +97,7 @@ resample_gifti <- function(original_fname, target_fname, file_type=NULL,
 #'  \code{file_type} (which is "metric") can be provided.
 #'
 #' @return Logical indicating whether resampled file was created.
-#' @export
+#' @keywords internal
 #'
 metric_resample <- function(...) {
   # Check that the arguments are valid.
@@ -120,7 +120,7 @@ metric_resample <- function(...) {
 #'  \code{file_type} (which is "surface") can be provided.
 #'
 #' @return Logical indicating whether resampled file was created.
-#' @export
+#' @keywords internal
 #'
 surface_resample <- function(...) {
   # Check that the arguments are valid.

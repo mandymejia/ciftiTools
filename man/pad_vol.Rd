@@ -12,7 +12,7 @@ uncrop_vol(x, padding, fill = NA)
 \arguments{
 \item{x}{A 3D array, e.g. \code{unmask(xifti$data$subcort, xifti$meta$subcort$mask)}.}
 
-\item{padding}{A length-d list of length-2 vectors indicating the number of 
+\item{padding}{A dx2 matrix indicating the number of 
 slices to add at the beginning and end of each of the d dimensions, e.g.
 \code{xifti$meta$subcort$mask_padding}.}
 
@@ -25,3 +25,4 @@ The padded array
 Pad a 3D array by a certain amount in each direction, along each dimension.
  This effectively undoes a crop.
 }
+\keyword{internal}

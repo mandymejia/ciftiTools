@@ -7,63 +7,23 @@
 #' @param out_fname The path to the GIFTI file to write
 # #' @param intent The NIFTI intent. Default is \code{"NIFTI_INTENT_NORMAL"}. See:
 # #'  https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
-#' @param datatype A vector corresponding to the NIFTI types of \code{data}.
+#' @param data_type A vector corresponding to the NIFTI types of \code{data}.
 #'  For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
-#'  (default), the datatype will be inferred. 
+#'  (default), the data_type will be inferred. 
 #' @param ... Other vectors of options to 
 #'  \code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and
 #'  "endian". 
-#' 
-#' @importFrom freesurferformats gifti_writer
 #'
 #' @keywords internal
 #' 
-write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) {
-  # Check arguments.
-  if (is.list(data)) { stop("Only a single data matrix is supported.") }
-  stopifnot(is.matrix(data))
-  
-  # Get data type.
-  if (is.null(datatype)) { 
-    non_integer <- max(abs(data - round(data)))
-    datatype <- ifelse(
-      non_integer!=0 || is.na(non_integer),
-      "NIFTI_TYPE_FLOAT32", 
-      "NIFTI_TYPE_INT32"
-    )
-  } 
-  stopifnot(length(datatype) == 1)
-  stopifnot(datatype %in% c("NIFTI_TYPE_INT32", "NIFTI_TYPE_FLOAT32"))
-
-  # Convert data columns to list.
-  data <- split(t(data), seq(ncol(data)))
-  names(data) <- rep("data", length(data))
-
-  # We need to use ASCII encoding if the data type is integers.
-  ## Why? Wasn't this a problem for gifti::write_gifti?
-  ## [TO DO]: Check this.
-  gifti_writer_wrapper <- function(encoding, ...){
-    encoding <- "ascii"
-    gifti_writer(...)
-  }
-  writer_FUN <- switch(datatype,
-    NIFTI_TYPE_INT32 = gifti_writer_wrapper,
-    NIFTI_TYPE_FLOAT32 = gifti_writer
-  )
-
-  # Write.
-  invisible(
-    writer_FUN(filepath=out_fname, data_array=data, ...)
-  )
-}
 
 #' Write Out Each Present Component in a "xifti"
 #'
 #' @inheritParams xifti_Param
 #' @inheritParams write_dir_Param_generic
-#' @param medial_wall_val Value to use for the medial wall in the cortex GIFTIs. 
+#' @param mwall_fill Value to use for the medial wall in the cortex GIFTIs. 
 #'  Default: \code{NA}.
-#' @param subcortex_fill_val Value to use for out-of-mask voxels in the subcortex. 
+#' @param subcort_fill Value to use for out-of-mask voxels in the subcortex. 
 #'  Default: \code{0}.
 #' @inheritParams verbose_Param_FALSE
 #' @inheritParams wb_path_Param
@@ -75,15 +35,15 @@ write_gifti_component_of_cifti <- function(data, out_fname, datatype=NULL, ...) 
 #' 
 write_xifti_components <- function(
   xifti, write_dir=NULL, 
-  medial_wall_val=NA, subcortex_fill_val=0,
+  mwall_fill=NA, subcort_fill=0,
   verbose=FALSE, wb_path=NULL) {
   # Check arguments.
   stopifnot(is.xifti(xifti))
-  stopifnot(length(medial_wall_val)==1)
+  stopifnot(length(mwall_fill)==1)
 
   # Get intermediate file names.
   if (is.null(write_dir)) { write_dir <- getwd() }
-  sep_names <- c("cortexL", "cortexR", "subcortVol", "subcortLab")
+  sep_names <- c("cortexL", "cortexR", "subcortVol", "subcortLabs")
   sep_fnames <- lapply(sep_names, cifti_component_suffix)
   sep_fnames <- lapply(
     sep_fnames, 
@@ -96,12 +56,13 @@ write_xifti_components <- function(
   ## Left cortex: add back medial wall.
   if (!is.null(xifti$data$cortex_left)){
     if (verbose) {cat("Writing left cortex.\n")}
-    cdat <- matrix(medial_wall_val,
-      nrow=length(xifti$meta$cortex$medial_wall_mask$left), 
-      ncol=ncol(xifti$data$cortex_left)
-    )
-    cdat[xifti$meta$cortex$medial_wall_mask$left,] <- xifti$data$cortex_left
-    write_gifti_component_of_cifti(cdat, sep_fnames$cortexL)
+    if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+      mwall <- rep(TRUE, nrow(xifti$data$cortex_left))
+    } else {
+      mwall <- xifti$meta$cortex$medial_wall_mask$left
+    }
+    cdat <- unmask_cortex(xifti$data$cortex_left, mwall)
+    write_metric_gifti(cdat, sep_fnames$cortexL, "left")
   } else {
     sep_fnames$cortexL <- NULL
   }
@@ -109,51 +70,31 @@ write_xifti_components <- function(
   ## Right cortex: add back medial wall.
   if (!is.null(xifti$data$cortex_right)){
     if (verbose) {cat("Writing right cortex.\n")}
-    cdat <- matrix(medial_wall_val,
-      nrow=length(xifti$meta$cortex$medial_wall_mask$right), 
-      ncol=ncol(xifti$data$cortex_right)
-    )
-    cdat[xifti$meta$cortex$medial_wall_mask$right,] <- xifti$data$cortex_right
-    write_gifti_component_of_cifti(cdat, sep_fnames$cortexR)
+    if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+      mwall <- rep(TRUE, nrow(xifti$data$cortex_right))
+    } else {
+      mwall <- xifti$meta$cortex$medial_wall_mask$right
+    }
+    cdat <- unmask_cortex(xifti$data$cortex_right, mwall)
+    write_metric_gifti(cdat, sep_fnames$cortexR, "right")
   } else {
     sep_fnames$cortexR <- NULL
   }
 
   ## Subcortex: unmask to get volumetric array.
   if (!is.null(xifti$data$subcort)) {
-    if (verbose) {cat("Writing subcortex.\n")}
-    ## (first pad the mask if the cropping is known.)
-    if (!any(is.na(do.call(rbind, xifti$meta$subcort$mask_padding)))) {
-      mask <- pad_vol(
-        xifti$meta$subcort$mask, 
-        xifti$meta$subcort$mask_padding, 
-        FALSE
-      )
-    } else {
-      mask <- xifti$meta$subcort$mask
-    }
-    ## Data.
-    writeNifti(
-      unmask(xifti$data$subcort, mask, fill=subcortex_fill_val), 
-      sep_fnames$subcortVol
+    if (verbose) {cat("Writing subcortical data and labels.\n")}
+    write_subcort_nifti(
+      xifti$data$subcort, 
+      xifti$meta$subcort$labels, 
+      xifti$meta$subcort$mask, 
+      sep_fnames$subcortVol, 
+      sep_fnames$subcortLabs, 
+      fill=0,
+      wb_path
     )
-    ## Labels..
-    writeNifti(
-      unmask(as.numeric(xifti$meta$subcort$labels), mask, fill=subcortex_fill_val), 
-      sep_fnames$subcortLab
-    )
-    # Add back subcortical label information.
-    # https://www.humanconnectome.org/software/workbench-command/-volume-help
-    subcort_lab_list <- system.file("subcort_label_list.txt", package="ciftiTools")
-    cmd <- paste(
-      "-volume-label-import", 
-      sys_path(sep_fnames$subcortLab), 
-      sys_path(subcort_lab_list), 
-      sys_path(sep_fnames$subcortLab)
-    )
-    run_wb_cmd(cmd, wb_path)
   } else {
-    sep_fnames$subcortVol <- sep_fnames$subcortLab <- NULL
+    sep_fnames$subcortVol <- sep_fnames$subcortLabs <- NULL
   }
 
   return(sep_fnames)
@@ -161,28 +102,23 @@ write_xifti_components <- function(
 
 #' Write CIFTI
 #'
-#' Write out a CIFTI file from a "xifti" object. Each brainstructure must be
-#'  present.
+#' Write out a CIFTI file from a "xifti" object. 
 #'
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
-#' @param timestep If a dense time series (dtseries.nii) file is being written,
-#'  this is the time between measurements. If \code{NULL}, use the Connectome
-#'  Workbench default (1.0).
-#' @param timestart If a dense time series (dtseries.nii) file is being written,
-#'  this is starting time. If \code{NULL}, use the Connectome Workbench default 
-#'  (0.0).
+#' @param surfL_fname,surfR_fname If the left or right surface is present, it 
+#'  will be a written to a GIFTI file at this file path. If \code{NULL} 
+#'  (default), do not write out the surface file.
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether the CIFTI file was successfully written
+#' @return Logical indicating whether the CIFTI file (and any surfaces) was 
+#'  successfully written
 #' @export
 #'
 write_cifti <- function(
-  xifti, cifti_fname, 
-  timestep=NULL, timestart=NULL,
+  xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {
-  stopifnot(!any(sapply(xifti$data, is.null)))
 
   sep_fnames <- write_xifti_components(
     xifti=xifti, write_dir=tempdir(), 
@@ -195,19 +131,37 @@ write_cifti <- function(
     cortexL_fname=sep_fnames$cortexL, 
     cortexR_fname=sep_fnames$cortexR,
     subcortVol_fname=sep_fnames$subcortVol, 
-    subcortLab_fname=sep_fnames$subcortLab,
-    timestep=timestep, timestart=timestart,
+    subcortLabs_fname=sep_fnames$subcortLabs,
+    timestep=xifti$meta$cifti$time_step, timestart=xifti$meta$cifti$time_start,
     wb_path=wb_path
   )
+
+  do_left_surf <- !is.null(surfL_fname) && !is.null(xifti$surf$cortex_left)
+  do_right_surf <- !is.null(surfR_fname) && !is.null(xifti$surf$cortex_right)
+
+  if (do_left_surf || do_right_surf) {
+    if (verbose) { cat("Writing surface geometry GIFTI(s).\n") }
+
+    if (do_left_surf) {
+      write_surf_gifti(xifti$surf$cortex_left, surfL_fname, "left")
+    }
+    if (do_right_surf) {
+      write_surf_gifti(xifti$surf$cortex_right, surfR_fname, "right")
+    }
+  }
+
+  invisible(TRUE)
 }
 
 #' @rdname write_cifti
 #' @export
 writeCIfTI <- writecii <- write_xifti <- function(
   xifti, cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {
   write_cifti(
     xifti=xifti, cifti_fname=cifti_fname, 
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     verbose=verbose, wb_path=wb_path
   )
 }

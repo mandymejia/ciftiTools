@@ -230,7 +230,7 @@ match_exactly <- function(
   user, expected,
   fail_action=c("message", "warning", "stop", "nothing")) {
 
-  fail_action <- match.arg(fail_action)
+  fail_action <- match.arg(fail_action, c("message", "warning", "stop", "nothing"))
   unrecognized_FUN <- switch(fail_action,
     message=message,
     warning=warning,
@@ -270,7 +270,7 @@ match_exactly <- function(
 #' @inheritParams wb_path_Param
 #'
 #' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
-#'  If \code{intern==TRUE}, the printed output fo the command.
+#'  If \code{intern==TRUE}, the printed output of the command.
 #'
 run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
   wb_cmd <- get_wb_cmd_path(wb_path)
@@ -288,5 +288,47 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
     }
   }
 
-  out
+  invisible(out)
+}
+
+#' Print Suppressable Message
+#' 
+#' Print Message only if ciftiTools Option "suppress_msgs" is TRUE
+#' 
+#' @param msg The message
+#' @keywords internal
+#' 
+#' @return NULL, invisibly.
+#' 
+ciftiTools_msg <- function(msg){
+  if(ciftiTools.getOption("suppress_msgs")) { message(msg) }
+  invisible(NULL)
+}
+
+#' Print Suppressable Warning
+#' 
+#' Print warning only if ciftiTools Option "suppress_msgs" is TRUE
+#' 
+#' @param msg The warning message
+#' @keywords internal
+#' 
+#' @return NULL, invisibly.
+#' 
+ciftiTools_warn <- function(warn){
+  if(ciftiTools.getOption("suppress_msgs")) { warning(warn) }
+  invisible(NULL)
+}
+
+#' All Integers?
+#'
+#' Check if a data vector or matrix is all integers.
+#'
+#' @param x The data vector or matrix
+#' @keywords internal
+#'
+#' @return TRUE or FALSE indicating if x is all integers
+#'
+all_integers <- function(x){
+  non_integer <- max(abs(x - round(x)))
+  non_integer==0 && !is.na(non_integer)
 }

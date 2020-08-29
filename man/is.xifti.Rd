@@ -25,8 +25,7 @@ Check if object is valid for a \code{"xifti"} object.
 Requirements: the structure must match that of \code{\link{template_xifti}}. 
  The size of each data entry must be compatible with the corresponding mask.
  Metadata should be present if and only if the corresponding data is also 
- present (except for the cortex resampling resolution and subcortical
- mask padding).
+ present.
 
  See the "Label Levels" section for the requirements of 
  \code{xifti$meta$subcort$labels}.

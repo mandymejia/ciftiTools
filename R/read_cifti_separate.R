@@ -74,6 +74,15 @@ read_cifti_separate <- function(
     ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,
       user_value_label="ROI_brainstructures")
   }
+  if (is.null(resamp_res)) {
+    cifti_info <- info_cifti(cifti_fname, wb_path)
+    if (!all(brainstructures %in% cifti_info$meta$cifti$brainstructures)) {
+      stop(paste0(
+        "Only the following brainstructures are present in the CIFTI file:",
+        paste(cifti_info$meta$cifti$brainstructures, collapse=", ")
+      ))
+    }
+  }
 
   if (verbose) { exec_time <- Sys.time() }
 
@@ -141,8 +150,8 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
 
   if (is.null(resamp_res)) {
-    to_read <- c(list(cifti_map=header_cifti(cifti_fname)), to_read)
-  } 
+    to_read <- c(list(cifti_info=cifti_info), to_read)
+  }
 
   # ROIs are not supported yet.
   is_ROI <- grepl("ROI", names(to_read))
@@ -160,36 +169,16 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
-  result <- do.call(make_xifti, to_read)
+  xifti <- do.call(make_xifti, to_read)
 
   if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
 
-  # ----------------------------------------------------------------------------
-  # Finish ---------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  if ("left" %in% brainstructures | "right" %in% brainstructures) {
+    xifti$meta$cortex$resamp_res <- resamp_res
+  }
 
-  ## [TO DO]: The files are in tempdir(), so no need to manually delete?
-  # Delete the separated files, unless otherwise requested.
-  # if (!sep_keep) {
-  #   for(f in sep_result$fname) {
-  #     file.remove(f)
-  #     if (file.exists(paste0(f, ".data"))) {
-  #       file.remove(paste0(f, ".data"))
-  #     }
-  #   }
-  # }
-  # # Same for resampled files.
-  # if (do_resamp && !resamp_keep) {
-  #   for(f in resamp_result$fname) {
-  #     file.remove(f)
-  #     if (file.exists(paste0(f, ".data"))) {
-  #       file.remove(paste0(f, ".data"))
-  #     }
-  #   }
-  # }
-
-  result
+  xifti
 }

@@ -11,7 +11,7 @@ separate_cifti(
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
-  subcortLab_fname = NULL,
+  subcortLabs_fname = NULL,
   ROI_brainstructures = NULL,
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
@@ -26,7 +26,7 @@ separateCIfTI(
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
-  subcortLab_fname = NULL,
+  subcortLabs_fname = NULL,
   ROI_brainstructures = NULL,
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
@@ -48,7 +48,7 @@ Default: \code{c("left","right")} (cortical surface only).}
 defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
 relative, they will be saved in \code{write_dir}.}
 
-\item{subcortVol_fname, subcortLab_fname}{(Optional) where to save the subcortical volume and labels NIFTIs. If not 
+\item{subcortVol_fname, subcortLabs_fname}{(Optional) where to save the subcortical volume and labels NIFTIs. If not 
 provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
 path is relative, they will be saved in \code{write_dir}.}
 

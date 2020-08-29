@@ -8,13 +8,20 @@
 write_cifti(
   xifti,
   cifti_fname,
-  timestep = NULL,
-  timestart = NULL,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
   verbose = TRUE,
   wb_path = NULL
 )
 
-writeCIfTI(xifti, cifti_fname, verbose = TRUE, wb_path = NULL)
+writeCIfTI(
+  xifti,
+  cifti_fname,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
@@ -22,13 +29,9 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
-\item{timestep}{If a dense time series (dtseries.nii) file is being written,
-this is the time between measurements. If \code{NULL}, use the Connectome
-Workbench default (1.0).}
-
-\item{timestart}{If a dense time series (dtseries.nii) file is being written,
-this is starting time. If \code{NULL}, use the Connectome Workbench default 
-(0.0).}
+\item{surfL_fname, surfR_fname}{If the left or right surface is present, it 
+will be a written to a GIFTI file at this file path. If \code{NULL} 
+(default), do not write out the surface file.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
@@ -37,9 +40,9 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Logical indicating whether the CIFTI file was successfully written
+Logical indicating whether the CIFTI file (and any surfaces) was 
+ successfully written
 }
 \description{
-Write out a CIFTI file from a "xifti" object. Each brainstructure must be
- present.
+Write out a CIFTI file from a "xifti" object.
 }

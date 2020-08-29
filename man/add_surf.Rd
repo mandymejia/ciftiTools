@@ -9,6 +9,12 @@ add_surf(xifti, surfL = NULL, surfR = NULL)
 \arguments{
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+
+\item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
+path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
+}
+\value{
+The "xifti" with added surface geometry components
 }
 \description{
 Add left or right cortical surface geometry to a "xifti" object.
