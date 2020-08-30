@@ -16,7 +16,7 @@ view_xifti_surface(
   zoom = 0.6,
   bg = NULL,
   title = NULL,
-  cex.title = 2.5,
+  cex.title = NULL,
   text_color = "black",
   fname = "xifti",
   write_dir = NULL,
@@ -101,9 +101,13 @@ the same aspect ratio. Both could be specified to set the dimensions exactly.}
 
 \item{title}{Optional title for the plot. It will be printed at the top in
 a separate subplot with 1/4 the height of the brain cortex subplots.
-\code{NULL} (default) will not make a title.}
+\code{NULL} (default) will use the time index (.dtseries) or name
+(.dscalar or .dlabel) of the data column being plotted. Set to an empty
+string \code{""} to omit the title.}
 
-\item{cex.title}{Font size multiplier for the title. Default: \code{2.5}.}
+\item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
+will use \code{2.5} for titles less than 20 characters long, and smaller
+sizes for increasingly longer titles.}
 
 \item{text_color}{Color for text in title and colorbar legend. Default: 
 "black".}

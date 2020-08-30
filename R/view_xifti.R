@@ -418,8 +418,12 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param bg Background color. \code{NULL} will not color the background (white).
 #' @param title Optional title for the plot. It will be printed at the top in
 #'  a separate subplot with 1/4 the height of the brain cortex subplots.
-#'  \code{NULL} (default) will not make a title.
-#' @param cex.title Font size multiplier for the title. Default: \code{2.5}.
+#'  \code{NULL} (default) will use the time index (.dtseries) or name
+#'  (.dscalar or .dlabel) of the data column being plotted. Set to an empty
+#'  string \code{""} to omit the title.
+#' @param cex.title Font size multiplier for the title. \code{NULL} (default)
+#'  will use \code{2.5} for titles less than 20 characters long, and smaller
+#'  sizes for increasingly longer titles.
 #' @param text_color Color for text in title and colorbar legend. Default: 
 #'  "black".
 #' @param fname An identifier to use for naming the saved images 
@@ -462,7 +466,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 view_xifti_surface <- function(xifti, idx=1, 
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
-  bg=NULL, title=NULL, cex.title=2.5, text_color="black",
+  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti", write_dir=NULL,
   colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
   surfL=NULL, surfR=NULL,
@@ -511,9 +515,6 @@ view_xifti_surface <- function(xifti, idx=1,
     surfR <- make_surface(surfR) 
   }
 
-  print(surfL)
-  print(surfR)
-
   if (is.null(surfL) && is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
 
   # Check hemisphere and view.
@@ -526,7 +527,12 @@ view_xifti_surface <- function(xifti, idx=1,
   brain_panels_nrow <- length(view)
   brain_panels_ncol <- length(hemisphere)
 
-  all_panels_nrow <- brain_panels_nrow + 1*(!is.null(title)) + 1*colorbar_embedded
+  if (is.null(title)) {
+    no_title = FALSE
+  } else {
+    no_title = title == ""
+  }
+  all_panels_nrow <- brain_panels_nrow + 1*(!no_title) + 1*colorbar_embedded
   all_panels_ncol <- brain_panels_ncol
   
   # Check other arguments.
@@ -758,7 +764,7 @@ view_xifti_surface <- function(xifti, idx=1,
   Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
   
   all_panels_heights <- rep.int(1, brain_panels_nrow)
-  if (!is.null(title)) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
+  if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
   if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   # Determine the panel layout.
@@ -771,7 +777,37 @@ view_xifti_surface <- function(xifti, idx=1,
   brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
   n_brain_panels <- length(brain_panels)
 
-  if (!is.null(title)) {
+  if (!no_title) {
+    if (is.null(title)) {
+      intent <- xifti$meta$cifti$intent
+      if (is.null(intent)) {
+        title <- paste("Index", idx)
+      } else if (intent == 3002) {
+        title <- paste("Index", idx)
+        if (!any(sapply(xifti$meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
+          title <- paste0(title, " (", xifti$meta$cifti$time_start+xifti$meta$cifti$time_step*idx, " ", xifti$meta$cifti$time_unit, "s)")
+        }
+      } else if (intent == 3006) {
+        if (!is.null(xifti$meta$cifti$names) && length(xifti$meta$cifti$names)>=idx) {
+          title <- xifti$meta$cifti$names[idx]
+        } else {
+          title <- ""
+        }
+      } else if (intent == 3007) {
+        if (!is.null(xifti$meta$cifti$labels) && length(xifti$meta$cifti$labels)>=idx) {
+          title <- names(xifti$meta$cifti$labels)[idx]
+        } else {
+          title <- ""
+        }
+      }
+    }
+    if (is.null(cex.title)) {
+      if (nchar(title) > 20) {
+        cex.title <- 50 / nchar(title)
+      } else {
+        cex.title <- 2.5
+      }
+    }
     rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
                 cex=cex.title, # Default: 250% font size,
                 adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
