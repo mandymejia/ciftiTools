@@ -11,8 +11,6 @@
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams resamp_res_Param_optional
-#' @inheritParams sphereL_fname_Param
-#' @inheritParams sphereR_fname_Param
 #' @inheritParams sep_keep_Param
 #' @inheritParams sep_fnames_Param
 #' @inheritParams resamp_keep_Param
@@ -36,7 +34,7 @@ read_cifti_separate <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), ROI_brainstructures=NULL,
-  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
+  resamp_res=NULL, 
   sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
@@ -44,13 +42,6 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
-
-  # [TO DO]: more extensive preliminary check
-  if (!is.null(resamp_res)) {
-    if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
-      stop("`sphereL_fname` and `sphereR_fname` are required for resampling.")
-    }
-  }
 
   if (sep_keep) {
     write_dir_sep <- write_dir
@@ -74,17 +65,30 @@ read_cifti_separate <- function(
     ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,
       user_value_label="ROI_brainstructures")
   }
-  if (is.null(resamp_res)) {
-    cifti_info <- info_cifti(cifti_fname, wb_path)
-    if (!all(brainstructures %in% cifti_info$meta$cifti$brainstructures)) {
-      stop(paste0(
-        "Only the following brainstructures are present in the CIFTI file:",
-        paste(cifti_info$meta$cifti$brainstructures, collapse=", ")
-      ))
-    }
-  }
+
+  stopifnot(is.null(resamp_res) || resamp_res>0)
 
   if (verbose) { exec_time <- Sys.time() }
+
+  # ----------------------------------------------------------------------------
+  # info_cifti() ---------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  
+  cifti_info <- info_cifti(cifti_fname, wb_path)
+
+  if (!all(brainstructures %in% cifti_info$cifti$brainstructures)) {
+    stop(paste0(
+      "Only the following brainstructures are present in the CIFTI file:",
+      paste(cifti_info$cifti$brainstructures, collapse=", ")
+    ))
+  }
+
+  if (!("left" %in% brainstructures)) {
+    original_res <- length(cifti_info$cortex$medial_wall_mask$left)
+  } else {
+    original_res <- length(cifti_info$cortex$medial_wall_mask$right)
+  }
+  stopifnot(original_res > 0)
 
   # ----------------------------------------------------------------------------
   # separate_cifti() -----------------------------------------------------------
@@ -120,9 +124,8 @@ read_cifti_separate <- function(
 
     # Do resample_cifti_separate.
     resamp_result <- resample_cifti_wrapper(
-      resamp_res=resamp_res, original_fnames=to_resample,
-      resamp_fnames=resamp_fnames,
-      sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
+      original_res=original_res, resamp_res=resamp_res, 
+      original_fnames=to_resample, resamp_fnames=resamp_fnames,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       read_dir=NULL, write_dir=write_dir_resamp, wb_path=wb_path
     )
@@ -177,14 +180,16 @@ read_cifti_separate <- function(
     if ("subcortical" %in% brainstructures) { xifti$data$subcort <- xifti$data$subcort + 1 }
   }
 
+  if ("left" %in% brainstructures || "right" %in% brainstructures) {
+    xifti$meta$cortex$resamp_res <- resamp_res
+  }
+  xifti$meta$cifti <- cifti_info$cifti
+
   if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
   }
 
-  if ("left" %in% brainstructures | "right" %in% brainstructures) {
-    xifti$meta$cortex$resamp_res <- resamp_res
-  }
 
   xifti
 }

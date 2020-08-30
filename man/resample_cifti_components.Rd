@@ -5,9 +5,8 @@
 \title{Resample a series of GIFTIs related to a CIFTI file}
 \usage{
 resample_cifti_components(
+  original_res,
   resamp_res,
-  sphereL_fname,
-  sphereR_fname,
   cortexL_original_fname = NULL,
   cortexR_original_fname = NULL,
   cortexL_target_fname = NULL,
@@ -28,14 +27,10 @@ resample_cifti_components(
 )
 }
 \arguments{
+\item{original_res}{The original resolution of the CIFTI cortical surface(s).}
+
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
-
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
-
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
 
 \item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of 
 GIFTI data for [left/right] cortex to resample.}
@@ -100,7 +95,7 @@ Performs spatial resampling of various CIFTI file components on
 }
 \details{
 Performs resampling of CIFTI files using Connectome Workbench tools.  
- Step 1: Generate spheres in the target resolution
+ Step 1: Generate spheres in the original and target resolutions
  Step 2: Use -metric-resample to resample surface/cortex files 
  Step 3: Use -surface-resample to resample gifti files
 }

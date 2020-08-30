@@ -36,11 +36,6 @@
 #'  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 #'  have to be read in with \code{-cifti-separate}, which is slower than 
 #'  \code{-cifti-convert -to-gifti-ext}.
-#' 
-#'  Spheres in the original resolution are required (\code{sphereL_fname} and 
-#'  \code{sphereR_fname}).
-#' @inheritParams sphereL_fname_Param
-#' @inheritParams sphereR_fname_Param
 #' @inheritParams wb_path_Param
 #' @inheritParams verbose_Param_FALSE
 #' @param ... Additional arguments to \code{\link{read_cifti_convert}} or 
@@ -63,7 +58,7 @@ read_cifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
+  resamp_res=NULL,
   wb_path=NULL, verbose=FALSE, ...){
 
   # ----------------------------------------------------------------------------
@@ -112,7 +107,7 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
-      resamp_res=resamp_res, sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
+      resamp_res=resamp_res,
       wb_path=wb_path, verbose=verbose,
       ...
     ))
@@ -125,14 +120,14 @@ readCIfTI <- readcii <- read_xifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  resamp_res=NULL, sphereL_fname=NULL, sphereR_fname=NULL,
+  resamp_res=NULL,
   wb_path=NULL, verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname, flat,
     surfL_fname, surfR_fname,
     brainstructures, 
-    resamp_res, sphereL_fname, sphereR_fname,
+    resamp_res,
     wb_path, verbose, ...
   )
 }

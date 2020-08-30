@@ -4,12 +4,7 @@
 \alias{resample_surf}
 \title{Resample "surface" object}
 \usage{
-resample_surf(
-  surf,
-  resamp_res,
-  side = c("left", "right"),
-  sphere_original_fname
-)
+resample_surf(surf, resamp_res, side = c("left", "right"))
 }
 \arguments{
 \item{surf}{A "surface" object}
@@ -17,14 +12,11 @@ resample_surf(
 \item{resamp_res}{The desired resolution}
 
 \item{side}{"left" or "right"}
-
-\item{sphere_original_fname}{File path of [left/right]-hemisphere spherical 
-GIFTI files in original resolution. The hemisphere side should match \code{side}.}
 }
 \value{
 The new surface
 }
 \description{
 Resample a "surface" object by writing it to a GIFTI, using the Connectome
- Workbench, and then reading it back in.
+ Workbench to resample it, and then reading the new file.
 }

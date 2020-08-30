@@ -14,8 +14,6 @@
 #'  cortex. If NULL (default), will use default names: see 
 #'  \code{resample_cifti_default_fname}.
 #' @inheritParams resamp_res_Param_required
-#' @inheritParams sphereL_fname_Param
-#' @inheritParams sphereR_fname_Param
 #' @inheritParams sep_fnames_Param
 #' @inheritParams sep_keep_Param
 #' @inheritParams resamp_fnames_Param
@@ -41,21 +39,14 @@ resample_cifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
-  resamp_res, sphereL_fname, sphereR_fname,
+  resamp_res, 
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
-  resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti
+  resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
-
-  # [TO DO]: more extensive preliminary is.
-  if (!is.null(resamp_res)) {
-    if (is.null(sphereL_fname) | is.null(sphereR_fname)) {
-      stop("`sphereL_fname` and `sphereR_fname` are required for resampling.")
-    }
-  }
 
   if (sep_keep) { 
     write_dir_sep <- write_dir 
@@ -68,13 +59,31 @@ resample_cifti <- function(
     write_dir_resamp <- tempdir() 
   }
 
-  cifti_info <- info_cifti(cifti_original_fname, wb_path)
-  brainstructures <- ROI_brainstructures <- cifti_info$cifti$brainstructures
+  stopifnot(resamp_res > 0)
 
   # [TO DO]: consider auto-generating cifti_target_fname & make it optional
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
 
   if (verbose) { exec_time <- Sys.time() }
+
+  # ----------------------------------------------------------------------------
+  # info_cifti() ---------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  
+  cifti_info <- info_cifti(cifti_original_fname, wb_path)
+  
+  brainstructures <- ROI_brainstructures <- cifti_info$cifti$brainstructures
+
+  if (!("left" %in% brainstructures || "right" %in% brainstructures)) {
+    stop("The CIFTI does not have cortical data, so there's nothing to resample.")
+  }
+
+  if (!("left" %in% brainstructures)) {
+    original_res <- length(cifti_info$cortex$medial_wall_mask$left)
+  } else {
+    original_res <- length(cifti_info$cortex$medial_wall_mask$right)
+  }
+  stopifnot(original_res > 0)
 
   # ----------------------------------------------------------------------------
   # separate_cifti() -----------------------------------------------------------
@@ -106,9 +115,8 @@ resample_cifti <- function(
 
   # Do resample_cifti_components.
   resamp_result <- resample_cifti_wrapper(
-    resamp_res=resamp_res, original_fnames=to_resample, 
-    resamp_fnames=resamp_fnames, 
-    sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname, 
+    original_res=original_res, resamp_res=resamp_res, 
+    original_fnames=to_resample, resamp_fnames=resamp_fnames, 
     surfL_fname=surfL_original_fname, surfR_fname=surfR_original_fname,
     surfL_target_fname=surfL_target_fname, 
     surfR_target_fname=surfR_target_fname,
@@ -131,10 +139,6 @@ resample_cifti <- function(
     surfR_target_fname <- format_path(basename(surfR_target_fname_old), write_dir, mode=2)
     file.copy(surfR_target_fname_old, surfR_target_fname)
   }
-
-  # [TO DO]: is it safe to recycle the target spheres? in future, just make new.
-  sphereL_target_fname <- resamp_result$fname[resamp_result$label == "sphereL"]
-  sphereR_target_fname <- resamp_result$fname[resamp_result$label == "sphereR"]
 
   if (verbose) { 
     print(Sys.time() - exec_time)
@@ -178,18 +182,18 @@ resampleCIfTI <- resamplecii <- resample_xifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
-  resamp_res, sphereL_fname, sphereR_fname,
+  resamp_res,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
-  resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti
+  resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {
 
   resample_cifti(
     cifti_original_fname, cifti_target_fname, 
     surfL_original_fname, surfR_original_fname,
     surfL_target_fname, surfR_target_fname,
-    resamp_res, sphereL_fname, sphereR_fname,
+    resamp_res,
     sep_keep, sep_fnames, #separate_cifti
-    resamp_keep, resamp_fnames, # resample_cifti
+    resamp_keep, resamp_fnames, # resample_cifti_components
     write_dir, verbose, wb_path
   ) 
 }

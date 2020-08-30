@@ -413,10 +413,13 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
 #'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
 #'  the same aspect ratio. Both could be specified to set the dimensions exactly.
+#' @param zoom Adjustment to size of brain meshes. Default: \code{3/5} 
+#'  (100\% + 3/5*100\% = 160\% the original size).
 #' @param bg Background color. \code{NULL} will not color the background (white).
 #' @param title Optional title for the plot. It will be printed at the top in
 #'  a separate subplot with 1/4 the height of the brain cortex subplots.
 #'  \code{NULL} (default) will not make a title.
+#' @param cex.title Font size multiplier for the title. Default: \code{2.5}.
 #' @param text_color Color for text in title and colorbar legend. Default: 
 #'  "black".
 #' @param fname An identifier to use for naming the saved images 
@@ -458,8 +461,8 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @importFrom grDevices dev.list dev.off
 view_xifti_surface <- function(xifti, idx=1, 
   hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("widget", "image", "video"), width=NULL, height=NULL,
-  bg=NULL, title=NULL, text_color="black",
+  mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  bg=NULL, title=NULL, cex.title=2.5, text_color="black",
   fname="xifti", write_dir=NULL,
   colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
   surfL=NULL, surfR=NULL,
@@ -766,7 +769,7 @@ view_xifti_surface <- function(xifti, idx=1,
 
   if (!is.null(title)) {
     rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
-                cex=2.5, # 250% font size,
+                cex=cex.title, # Default: 250% font size,
                 adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
                 font=2, # Forget if this made a difference...
                 color=text_color,
@@ -826,7 +829,7 @@ view_xifti_surface <- function(xifti, idx=1,
     this_trans <- diag(4)
 
     this_mat <- this_rot %*% this_trans
-    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=3/5) #167% size
+    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=zoom) #Default: 167% size
     rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 

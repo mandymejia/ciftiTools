@@ -13,8 +13,6 @@ resample_cifti(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sphereL_fname,
-  sphereR_fname,
   sep_keep = FALSE,
   sep_fnames = NULL,
   resamp_keep = FALSE,
@@ -32,8 +30,6 @@ resampleCIfTI(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sphereL_fname,
-  sphereR_fname,
   sep_keep = FALSE,
   sep_fnames = NULL,
   resamp_keep = FALSE,
@@ -59,12 +55,6 @@ cortex. If NULL (default), will use default names: see
 
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
-
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
-
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
 
 \item{sep_keep}{If separated files are created, should they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).

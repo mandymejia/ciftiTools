@@ -12,8 +12,6 @@ read_cifti(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
-  sphereL_fname = NULL,
-  sphereR_fname = NULL,
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -26,8 +24,6 @@ readCIfTI(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
-  sphereL_fname = NULL,
-  sphereR_fname = NULL,
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -66,18 +62,9 @@ gray matter). Can also be \code{"all"} (obtain all three brain structures).
 Default: \code{c("left","right")} (cortical surface only).}
 
 \item{resamp_res}{Resolution to resample the cortical data and surface to.
- Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
- have to be read in with \code{-cifti-separate}, which is slower than 
- \code{-cifti-convert -to-gifti-ext}.
-
- Spheres in the original resolution are required (\code{sphereL_fname} and 
- \code{sphereR_fname}).}
-
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
-
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
+Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
+have to be read in with \code{-cifti-separate}, which is slower than 
+\code{-cifti-convert -to-gifti-ext}.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

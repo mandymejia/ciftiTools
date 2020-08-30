@@ -13,8 +13,10 @@ view_xifti_surface(
   mode = c("widget", "image", "video"),
   width = NULL,
   height = NULL,
+  zoom = 0.6,
   bg = NULL,
   title = NULL,
+  cex.title = 2.5,
   text_color = "black",
   fname = "xifti",
   write_dir = NULL,
@@ -92,11 +94,16 @@ will be shown in a separate panel row within the RGL window.}
 within a 1600 x 900 screen. Specyfing only one will set the other to maintain
 the same aspect ratio. Both could be specified to set the dimensions exactly.}
 
+\item{zoom}{Adjustment to size of brain meshes. Default: \code{3/5} 
+(100\% + 3/5*100\% = 160\% the original size).}
+
 \item{bg}{Background color. \code{NULL} will not color the background (white).}
 
 \item{title}{Optional title for the plot. It will be printed at the top in
 a separate subplot with 1/4 the height of the brain cortex subplots.
 \code{NULL} (default) will not make a title.}
+
+\item{cex.title}{Font size multiplier for the title. Default: \code{2.5}.}
 
 \item{text_color}{Color for text in title and colorbar legend. Default: 
 "black".}
