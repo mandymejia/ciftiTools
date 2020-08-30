@@ -1011,7 +1011,17 @@ view_xifti_volume <- function(
   }
 
   if (!use_papaya) {
-    oro.nifti::overlay(x=img, y=img_overlay, plane=plane, z=slices)
+    if (plane=="axial") {
+      img <- img[,,slices]
+      img_overlay <- img_overlay[,,slices]
+    } else if (plane=="coronal") {
+      img <- img[,slices,]
+      img_overlay <- img_overlay[,slices,] 
+    } else if (plane=="sagittal") {
+      img <- img[slices,,]
+      img_overlay <- img_overlay[slices,,]
+    }
+    oro.nifti::overlay(x=img, y=img_overlay, plane=plane)
   } else {
     if (is.null(structural_img)) {
       stop("Doesn't work; use an overlay or not papaya.")
