@@ -510,6 +510,10 @@ view_xifti_surface <- function(xifti, idx=1,
   } else { 
     surfR <- make_surface(surfR) 
   }
+
+  print(surfL)
+  print(surfR)
+
   if (is.null(surfL) && is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
 
   # Check hemisphere and view.
@@ -972,13 +976,24 @@ view_xifti <- function(xifti, what=NULL, ...) {
   if (is.null(what)) {
     can_do_left <- (!is.null(xifti$surf$cortex_left)) || ("surfL" %in% names(list(...)))
     can_do_right <- (!is.null(xifti$surf$cortex_right)) || ("surfR" %in% names(list(...)))
-    what <- ifelse(can_do_left | can_do_right, "surface", "volume")
+    can_do_sub <- !is.null(xifti$data$subcort)
+    what <- ifelse(
+      can_do_left || can_do_right, 
+      "surface", 
+      ifelse(can_do_sub, "volume", "error")
+    )
   }
   if (what == "surface") { 
     return(view_xifti_surface(xifti, ...)) 
   } else if (what == "volume") { 
     return(view_xifti_volume(xifti, ...)) 
-  } else { stop() }
+  } else {
+    stop(paste(
+      "No valid cortical surface, and no valid subcortical data.",
+      "Did you forget to provide surfL/surfR?",
+      "Or, did you forget to read in the subcortical data too?"
+    ))
+  }
 }
 
 #' S3 method: use view_xifti to plot a xifti
