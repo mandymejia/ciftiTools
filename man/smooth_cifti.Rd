@@ -27,9 +27,12 @@ smooth_cifti(
 
 \item{volume_sigma}{The sigma for the gaussian volume smoothing kernel, in mm}
 
-\item{surfL_fname, surfR_fname, cerebellum_fname}{(Required if the 
-corresponding brainstructure is present) Surface GIFTI files for the left
-cortical surface, right cortical surface, and cerebellar surface}
+\item{surfL_fname, surfR_fname}{(Required if the 
+corresponding cortex is present) Surface GIFTI files for the left and right
+cortical surface}
+
+\item{cerebellum_fname}{(Optional) Surface GIFTI file for the 
+cerebellar surface}
 
 \item{subcortical_zeroes_as_NA, cortical_zeroes_as_NA}{Should zero-values in 
 the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.}
