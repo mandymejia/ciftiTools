@@ -942,6 +942,7 @@ view_xifti_surface <- function(xifti, idx=1,
 #' @param z_min Floor value.
 #' @param z_max Ceiling value.
 #' @inheritParams verbose_Param_TRUE
+#' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
 #'
 #' @export
 #' 
@@ -949,7 +950,7 @@ view_xifti_surface <- function(xifti, idx=1,
 view_xifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane="axial", 
   num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
-  verbose=TRUE) {
+  verbose=TRUE, ...) {
 
   if (use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
@@ -1021,13 +1022,13 @@ view_xifti_volume <- function(
       img <- img[slices,,]
       img_overlay <- img_overlay[slices,,]
     }
-    oro.nifti::overlay(x=img, y=img_overlay, plane=plane)
+    oro.nifti::overlay(x=img, y=img_overlay, plane=plane, ...)
   } else {
     if (is.null(structural_img)) {
       stop("Doesn't work; use an overlay or not papaya.")
-      papayar::papaya(list(img, img_labels))
+      papayar::papaya(list(img, img_labels), ...)
     } else {
-      papayar::papaya(list(img, img_overlay, img_labels))
+      papayar::papaya(list(img, img_overlay, img_labels), ...)
     }
   }
 }

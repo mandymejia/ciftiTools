@@ -14,7 +14,8 @@ view_xifti_volume(
   use_papaya = FALSE,
   z_min = NULL,
   z_max = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 
 view_cifti_volume(
@@ -51,6 +52,8 @@ Default: "axial". Other options are "sagittal" and "coronal".}
 \item{z_max}{Ceiling value.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
+
+\item{...}{Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}}
 }
 \description{
 Visualize xifti brain data
