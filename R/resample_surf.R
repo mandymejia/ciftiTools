@@ -6,12 +6,13 @@
 #' @param surf A "surface" object
 #' @param resamp_res The desired resolution
 #' @param side "left" or "right"
+#' @inheritParams wb_path_Param
 #' 
 #' @return The new surface
 #' @export
 #'
 resample_surf <- function(
-  surf, resamp_res, side=c("left", "right")){
+  surf, resamp_res, side=c("left", "right"), wb_path=NULL){
 
   stopifnot(is.surface(surf))
 
@@ -42,7 +43,8 @@ resample_surf <- function(
   resample_gifti(
     gii_pre, gii_post, resamp_res=resamp_res,
     sphere_original_fname=sphere_original_fname, 
-    sphere_target_fname=sphere_target_fname
+    sphere_target_fname=sphere_target_fname,
+    wb_path=wb_path
   )
 
   # Read new file.

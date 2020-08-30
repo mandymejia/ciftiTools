@@ -190,6 +190,5 @@ read_cifti_separate <- function(
     exec_time <- Sys.time()
   }
 
-
   xifti
 }
