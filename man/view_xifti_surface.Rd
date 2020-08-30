@@ -21,7 +21,7 @@ view_xifti_surface(
   fname = "xifti",
   write_dir = NULL,
   colors = NULL,
-  color_mode = c("sequential", "qualitative", "diverging"),
+  color_mode = NULL,
   zlim = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -103,7 +103,8 @@ the same aspect ratio. Both could be specified to set the dimensions exactly.}
 a separate subplot with 1/4 the height of the brain cortex subplots.
 \code{NULL} (default) will use the time index (.dtseries) or name
 (.dscalar or .dlabel) of the data column being plotted. Set to an empty
-string \code{""} to omit the title.}
+string \code{""} to omit the title. If the title is non-empty but does not
+appear, \code{cex.title} may need to be lowered.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2.5} for titles less than 20 characters long, and smaller
@@ -124,12 +125,16 @@ Default: "xifti".}
 \item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use, 
 OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
 and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), 
-\code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+\code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
+to these defaults is if the "xifti" represents a .dlabel CIFTI (intent 3007),
+then the qualitative colors in the label table will be used.
 See the \code{ciftiTools::make_color_pal()} description for more details.}
 
 \item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, 
-or \code{"diverging"}. Default: sequential. See the
-\code{ciftiTools::make_color_pal()} description for more details.}
+or \code{"diverging"}. \code{NULL} will use the qualitative color mode if 
+the "xifti" represents a .dlabel CIFTI (intent 3007), and the sequential
+color mode otherwise. See the \code{ciftiTools::make_color_pal()} 
+description for more details.}
 
 \item{zlim}{(Optional) Controls the mapping of values to each 
 color in \code{colors}. If the length is longer than

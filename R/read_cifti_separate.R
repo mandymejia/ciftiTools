@@ -174,11 +174,11 @@ read_cifti_separate <- function(
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
   xifti <- do.call(make_xifti, to_read)
 
-  if (endsWith(cifti_fname, ".dlabel.nii")) {
-    if ("left" %in% brainstructures) { xifti$data$cortex_left <- xifti$data$cortex_left + 1 }
-    if ("right" %in% brainstructures) { xifti$data$cortex_right <- xifti$data$cortex_right + 1 }
-    if ("subcortical" %in% brainstructures) { xifti$data$subcort <- xifti$data$subcort + 1 }
-  }
+  # if (endsWith(cifti_fname, ".dlabel.nii")) {
+  #   if ("left" %in% brainstructures) { xifti$data$cortex_left <- xifti$data$cortex_left + 1 }
+  #   if ("right" %in% brainstructures) { xifti$data$cortex_right <- xifti$data$cortex_right + 1 }
+  #   if ("subcortical" %in% brainstructures) { xifti$data$subcort <- xifti$data$subcort + 1 }
+  # }
 
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
     xifti$meta$cortex$resamp_res <- resamp_res

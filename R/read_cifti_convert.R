@@ -60,9 +60,9 @@ read_cifti_convert <- function(
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
 
-  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
-    xifti_data <- xifti_data + 1
-  }
+  # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+  #   xifti_data <- xifti_data + 1
+  # }
 
   # Place cortex data into the "xifti" object.
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)

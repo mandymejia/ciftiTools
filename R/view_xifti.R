@@ -420,7 +420,8 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  a separate subplot with 1/4 the height of the brain cortex subplots.
 #'  \code{NULL} (default) will use the time index (.dtseries) or name
 #'  (.dscalar or .dlabel) of the data column being plotted. Set to an empty
-#'  string \code{""} to omit the title.
+#'  string \code{""} to omit the title. If the title is non-empty but does not
+#'  appear, \code{cex.title} may need to be lowered.
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
 #'  will use \code{2.5} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles.
@@ -436,11 +437,15 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, 
 #'  OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
 #'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), 
-#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
+#'  to these defaults is if the "xifti" represents a .dlabel CIFTI (intent 3007),
+#'  then the qualitative colors in the label table will be used.
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, 
-#'  or \code{"diverging"}. Default: sequential. See the
-#'  \code{ciftiTools::make_color_pal()} description for more details.
+#'  or \code{"diverging"}. \code{NULL} will use the qualitative color mode if 
+#'  the "xifti" represents a .dlabel CIFTI (intent 3007), and the sequential
+#'  color mode otherwise. See the \code{ciftiTools::make_color_pal()} 
+#'  description for more details.
 #' @param zlim (Optional) Controls the mapping of values to each 
 #'  color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
@@ -468,7 +473,7 @@ view_xifti_surface <- function(xifti, idx=1,
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
+  colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL) {
 
@@ -544,7 +549,16 @@ view_xifti_surface <- function(xifti, idx=1,
     img_fname <- format_path(fname, write_dir, mode=2)
   }
 
-  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
+  # Color mode
+  if (is.null(color_mode)) {
+    if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
+      color_mode <- "qualitative"
+    } else {
+      color_mode <- "sequential"
+    }
+  } else {
+    color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
+  }
 
   # Check width and height.
   if (is.null(width) | is.null(height)) {
@@ -673,14 +687,26 @@ view_xifti_surface <- function(xifti, idx=1,
 
     # Get the base palette.
     if (color_mode=="qualitative") {
-      warning("Qualitative values must be integers 1:N_VALUES. Will be fixed in future.") # will fix in future.
-      N_VALUES <- length(unique(values))
-      if (N_VALUES > 30) {stop("Too many qualitative values.")} #fix
-      pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
-        DATA_MIN=1, DATA_MAX=N_VALUES)
+      if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
+        labs <- xifti$meta$cifti$labels[[idx]]
+        N_VALUES <- length(labs$Key)
+        pal_base <- data.frame(
+          color = rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
+          value = labs$Key
+        )
+      } else {
+        values <- as.numeric(factor(values, levels=sort(unique(values))))
+        N_VALUES <- length(unique(values))
+        pal_base <- make_color_pal(
+          colors=colors, color_mode=color_mode, zlim=zlim,
+          DATA_MIN=1, DATA_MAX=N_VALUES
+        )
+      }
     } else {
-      pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
-        DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE))
+      pal_base <- make_color_pal(
+        colors=colors, color_mode=color_mode, zlim=zlim,
+        DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE)
+      )
     }
     # Interpolate colors in the base palette for higher color resolution.
     if (color_mode %in% c("sequential", "diverging")) {
@@ -802,6 +828,7 @@ view_xifti_surface <- function(xifti, idx=1,
       }
     }
     if (is.null(cex.title)) {
+      # Default: 250% font size, but increasingly smaller for longer titles
       if (nchar(title) > 20) {
         cex.title <- 50 / nchar(title)
       } else {
@@ -809,7 +836,7 @@ view_xifti_surface <- function(xifti, idx=1,
       }
     }
     rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
-                cex=cex.title, # Default: 250% font size,
+                cex=cex.title, 
                 adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
                 font=2, # Forget if this made a difference...
                 color=text_color,
