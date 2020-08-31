@@ -62,8 +62,8 @@ is.xifti_data <- function(x) {
         "must all have the same number of measurements (columns),",
         "but they do not."
       ),
-      "\nThe column counts are:",
-      paste(n_meas, collapse=","),
+      "\nThe column counts are: ",
+      paste(n_meas, collapse=", "),
       "\n"
     ))
     return(FALSE)

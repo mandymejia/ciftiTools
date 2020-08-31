@@ -3,17 +3,17 @@
 \name{resample_gifti}
 \alias{resample_gifti}
 \alias{resampleGIfTI}
-\title{Resample an individual GIFTI file (with its ROI)}
+\title{Resample a GIFTI file (with its ROI)}
 \usage{
 resample_gifti(
   original_fname,
   target_fname,
+  hemisphere,
   file_type = NULL,
+  original_res = NULL,
+  resamp_res,
   ROIcortex_original_fname = NULL,
   validROIcortex_target_fname = NULL,
-  resamp_res,
-  sphere_original_fname,
-  sphere_target_fname,
   read_dir = NULL,
   write_dir = NULL,
   wb_path = NULL
@@ -23,11 +23,10 @@ resampleGIfTI(
   original_fname,
   target_fname,
   file_type = NULL,
+  original_res = NULL,
+  resamp_res,
   ROIcortex_original_fname = NULL,
   validROIcortex_target_fname = NULL,
-  resamp_res,
-  sphere_original_fname,
-  sphere_target_fname,
   read_dir = NULL,
   write_dir = NULL,
   wb_path = NULL
@@ -38,8 +37,16 @@ resampleGIfTI(
 
 \item{target_fname}{Where to save the resampled file.}
 
+\item{hemisphere}{"left" or "right".}
+
 \item{file_type}{\code{"metric"} or \code{"surface"}, or \code{NULL} 
 (default) to infer from \code{original_fname}.}
+
+\item{original_res}{The resolution of the original file. If \code{NULL}
+(default), infer from the file.}
+
+\item{resamp_res}{Target resolution for resampling (number of 
+cortical surface vertices per hemisphere).}
 
 \item{ROIcortex_original_fname}{The name of the ROI file corresponding to 
 \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
@@ -47,17 +54,6 @@ or shouldn't be resampled.}
 
 \item{validROIcortex_target_fname}{The name of the resampled ROI file. Only 
 applicable if \code{ROIcortex_original_fname} is provided.}
-
-\item{resamp_res}{Target resolution for resampling (number of 
-cortical surface vertices per hemisphere).}
-
-\item{sphere_original_fname}{File path of [left/right]-hemisphere spherical 
-GIFTI files in original resolution. The hemisphere side should match that of
-\code{original_fname}.}
-
-\item{sphere_target_fname}{File path of [left/right]-hemisphere spherical 
-GIFTI files in targetinal resolution. The hemisphere side should match 
-that of \code{target_fname}. See \code{\link{write_spheres}}.}
 
 \item{read_dir}{Directory to append to the path of every file name in
 \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
