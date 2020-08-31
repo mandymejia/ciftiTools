@@ -41,7 +41,7 @@ the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 
 \item{idx}{The time/column index of the xifti data to plot.}
 
-\item{plane}{If use_papaya=FALSE, the plane to display. 
+\item{plane}{If use_papaya=FALSE, the plane to display.
 Default: "axial". Other options are "sagittal" and "coronal".}
 
 \item{num.slices}{If use_papaya=FALSE, the number of slices to display.}

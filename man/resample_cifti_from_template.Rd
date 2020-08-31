@@ -5,18 +5,18 @@
 \title{Resample a CIFTI from a template}
 \usage{
 resample_cifti_from_template(
-  cifti_original_fname,
-  cifti_template_fname,
-  cifti_target_fname,
+  original_fname,
+  template_fname,
+  target_fname,
   wb_path = NULL
 )
 }
 \arguments{
-\item{cifti_original_fname}{A CIFTI file to resample.}
+\item{original_fname}{A CIFTI file to resample.}
 
-\item{cifti_template_fname}{A CIFTI file to use as the template.}
+\item{template_fname}{A CIFTI file to use as the template.}
 
-\item{cifti_target_fname}{The file name to save the resampled CIFTI.}
+\item{target_fname}{The file name to save the resampled CIFTI.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

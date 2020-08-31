@@ -10,7 +10,7 @@
 \item{x}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{...}{Additional arguments to \code{\link{view_xifti}}, except 
+\item{...}{Additional arguments to \code{\link{view_xifti}}, except
 \code{what}, which will be set to \code{NULL}.}
 }
 \description{
