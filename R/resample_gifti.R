@@ -18,7 +18,7 @@
 #'  \code{original_fname}.
 #' @param sphere_target_fname File path of [left/right]-hemisphere spherical 
 #'  GIFTI files in targetinal resolution. The hemisphere side should match 
-#'  that of \code{target_fname}. See \code{\link{make_helper_spheres}}.
+#'  that of \code{target_fname}. See \code{\link{write_spheres}}.
 #' @param read_dir Directory to append to the path of every file name in
 #'  \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
@@ -107,9 +107,9 @@ resample_gifti <- function(original_fname, target_fname, file_type=NULL,
 #' @inheritParams wb_path_Param
 #'
 #' @return Logical indicating whether output files exist. 
-#' @export
+#' @keywords internal
 #'
-make_helper_spheres <- function(
+write_spheres <- function(
   sphereL_fname, sphereR_fname, resamp_res, 
   write_dir=NULL, wb_path=NULL) {
 

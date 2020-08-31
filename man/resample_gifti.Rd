@@ -57,7 +57,7 @@ GIFTI files in original resolution. The hemisphere side should match that of
 
 \item{sphere_target_fname}{File path of [left/right]-hemisphere spherical 
 GIFTI files in targetinal resolution. The hemisphere side should match 
-that of \code{target_fname}. See \code{\link{make_helper_spheres}}.}
+that of \code{target_fname}. See \code{\link{write_spheres}}.}
 
 \item{read_dir}{Directory to append to the path of every file name in
 \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 

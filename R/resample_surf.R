@@ -25,13 +25,13 @@ resample_surf <- function(
   # Create original sphere.
   sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
   sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
-  make_helper_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
+  write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
   sphere_original_fname <- switch(side, left=sphereL_original_fname, right=sphereR_original_fname)
 
   # Create target sphere.
   sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res, ".surf.gii"), tdir, mode=2)
   sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res, ".surf.gii"), tdir, mode=2)
-  make_helper_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
+  write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
   sphere_target_fname <- switch(side, left=sphereL_target_fname, right=sphereR_target_fname)
 
   # Write the surface to a GIFTI.

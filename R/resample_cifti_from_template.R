@@ -64,11 +64,11 @@ resample_cifti_from_template <- function(
     # Create original sphere.
     sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
     sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
-    make_helper_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
+    write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
     # Create target sphere.
     sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res, ".surf.gii"), tdir, mode=2)
     sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res, ".surf.gii"), tdir, mode=2)
-    make_helper_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
+    write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
 
     if ("left" %in% brainstructures) {
       cmd <- paste(cmd, "-left-spheres", sphereL_original_fname, sphereL_target_fname)
