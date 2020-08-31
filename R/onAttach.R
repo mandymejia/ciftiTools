@@ -2,6 +2,7 @@
 #' 
 #' Direct user to indicate Connectome Workbench path and check gifti package version.
 #'
+#' @param ... Not used
 #' @importFrom utils packageVersion
 #'
 .onAttach <- function(...) {

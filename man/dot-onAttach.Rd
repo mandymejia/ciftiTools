@@ -6,6 +6,9 @@
 \usage{
 .onAttach(...)
 }
+\arguments{
+\item{...}{Not used}
+}
 \description{
 Direct user to indicate Connectome Workbench path and check gifti package version.
 }
