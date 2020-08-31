@@ -1,3 +1,36 @@
+# 1.4 (August 31, 2020)
+
+## Changes Affecting Users
+
+* Spheres are no longer required to input for resampling
+    * In-register spheres are generated automatically based on the cortical resolution
+* Full label table list for `dlabel.nii` files
+* Add `smooth_cifti`
+* Add `resample_cifti_from_template`
+* Add helpful error message if `plot(xii)` is called without any surface or subcortical data
+* `view_xifti_surface` improvements:
+    * Use column index or name as the default title
+    * Improved qualitative color mode
+    * Use qualitative color mode and label table colors if the CIFTI is a `dlabel.nii` file (intent 3007)
+* `view_xifti_volume` improvments:
+    * Fix `num.slices` argument
+    * Add `...` for additional arguments
+* Add `view_surface` for `"surface"` objects
+* Add `summary` and `plot` methods for `"surface"` objects
+
+## Demo files
+
+* Taken from NITRC: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
+
+## Notes for Developers
+
+* rename `write_xifti_components` as `write_cifti_components`
+* remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
+* rename `make_helper_spheres` as `write_spheres`, and do not export it
+* rename `make_surface` as `make_surf`
+* rename `is.surface` as `is.surf`
+* rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
+
 # 1.3 (August 24, 2020)
 
 * introduce `"xifti"` object: can be made from CIFTI file, GIFTI surfaces, or new data
