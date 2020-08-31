@@ -24,12 +24,12 @@
 
 ## Notes for Developers
 
-* rename `write_xifti_components` as `write_cifti_components`
-* remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
-* rename `make_helper_spheres` as `write_spheres`, and do not export it
-* rename `make_surface` as `make_surf`
-* rename `is.surface` as `is.surf`
-* rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
+* Rename `write_xifti_components` as `write_cifti_components`
+* Remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
+* Rename `make_helper_spheres` as `write_spheres`, and do not export it
+* Rename `make_surface` as `make_surf`
+* Rename `is.surface` as `is.surf`
+* Rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
 
 # 1.3 (August 24, 2020)
 
