@@ -15,6 +15,8 @@
 #' @param subcortLabs_fname What to name the labels file
 #' @param fill Out-of-mask values. Default: \code{0}.
 #' @inheritParams wb_path_Param
+#' 
+#' @export
 write_subcort_nifti <- function(
   subcortVol, subcortLabs, subcortMask, 
   subcortVol_fname, subcortLabs_fname, fill=0, wb_path=NULL){

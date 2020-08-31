@@ -10,7 +10,7 @@
 #' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
 #' @param pos_half Use the positive half (black --> red --> yellow) only? Default: \code{FALSE}.
 #'
-#' @export
+#' @keywords internal
 #' @return A data.frame with two columns: color (character: color hex codes) and value (numeric).
 #'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
@@ -143,7 +143,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #' @param DATA_MIN (Optional) The minimum value of the data to make the palette for. Overrided by certain \code{zlim}.
 #' @param DATA_MAX (Optional) The maximum value of the data to make the palette for. Overrided by certain \code{zlim}.
 #'
-#' @export
+#' @keywords internal
 #' @importFrom grDevices colorRampPalette
 #' @import RColorBrewer
 #'
@@ -328,7 +328,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
 #' @param MIN_COLOR_RES The minimum number of entries to have in the output palette. Because of rounding, there may be more
 #'  than this number of entries.
 #'
-#' @export
+#' @keywords internal
 #' @importFrom grDevices colorRampPalette
 #'
 #' @return A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).

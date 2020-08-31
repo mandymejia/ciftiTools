@@ -62,6 +62,8 @@ substructure_table <- function(){
 #' 
 #' @return If the intent is supported, \code{TRUE}.
 #'  If the intent is not supported, an error is raised.
+#' @keywords internal
+#' 
 check_cifti_type <- function(intent, extn){
   intent_idx <- which(supported_intents()$value == intent)
   extn_idx <- which(supported_intents()$extension == extn)
@@ -319,7 +321,7 @@ info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
-#' @keywords internal
+#' @export
 #' 
 info_cifti <- function(cifti_fname, wb_path=NULL){
 

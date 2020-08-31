@@ -11,7 +11,7 @@
 #'  data_type will be inferred. 
 #' @return The metric "gifti"
 #'
-#' @export
+#' @keywords internal
 as.metric_gifti <- function(
   data, side=c("left", "right"), 
   intent="NONE", data_type=NULL){
@@ -106,7 +106,7 @@ as.metric_gifti <- function(
 #' @param side "left" (default) or "right".
 #' @return The surface "gifti"
 #'
-#' @export
+#' @keywords internal
 as.surf_gifti <- function(
   surf, side=c("left", "right")){
 

@@ -29,3 +29,4 @@ The metric "gifti"
 Convert a V x T data matrix (V vertices, T measurements) or a length-T list 
  of length-V vectors to a metric "gifti" object.
 }
+\keyword{internal}

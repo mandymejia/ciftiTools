@@ -74,4 +74,3 @@ medial wall masks for the left and right cortex,
  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
-\keyword{internal}
