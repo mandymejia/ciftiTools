@@ -1,0 +1,33 @@
+#' Summarise cifti objects
+#'
+#' Summary method for class "surface"
+#'
+#' @param object Object of class "surface". 
+#'  See \code{\link{is.surf}} and \code{\link{make_surf}}.
+#' @param ... further arguments passed to or from other methods.
+#' @export
+#' @method summary surface
+summary.surface <- function(object, ...) {
+  out <- list(
+    vertices = nrow(object$vertices),
+    faces = nrow(object$faces)
+  )
+  class(out) <- "summary.surface"
+  return(out)
+}
+
+#' @param x bject of class "surface". 
+#' @export
+#' @method print summary.surface
+#' @rdname summary.surface
+print.summary.surface <- function(x, ...) {
+  cat("Vertices:", x$vertices, " \n")
+  cat("Faces:", x$faces, " \n")
+}
+
+#' @export
+#' @method print surface
+#' @rdname summary.surface
+print.surface <- function(x, ...) {
+  print.summary.surface(summary(x))
+}

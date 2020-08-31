@@ -34,8 +34,8 @@ A list with components "data", "labels" and "mask". The first two
  will be vectorized and ordered spatially.
 
  The volume can be recovered using: 
-   vol <- unmask(data, mask, fill=NA) 
-   labs <- unmask(labels, mask, fill=0)
+   vol <- unmask_vol(data, mask, fill=NA) 
+   labs <- unmask_vol(labels, mask, fill=0)
 }
 \description{
 Coerce subcortical data into valid entries for \code{xifti$data$subcort}

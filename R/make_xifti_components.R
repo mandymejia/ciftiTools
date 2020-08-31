@@ -198,8 +198,8 @@ make_cortex <- function(
 #'  will be vectorized and ordered spatially.
 #' 
 #'  The volume can be recovered using: 
-#'    vol <- unmask(data, mask, fill=NA) 
-#'    labs <- unmask(labels, mask, fill=0) 
+#'    vol <- unmask_vol(data, mask, fill=NA) 
+#'    labs <- unmask_vol(labels, mask, fill=0) 
 #'
 #' @importFrom RNifti readNifti
 make_subcort <- function(
@@ -323,7 +323,7 @@ gifti_to_surface <- function(surf) {
   surf <- list(vertices = verts, faces = faces)
 
   # Return cifti_surface or error.
-  if (!is.surface(surf)) {
+  if (!is.surf(surf)) {
     stop("The object could not be converted into a surface.")
   }
 
@@ -344,7 +344,7 @@ gifti_to_surface <- function(surf) {
 #' @export
 #' 
 #' @importFrom gifti readgii is.gifti
-make_surface <- function(surf) {
+make_surf <- function(surf) {
 
   x <- tryCatch(
     { surf <- gifti_to_surface(surf) },
@@ -353,7 +353,7 @@ make_surface <- function(surf) {
   # TO DO because of tryCatch, need useful error message if file does not exist.
 
   # Return cifti_surface or error.
-  if (!is.surface(surf)) {
+  if (!is.surf(surf)) {
     stop("The object could not be converted into a surface.")
   }
 

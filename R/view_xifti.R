@@ -401,9 +401,8 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
 #'  as a png in \code{write_dir} and its name will be \code{fname}.
 #' 
-#'  "video" will take a series of screenshots of the RGL window, while 
-#'  rotating the brain surface(s), saving each to a file in \code{write_dir} 
-#'  named by \code{fname}, and then close the RGL window. The frames can 
+#'  "video" will take a series of screenshots of the RGL window, while increasing
+#'  the column index. The frames can 
 #'  be converted to a video file using multimedia software such as Adobe 
 #'  Premiere Pro. The "video" mode is not yet supported.
 #' @param width,height The dimensions of the RGL window, in pixels. If both are 
@@ -467,7 +466,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'
 #' @export
 #' @importFrom fields image.plot
-#' @importFrom grDevices dev.list dev.off
+#' @importFrom grDevices dev.list dev.off rgb
 view_xifti_surface <- function(xifti, idx=1, 
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
@@ -506,7 +505,7 @@ view_xifti_surface <- function(xifti, idx=1,
       surfL <- xifti$surf$cortex_left
     }
   } else { 
-    surfL <- make_surface(surfL) 
+    surfL <- make_surf(surfL) 
   }
   if (is.null(surfR)) {
     if (is.null(xifti$surf$cortex_right) & !is.null(hemisphere)) {
@@ -517,7 +516,7 @@ view_xifti_surface <- function(xifti, idx=1,
       surfR <- xifti$surf$cortex_right
     }
   } else { 
-    surfR <- make_surface(surfR) 
+    surfR <- make_surf(surfR) 
   }
 
   if (is.null(surfL) && is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
@@ -965,8 +964,8 @@ view_xifti_volume <- function(
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx]
-  vol <- unmask(values, xifti$meta$subcort$mask, fill=NA)
-  labs <- unmask(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
+  vol <- unmask_vol(values, xifti$meta$subcort$mask, fill=NA)
+  labs <- unmask_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
@@ -1117,7 +1116,7 @@ view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, id
 view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
   xifti, structural_img="MNI", idx=1, plane="axial", 
   num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
-  verbose=TRUE) {
+  verbose=TRUE, ...) {
 
   view_xifti_volume(
     xifti=xifti, 
@@ -1126,6 +1125,6 @@ view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
     num.slices=num.slices,
     use_papaya=use_papaya,
     z_min=z_min, z_max=z_max,
-    verbose=verbose
+    verbose=verbose, ...
   )
 }

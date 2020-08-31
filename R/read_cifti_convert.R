@@ -106,10 +106,10 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_surface(surfL_fname) 
+    xifti$surf$cortex_left <- make_surf(surfL_fname) 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_surface(surfR_fname) 
+    xifti$surf$cortex_right <- make_surf(surfR_fname) 
   }
 
   # Finish.

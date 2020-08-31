@@ -80,9 +80,8 @@ will be shown in a separate panel row within the RGL window.}
  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
  as a png in \code{write_dir} and its name will be \code{fname}.
 
- "video" will take a series of screenshots of the RGL window, while 
- rotating the brain surface(s), saving each to a file in \code{write_dir} 
- named by \code{fname}, and then close the RGL window. The frames can 
+ "video" will take a series of screenshots of the RGL window, while increasing
+ the column index. The frames can 
  be converted to a video file using multimedia software such as Adobe 
  Premiere Pro. The "video" mode is not yet supported.}
 

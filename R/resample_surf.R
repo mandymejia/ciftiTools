@@ -14,7 +14,7 @@
 resample_surf <- function(
   surf, resamp_res, side=c("left", "right"), wb_path=NULL){
 
-  stopifnot(is.surface(surf))
+  stopifnot(is.surf(surf))
 
   side <- match.arg(side, c("left", "right"))
 
@@ -48,5 +48,5 @@ resample_surf <- function(
   )
 
   # Read new file.
-  make_surface(gii_post)
+  make_surf(gii_post)
 }

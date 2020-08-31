@@ -148,8 +148,8 @@ make_xifti <- function(
   if (!is.null(cifti_info)) { xifti$meta$cifti <- cifti_info$cifti }
 
   # Surfaces.
-  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_surface(surfL) }
-  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_surface(surfR) }
+  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_surf(surfL) }
+  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_surf(surfR) }
 
   if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   structure(xifti, class="xifti")

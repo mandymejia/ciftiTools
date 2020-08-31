@@ -3,7 +3,7 @@
 * introduce `"xifti"` object: can be made from CIFTI file, GIFTI surfaces, or new data
     * To make a `"xifti"` from data: `as.xifti(...)`
     * To make a `"xifti"` from a CIFTI file: `read_cifti(cifti_fname)`
-    * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surface(surfL_fname))`
+    * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surf(surfL_fname))`
 * `read_cifti_flat` now uses XML metadata directly (but still obtains XML via Connectome Workbench)
     * This allows for reading in more metadata such as time start/step for `.dtseries.nii`
 * `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::write_gifti`

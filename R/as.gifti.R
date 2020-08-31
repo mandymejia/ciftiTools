@@ -131,7 +131,7 @@ as.surf_gifti <- function(
   }
 
   # Format data as a list with elements "pointset" and "triangle"
-  if (suppressMessages(is.surface(surf))) {
+  if (suppressMessages(is.surf(surf))) {
     # start indexing at 0 instead of 1
     surf <- list(pointset = surf$vertices, triangle = surf$faces)
   }
