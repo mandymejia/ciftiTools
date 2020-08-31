@@ -42,7 +42,6 @@
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
 #'
-#' @method plot surface 
 #' @export
 #' @importFrom grDevices dev.list dev.off
 view_surf <- function(surf, hemisphere=NULL, mode=c("widget", "image"),

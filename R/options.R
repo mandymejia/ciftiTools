@@ -57,13 +57,3 @@ ciftiTools.getOption <- function(opt) {
   ciftiTools.checkOption(opt)
   getOption(paste0("ciftiTools_", opt))
 }
-
-.onAttach <- function(...) {
-  if (interactive()) {
-    if (is.null(getOption("ciftiTools_wb_path"))) {
-      packageStartupMessage(wb_path_request())
-    }
-  }
-  ciftiTools.setOption("EPS", 1e-8)
-  ciftiTools.setOption("suppress_msgs", FALSE)
-}
