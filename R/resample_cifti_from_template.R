@@ -3,9 +3,9 @@
 #' @description Resample a CIFTI from a template. This uses the
 #'  \code{-cifti-resample} command from Connectome Workbench.
 #'
-#' @param cifti_original_fname A CIFTI file to resample.
-#' @param cifti_template_fname A CIFTI file to use as the template.
-#' @param cifti_target_fname The file name to save the resampled CIFTI.
+#' @param original_fname A CIFTI file to resample.
+#' @param template_fname A CIFTI file to use as the template.
+#' @param target_fname The file name to save the resampled CIFTI.
 #' @inheritParams wb_path_Param
 #'
 #' @return Whether the CIFTI was successfully resampled
@@ -20,13 +20,13 @@
 #'  executable.
 #'
 resample_cifti_from_template <- function(
-  cifti_original_fname, cifti_template_fname, cifti_target_fname,
+  original_fname, template_fname, target_fname,
   wb_path=NULL){
   
   # Check brainstructures.
-  original_info <- info_cifti(cifti_original_fname, wb_path)
+  original_info <- info_cifti(original_fname, wb_path)
   brainstructures <- original_info$cifti$brainstructures
-  template_info <- info_cifti(cifti_template_fname, wb_path)
+  template_info <- info_cifti(template_fname, wb_path)
   template_brainstructures <- template_info$cifti$brainstructures  
   for (b in brainstructures) {
     if (!(b %in% template_brainstructures)) {
@@ -37,13 +37,13 @@ resample_cifti_from_template <- function(
   # Build the Connectome Workbench command. 
   cmd <- paste(
     "-cifti-resample", 
-    sys_path(cifti_original_fname),
+    sys_path(original_fname),
     "COLUMN",
-    sys_path(cifti_template_fname),
+    sys_path(template_fname),
     "COLUMN", 
     "BARYCENTRIC",
     "CUBIC",
-    sys_path(cifti_target_fname)
+    sys_path(target_fname)
   )
 
   # Cortical spheres.
