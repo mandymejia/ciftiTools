@@ -5,3 +5,4 @@
 ^appveyor\.yml$
 ^R/flatten_xifti\.R$
 ^data-raw$
+^vignettes$

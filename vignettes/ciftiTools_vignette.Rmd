@@ -1,0 +1,317 @@
+---
+title: "ciftiTools Demo"
+date: "8/29/2020"
+output: html_document
+---
+
+`ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the following CIFTI file types: `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"`. It also supports the GIFTI surface geometry file file, `".surf.gii"`. Reading, writing, and resampling CIFTI files is made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench).  The Workbench must be installed to use `ciftiTools`. Visualizing the CIFTI files is made possible using the `rgl` R package and integrated support of surface GIFTI files.
+
+To get started, we load the `ciftiTools` package and indicate where to find the Connectome Workbench folder:
+
+```{r}
+library(knitr)
+library(rgl)
+knit_hooks$set(webgl = hook_webgl)
+```
+
+
+```{r}
+#devtools::install_github("mandymejia/ciftiTools")
+library(ciftiTools)
+```
+
+```{r}
+# Replace '/path/to/workbench' with the actual path to the Connectome Workbench folder on your computer.
+ciftiTools.setOption('wb_path', '/Applications/workbench')
+```
+
+In this vignette, we will use example data included in the `ciftiTools` package. The files are originally from [NITRC](https://www.nitrc.org/frs/?group_id=454):
+* The MyelinAndCorrThickness dtseries and dscalar files contain the same data: MyelinMap_BC_decurv and corrThickness
+* The dlabel file contains three cortical parcellations
+* The "ones" dscalar file is the only file to include subcortical voxels and has all data values equal to 1.
+
+```{r}
+cifti_fnames <- list(
+  dtseries = system.file("extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii", package = "ciftiTools"),
+  dscalar = system.file("extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii", package = "ciftiTools"),
+  dlabel = system.file("extdata", "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii", package = "ciftiTools"),
+  dscalar_ones = system.file("extdata", "ones.dscalar.nii", package = "ciftiTools")
+)
+# cifti_fnames <- list(
+#   dtseries = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii"),
+#   dscalar = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii"),
+#   dlabel = file.path("../inst/extdata", "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii"),
+#   dscalar_ones = file.path("../inst/extdata","ones.dscalar.nii")
+# )
+
+surfL_fname = system.file("extdata", "Conte69.L.inflated.32k_fs_LR.surf.gii", package = "ciftiTools")
+surfR_fname = system.file("extdata", "Conte69.R.inflated.32k_fs_LR.surf.gii", package = "ciftiTools")
+
+# surfL_fname = file.path("../inst/extdata", "Conte69.L.inflated.32k_fs_LR.surf.gii")
+# surfR_fname = file.path("../inst/extdata", "Conte69.R.inflated.32k_fs_LR.surf.gii")
+```
+
+# Reading a CIFTI file with a surface, and viewing it
+
+CIFTI files organize the gray matter of the brain into “grayordinates”: vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the grayordinate data. These components are read in together with `read_cifti`:
+
+```{r, warning=FALSE}
+cii <- read_cifti(cifti_fnames$dtseries)
+cii
+cii <- read_cifti(cifti_fnames$dscalar)
+cii
+```
+
+By default, `read_cifti` only reads in the left and right cortex data. The subcortical data can be included by using the argument `brainstructures="all"`. Other brainstructure combinations can be specified too, e.g. `brainstructures=c("left", "subcortical")`. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`, or `"all"` for all three.
+
+The resulting object produced by `read_cifti` is a `"xifti"` with components `data` (the grayordinate data matrix, separated by brainstructure), `meta` (metadata, most of which is from the NIFTI XML header), and `surf` (surface geometry). The last component distinguishes a `"xifti"` from a CIFTI: the left and right cortical surface geometries are not included in CIFTI files, so they must be read from separate surface GIFTI files (ending in `surf.gii`). The surface must be compatible: the number of vertices must be the same, and each vertex in the CIFTI data must correspond to the vertex location in the corresponding GIFTI surface file. In this way, a `"xifti"` represents a combination of a CIFTI file with compatible GIFTI files for the cortical mesh.
+
+We can add surfaces like so:
+
+```{r}
+cii <- add_surf(cii, surfL=surfL_fname, surfR=surfR_fname)
+cii
+```
+
+Alternatively, we could have provided the surfaces at the outset of reading the CIFTI file:
+
+```{r}
+cii <- read_cifti(cifti_fnames$dtseries, surfL_fname=surfL_fname, surfR_fname=surfR_fname)
+cii
+```
+
+Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data.
+
+```{r, webgl=TRUE}
+view_xifti_surface(cii, zlim=c(1,2), title='MyelinMap_BC_decurv')
+```
+
+```{r, webgl=TRUE}
+view_xifti_surface(cii, zlim=c(1,2), title='MyelinMap_BC_decurv', color_mode='diverging')
+```
+
+```{r, webgl=TRUE}
+view_xifti_surface(cii, idx=2, zlim=c(1,5), title='corrThickness')
+```
+
+```{r, webgl=TRUE}
+view_xifti_surface(cii, idx=2, zlim=c(1,5), title='corrThickness', color_mode='diverging')
+```
+
+`view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `use_papaya=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
+
+```{r}
+# cifti_fnames$dscalar_ones is the only file with subcortical data
+cii <- read_cifti(cifti_fnames$dscalar_ones, brainstructures="subcortical")
+view_xifti_volume(cii)
+```
+
+```{r}
+# For information only, since papaya viewer cannot be opened during knitting
+#view_xifti_volume(cii, num.slices=10, use_papaya = TRUE)
+```
+
+The `"xifti"` "plot" method (`plot(cii)`) will display the cortical data if possible, and the subcortical data otherwise. 
+
+# More about the `"xifti"`
+
+### Medial wall of the cortical data
+
+Medial wall vertices are not included in the `cortex_left` and `cortex_right` components of `data`. A data matrix for the left cortex which includes the medial wall vertices can be obtained with `unmask_cortex(cii$data$cortex_left, cii$meta$cortex$medial_wall_mask$left)` (and similarly for the right cortex).
+
+Sometimes, the medial wall locations are not indicated in the XML header of the CIFTI file. In this case, `ciftiTools` attempts to infer medial wall locations from `0` or `NA` values in the cortical data when `read_cifti()` is called.
+
+### Vectorization of the subcortical data
+
+The subcortical data is stored in vectorized form. To recover the subcortical volume, use `unmask_vol(cii$data$subcort, cii$meta$subcort$mask, fill=NA)` for the data and `unmask_vol(cii$meta$subcort$labels, cii$meta$subcort$mask, fill=0)` for the labels.
+
+### Intent code
+
+`cii$meta$cifti$intent` indicates the NIFTI intent, which corresponds to a unique CIFTI file type. For example, `"dtseries.nii"` files have an intent of 3006.
+
+### Support for surface geometry without data
+
+A `"surface"` can be read in using `make_surf(surfL_fname)`. They can be viewed with `view_surf` or, equivalently, their `plot` method.
+
+```{r}
+plot(make_surf(surfR_fname), hemisphere="right")
+```
+
+A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
+
+# Creating a new `"xifti"` and writing it
+
+We can make a `"xifti"` from data using `as.xifti`. For example, let's make a `"xifti"` from the mean image (over time) of the `"dtseries.nii"` file. (Note that the dtseries used in this example does not truly contain fMRI timeseries data, but we use it for illustration.)
+
+```{r}
+cii <- read_cifti(cifti_fnames$dtseries)
+cii_new <- as.xifti(
+  cortexL = apply(cii$data$cortex_left, 1, mean),
+  cortexL_mwall = cii$meta$cortex$medial_wall_mask$left,
+  cortexR = apply(cii$data$cortex_right, 1, mean),
+  cortexR_mwall = cii$meta$cortex$medial_wall_mask$right
+)
+is.xifti(cii_new)
+cii_new
+```
+
+We can also add subcortical data from `"ones.dscalar.nii"`. 
+
+```{r}
+cii2 <- read_cifti(cifti_fnames$dscalar_ones, brainstructures="subcortical")
+cii_new <- as.xifti(
+  cortexL = apply(cii$data$cortex_left, 1, mean),
+  cortexL_mwall = cii$meta$cortex$medial_wall_mask$left,
+  cortexR = apply(cii$data$cortex_right, 1, mean),
+  cortexR_mwall = cii$meta$cortex$medial_wall_mask$right,
+  # Alternatively to unmasking, we could have used the `subcortMask` argument.
+  subcortVol = unmask_vol(cii2$data$subcort, cii2$meta$subcort$mask, fill=0),
+  subcortLabs = cii2$meta$subcort$labels
+)
+is.xifti(cii_new)
+```
+
+To visualize this new `xifti` object, we need to add the surface geometries:
+
+```{r}
+cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
+view_xifti_surface(cii_new)
+view_xifti_volume(cii_new)
+```
+
+
+We can also write out a new CIFTI file with `write_cifti`!:
+
+```{r}
+write_cifti(cii_new, "my_new_cifti.dscalar.nii")
+
+# Verify that if we read the file back in, the result matches.
+# Some metadata is lost or added, but beside that, the data is the same.
+cii_new_copy <- read_cifti("my_new_cifti.dscalar.nii", brainstructures="all")
+try(testthat::expect_equal(cii_new$data, cii_new_copy$data))
+```
+
+There is only a negligible difference between the original and the written-then-read copy due to rounding.
+
+# Resampling
+
+`ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k `"dtseries.nii"` file to 6k vertices. We also provide the surfaces and resample them in conjunction.
+
+```{r}
+cii_6k <- resample_cifti(
+  cifti_fnames$dtseries, "my_resampled_cifti.dtseries.nii",
+  resamp_res = 6000,
+  surfL_fname, surfR_fname,
+  "my_resampled_surfL.surf.gii", "my_resampled_surfR.surf.gii",
+)
+```
+
+The new files can be viewed together like so:
+
+```{r}
+plot(read_cifti(cifti_fname=cii_6k$cifti, surfL=cii_6k$surfL, surfR=cii_6k$surfR))
+```
+
+Resampling can also be performed while reading a file into R. 
+
+```{r}
+cii <- read_cifti(
+  cifti_fnames$dtseries, 
+  surfL_fname = surfL_fname, surfR_fname = surfR_fname, 
+  resamp_res=6000
+)
+
+plot(cii)
+```
+
+Surfaces can also be resampled:
+
+```{r}
+surf <- make_surf(surf=surfL_fname)
+resample_surf(surf, resamp_res=6000)
+```
+
+The surface GIFTI files can be resampled without a CIFTI:
+
+```{r}
+resample_gifti(
+  surfL_fname, "resampled_L.surf.gii", 
+  hemisphere="left", resamp_res=6000
+)
+```
+
+Finally, a CIFTI file can be resampled to match a template. This is not always faster than resampling without a template, but it ensures the files are in register with one another and I believe it retains additional metadata.
+
+```{r}
+# Since it's the same file, the result should be identical besides metadata.
+# But, the numbers are slightly different...
+resample_cifti_from_template(
+  original_fname=cifti_fnames$dtseries,
+  template_fname="my_resampled_cifti.dtseries.nii",
+  target_fname="my_resampled_cifti2.dtseries.nii"
+)
+
+try(testthat::expect_equal(
+  read_cifti("my_resampled_cifti.dtseries.nii"), read_cifti("my_resampled_cifti2.dtseries.nii")
+))
+```
+
+# Other functionality
+
+### Separating a CIFTI into GIFTI and NIFTI files
+
+The cortical data can be written to GIFTI files, and the subcortical data can be written to a NIFTI file. The files are automatically named unless a new file name is provided.
+
+```{r}
+# Use default names for everything except left cortex
+separated_files = separate_cifti(cifti_fnames$dscalar_ones, brainstructures="all", cortexL_fname="my_left_cortex.func.gii")
+separated_files
+```
+
+Separated files can be read back in with the `oro.nifti`/`RNifti` and `gifti` packages, and made into a `"xifti"` object with `as.xifti`.
+
+### Reading only the CIFTI data, or only the CIFTI metadata
+
+When only the data matrix is needed, use the `flat=TRUE` argument to save time. Note that all brainstructures in the CIFTI file will be read in, and it will not be possible to determine which rows in the data belong to which brainstructure. It will also not be possible to visualize the data on the surface.
+
+```{r}
+cii <- read_cifti(cifti_fnames$dscalar, flat=TRUE)
+```
+
+To only read the CIFTI header, use `info_cifti`.
+
+```{r}
+cii_info <- ciftiTools:::info_cifti(cifti_fnames$dlabel)
+```
+
+# Verify a CIFTI
+
+Use `is.xifti` to check if one has been properly formed:
+
+```{r}
+cii <- read_cifti(cifti_fnames$dtseries)
+is.xifti(cii)
+```
+
+This can be helpful if it was directly edited:
+
+```{r}
+# Make a mistake and have different numbers of columns for the left and right cortex
+cii$data$cortex_left <- cii$data$cortex_left[,1,drop=FALSE]
+is.xifti(cii)
+```
+
+# Smooth a CIFTI
+
+Use `smooth_cifti` to perform smoothing.
+
+```{r}
+smoothed_fname <- "my_smoothed_cifti.dtseries.nii"
+smooth_cifti(
+  cifti_fnames$dtseries, smoothed_fname,
+  surface_sigma=2, volume_sigma=2,
+  surfL_fname=surfL_fname, surfR_fname=surfR_fname,
+  subcortical_zeroes_as_NA=TRUE
+)
+plot(read_cifti(smoothed_fname), surfL=surfL_fname, surfR=surfR_fname)
+```
