@@ -160,17 +160,6 @@ resample_cifti_components <- function(
     as.character(original_fnames), read_dir, mode=4)
   # [TO DO]: error if a file name is absolute?
 
-  # Step 1: Generate spheres in the target resolution (if not already existing and provided)
-  tdir <- tempdir()
-  # Create original sphere.
-  sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
-  sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
-  write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
-  # Create target sphere.
-  sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res, ".surf.gii"), tdir, mode=2)
-  sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res, ".surf.gii"), tdir, mode=2)
-  write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
-
   # Step 2 and 3: Use -metric-resample or -surface-rsample to resample 
   #   cortex, ROI, and surface files into target resolution.
 
@@ -182,7 +171,7 @@ resample_cifti_components <- function(
   )
 
   resample_gifti_kwargs_common <- list(
-    resamp_res=resamp_res, wb_path=wb_path,
+    original_res=original_res, resamp_res=resamp_res, wb_path=wb_path,
     #   Since we already appended read/write/sphere_target directories,
     #     set them to NULL.
     read_dir=NULL, write_dir=NULL
@@ -195,10 +184,7 @@ resample_cifti_components <- function(
     is_left <- substr(lab, nchar(lab), nchar(lab)) == "L" # last char: L or R.
     resample_kwargs <- c(resample_gifti_kwargs_common, list(
       original_fname=original_fnames[[lab]], target_fname=target_fnames[[lab]],
-      sphere_original_fname=ifelse(is_left, 
-        sphereL_original_fname, sphereR_original_fname),
-      sphere_target_fname=ifelse(is_left, 
-        sphereL_target_fname, sphereR_target_fname) 
+      hemisphere=ifelse(is_left, "left", "right")
     ))
     
     # Do resampling.

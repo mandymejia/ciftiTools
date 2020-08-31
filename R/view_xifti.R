@@ -944,8 +944,8 @@ view_xifti_surface <- function(xifti, idx=1,
 #' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
 #'
 #' @export
-#'
-#' @importFrom oro.nifti overlay readNIfTI
+
+#' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane="axial",
   num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
@@ -997,18 +997,17 @@ view_xifti_volume <- function(
       stop("`structural_img` argument not one of: NULL, \"MNI\", or an existing file.")
     }
     img_overlay <- img*0
-    img_overlay@.Data <- vol
-    img_overlay@.Data[labs==0] <- NA
-
     img_labels <- img*0
-    img_labels@.Data <- labs
-    img_labels@.Data[labs==0] <- NA
   } else {
-    img <- img_overlay <- vol
-    #img_labels <- vol*0
-    #img_labels@.Data <- labs
-    #img_labels@.Data[labs==0] <- NA
+    img <- oro.nifti::as.nifti(vol*0)
+    img@.Data <- xifti$meta$subcort$mask
+    img_overlay <- img_labels <- img
   }
+
+  img_overlay@.Data <- vol
+  img_overlay@.Data[labs==0] <- NA
+  img_labels@.Data <- labs
+  img_labels@.Data[labs==0] <- NA
 
   if (!use_papaya) {
     if (plane=="axial") {
@@ -1023,12 +1022,7 @@ view_xifti_volume <- function(
     }
     oro.nifti::overlay(x=img, y=img_overlay, plane=plane, ...)
   } else {
-    if (is.null(structural_img)) {
-      stop("Doesn't work; use an overlay or not papaya.")
-      papayar::papaya(list(img, img_labels), ...)
-    } else {
-      papayar::papaya(list(img, img_overlay, img_labels), ...)
-    }
+    papayar::papaya(list(img, img_overlay, img_labels), ...)
   }
 }
 

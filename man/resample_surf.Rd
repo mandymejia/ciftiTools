@@ -4,14 +4,19 @@
 \alias{resample_surf}
 \title{Resample "surface" object}
 \usage{
-resample_surf(surf, resamp_res, side = c("left", "right"), wb_path = NULL)
+resample_surf(
+  surf,
+  resamp_res,
+  hemisphere = c("left", "right"),
+  wb_path = NULL
+)
 }
 \arguments{
 \item{surf}{A "surface" object}
 
 \item{resamp_res}{The desired resolution}
 
-\item{side}{"left" or "right"}
+\item{hemisphere}{"left" or "right"}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

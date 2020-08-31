@@ -56,7 +56,7 @@ make_cortex <- function(
     if (!is.numeric(cortex) && !is.matrix(cortex)) {
       stop(paste(
         "`cortex` was not an existing file (check file name?),",
-        "a result of `gifti::read_gifti()`,",
+        "a result of `gifti::readgii()`,",
         "or a numeric matrix."
       ))
     }
@@ -312,7 +312,7 @@ gifti_to_surface <- function(surf) {
   if (is.fname(surf)){ surf <- readgii(surf) }
 
   # GIFTI --> list of vertices and faces.
-  if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::read_gifti()`.") }
+  if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::readgii()`.") }
   stopifnot(is.list(surf))
   if ("data" %in% names(surf)) { surf <- surf$data }
   stopifnot(all(c("pointset", "triangle") %in% names(surf)))

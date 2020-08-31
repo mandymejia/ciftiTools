@@ -4,7 +4,7 @@
 \alias{view_surf}
 \title{Visualize a "surface" object}
 \usage{
-\method{plot}{surface}(
+view_surf(
   surf,
   hemisphere = NULL,
   mode = c("widget", "image"),
