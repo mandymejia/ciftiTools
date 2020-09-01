@@ -178,7 +178,51 @@ resample_cifti <- function(
 
 #' @rdname resample_cifti
 #' @export
-resampleCIfTI <- resamplecii <- resample_xifti <- function(
+resampleCIfTI <- function(
+  cifti_original_fname, cifti_target_fname, 
+  surfL_original_fname=NULL, surfR_original_fname=NULL,
+  surfL_target_fname=NULL, surfR_target_fname=NULL,
+  resamp_res,
+  sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
+  resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
+  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+
+  resample_cifti(
+    cifti_original_fname, cifti_target_fname, 
+    surfL_original_fname, surfR_original_fname,
+    surfL_target_fname, surfR_target_fname,
+    resamp_res,
+    sep_keep, sep_fnames, #separate_cifti
+    resamp_keep, resamp_fnames, # resample_cifti_components
+    write_dir, verbose, wb_path
+  ) 
+}
+
+#' @rdname resample_cifti
+#' @export
+resamplecii <- function(
+  cifti_original_fname, cifti_target_fname, 
+  surfL_original_fname=NULL, surfR_original_fname=NULL,
+  surfL_target_fname=NULL, surfR_target_fname=NULL,
+  resamp_res,
+  sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
+  resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
+  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+
+  resample_cifti(
+    cifti_original_fname, cifti_target_fname, 
+    surfL_original_fname, surfR_original_fname,
+    surfL_target_fname, surfR_target_fname,
+    resamp_res,
+    sep_keep, sep_fnames, #separate_cifti
+    resamp_keep, resamp_fnames, # resample_cifti_components
+    write_dir, verbose, wb_path
+  ) 
+}
+
+#' @rdname resample_cifti
+#' @export
+resample_xifti <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,

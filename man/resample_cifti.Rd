@@ -3,6 +3,8 @@
 \name{resample_cifti}
 \alias{resample_cifti}
 \alias{resampleCIfTI}
+\alias{resamplecii}
+\alias{resample_xifti}
 \title{Resample CIFTI Data}
 \usage{
 resample_cifti(
@@ -23,6 +25,40 @@ resample_cifti(
 )
 
 resampleCIfTI(
+  cifti_original_fname,
+  cifti_target_fname,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
+  resamp_res,
+  sep_keep = FALSE,
+  sep_fnames = NULL,
+  resamp_keep = FALSE,
+  resamp_fnames = NULL,
+  write_dir = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+resamplecii(
+  cifti_original_fname,
+  cifti_target_fname,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
+  resamp_res,
+  sep_keep = FALSE,
+  sep_fnames = NULL,
+  resamp_keep = FALSE,
+  resamp_fnames = NULL,
+  write_dir = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+resample_xifti(
   cifti_original_fname,
   cifti_target_fname,
   surfL_original_fname = NULL,

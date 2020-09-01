@@ -3,6 +3,7 @@
 \name{separate_cifti}
 \alias{separate_cifti}
 \alias{separateCIfTI}
+\alias{separatecii}
 \title{Separate a CIFTI as its NIFTI and GIFTI component files}
 \usage{
 separate_cifti(
@@ -21,6 +22,21 @@ separate_cifti(
 )
 
 separateCIfTI(
+  cifti_fname,
+  brainstructures = c("left", "right"),
+  cortexL_fname = NULL,
+  cortexR_fname = NULL,
+  subcortVol_fname = NULL,
+  subcortLabs_fname = NULL,
+  ROI_brainstructures = NULL,
+  ROIcortexL_fname = NULL,
+  ROIcortexR_fname = NULL,
+  ROIsubcortVol_fname = NULL,
+  write_dir = NULL,
+  wb_path = NULL
+)
+
+separatecii(
   cifti_fname,
   brainstructures = c("left", "right"),
   cortexL_fname = NULL,

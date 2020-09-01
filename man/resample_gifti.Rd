@@ -3,6 +3,7 @@
 \name{resample_gifti}
 \alias{resample_gifti}
 \alias{resampleGIfTI}
+\alias{resamplegii}
 \title{Resample a GIFTI file (with its ROI)}
 \usage{
 resample_gifti(
@@ -20,6 +21,19 @@ resample_gifti(
 )
 
 resampleGIfTI(
+  original_fname,
+  target_fname,
+  file_type = NULL,
+  original_res = NULL,
+  resamp_res,
+  ROIcortex_original_fname = NULL,
+  validROIcortex_target_fname = NULL,
+  read_dir = NULL,
+  write_dir = NULL,
+  wb_path = NULL
+)
+
+resamplegii(
   original_fname,
   target_fname,
   file_type = NULL,

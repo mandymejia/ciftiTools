@@ -58,3 +58,43 @@ smooth_cifti <- function(
 
   run_wb_cmd(cmd, wb_path)
 }
+
+#' @rdname smooth_cifti
+#' @export
+smoothCIfTI <- function(
+  cifti_original_fname, cifti_target_fname,
+  surface_sigma, volume_sigma,
+  surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
+  subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
+  subcortical_merged=FALSE,
+  wb_path=NULL){
+
+  smooth_cifti(
+    cifti_original_fname, cifti_target_fname,
+    surface_sigma, volume_sigma,
+    surfL_fname, surfR_fname, cerebellum_fname,
+    subcortical_zeroes_as_NA, cortical_zeroes_as_NA,
+    subcortical_merged,
+    wb_path
+  )
+}
+
+#' @rdname smooth_cifti
+#' @export
+smoothcii <- function(
+  cifti_original_fname, cifti_target_fname,
+  surface_sigma, volume_sigma,
+  surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
+  subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
+  subcortical_merged=FALSE,
+  wb_path=NULL){
+
+  smooth_cifti(
+    cifti_original_fname, cifti_target_fname,
+    surface_sigma, volume_sigma,
+    surfL_fname, surfR_fname, cerebellum_fname,
+    subcortical_zeroes_as_NA, cortical_zeroes_as_NA,
+    subcortical_merged,
+    wb_path
+  )
+}

@@ -116,7 +116,43 @@ read_cifti <- function(
 
 #' @rdname read_cifti
 #' @export
-readCIfTI <- readcii <- read_xifti <- function(
+readCIfTI <- function(
+  cifti_fname, flat=FALSE,
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), 
+  resamp_res=NULL,
+  wb_path=NULL, verbose=FALSE, ...){
+
+  read_cifti(
+    cifti_fname, flat,
+    surfL_fname, surfR_fname,
+    brainstructures, 
+    resamp_res,
+    wb_path, verbose, ...
+  )
+}
+
+#' @rdname read_cifti
+#' @export
+readcii <- function(
+  cifti_fname, flat=FALSE,
+  surfL_fname=NULL, surfR_fname=NULL,
+  brainstructures=c("left","right"), 
+  resamp_res=NULL,
+  wb_path=NULL, verbose=FALSE, ...){
+
+  read_cifti(
+    cifti_fname, flat,
+    surfL_fname, surfR_fname,
+    brainstructures, 
+    resamp_res,
+    wb_path, verbose, ...
+  )
+}
+
+#' @rdname read_cifti
+#' @export
+read_xifti <- function(
   cifti_fname, flat=FALSE,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 

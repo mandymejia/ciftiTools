@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_cifti.R
 \name{write_cifti_components}
 \alias{write_cifti_components}
-\title{Write out a GIFTI File}
+\title{Write Out Each Present Component in a "xifti"}
 \usage{
 write_cifti_components(
   xifti,
@@ -34,32 +34,11 @@ Default: \code{0}.}
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
-
-\item{data}{A data matrix to write out as a GIFTI, i.e. a V (vertices) by T
-(measurements) matrix correpsonding to the left or right cortex.}
-
-\item{out_fname}{The path to the GIFTI file to write}
-
-\item{data_type}{A vector corresponding to the NIFTI types of \code{data}.
-For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
-(default), the data_type will be inferred.}
-
-\item{...}{Other vectors of options to 
-\code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and
-"endian".}
 }
 \value{
 List of written files
 }
 \description{
-Write GIFTI-format data.
+Write Out Each Present Component in a "xifti"
 }
-\keyword{"xifti"}
-\keyword{Component}
-\keyword{Each}
-\keyword{Out}
-\keyword{Present}
-\keyword{Write}
-\keyword{a}
-\keyword{in}
 \keyword{internal}

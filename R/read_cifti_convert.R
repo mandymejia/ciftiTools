@@ -65,6 +65,12 @@ read_cifti_convert <- function(
   # }
 
   # Place cortex data into the "xifti" object.
+  if (xifti$meta$cifti$intent == 3007) {
+    # Label values begin at zero. In example file, it indicates "???"
+    mwall_values <- c(NaN, NA)
+  } else {
+    mwall_values <- c(0, NaN, NA)
+  }
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
   if ("left" %in% brainstructures) {
@@ -72,7 +78,8 @@ read_cifti_convert <- function(
       xifti_data[1:last_left,, drop=FALSE],
       side = "left", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$left,
-      mwall_source="the CIFTI being read in"
+      mwall_source="the CIFTI being read in",
+      mwall_values=mwall_values
     )
     xifti$data$cortex_left <- cortex$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$mwall)
@@ -84,7 +91,8 @@ read_cifti_convert <- function(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
       side = "right", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$right,
-      mwall_source="the CIFTI being read in"
+      mwall_source="the CIFTI being read in",
+      mwall_values=mwall_values
     )
     xifti$data$cortex_right <- cortex$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$mwall)

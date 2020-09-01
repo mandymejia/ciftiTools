@@ -31,7 +31,7 @@ write_subcort_nifti <- function(
   
   # ...Add back subcortical label information.
   # https://www.humanconnectome.org/software/workbench-command/-volume-help
-  subcort_lab_list <- system.file("subcort_label_list.txt", package="ciftiTools")
+  subcort_lab_list <- system.file("extdata", "subcort_label_list.txt", package="ciftiTools")
   cmd <- paste(
     "-volume-label-import", 
     sys_path(subcortLabs_fname), 

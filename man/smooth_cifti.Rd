@@ -2,9 +2,39 @@
 % Please edit documentation in R/smooth_cifti.R
 \name{smooth_cifti}
 \alias{smooth_cifti}
+\alias{smoothCIfTI}
+\alias{smoothcii}
 \title{Smooth a CIFTI}
 \usage{
 smooth_cifti(
+  cifti_original_fname,
+  cifti_target_fname,
+  surface_sigma,
+  volume_sigma,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  cerebellum_fname = NULL,
+  subcortical_zeroes_as_NA = FALSE,
+  cortical_zeroes_as_NA = FALSE,
+  subcortical_merged = FALSE,
+  wb_path = NULL
+)
+
+smoothCIfTI(
+  cifti_original_fname,
+  cifti_target_fname,
+  surface_sigma,
+  volume_sigma,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  cerebellum_fname = NULL,
+  subcortical_zeroes_as_NA = FALSE,
+  cortical_zeroes_as_NA = FALSE,
+  subcortical_merged = FALSE,
+  wb_path = NULL
+)
+
+smoothcii(
   cifti_original_fname,
   cifti_target_fname,
   surface_sigma,

@@ -3,6 +3,8 @@
 \name{read_cifti}
 \alias{read_cifti}
 \alias{readCIfTI}
+\alias{readcii}
+\alias{read_xifti}
 \title{Read a CIFTI File}
 \usage{
 read_cifti(
@@ -18,6 +20,30 @@ read_cifti(
 )
 
 readCIfTI(
+  cifti_fname,
+  flat = FALSE,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  brainstructures = c("left", "right"),
+  resamp_res = NULL,
+  wb_path = NULL,
+  verbose = FALSE,
+  ...
+)
+
+readcii(
+  cifti_fname,
+  flat = FALSE,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  brainstructures = c("left", "right"),
+  resamp_res = NULL,
+  wb_path = NULL,
+  verbose = FALSE,
+  ...
+)
+
+read_xifti(
   cifti_fname,
   flat = FALSE,
   surfL_fname = NULL,

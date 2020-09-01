@@ -181,7 +181,23 @@ write_spheres <- function(
 
 #' @rdname resample_gifti
 #' @export
-resampleGIfTI <- resamplegii <- function(
+resampleGIfTI <- function(
+  original_fname, target_fname, 
+  file_type=NULL, original_res=NULL, resamp_res,
+  ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+  read_dir=NULL, write_dir=NULL, wb_path=NULL){
+
+  resample_gifti(
+    original_fname, target_fname, 
+    file_type=NULL, original_res=NULL, resamp_res,
+    ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+    read_dir=NULL, write_dir=NULL, wb_path=NULL
+  )
+}
+
+#' @rdname resample_gifti
+#' @export
+resamplegii <- function(
   original_fname, target_fname, 
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,

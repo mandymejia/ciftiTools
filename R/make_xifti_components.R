@@ -18,8 +18,9 @@
 #' @param rm_bad_mwall If the medial wall mask doesn't match up with the 
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
-#' @param infer_mwall If the medial wall mask was not provided (or if it was
-#'  discarded) should it be inferred from 0/NA values? Default: \code{TRUE}.
+#' @param mwall_values If the medial wall mask was not provided (or if it was
+#'  discarded), infer it from these values. Default: \code{c(0, NA)}. If 
+#'  \code{NULL}, do not attempt to infer the medial wall mask.
 #' @param side "left" or "right"? Just used to print warnings.
 #' @param mwall_source Character describing where the mwall came from. Just used
 #'  to print warnings.
@@ -34,7 +35,7 @@ make_cortex <- function(
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
   rm_bad_mwall=TRUE,
-  infer_mwall=TRUE,
+  mwall_values=c(0, NA),
   side=NULL,
   mwall_source=NULL) {
 
@@ -42,6 +43,7 @@ make_cortex <- function(
   if (is.null(mwall_source)) {mwall_source <- ""}
 
   # Cannot infer the medial wall if the cortex has been masked.
+  infer_mwall <- !identical(mwall_values, NULL)
   if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
 
   # File --> GIFTI.
@@ -115,7 +117,7 @@ make_cortex <- function(
   # If no valid medial wall mask, optionally infer it.
   if (is.null(mwall)) {
     if (infer_mwall) {
-      new_mwall <- !apply(cortex==0 | is.na(cortex), 1, all)
+      new_mwall <- !apply(matrix(cortex %in% mwall_values, nrow=nrow(cortex)), 1, all)
       if (any(!new_mwall)) {
         msg <- paste0(
           msg,"A new medial wall mask for the ",side," cortex was inferred from ",
@@ -235,7 +237,11 @@ make_subcort <- function(
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
 
-  labs <- as.numeric(labs)
+  if (labs_ndims < 2) {
+    labs <- as.numeric(labs)
+  } else {
+    labs <- array(as.numeric(labs), dim=dim(labs))
+  }
 
   # Infer mask if not provided.
   if (is.null(mask)) {

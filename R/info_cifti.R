@@ -202,16 +202,18 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   if ("CORTEX_LEFT" %in% bs_names) { 
     meta$brainstructures <- c(meta$brainstructures, "left")
     c_idx <- xml[[which(bs_names=="CORTEX_LEFT")]] 
-    meta$cortex_left_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
-      1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
+    v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
+    v <- 1 + as.numeric(v[v != ""])
+    meta$cortex_left_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% v
   }
 
   # Right Cortex
   if ("CORTEX_RIGHT" %in% bs_names) { 
     meta$brainstructures <- c(meta$brainstructures, "right")
     c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]] 
-    meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
-      1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
+    v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
+    v <- 1 + as.numeric(v[v != ""])
+    meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% v
   }
 
   # Subcortical Transformation Matrix
@@ -387,6 +389,12 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
 
 #' @rdname info_cifti
 #' @export
-infoCIfTI <- infocii <- function(cifti_fname, wb_path=NULL){
+infoCIfTI <- function(cifti_fname, wb_path=NULL){
+  info_cifti(cifti_fname, wb_path=NULL)
+}
+
+#' @rdname info_cifti
+#' @export
+infocii <- function(cifti_fname, wb_path=NULL){
   info_cifti(cifti_fname, wb_path=NULL)
 }

@@ -497,7 +497,19 @@ is_xifti <- function(x, messages=TRUE){
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
-is.cifti <- is_cifti <- isCIfTI <- function(x, messages=TRUE){
+is.cifti <- function(x, messages=TRUE){
   warning("is.cifti() is an alias for is.xifti().\n")
   is.xifti(x, messages=messages)
+}
+
+#' @rdname is.cifti
+#' @export
+is_cifti <- function(x, messages=TRUE){
+ is.cifti(x, messages=messages) 
+}
+
+#' @rdname is.cifti
+#' @export
+isCIfTI <- function(x, messages=TRUE){
+ is.cifti(x, messages=messages) 
 }
