@@ -17,8 +17,7 @@ knit_hooks$set(webgl = rgl::hook_webgl)
 out_dir <- "output"
 
 # Sometimes the first RGL window does not render properly.
-rgl.open()
-rgl.close()
+rgl.open(); rgl.close()
 ```
 
 ```{r}
@@ -86,7 +85,7 @@ cii
 Alternatively, we could have provided the surfaces at the outset of reading the CIFTI file:
 
 ```{r}
-cii <- read_cifti(cifti_fnames$dtseries, surfL_fname=surfL_fname, surfR_fname=surfR_fname)
+cii <- read_cifti(cifti_fnames$dscalar, surfL_fname=surfL_fname, surfR_fname=surfR_fname)
 cii
 ```
 
@@ -195,7 +194,8 @@ To visualize the cortical data of the new `xifti` object, we need to add the sur
 ```{r, out.width="75%", fig.cap=".dtseries mean image"}
 cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
 knitr::include_graphics(view_xifti_surface(
-  cii_new, mode="image", fname=file.path(out_dir, "xifti_3.png")
+  cii_new, mode="image", fname=file.path(out_dir, "xifti_3.png"), 
+  title=".dtseries Mean Image", zlim=c(0,4)
 ))
 ```
 
@@ -358,6 +358,7 @@ smooth_cifti(
 knitr::include_graphics(plot(
   read_cifti(smoothed_cii_fname), 
   surfL=surfL_fname, surfR=surfR_fname, mode="image", 
+  title="Smoothed CIFTI", zlim=c(1,2),
   fname=file.path(out_dir, "xifti_4.png")
 ))
 ```
