@@ -62,8 +62,8 @@ is.xifti_data <- function(x) {
         "must all have the same number of measurements (columns),",
         "but they do not."
       ),
-      "\nThe column counts are:",
-      paste(n_meas, collapse=","),
+      "\nThe column counts are: ",
+      paste(n_meas, collapse=", "),
       "\n"
     ))
     return(FALSE)
@@ -91,7 +91,7 @@ is.xifti_data <- function(x) {
 #' @return Logical indicating whether x is a valid surface.
 #' @export
 #' 
-is.surface <- function(x) {
+is.surf <- function(x) {
   if (!match_exactly(names(x), c("vertices", "faces"))) {
     return(FALSE)
   }
@@ -304,13 +304,15 @@ is.xifti_meta <- function(x) {
           }
         }
       } else if (intent == 3007) {
-        if (!is.null(x$cifti$labels)) {
-          if (!is.data.frame(x$cifti$labels)) {
-            message("cifti$labels must be a data.frame.\n"); return(FALSE)
-          }
-          if (!all(colnames(x$cifti$labels) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
-            message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
-            return(FALSE)
+        for (lab in x$cifti$labels) {
+          if (!is.null(lab)) {
+            if (!is.data.frame(lab)) {
+              message("cifti$labels must be a data.frame.\n"); return(FALSE)
+            }
+            if (!all(colnames(lab) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
+              message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
+              return(FALSE)
+            }
           }
         }
       }
@@ -373,7 +375,7 @@ is.xifti <- function(x, messages=TRUE) {
 
   if (!is.xifti_data(x$data)) { message('"data" is invalid.\n'); return(FALSE) }
   for (s in names(x$surf)) {
-    if (!is.null(x$surf[[s]]) && !is.surface(x$surf[[s]])) {
+    if (!is.null(x$surf[[s]]) && !is.surf(x$surf[[s]])) {
       message(paste(s, "is invalid.\n")); return(FALSE)
     }
   }
@@ -495,7 +497,19 @@ is_xifti <- function(x, messages=TRUE){
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
-is.cifti <- is_cifti <- isCIfTI <- function(x, messages=TRUE){
+is.cifti <- function(x, messages=TRUE){
   warning("is.cifti() is an alias for is.xifti().\n")
   is.xifti(x, messages=messages)
+}
+
+#' @rdname is.cifti
+#' @export
+is_cifti <- function(x, messages=TRUE){
+ is.cifti(x, messages=messages) 
+}
+
+#' @rdname is.cifti
+#' @export
+isCIfTI <- function(x, messages=TRUE){
+ is.cifti(x, messages=messages) 
 }

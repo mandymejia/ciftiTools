@@ -19,3 +19,4 @@ A data.frame with two columns: color (character: standard color names or hex cod
 \description{
 Interpolates between entries in the input palette to make a larger palette with at least MIN_COLOR_RES entries.
 }
+\keyword{internal}

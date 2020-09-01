@@ -9,8 +9,8 @@
 #'  be reversed.
 #' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
 #' @param pos_half Use the positive half (black --> red --> yellow) only? Default: \code{FALSE}.
-#'
 #' @export
+#'
 #' @return A data.frame with two columns: color (character: color hex codes) and value (numeric).
 #'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
@@ -143,7 +143,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #' @param DATA_MIN (Optional) The minimum value of the data to make the palette for. Overrided by certain \code{zlim}.
 #' @param DATA_MAX (Optional) The maximum value of the data to make the palette for. Overrided by certain \code{zlim}.
 #'
-#' @export
+#' @keywords internal
 #' @importFrom grDevices colorRampPalette
 #' @import RColorBrewer
 #'
@@ -328,7 +328,7 @@ make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative"
 #' @param MIN_COLOR_RES The minimum number of entries to have in the output palette. Because of rounding, there may be more
 #'  than this number of entries.
 #'
-#' @export
+#' @keywords internal
 #' @importFrom grDevices colorRampPalette
 #'
 #' @return A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
@@ -379,89 +379,100 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #' Visualize "xifti" cortical data. The \code{rgl} package is required.
 #'
 #' @inheritParams xifti_Param
-#' @param idx The time/column index of the xifti data to plot. 
+#' @param idx The time/column index of the xifti data to plot.
 #'  Currently one a single time point is supported. Default: the first index.
-#' @param hemisphere Which brain cortex to display: "both", "left", or "right". 
+#' @param hemisphere Which brain cortex to display: "both", "left", or "right".
 #'  If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 #'  or \code{xifti$surf$cortex_right} is not empty) will be displayed. Surfaces without
 #'  data (e.g. \code{xifti$CORTEX_LEFT} is empty) will still be displayed,
 #'  colored by \code{color_NA}. Each cortex will be shown in a separate panel
 #'  column within the RGL window.
-#' @param view Which view to display: "lateral", "medial", or "both". 
+#' @param view Which view to display: "lateral", "medial", or "both".
 #'  If \code{NULL} (default), both views will be shown. Each view
 #'  will be shown in a separate panel row within the RGL window.
 #' @param mode One of "widget" (Default), "image", or "video":
-#' 
+#'
 #'  "widget" will open an interactive RGL window. Left click and drag to rotate.
-#'  Use the scroll wheel to zoom. Run the R function 
-#'  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png. 
+#'  Use the scroll wheel to zoom. Run the R function
+#'  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png.
 #'  See \code{\link[rgl]{snapshot}} for more information.
-#'  
+#'
 #'  "image" will open the RGL window, take a screenshot using
 #'  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
-#'  as a png in \code{write_dir} and its name will be \code{fname}.
-#' 
-#'  "video" will take a series of screenshots of the RGL window, while 
-#'  rotating the brain surface(s), saving each to a file in \code{write_dir} 
-#'  named by \code{fname}, and then close the RGL window. The frames can 
-#'  be converted to a video file using multimedia software such as Adobe 
+#'  as a png in \code{write_dir} and its name will be \code{[fname].png}.
+#'
+#'  "video" will take a series of screenshots of the RGL window, while increasing
+#'  the column index. The frames can
+#'  be converted to a video file using multimedia software such as Adobe
 #'  Premiere Pro. The "video" mode is not yet supported.
-#' @param width,height The dimensions of the RGL window, in pixels. If both are 
-#'  \code{NULL} (default), the dimensions will be set to 
+#' @param width,height The dimensions of the RGL window, in pixels. If both are
+#'  \code{NULL} (default), the dimensions will be set to
 #'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
 #'  1500 x 525 for 2x1 subplots, and
 #'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
 #'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
 #'  the same aspect ratio. Both could be specified to set the dimensions exactly.
+#' @param zoom Adjustment to size of brain meshes. Default: \code{3/5}
+#'  (100\% + 3/5*100\% = 160\% the original size).
 #' @param bg Background color. \code{NULL} will not color the background (white).
 #' @param title Optional title for the plot. It will be printed at the top in
 #'  a separate subplot with 1/4 the height of the brain cortex subplots.
-#'  \code{NULL} (default) will not make a title.
-#' @param text_color Color for text in title and colorbar legend. Default: 
+#'  \code{NULL} (default) will use the time index (.dtseries) or name
+#'  (.dscalar or .dlabel) of the data column being plotted. Set to an empty
+#'  string \code{""} to omit the title. If the title is non-empty but does not
+#'  appear, \code{cex.title} may need to be lowered.
+#' @param cex.title Font size multiplier for the title. \code{NULL} (default)
+#'  will use \code{2} for titles less than 20 characters long, and smaller
+#'  sizes for increasingly longer titles.
+#' @param text_color Color for text in title and colorbar legend. Default:
 #'  "black".
-#' @param fname An identifier to use for naming the saved images 
+#' @param fname An identifier to use for naming the saved images
 #'  ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
-#'  Default: "xifti". 
-#' @param write_dir Where should any output images be written. NULL (default) 
-#'  will write them to the current working directory. 
-#' 
+#'  Default: "xifti".
+#' @param write_dir Where should any output images be written. NULL (default)
+#'  will write them to the current working directory.
+#'
 #'  \code{write_dir} must already exist, or an error will occur.
-#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use, 
-#'  OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-#'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), 
-#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use,
+#'  OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info
+#'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential),
+#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
+#'  to these defaults is if the "xifti" represents a .dlabel CIFTI (intent 3007),
+#'  then the qualitative colors in the label table will be used.
 #'  See the \code{ciftiTools::make_color_pal()} description for more details.
-#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, 
-#'  or \code{"diverging"}. Default: sequential. See the
-#'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param zlim (Optional) Controls the mapping of values to each 
+#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
+#'  or \code{"diverging"}. \code{NULL} will use the qualitative color mode if
+#'  the "xifti" represents a .dlabel CIFTI (intent 3007), and the sequential
+#'  color mode otherwise. See the \code{ciftiTools::make_color_pal()}
+#'  description for more details.
+#' @param zlim (Optional) Controls the mapping of values to each
 #'  color in \code{colors}. If the length is longer than
-#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
+#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
 #'  the value to \code{DATA_MAX}. See the
 #'  \code{ciftiTools::make_color_pal()} description for more details.
-#' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and 
-#'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
-#'  Each can be a file path for a GIFTI, a file read by gifti::readgii, 
-#'  or a list with components "vertices" and "faces". If provided, they will override 
-#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
-#'  Otherwise, leave these arguments as \code{NULL} (default) to use 
+#' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and
+#'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
+#'  Each can be a file path for a GIFTI, a file read by gifti::readgii,
+#'  or a list with components "vertices" and "faces". If provided, they will override
+#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist.
+#'  Otherwise, leave these arguments as \code{NULL} (default) to use
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.
 #' @param colorbar_embedded Should the colorbar be embedded in the RGL window?
-#'  It will be positioned in the bottom-left corner, in a separate subplot 
+#'  It will be positioned in the bottom-left corner, in a separate subplot
 #'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
 #'  If \code{FALSE}, print it separately instead.
-#' @param colorbar_digits The number of digits for the colorbar legend ticks. 
+#' @param colorbar_digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
 #'
 #' @export
 #' @importFrom fields image.plot
-#' @importFrom grDevices dev.list dev.off
-view_xifti_surface <- function(xifti, idx=1, 
+#' @importFrom grDevices dev.list dev.off rgb
+view_xifti_surface <- function(xifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("widget", "image", "video"), width=NULL, height=NULL,
-  bg=NULL, title=NULL, text_color="black",
+  mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
+  colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL) {
 
@@ -469,11 +480,11 @@ view_xifti_surface <- function(xifti, idx=1,
     stop("Package \"rgl\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
   }
   if (!capabilities("X11")) {
-    warning("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
+    ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
   }
 
-  # Try to avoid this error with colorbar: 
-  #   Error in par(old.par) : 
+  # Try to avoid this error with colorbar:
+  #   Error in par(old.par) :
   #   invalid value specified for graphical parameter "pin"
   while (!is.null(dev.list()))  dev.off()
 
@@ -493,20 +504,21 @@ view_xifti_surface <- function(xifti, idx=1,
     } else {
       surfL <- xifti$surf$cortex_left
     }
-  } else { 
-    surfL <- make_surface(surfL) 
+  } else {
+    surfL <- make_surf(surfL)
   }
   if (is.null(surfR)) {
     if (is.null(xifti$surf$cortex_right) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "right")) {
         stop("The right hemisphere was requested, but no surface data was provided (xifti$surf$cortex_right or the surfR argument).")
-      }    
+      }
     } else {
       surfR <- xifti$surf$cortex_right
     }
-  } else { 
-    surfR <- make_surface(surfR) 
+  } else {
+    surfR <- make_surf(surfR)
   }
+
   if (is.null(surfL) && is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
 
   # Check hemisphere and view.
@@ -519,9 +531,14 @@ view_xifti_surface <- function(xifti, idx=1,
   brain_panels_nrow <- length(view)
   brain_panels_ncol <- length(hemisphere)
 
-  all_panels_nrow <- brain_panels_nrow + 1*(!is.null(title)) + 1*colorbar_embedded
+  if (is.null(title)) {
+    no_title = FALSE
+  } else {
+    no_title = title == ""
+  }
+  all_panels_nrow <- brain_panels_nrow + 1*(!no_title) + 1*colorbar_embedded
   all_panels_ncol <- brain_panels_ncol
-  
+
   # Check other arguments.
   mode <- match.arg(mode, c("widget", "image", "video"))
   if (mode == "video") { stop("The video mode is not yet supported.") }
@@ -531,7 +548,16 @@ view_xifti_surface <- function(xifti, idx=1,
     img_fname <- format_path(fname, write_dir, mode=2)
   }
 
-  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
+  # Color mode
+  if (is.null(color_mode)) {
+    if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
+      color_mode <- "qualitative"
+    } else {
+      color_mode <- "sequential"
+    }
+  } else {
+    color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
+  }
 
   # Check width and height.
   if (is.null(width) | is.null(height)) {
@@ -560,8 +586,8 @@ view_xifti_surface <- function(xifti, idx=1,
 
   TITLE_AND_LEGEND_HEIGHT_RATIO <- 1/6
   all_panels_width <- brain_panels_width
-  all_panels_height <- brain_panels_height + 
-    (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) * 
+  all_panels_height <- brain_panels_height +
+    (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) *
       (all_panels_nrow - brain_panels_nrow)
 
   # ----------------------------------------------------------------------------
@@ -572,7 +598,7 @@ view_xifti_surface <- function(xifti, idx=1,
   if ("left" %in% hemisphere) {
 
     # Check for surface data.
-    if (is.null(surfL)) { 
+    if (is.null(surfL)) {
       stop(paste0("The left hemisphere was requested, but no surface data ",
         "(xifti$surf$cortex_left or the surfL argument to view_xifti) was provided."))
     }
@@ -591,7 +617,7 @@ view_xifti_surface <- function(xifti, idx=1,
 
     # Get data values.
     valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices))
-    if (!is.null(xifti$data$cortex_left)) { 
+    if (!is.null(xifti$data$cortex_left)) {
       valuesL[xifti$meta$cortex$medial_wall_mask$left,] <- xifti$data$cortex_left[,idx, drop=FALSE]
     }
     nvoxL <- nrow(valuesL)
@@ -602,12 +628,12 @@ view_xifti_surface <- function(xifti, idx=1,
                               t(surfL$faces),
                               meshColor = "vertices")
     mesh_left <- rgl::addNormals(mesh_left) # for smooth coloring
-  } 
+  }
   # Right cortex:
   if ("right" %in% hemisphere) {
 
     # Check for surface data.
-    if (is.null(surfR)) { 
+    if (is.null(surfR)) {
       stop(paste0("The right hemisphere was requested, but no surface data ",
         "(xifti$surf$cortex_right or the surfR argument to view_xifti) was provided."))
     }
@@ -625,7 +651,7 @@ view_xifti_surface <- function(xifti, idx=1,
 
     # Get data values.
     valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices))
-    if (!is.null(xifti$data$cortex_right)) { 
+    if (!is.null(xifti$data$cortex_right)) {
       valuesR[xifti$meta$cortex$medial_wall_mask$right,] <- xifti$data$cortex_right[,idx, drop=FALSE]
     }
     nvoxR <- nrow(valuesR)
@@ -647,7 +673,7 @@ view_xifti_surface <- function(xifti, idx=1,
     }
   } else if ("right" %in% hemisphere) {
     values <- valuesR
-  } 
+  }
   if (all(is.na(values))) {
     values <- NULL
   }
@@ -660,14 +686,26 @@ view_xifti_surface <- function(xifti, idx=1,
 
     # Get the base palette.
     if (color_mode=="qualitative") {
-      warning("Qualitative values must be integers 1:N_VALUES. Will be fixed in future.") # will fix in future.
-      N_VALUES <- length(unique(values))
-      if (N_VALUES > 30) {stop("Too many qualitative values.")} #fix
-      pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
-        DATA_MIN=1, DATA_MAX=N_VALUES)
+      if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
+        labs <- xifti$meta$cifti$labels[[idx]]
+        N_VALUES <- length(labs$Key)
+        pal_base <- data.frame(
+          color = rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
+          value = labs$Key
+        )
+      } else {
+        values <- as.numeric(factor(values, levels=sort(unique(values))))
+        N_VALUES <- length(unique(values))
+        pal_base <- make_color_pal(
+          colors=colors, color_mode=color_mode, zlim=zlim,
+          DATA_MIN=1, DATA_MAX=N_VALUES
+        )
+      }
     } else {
-      pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim,
-        DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE))
+      pal_base <- make_color_pal(
+        colors=colors, color_mode=color_mode, zlim=zlim,
+        DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE)
+      )
     }
     # Interpolate colors in the base palette for higher color resolution.
     if (color_mode %in% c("sequential", "diverging")) {
@@ -701,7 +739,7 @@ view_xifti_surface <- function(xifti, idx=1,
       pal$value[length(pal$value)]
     )
     colorbar_labs <- switch(color_mode,
-      sequential=c(colorbar_min, 
+      sequential=c(colorbar_min,
                   pal_base$value[nrow(pal_base)]),
       qualitative=1:N_VALUES,
       diverging=c(colorbar_min,
@@ -712,17 +750,17 @@ view_xifti_surface <- function(xifti, idx=1,
     colorbar_kwargs <- list(
       legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
       breaks=colorbar_breaks, #legend.lab=colorbar_label,
-      axis.args=list(cex.axis=1.7, at=colorbar_labs, 
+      axis.args=list(cex.axis=1.7, at=colorbar_labs,
                     col=text_color, col.ticks=text_color, col.axis=text_color,
                     labels=format(colorbar_labs, digits=colorbar_digits))
     )
     #if (colorbar_position=="right") {
     #  colorbar_kwargs <- c(
-    #    colorbar_kwargs, 
+    #    colorbar_kwargs,
     #    list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
     #  )
     #} else if (colorbar_position=="bottom") {
-    colorbar_kwargs <- c(colorbar_kwargs, 
+    colorbar_kwargs <- c(colorbar_kwargs,
       list(
         horizontal=TRUE, # horizontal legend
         legend.cex=2, # double size of labels (numeric limits)
@@ -749,9 +787,9 @@ view_xifti_surface <- function(xifti, idx=1,
   rgl::bg3d(color=bg)
   rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
   Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-  
+
   all_panels_heights <- rep.int(1, brain_panels_nrow)
-  if (!is.null(title)) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
+  if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
   if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   # Determine the panel layout.
@@ -764,9 +802,40 @@ view_xifti_surface <- function(xifti, idx=1,
   brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
   n_brain_panels <- length(brain_panels)
 
-  if (!is.null(title)) {
+  if (!no_title) {
+    if (is.null(title)) {
+      intent <- xifti$meta$cifti$intent
+      if (is.null(intent)) {
+        title <- paste("Index", idx)
+      } else if (intent == 3002) {
+        title <- paste("Index", idx)
+        if (!any(sapply(xifti$meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
+          title <- paste0(title, " (", xifti$meta$cifti$time_start+xifti$meta$cifti$time_step*idx, " ", xifti$meta$cifti$time_unit, "s)")
+        }
+      } else if (intent == 3006) {
+        if (!is.null(xifti$meta$cifti$names) && length(xifti$meta$cifti$names)>=idx) {
+          title <- xifti$meta$cifti$names[idx]
+        } else {
+          title <- ""
+        }
+      } else if (intent == 3007) {
+        if (!is.null(xifti$meta$cifti$labels) && length(xifti$meta$cifti$labels)>=idx) {
+          title <- names(xifti$meta$cifti$labels)[idx]
+        } else {
+          title <- ""
+        }
+      }
+    }
+    if (is.null(cex.title)) {
+      # Default: 200% font size, but increasingly smaller for longer titles
+      if (nchar(title) > 20) {
+        cex.title <- 40 / nchar(title)
+      } else {
+        cex.title <- 2
+      }
+    }
     rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
-                cex=2.5, # 250% font size,
+                cex=cex.title,
                 adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
                 font=2, # Forget if this made a difference...
                 color=text_color,
@@ -826,7 +895,7 @@ view_xifti_surface <- function(xifti, idx=1,
     this_trans <- diag(4)
 
     this_mat <- this_rot %*% this_trans
-    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=3/5) #167% size
+    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=zoom) #Default: 167% size
     rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
   }
 
@@ -834,7 +903,7 @@ view_xifti_surface <- function(xifti, idx=1,
     if (colorbar_embedded) {
       rgl::bgplot3d(
         # Warning: calling par(new=TRUE) with no plot
-        # Error in par(old.par) : 
+        # Error in par(old.par) :
         #   invalid value specified for graphical parameter "pin"
         try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
         bg.color=bg
@@ -853,9 +922,10 @@ view_xifti_surface <- function(xifti, idx=1,
   if (mode=="image") {
     rgl::rgl.snapshot(img_fname)
     rgl::rgl.close()
+    return(img_fname)
+  } else {
+    return(invisible())
   }
-
-  invisible()
 }
 
 #' Visualize xifti brain data
@@ -865,21 +935,22 @@ view_xifti_surface <- function(xifti, idx=1,
 #'  subcortical values. Can be a file name, \code{"MNI"} (default) to use
 #'  the MNI T1-weighted template, or \code{NULL} to use a blank image.
 #' @param idx The time/column index of the xifti data to plot.
-#' @param plane If use_papaya=FALSE, the plane to display. 
+#' @param plane If use_papaya=FALSE, the plane to display.
 #'  Default: "axial". Other options are "sagittal" and "coronal".
 #' @param num.slices If use_papaya=FALSE, the number of slices to display.
 #' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
 #' @param z_min Floor value.
 #' @param z_max Ceiling value.
 #' @inheritParams verbose_Param_TRUE
+#' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
 #'
 #' @export
-#' 
-#' @importFrom oro.nifti overlay readNIfTI
+
+#' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
-  xifti, structural_img="MNI", idx=1, plane="axial", 
+  xifti, structural_img="MNI", idx=1, plane="axial",
   num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
-  verbose=TRUE) {
+  verbose=TRUE, ...) {
 
   if (use_papaya) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
@@ -894,8 +965,8 @@ view_xifti_volume <- function(
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx]
-  vol <- unmask(values, xifti$meta$subcort$mask, fill=NA)
-  labs <- unmask(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
+  vol <- unmask_vol(values, xifti$meta$subcort$mask, fill=NA)
+  labs <- unmask_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
@@ -927,28 +998,32 @@ view_xifti_volume <- function(
       stop("`structural_img` argument not one of: NULL, \"MNI\", or an existing file.")
     }
     img_overlay <- img*0
-    img_overlay@.Data <- vol
-    img_overlay@.Data[labs==0] <- NA
-
     img_labels <- img*0
-    img_labels@.Data <- labs
-    img_labels@.Data[labs==0] <- NA
   } else {
-    img <- img_overlay <- vol
-    #img_labels <- vol*0
-    #img_labels@.Data <- labs
-    #img_labels@.Data[labs==0] <- NA
+    img <- oro.nifti::as.nifti(vol*0)
+    img@.Data <- xifti$meta$subcort$mask
+    img_overlay <- img_labels <- img
   }
 
+  img_overlay@.Data <- vol
+  img_overlay@.Data[labs==0] <- NA
+  img_labels@.Data <- labs
+  img_labels@.Data[labs==0] <- NA
+
   if (!use_papaya) {
-    oro.nifti::overlay(x=img, y=img_overlay, plane=plane, z=slices)
-  } else {
-    if (is.null(structural_img)) {
-      stop("Doesn't work; use an overlay or not papaya.")
-      papayar::papaya(list(img, img_labels))
-    } else {
-      papayar::papaya(list(img, img_overlay, img_labels))
+    if (plane=="axial") {
+      img <- img[,,slices]
+      img_overlay <- img_overlay[,,slices]
+    } else if (plane=="coronal") {
+      img <- img[,slices,]
+      img_overlay <- img_overlay[,slices,]
+    } else if (plane=="sagittal") {
+      img <- img[slices,,]
+      img_overlay <- img_overlay[slices,,]
     }
+    oro.nifti::overlay(x=img, y=img_overlay, plane=plane, ...)
+  } else {
+    papayar::papaya(list(img, img_overlay, img_labels), ...)
   }
 }
 
@@ -959,7 +1034,7 @@ view_xifti_volume <- function(
 #'  volume otherwise
 #' @param ... Additional arguments to pass to either view function.
 #'
-#' @return The return value of \code{view_xifti_surface} or 
+#' @return The return value of \code{view_xifti_surface} or
 #'  \code{view_xifti_volume}.
 #'
 #' @export
@@ -969,22 +1044,33 @@ view_xifti <- function(xifti, what=NULL, ...) {
   if (is.null(what)) {
     can_do_left <- (!is.null(xifti$surf$cortex_left)) || ("surfL" %in% names(list(...)))
     can_do_right <- (!is.null(xifti$surf$cortex_right)) || ("surfR" %in% names(list(...)))
-    what <- ifelse(can_do_left | can_do_right, "surface", "volume")
+    can_do_sub <- !is.null(xifti$data$subcort)
+    what <- ifelse(
+      can_do_left || can_do_right,
+      "surface",
+      ifelse(can_do_sub, "volume", "error")
+    )
   }
-  if (what == "surface") { 
-    return(view_xifti_surface(xifti, ...)) 
-  } else if (what == "volume") { 
-    return(view_xifti_volume(xifti, ...)) 
-  } else { stop() }
+  if (what == "surface") {
+    return(view_xifti_surface(xifti, ...))
+  } else if (what == "volume") {
+    return(view_xifti_volume(xifti, ...))
+  } else {
+    stop(paste(
+      "No valid cortical surface, and no valid subcortical data.",
+      "Did you forget to provide surfL/surfR?",
+      "Or, did you forget to read in the subcortical data too?"
+    ))
+  }
 }
 
 #' S3 method: use view_xifti to plot a xifti
 #'
 #' @inheritParams x_Param_xifti
-#' @param ... Additional arguments to \code{\link{view_xifti}}, except 
+#' @param ... Additional arguments to \code{\link{view_xifti}}, except
 #'  \code{what}, which will be set to \code{NULL}.
 #'
-#' @method plot xifti 
+#' @method plot xifti
 #' @export
 plot.xifti <- function(x, ...){
   view_xifti(x, what=NULL, ...)
@@ -998,25 +1084,24 @@ view_cifti <- viewCIfTI <- viewcii <- function(xifti, what=NULL, ...){
 
 #' @rdname view_xifti_surface
 #' @export
-view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, idx=1, 
+view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL,
-  bg=NULL, title=NULL,
+  bg=NULL, title=NULL, text_color="black",
   fname="xifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), 
-  zlim=NULL,
+  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL){
 
   view_xifti_surface(
-    xifti, idx, 
-    hemisphere, view, 
+    xifti, idx,
+    hemisphere, view,
     mode, width, height,
-    bg, title,
+    bg, title, text_color,
     fname, write_dir,
     colors, color_mode, zlim,
     surfL, surfR,
-    colorbar_embedded, 
+    colorbar_embedded,
     colorbar_digits
   )
 }
@@ -1024,15 +1109,17 @@ view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, id
 #' @rdname view_xifti_volume
 #' @export
 view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
-  xifti, structural_img="MNI", idx=1, plane="axial", 
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL) {
+  xifti, structural_img="MNI", idx=1, plane="axial",
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  verbose=TRUE, ...) {
 
   view_xifti_volume(
-    xifti=xifti, 
+    xifti=xifti,
     structural_img=structural_img,
     idx=idx, plane=plane,
     num.slices=num.slices,
     use_papaya=use_papaya,
-    z_min=z_min, z_max=z_max
+    z_min=z_min, z_max=z_max,
+    verbose=verbose, ...
   )
 }

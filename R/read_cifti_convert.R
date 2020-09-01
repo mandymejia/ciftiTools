@@ -60,11 +60,17 @@ read_cifti_convert <- function(
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
 
-  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
-    xifti_data <- xifti_data + 1
-  }
+  # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+  #   xifti_data <- xifti_data + 1
+  # }
 
   # Place cortex data into the "xifti" object.
+  if (xifti$meta$cifti$intent == 3007) {
+    # Label values begin at zero. In example file, it indicates "???"
+    mwall_values <- c(NaN, NA)
+  } else {
+    mwall_values <- c(0, NaN, NA)
+  }
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
   if ("left" %in% brainstructures) {
@@ -72,7 +78,8 @@ read_cifti_convert <- function(
       xifti_data[1:last_left,, drop=FALSE],
       side = "left", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$left,
-      mwall_source="the CIFTI being read in"
+      mwall_source="the CIFTI being read in",
+      mwall_values=mwall_values
     )
     xifti$data$cortex_left <- cortex$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$mwall)
@@ -84,7 +91,8 @@ read_cifti_convert <- function(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
       side = "right", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$right,
-      mwall_source="the CIFTI being read in"
+      mwall_source="the CIFTI being read in",
+      mwall_values=mwall_values
     )
     xifti$data$cortex_right <- cortex$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$mwall)
@@ -106,10 +114,10 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_surface(surfL_fname) 
+    xifti$surf$cortex_left <- make_surf(surfL_fname) 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_surface(surfR_fname) 
+    xifti$surf$cortex_right <- make_surf(surfR_fname) 
   }
 
   # Finish.

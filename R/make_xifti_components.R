@@ -18,8 +18,9 @@
 #' @param rm_bad_mwall If the medial wall mask doesn't match up with the 
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
-#' @param infer_mwall If the medial wall mask was not provided (or if it was
-#'  discarded) should it be inferred from 0/NA values? Default: \code{TRUE}.
+#' @param mwall_values If the medial wall mask was not provided (or if it was
+#'  discarded), infer it from these values. Default: \code{c(0, NA)}. If 
+#'  \code{NULL}, do not attempt to infer the medial wall mask.
 #' @param side "left" or "right"? Just used to print warnings.
 #' @param mwall_source Character describing where the mwall came from. Just used
 #'  to print warnings.
@@ -34,7 +35,7 @@ make_cortex <- function(
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
   rm_bad_mwall=TRUE,
-  infer_mwall=TRUE,
+  mwall_values=c(0, NA),
   side=NULL,
   mwall_source=NULL) {
 
@@ -42,6 +43,7 @@ make_cortex <- function(
   if (is.null(mwall_source)) {mwall_source <- ""}
 
   # Cannot infer the medial wall if the cortex has been masked.
+  infer_mwall <- !identical(mwall_values, NULL)
   if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
 
   # File --> GIFTI.
@@ -56,11 +58,13 @@ make_cortex <- function(
     if (!is.numeric(cortex) && !is.matrix(cortex)) {
       stop(paste(
         "`cortex` was not an existing file (check file name?),",
-        "a result of `gifti::read_gifti()`,",
+        "a result of `gifti::readgii()`,",
         "or a numeric matrix."
       ))
     }
   }
+
+  if (is.vector(cortex)) { cortex <- matrix(cortex, ncol=1) }
 
   # Check if medial wall mask is valid.
   msg <- ""
@@ -113,7 +117,7 @@ make_cortex <- function(
   # If no valid medial wall mask, optionally infer it.
   if (is.null(mwall)) {
     if (infer_mwall) {
-      new_mwall <- !apply(cortex==0 | is.na(cortex), 1, all)
+      new_mwall <- !apply(matrix(cortex %in% mwall_values, nrow=nrow(cortex)), 1, all)
       if (any(!new_mwall)) {
         msg <- paste0(
           msg,"A new medial wall mask for the ",side," cortex was inferred from ",
@@ -136,9 +140,12 @@ make_cortex <- function(
   if (!(msg == "")) { ciftiTools_msg(msg) }
 
   # Apply a valid medial wall mask to an unmasked cortex.
-  if (!is.null(mwall) && (is.null(cortex_is_masked) || (!is.null(cortex_is_masked) && !cortex_is_masked))) {
-    cortex <- cortex[mwall,, drop=FALSE]
-    cortex_is_masked <- TRUE
+  if (!is.null(mwall)) {
+    if (is.null(cortex_is_masked)) { cortex_is_masked <- FALSE }
+    if (!cortex_is_masked) {
+      cortex <- cortex[mwall,, drop=FALSE]
+      cortex_is_masked <- TRUE
+    }
   }
 
   list(data = cortex, mwall = mwall)
@@ -193,8 +200,8 @@ make_cortex <- function(
 #'  will be vectorized and ordered spatially.
 #' 
 #'  The volume can be recovered using: 
-#'    vol <- unmask(data, mask, fill=NA) 
-#'    labs <- unmask(labels, mask, fill=0) 
+#'    vol <- unmask_vol(data, mask, fill=NA) 
+#'    labs <- unmask_vol(labels, mask, fill=0) 
 #'
 #' @importFrom RNifti readNifti
 make_subcort <- function(
@@ -220,7 +227,6 @@ make_subcort <- function(
     labs_vals <- sort(unique(as.vector(labs)))
   } else if (all(labs_vals %in% c(0, 3:21))) {
     invisible()
-    #warning("The nonzero labels from a NIFTI file should be integers 1-19. But, they were already 3-21.")
   } else {
     stop("The labels should be integers 0-19, or 0 and 3-21. See `substructure_table()`.")
   }
@@ -229,6 +235,12 @@ make_subcort <- function(
   }
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
+
+  if (labs_ndims < 2) {
+    labs <- as.numeric(labs)
+  } else {
+    labs <- array(as.numeric(labs), dim=dim(labs))
+  }
 
   # Infer mask if not provided.
   if (is.null(mask)) {
@@ -305,7 +317,7 @@ gifti_to_surface <- function(surf) {
   if (is.fname(surf)){ surf <- readgii(surf) }
 
   # GIFTI --> list of vertices and faces.
-  if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::read_gifti()`.") }
+  if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::readgii()`.") }
   stopifnot(is.list(surf))
   if ("data" %in% names(surf)) { surf <- surf$data }
   stopifnot(all(c("pointset", "triangle") %in% names(surf)))
@@ -316,7 +328,7 @@ gifti_to_surface <- function(surf) {
   surf <- list(vertices = verts, faces = faces)
 
   # Return cifti_surface or error.
-  if (!is.surface(surf)) {
+  if (!is.surf(surf)) {
     stop("The object could not be converted into a surface.")
   }
 
@@ -337,7 +349,7 @@ gifti_to_surface <- function(surf) {
 #' @export
 #' 
 #' @importFrom gifti readgii is.gifti
-make_surface <- function(surf) {
+make_surf <- function(surf) {
 
   x <- tryCatch(
     { surf <- gifti_to_surface(surf) },
@@ -346,7 +358,7 @@ make_surface <- function(surf) {
   # TO DO because of tryCatch, need useful error message if file does not exist.
 
   # Return cifti_surface or error.
-  if (!is.surface(surf)) {
+  if (!is.surf(surf)) {
     stop("The object could not be converted into a surface.")
   }
 

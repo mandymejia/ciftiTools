@@ -50,9 +50,8 @@ separate_cifti_wrapper <- function(
 #'
 #' @inheritParams original_fnames_Param_resampled
 #' @inheritParams resamp_fnames_Param
+#' @param original_res The original resolution of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
-#' @inheritParams sphereL_fname_Param
-#' @inheritParams sphereR_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @param surfL_target_fname,surfR_target_fname (Optional) File path for
@@ -69,19 +68,17 @@ separate_cifti_wrapper <- function(
 #' @keywords internal
 #' 
 resample_cifti_wrapper <- function(
-  resamp_res,
   original_fnames, resamp_fnames,
-  sphereL_fname, sphereR_fname, 
+  original_res, resamp_res,
   surfL_fname=NULL, surfR_fname=NULL, 
   surfL_target_fname=NULL, surfR_target_fname=NULL, 
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
 
-  # [TO DO]: Decide: add "original"/"target" to sphere and surf?
+  # [TO DO]: Decide: add "original"/"target" to surf?
   
   # Get kwargs.
   resamp_kwargs <- list(
-    resamp_res=resamp_res, 
-    sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname,
+    original_res=original_res, resamp_res=resamp_res, 
     surfL_original_fname=surfL_fname, surfR_original_fname=surfR_fname,
     surfL_target_fname=surfL_target_fname, 
     surfR_target_fname=surfR_target_fname, 

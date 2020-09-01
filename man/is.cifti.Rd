@@ -2,9 +2,15 @@
 % Please edit documentation in R/is.xifti.R
 \name{is.cifti}
 \alias{is.cifti}
+\alias{is_cifti}
+\alias{isCIfTI}
 \title{Validate a \code{"xifti"} object.}
 \usage{
 is.cifti(x, messages = TRUE)
+
+is_cifti(x, messages = TRUE)
+
+isCIfTI(x, messages = TRUE)
 }
 \arguments{
 \item{x}{The putative \code{"xifti"} object.}

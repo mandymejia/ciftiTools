@@ -63,8 +63,7 @@ NULL
 #' @param original_fnames The files to resample. This is a named list 
 #'  where each element's name is a file type label, and each element's value
 #'  is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-#'  "ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
-#'  Both "sphereL" and "sphereR" are required; all others are optional. If 
+#'  "ROIcortexL", "ROIcortexR", "surfL", or "surfR". If 
 #'  \code{read_dir} is not \code{NULL}, then all these file names should be
 #'  relative to \code{read_dir}. 
 #' @name original_fnames_Param_resampled
@@ -174,20 +173,6 @@ NULL
 #'  The \code{write_dir} argument can be used to place each separated file in
 #'  the same directory. 
 #' @name sep_fnames_Param
-NULL
-
-#' sphereL_fname
-#'
-#' @param sphereL_fname The left GIFTI sphere file in the same resolution
-#'  as the CIFTI data. It is required for resampling. 
-#' @name sphereL_fname_Param
-NULL
-
-#' sphereR_fname
-#'
-#' @param sphereR_fname The right GIFTI sphere file in the same resolution
-#'  as the CIFTI data. It is required for resampling. 
-#' @name sphereR_fname_Param
 NULL
 
 #' surfL_fname

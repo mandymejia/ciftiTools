@@ -14,7 +14,8 @@ view_xifti_volume(
   use_papaya = FALSE,
   z_min = NULL,
   z_max = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 
 view_cifti_volume(
@@ -25,7 +26,9 @@ view_cifti_volume(
   num.slices = 12,
   use_papaya = FALSE,
   z_min = NULL,
-  z_max = NULL
+  z_max = NULL,
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -38,7 +41,7 @@ the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 
 \item{idx}{The time/column index of the xifti data to plot.}
 
-\item{plane}{If use_papaya=FALSE, the plane to display. 
+\item{plane}{If use_papaya=FALSE, the plane to display.
 Default: "axial". Other options are "sagittal" and "coronal".}
 
 \item{num.slices}{If use_papaya=FALSE, the number of slices to display.}
@@ -50,6 +53,8 @@ Default: "axial". Other options are "sagittal" and "coronal".}
 \item{z_max}{Ceiling value.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
+
+\item{...}{Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}}
 }
 \description{
 Visualize xifti brain data

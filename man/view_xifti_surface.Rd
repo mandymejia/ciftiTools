@@ -13,13 +13,15 @@ view_xifti_surface(
   mode = c("widget", "image", "video"),
   width = NULL,
   height = NULL,
+  zoom = 0.6,
   bg = NULL,
   title = NULL,
+  cex.title = NULL,
   text_color = "black",
   fname = "xifti",
   write_dir = NULL,
   colors = NULL,
-  color_mode = c("sequential", "qualitative", "diverging"),
+  color_mode = NULL,
   zlim = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -37,6 +39,7 @@ view_cifti_surface(
   height = NULL,
   bg = NULL,
   title = NULL,
+  text_color = "black",
   fname = "xifti",
   write_dir = NULL,
   colors = NULL,
@@ -52,93 +55,106 @@ view_cifti_surface(
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{idx}{The time/column index of the xifti data to plot. 
+\item{idx}{The time/column index of the xifti data to plot.
 Currently one a single time point is supported. Default: the first index.}
 
-\item{hemisphere}{Which brain cortex to display: "both", "left", or "right". 
+\item{hemisphere}{Which brain cortex to display: "both", "left", or "right".
 If \code{NULL} (default), each available surface (e.g. if \code{surfL}
 or \code{xifti$surf$cortex_right} is not empty) will be displayed. Surfaces without
 data (e.g. \code{xifti$CORTEX_LEFT} is empty) will still be displayed,
 colored by \code{color_NA}. Each cortex will be shown in a separate panel
 column within the RGL window.}
 
-\item{view}{Which view to display: "lateral", "medial", or "both". 
+\item{view}{Which view to display: "lateral", "medial", or "both".
 If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
 
 \item{mode}{One of "widget" (Default), "image", or "video":
 
  "widget" will open an interactive RGL window. Left click and drag to rotate.
- Use the scroll wheel to zoom. Run the R function 
- \code{rgl::snapshot("my_file.png")} to save the RGL window as a png. 
+ Use the scroll wheel to zoom. Run the R function
+ \code{rgl::snapshot("my_file.png")} to save the RGL window as a png.
  See \code{\link[rgl]{snapshot}} for more information.
- 
+
  "image" will open the RGL window, take a screenshot using
  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
- as a png in \code{write_dir} and its name will be \code{fname}.
+ as a png in \code{write_dir} and its name will be \code{[fname].png}.
 
- "video" will take a series of screenshots of the RGL window, while 
- rotating the brain surface(s), saving each to a file in \code{write_dir} 
- named by \code{fname}, and then close the RGL window. The frames can 
- be converted to a video file using multimedia software such as Adobe 
+ "video" will take a series of screenshots of the RGL window, while increasing
+ the column index. The frames can
+ be converted to a video file using multimedia software such as Adobe
  Premiere Pro. The "video" mode is not yet supported.}
 
-\item{width, height}{The dimensions of the RGL window, in pixels. If both are 
-\code{NULL} (default), the dimensions will be set to 
+\item{width, height}{The dimensions of the RGL window, in pixels. If both are
+\code{NULL} (default), the dimensions will be set to
 1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
 1500 x 525 for 2x1 subplots, and
 500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
 within a 1600 x 900 screen. Specyfing only one will set the other to maintain
 the same aspect ratio. Both could be specified to set the dimensions exactly.}
 
+\item{zoom}{Adjustment to size of brain meshes. Default: \code{3/5}
+(100\% + 3/5*100\% = 160\% the original size).}
+
 \item{bg}{Background color. \code{NULL} will not color the background (white).}
 
 \item{title}{Optional title for the plot. It will be printed at the top in
 a separate subplot with 1/4 the height of the brain cortex subplots.
-\code{NULL} (default) will not make a title.}
+\code{NULL} (default) will use the time index (.dtseries) or name
+(.dscalar or .dlabel) of the data column being plotted. Set to an empty
+string \code{""} to omit the title. If the title is non-empty but does not
+appear, \code{cex.title} may need to be lowered.}
 
-\item{text_color}{Color for text in title and colorbar legend. Default: 
+\item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
+will use \code{2} for titles less than 20 characters long, and smaller
+sizes for increasingly longer titles.}
+
+\item{text_color}{Color for text in title and colorbar legend. Default:
 "black".}
 
-\item{fname}{An identifier to use for naming the saved images 
+\item{fname}{An identifier to use for naming the saved images
 ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
 Default: "xifti".}
 
-\item{write_dir}{Where should any output images be written. NULL (default) 
- will write them to the current working directory. 
+\item{write_dir}{Where should any output images be written. NULL (default)
+ will write them to the current working directory.
 
  \code{write_dir} must already exist, or an error will occur.}
 
-\item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use, 
-OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info 
-and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential), 
-\code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging).
+\item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use,
+OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info
+and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential),
+\code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
+to these defaults is if the "xifti" represents a .dlabel CIFTI (intent 3007),
+then the qualitative colors in the label table will be used.
 See the \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"}, 
-or \code{"diverging"}. Default: sequential. See the
-\code{ciftiTools::make_color_pal()} description for more details.}
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"},
+or \code{"diverging"}. \code{NULL} will use the qualitative color mode if
+the "xifti" represents a .dlabel CIFTI (intent 3007), and the sequential
+color mode otherwise. See the \code{ciftiTools::make_color_pal()}
+description for more details.}
 
-\item{zlim}{(Optional) Controls the mapping of values to each 
+\item{zlim}{(Optional) Controls the mapping of values to each
 color in \code{colors}. If the length is longer than
-one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set 
+one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
 the value to \code{DATA_MAX}. See the
 \code{ciftiTools::make_color_pal()} description for more details.}
 
-\item{surfL, surfR}{(Optional if \code{xifti$surf$cortex_left} and 
-\code{xifti$surf$cortex_right} are not empty) The brain surface model to use. 
-Each can be a file path for a GIFTI, a file read by gifti::readgii, 
-or a list with components "vertices" and "faces". If provided, they will override 
-\code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist. 
-Otherwise, leave these arguments as \code{NULL} (default) to use 
+\item{surfL, surfR}{(Optional if \code{xifti$surf$cortex_left} and
+\code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
+Each can be a file path for a GIFTI, a file read by gifti::readgii,
+or a list with components "vertices" and "faces". If provided, they will override
+\code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist.
+Otherwise, leave these arguments as \code{NULL} (default) to use
 \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.}
 
 \item{colorbar_embedded}{Should the colorbar be embedded in the RGL window?
-It will be positioned in the bottom-left corner, in a separate subplot 
+It will be positioned in the bottom-left corner, in a separate subplot
 with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
 If \code{FALSE}, print it separately instead.}
 
-\item{colorbar_digits}{The number of digits for the colorbar legend ticks. 
+\item{colorbar_digits}{The number of digits for the colorbar legend ticks.
 If \code{NULL} (default), let \code{\link{format}} decide.}
 }
 \description{

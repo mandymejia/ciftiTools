@@ -22,7 +22,8 @@
 #'
 #' @return A T x B matrix of class "cifti_data", where T is the number of 
 #'  measurements and B is the number of brainordinates in the CIFTI file.
-#' @export
+#' 
+#' @keywords internal
 #'
 #' @details This function uses a system wrapper for the "wb_command"
 #'  executable. The user must first download and install the Connectome

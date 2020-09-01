@@ -1,22 +1,3 @@
-#' Write out a GIFTI File
-#' 
-#' Write GIFTI-format data.
-#' 
-#' @param data A data matrix to write out as a GIFTI, i.e. a V (vertices) by T
-#'  (measurements) matrix correpsonding to the left or right cortex.
-#' @param out_fname The path to the GIFTI file to write
-# #' @param intent The NIFTI intent. Default is \code{"NIFTI_INTENT_NORMAL"}. See:
-# #'  https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
-#' @param data_type A vector corresponding to the NIFTI types of \code{data}.
-#'  For example, "NIFTI_TYPE_INT32" and "NIFTI_TYPE_FLOAT32". If \code{NULL}
-#'  (default), the data_type will be inferred. 
-#' @param ... Other vectors of options to 
-#'  \code{\link[freesurferformats]{gifti_xml}}, for example "encoding" and
-#'  "endian". 
-#'
-#' @keywords internal
-#' 
-
 #' Write Out Each Present Component in a "xifti"
 #'
 #' @inheritParams xifti_Param
@@ -33,7 +14,7 @@
 #'
 #' @keywords internal
 #' 
-write_xifti_components <- function(
+write_cifti_components <- function(
   xifti, write_dir=NULL, 
   mwall_fill=NA, subcort_fill=0,
   verbose=FALSE, wb_path=NULL) {
@@ -120,7 +101,7 @@ write_cifti <- function(
   xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {
 
-  sep_fnames <- write_xifti_components(
+  sep_fnames <- write_cifti_components(
     xifti=xifti, write_dir=tempdir(), 
     verbose=verbose, wb_path=wb_path
   )

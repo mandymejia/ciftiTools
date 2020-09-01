@@ -139,7 +139,23 @@ separate_cifti <- function(cifti_fname, brainstructures=c("left","right"),
 
 #' @rdname separate_cifti
 #' @export
-separateCIfTI <- separatecii <- function(
+separateCIfTI <- function(
+  cifti_fname, brainstructures=c("left","right"), 
+  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLabs_fname=NULL, 
+  ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
+  write_dir=NULL, wb_path=NULL){
+
+  separate_cifti(
+    cifti_fname, brainstructures, 
+    cortexL_fname, cortexR_fname, subcortVol_fname, subcortLabs_fname, 
+    ROI_brainstructures, ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname, 
+    write_dir, wb_path
+  )
+}
+
+#' @rdname separate_cifti
+#' @export
+separatecii <- function(
   cifti_fname, brainstructures=c("left","right"), 
   cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLabs_fname=NULL, 
   ROI_brainstructures=NULL, ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 

@@ -37,21 +37,32 @@ Visualizing CIFTI data with `ciftiTools`:
 ``` r
 library(ciftiTools)
 
-# Tell ciftiTools where to find the Connectome Workbench folder/executable.
+# Tell ciftiTools where to find the Connectome Workbench folder or executable.
 ciftiTools.setOption('wb_path', 'Desktop/workbench')
 
-# Read in the CIFTI file, and resample it to 8000 vertices per hemisphere.
-cifti <- read_cifti(
-  cifti_fname='Desktop/data/my_CIFTI_file.dtseries.nii', 
-  surfL_fname='Desktop/data/32k_inflated_left.surf.gii', 
-  surfR_fname='Desktop/data/32k_inflated_right.surf.gii', 
-  resamp_res=8000, 
-  # The spheres are only required for resampling.
-  sphereL_fname='Desktop/data/32k_left_sphere.surf.gii', 
-  sphereR_fname='Desktop/data/32k_right_sphere.surf.gii'
+# Use example CIFTI and surface files.
+cifti_fname <- system.file(
+  "extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii", 
+  package = "ciftiTools"
+)
+surfL_fname <- system.file(
+  "extdata", "Conte69.L.inflated.32k_fs_LR.surf.gii", 
+  package = "ciftiTools"
+)
+surfR_fname <- system.file(
+  "extdata", "Conte69.R.inflated.32k_fs_LR.surf.gii", 
+  package = "ciftiTools"
 )
 
-# Visualize the surface.
+# Read in the CIFTI and surfaces, and resample to 8000 vertices per hemisphere.
+cifti <- read_cifti(
+  cifti_fname=cifti_fname, 
+  surfL_fname=surfL_fname, 
+  surfR_fname=surfR_fname, 
+  resamp_res=8000
+)
+
+# Visualize the cortical surface data.
 plot(cifti)
 ```
 

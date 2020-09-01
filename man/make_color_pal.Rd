@@ -100,3 +100,4 @@ If \code{colors} is the name of an RColorBrewer palette (see a listing at `RColo
  }
 }
 }
+\keyword{internal}

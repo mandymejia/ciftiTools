@@ -19,3 +19,4 @@ The surface "gifti"
 Convert a "surface" object or a list with elements "pointset" and 
  "triangle" to a surface "gifti" object.
 }
+\keyword{internal}

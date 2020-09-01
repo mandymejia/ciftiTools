@@ -3,11 +3,14 @@
 \name{info_cifti}
 \alias{info_cifti}
 \alias{infoCIfTI}
+\alias{infocii}
 \title{Get CIFTI Header}
 \usage{
 info_cifti(cifti_fname, wb_path = NULL)
 
 infoCIfTI(cifti_fname, wb_path = NULL)
+
+infocii(cifti_fname, wb_path = NULL)
 }
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
@@ -74,4 +77,3 @@ medial wall masks for the left and right cortex,
  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
-\keyword{internal}

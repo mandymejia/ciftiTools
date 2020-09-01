@@ -5,11 +5,10 @@
 \title{resample_cifti with collapsed file name argument}
 \usage{
 resample_cifti_wrapper(
-  resamp_res,
   original_fnames,
   resamp_fnames,
-  sphereL_fname,
-  sphereR_fname,
+  original_res,
+  resamp_res,
   surfL_fname = NULL,
   surfR_fname = NULL,
   surfL_target_fname = NULL,
@@ -20,14 +19,10 @@ resample_cifti_wrapper(
 )
 }
 \arguments{
-\item{resamp_res}{Target resolution for resampling (number of 
-cortical surface vertices per hemisphere).}
-
 \item{original_fnames}{The files to resample. This is a named list 
 where each element's name is a file type label, and each element's value
 is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-"ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
-Both "sphereL" and "sphereR" are required; all others are optional. If 
+"ROIcortexL", "ROIcortexR", "surfL", or "surfR". If 
 \code{read_dir} is not \code{NULL}, then all these file names should be
 relative to \code{read_dir}.}
 
@@ -50,11 +45,10 @@ relative to \code{read_dir}.}
  The \code{write_dir} argument can be used to place each resampled file in
  the same directory.}
 
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
+\item{original_res}{The original resolution of the CIFTI cortical surface(s).}
 
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
+\item{resamp_res}{Target resolution for resampling (number of 
+cortical surface vertices per hemisphere).}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}

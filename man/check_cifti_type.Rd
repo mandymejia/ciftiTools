@@ -18,3 +18,4 @@ If the intent is supported, \code{TRUE}.
 \description{
 Validate the file name extension and intent code.
 }
+\keyword{internal}

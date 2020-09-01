@@ -19,7 +19,7 @@ volume otherwise}
 \item{...}{Additional arguments to pass to either view function.}
 }
 \value{
-The return value of \code{view_xifti_surface} or 
+The return value of \code{view_xifti_surface} or
  \code{view_xifti_volume}.
 }
 \description{

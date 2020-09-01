@@ -11,8 +11,6 @@ read_cifti_separate(
   brainstructures = c("left", "right"),
   ROI_brainstructures = NULL,
   resamp_res = NULL,
-  sphereL_fname = NULL,
-  sphereR_fname = NULL,
   sep_keep = FALSE,
   sep_fnames = NULL,
   resamp_keep = FALSE,
@@ -50,12 +48,6 @@ with \code{sep_keep}/\code{resamp_keep} and then read those in with
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 \code{FALSE}, do not perform resampling.}
-
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
-
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
 
 \item{sep_keep}{If separated files are created, should they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).

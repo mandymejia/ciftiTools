@@ -15,21 +15,23 @@
 #' @param subcortLabs_fname What to name the labels file
 #' @param fill Out-of-mask values. Default: \code{0}.
 #' @inheritParams wb_path_Param
+#' 
+#' @export
 write_subcort_nifti <- function(
   subcortVol, subcortLabs, subcortMask, 
   subcortVol_fname, subcortLabs_fname, fill=0, wb_path=NULL){
 
   # Data.
-  writeNifti(unmask(subcortVol, subcortMask, fill=fill), subcortVol_fname)
+  writeNifti(unmask_vol(subcortVol, subcortMask, fill=fill), subcortVol_fname)
 
   # Labels...
   stopifnot(is.subcort_labs(subcortLabs))
   subcortLabs <- as.numeric(subcortLabs) #- 2
-  writeNifti(unmask(subcortLabs, subcortMask, fill=fill), subcortLabs_fname)
+  writeNifti(unmask_vol(subcortLabs, subcortMask, fill=fill), subcortLabs_fname)
   
   # ...Add back subcortical label information.
   # https://www.humanconnectome.org/software/workbench-command/-volume-help
-  subcort_lab_list <- system.file("subcort_label_list.txt", package="ciftiTools")
+  subcort_lab_list <- system.file("extdata", "subcort_label_list.txt", package="ciftiTools")
   cmd <- paste(
     "-volume-label-import", 
     sys_path(subcortLabs_fname), 

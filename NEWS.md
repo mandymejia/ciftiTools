@@ -1,9 +1,51 @@
+# 1.4 (August 31, 2020)
+
+## Changes Affecting Users
+
+* Spheres are no longer required to input for resampling
+    * In-register spheres are generated automatically based on the cortical resolution
+* Full label table list for `dlabel.nii` files
+* Add `smooth_cifti`
+* Add `resample_cifti_from_template`
+* Add helpful error message if `plot(xii)` is called without any surface or subcortical data
+* `view_xifti_surface` improvements:
+    * Use column index or name as the default title
+    * Improved qualitative color mode
+    * Use qualitative color mode and label table colors if the CIFTI is a `dlabel.nii` file (intent 3007)
+* `view_xifti_volume` improvments:
+    * Fix `num.slices` argument
+    * Add `...` for additional arguments
+* Add `view_surface` for `"surface"` objects
+* Add `summary` and `plot` methods for `"surface"` objects
+* Warning if GIFTI version is too old (need the one on github for `writegii`)
+* Tweaks to `view_xifti_surface` defaults
+* Add `view_xifti_volume` without structural image
+
+## Demo files
+
+* Taken from NITRC: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
+
+## Notes for Developers
+
+* Add tests for reading and writing files
+* Rename `write_xifti_components` as `write_cifti_components`
+* Remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
+* Rename `make_helper_spheres` as `write_spheres`, and do not export it
+* Rename `make_surface` as `make_surf`
+* Rename `is.surface` as `is.surf`
+* Rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
+* Remove data-raw from R package build
+
+## Vignette!
+
+It will be located here: https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html once we push to master. Until then, replace "master" with "1.4"
+
 # 1.3 (August 24, 2020)
 
 * introduce `"xifti"` object: can be made from CIFTI file, GIFTI surfaces, or new data
     * To make a `"xifti"` from data: `as.xifti(...)`
     * To make a `"xifti"` from a CIFTI file: `read_cifti(cifti_fname)`
-    * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surface(surfL_fname))`
+    * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surf(surfL_fname))`
 * `read_cifti_flat` now uses XML metadata directly (but still obtains XML via Connectome Workbench)
     * This allows for reading in more metadata such as time start/step for `.dtseries.nii`
 * `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::write_gifti`

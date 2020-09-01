@@ -5,9 +5,8 @@
 #'  GIFTI surface geometry files can additionally be included: see 
 #' \code{surfL_original_fname} and \code{surfR_original_fname}.
 #'
+#' @param original_res The original resolution of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
-#' @inheritParams sphereL_fname_Param
-#' @inheritParams sphereR_fname_Param
 #' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of 
 #'  GIFTI data for [left/right] cortex to resample.
 #' @param cortexL_target_fname,cortexR_target_fname (Optional) File path to 
@@ -38,7 +37,7 @@
 #'  rows corresponding to each resampled file.
 #'
 #' @details Performs resampling of CIFTI files using Connectome Workbench tools.  
-#'  Step 1: Generate spheres in the target resolution
+#'  Step 1: Generate spheres in the original and target resolutions
 #'  Step 2: Use -metric-resample to resample surface/cortex files 
 #'  Step 3: Use -surface-resample to resample gifti files
 #'
@@ -46,8 +45,7 @@
 #' 
 #' 
 resample_cifti_components <- function(
-  resamp_res, 
-  sphereL_fname, sphereR_fname, 
+  original_res, resamp_res, 
   cortexL_original_fname=NULL, cortexR_original_fname=NULL, 
   cortexL_target_fname=NULL, cortexR_target_fname=NULL, 
   ROIcortexL_original_fname=NULL, ROIcortexR_original_fname=NULL, 
@@ -112,7 +110,7 @@ resample_cifti_components <- function(
     ))
     if (sum(missing_original) > 0) {
       # [TO DO]: print file names too.
-      warning(paste0(
+      ciftiTools_warn(paste0(
         "Ignoring these resampling targets because",
         " their original files were not provided:\n", 
         paste(names(target_fnames)[
@@ -162,17 +160,6 @@ resample_cifti_components <- function(
     as.character(original_fnames), read_dir, mode=4)
   # [TO DO]: error if a file name is absolute?
 
-  # Step 1: Generate spheres in the target resolution (if not already existing and provided)
-  if(is.null(sphereL_fname) | is.null(sphereR_fname)){
-    stop("Both sphere files names must be provided (cannot be NULL).")
-  }
-  sphere_dir <- tempdir()
-  target_fnames$sphereL <- resample_cifti_default_fname(sphereL_fname, resamp_res)
-  target_fnames$sphereL <- format_path(target_fnames$sphereL, sphere_dir, mode=2)
-  target_fnames$sphereR <- resample_cifti_default_fname(sphereR_fname, resamp_res)
-  target_fnames$sphereR <- format_path(target_fnames$sphereR, sphere_dir, mode=2)
-  make_helper_spheres(target_fnames$sphereL, target_fnames$sphereR, resamp_res)
-
   # Step 2 and 3: Use -metric-resample or -surface-rsample to resample 
   #   cortex, ROI, and surface files into target resolution.
 
@@ -184,10 +171,11 @@ resample_cifti_components <- function(
   )
 
   resample_gifti_kwargs_common <- list(
-    resamp_res=resamp_res, wb_path=wb_path,
+    original_res=original_res, resamp_res=resamp_res, wb_path=wb_path,
     #   Since we already appended read/write/sphere_target directories,
     #     set them to NULL.
-    read_dir=NULL, write_dir=NULL)
+    read_dir=NULL, write_dir=NULL
+  )
   for(ii in 1:length(original_fnames)) {
     lab <- names(original_fnames)[ii]
     # Check if this file should be skipped.
@@ -196,10 +184,7 @@ resample_cifti_components <- function(
     is_left <- substr(lab, nchar(lab), nchar(lab)) == "L" # last char: L or R.
     resample_kwargs <- c(resample_gifti_kwargs_common, list(
       original_fname=original_fnames[[lab]], target_fname=target_fnames[[lab]],
-      sphere_original_fname=ifelse(is_left, 
-        sphereL_fname, sphereR_fname),
-      sphere_target_fname=ifelse(is_left, 
-        target_fnames$sphereL, target_fnames$sphereR) 
+      hemisphere=ifelse(is_left, "left", "right")
     ))
     
     # Do resampling.
@@ -216,11 +201,11 @@ resample_cifti_components <- function(
         )
       }
 
-      do.call(metric_resample, c(resample_kwargs))
+      do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
     } else if (lab %in% c("ROIcortexL", "ROIcortexR")) {
-      do.call(metric_resample, c(resample_kwargs))
+      do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
     } else if (lab %in% c("surfL", "surfR")) {
-      do.call(surface_resample, c(resample_kwargs))
+      do.call(resample_gifti, c(resample_kwargs, list(file_type="surface")))
     }
   }
   

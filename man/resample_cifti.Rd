@@ -3,6 +3,8 @@
 \name{resample_cifti}
 \alias{resample_cifti}
 \alias{resampleCIfTI}
+\alias{resamplecii}
+\alias{resample_xifti}
 \title{Resample CIFTI Data}
 \usage{
 resample_cifti(
@@ -13,8 +15,6 @@ resample_cifti(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sphereL_fname,
-  sphereR_fname,
   sep_keep = FALSE,
   sep_fnames = NULL,
   resamp_keep = FALSE,
@@ -32,8 +32,40 @@ resampleCIfTI(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sphereL_fname,
-  sphereR_fname,
+  sep_keep = FALSE,
+  sep_fnames = NULL,
+  resamp_keep = FALSE,
+  resamp_fnames = NULL,
+  write_dir = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+resamplecii(
+  cifti_original_fname,
+  cifti_target_fname,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
+  resamp_res,
+  sep_keep = FALSE,
+  sep_fnames = NULL,
+  resamp_keep = FALSE,
+  resamp_fnames = NULL,
+  write_dir = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+resample_xifti(
+  cifti_original_fname,
+  cifti_target_fname,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
+  surfL_target_fname = NULL,
+  surfR_target_fname = NULL,
+  resamp_res,
   sep_keep = FALSE,
   sep_fnames = NULL,
   resamp_keep = FALSE,
@@ -59,12 +91,6 @@ cortex. If NULL (default), will use default names: see
 
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
-
-\item{sphereL_fname}{The left GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
-
-\item{sphereR_fname}{The right GIFTI sphere file in the same resolution
-as the CIFTI data. It is required for resampling.}
 
 \item{sep_keep}{If separated files are created, should they be kept or 
 deleted at the end of this function call? Default: \code{FALSE} (delete).

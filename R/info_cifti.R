@@ -62,6 +62,8 @@ substructure_table <- function(){
 #' 
 #' @return If the intent is supported, \code{TRUE}.
 #'  If the intent is not supported, an error is raised.
+#' @keywords internal
+#' 
 check_cifti_type <- function(intent, extn){
   intent_idx <- which(supported_intents()$value == intent)
   extn_idx <- which(supported_intents()$extension == extn)
@@ -154,13 +156,17 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
       names=as.character(sapply(xml, function(x){x$MapName[[1]]}))
     )
   } else if (intent == 3007) {
-    # [TO DO]: Names?
-    labs <- do.call(rbind, lapply(xml$NamedMap$LabelTable, function(x){as.numeric(attributes(x))}))
-    rownames(labs) <- as.character(sapply(xml$NamedMap$LabelTable, function(x){x[[1]]}))
-    colnames(labs) <- c("Key", "Red", "Green", "Blue", "Alpha")
-    meta <- list(
-      labels=  as.data.frame(labs)
-    )
+    xml <- xml[names(xml) == "NamedMap"]
+    labs <- vector("list", length(xml))
+    for (ii in 1:length(xml)) {
+      xml_ii <- xml[[ii]]
+      labs[[ii]] <- do.call(rbind, lapply(xml_ii$LabelTable, function(x){as.numeric(attributes(x))}))
+      rownames(labs[[ii]]) <- as.character(sapply(xml_ii$LabelTable, function(x){x[[1]]}))
+      colnames(labs[[ii]]) <- c("Key", "Red", "Green", "Blue", "Alpha")
+      labs[[ii]] <- as.data.frame(labs[[ii]])
+    }
+    names(labs) <- sapply(xml, function(x){x$MapName[[1]]})
+    meta <- list(labels = labs)
   } else { stop("Internal error: CIFTI intent not supported.") }
   meta
 }
@@ -196,16 +202,18 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   if ("CORTEX_LEFT" %in% bs_names) { 
     meta$brainstructures <- c(meta$brainstructures, "left")
     c_idx <- xml[[which(bs_names=="CORTEX_LEFT")]] 
-    meta$cortex_left_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
-      1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
+    v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
+    v <- 1 + as.numeric(v[v != ""])
+    meta$cortex_left_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% v
   }
 
   # Right Cortex
   if ("CORTEX_RIGHT" %in% bs_names) { 
     meta$brainstructures <- c(meta$brainstructures, "right")
     c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]] 
-    meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% (
-      1+as.numeric(strsplit(c_idx$VertexIndices[[1]], " ")[[1]]))
+    v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
+    v <- 1 + as.numeric(v[v != ""])
+    meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% v
   }
 
   # Subcortical Transformation Matrix
@@ -315,7 +323,7 @@ info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
-#' @keywords internal
+#' @export
 #' 
 info_cifti <- function(cifti_fname, wb_path=NULL){
 
@@ -381,6 +389,12 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
 
 #' @rdname info_cifti
 #' @export
-infoCIfTI <- infocii <- function(cifti_fname, wb_path=NULL){
+infoCIfTI <- function(cifti_fname, wb_path=NULL){
+  info_cifti(cifti_fname, wb_path=NULL)
+}
+
+#' @rdname info_cifti
+#' @export
+infocii <- function(cifti_fname, wb_path=NULL){
   info_cifti(cifti_fname, wb_path=NULL)
 }

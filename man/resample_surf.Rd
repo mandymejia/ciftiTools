@@ -7,8 +7,8 @@
 resample_surf(
   surf,
   resamp_res,
-  side = c("left", "right"),
-  sphere_original_fname
+  hemisphere = c("left", "right"),
+  wb_path = NULL
 )
 }
 \arguments{
@@ -16,15 +16,16 @@ resample_surf(
 
 \item{resamp_res}{The desired resolution}
 
-\item{side}{"left" or "right"}
+\item{hemisphere}{"left" or "right"}
 
-\item{sphere_original_fname}{File path of [left/right]-hemisphere spherical 
-GIFTI files in original resolution. The hemisphere side should match \code{side}.}
+\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
+If not provided, should be set with 
+\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The new surface
 }
 \description{
 Resample a "surface" object by writing it to a GIFTI, using the Connectome
- Workbench, and then reading it back in.
+ Workbench to resample it, and then reading the new file.
 }

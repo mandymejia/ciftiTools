@@ -7,8 +7,7 @@
 \item{original_fnames}{The files to resample. This is a named list 
 where each element's name is a file type label, and each element's value
 is a file name. Labels must be one of the following: "cortexL", "cortexR", 
-"ROIcortexL", "ROIcortexR", "sphereL", "sphereR", "surfL", or "surfR".
-Both "sphereL" and "sphereR" are required; all others are optional. If 
+"ROIcortexL", "ROIcortexR", "surfL", or "surfR". If 
 \code{read_dir} is not \code{NULL}, then all these file names should be
 relative to \code{read_dir}.}
 }
