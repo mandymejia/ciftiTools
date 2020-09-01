@@ -36,6 +36,10 @@
 * Rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
 * Remove data-raw from R package build
 
+## Vignette!
+
+It will be located here: https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html once we push to master. Until then, replace "master" with "1.4"
+
 # 1.3 (August 24, 2020)
 
 * introduce `"xifti"` object: can be made from CIFTI file, GIFTI surfaces, or new data
