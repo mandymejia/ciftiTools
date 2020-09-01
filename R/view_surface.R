@@ -53,7 +53,7 @@ view_surf <- function(surf, hemisphere=NULL, mode=c("widget", "image"),
     stop("Package \"rgl\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
   }
   if (!capabilities("X11")) {
-    warning("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
+    ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
   }
 
   # Try to avoid this error with colorbar: 
@@ -239,9 +239,10 @@ view_surf <- function(surf, hemisphere=NULL, mode=c("widget", "image"),
   if (mode=="image") {
     rgl::rgl.snapshot(img_fname)
     rgl::rgl.close()
+    return(img_fname)
+  } else {
+    return(invisible())
   }
-
-  invisible()
 }
 
 #' S3 method: plot surface

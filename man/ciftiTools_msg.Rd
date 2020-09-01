@@ -13,6 +13,6 @@ ciftiTools_msg(msg)
 NULL, invisibly.
 }
 \description{
-Print Message only if ciftiTools Option "suppress_msgs" is TRUE
+Print message only if ciftiTools Option "suppress_msgs" is TRUE
 }
 \keyword{internal}

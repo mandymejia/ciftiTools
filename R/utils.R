@@ -293,7 +293,7 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
 
 #' Print Suppressable Message
 #' 
-#' Print Message only if ciftiTools Option "suppress_msgs" is TRUE
+#' Print message only if ciftiTools Option "suppress_msgs" is TRUE
 #' 
 #' @param msg The message
 #' @keywords internal
@@ -301,7 +301,7 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
 #' @return NULL, invisibly.
 #' 
 ciftiTools_msg <- function(msg){
-  if(ciftiTools.getOption("suppress_msgs")) { message(msg) }
+  if(!ciftiTools.getOption("suppress_msgs")) { message(msg) }
   invisible(NULL)
 }
 
@@ -315,7 +315,7 @@ ciftiTools_msg <- function(msg){
 #' @return NULL, invisibly.
 #' 
 ciftiTools_warn <- function(warn){
-  if(ciftiTools.getOption("suppress_msgs")) { warning(warn) }
+  if(!ciftiTools.getOption("suppress_msgs")) { warning(warn) }
   invisible(NULL)
 }
 

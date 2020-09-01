@@ -99,7 +99,7 @@ make_xifti <- function(
   # Use `read_cifti` if `cifti_fname` was provided.
   if (!is.null(cifti_fname)) {
     if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLabs, cifti_info), is.null))) {
-      warning("`cifti_fname` was provided, so it will be read. separate GIFTI/NIFTI data and `cifti_info` will be ignored.")
+      ciftiTools_warn("`cifti_fname` was provided, so it will be read. separate GIFTI/NIFTI data and `cifti_info` will be ignored.")
     }
     return( read_cifti(cifti_fname, brainstructures=cifti_brainstructures, ...) )
   }

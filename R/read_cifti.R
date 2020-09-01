@@ -67,7 +67,7 @@ read_cifti <- function(
 
   if (flat) {
     if (!is.null(resamp_res)) {
-      warning(paste(
+      ciftiTools_warn(paste(
         "Resampling is not possible with the flat method.",
         "Ignoring `resamp_res`.\n"
       ))

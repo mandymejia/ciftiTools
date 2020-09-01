@@ -78,7 +78,7 @@ will be shown in a separate panel row within the RGL window.}
 
  "image" will open the RGL window, take a screenshot using
  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
- as a png in \code{write_dir} and its name will be \code{fname}.
+ as a png in \code{write_dir} and its name will be \code{[fname].png}.
 
  "video" will take a series of screenshots of the RGL window, while increasing
  the column index. The frames can

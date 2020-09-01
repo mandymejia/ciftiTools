@@ -399,7 +399,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'
 #'  "image" will open the RGL window, take a screenshot using
 #'  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
-#'  as a png in \code{write_dir} and its name will be \code{fname}.
+#'  as a png in \code{write_dir} and its name will be \code{[fname].png}.
 #'
 #'  "video" will take a series of screenshots of the RGL window, while increasing
 #'  the column index. The frames can
@@ -480,7 +480,7 @@ view_xifti_surface <- function(xifti, idx=1,
     stop("Package \"rgl\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
   }
   if (!capabilities("X11")) {
-    warning("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
+    ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
   }
 
   # Try to avoid this error with colorbar:
@@ -922,9 +922,10 @@ view_xifti_surface <- function(xifti, idx=1,
   if (mode=="image") {
     rgl::rgl.snapshot(img_fname)
     rgl::rgl.close()
+    return(img_fname)
+  } else {
+    return(invisible())
   }
-
-  invisible()
 }
 
 #' Visualize xifti brain data

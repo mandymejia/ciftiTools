@@ -110,7 +110,7 @@ resample_cifti_components <- function(
     ))
     if (sum(missing_original) > 0) {
       # [TO DO]: print file names too.
-      warning(paste0(
+      ciftiTools_warn(paste0(
         "Ignoring these resampling targets because",
         " their original files were not provided:\n", 
         paste(names(target_fnames)[

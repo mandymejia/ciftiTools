@@ -12,7 +12,7 @@
     }
   }
   ciftiTools.setOption("EPS", 1e-8)
-  ciftiTools.setOption("suppress_msgs", FALSE)
+  ciftiTools.setOption("suppress_msgs", TRUE)
 
   gifti_version <- try(packageVersion("gifti"), silent=TRUE)
   if ("package_version" %in% class(gifti_version)) {

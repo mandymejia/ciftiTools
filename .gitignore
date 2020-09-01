@@ -2,15 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
-vignettes/my_left_cortex.func.gii
-vignettes/my_new_cifti.dscalar.nii
-vignettes/my_resampled_cifti.dtseries.nii
-vignettes/my_resampled_cifti2.dtseries.nii
-vignettes/my_resampled_surfL.surf.gii
-vignettes/my_resampled_surfR.surf.gii
-vignettes/my_smoothed_cifti.dtseries.nii
-vignettes/ones.labels.nii
-vignettes/ones.nii
-vignettes/ones.R.func.gii
-vignettes/resampled_L.surf.gii
-vignettes/ciftiTools_vignette.html
+vignettes/output/*
+!vignettes/output/.gitkeep 

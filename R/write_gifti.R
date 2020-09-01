@@ -119,7 +119,7 @@ write_surf_gifti <- function(
   # Issue #5
   tri_enc <- gii$data_info$Encoding[names(gii$data) == "triangle"]
   if (tri_enc != "ASCII") {
-    warning(paste(
+    ciftiTools_warn(paste(
       "The encoding for the triangle component was", tri_enc, 
       "but only ASCII is supported for integer data types.",
       "Overwriting.\n"

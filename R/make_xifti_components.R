@@ -227,7 +227,6 @@ make_subcort <- function(
     labs_vals <- sort(unique(as.vector(labs)))
   } else if (all(labs_vals %in% c(0, 3:21))) {
     invisible()
-    #warning("The nonzero labels from a NIFTI file should be integers 1-19. But, they were already 3-21.")
   } else {
     stop("The labels should be integers 0-19, or 0 and 3-21. See `substructure_table()`.")
   }

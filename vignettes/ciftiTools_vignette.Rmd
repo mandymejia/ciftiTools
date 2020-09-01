@@ -10,10 +10,16 @@ To get started, we load the `ciftiTools` package and indicate where to find the 
 
 ```{r}
 library(knitr)
+library(kableExtra)
 library(rgl)
-knit_hooks$set(webgl = hook_webgl)
-```
+knit_hooks$set(webgl = rgl::hook_webgl)
 
+out_dir <- "output"
+
+# Sometimes the first RGL window does not render properly.
+rgl.open()
+rgl.close()
+```
 
 ```{r}
 #devtools::install_github("mandymejia/ciftiTools")
@@ -22,7 +28,10 @@ library(ciftiTools)
 
 ```{r}
 # Replace '/path/to/workbench' with the actual path to the Connectome Workbench folder on your computer.
-ciftiTools.setOption('wb_path', '/Applications/workbench')
+ciftiTools.setOption('wb_path', '../../workbench')
+
+# Cleaner vignette document
+ciftiTools.setOption("suppress_msgs", TRUE)
 ```
 
 In this vignette, we will use example data included in the `ciftiTools` package. The files are originally from [NITRC](https://www.nitrc.org/frs/?group_id=454):
@@ -80,22 +89,18 @@ cii <- read_cifti(cifti_fnames$dtseries, surfL_fname=surfL_fname, surfR_fname=su
 cii
 ```
 
-Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data.
+Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data. Finaly, using the argument `mode=image` the Open GL window can be saved to a static image. To minimize the size of this document, we will use the image method except for one plot in the "Resampling" section.
 
-```{r, webgl=TRUE}
-view_xifti_surface(cii, zlim=c(1,2), title='MyelinMap_BC_decurv')
+```{r}
+knitr::include_graphics(view_xifti_surface(
+  cii, zlim=c(1,2), mode='image', fname=file.path(out_dir, "xifti_1.png")
+))
 ```
 
-```{r, webgl=TRUE}
-view_xifti_surface(cii, zlim=c(1,2), title='MyelinMap_BC_decurv', color_mode='diverging')
-```
-
-```{r, webgl=TRUE}
-view_xifti_surface(cii, idx=2, zlim=c(1,5), title='corrThickness')
-```
-
-```{r, webgl=TRUE}
-view_xifti_surface(cii, idx=2, zlim=c(1,5), title='corrThickness', color_mode='diverging')
+```{r}
+knitr::include_graphics(view_xifti_surface(
+  cii, idx=2, zlim=c(1,5), color_mode='diverging', mode='image', fname=file.path(out_dir, "xifti_2.png")
+))
 ```
 
 `view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `use_papaya=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
@@ -106,9 +111,9 @@ cii <- read_cifti(cifti_fnames$dscalar_ones, brainstructures="subcortical")
 view_xifti_volume(cii)
 ```
 
-```{r}
+```{r eval=FALSE}
 # For information only, since papaya viewer cannot be opened during knitting
-#view_xifti_volume(cii, num.slices=10, use_papaya = TRUE)
+view_xifti_volume(cii, num.slices=10, use_papaya = TRUE)
 ```
 
 The `"xifti"` "plot" method (`plot(cii)`) will display the cortical data if possible, and the subcortical data otherwise. 
@@ -134,7 +139,7 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 A `"surface"` can be read in using `make_surf(surfL_fname)`. They can be viewed with `view_surf` or, equivalently, their `plot` method.
 
 ```{r}
-plot(make_surf(surfR_fname), hemisphere="right")
+knitr::include_graphics(plot(make_surf(surfR_fname), hemisphere="right", mode="image", fname=file.path(out_dir, "surf_1.png")))
 ```
 
 A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
@@ -175,19 +180,22 @@ To visualize this new `xifti` object, we need to add the surface geometries:
 
 ```{r}
 cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
-view_xifti_surface(cii_new)
+knitr::include_graphics(view_xifti_surface(cii_new, mode="image", fname=file.path(out_dir, "xifti_3.png")))
+```
+
+```{r}
 view_xifti_volume(cii_new)
 ```
 
-
-We can also write out a new CIFTI file with `write_cifti`!:
+We can also write out a new CIFTI file with `write_cifti`! Here's how:
 
 ```{r}
-write_cifti(cii_new, "my_new_cifti.dscalar.nii")
+written_cii_fname <- file.path(out_dir, "my_new_cifti.dscalar.nii")
+write_cifti(cii_new, written_cii_fname)
 
 # Verify that if we read the file back in, the result matches.
 # Some metadata is lost or added, but beside that, the data is the same.
-cii_new_copy <- read_cifti("my_new_cifti.dscalar.nii", brainstructures="all")
+cii_new_copy <- read_cifti(written_cii_fname, brainstructures="all")
 try(testthat::expect_equal(cii_new$data, cii_new_copy$data))
 ```
 
@@ -198,30 +206,36 @@ There is only a negligible difference between the original and the written-then-
 `ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k `"dtseries.nii"` file to 6k vertices. We also provide the surfaces and resample them in conjunction.
 
 ```{r}
+resampled_cii_fname <- "my_new_resampled.dscalar.nii"
+resampled_surfL_fname <- "my_resampled_surfL.surf.gii"
+resampled_surfR_fname <- "my_resampled_surfR.surf.gii"
+  
 cii_6k <- resample_cifti(
-  cifti_fnames$dtseries, "my_resampled_cifti.dtseries.nii",
+  cifti_fnames$dtseries, resampled_cii_fname,
   resamp_res = 6000,
   surfL_fname, surfR_fname,
-  "my_resampled_surfL.surf.gii", "my_resampled_surfR.surf.gii",
+  resampled_surfL_fname, resampled_surfR_fname,
+  write_dir=out_dir
 )
 ```
 
-The new files can be viewed together like so:
+The new files can be viewed together with `read_cifti`. Let's make this one interactive, since the meshes are now much lower-res! Try clicking and dragging around the plot to rotate, and scrolling to zoom in and out. We'll also use a blue background color to highlight this interactive figure within the vignette.
 
-```{r}
-plot(read_cifti(cifti_fname=cii_6k$cifti, surfL=cii_6k$surfL, surfR=cii_6k$surfR))
+```{r, webgl=TRUE}
+plot(
+  read_cifti(cifti_fname=cii_6k$cifti, surfL=cii_6k$surfL, surfR=cii_6k$surfR), 
+  zoom=7/10, bg="#d4edf5", cex.title=1.25, title=".dtseries resampled to 6k", zlim=c(0,2)
+)
 ```
 
 Resampling can also be performed while reading a file into R. 
 
 ```{r}
-cii <- read_cifti(
+read_cifti(
   cifti_fnames$dtseries, 
   surfL_fname = surfL_fname, surfR_fname = surfR_fname, 
   resamp_res=6000
 )
-
-plot(cii)
 ```
 
 Surfaces can also be resampled:
@@ -234,25 +248,30 @@ resample_surf(surf, resamp_res=6000)
 The surface GIFTI files can be resampled without a CIFTI:
 
 ```{r}
+resampled_surfL_fname <- file.path(out_dir, resampled_surfL_fname)
 resample_gifti(
-  surfL_fname, "resampled_L.surf.gii", 
+  surfL_fname, resampled_surfL_fname, 
   hemisphere="left", resamp_res=6000
 )
+make_surf(resampled_surfL_fname)
 ```
 
-Finally, a CIFTI file can be resampled to match a template. This is not always faster than resampling without a template, but it ensures the files are in register with one another and I believe it retains additional metadata.
+Finally, a CIFTI file can be resampled to match a template. This is not always faster than resampling without a template, but it ensures the files are in register with one another and retains additional metadata.
 
 ```{r}
+template_cii_fname <- file.path(out_dir, resampled_cii_fname)
+target_cii_fname <- file.path(out_dir, "target.dscalar.nii")
+
 # Since it's the same file, the result should be identical besides metadata.
 # But, the numbers are slightly different...
 resample_cifti_from_template(
-  original_fname=cifti_fnames$dtseries,
-  template_fname="my_resampled_cifti.dtseries.nii",
-  target_fname="my_resampled_cifti2.dtseries.nii"
+  original_fname=cifti_fnames$dscalar,
+  template_fname=template_cii_fname,
+  target_fname=target_cii_fname
 )
 
 try(testthat::expect_equal(
-  read_cifti("my_resampled_cifti.dtseries.nii"), read_cifti("my_resampled_cifti2.dtseries.nii")
+  read_cifti(template_cii_fname), read_cifti(target_cii_fname)
 ))
 ```
 
@@ -264,8 +283,8 @@ The cortical data can be written to GIFTI files, and the subcortical data can be
 
 ```{r}
 # Use default names for everything except left cortex
-separated_files = separate_cifti(cifti_fnames$dscalar_ones, brainstructures="all", cortexL_fname="my_left_cortex.func.gii")
-separated_files
+separated_files = separate_cifti(cifti_fnames$dscalar_ones, brainstructures="all", cortexL_fname="my_left_cortex.func.gii", write_dir=tempdir())
+kableExtra::kable_styling(kable(separated_files))
 ```
 
 Separated files can be read back in with the `oro.nifti`/`RNifti` and `gifti` packages, and made into a `"xifti"` object with `as.xifti`.
@@ -276,6 +295,7 @@ When only the data matrix is needed, use the `flat=TRUE` argument to save time. 
 
 ```{r}
 cii <- read_cifti(cifti_fnames$dscalar, flat=TRUE)
+dim(cii)
 ```
 
 To only read the CIFTI header, use `info_cifti`.
@@ -306,12 +326,14 @@ is.xifti(cii)
 Use `smooth_cifti` to perform smoothing.
 
 ```{r}
-smoothed_fname <- "my_smoothed_cifti.dtseries.nii"
+smoothed_cii_fname <- file.path(out_dir, "my_smoothed_cifti.dtseries.nii")
 smooth_cifti(
-  cifti_fnames$dtseries, smoothed_fname,
+  cifti_fnames$dtseries, smoothed_cii_fname,
   surface_sigma=2, volume_sigma=2,
   surfL_fname=surfL_fname, surfR_fname=surfR_fname,
   subcortical_zeroes_as_NA=TRUE
 )
-plot(read_cifti(smoothed_fname), surfL=surfL_fname, surfR=surfR_fname)
+knitr::include_graphics(plot(
+  read_cifti(smoothed_cii_fname), surfL=surfL_fname, surfR=surfR_fname, mode="image", fname=file.path(out_dir, "xifti_4.png")
+))
 ```
