@@ -17,6 +17,9 @@
     * Add `...` for additional arguments
 * Add `view_surface` for `"surface"` objects
 * Add `summary` and `plot` methods for `"surface"` objects
+* Warning if GIFTI version is too old (need the one on github for `writegii`)
+* Tweaks to `view_xifti_surface` defaults
+* Add `view_xifti_volume` without structural image
 
 ## Demo files
 
@@ -24,12 +27,14 @@
 
 ## Notes for Developers
 
+* Add tests for reading and writing files
 * Rename `write_xifti_components` as `write_cifti_components`
 * Remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
 * Rename `make_helper_spheres` as `write_spheres`, and do not export it
 * Rename `make_surface` as `make_surf`
 * Rename `is.surface` as `is.surf`
 * Rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
+* Remove data-raw from R package build
 
 # 1.3 (August 24, 2020)
 
