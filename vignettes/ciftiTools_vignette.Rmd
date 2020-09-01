@@ -15,6 +15,8 @@ library(rgl)
 
 out_dir <- "output"
 
+knit_hooks$set(webgl = rgl::hook_webgl)
+
 # Sometimes the first RGL window does not render properly.
 rgl.open(); rgl.close()
 ```
@@ -223,7 +225,7 @@ There is only a negligible difference between the original and the written-then-
 `ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k `"dtseries.nii"` file to 6k vertices. We also provide the surfaces and resample them in conjunction.
 
 ```{r}
-resampled_cii_fname <- "my_new_resampled.dscalar.nii"
+resampled_cii_fname <- "my_new_resampled.dtseries.nii"
 resampled_surfL_fname <- "my_resampled_surfL.surf.gii"
 resampled_surfR_fname <- "my_resampled_surfR.surf.gii"
   
@@ -238,20 +240,26 @@ cii_6k <- resample_cifti(
 
 The new files can be viewed together with `read_cifti`. Let's make this one interactive, since the meshes are now much lower-res! Try clicking and dragging around the plot to rotate, and scrolling to zoom in and out. We'll also use a blue background color to highlight this interactive figure within the vignette.
 
-```{r}
-plot(
+```{r, webgl=TRUE}
+view_xifti_surface(
   read_cifti(cifti_fname=cii_6k$cifti, surfL=cii_6k$surfL, surfR=cii_6k$surfR), 
   zoom=7/10, bg="#d4edf5", cex.title=1.25, 
   title=".dtseries resampled to 6k", zlim=c(0,2)
 )
-rglwidget(elementId="resampled"); rgl.close()
+# Note: Call rglwidget() here to display inline in RStudio.
+# rglwidget() does not work with htmlpreview, so we used the WebGL hook instead.
+```
+
+```{r}
+# Close pop-up window
+rgl.close()
 ```
 
 Resampling can also be performed while reading a file into R. 
 
 ```{r}
 read_cifti(
-  cifti_fnames$dtseries, 
+  cifti_fnames$dscalar, 
   surfL_fname = surfL_fname, surfR_fname = surfR_fname, 
   resamp_res=6000
 )
@@ -279,12 +287,12 @@ Finally, a CIFTI file can be resampled to match a template. This is not always f
 
 ```{r}
 template_cii_fname <- file.path(out_dir, resampled_cii_fname)
-target_cii_fname <- file.path(out_dir, "target.dscalar.nii")
+target_cii_fname <- file.path(out_dir, "target.dtseries.nii")
 
-# Since it's the same file, the result should be identical besides metadata.
-# But, the numbers are slightly different...
+# Since it's the same file, the result is similar, but
+# the underlying resampling method may be slightly different.
 resample_cifti_from_template(
-  original_fname=cifti_fnames$dscalar,
+  original_fname=cifti_fnames$dtseries,
   template_fname=template_cii_fname,
   target_fname=target_cii_fname
 )
