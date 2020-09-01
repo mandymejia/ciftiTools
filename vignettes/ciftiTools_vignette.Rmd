@@ -12,7 +12,6 @@ To get started, we load the `ciftiTools` package and indicate where to find the 
 library(knitr)
 library(kableExtra)
 library(rgl)
-knit_hooks$set(webgl = rgl::hook_webgl)
 
 out_dir <- "output"
 
@@ -239,12 +238,13 @@ cii_6k <- resample_cifti(
 
 The new files can be viewed together with `read_cifti`. Let's make this one interactive, since the meshes are now much lower-res! Try clicking and dragging around the plot to rotate, and scrolling to zoom in and out. We'll also use a blue background color to highlight this interactive figure within the vignette.
 
-```{r, webgl=TRUE}
+```{r}
 plot(
   read_cifti(cifti_fname=cii_6k$cifti, surfL=cii_6k$surfL, surfR=cii_6k$surfR), 
   zoom=7/10, bg="#d4edf5", cex.title=1.25, 
   title=".dtseries resampled to 6k", zlim=c(0,2)
 )
+rglwidget(elementId="resampled"); rgl.close()
 ```
 
 Resampling can also be performed while reading a file into R. 
