@@ -422,7 +422,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  string \code{""} to omit the title. If the title is non-empty but does not
 #'  appear, \code{cex.title} may need to be lowered.
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
-#'  will use \code{2.5} for titles less than 20 characters long, and smaller
+#'  will use \code{2} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles.
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  "black".
@@ -827,11 +827,11 @@ view_xifti_surface <- function(xifti, idx=1,
       }
     }
     if (is.null(cex.title)) {
-      # Default: 250% font size, but increasingly smaller for longer titles
+      # Default: 200% font size, but increasingly smaller for longer titles
       if (nchar(title) > 20) {
-        cex.title <- 50 / nchar(title)
+        cex.title <- 40 / nchar(title)
       } else {
-        cex.title <- 2.5
+        cex.title <- 2
       }
     }
     rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...

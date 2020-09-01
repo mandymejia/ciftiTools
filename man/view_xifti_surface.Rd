@@ -106,7 +106,7 @@ string \code{""} to omit the title. If the title is non-empty but does not
 appear, \code{cex.title} may need to be lowered.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
-will use \code{2.5} for titles less than 20 characters long, and smaller
+will use \code{2} for titles less than 20 characters long, and smaller
 sizes for increasingly longer titles.}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
