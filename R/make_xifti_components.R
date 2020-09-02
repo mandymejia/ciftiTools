@@ -19,7 +19,7 @@
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
 #' @param mwall_values If the medial wall mask was not provided (or if it was
-#'  discarded), infer it from these values. Default: \code{c(0, NA)}. If 
+#'  discarded), infer it from these values. Default: \code{c(0, NA, NaN)}. If 
 #'  \code{NULL}, do not attempt to infer the medial wall mask.
 #' @param side "left" or "right"? Just used to print warnings.
 #' @param mwall_source Character describing where the mwall came from. Just used
@@ -35,7 +35,7 @@ make_cortex <- function(
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
   rm_bad_mwall=TRUE,
-  mwall_values=c(0, NA),
+  mwall_values=c(0, NA, NaN),
   side=NULL,
   mwall_source=NULL) {
 
