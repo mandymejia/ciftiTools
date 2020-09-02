@@ -3,6 +3,5 @@
 ^README\.Rmd$
 ^\.travis\.yml$
 ^appveyor\.yml$
-^R/flatten_xifti\.R$
 ^data-raw$
 ^vignettes$
