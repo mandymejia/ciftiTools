@@ -18,30 +18,11 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
   tdir <- tempdir()
 
-  cii_fnames <- list(
-    dtseries = system.file(
-      "extdata",
-      "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii",
-      package="ciftiTools"
-    ),
-    dscalar = system.file(
-      "extdata",
-      "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii",
-      package="ciftiTools"
-    ),
-    dlabel = system.file(
-      "extdata",
-      "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii",
-      package="ciftiTools"
-    ),
-    ones = system.file(
-      "extdata",
-      "ones.dscalar.nii",
-      package="ciftiTools"
-    )
-  )
+  fnames <- ciftiTools:::get_example_files()
 
-  for (cii_fname in cii_fnames) {
+  for (cii_fname in fnames$cifti) {
+    cat("\n\n"); cat(cii_fname); cat("\n\n")
+
     # Read the CIFTI
     cii_info <- info_cifti(cii_fname)
     brainstructures <- cii_info$cifti$brainstructures
@@ -80,20 +61,8 @@ test_that("Writing CIFTI and GIFTI files is working", {
   }
 
   # Writing surfaces
-  surfL <- make_surf(
-    system.file(
-      "extdata",
-      "Conte69.L.inflated.32k_fs_LR.surf.gii",
-      package="ciftiTools"
-    )
-  )
-  surfR <- make_surf(
-    system.file(
-      "extdata",
-      "Conte69.R.inflated.32k_fs_LR.surf.gii",
-      package="ciftiTools"
-    )
-  )
+  surfL <- make_surf(fnames$surf$left)
+  surfR <- make_surf(fnames$surf$right)
   surfL_fname2 <- file.path(tdir, "temp_L.surf.gii")
   surfR_fname2 <- file.path(tdir, "temp_R.surf.gii")
   write_surf_gifti(surfL, surfL_fname2, side="left")

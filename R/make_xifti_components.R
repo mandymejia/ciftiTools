@@ -181,9 +181,9 @@ make_cortex <- function(
 #'  be in spatial order.
 #' @param labs represents the brainstructure labels of each voxel: see
 #'  \code{\link{substructure_table}}. It is either a path to a NIFTI file, a 3D 
-#'  data array (i x j x k) of brainstructure indices 3-21 with 0 representing 
+#'  data array (i x j x k) of numeric brainstructure indices 3-21 with 0 representing 
 #'  out-of-mask voxels; or, a V_S-length vector in spatial order with 
-#'  brainstructure names as factors, or with brainstructure indices as integers.
+#'  brainstructure names as factors, or with numeric brainstructure indices as integers.
 #' @param mask is a logical 3D data array (i x j x k) where \code{TRUE}
 #'  values indicate voxels inside the brain mask. If it is not provided, the
 #'  mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
@@ -220,6 +220,17 @@ make_subcort <- function(
   if (is.fname(labs)) {
     labs <- readNifti(labs)
   }
+
+  labs_ndims <- length(dim(labs))
+  labs_is_vectorized <- labs_ndims < 3
+
+  # Make labels numeric.
+  if (labs_ndims < 2) {
+    labs <- as.numeric(labs)
+  } else {
+    labs <- array(as.numeric(labs), dim=dim(labs))
+  }
+  
   ## Add 2 to non-zero label values.
   labs_vals <- sort(unique(as.numeric(labs)))
   if (all(labs_vals %in% 0:19)) {
@@ -232,14 +243,6 @@ make_subcort <- function(
   }
   if (!(is.numeric(as.vector(labs)) || is.factor(labs))) { 
     stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
-  }
-  labs_ndims <- length(dim(labs))
-  labs_is_vectorized <- labs_ndims < 3
-
-  if (labs_ndims < 2) {
-    labs <- as.numeric(labs)
-  } else {
-    labs <- array(as.numeric(labs), dim=dim(labs))
   }
 
   # Infer mask if not provided.

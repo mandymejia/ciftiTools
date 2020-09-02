@@ -24,7 +24,7 @@
 #'  (default), do not append any directory to the path. 
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether resampled file was created.
+#' @return The resampled GIFTI file name, invisibly
 #'
 #' @importFrom gifti readgii
 #'
@@ -132,6 +132,8 @@ resample_gifti <- function(
     )
   }
   run_wb_cmd(cmd, wb_path)
+
+  invisible(target_fname)
 }
 
 #' Generate GIFTI sphere surface files
@@ -149,7 +151,7 @@ resample_gifti <- function(
 #'  \code{NULL} (default), do not append any directory to the sphere file paths.
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether output files exist. 
+#' @return The names of the written sphere files, invisibly
 #' @keywords internal
 #'
 write_spheres <- function(
@@ -176,7 +178,7 @@ write_spheres <- function(
     wb_path
   )
 
-  invisible(file.exists(sphereL_fname) & file.exists(sphereR_fname))
+  invisible(list(sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname))
 }
 
 #' @rdname resample_gifti

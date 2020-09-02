@@ -9,8 +9,8 @@
 #'  be reversed.
 #' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
 #' @param pos_half Use the positive half (black --> red --> yellow) only? Default: \code{FALSE}.
-#' @export
 #'
+#' @export
 #' @return A data.frame with two columns: color (character: color hex codes) and value (numeric).
 #'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {

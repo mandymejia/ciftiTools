@@ -18,7 +18,7 @@
 #'  Default: \code{FALSE}.
 #' @inheritParams wb_path_Param
 #'
-#' @return Whether the CIFTI was successfully smoothed
+#' @return The \code{cifti_target_fname}, invisibly
 #'
 #' @export
 #'
@@ -57,6 +57,8 @@ smooth_cifti <- function(
   if (subcortical_merged) { cmd <- paste(cmd, "-merged-volume") }
 
   run_wb_cmd(cmd, wb_path)
+  
+  invisible(cifti_target_fname)
 }
 
 #' @rdname smooth_cifti

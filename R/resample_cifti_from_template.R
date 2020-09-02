@@ -8,7 +8,7 @@
 #' @param target_fname The file name to save the resampled CIFTI.
 #' @inheritParams wb_path_Param
 #'
-#' @return Whether the CIFTI was successfully resampled
+#' @return The \code{target_fname}, invisibly
 #'
 #' @export
 #'
@@ -80,4 +80,6 @@ resample_cifti_from_template <- function(
 
   # Run command.
   run_wb_cmd(cmd, wb_path)
+
+  invisible(target_fname)
 }
