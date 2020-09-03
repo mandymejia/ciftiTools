@@ -7,7 +7,7 @@
 write_surf_gifti(
   gii,
   gifti_fname,
-  side = c("left", "right"),
+  hemisphere = c("left", "right"),
   encoding = NULL,
   endian = c("LittleEndian", "BigEndian")
 )
@@ -18,7 +18,7 @@ list with elements "pointset" and "triangle".}
 
 \item{gifti_fname}{Where to write the GIFTI file.}
 
-\item{side}{"left" (default) or "right". Ignored if \code{data} is already
+\item{hemisphere}{"left" (default) or "right". Ignored if \code{data} is already
 a "gifti" object.}
 
 \item{encoding}{A length-2 vector with elements chosen among "ASCII", 

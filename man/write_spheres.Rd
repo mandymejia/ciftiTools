@@ -30,7 +30,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Logical indicating whether output files exist.
+The names of the written sphere files, invisibly
 }
 \description{
 This function generates a pair of GIFTI vertex-matched left and 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_surf.R
 \name{add_surf}
 \alias{add_surf}
-\title{Add surface(s) to "xifti"}
+\title{Add surface(s) to a \code{"xifti"} object}
 \usage{
 add_surf(xifti, surfL = NULL, surfR = NULL)
 }
@@ -10,12 +10,23 @@ add_surf(xifti, surfL = NULL, surfR = NULL)
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{surfL, surfR}{(Optional) [Left/right] brain surface model. Can be a file
-path for GIFTI data or an object from \code{\link[gifti]{readgii}}.}
+\item{surfL}{(Optional) Left brain surface model. Can be a file
+path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
+\code{"gifti"} object representing surface geometry, or a \code{"surface"}
+object.}
+
+\item{surfR}{(Optional) Right brain surface model. Can be a file
+path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
+\code{"gifti"} object representing surface geometry, or a \code{"surface"}
+object.}
 }
 \value{
-The "xifti" with added surface geometry components
+the \code{"xifti"} object with added surface geometry components.
 }
 \description{
-Add left or right cortical surface geometry to a "xifti" object.
+Add left or right cortical surface geometry to a \code{"xifti"} object.
+}
+\details{
+`surfL` will be added to `xifti$surf$cortex_left` and `surfR` will be added
+ to `xifti$surf$cortex_right`. Any existing surfaces will be overwritten.
 }

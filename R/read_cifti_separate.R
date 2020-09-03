@@ -5,11 +5,16 @@
 #'  and then reading each separated 
 #'  component into R (\code{\link{make_xifti}}).
 #'
+#'  This function uses a system wrapper for the 'wb_command' executable. The 
+#'  user must first download and install the Connectome Workbench, available 
+#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
+#'  folder. (The full file path to the 'wb_cmd' executable also works.)
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
-#' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams sep_keep_Param
 #' @inheritParams sep_fnames_Param
@@ -21,19 +26,12 @@
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome
-#'  Workbench, available from
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
-#'  or executable.
-#'
 #' @keywords internal
 #' 
 read_cifti_separate <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), ROI_brainstructures=NULL,
+  brainstructures=c("left","right"),
   resamp_res=NULL, 
   sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
@@ -61,10 +59,7 @@ read_cifti_separate <- function(
   if ("all" %in% brainstructures) { 
     brainstructures <- c("left","right","subcortical")
   }
-  if (!is.null(ROI_brainstructures)) {
-    ROI_brainstructures <- match_input(ROI_brainstructures, brainstructures,
-      user_value_label="ROI_brainstructures")
-  }
+  ROI_brainstructures <- brainstructures
 
   stopifnot(is.null(resamp_res) || resamp_res>0)
 
@@ -115,6 +110,7 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
 
   do_resamp <- !(is.null(resamp_res) || identical(resamp_res, FALSE))
+
   # Do not resample the subcortical data.
   to_resample <- to_read[!grepl("subcort", names(to_read))]
 
@@ -152,20 +148,16 @@ read_cifti_separate <- function(
   # make_xifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  to_read <- as.list(to_read)
+
   if (is.null(resamp_res)) {
-    to_read <- c(list(cifti_info=cifti_info), to_read)
+    to_read <- c(to_read, list(cifti_info=cifti_info))
   }
 
-  # ROIs are not supported yet.
-  is_ROI <- grepl("ROI", names(to_read))
-  if(any(is_ROI)){
-    warning(paste(
-      "ROIs are not supported by ciftiTools yet.",
-      "The separated ROI file(s) has been created but will not be read in.\n"
-    ))
-  }
-  to_read <- to_read[!is_ROI]
-  to_read <- as.list(to_read)
+  # Rename ROI arguments
+  names(to_read)[names(to_read) == "ROIcortexL"] <- "cortexL_mwall"
+  names(to_read)[names(to_read) == "ROIcortexR"] <- "cortexR_mwall"
+  names(to_read)[names(to_read) == "ROIsubcortVol"] <- "subcortMask"
 
   if (!is.null(surfL_fname)) { to_read$surfL <- surfL_fname }
   if (!is.null(surfR_fname)) { to_read$surfR <- surfR_fname }

@@ -44,14 +44,31 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
     # Put back together
     if ("left" %in% brainstructures) {
-      parts <- c(parts, list(cortexL=cii_sep$fname[cii_sep$label=="cortexL"]))
+      parts <- c(
+        parts, 
+        list(
+          cortexL = cii_sep$fname[cii_sep$label=="cortexL"], 
+          cortexL_mwall = cii_sep$fname[cii_sep$label=="ROIcortexL"]
+        )
+      )
     }
     if ("right" %in% brainstructures) {
-      parts <- c(parts, list(cortexR=cii_sep$fname[cii_sep$label=="cortexR"]))
-    }
+      parts <- c(
+        parts, 
+        list(
+          cortexR = cii_sep$fname[cii_sep$label=="cortexR"], 
+          cortexR_mwall = cii_sep$fname[cii_sep$label=="ROIcortexR"]
+        )
+      )    }
     if ("subcortical" %in% brainstructures) {
-      parts <- c(parts, list(subcortVol=cii_sep$fname[cii_sep$label=="subcortVol"]))
-      parts <- c(parts, list(subcortLabs=cii_sep$fname[cii_sep$label=="subcortLabs"]))
+      parts <- c(
+        parts, 
+        list(
+          subcortVol = cii_sep$fname[cii_sep$label=="subcortVol"],
+          subcortLabs = cii_sep$fname[cii_sep$label=="subcortLabs"],
+          subcortMask = cii_sep$fname[cii_sep$label=="ROIsubcortVol"]
+        )
+      )
     }
     cii2 <- do.call(ciftiTools:::make_xifti, parts)
 
@@ -65,8 +82,8 @@ test_that("Writing CIFTI and GIFTI files is working", {
   surfR <- make_surf(fnames$surf$right)
   surfL_fname2 <- file.path(tdir, "temp_L.surf.gii")
   surfR_fname2 <- file.path(tdir, "temp_R.surf.gii")
-  write_surf_gifti(surfL, surfL_fname2, side="left")
-  write_surf_gifti(surfR, surfR_fname2, side="right")
+  write_surf_gifti(surfL, surfL_fname2, hemisphere="left")
+  write_surf_gifti(surfR, surfR_fname2, hemisphere="right")
   expect_equal(surfL, make_surf(surfL_fname2))
   expect_equal(surfR, make_surf(surfR_fname2))
 })

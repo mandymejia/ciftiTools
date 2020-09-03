@@ -45,13 +45,13 @@ test_that("Resampling CIFTI and GIFTI files is working", {
       write_dir = tdir
     )
     cii2 <- readcii(
-      cii2_fnames$cifti,
-      surfL_fname=cii2_fnames$surfL, surfR_fname=cii2_fnames$surfR
+      cii2_fnames["cifti"],
+      surfL_fname=cii2_fnames["surfL"], surfR_fname=cii2_fnames["surfR"]
     )
 
     # resample_cifti_from_template
     cii3 <- readcii(resample_cifti_from_template(
-      original=cii_fname, template=cii2_fnames$cifti,
+      original=cii_fname, template=cii2_fnames["cifti"],
       target=file.path(tdir, paste0("v2_", basename(cii_fname)))
     ))
 

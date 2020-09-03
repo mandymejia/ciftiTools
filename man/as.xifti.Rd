@@ -3,7 +3,7 @@
 \name{as.xifti}
 \alias{as.xifti}
 \alias{as_xifti}
-\title{As "xifti"}
+\title{Make a \code{"xifti"} object}
 \usage{
 as.xifti(
   cortexL = NULL,
@@ -30,9 +30,9 @@ as_xifti(
 )
 }
 \arguments{
-\item{cortexL, cortexL_mwall}{\code{cortexL} is a data matrix (V_L vertices x 
- T measurements) representing the left cortex. If it's provided, \code{cortexL_mwall}
- can be provided too. V_L is equal to either the length of \code{cortexL_mwall} 
+\item{cortexL, cortexL_mwall}{\code{cortexL} is a data matrix ($V_L$ vertices x 
+ $T$ measurements) representing the left cortex. If it's provided, \code{cortexL_mwall}
+ can be provided too. $V_L$ is equal to either the length of \code{cortexL_mwall} 
  (if the left cortex data is unmasked) or the sum of \code{TRUE} values 
  (if the left cortex data is masked).
 
@@ -80,5 +80,18 @@ three vertices defining each triangular face).}
 A "xifti" object.
 }
 \description{
-Merge separate data objects into a "xifti"
+Merge separate data objects into a \code{"xifti"} object.
+}
+\details{
+Takes in cortical data (medial wall masks optional but recommended if 
+ available), subcortical data, and surfaces. Each entry is optional. If all 
+ entries are \code{NULL} then the template \code{"xifti"} will be returned.
+
+ If cortical data are provided without a corresponding medial wall mask, then
+ it will try to infer the medial wall mask. ...
+
+ The total number of brainordinates will be $V = V_L + V_R + V_S$: $V_L$ left
+ vertices, $V_R$ right vertices and $V_S$ subcortical voxels. $T$, the total
+ number of measurements (columns of data), must be the same for each
+ brainstructure.
 }

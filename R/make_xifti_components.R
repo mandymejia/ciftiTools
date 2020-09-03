@@ -19,8 +19,8 @@
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
 #' @param mwall_values If the medial wall mask was not provided (or if it was
-#'  discarded), infer it from these values. Default: \code{c(0, NA, NaN)}. If 
-#'  \code{NULL}, do not attempt to infer the medial wall mask.
+#'  discarded), infer it from these values. Example: \code{c(0, NA, NaN)}. If 
+#'  \code{NULL} (default), do not attempt to infer the medial wall mask.
 #' @param side "left" or "right"? Just used to print warnings.
 #' @param mwall_source Character describing where the mwall came from. Just used
 #'  to print warnings.
@@ -35,7 +35,7 @@ make_cortex <- function(
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
   rm_bad_mwall=TRUE,
-  mwall_values=c(0, NA, NaN),
+  mwall_values=NULL,
   side=NULL,
   mwall_source=NULL) {
 
@@ -46,11 +46,12 @@ make_cortex <- function(
   infer_mwall <- !identical(mwall_values, NULL)
   if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
 
-  # File --> GIFTI.
+  # Cortex:
+  #   File --> GIFTI.
   if (is.fname(cortex)) {
     cortex <- readgii(cortex)
   }
-  # GIFTI --> matrix.
+  #   GIFTI --> matrix.
   if (is.gifti(cortex)) {
     cortex <- do.call(cbind, cortex$data)
     dimnames(cortex) <- NULL # [TO DO]: Keep if dscalar or dlabels?
@@ -63,12 +64,27 @@ make_cortex <- function(
       ))
     }
   }
-
   if (is.vector(cortex)) { cortex <- matrix(cortex, ncol=1) }
 
   # Check if medial wall mask is valid.
   msg <- ""
   if (!is.null(mwall)) {
+    
+    # File --> GIFTI.
+    if (is.fname(mwall)) {
+      mwall <- readgii(mwall)
+    }
+    # GIFTI --> vector.
+    if (is.gifti(mwall)) {
+      mwall <- do.call(cbind, mwall$data)
+      dimnames(mwall) <- NULL
+    }
+    if (!is.vector(mwall) && ncol(mwall) > 1) { 
+      stop("`mwall` should be a vector of values (or column vector) but it had more than one column.") 
+    }
+    mwall <- as.logical(mwall)
+
+    # Handle case if no medial wall vertices were detected.
     if (all(mwall)) {
       msg <- paste0(msg,
         "The ",side," medial wall mask obtained from ",mwall_source,
@@ -208,18 +224,14 @@ make_subcort <- function(
   vol, labs, mask=NULL, validate_mask=FALSE) {
 
   # Get vol.
-  if (is.fname(vol)) {
-    vol <- readNifti(vol)
-  }
+  if (is.fname(vol)) { vol <- readNifti(vol) }
   vol_ndims <- length(dim(vol))
   if (vol_ndims == 0) { stop("`vol` did not have any dimensions. Check that it is a matrix or array?") }
   if (vol_ndims == 1) { vol <- matrix(vol, ncol=1) }
   vol_is_vectorized <- vol_ndims < 3
 
   # Get labels.
-  if (is.fname(labs)) {
-    labs <- readNifti(labs)
-  }
+  if (is.fname(labs)) { labs <- readNifti(labs) }
 
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
@@ -262,6 +274,7 @@ make_subcort <- function(
     }
   # Otherwise, validate it if requested.
   } else {
+    if (is.fname(mask)) { mask <- readNifti(mask) }
     if (is.numeric(mask)) { mask <- mask > 0 }
     stopifnot( is.logical(mask) )
     if (validate_mask) {

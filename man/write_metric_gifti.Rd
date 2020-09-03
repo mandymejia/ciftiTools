@@ -7,7 +7,7 @@
 write_metric_gifti(
   gii,
   gifti_fname,
-  side = c("left", "right"),
+  hemisphere = c("left", "right"),
   intent = NULL,
   data_type = NULL,
   encoding = NULL,
@@ -21,7 +21,7 @@ vectors.}
 
 \item{gifti_fname}{Where to write the GIFTI file.}
 
-\item{side}{"left" (default) or "right". Ignored if \code{data} is already
+\item{hemisphere}{"left" (default) or "right". Ignored if \code{data} is already
 a "gifti" object.}
 
 \item{intent}{"NIFTI_INTENT_*". \code{NULL} (default) will use

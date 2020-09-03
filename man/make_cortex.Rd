@@ -10,7 +10,7 @@ make_cortex(
   cortex_is_masked = NULL,
   rm_blank_mwall = TRUE,
   rm_bad_mwall = TRUE,
-  mwall_values = c(0, NA, NaN),
+  mwall_values = NULL,
   side = NULL,
   mwall_source = NULL
 )
@@ -35,8 +35,8 @@ data (e.g. the vertex count doesn't add up), should it be discarded?
 Default: \code{TRUE}. If \code{FALSE}, raise an error.}
 
 \item{mwall_values}{If the medial wall mask was not provided (or if it was
-discarded), infer it from these values. Default: \code{c(0, NA, NaN)}. If 
-\code{NULL}, do not attempt to infer the medial wall mask.}
+discarded), infer it from these values. Example: \code{c(0, NA, NaN)}. If 
+\code{NULL} (default), do not attempt to infer the medial wall mask.}
 
 \item{side}{"left" or "right"? Just used to print warnings.}
 

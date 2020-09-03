@@ -12,6 +12,12 @@
 #' 
 #'  With either method, metadata is obtained with \code{\link{info_cifti}}.
 #'
+#'  This function uses a system wrapper for the 'wb_command' executable. The 
+#'  user must first download and install the Connectome Workbench, available 
+#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
+#'  folder. (The full file path to the 'wb_cmd' executable also works.)
+#' 
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the result be flattened into a single matrix? If \code{TRUE},
 #'  the result will be a T x B matrix (T measurements, B brainordinates not including
@@ -46,13 +52,6 @@
 #' 
 #'  See \code{\link{is.xifti}} for details about \code{"xifti"} objects.
 #' @export
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome
-#'  Workbench, available from
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
-#'  or executable.
 #'
 read_cifti <- function(
   cifti_fname, flat=FALSE,

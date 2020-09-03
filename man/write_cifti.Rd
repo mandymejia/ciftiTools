@@ -40,8 +40,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Logical indicating whether the CIFTI file (and any surfaces) was 
- successfully written
+List of the names of the resampled files
 }
 \description{
 Write out a CIFTI file from a "xifti" object.

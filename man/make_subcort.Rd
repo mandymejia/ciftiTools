@@ -14,9 +14,9 @@ be in spatial order.}
 
 \item{labs}{represents the brainstructure labels of each voxel: see
 \code{\link{substructure_table}}. It is either a path to a NIFTI file, a 3D 
-data array (i x j x k) of brainstructure indices 3-21 with 0 representing 
+data array (i x j x k) of numeric brainstructure indices 3-21 with 0 representing 
 out-of-mask voxels; or, a V_S-length vector in spatial order with 
-brainstructure names as factors, or with brainstructure indices as integers.}
+brainstructure names as factors, or with numeric brainstructure indices as integers.}
 
 \item{mask}{is a logical 3D data array (i x j x k) where \code{TRUE}
 values indicate voxels inside the brain mask. If it is not provided, the

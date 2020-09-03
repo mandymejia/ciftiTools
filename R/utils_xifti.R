@@ -96,8 +96,7 @@ get_cifti_extn <- function(cifti_fname) {
 cifti_component_suffix <- function(label, GIFTI_type="func") {
   label <- match.arg(label, c(
     "cortexL", "cortexR", "subcortVol", "subcortLabs",
-    "ROIcortexL", "ROIcortexR", "ROIsubcortVol", 
-    "validROIcortexL", "validROIcortexR"
+    "ROIcortexL", "ROIcortexR", "ROIsubcortVol"
   ))
   switch(label,
     cortexL = paste0("L.", GIFTI_type, ".gii"),
@@ -106,9 +105,7 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
     subcortLabs = "labels.nii",
     ROIcortexL = paste0("ROI_L.", GIFTI_type, ".gii"),
     ROIcortexR = paste0("ROI_R.", GIFTI_type, ".gii"),
-    ROIsubcortVol = "ROI.nii",
-    validROIcortexL = paste0("valid_ROI_L.", GIFTI_type, ".gii"),
-    validROIcortexR = paste0("valid_ROI_R.", GIFTI_type, ".gii")
+    ROIsubcortVol = "ROI.nii"
   )
 }
 

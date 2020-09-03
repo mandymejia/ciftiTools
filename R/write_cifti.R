@@ -93,8 +93,7 @@ write_cifti_components <- function(
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether the CIFTI file (and any surfaces) was 
-#'  successfully written
+#' @return List of the names of the resampled files
 #' @export
 #'
 write_cifti <- function(
@@ -131,7 +130,11 @@ write_cifti <- function(
     }
   }
 
-  invisible(TRUE)
+  out <- list(
+    cifti=cifti_fname, 
+    surfL=surfL_fname, surfR=surfR_fname
+  )
+  out[!sapply(out, is.null)]
 }
 
 #' @rdname write_cifti

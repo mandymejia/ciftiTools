@@ -179,12 +179,10 @@ A list of output files written. The elements are "cifti" and
 Performs spatial resampling of CIFTI data on the cortical surface
  by separating it into GIFTI and NIFTI files, resampling them, then putting
  them together.
-}
-\details{
-This function uses a system wrapper for the "wb_command"
- executable. The user must first download and install the Connectome 
- Workbench, available from 
- \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
- The \code{wb_path} argument is the path to the Connectime Workbench folder or
- executable.
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench. 
+ The 'wb_path' argument is the full file path to the Connectome Workbench 
+ folder. (The full file path to the 'wb_cmd' executable also works.)
 }

@@ -2,21 +2,24 @@
 % Please edit documentation in R/as.gifti.R
 \name{as.surf_gifti}
 \alias{as.surf_gifti}
-\title{Convert to surface GIFTI}
+\title{Format a surface data as a \code{"gifti"} object}
 \usage{
-as.surf_gifti(surf, side = c("left", "right"))
+as.surf_gifti(surf, hemisphere = c("left", "right"))
 }
 \arguments{
-\item{surf}{A "surface" object or a list with elements "pointset" and 
-"triangle"}
+\item{surf}{A \code{"surface"} object or a list with elements 
+\code{"pointset"} and \code{"triangle"}}
 
-\item{side}{"left" (default) or "right".}
+\item{hemisphere}{The side of the brain the surface represents: \code{"left"} 
+(default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
+metadata field.}
 }
 \value{
-The surface "gifti"
+The \code{"gifti"} object
 }
 \description{
-Convert a "surface" object or a list with elements "pointset" and 
- "triangle" to a surface "gifti" object.
+Format a \code{"surface"} object or a list with elements \code{"pointset"}
+ and \code{"triangle"} as a \code{"gifti"} object using a template 
+ \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 }
 \keyword{internal}

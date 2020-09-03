@@ -23,17 +23,15 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Whether the CIFTI was successfully resampled
+The \code{target_fname}, invisibly
 }
 \description{
 Resample a CIFTI from a template. This uses the
  \code{-cifti-resample} command from Connectome Workbench.
-}
-\details{
-This function uses a system wrapper for the "wb_command"
- executable. The user must first download and install the Connectome 
- Workbench, available from 
- \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
- The \code{wb_path} argument is the path to the Connectime Workbench folder or
- executable.
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench. 
+ The 'wb_path' argument is the full file path to the Connectome Workbench 
+ folder. (The full file path to the 'wb_cmd' executable also works.)
 }

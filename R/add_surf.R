@@ -1,24 +1,30 @@
-#' Add surface(s) to "xifti"
+#' Add surface(s) to a \code{"xifti"} object
 #' 
-#' Add left or right cortical surface geometry to a "xifti" object.
+#' Add left or right cortical surface geometry to a \code{"xifti"} object.
+#' 
+#' `surfL` will be added to `xifti$surf$cortex_left` and `surfR` will be added
+#'  to `xifti$surf$cortex_right`. Any existing surfaces will be overwritten.
 #' 
 #' @inheritParams xifti_Param
-#' @param surfL,surfR (Optional) [Left/right] brain surface model. Can be a file
-#'  path for GIFTI data or an object from \code{\link[gifti]{readgii}}.
+#' @inheritParams surfL_Param_optional
+#' @inheritParams surfR_Param_optional
 #' 
-#' @return The "xifti" with added surface geometry components
+#' @return the \code{"xifti"} object with added surface geometry components.
 #' 
 #' @export
 #'
 add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
   if (!is.xifti(xifti)) { stop("The input \"xifti\" object is invalid.") }
 
+  # Left.
   if (!is.null(surfL)) {
     if (!is.null(xifti$surf$cortex_left)) { 
       ciftiTools_msg("Overwriting existing geometry for left cortex.\n") 
     }
     xifti$surf$cortex_left <- make_surf(surfL)
   }
+
+  # Right.
   if (!is.null(surfR)) {
     if (!is.null(xifti$surf$cortex_right)) { 
       ciftiTools_msg("Overwriting existing geometry for right cortex.\n") 
@@ -26,6 +32,8 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     xifti$surf$cortex_right <- make_surf(surfR)
   }
 
+  # Check.
   if (!is.xifti(xifti)) { stop("The resulting \"xifti\" object was invalid.") }
-  return(xifti)
+
+  xifti
 }

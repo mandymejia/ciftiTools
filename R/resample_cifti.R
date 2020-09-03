@@ -4,6 +4,12 @@
 #'  by separating it into GIFTI and NIFTI files, resampling them, then putting
 #'  them together.
 #'
+#'  This function uses a system wrapper for the 'wb_command' executable. The 
+#'  user must first download and install the Connectome Workbench, available 
+#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
+#'  folder. (The full file path to the 'wb_cmd' executable also works.)
+#' 
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
 #' @param surfL_original_fname,surfR_original_fname (Optional) File path of 
@@ -27,13 +33,6 @@
 #'  "surfR" (if \code{surfR_original_fname} was provided).
 #'
 #' @export
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome 
-#'  Workbench, available from 
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
-#'  executable.
 #'
 resample_cifti <- function(
   cifti_original_fname, cifti_target_fname, 
@@ -128,7 +127,7 @@ resample_cifti <- function(
   to_cif[to_cif_resampled] <- resamp_result$fname[
     resamp_result$label %in% to_cif_resampled]
 
-  # [TO DO]: is it safe to copy these files when write_dir=tempdir()?
+  # Copy resampled surface files to desired file paths.
   if (!is.null(surfL_original_fname)) { 
     surfL_target_fname_old <- resamp_result$fname[resamp_result$label == "surfL"]
     surfL_target_fname <- format_path(basename(surfL_target_fname_old), write_dir, mode=2)
@@ -173,7 +172,7 @@ resample_cifti <- function(
     cifti=cifti_target_fname, 
     surfL=surfL_target_fname, surfR=surfR_target_fname
   )
-  out[!sapply(out, is.null)]
+  unlist(out[!sapply(out, is.null)])
 }
 
 #' @rdname resample_cifti

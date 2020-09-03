@@ -5,6 +5,12 @@
 #'  and obtaining the brainordinate mapping using 
 #'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
 #'
+#'  This function uses a system wrapper for the 'wb_command' executable. The 
+#'  user must first download and install the Connectome Workbench, available 
+#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
+#'  folder. (The full file path to the 'wb_cmd' executable also works.)
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
@@ -14,13 +20,6 @@
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome
-#'  Workbench, available from
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
-#'  or executable.
 #'
 #' @keywords internal
 #' 

@@ -3,6 +3,12 @@
 #' @description Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
 #'  from Connectome Workbench.
 #'
+#'  This function uses a system wrapper for the 'wb_command' executable. The 
+#'  user must first download and install the Connectome Workbench, available 
+#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
+#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
+#'  folder. (The full file path to the 'wb_cmd' executable also works.)
+#' 
 #' @param cifti_original_fname A CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI.
 #' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm
@@ -21,13 +27,6 @@
 #' @return The \code{cifti_target_fname}, invisibly
 #'
 #' @export
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome 
-#'  Workbench, available from 
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
-#'  executable.
 #'
 smooth_cifti <- function(
   cifti_original_fname, cifti_target_fname,

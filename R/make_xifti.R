@@ -116,6 +116,7 @@ make_xifti <- function(
   xifti <- template_xifti()
 
   # Cortex data.
+  # TO DO: see `read_cifti_convert` on using intent to change mwall infer behavior
   if (!is.null(cortexL)) {
     x <- make_cortex(
       cortexL, cortexL_mwall,

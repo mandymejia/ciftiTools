@@ -119,12 +119,10 @@ Make a "xifti" from CIFTI data either by exporting it as a single
  use the latter.
 
  With either method, metadata is obtained with \code{\link{info_cifti}}.
-}
-\details{
-This function uses a system wrapper for the "wb_command"
- executable. The user must first download and install the Connectome
- Workbench, available from
- \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
- The \code{wb_path} argument is the path to the Connectime Workbench folder
- or executable.
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench. 
+ The 'wb_path' argument is the full file path to the Connectome Workbench 
+ folder. (The full file path to the 'wb_cmd' executable also works.)
 }

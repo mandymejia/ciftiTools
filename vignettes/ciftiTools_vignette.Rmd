@@ -242,7 +242,7 @@ The new files can be viewed together with `read_cifti`. Let's make this one inte
 
 ```{r, webgl=TRUE}
 view_xifti_surface(
-  read_cifti(cifti_fname=cii_6k$cifti, surfL=cii_6k$surfL, surfR=cii_6k$surfR), 
+  read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
   zoom=7/10, bg="#d4edf5", cex.title=1.25, 
   title=".dtseries resampled to 6k", zlim=c(0,2)
 )
@@ -331,7 +331,7 @@ dim(cii)
 To only read the CIFTI header, use `info_cifti`.
 
 ```{r}
-cii_info <- ciftiTools:::info_cifti(cifti_fnames$dlabel)
+cii_info <- ciftiTools::info_cifti(cifti_fnames$dlabel)
 ```
 
 # Verify a CIFTI
