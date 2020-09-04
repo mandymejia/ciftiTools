@@ -14,7 +14,7 @@
 #' 
 #' @inheritParams cifti_fname_Param
 #' @param flat Should the result be flattened into a single matrix? If \code{TRUE},
-#'  the result will be a $T$ x $B$ matrix ($T$ measurements, $B$ brainordinates 
+#'  the result will be a \eqn{T x B} matrix (\eqn{T} measurements, \eqn{B} brainordinates 
 #'  not including the medial wall). All below arguments will be ignored, because 
 #'  the brain  structures cannot be identified and surfaces will not be appended. 
 #'  Resampling is also not possible.
@@ -41,8 +41,8 @@
 #' @param ... Additional arguments to \code{\link{read_cifti_convert}} or 
 #'  \code{\link{read_cifti_separate}}.
 #'
-#' @return If \code{!flat}, a \code{"xifti"} object. Otherwise, a $T$ x $B$ 
-#'  matrix ($T$ measurements, $B$ brainordinates). 
+#' @return If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x B} 
+#'  matrix (\eqn{T} measurements, \eqn{B} brainordinates). 
 #' 
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @inheritSection labels_Description Label Levels

@@ -324,19 +324,19 @@ info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
 #'  \enumerate{
 #'    \item{"dtseries"}{
 #'      \enumerate{
-#'        \item{time_start}{Start time}
-#'        \item{time_step}{The TR}
-#'        \item{time_unit}{Unit of time}
+#'        \item{time_start}{   Start time}
+#'        \item{time_step}{   The TR}
+#'        \item{time_unit}{   Unit of time}
 #'      }
 #'    }
 #'    \item{"dscalar"}{
 #'      \enumerate{
-#'        \item{names}{Name of each data column}
+#'        \item{names}{   Name of each data column}
 #'      }
 #'    }
 #'    \item{"dlabels"}{
 #'      \enumerate{
-#'        \item{labels}{(L x 5 data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+#'        \item{labels}{(   \eqn{L x 5} data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
 #'      }
 #'    }
 #'  }

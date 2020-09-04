@@ -82,7 +82,8 @@ resample_xifti(
 
 \item{surfL_original_fname, surfR_original_fname}{(Optional) File path of 
 existing GIFTI surface geometry file representing the left/right cortex. 
-One or both can be provided.}
+One or both can be provided. These will be resampled too, and are convenient
+for visualizing the resampled data.}
 
 \item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
 the resampled GIFTI surface geometry file representing the left/right 
@@ -171,21 +172,22 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A named character vector of written files: "cifti" and
- potentially "surfL" (if \code{surfL_original_fname} was provided) and 
- "surfR" (if \code{surfR_original_fname} was provided).
+A named character vector of written files: \code{"cifti"} and
+ potentially \code{"surfL"} (if \code{surfL_original_fname} was provided) 
+ and/or \code{"surfR"} (if \code{surfR_original_fname} was provided).
 }
 \description{
 Performs spatial resampling of CIFTI data on the cortical surface
- by separating it into GIFTI and NIFTI files, resampling them, then putting
- them together.
+ by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
+ putting them together. (The subcortex is not resampled.)
 }
 \section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_path' argument is the full file path to the Connectome Workbench 
- folder. (The full file path to the 'wb_cmd' executable also works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench . 
+ The \code{wb_path} argument is the full file path to the Connectome 
+ Workbench folder. (The full file path to the 'wb_cmd' executable also 
+ works.)
 }
 

@@ -59,7 +59,7 @@ read_xifti(
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{flat}{Should the result be flattened into a single matrix? If \code{TRUE},
- the result will be a $T$ x $B$ matrix ($T$ measurements, $B$ brainordinates 
+ the result will be a \eqn{T x B} matrix (\eqn{T} measurements, \eqn{B} brainordinates 
  not including the medial wall). All below arguments will be ignored, because 
  the brain  structures cannot be identified and surfaces will not be appended. 
  Resampling is also not possible.
@@ -102,8 +102,8 @@ If not provided, should be set with
 \code{\link{read_cifti_separate}}.}
 }
 \value{
-If \code{!flat}, a \code{"xifti"} object. Otherwise, a $T$ x $B$ 
- matrix ($T$ measurements, $B$ brainordinates).
+If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x B} 
+ matrix (\eqn{T} measurements, \eqn{B} brainordinates).
 }
 \description{
 Read a CIFTI file as a "xifti" object (see \code{\link{is.xifti}}).
@@ -123,9 +123,10 @@ First, metadata is obtained with \code{\link{info_cifti}}. Then, if no
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_path' argument is the full file path to the Connectome Workbench 
- folder. (The full file path to the 'wb_cmd' executable also works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench . 
+ The \code{wb_path} argument is the full file path to the Connectome 
+ Workbench folder. (The full file path to the 'wb_cmd' executable also 
+ works.)
 }
 
 \section{Label Levels}{

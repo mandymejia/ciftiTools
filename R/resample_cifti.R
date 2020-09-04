@@ -1,14 +1,15 @@
 #' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
-#'  by separating it into GIFTI and NIFTI files, resampling them, then putting
-#'  them together.
+#'  by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
+#'  putting them together. (The subcortex is not resampled.) 
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
 #' @param surfL_original_fname,surfR_original_fname (Optional) File path of 
 #'  existing GIFTI surface geometry file representing the left/right cortex. 
-#'  One or both can be provided.
+#'  One or both can be provided. These will be resampled too, and are convenient
+#'  for visualizing the resampled data.
 #' @param surfL_target_fname,surfR_target_fname (Optional) File path for
 #'  the resampled GIFTI surface geometry file representing the left/right 
 #'  cortex. If NULL (default), will use default names: see 
@@ -22,9 +23,9 @@
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return A named character vector of written files: "cifti" and
-#'  potentially "surfL" (if \code{surfL_original_fname} was provided) and 
-#'  "surfR" (if \code{surfR_original_fname} was provided).
+#' @return A named character vector of written files: \code{"cifti"} and
+#'  potentially \code{"surfL"} (if \code{surfL_original_fname} was provided) 
+#'  and/or \code{"surfR"} (if \code{surfR_original_fname} was provided).
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @export
 #'

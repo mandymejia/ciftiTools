@@ -175,17 +175,17 @@ make_cortex <- function(
 #'  labels.
 #'
 #' @param vol represents the data values of the subcortex. It is either a NIFTI 
-#'  file path, 3D/4D data array ($i$ x $j$ x $k$ x $T$), or a vectorized data 
-#'  matrix ($V_S$ voxels x $T$ measurements). If it's vectorized, the voxels 
+#'  file path, 3D/4D data array ($i$ x $j$ x $k$ x \eqn{T}), or a vectorized data 
+#'  matrix (\eqn{V_S} voxels x \eqn{T} measurements). If it's vectorized, the voxels 
 #'  should be in spatial order.
 #' @param labs represents the brainstructure labels of each voxel: see
 #'  \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array 
-#'  ($i$ x $j$ x $k$) of numeric brainstructure indices, or a $V_S$ length
+#'  ($i$ x $j$ x $k$) of numeric brainstructure indices, or a \eqn{V_S} length
 #'  vector in spatial order with brainstructure names as factors or integer
 #'  indices. The indices should be 3-21 (2 and 3 correspond to left and right
 #'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
 #'  out-of-mask voxels.
-#' @param mask is a NIFTI file path or logical 3D data array (i x j x k) where \code{TRUE}
+#' @param mask is a NIFTI file path or logical 3D data array (\eqn{i x j x k}) where \code{TRUE}
 #'  values indicate subcortical voxels (in-mask). If it is not provided, the
 #'  mask will be inferred from voxels with labels \code{0} or \code{NA} in 
 #'  \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}

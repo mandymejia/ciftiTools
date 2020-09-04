@@ -3,7 +3,7 @@
 #' @description Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
 #'  from Connectome Workbench.
 #' 
-#' @param cifti_original_fname A CIFTI file to smooth.
+#' @param cifti_original_fname The CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI.
 #' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm
 #' @param volume_sigma The sigma for the gaussian volume smoothing kernel, in mm
