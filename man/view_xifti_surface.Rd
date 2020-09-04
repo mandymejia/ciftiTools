@@ -3,6 +3,8 @@
 \name{view_xifti_surface}
 \alias{view_xifti_surface}
 \alias{view_cifti_surface}
+\alias{viewCIfTI_surface}
+\alias{viewcii_surface}
 \title{Visualize "xifti" cortical data. The \code{rgl} package is required.}
 \usage{
 view_xifti_surface(
@@ -37,13 +39,63 @@ view_cifti_surface(
   mode = c("widget", "image", "video"),
   width = NULL,
   height = NULL,
+  zoom = 0.6,
   bg = NULL,
   title = NULL,
+  cex.title = NULL,
   text_color = "black",
   fname = "xifti",
   write_dir = NULL,
   colors = NULL,
-  color_mode = c("sequential", "qualitative", "diverging"),
+  color_mode = NULL,
+  zlim = NULL,
+  surfL = NULL,
+  surfR = NULL,
+  colorbar_embedded = TRUE,
+  colorbar_digits = NULL
+)
+
+viewCIfTI_surface(
+  xifti,
+  idx = 1,
+  hemisphere = NULL,
+  view = c("both", "lateral", "medial"),
+  mode = c("widget", "image", "video"),
+  width = NULL,
+  height = NULL,
+  zoom = 0.6,
+  bg = NULL,
+  title = NULL,
+  cex.title = NULL,
+  text_color = "black",
+  fname = "xifti",
+  write_dir = NULL,
+  colors = NULL,
+  color_mode = NULL,
+  zlim = NULL,
+  surfL = NULL,
+  surfR = NULL,
+  colorbar_embedded = TRUE,
+  colorbar_digits = NULL
+)
+
+viewcii_surface(
+  xifti,
+  idx = 1,
+  hemisphere = NULL,
+  view = c("both", "lateral", "medial"),
+  mode = c("widget", "image", "video"),
+  width = NULL,
+  height = NULL,
+  zoom = 0.6,
+  bg = NULL,
+  title = NULL,
+  cex.title = NULL,
+  text_color = "black",
+  fname = "xifti",
+  write_dir = NULL,
+  colors = NULL,
+  color_mode = NULL,
   zlim = NULL,
   surfL = NULL,
   surfR = NULL,

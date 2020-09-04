@@ -3,11 +3,17 @@
 \name{view_xifti}
 \alias{view_xifti}
 \alias{view_cifti}
+\alias{viewCIfTI}
+\alias{viewcii}
 \title{Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}}
 \usage{
 view_xifti(xifti, what = NULL, ...)
 
 view_cifti(xifti, what = NULL, ...)
+
+viewCIfTI(xifti, what = NULL, ...)
+
+viewcii(xifti, what = NULL, ...)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
