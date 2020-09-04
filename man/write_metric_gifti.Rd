@@ -2,12 +2,12 @@
 % Please edit documentation in R/write_gifti.R
 \name{write_metric_gifti}
 \alias{write_metric_gifti}
-\title{Write CIFTI Cortex Data to GIFTI}
+\title{Write CIFTI cortex data to GIFTI}
 \usage{
 write_metric_gifti(
   gii,
   gifti_fname,
-  side = c("left", "right"),
+  hemisphere = c("left", "right"),
   intent = NULL,
   data_type = NULL,
   encoding = NULL,
@@ -21,7 +21,7 @@ vectors.}
 
 \item{gifti_fname}{Where to write the GIFTI file.}
 
-\item{side}{"left" (default) or "right". Ignored if \code{data} is already
+\item{hemisphere}{"left" (default) or "right". Ignored if \code{data} is already
 a "gifti" object.}
 
 \item{intent}{"NIFTI_INTENT_*". \code{NULL} (default) will use

@@ -14,7 +14,7 @@ resample_gifti(
   original_res = NULL,
   resamp_res,
   ROIcortex_original_fname = NULL,
-  validROIcortex_target_fname = NULL,
+  ROIcortex_target_fname = NULL,
   read_dir = NULL,
   write_dir = NULL,
   wb_path = NULL
@@ -23,11 +23,12 @@ resample_gifti(
 resampleGIfTI(
   original_fname,
   target_fname,
+  hemisphere,
   file_type = NULL,
   original_res = NULL,
   resamp_res,
   ROIcortex_original_fname = NULL,
-  validROIcortex_target_fname = NULL,
+  ROIcortex_target_fname = NULL,
   read_dir = NULL,
   write_dir = NULL,
   wb_path = NULL
@@ -36,11 +37,12 @@ resampleGIfTI(
 resamplegii(
   original_fname,
   target_fname,
+  hemisphere,
   file_type = NULL,
   original_res = NULL,
   resamp_res,
   ROIcortex_original_fname = NULL,
-  validROIcortex_target_fname = NULL,
+  ROIcortex_target_fname = NULL,
   read_dir = NULL,
   write_dir = NULL,
   wb_path = NULL
@@ -66,7 +68,7 @@ cortical surface vertices per hemisphere).}
 \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
 or shouldn't be resampled.}
 
-\item{validROIcortex_target_fname}{The name of the resampled ROI file. Only 
+\item{ROIcortex_target_fname}{The name of the resampled ROI file. Only 
 applicable if \code{ROIcortex_original_fname} is provided.}
 
 \item{read_dir}{Directory to append to the path of every file name in
@@ -74,7 +76,7 @@ applicable if \code{ROIcortex_original_fname} is provided.}
 (default), do not append any directory to the path.}
 
 \item{write_dir}{Directory to append to the path of every file name in
-\code{target_fname} and \code{validROIcortex_target_fname}. If \code{NULL} 
+\code{target_fname} and \code{ROIcortex_target_fname}. If \code{NULL} 
 (default), do not append any directory to the path.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
@@ -82,9 +84,8 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-Logical indicating whether resampled file was created.
+The resampled GIFTI file name, invisibly
 }
 \description{
-Performs spatial resampling of NIFTI/GIFTI data on the cortical 
- surface.
+Performs spatial resampling of GIFTI data on the cortical surface.
 }

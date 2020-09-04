@@ -2,8 +2,8 @@
 #'
 #' @description Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
 #'  from Connectome Workbench.
-#'
-#' @param cifti_original_fname A CIFTI file to smooth.
+#' 
+#' @param cifti_original_fname The CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI.
 #' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm
 #' @param volume_sigma The sigma for the gaussian volume smoothing kernel, in mm
@@ -18,16 +18,9 @@
 #'  Default: \code{FALSE}.
 #' @inheritParams wb_path_Param
 #'
-#' @return Whether the CIFTI was successfully smoothed
-#'
+#' @return The \code{cifti_target_fname}, invisibly
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @export
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome 
-#'  Workbench, available from 
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
-#'  executable.
 #'
 smooth_cifti <- function(
   cifti_original_fname, cifti_target_fname,
@@ -57,6 +50,8 @@ smooth_cifti <- function(
   if (subcortical_merged) { cmd <- paste(cmd, "-merged-volume") }
 
   run_wb_cmd(cmd, wb_path)
+  
+  invisible(cifti_target_fname)
 }
 
 #' @rdname smooth_cifti

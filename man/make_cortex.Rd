@@ -10,13 +10,13 @@ make_cortex(
   cortex_is_masked = NULL,
   rm_blank_mwall = TRUE,
   rm_bad_mwall = TRUE,
-  mwall_values = c(0, NA),
+  mwall_values = NULL,
   side = NULL,
   mwall_source = NULL
 )
 }
 \arguments{
-\item{cortex}{A file path, GIFTI object, or data matrix representing
+\item{cortex}{A file path, metric "gifti" object, or data matrix representing
 cortical data.}
 
 \item{mwall}{The medial wall mask: a logical vector with \code{FALSE} values 
@@ -35,8 +35,8 @@ data (e.g. the vertex count doesn't add up), should it be discarded?
 Default: \code{TRUE}. If \code{FALSE}, raise an error.}
 
 \item{mwall_values}{If the medial wall mask was not provided (or if it was
-discarded), infer it from these values. Default: \code{c(0, NA)}. If 
-\code{NULL}, do not attempt to infer the medial wall mask.}
+discarded), infer it from these values. Example: \code{c(0, NA, NaN)}. If 
+\code{NULL} (default), do not attempt to infer the medial wall mask.}
 
 \item{side}{"left" or "right"? Just used to print warnings.}
 
@@ -47,7 +47,7 @@ to print warnings.}
 A list with components "data" and "mwall".
 }
 \description{
-Coerce a file path, GIFTI object, or data matrix to a data matrix
+Coerce a file path, metric "gifti" object, or data matrix to a data matrix
  representing cortical data (and optionally a corresponding mask). That is,
  entries for \code{xifti$data$cortex_[left/right]} and 
  \code{xifti$meta$cortex}.

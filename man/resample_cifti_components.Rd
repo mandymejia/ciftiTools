@@ -15,8 +15,6 @@ resample_cifti_components(
   ROIcortexR_original_fname = NULL,
   ROIcortexL_target_fname = NULL,
   ROIcortexR_target_fname = NULL,
-  validROIcortexL_target_fname = NULL,
-  validROIcortexR_target_fname = NULL,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
@@ -50,11 +48,6 @@ of to save the resampled GIFTI ROI corresponding to
 If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
 will be named by \code{\link{cifti_component_suffix}}.}
 
-\item{validROIcortexL_target_fname, validROIcortexR_target_fname}{(Optional) 
-Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-will be named by \code{\link{cifti_component_suffix}}.}
-
 \item{surfL_original_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
 
@@ -84,18 +77,16 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A data frame with column names "label" and "fname", and 
- rows corresponding to each resampled file.
+A named character vector of file paths to each resampled file.
 }
 \description{
 Performs spatial resampling of various CIFTI file components on 
  the cortical surface. (The subcortical data is not resampled here.) 
  GIFTI surface geometry files can additionally be included: see 
-\code{surfL_original_fname} and \code{surfR_original_fname}.
+ \code{surfL_original_fname} and \code{surfR_original_fname}.
 }
 \details{
-Performs resampling of CIFTI files using Connectome Workbench tools.  
- Step 1: Generate spheres in the original and target resolutions
+Step 1: Generate spheres in the original and target resolutions
  Step 2: Use -metric-resample to resample surface/cortex files 
  Step 3: Use -surface-resample to resample gifti files
 }

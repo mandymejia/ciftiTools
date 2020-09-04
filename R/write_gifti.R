@@ -1,4 +1,4 @@
-#' Write CIFTI Cortex Data to GIFTI
+#' Write CIFTI cortex data to GIFTI
 #' 
 #' Write the data for the left or right cortex to a metric GIFTI file.
 #'
@@ -6,7 +6,7 @@
 #'  be an object from \code{gifti::readgii}, or a length-T list of length-V 
 #'  vectors. 
 #' @param gifti_fname Where to write the GIFTI file.
-#' @param side "left" (default) or "right". Ignored if \code{data} is already
+#' @param hemisphere "left" (default) or "right". Ignored if \code{data} is already
 #'  a "gifti" object.
 #' @param intent "NIFTI_INTENT_*". \code{NULL} (default) will use
 #'  metadata if \code{data} is a "gifti" object, or "NONE" if it cannot be 
@@ -31,11 +31,11 @@
 #' @importFrom gifti write_gifti
 #' @export
 write_metric_gifti <- function(
-  gii, gifti_fname, side=c("left", "right"),
+  gii, gifti_fname, hemisphere=c("left", "right"),
   intent=NULL, data_type=NULL, encoding=NULL, endian=c("LittleEndian", "BigEndian")){
 
   # Match args.
-  side <- match.arg(side, c("left", "right"))
+  hemisphere <- match.arg(hemisphere, c("left", "right"))
   endian <- match.arg(endian, c("LittleEndian", "BigEndian"))
 
   # If gii is a "gifti", use its metadata to determine unspecified options.
@@ -65,20 +65,20 @@ write_metric_gifti <- function(
   gii$data_info$DataType <- paste0("NIFTI_TYPE_", gsub("NIFTI_TYPE_", "", toupper(data_type)))
   gii$data_info$Encoding <- encoding
   gii$data_info$Endian <- endian
-  side_idx <- which(names(gii$file_meta)=="AnatomicalStructurePrimary")[1]
-  gii$file_meta[side_idx] <- list(left="CortexLeft", right="CortexRight")[side]
+  hemisphere_idx <- which(names(gii$file_meta)=="AnatomicalStructurePrimary")[1]
+  gii$file_meta[hemisphere_idx] <- list(left="CortexLeft", right="CortexRight")[hemisphere]
 
   write_gifti(gii, gifti_fname, use_parsed_transformations=TRUE)
 }
 
-#' Write CIFTI Surface Data to GIFTI
+#' Write CIFTI surface data to GIFTI
 #' 
 #' Write the data for the left or right surface to a surface GIFTI file.
 #'
 #' @param gii A "surface" object, an object from \code{gifti::readgii}, or a 
 #'  list with elements "pointset" and "triangle".
 #' @param gifti_fname Where to write the GIFTI file.
-#' @param side "left" (default) or "right". Ignored if \code{data} is already
+#' @param hemisphere "left" (default) or "right". Ignored if \code{data} is already
 #'  a "gifti" object.
 #' @param encoding A length-2 vector with elements chosen among "ASCII", 
 #'  "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 
@@ -92,11 +92,11 @@ write_metric_gifti <- function(
 #' @importFrom gifti write_gifti
 #' @export
 write_surf_gifti <- function(
-  gii, gifti_fname, side=c("left", "right"),
+  gii, gifti_fname, hemisphere=c("left", "right"),
   encoding=NULL, endian=c("LittleEndian", "BigEndian")){
 
   # Match args.
-  side <- match.arg(side, c("left", "right"))
+  hemisphere <- match.arg(hemisphere, c("left", "right"))
   endian <- match.arg(endian, c("LittleEndian", "BigEndian"))
 
   # If gii is a "gifti", use its metadata to determine unspecified options.
@@ -106,7 +106,7 @@ write_surf_gifti <- function(
   # If gii is not a "gifti", convert it to a GIFTI and use default options
   #   where unspecified.
   } else {
-    gii <- as.surf_gifti(gii, side=side)
+    gii <- as.surf_gifti(gii, hemisphere=hemisphere)
     if (is.null(encoding)) { 
       encoding <- as.character(list(pointset="GZipBase64Binary", triangle="ASCII")[names(gii$data)])
     }

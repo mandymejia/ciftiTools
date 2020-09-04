@@ -1,14 +1,15 @@
 #' Resample CIFTI Data
 #'
 #' @description Performs spatial resampling of CIFTI data on the cortical surface
-#'  by separating it into GIFTI and NIFTI files, resampling them, then putting
-#'  them together.
+#'  by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
+#'  putting them together. (The subcortex is not resampled.) 
 #'
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
 #' @param surfL_original_fname,surfR_original_fname (Optional) File path of 
 #'  existing GIFTI surface geometry file representing the left/right cortex. 
-#'  One or both can be provided.
+#'  One or both can be provided. These will be resampled too, and are convenient
+#'  for visualizing the resampled data.
 #' @param surfL_target_fname,surfR_target_fname (Optional) File path for
 #'  the resampled GIFTI surface geometry file representing the left/right 
 #'  cortex. If NULL (default), will use default names: see 
@@ -22,18 +23,11 @@
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return A list of output files written. The elements are "cifti" and
-#'  potentially "surfL" (if \code{surfL_original_fname} was provided) and 
-#'  "surfR" (if \code{surfR_original_fname} was provided).
-#'
+#' @return A named character vector of written files: \code{"cifti"} and
+#'  potentially \code{"surfL"} (if \code{surfL_original_fname} was provided) 
+#'  and/or \code{"surfR"} (if \code{surfR_original_fname} was provided).
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @export
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome 
-#'  Workbench, available from 
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}. 
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder or
-#'  executable.
 #'
 resample_cifti <- function(
   cifti_original_fname, cifti_target_fname, 
@@ -91,14 +85,11 @@ resample_cifti <- function(
 
   if (verbose) { cat("Separating CIFTI file.\n") }
 
-  sep_result <- separate_cifti_wrapper(
+  to_cif <- separate_cifti_wrapper(
     cifti_fname=cifti_original_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
     sep_fnames=sep_fnames, write_dir=write_dir_sep, wb_path=wb_path
   )
-
-  to_cif <- sep_result$fname
-  names(to_cif) <- sep_result$label
 
   if (verbose) { 
     print(Sys.time() - exec_time)
@@ -124,18 +115,16 @@ resample_cifti <- function(
   )
 
   # Replace resampled files.
-  to_cif_resampled <- names(to_cif)[names(to_cif) %in% resamp_result$label]
-  to_cif[to_cif_resampled] <- resamp_result$fname[
-    resamp_result$label %in% to_cif_resampled]
+  to_cif[names(to_cif) %in% names(resamp_result)] <- resamp_result[names(to_cif)[names(to_cif) %in% names(resamp_result)]]
 
-  # [TO DO]: is it safe to copy these files when write_dir=tempdir()?
+  # Copy resampled surface files to desired file paths.
   if (!is.null(surfL_original_fname)) { 
-    surfL_target_fname_old <- resamp_result$fname[resamp_result$label == "surfL"]
+    surfL_target_fname_old <- resamp_result["surfL"]
     surfL_target_fname <- format_path(basename(surfL_target_fname_old), write_dir, mode=2)
     file.copy(surfL_target_fname_old, surfL_target_fname)
   }
   if (!is.null(surfR_original_fname)) { 
-    surfR_target_fname_old <- resamp_result$fname[resamp_result$label == "surfR"]
+    surfR_target_fname_old <- resamp_result["surfR"]
     surfR_target_fname <- format_path(basename(surfR_target_fname_old), write_dir, mode=2)
     file.copy(surfR_target_fname_old, surfR_target_fname)
   }
@@ -151,17 +140,8 @@ resample_cifti <- function(
 
   # Create target CIFTI dense timeseries.
   if (verbose) cat("Merging components into a CIFTI file... \n")
-  wcfs_kwargs <- list(
-    cifti_target_fname, 
-    cortexL_fname = to_cif["cortexL"],
-    cortexR_fname = to_cif["cortexR"],
-    ROIcortexL_fname = to_cif["ROIcortexL"],
-    ROIcortexR_fname = to_cif["ROIcortexR"],
-    subcortVol_fname = to_cif["subcortVol"],
-    subcortLabs_fname = to_cif["subcortLabs"]
-  )
-  wcfs_kwargs <- wcfs_kwargs[!is.na(wcfs_kwargs)]
-  wcfs_kwargs <- wcfs_kwargs[!is.null(wcfs_kwargs)]
+  to_cif <- to_cif[names(to_cif) != "ROIsubcortVol"]
+  wcfs_kwargs <- c(list(cifti_fname=cifti_target_fname), as.list(to_cif))
   do.call(write_cifti_from_separate, wcfs_kwargs)
   
   if (verbose) { 
@@ -169,11 +149,10 @@ resample_cifti <- function(
     exec_time <- Sys.time()
   }
 
-  out <- list(
+  out <- unlist(list(
     cifti=cifti_target_fname, 
     surfL=surfL_target_fname, surfR=surfR_target_fname
-  )
-  out[!sapply(out, is.null)]
+  ))
 }
 
 #' @rdname resample_cifti
@@ -182,7 +161,7 @@ resampleCIfTI <- function(
   cifti_original_fname, cifti_target_fname, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
-  resamp_res,
+  resamp_res, 
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
   write_dir=NULL, verbose=TRUE, wb_path=NULL) {

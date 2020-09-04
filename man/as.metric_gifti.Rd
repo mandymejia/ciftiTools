@@ -2,31 +2,44 @@
 % Please edit documentation in R/as.gifti.R
 \name{as.metric_gifti}
 \alias{as.metric_gifti}
-\title{Convert to metric GIFTI}
+\title{Format metric data as a \code{"gifti"} object}
 \usage{
 as.metric_gifti(
   data,
-  side = c("left", "right"),
+  hemisphere = c("left", "right"),
   intent = "NONE",
   data_type = NULL
 )
 }
 \arguments{
-\item{data}{A V x T data matrix or length-T list of length-V vectors}
+\item{data}{V x T numeric matrix, or length-T list of length-V numeric 
+vectors}
 
-\item{side}{"left" (default) or "right".}
+\item{hemisphere}{The side of the brain the data represents: \code{"left"} 
+(default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
+metadata field.}
 
-\item{intent}{"NIFTI_INTENT_*". Default: "NONE". See https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view}
+\item{intent}{The NIFTI intent, with prefix "NIFTI_INTENT_*". Default: 
+\code{"NONE"}. For a list of intents see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view}
 
-\item{data_type}{the type of \code{data}:
-"NIFTI_TYPE_INT32" or "NIFTI_TYPE_FLOAT32". If \code{NULL} (default), the 
-data_type will be inferred.}
+\item{data_type}{The NIFTI type of \code{data}:
+"NIFTI_TYPE_INT32" or "NIFTI_TYPE_FLOAT32". If \code{NULL} (default), will
+be inferred from \code{data}.}
 }
 \value{
-The metric "gifti"
+The \code{"gifti"} object
 }
 \description{
-Convert a V x T data matrix (V vertices, T measurements) or a length-T list 
- of length-V vectors to a metric "gifti" object.
+Format a V x T numeric matrix (V vertices, T measurements) or a length-T list 
+ of length-V numeric vectors as a \code{"gifti"} object using a template 
+ \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
+ 
+If the data represent measurements on the cortical surface, the intent 
+ \code{"NORMAL"} is recommended, because that is what is used by the
+ \code{-cifti-separate} Connectome Workbench command for cortical data.
+}
+\details{
+If \code{data} is already a \code{"gifti"} object, \code{data$data} will be
+ used and any existing metadata will be discarded.
 }
 \keyword{internal}

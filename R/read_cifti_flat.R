@@ -7,7 +7,7 @@
 #'  they will be undifferentiable. Medial wall vertices and voxels outside the
 #'  brain mask will not be included. No spatial information is included. This is 
 #'  the fastest way to read in CIFTI data. 
-#'
+#' 
 #' @inheritParams cifti_fname_Param
 #' @param keep \code{read_cifti_minimal} works by saving the CIFTI as a GIFTI file, 
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
@@ -22,15 +22,8 @@
 #'
 #' @return A T x B matrix of class "cifti_data", where T is the number of 
 #'  measurements and B is the number of brainordinates in the CIFTI file.
-#' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @keywords internal
-#'
-#' @details This function uses a system wrapper for the "wb_command"
-#'  executable. The user must first download and install the Connectome
-#'  Workbench, available from
-#'  \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
-#'  The \code{wb_path} argument is the path to the Connectime Workbench folder
-#'  or executable.
 #'
 read_cifti_flat <- function(
   cifti_fname, keep=FALSE, gifti_fname=NULL,

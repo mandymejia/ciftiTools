@@ -15,16 +15,27 @@ isCIfTI(x, messages = TRUE)
 \arguments{
 \item{x}{The putative \code{"xifti"} object.}
 
-\item{messages}{If \code{x} is not a \code{"xifti"}, print messages 
+\item{messages}{If \code{x} is not a \code{"xifti"} object, print messages 
 explaining the problem? Default is \code{TRUE}.}
 }
 \value{
-Logical indicating whether x is a valid \code{"xifti"} object.
+Logical. Is \code{x} a valid \code{"xifti"} object?
 }
 \description{
 Check if object is valid for a \code{"xifti"} object. This alias for 
-\code{\link{is.xifti}} is offered as a convenience, and a message will warn 
-the user. We recommend using \code{\link{is.xifti}} instead.
+ \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
+ the user. We recommend using \code{\link{is.xifti}} instead.
+}
+\details{
+Requirements: it is a list with the same structure as 
+ \code{\link{template_xifti}}. The size of each data entry must be 
+ compatible with its corresponding mask (medial wall for the cortex and 
+ volumetric mask for the subcortex). Metadata should be present if and only 
+ if the corresponding data is also present. The surfaces can be present
+ whether or not the cortex data are present.
+
+ See the "Label Levels" section for the requirements of 
+ \code{xifti$meta$subcort$labels}.
 }
 \section{Label Levels}{
 

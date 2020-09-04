@@ -1,10 +1,14 @@
-#' Table of CIFTI File Types (Intents) Supported By ciftiTools
+#' The NIFTI intents supported by \code{ciftiTools}
+#' 
+#' Table of CIFTI file types (NIFTI intents) supported By \code{ciftiTools}.
 #' 
 #' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
+#'  for information about the different NIFTI intents.
 #' 
-#' @return A data.frame with each supported file type along the rows.
+#' @return A data.frame with each supported file type along the rows, and
+#'  column names "extension", "intent_code", "value", and "intent_name"
 #' 
-#' @keywords internal
+#' @export
 #' 
 supported_intents <- function(){
   df <- data.frame(rbind(
@@ -16,12 +20,18 @@ supported_intents <- function(){
   df
 }
 
-#' Substructure Table
+#' Substructure table
 #' 
-#' Table of labels with original names from the CIFTI file, and new names
-#'  based on ft_read_cifti.
+#' Table of labels for cortex hemispheres (left and right) and subcortical
+#'  substructures. The names used by the CIFTI format and the names used by
+#'  \code{ciftiTools} are given.
 #' 
-#' @return The substructure table.
+#' The names used by \code{ciftiTools} are based on those in 
+#'  \code{FT_READ_CIFTI} from the FieldTrip MATLAB toolbox.
+#' 
+#' @return A data.frame with each substructure along the rows. The first
+#'  column gives the CIFTI format name and the second column gives the
+#'  \code{ciftiTools} name.
 #' @export
 #'  
 substructure_table <- function(){
@@ -55,12 +65,12 @@ substructure_table <- function(){
 
 #' Check CIFTI type
 #' 
-#' Validate the file name extension and intent code.
+#' Check that a CIFTI's NIFTI intent matches its file name extension.
 #' 
-#' @param intent The NIFTI intent_code, as a numeric integer
+#' @param intent The NIFTI \code{intent_code}, as a numeric integer
 #' @param extn The file name extension, e.g. "dtseries.nii"
 #' 
-#' @return If the intent is supported, \code{TRUE}.
+#' @return If the intent is supported, returns \code{TRUE}.
 #'  If the intent is not supported, an error is raised.
 #' @keywords internal
 #' 
@@ -112,12 +122,13 @@ check_cifti_type <- function(intent, extn){
 }
 
 
-#' Extract Misc Metadata from CIFTI Header
+#' Extract misc metadata from CIFTI
 #' 
-#' Extract Misc Metadata from CIFTI Header ("Metadata" entry)
+#' Extract misc metadata from CIFTI header XML ("Metadata" entry)
 #' 
-#' @param xml List representing "Metadata" entry XML (xii$CIFTI$Matrix$MetaData)
-#' @param intent The CIFTI/NIFTI intent code. Not used right now, but may be later.
+#' @param xml List representing "Metadata" entry XML 
+#'  (\code{xii$CIFTI$Matrix$MetaData})
+#' @param intent The CIFTI's NIFTI intent code. Not used right now, but may be later.
 #'  Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
 #' 
 #' @return The metadata, a list
@@ -132,12 +143,13 @@ get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
   meta
 }
 
-#' Extract Intent-specific Metadata from CIFTI Header
+#' Extract intent-specific metadata from CIFTI
 #' 
-#' Extract Intent-specific Metadata from CIFTI Header (first "MatrixIndicesMap" entry)
+#' Extract intent-specific Metadata from CIFTI header XML (first "MatrixIndicesMap" entry)
 #' 
-#' @param x List representing "MatrixIndicesMap" entry XML (xii$CIFTI$Matrix[[2]])
-#' @param intent The CIFTI/NIFTI intent code
+#' @param x List representing "MatrixIndicesMap" entry XML 
+#'  (\code{xii$CIFTI$Matrix[[2]]})
+#' @param intent The CIFTI's NIFTI intent code
 #' 
 #' @return The metadata, a list
 #' 
@@ -171,13 +183,14 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
   meta
 }
 
-#' Extract Data-related Metadata from CIFTI Header
+#' Extract data-related metadata from CIFTI
 #' 
-#' Extract Data-related Metadata from CIFTI Header (second "MatrixIndicesMap" entry)
+#' Extract data-related metadata from CIFTI header XML (second "MatrixIndicesMap" entry)
 #' 
-#' @param x List representing "MatrixIndicesMap" entry XML (xii$CIFTI$Matrix[[3]])
-#' @param intent The CIFTI/NIFTI intent code. Not used right now, but may be later.
-#'  Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
+#' @param x List representing "MatrixIndicesMap" entry XML 
+#'  (\code{xii$CIFTI$Matrix[[3]]})
+#' @param intent The CIFTI's NIFTI intent code. Not used right now, but might be
+#'  used later. Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
 #' 
 #' @return The metadata, a list
 #' 
@@ -293,33 +306,45 @@ info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
   out
 }
 
-#' Get CIFTI Header
-#'
-#' Wrapper for the Connectome Workbench command 
-#'  \code{-nifti-information}. It parses the CIFTI header XML to obtain:
+#' Get CIFTI metadata
 #' 
-#'  medial wall masks for the left and right cortex,
-#'  the subcortical labels (ordered spatially),
-#'  the subcortical mask,
-#'  and other metadata.
+#' Get CIFTI metadata from the NIFTI header and XML using the Connectome
+#'  Workbench command \code{-nifti-information}. The information is formatted as 
+#'  the \code{meta} component in a \code{"xifti"} object 
+#'  (see \code{\link{template_xifti}}), and includes:
+#'  \enumerate{
+#'    \item medial wall masks for the left and right cortex
+#'    \item the subcortical labels (ordered spatially)
+#'    \item the subcortical mask
+#'    \item other NIFTI intent-specific metadata
+#'  }
+#' 
+#' Additional metadata depends on the type of CIFTI file:
+#' 
+#'  \enumerate{
+#'    \item{"dtseries"}{
+#'      \enumerate{
+#'        \item{time_start}{   Start time}
+#'        \item{time_step}{   The TR}
+#'        \item{time_unit}{   Unit of time}
+#'      }
+#'    }
+#'    \item{"dscalar"}{
+#'      \enumerate{
+#'        \item{names}{   Name of each data column}
+#'      }
+#'    }
+#'    \item{"dlabels"}{
+#'      \enumerate{
+#'        \item{labels}{(   \eqn{L x 5} data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+#'      }
+#'    }
+#'  }
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
-#' @return The metadata component of a "xifti"
-#' 
-#'  Additional metadata depends on the type of CIFTI file:
-#' 
-#'  For "dtseries" files:
-#'    cifti$time_start
-#'    cifti$time_step
-#'    cifti$time_unit
-#' 
-#'  For "dscalar" files:
-#'    cifti$names       (Name of each data column)
-#' 
-#'  For "dlabels" files:
-#'    cifti$labels      (L x 5 data.frame. Rows are named. Cols: KRGBA)
+#' @return The metadata component of a "xifti" for the input CIFTI file
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 

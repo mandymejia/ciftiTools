@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_xifti.R
 \name{unmask_cortex}
 \alias{unmask_cortex}
-\title{Unmask Cortex}
+\title{Unmask cortex}
 \usage{
 unmask_cortex(cortex, mwall, mwall_fill = NA)
 }

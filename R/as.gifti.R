@@ -1,59 +1,76 @@
-#' Convert to metric GIFTI
+#' Format metric data as a \code{"gifti"} object
 #'
-#' Convert a V x T data matrix (V vertices, T measurements) or a length-T list 
-#'  of length-V vectors to a metric "gifti" object.
+#' Format a V x T numeric matrix (V vertices, T measurements) or a length-T list 
+#'  of length-V numeric vectors as a \code{"gifti"} object using a template 
+#'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
+#'  
+#' If the data represent measurements on the cortical surface, the intent 
+#'  \code{"NORMAL"} is recommended, because that is what is used by the
+#'  \code{-cifti-separate} Connectome Workbench command for cortical data.
+#' 
+#'  If \code{data} is already a \code{"gifti"} object, \code{data$data} will be
+#'  used and any existing metadata will be discarded.
 #'
-#' @param data A V x T data matrix or length-T list of length-V vectors
-#' @param side "left" (default) or "right".
-#' @param intent "NIFTI_INTENT_*". Default: "NONE". See https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
-#' @param data_type the type of \code{data}:
-#'  "NIFTI_TYPE_INT32" or "NIFTI_TYPE_FLOAT32". If \code{NULL} (default), the 
-#'  data_type will be inferred. 
-#' @return The metric "gifti"
+#' @param data V x T numeric matrix, or length-T list of length-V numeric 
+#'  vectors
+#' @param hemisphere The side of the brain the data represents: \code{"left"} 
+#'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
+#'  metadata field.
+#' @param intent The NIFTI intent, with prefix "NIFTI_INTENT_*". Default: 
+#'  \code{"NONE"}. For a list of intents see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
+#' @param data_type The NIFTI type of \code{data}:
+#'  "NIFTI_TYPE_INT32" or "NIFTI_TYPE_FLOAT32". If \code{NULL} (default), will
+#'  be inferred from \code{data}.
+#' @return The \code{"gifti"} object
 #'
 #' @keywords internal
 as.metric_gifti <- function(
-  data, side=c("left", "right"), 
+  data, hemisphere=c("left", "right"), 
   intent="NONE", data_type=NULL){
-  
-  # Get side.
-  side <- match.arg(side, c("left", "right"))
+
+  # Get hemisphere.
+  hemisphere <- match.arg(hemisphere, c("left", "right"))
 
   # Get intent.
   intent <- toupper(intent)
+  if (startsWith(intent, "NIFTI_INTENT_")) { 
+    intent <- gsub("NIFTI_INTENT_", "", intent)
+  }
   if (!(intent %in% c("NONE", "NORMAL"))) {
     intent_short <- tolower(intent)
-    warning(paste0(
-      "Names of data columns will be", intent_short, 
-      ". This has not been verified to match the standard column names."
+    ciftiTools_warn(paste0(
+      "Names of data entries in \"gifti\" object will be \"", intent_short, 
+      "\". This has not been verified to correspond with a NIFTI intent."
     ))
   } else {
-    intent_short <- list(NONE="unknown", NORMAL="normal")[[intent]]
+    intent_short <- list(NONE = "unknown", NORMAL = "normal")[[intent]]
   }
 
   # If already a "gifti", use the $data only.
   if (is.gifti(data)) {
-    side_idx <- names(data$file_meta) == "AnatomicalStructurePrimary"
-    side_idx <- which(side_idx)[1]
-    other_side <- list(right="left", left="right")[side]
-    meta_side <- gsub("cortex", "", tolower(data$file_meta[[side_idx]]))
-    if (grepl(other_side, meta_side)) {
-      stop(paste0(
-        "The requested side, ", side, 
-        ", was opposite the side in the metadata, ", 
-        meta_side, "."
+    hemi_idx <- names(data$file_meta) == "AnatomicalStructurePrimary"
+    hemi_idx <- which(hemi_idx)[1]
+    other_hemisphere <- switch(hemisphere, left="right", right="left")
+    meta_hemisphere <- gsub("cortex", "", tolower(data$file_meta[[hemi_idx]]))
+    if (grepl(other_hemisphere, meta_hemisphere)) {
+      warning(paste0(
+        "The requested hemisphere, \"", hemisphere, 
+        "\", was opposite the hemisphere in the existing metadata, \"", 
+        meta_hemisphere, "\"."
       ))
     }
-    warning("Already a \"gifti\". Using the $data element and discarding metadata.\n")
+    ciftiTools_warn("Already a \"gifti\". Using the $data element and discarding metadata.\n")
     data <- data$data
     names(data) <- rep(intent_short, length(data))
   }
-
+  
   # Format data as a list.
+  if (is.vector(data)) { data <- matrix(data, ncol=1) }
   if (suppressMessages(is.nummat(data))) {
     data <- split(t(data), seq(ncol(data)))
-    names(data) = rep(intent_short, length(data))
+    names(data) <- rep(intent_short, length(data))
   }
+
   if (!is.list(data)) {
     stop("data must be a numeric matrix or a list of numeric vectors.")
   }
@@ -68,23 +85,30 @@ as.metric_gifti <- function(
     )
   }
   stopifnot(length(data_type) == 1)
+  if (!startsWith(data_type, "NIFTI_TYPE_")) { 
+    data_type <- paste0("NIFTI_TYPE_", data_type)
+  }
   stopifnot(data_type %in% c("NIFTI_TYPE_INT32", "NIFTI_TYPE_FLOAT32"))
 
-  # Name the entries in data by intent.
+  # Name the entries in the data by the intent.
   if (!is.null(names(data))) {
     if (!all(unique(names(data)) == intent_short)) {
-      warning(paste0(
-        "Names of `data` must all match the intent: ", intent_short, ". Overwriting."
+      ciftiTools_warn(paste0(
+        "Names of `data` must all match the intent: \"", 
+        intent_short, "\". Overwriting."
       ))
     }
   }
   names(data) <- rep(intent_short, length(data))
 
   # Form the "gifti".
-  gii <- gifti_metric_template # from ciftiTools sysdata
+  gii <- gifti_metric_template # from ciftiTools R/sysdata.rda
   gii$data <- data
-  side_idx <- which(names(gii$file_meta)=="AnatomicalStructurePrimary")[1]
-  gii$file_meta[side_idx] <- list(left="CortexLeft", right="CortexRight")[side]
+  hemi_idx <- which(names(gii$file_meta) == "AnatomicalStructurePrimary")[1]
+  gii$file_meta[hemi_idx] <- switch(hemisphere, 
+    left = "CortexLeft", 
+    right = "CortexRight"
+  )
   gii$data_meta <- gii$data_meta[rep(1, length(data))]
   gii$data_info$Intent <- intent
   gii$data_info$DataType <- data_type
@@ -96,57 +120,63 @@ as.metric_gifti <- function(
   gii
 }
 
-#' Convert to surface GIFTI
+#' Format a surface data as a \code{"gifti"} object
 #'
-#' Convert a "surface" object or a list with elements "pointset" and 
-#'  "triangle" to a surface "gifti" object.
+#' Format a \code{"surface"} object or a list with elements \code{"pointset"}
+#'  and \code{"triangle"} as a \code{"gifti"} object using a template 
+#'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 #'
-#' @param surf A "surface" object or a list with elements "pointset" and 
-#'  "triangle"
-#' @param side "left" (default) or "right".
-#' @return The surface "gifti"
+#' @param surf A \code{"surface"} object or a list with elements 
+#'  \code{"pointset"} and \code{"triangle"}
+#' @param hemisphere The side of the brain the surface represents: \code{"left"} 
+#'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
+#'  metadata field.
+#' @return The \code{"gifti"} object
 #'
 #' @keywords internal
 as.surf_gifti <- function(
-  surf, side=c("left", "right")){
+  surf, hemisphere=c("left", "right")){
 
-  # Get side.
-  side <- match.arg(side, c("left", "right"))
+  # Get hemisphere.
+  hemisphere <- match.arg(hemisphere, c("left", "right"))
 
   # If already a "gifti", use the $data only.
   if (is.gifti(surf)) {
-    side_idx <- surf$data_meta[[1]][,"names"] == "AnatomicalStructurePrimary"
-    side_idx <- which(side_idx)[1]
-    other_side <- list(right="left", left="right")[side]
-    meta_side <- gsub("cortex", "", tolower(surf$data_meta[[1]][side_idx, "vals"]))
-    if (grepl(other_side, meta_side)) {
-      stop(paste0(
-        "The requested side, ", side, 
-        ", was opposite the side in the metadata, ", 
-        meta_side, "."
+    hemi_idx <- surf$data_meta[[1]][,"names"] == "AnatomicalStructurePrimary"
+    hemi_idx <- which(hemi_idx)[1]
+    other_hemisphere <- switch(hemisphere, left="right", right="left")
+    meta_hemisphere <- gsub("cortex", "", tolower(surf$data_meta[[1]][hemi_idx, "vals"]))
+    if (grepl(other_hemisphere, meta_hemisphere)) {
+      warning(paste0(
+        "The requested hemisphere, \"", hemisphere, 
+        "\", was opposite the hemisphere in the existing metadata, \"", 
+        meta_hemisphere, "\"."
       ))
     }
-    warning("Already a \"gifti\". Using the $data element and discarding metadata.\n")
+    ciftiTools_warn("Already a \"gifti\". Using the $data element and discarding metadata.\n")
     surf <- surf$data
   }
 
   # Format data as a list with elements "pointset" and "triangle"
   if (suppressMessages(is.surf(surf))) {
-    # start indexing at 0 instead of 1
     surf <- list(pointset = surf$vertices, triangle = surf$faces)
   }
   if (!( length(surf)==2 || all(names(surf) %in% c("pointset", "triangle") ))) {
     stop("`surf` must be a \"surface\" object or a list with elements \"pointset\" and \"triangle\".")
   }
+  # Start indexing at zero.
   if (min(surf$triangle)==1) { surf$triangle <- surf$triangle - 1 }
 
   # Form the "gifti".
-  gii <- gifti_surf_template # from ciftiTools sysdata
+  gii <- gifti_surf_template # from ciftiTools R/sysdata.rda
   gii$data <- surf
   mode(gii$data$triangle) <- "integer"
 
-  side_idx <- gii$data_meta[[1]][,"names"] == "AnatomicalStructurePrimary"
-  gii$data_meta[[1]][side_idx, "vals"] <- list(left="CortexLeft", right="CortexRight")[[side]]
+  hemi_idx <- gii$data_meta[[1]][,"names"] == "AnatomicalStructurePrimary"
+  gii$data_meta[[1]][hemi_idx, "vals"] <- switch(hemisphere, 
+    left = "CortexLeft", 
+    right = "CortexRight"
+  )
   gii$data_info$Dim0 <- c(nrow(surf$pointset), nrow(surf$triangle))
   gii$data_info$n <- 3 * gii$data_info$Dim0
 

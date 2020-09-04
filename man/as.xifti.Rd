@@ -3,7 +3,7 @@
 \name{as.xifti}
 \alias{as.xifti}
 \alias{as_xifti}
-\title{As "xifti"}
+\title{Assemble a \code{"xifti"} object from data}
 \usage{
 as.xifti(
   cortexL = NULL,
@@ -30,55 +30,92 @@ as_xifti(
 )
 }
 \arguments{
-\item{cortexL, cortexL_mwall}{\code{cortexL} is a data matrix (V_L vertices x 
- T measurements) representing the left cortex. If it's provided, \code{cortexL_mwall}
- can be provided too. V_L is equal to either the length of \code{cortexL_mwall} 
- (if the left cortex data is unmasked) or the sum of \code{TRUE} values 
- (if the left cortex data is masked).
+\item{cortexL, cortexL_mwall}{\code{cortexL} represents the left cortex data.
+ Each must be a data matrix or vector.
 
- If \code{cortexL_mwall} is not provided, ...
+ If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
+ all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
+ will not be a mask for the medial wall. Not providing the medial wall mask 
+ is appropriate for ".dlabels.nii" files where the medial wall has its own 
+ label and should not be treated as missing data.
+
+ If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
+ for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
+ filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or for
+ only non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix). The
+ medial wall mask will be the \code{0} values in \code{cortexL_mwall}. 
+ The medial wall mask should be provided for ".dscalar.nii" and ".dtseries.nii"
+ files where the medial wall data is not present. 
 
  Since the unmasked cortices must have the same number of vertices,
  \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.}
 
-\item{cortexR, cortexR_mwall}{\code{cortexR} is a data matrix (V_R vertices x 
- T measurements) representing the right cortex. If it's provided, \code{cortexR_mwall}
- can be provided too. V_R is equal to either the length of \code{cortexR_mwall} 
- (if the right cortex data is unmasked) or the sum of \code{TRUE} values 
- (if the right cortex data is masked).
+\item{cortexR, cortexR_mwall}{\code{cortexR} represents the right cortex data.
+ Each must be a data matrix or vector.
 
- If \code{cortexR_mwall} is not provided, ...
+ If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
+ all vertices on the right cortical surface (\eqn{V_R x T} data matrix). There 
+ will not be a mask for the medial wall. Not providing the medial wall mask 
+ is appropriate for ".dlabels.nii" files where the medial wall has its own 
+ label and should not be treated as missing data.
+
+ If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
+ for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
+ filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or for
+ only non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix). The
+ medial wall mask will be the \code{0} values in \code{cortexR_mwall}. 
+ The medial wall mask should be provided for ".dscalar.nii" and ".dtseries.nii"
+ files where the medial wall data is not present. 
 
  Since the unmasked cortices must have the same number of vertices,
  \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.}
 
 \item{subcortVol, subcortLabs, subcortMask}{\code{subcortVol} represents the
- data values of the subcortical volume. It is either a 3D/4D data array
- (i x j x k x T) or a vectorized data matrix (V_S voxels x T measurements). 
- If it's vectorized, voxels should be in spatial order.
+ data values of the subcortex. It is either a 3D/4D data array
+ (\eqn{i x j x k x T}), or a vectorized data matrix (\eqn{V_S} voxels \eqn{x T} 
+ measurements). If it's vectorized, the voxels should be in spatial order.
 
  \code{subcortLabs} represents the brainstructure labels of each voxel: see
- \code{\link{substructure_table}}. It is either a 3D data array (i x j x k)
- of brainstructure indices 3-21 with 0 representing out-of-mask voxels; or,
- a V_S-length vector in spatial order with brainstructure names as factors, 
- or with  brainstructure indices as integers.
+ \code{\link{substructure_table}}. It is either a 3D data array 
+ (\eqn{i x j x k}) of numeric brainstructure indices, or a \eqn{V_S} length
+ vector in spatial order with brainstructure names as factors or integer
+ indices. The indices should be 3-21 (2 and 3 correspond to left and right
+ cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
+ out-of-mask voxels.
  
- \code{subcortMask} is a logical 3D data array (i x j x k) where \code{TRUE}
- values indicate voxels inside the brain mask. If it is not provided, the
- mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
- (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
- \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
- is not provided, the mask cannot be inferred so an error occur.}
+ \code{subcortMask} is logical 3D data array (\eqn{i x j x k}) where \code{TRUE}
+ values indicate subcortical voxels (in-mask). If it is not provided, the
+ mask will be inferred from voxels with labels \code{0} or \code{NA} in 
+ \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
+ is not provided, the mask cannot be inferred so an error will occur.}
 
 \item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex. 
-Can a GIFTI representing surface geometry which has been read in or a list 
-with components "verts" (V x 3 data matrix indicating spatial locations of 
-each vertex) and "faces" (F x 3 data matrix indicating the indices of the 
-three vertices defining each triangular face).}
+Can be a surface GIFTI file path or "surface" object; see 
+\code{\link{make_surf}} for a full description of valid inputs.}
 }
 \value{
 A "xifti" object.
 }
 \description{
-Merge separate data objects into a "xifti"
+Assembles cortical data, subcortical data, and/or surface geometry to form a 
+ "xifti". The inputs must be data objects (matrices or arrays). 
+ \code{as.xifti} can be used to combine the files written by 
+ \code{\link{separate_cifti}}, or read individual components independent of 
+ any CIFTI file.
+}
+\details{
+Each data or surface component is optional. A metadata component will be 
+ ignored if its corresponding data component is not provided. If no data or
+ surface components are provided, then the \code{\link{template_xifti}} will 
+ be returned. 
+
+ If cortical data are provided without a corresponding medial wall mask, or
+ if the provided mask is invalid or empty, then the medial wall metadata
+ entry will be \code{NULL}. (It does not attempt to infer the medial wall
+ mask from data values.)
+ 
+ The total number of brainordinates will be \eqn{V = V_L + V_R + V_S}: \eqn{V_L} left
+ vertices, \eqn{V_R} right vertices and \eqn{V_S} subcortical voxels. \eqn{T}, the total
+ number of measurements (columns of data), must be the same for each
+ brainstructure.
 }

@@ -1,10 +1,14 @@
 #' Resample a series of GIFTIs related to a CIFTI file
 #'
-#' @description Performs spatial resampling of various CIFTI file components on 
+#' Performs spatial resampling of various CIFTI file components on 
 #'  the cortical surface. (The subcortical data is not resampled here.) 
 #'  GIFTI surface geometry files can additionally be included: see 
-#' \code{surfL_original_fname} and \code{surfR_original_fname}.
+#'  \code{surfL_original_fname} and \code{surfR_original_fname}.
 #'
+#' Step 1: Generate spheres in the original and target resolutions
+#'  Step 2: Use -metric-resample to resample surface/cortex files 
+#'  Step 3: Use -surface-resample to resample gifti files
+#' 
 #' @param original_res The original resolution of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
 #' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of 
@@ -21,10 +25,6 @@
 #'  \code{cortex[L/R]_target_fname} as.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
 #'  will be named by \code{\link{cifti_component_suffix}}.
-#' @param validROIcortexL_target_fname,validROIcortexR_target_fname (Optional) 
-#'  Where to save the valid ROI from resampling \code{cortex[L/R]_original_fname}.
-#'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
-#'  will be named by \code{\link{cifti_component_suffix}}.
 #' @inheritParams surfL_original_fname_Param
 #' @inheritParams surfR_original_fname_Param
 #' @inheritParams surfL_target_fname_Param
@@ -33,16 +33,9 @@
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return A data frame with column names "label" and "fname", and 
-#'  rows corresponding to each resampled file.
-#'
-#' @details Performs resampling of CIFTI files using Connectome Workbench tools.  
-#'  Step 1: Generate spheres in the original and target resolutions
-#'  Step 2: Use -metric-resample to resample surface/cortex files 
-#'  Step 3: Use -surface-resample to resample gifti files
+#' @return A named character vector of file paths to each resampled file.
 #'
 #' @keywords internal
-#' 
 #' 
 resample_cifti_components <- function(
   original_res, resamp_res, 
@@ -50,7 +43,6 @@ resample_cifti_components <- function(
   cortexL_target_fname=NULL, cortexR_target_fname=NULL, 
   ROIcortexL_original_fname=NULL, ROIcortexR_original_fname=NULL, 
   ROIcortexL_target_fname=NULL, ROIcortexR_target_fname=NULL,
-  validROIcortexL_target_fname=NULL, validROIcortexR_target_fname=NULL, 
   surfL_original_fname=NULL, surfR_original_fname=NULL, 
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
@@ -67,17 +59,13 @@ resample_cifti_components <- function(
   target_fnames <- list(
     cortexL=cortexL_target_fname, cortexR=cortexR_target_fname, 
     ROIcortexL=ROIcortexL_target_fname, ROIcortexR=ROIcortexR_target_fname,
-    validROIcortexL=validROIcortexL_target_fname, 
-    validROIcortexR=validROIcortexR_target_fname,
     surfL=surfL_target_fname, surfR=surfR_target_fname
   )
   target_fnames <- target_fnames[!sapply(target_fnames, is.null)]
 
   all_labels <- c(
-    "cortexL", "cortexR", "ROIcortexL", "ROIcortexR",
-    "surfL", "surfR"
+    "cortexL", "cortexR", "ROIcortexL", "ROIcortexR", "surfL", "surfR"
   )
-  all_labels_with_vROI <- c(all_labels, "validROIcortexL", "validROIcortexR")
 
   # Check original files.
   stopifnot(is.list(original_fnames))
@@ -90,7 +78,7 @@ resample_cifti_components <- function(
         !sapply(original_fnames, file.exists)]), collapse="\n")
     ))
   }
-  # Check target files.
+  # Use default names for target files if none provided.
   if (is.null(target_fnames)) {
     target_fnames <- vector("list", length(original_fnames))
     names(target_fnames) <- names(original_fnames)
@@ -102,9 +90,11 @@ resample_cifti_components <- function(
       target_fnames$validROIcortexR <- NULL
     }
   }
+
+  # Check target files.
   stopifnot(is.list(target_fnames))
   if (length(target_fnames) > 0) {
-    stopifnot(all(names(target_fnames) %in% all_labels_with_vROI))
+    stopifnot(all(names(target_fnames) %in% all_labels))
     missing_original <- !(names(target_fnames) %in% c(
       c("validROIcortexL", "validROIcortexR"), names(original_fnames)
     ))
@@ -163,13 +153,6 @@ resample_cifti_components <- function(
   # Step 2 and 3: Use -metric-resample or -surface-rsample to resample 
   #   cortex, ROI, and surface files into target resolution.
 
-  # Collect the paths to each file in a data.frame to return later. 
-  resamp_files <- data.frame(
-    label = names(target_fnames), 
-    fname = as.character(target_fnames),
-    stringsAsFactors=FALSE
-  )
-
   resample_gifti_kwargs_common <- list(
     original_res=original_res, resamp_res=resamp_res, wb_path=wb_path,
     #   Since we already appended read/write/sphere_target directories,
@@ -179,7 +162,7 @@ resample_cifti_components <- function(
   for(ii in 1:length(original_fnames)) {
     lab <- names(original_fnames)[ii]
     # Check if this file should be skipped.
-    if (grepl("validROI", lab)) { next }  # Obtained with cortex[L/R].
+    if (grepl("ROI", lab)) { next }  # Obtained with cortex[L/R].
     # Get additional kwargs.
     is_left <- substr(lab, nchar(lab), nchar(lab)) == "L" # last char: L or R.
     resample_kwargs <- c(resample_gifti_kwargs_common, list(
@@ -187,27 +170,25 @@ resample_cifti_components <- function(
       hemisphere=ifelse(is_left, "left", "right")
     ))
     
-    # Do resampling.
+    # Resample cortical data.
     if (lab %in% c("cortexL", "cortexR")) {
-      # Get ROI kwargs if applicable. 
+      # Use ROI if provided.
       ROI_lab <- ifelse(is_left, "ROIcortexL", "ROIcortexR")
-      validROI_lab <- ifelse(is_left, "validROIcortexL", "validROIcortexR")
-      if (validROI_lab %in% names(target_fnames)) {
+      if (ROI_lab %in% names(target_fnames)) {
         resample_kwargs <- c(
           resample_kwargs, list(
             ROIcortex_original_fname=original_fnames[[ROI_lab]], 
-            validROIcortex_target_fname=target_fnames[[validROI_lab]]
+            ROIcortex_target_fname=target_fnames[[ROI_lab]]
           )
         )
       }
-
       do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
-    } else if (lab %in% c("ROIcortexL", "ROIcortexR")) {
-      do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
+    
+    # Resample surfaces.
     } else if (lab %in% c("surfL", "surfR")) {
       do.call(resample_gifti, c(resample_kwargs, list(file_type="surface")))
     }
   }
   
-  invisible(resamp_files)
+  invisible(unlist(target_fnames))
 }

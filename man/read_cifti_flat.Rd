@@ -42,12 +42,14 @@ Reads CIFTI data as a matrix by converting it to a GIFTI.
  brain mask will not be included. No spatial information is included. This is 
  the fastest way to read in CIFTI data.
 }
-\details{
-This function uses a system wrapper for the "wb_command"
- executable. The user must first download and install the Connectome
- Workbench, available from
- \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
- The \code{wb_path} argument is the path to the Connectime Workbench folder
- or executable.
+\section{Connectome Workbench Requirement}{
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench . 
+ The \code{wb_path} argument is the full file path to the Connectome 
+ Workbench folder. (The full file path to the 'wb_cmd' executable also 
+ works.)
 }
+
 \keyword{internal}

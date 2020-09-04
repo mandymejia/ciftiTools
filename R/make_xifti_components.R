@@ -1,11 +1,11 @@
 #' Make "xifti" Cortical Components
 #' 
-#' Coerce a file path, GIFTI object, or data matrix to a data matrix
+#' Coerce a file path, metric "gifti" object, or data matrix to a data matrix
 #'  representing cortical data (and optionally a corresponding mask). That is,
 #'  entries for \code{xifti$data$cortex_[left/right]} and 
 #'  \code{xifti$meta$cortex}. 
 #'
-#' @param cortex A file path, GIFTI object, or data matrix representing
+#' @param cortex A file path, metric "gifti" object, or data matrix representing
 #'  cortical data.
 #' @param mwall The medial wall mask: a logical vector with \code{FALSE} values 
 #'  indicating vertices that make up the medial wall. It will be verified, and 
@@ -19,8 +19,8 @@
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
 #' @param mwall_values If the medial wall mask was not provided (or if it was
-#'  discarded), infer it from these values. Default: \code{c(0, NA)}. If 
-#'  \code{NULL}, do not attempt to infer the medial wall mask.
+#'  discarded), infer it from these values. Example: \code{c(0, NA, NaN)}. If 
+#'  \code{NULL} (default), do not attempt to infer the medial wall mask.
 #' @param side "left" or "right"? Just used to print warnings.
 #' @param mwall_source Character describing where the mwall came from. Just used
 #'  to print warnings.
@@ -35,7 +35,7 @@ make_cortex <- function(
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
   rm_bad_mwall=TRUE,
-  mwall_values=c(0, NA),
+  mwall_values=NULL,
   side=NULL,
   mwall_source=NULL) {
 
@@ -46,11 +46,12 @@ make_cortex <- function(
   infer_mwall <- !identical(mwall_values, NULL)
   if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
 
-  # File --> GIFTI.
+  # Cortex:
+  #   File --> GIFTI.
   if (is.fname(cortex)) {
     cortex <- readgii(cortex)
   }
-  # GIFTI --> matrix.
+  #   GIFTI --> matrix.
   if (is.gifti(cortex)) {
     cortex <- do.call(cbind, cortex$data)
     dimnames(cortex) <- NULL # [TO DO]: Keep if dscalar or dlabels?
@@ -63,12 +64,27 @@ make_cortex <- function(
       ))
     }
   }
-
   if (is.vector(cortex)) { cortex <- matrix(cortex, ncol=1) }
 
   # Check if medial wall mask is valid.
   msg <- ""
   if (!is.null(mwall)) {
+    
+    # File --> GIFTI.
+    if (is.fname(mwall)) {
+      mwall <- readgii(mwall)
+    }
+    # GIFTI --> vector.
+    if (is.gifti(mwall)) {
+      mwall <- do.call(cbind, mwall$data)
+      dimnames(mwall) <- NULL
+    }
+    if (!is.vector(mwall) && ncol(mwall) > 1) { 
+      stop("`mwall` should be a vector of values (or column vector) but it had more than one column.") 
+    }
+    mwall <- as.logical(mwall)
+
+    # Handle case if no medial wall vertices were detected.
     if (all(mwall)) {
       msg <- paste0(msg,
         "The ",side," medial wall mask obtained from ",mwall_source,
@@ -154,72 +170,65 @@ make_cortex <- function(
 #' Make "xifti" Subcortical Components
 #' 
 #' Coerce subcortical data into valid entries for \code{xifti$data$subcort}
-#'  and \code{xifti$meta$subcort}. All data arguments can be matrices/arrays. 
-#'  Additionally, the subcortical volume and labels can be paths to NIFTI files.
-#'  If the mask is not provided, it will be inferred from the labels, or the 
-#'  volume if the labels are already vectorized.
-#' 
-#' \code{subcortVol} is either a 3D/4D data array (i x j x k x T) or a 
-#'  vectorized data matrix (V_S voxels x T measurements). If it's vectorized, 
-#'  voxels should be in spatial order.
-#' 
-#'  \code{subcortLabs} is either a 3D data array (i x j x k) or a V_S-length 
-#'  vector of subcortical brainstructure labels (as factors) or their indices 
-#'  (as integers): see \code{\link{substructure_table}}. If it's vectorized,
-#'  the labels should be in spatial order.
-#'  
-#'  \code{subcortMask} is a logical 3D data array (i x j x k) where \code{TRUE}
-#'  values indicate voxels inside the brain mask. If it is not provided, the
-#'  mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
-#'  (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
-#'  \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
-#'  is not provided, the mask cannot be inferred so an error occur.
-#' 
-#' @param vol represents the data values of the subcortical volume. It is either 
-#'  a path to a NIFTI file, a 3D/4D data array (i x j x k x T), or a vectorized 
-#'  data matrix (V_S voxels x T measurements). If it's vectorized, voxels should 
-#'  be in spatial order.
+#'  and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
+#'  NIFTI file paths. If the mask is not provided, it will be inferred from the 
+#'  labels.
+#'
+#' @param vol represents the data values of the subcortex. It is either a NIFTI 
+#'  file path, 3D/4D data array (\eqn{i x j x k x T}), or a vectorized data 
+#'  matrix (\eqn{V_S} voxels x \eqn{T} measurements). If it's vectorized, the voxels 
+#'  should be in spatial order.
 #' @param labs represents the brainstructure labels of each voxel: see
-#'  \code{\link{substructure_table}}. It is either a path to a NIFTI file, a 3D 
-#'  data array (i x j x k) of brainstructure indices 3-21 with 0 representing 
-#'  out-of-mask voxels; or, a V_S-length vector in spatial order with 
-#'  brainstructure names as factors, or with brainstructure indices as integers.
-#' @param mask is a logical 3D data array (i x j x k) where \code{TRUE}
-#'  values indicate voxels inside the brain mask. If it is not provided, the
-#'  mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
-#'  (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
-#'  \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
-#'  is not provided, the mask cannot be inferred so an error occur.
+#'  \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array 
+#'  (\eqn{i x j x k}) of numeric brainstructure indices, or a \eqn{V_S} length
+#'  vector in spatial order with brainstructure names as factors or integer
+#'  indices. The indices should be 3-21 (2 and 3 correspond to left and right
+#'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
+#'  out-of-mask voxels.
+#' @param mask is a NIFTI file path or logical 3D data array (\eqn{i x j x k}) where \code{TRUE}
+#'  values indicate subcortical voxels (in-mask). If it is not provided, the
+#'  mask will be inferred from voxels with labels \code{0} or \code{NA} in 
+#'  \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
+#'  is not provided, the mask cannot be inferred so an error will occur.
 #' @param validate_mask If \code{mask} is provided, set this to \code{TRUE} to 
-#'  check that the mask only removes NA- and zero-valued voxels in \code{vol} 
-#'  and \code{labs}. Default: \code{FALSE} (saves time).
+#'  check that the mask only removes voxels with \code{NA} and \code{0} values 
+#'  in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).
 #'
 #' @keywords internal
+#' 
+#' @inheritSection labels_Description Label Levels
 #' 
 #' @return A list with components "data", "labels" and "mask". The first two
 #'  will be vectorized and ordered spatially.
 #' 
 #'  The volume can be recovered using: 
-#'    vol <- unmask_vol(data, mask, fill=NA) 
-#'    labs <- unmask_vol(labels, mask, fill=0) 
+#'    \code{vol <- unmask_vol(data, mask, fill=NA)}
+#'    \code{labs <- unmask_vol(labels, mask, fill=0)}
 #'
 #' @importFrom RNifti readNifti
 make_subcort <- function(
   vol, labs, mask=NULL, validate_mask=FALSE) {
 
   # Get vol.
-  if (is.fname(vol)) {
-    vol <- readNifti(vol)
-  }
+  if (is.fname(vol)) { vol <- readNifti(vol) }
   vol_ndims <- length(dim(vol))
   if (vol_ndims == 0) { stop("`vol` did not have any dimensions. Check that it is a matrix or array?") }
   if (vol_ndims == 1) { vol <- matrix(vol, ncol=1) }
   vol_is_vectorized <- vol_ndims < 3
 
   # Get labels.
-  if (is.fname(labs)) {
-    labs <- readNifti(labs)
+  if (is.fname(labs)) { labs <- readNifti(labs) }
+
+  labs_ndims <- length(dim(labs))
+  labs_is_vectorized <- labs_ndims < 3
+
+  # Make labels numeric.
+  if (labs_ndims < 2) {
+    labs <- as.numeric(labs)
+  } else {
+    labs <- array(as.numeric(labs), dim=dim(labs))
   }
+  
   ## Add 2 to non-zero label values.
   labs_vals <- sort(unique(as.numeric(labs)))
   if (all(labs_vals %in% 0:19)) {
@@ -233,14 +242,6 @@ make_subcort <- function(
   if (!(is.numeric(as.vector(labs)) || is.factor(labs))) { 
     stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
   }
-  labs_ndims <- length(dim(labs))
-  labs_is_vectorized <- labs_ndims < 3
-
-  if (labs_ndims < 2) {
-    labs <- as.numeric(labs)
-  } else {
-    labs <- array(as.numeric(labs), dim=dim(labs))
-  }
 
   # Infer mask if not provided.
   if (is.null(mask)) {
@@ -252,13 +253,14 @@ make_subcort <- function(
           stop("The mask inferred from the labels did not match the mask inferred from the volume (NA/0 values).")
         }
       }
-    } else if (!vol_is_vectorized) {
-      mask <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
+    #} else if (!vol_is_vectorized) {
+    #  mask <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
     } else {
-      stop("The mask could not be inferred. At least one of the volume or labels must not be vectorized, if the mask is not provided.")
+      stop("The mask could not be inferred. If the mask is not provided, the labels must not be vectorized.")
     }
   # Otherwise, validate it if requested.
   } else {
+    if (is.fname(mask)) { mask <- readNifti(mask) }
     if (is.numeric(mask)) { mask <- mask > 0 }
     stopifnot( is.logical(mask) )
     if (validate_mask) {
@@ -298,15 +300,18 @@ make_subcort <- function(
   )
 }
 
-#' Convert GIFTI to "xifti" Surface Components
+#' Convert "gifti" to "surface" object
 #'
-#' Convert a GIFTI that has been read in to a "surface" object.
+#' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
+#'  object.
 #'
-#' @param surf The GIFTI that has been read in. It should be a list with components
-#'  "pointset" and "triangle", optionally as subentries to the entry "data".
-#'
-#' @return The "surface" object, a list of vertices (spatial locations) and faces
-#'  (defined by three vertices).
+#' @param surf Either a file path to a surface GIFTI; a "gifti" object (or list
+#'  with entry \code{"data"} with subentries \code{"pointset"} and 
+#'  \code{"triangle"}); or a list with entries \code{"pointset"} and 
+#'  \code{"triangle"}.
+#' 
+#' @return The "surface" object: a list with components \code{"vertices"}
+#'  (3D spatial locations) and \code{"faces"} (defined by three vertices).
 #'
 #' @importFrom gifti readgii is.gifti
 #'
@@ -335,31 +340,30 @@ gifti_to_surface <- function(surf) {
   structure(surf, class="surface")
 }
 
-#' Make "xifti" Surface Components
+#' Convert "gifti" to "surface" object
+#'
+#' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
+#'  object.
+#'
+#' @param surf Either a file path to a surface GIFTI; a "gifti" object (or list
+#'  with entry \code{"data"} with subentries \code{"pointset"} and 
+#'  \code{"triangle"}); a list with entries \code{"pointset"} and 
+#'  \code{"triangle"}; or a "surface" object.
 #' 
-#' Coerce a file path, GIFTI object (list with entries "pointset" and "triangle",
-#'  optionally as subentries to the entry "data"), or "surface" object (list of 
-#'  vertices + faces) to a "surface" object.
+#' @return The "surface" object: a list with components \code{"vertices"}
+#'  (3D spatial locations) and \code{"faces"} (defined by three vertices).
 #'
-#' @param surf What to coerce to a surface.
-#'
-#' @return The "surface" object, a list of vertices (spatial locations) and faces
-#'  (defined by three vertices).
+#' @importFrom gifti readgii is.gifti
 #'
 #' @export
 #' 
-#' @importFrom gifti readgii is.gifti
 make_surf <- function(surf) {
 
-  x <- tryCatch(
-    { surf <- gifti_to_surface(surf) },
-    error = function(e){}
-  )
-  # TO DO because of tryCatch, need useful error message if file does not exist.
-
-  # Return cifti_surface or error.
-  if (!is.surf(surf)) {
-    stop("The object could not be converted into a surface.")
+  if (!suppressMessages(is.surf(surf))) {
+    surf <- gifti_to_surface(surf)
+    if (!is.surf(surf)) {
+      stop("The object could not be converted into a surface.")
+    }
   }
 
   structure(surf, class="surface")

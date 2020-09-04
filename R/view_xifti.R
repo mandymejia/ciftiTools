@@ -9,8 +9,8 @@
 #'  be reversed.
 #' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
 #' @param pos_half Use the positive half (black --> red --> yellow) only? Default: \code{FALSE}.
-#' @export
 #'
+#' @export
 #' @return A data.frame with two columns: color (character: color hex codes) and value (numeric).
 #'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
@@ -1078,26 +1078,38 @@ plot.xifti <- function(x, ...){
 
 #' @rdname view_xifti
 #' @export
-view_cifti <- viewCIfTI <- viewcii <- function(xifti, what=NULL, ...){
+view_cifti <- function(xifti, what=NULL, ...){
+  view_xifti(xifti, what=what, ...)
+}
+
+#' @rdname view_xifti
+#' @export
+viewCIfTI <- function(xifti, what=NULL, ...){
+  view_xifti(xifti, what=what, ...)
+}
+
+#' @rdname view_xifti
+#' @export
+viewcii <- function(xifti, what=NULL, ...){
   view_xifti(xifti, what=what, ...)
 }
 
 #' @rdname view_xifti_surface
 #' @export
-view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, idx=1,
+view_cifti_surface <- function(xifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("widget", "image", "video"), width=NULL, height=NULL,
-  bg=NULL, title=NULL, text_color="black",
+  mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti", write_dir=NULL,
-  colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
+  colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL){
 
   view_xifti_surface(
     xifti, idx,
     hemisphere, view,
-    mode, width, height,
-    bg, title, text_color,
+    mode, width, height, zoom,
+    bg, title, cex.title, text_color,
     fname, write_dir,
     colors, color_mode, zlim,
     surfL, surfR,
@@ -1106,9 +1118,94 @@ view_cifti_surface <- viewCIfTI_surface <- viewcii_surface <- function(xifti, id
   )
 }
 
+#' @rdname view_xifti_surface
+#' @export
+viewCIfTI_surface <- function(xifti, idx=1,
+  hemisphere=NULL, view=c("both", "lateral", "medial"),
+  mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
+  fname="xifti", write_dir=NULL,
+  colors=NULL, color_mode=NULL, zlim=NULL,
+  surfL=NULL, surfR=NULL,
+  colorbar_embedded=TRUE, colorbar_digits=NULL){
+
+  view_xifti_surface(
+    xifti, idx,
+    hemisphere, view,
+    mode, width, height, zoom,
+    bg, title, cex.title, text_color,
+    fname, write_dir,
+    colors, color_mode, zlim,
+    surfL, surfR,
+    colorbar_embedded,
+    colorbar_digits
+  )
+}
+
+#' @rdname view_xifti_surface
+#' @export
+viewcii_surface <- function(xifti, idx=1,
+  hemisphere=NULL, view=c("both", "lateral", "medial"),
+  mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
+  fname="xifti", write_dir=NULL,
+  colors=NULL, color_mode=NULL, zlim=NULL,
+  surfL=NULL, surfR=NULL,
+  colorbar_embedded=TRUE, colorbar_digits=NULL){
+
+  view_xifti_surface(
+    xifti, idx,
+    hemisphere, view,
+    mode, width, height, zoom,
+    bg, title, cex.title, text_color,
+    fname, write_dir,
+    colors, color_mode, zlim,
+    surfL, surfR,
+    colorbar_embedded,
+    colorbar_digits
+  )
+}
+
+
 #' @rdname view_xifti_volume
 #' @export
-view_cifti_volume <- viewCIfTI_volume <- viewcii_volume <- function(
+view_cifti_volume <- function(
+  xifti, structural_img="MNI", idx=1, plane="axial",
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  verbose=TRUE, ...) {
+
+  view_xifti_volume(
+    xifti=xifti,
+    structural_img=structural_img,
+    idx=idx, plane=plane,
+    num.slices=num.slices,
+    use_papaya=use_papaya,
+    z_min=z_min, z_max=z_max,
+    verbose=verbose, ...
+  )
+}
+
+#' @rdname view_xifti_volume
+#' @export
+viewCIfTI_volume <- function(
+  xifti, structural_img="MNI", idx=1, plane="axial",
+  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  verbose=TRUE, ...) {
+
+  view_xifti_volume(
+    xifti=xifti,
+    structural_img=structural_img,
+    idx=idx, plane=plane,
+    num.slices=num.slices,
+    use_papaya=use_papaya,
+    z_min=z_min, z_max=z_max,
+    verbose=verbose, ...
+  )
+}
+
+#' @rdname view_xifti_volume
+#' @export
+viewcii_volume <- function(
   xifti, structural_img="MNI", idx=1, plane="axial",
   num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
   verbose=TRUE, ...) {

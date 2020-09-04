@@ -9,7 +9,6 @@ read_cifti_separate(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
-  ROI_brainstructures = NULL,
   resamp_res = NULL,
   sep_keep = FALSE,
   sep_fnames = NULL,
@@ -34,16 +33,6 @@ to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
 cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 Default: \code{c("left","right")} (cortical surface only).}
-
-\item{ROI_brainstructures}{Character vector indicating which ROIs should be 
-obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
-be a subset of the \code{brainstructures} argument. 
-
-NOTE: ROIs are currently
-not fully supported by ciftiTools, since \code{"cifti"} objects will not contain
-the ROIs. A workaround would be to keep the separated/resampled files
-with \code{sep_keep}/\code{resamp_keep} and then read those in with
-\code{make_xifti}.}
 
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
@@ -136,12 +125,14 @@ Read a CIFTI file by separating it into GIFTI and NIFTI files
  and then reading each separated 
  component into R (\code{\link{make_xifti}}).
 }
-\details{
-This function uses a system wrapper for the "wb_command"
- executable. The user must first download and install the Connectome
- Workbench, available from
- \url{https://www.humanconnectome.org/software/get-connectome-workbench}.
- The \code{wb_path} argument is the path to the Connectime Workbench folder
- or executable.
+\section{Connectome Workbench Requirement}{
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench . 
+ The \code{wb_path} argument is the full file path to the Connectome 
+ Workbench folder. (The full file path to the 'wb_cmd' executable also 
+ works.)
 }
+
 \keyword{internal}

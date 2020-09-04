@@ -2,18 +2,21 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{gifti_to_surface}
 \alias{gifti_to_surface}
-\title{Convert GIFTI to "xifti" Surface Components}
+\title{Convert "gifti" to "surface" object}
 \usage{
 gifti_to_surface(surf)
 }
 \arguments{
-\item{surf}{The GIFTI that has been read in. It should be a list with components
-"pointset" and "triangle", optionally as subentries to the entry "data".}
+\item{surf}{Either a file path to a surface GIFTI; a "gifti" object (or list
+with entry \code{"data"} with subentries \code{"pointset"} and 
+\code{"triangle"}); or a list with entries \code{"pointset"} and 
+\code{"triangle"}.}
 }
 \value{
-The "surface" object, a list of vertices (spatial locations) and faces
- (defined by three vertices).
+The "surface" object: a list with components \code{"vertices"}
+ (3D spatial locations) and \code{"faces"} (defined by three vertices).
 }
 \description{
-Convert a GIFTI that has been read in to a "surface" object.
+Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
+ object.
 }

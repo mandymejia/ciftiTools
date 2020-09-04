@@ -2,7 +2,7 @@
 % Please edit documentation in R/template_xifti.R
 \name{template_xifti}
 \alias{template_xifti}
-\title{Make a template "xifti" object.}
+\title{Make a template "xifti" object}
 \usage{
 template_xifti()
 }
@@ -10,38 +10,30 @@ template_xifti()
 An empty "xifti" object with a valid list structure
 }
 \description{
-Make a template "xifti" object.
+Make a "xifti" object with all terminal entries \code{NULL}. Useful for
+ seeing the structure of a "xifti" object.
 }
-\keyword{"dlabels"}
-\keyword{"dscalar"}
-\keyword{"dtseries"}
-\keyword{(L}
-\keyword{(Name}
-\keyword{5}
-\keyword{Additional}
-\keyword{CIFTI}
-\keyword{Cols:}
-\keyword{For}
-\keyword{KRGBA)}
-\keyword{Rows}
-\keyword{are}
-\keyword{cifti$labels}
-\keyword{cifti$names}
-\keyword{cifti$time_start}
-\keyword{cifti$time_step}
-\keyword{cifti$time_unit}
-\keyword{column)}
-\keyword{data}
-\keyword{data.frame.}
-\keyword{depends}
-\keyword{each}
-\keyword{file:}
-\keyword{files:}
+\details{
+Additional metadata depends on the type of CIFTI file:
+
+ \enumerate{
+   \item{"dtseries"}{
+     \enumerate{
+       \item{time_start}{Start time}
+       \item{time_step}{The TR}
+       \item{time_unit}{Unit of time}
+     }
+   }
+   \item{"dscalar"}{
+     \enumerate{
+       \item{names}{Name of each data column}
+     }
+   }
+   \item{"dlabels"}{
+     \enumerate{
+       \item{labels}{(L x 5 data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+     }
+   }
+ }
+}
 \keyword{internal}
-\keyword{metadata}
-\keyword{named.}
-\keyword{of}
-\keyword{on}
-\keyword{the}
-\keyword{type}
-\keyword{x}

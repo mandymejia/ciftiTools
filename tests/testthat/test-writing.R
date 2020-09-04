@@ -18,30 +18,11 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
   tdir <- tempdir()
 
-  cii_fnames <- list(
-    dtseries = system.file(
-      "extdata",
-      "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii",
-      package="ciftiTools"
-    ),
-    dscalar = system.file(
-      "extdata",
-      "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii",
-      package="ciftiTools"
-    ),
-    dlabel = system.file(
-      "extdata",
-      "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii",
-      package="ciftiTools"
-    ),
-    ones = system.file(
-      "extdata",
-      "ones.dscalar.nii",
-      package="ciftiTools"
-    )
-  )
+  fnames <- ciftiTools:::get_example_files()
 
-  for (cii_fname in cii_fnames) {
+  for (cii_fname in fnames$cifti) {
+    cat("\n\n"); cat(cii_fname); cat("\n\n")
+
     # Read the CIFTI
     cii_info <- info_cifti(cii_fname)
     brainstructures <- cii_info$cifti$brainstructures
@@ -51,6 +32,7 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
     # Write and read back in
     write_cifti(cii, cii_fname2)
+    stopifnot(file.exists(cii_fname2))
     cii2 <- read_cifti(cii_fname2, brainstructures=brainstructures)
 
     # Check if same
@@ -63,14 +45,31 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
     # Put back together
     if ("left" %in% brainstructures) {
-      parts <- c(parts, list(cortexL=cii_sep$fname[cii_sep$label=="cortexL"]))
+      parts <- c(
+        parts, 
+        list(
+          cortexL = cii_sep["cortexL"], 
+          cortexL_mwall = cii_sep["ROIcortexL"]
+        )
+      )
     }
     if ("right" %in% brainstructures) {
-      parts <- c(parts, list(cortexR=cii_sep$fname[cii_sep$label=="cortexR"]))
-    }
+      parts <- c(
+        parts, 
+        list(
+          cortexR = cii_sep["cortexR"], 
+          cortexR_mwall = cii_sep["ROIcortexR"]
+        )
+      )    }
     if ("subcortical" %in% brainstructures) {
-      parts <- c(parts, list(subcortVol=cii_sep$fname[cii_sep$label=="subcortVol"]))
-      parts <- c(parts, list(subcortLabs=cii_sep$fname[cii_sep$label=="subcortLabs"]))
+      parts <- c(
+        parts, 
+        list(
+          subcortVol = cii_sep["subcortVol"],
+          subcortLabs = cii_sep["subcortLabs"],
+          subcortMask = cii_sep["ROIsubcortVol"]
+        )
+      )
     }
     cii2 <- do.call(ciftiTools:::make_xifti, parts)
 
@@ -80,24 +79,12 @@ test_that("Writing CIFTI and GIFTI files is working", {
   }
 
   # Writing surfaces
-  surfL <- make_surf(
-    system.file(
-      "extdata",
-      "Conte69.L.inflated.32k_fs_LR.surf.gii",
-      package="ciftiTools"
-    )
-  )
-  surfR <- make_surf(
-    system.file(
-      "extdata",
-      "Conte69.R.inflated.32k_fs_LR.surf.gii",
-      package="ciftiTools"
-    )
-  )
+  surfL <- make_surf(fnames$surf["left"])
+  surfR <- make_surf(fnames$surf["right"])
   surfL_fname2 <- file.path(tdir, "temp_L.surf.gii")
   surfR_fname2 <- file.path(tdir, "temp_R.surf.gii")
-  write_surf_gifti(surfL, surfL_fname2, side="left")
-  write_surf_gifti(surfR, surfR_fname2, side="right")
+  write_surf_gifti(surfL, surfL_fname2, hemisphere="left")
+  write_surf_gifti(surfR, surfR_fname2, hemisphere="right")
   expect_equal(surfL, make_surf(surfL_fname2))
   expect_equal(surfR, make_surf(surfR_fname2))
 })

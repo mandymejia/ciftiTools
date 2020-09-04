@@ -4,7 +4,7 @@
 \alias{separate_cifti}
 \alias{separateCIfTI}
 \alias{separatecii}
-\title{Separate a CIFTI as its NIFTI and GIFTI component files}
+\title{Separate a CIFTI file into GIFTI and NIFTI files.}
 \usage{
 separate_cifti(
   cifti_fname,
@@ -13,7 +13,7 @@ separate_cifti(
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLabs_fname = NULL,
-  ROI_brainstructures = NULL,
+  ROI_brainstructures = "all",
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
   ROIsubcortVol_fname = NULL,
@@ -28,7 +28,7 @@ separateCIfTI(
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLabs_fname = NULL,
-  ROI_brainstructures = NULL,
+  ROI_brainstructures = "all",
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
   ROIsubcortVol_fname = NULL,
@@ -43,7 +43,7 @@ separatecii(
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLabs_fname = NULL,
-  ROI_brainstructures = NULL,
+  ROI_brainstructures = "all",
   ROIcortexL_fname = NULL,
   ROIcortexR_fname = NULL,
   ROIsubcortVol_fname = NULL,
@@ -60,20 +60,34 @@ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 Default: \code{c("left","right")} (cortical surface only).}
 
-\item{cortexL_fname, cortexR_fname}{(Optional) the files to save the left and right cortex GIFTIs to. If not provided, 
-defaults to \code{"*[L/R].func.gii"}, where * is the file name component of \code{cifti_fname}. If the path is 
-relative, they will be saved in \code{write_dir}.}
+\item{cortexL_fname, cortexR_fname}{(Optional) metric GIFTI file names 
+(*.func.gii) to save the [left/right] cortex data to. If not provided, 
+defaults to \code{"*[L/R].func.gii"}, where * is the file name component of 
+\code{cifti_fname}. Will be written in \code{write_dir}.}
 
-\item{subcortVol_fname, subcortLabs_fname}{(Optional) where to save the subcortical volume and labels NIFTIs. If not 
-provided, defaults to \code{"[/.labels].nii.gz"}, where * is the file name component of \code{cifti_fname}. If the
-path is relative, they will be saved in \code{write_dir}.}
+\item{subcortVol_fname, subcortLabs_fname}{(Optional) NIFTI file names to save
+the subcortical [volume/labels] to. If not provided, defaults to 
+\code{"*[/.labels].nii"}, where * is the file name component of 
+\code{cifti_fname}. Will be written in \code{write_dir}.}
 
-\item{ROI_brainstructures}{Which ROIs should be obtained? NULL (default) to not get any ROIs. This should be a subset of the
-\code{brainstructures} argument.}
+\item{ROI_brainstructures}{Which ROIs should be obtained? \code{"all"} 
+(default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL} 
+to not obtain any ROIs. This should be a subset of \code{brainstructures}.}
 
-\item{ROIcortexL_fname, ROIcortexR_fname}{File names for cortex ROIs.}
+\item{ROIcortexL_fname, ROIcortexR_fname}{(Optional) metric GIFTI file names
+(*.func.gii) to save the [left/right] cortex ROI to. If not provided, 
+defaults to \code{"*ROI_[L/R].func.gii"}, where * is the file name component
+of \code{cifti_fname}. The cortical ROIs typically represent the medial wall 
+mask, with values of 1 for in-ROI (non-medial wall) vertices and 0 for 
+out-of-ROI (medial wall) vertices. Will be written in \code{write_dir}.}
 
-\item{ROIsubcortVol_fname}{File name for volume ROI.}
+\item{ROIsubcortVol_fname}{(Optional) NIFTI file names to save
+the subcortical ROI to. If not provided, defaults to 
+\code{"*ROI.nii"}, where * is the file name component of 
+\code{cifti_fname}. The subcortical ROI typically represents the volumetric
+mask for the entire subcortical structure, with values of 1 for in-ROI 
+(in subcortex) voxels and 0 for out-of-ROI (not in subcortex) voxels. Will 
+be written in \code{write_dir}.}
 
 \item{write_dir}{Where should the separated
  files be placed? \code{NULL} (default) will write them to
@@ -86,17 +100,37 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A data frame with column names "label" and "fname", and rows corresponding to each separate file.
+A named character vector with the file paths to the written 
+ NIFTI and GIFTI files.
 }
 \description{
-Separates a CIFTI file into GIFTIs for the cortical 
- (left and right) structures, and NIFTIs for the 
- subcortical structures. 
- This uses the \code{-cifti-separate} command from Connectome Workbench.
+Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files 
+ for the subcortical data and labels. ROIs can also be written to indicate 
+ the medial wall mask (cortex) and volume mask (subcortex). This uses the
+ Connectome Workbench command \code{-cifti-separate}.
 }
 \details{
-This function uses a system wrapper for the 'wb_command' executable. The user must first download and 
- install the Connectome Workbench, available from https://www.humanconnectome.org/software/get-connectome-workbench. 
- The 'wb_path' argument is the full file path to the Connectome Workbench folder. (The full file path to the 'wb_cmd' 
- executable also works.)
+Metadata such as time unit, start, and step (dtseries files), column names 
+ (dscalar files), and label names and colors (dlabel files) will not be 
+ written to the GIFTI/NIFTIs. 
+
+ ROI/medial wall behavior: If there are 32k vertices in the left cortex with
+ 3k representing the medial wall, then both \code{cortexL_fname} and 
+ \code{ROIcortexL_fname} will have 32k entries, 3k of which having a value of
+ 0 indicating the medial wall. The non-medial wall entries will have the 
+ data values in \code{cortexL_fname} and a value of 1 in 
+ \code{ROIcortexL_fname}. Thus, exporting \code{ROIcortexL_fname} is vital if 
+ the data values include 0, because 0-valued non-medial wall vertices and
+ medial wall vertices cannot be distinguished from one another within
+ \code{cortexL_fname} alone.
 }
+\section{Connectome Workbench Requirement}{
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench . 
+ The \code{wb_path} argument is the full file path to the Connectome 
+ Workbench folder. (The full file path to the 'wb_cmd' executable also 
+ works.)
+}
+

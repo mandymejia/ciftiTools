@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_xifti.R
 \name{cifti_component_suffix}
 \alias{cifti_component_suffix}
-\title{Get the default file name suffix for a certain type of GIFTI/NIFTI file}
+\title{Get CIFTI component suffix default}
 \usage{
 cifti_component_suffix(label, GIFTI_type = "func")
 }

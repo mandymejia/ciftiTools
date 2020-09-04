@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_nifti.R
 \name{write_subcort_nifti}
 \alias{write_subcort_nifti}
-\title{Write subcortical NIFTI}
+\title{Write subcortical data to NIFTI files}
 \usage{
 write_subcort_nifti(
   subcortVol,
@@ -10,33 +10,47 @@ write_subcort_nifti(
   subcortMask,
   subcortVol_fname,
   subcortLabs_fname,
+  ROIsubcortVol_fname = NULL,
   fill = 0,
   wb_path = NULL
 )
 }
 \arguments{
-\item{subcortVol}{V voxels by T measurements data matrix}
+\item{subcortVol}{A vectorized data matrix: V voxels by T measurements}
 
-\item{subcortLabs}{Numeric or factor vector corresponding to subcortical
-structure labels}
+\item{subcortLabs}{Numeric (0 and 3-21) or factor vector corresponding to 
+subcortical structure labels. See \code{\link{substructure_table}}.}
 
-\item{subcortMask}{The volumetric mask.}
+\item{subcortMask}{Logical volumetric mask. Values of 0 represent out-of-mask
+voxels (not subcortical), and values of 1 represent in-mask voxels
+(subcortical),}
 
-\item{subcortVol_fname}{What to name the data file}
+\item{subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname}{File path to
+a NIFTI to save the corresponding data. \code{ROIsubcortVol_fname} is
+optional but the rest is required.}
 
-\item{subcortLabs_fname}{What to name the labels file}
-
-\item{fill}{Out-of-mask values. Default: \code{0}.}
+\item{fill}{Values to use for out-of-mask voxels. Default: \code{0}.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
+\value{
+Named character vector with the \code{"subcortVol"}, 
+ \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written).
+}
 \description{
-Write subcortical NIFTI from vectorized data and labels, and the 
- subcortical mask.
+Write subcortical data to NIFTI files representing the data values,
+ subcortical structure labels, and volumetric mask. The input formats of
+ \code{subcortVol}, \code{subcortLabs}, and \code{subcortMask}
+ correspond to the data structures of \code{xifti$data$subcort},
+ \code{xifti$meta$subcort$labels} , and \code{xifti$meta$subcort$mask}
+ respectively. \code{subcortVol} and \code{subcortLabs} should be vectorized,
+ so if they are volumes consider using \code{oro.nifti::writeNIfTI}.
 }
 \details{
-To write out NIFTIs from the volumetric data and labels, use \code{writeNifti}
- directly.
+All file path arguments are required except \code{ROIsubcortVol_fname}. If
+ not provided, the volumetric mask will not be written. (It's redundant with
+ the 0 values in \code{subcortLabs_fname} because valid labels have positive
+ indexes.)
 }

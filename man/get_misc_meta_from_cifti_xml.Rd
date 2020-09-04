@@ -2,20 +2,21 @@
 % Please edit documentation in R/info_cifti.R
 \name{get_misc_meta_from_cifti_xml}
 \alias{get_misc_meta_from_cifti_xml}
-\title{Extract Misc Metadata from CIFTI Header}
+\title{Extract misc metadata from CIFTI}
 \usage{
 get_misc_meta_from_cifti_xml(xml, intent = 3000)
 }
 \arguments{
-\item{xml}{List representing "Metadata" entry XML (xii$CIFTI$Matrix$MetaData)}
+\item{xml}{List representing "Metadata" entry XML 
+(\code{xii$CIFTI$Matrix$MetaData})}
 
-\item{intent}{The CIFTI/NIFTI intent code. Not used right now, but may be later.
+\item{intent}{The CIFTI's NIFTI intent code. Not used right now, but may be later.
 Default: \code{3000} (NIFTI_INTENT_UNKNOWN)}
 }
 \value{
 The metadata, a list
 }
 \description{
-Extract Misc Metadata from CIFTI Header ("Metadata" entry)
+Extract misc metadata from CIFTI header XML ("Metadata" entry)
 }
 \keyword{internal}

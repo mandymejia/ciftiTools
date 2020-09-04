@@ -3,6 +3,8 @@
 \name{view_xifti_volume}
 \alias{view_xifti_volume}
 \alias{view_cifti_volume}
+\alias{viewCIfTI_volume}
+\alias{viewcii_volume}
 \title{Visualize xifti brain data}
 \usage{
 view_xifti_volume(
@@ -19,6 +21,32 @@ view_xifti_volume(
 )
 
 view_cifti_volume(
+  xifti,
+  structural_img = "MNI",
+  idx = 1,
+  plane = "axial",
+  num.slices = 12,
+  use_papaya = FALSE,
+  z_min = NULL,
+  z_max = NULL,
+  verbose = TRUE,
+  ...
+)
+
+viewCIfTI_volume(
+  xifti,
+  structural_img = "MNI",
+  idx = 1,
+  plane = "axial",
+  num.slices = 12,
+  use_papaya = FALSE,
+  z_min = NULL,
+  z_max = NULL,
+  verbose = TRUE,
+  ...
+)
+
+viewcii_volume(
   xifti,
   structural_img = "MNI",
   idx = 1,

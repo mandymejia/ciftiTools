@@ -1,7 +1,6 @@
 #' Resample a GIFTI file (with its ROI)
 #'
-#' @description Performs spatial resampling of NIFTI/GIFTI data on the cortical 
-#'  surface.
+#' Performs spatial resampling of GIFTI data on the cortical surface.
 #'
 #' @param original_fname The GIFTI file to resample.
 #' @param target_fname Where to save the resampled file.
@@ -14,17 +13,17 @@
 #' @param ROIcortex_original_fname The name of the ROI file corresponding to 
 #'  \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
 #'  or shouldn't be resampled.
-#' @param validROIcortex_target_fname The name of the resampled ROI file. Only 
+#' @param ROIcortex_target_fname The name of the resampled ROI file. Only 
 #'  applicable if \code{ROIcortex_original_fname} is provided.
 #' @param read_dir Directory to append to the path of every file name in
 #'  \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
 #' @param write_dir Directory to append to the path of every file name in
-#'  \code{target_fname} and \code{validROIcortex_target_fname}. If \code{NULL} 
+#'  \code{target_fname} and \code{ROIcortex_target_fname}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether resampled file was created.
+#' @return The resampled GIFTI file name, invisibly
 #'
 #' @importFrom gifti readgii
 #'
@@ -33,30 +32,12 @@
 resample_gifti <- function(
   original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
-  ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+  ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
 
   # ----------------------------------------------------------------------------
   # Check arguments. -----------------------------------------------------------
   # ----------------------------------------------------------------------------
-
-  # File names
-  original_fname <- format_path(original_fname, read_dir, mode=4)
-  stopifnot(file.exists(original_fname))
-  do_ROI <- !is.null(ROIcortex_original_fname)
-  if (do_ROI) {
-    ROIcortex_original_fname <- format_path(
-      ROIcortex_original_fname, read_dir, mode=4)
-    stopifnot(file.exists(ROIcortex_original_fname))
-  }
-  target_fname <- format_path(target_fname, write_dir, mode=2)
-  if (do_ROI) {
-    validROIcortex_target_fname <- format_path(
-      validROIcortex_target_fname, write_dir, mode=2)
-  }
-
-  # Hemisphere
-  hemisphere <- match.arg(hemisphere, c("left", "right"))
 
   # File type
   if (is.null(file_type)) {
@@ -72,6 +53,32 @@ resample_gifti <- function(
     }
   }
   file_type <- match.arg(file_type, c("metric", "surface"))
+
+  # Hemisphere
+  hemisphere <- match.arg(hemisphere, c("left", "right"))
+
+  # Original & target file names
+  original_fname <- format_path(original_fname, read_dir, mode=4)
+  stopifnot(file.exists(original_fname))
+  target_fname <- format_path(target_fname, write_dir, mode=2)
+
+  # Original ROI & target ROI file names
+  do_ROI <- !is.null(ROIcortex_original_fname)
+  if (do_ROI) {
+    ROIcortex_original_fname <- format_path(
+      ROIcortex_original_fname, read_dir, mode=4
+    )
+    stopifnot(file.exists(ROIcortex_original_fname))
+    if (is.null(ROIcortex_target_fname)) { 
+      ROIcortex_target_fname <- cifti_component_suffix(
+        paste0("ROIcortex", switch(hemisphere, left="L", right="R")), 
+        switch(file_type, metric="func", surface="surf")
+      ) 
+    }
+    ROIcortex_target_fname <- format_path(
+      ROIcortex_target_fname, write_dir, mode=2
+    )
+  }
 
   # Resolution
   if (is.null(original_res)) {
@@ -127,18 +134,28 @@ resample_gifti <- function(
   )
   if (do_ROI) {
     cmd <- paste(
-      cmd, "-current-roi", sys_path(ROIcortex_original_fname), 
-      "-valid-roi-out", sys_path(validROIcortex_target_fname)
+      cmd, 
+      "-current-roi", sys_path(ROIcortex_original_fname), 
+      "-valid-roi-out", sys_path(ROIcortex_target_fname)
     )
   }
   run_wb_cmd(cmd, wb_path)
+
+  if (do_ROI) {
+    out <- c(target_fname, ROIcortex_target_fname)
+    names(out) <- c(file_type, "ROI")
+  } else {
+    out <- target_fname
+    names(out) <- file_type
+  }
+  invisible(out)
 }
 
 #' Generate GIFTI sphere surface files
 #'
-#' @description This function generates a pair of GIFTI vertex-matched left and 
-#'  right spheres in the target resolution. These are required for resampling 
-#'  CIFTI and GIFTI files. 
+#' This function generates a pair of GIFTI vertex-matched left and right spheres
+#'  in the target resolution. These are required for resampling CIFTI and GIFTI 
+#'  files. 
 #'
 #' @param sphereL_fname File path to left-hemisphere spherical GIFTI to be 
 #'  created
@@ -149,7 +166,7 @@ resample_gifti <- function(
 #'  \code{NULL} (default), do not append any directory to the sphere file paths.
 #' @inheritParams wb_path_Param
 #'
-#' @return Logical indicating whether output files exist. 
+#' @return The names of the written sphere files, invisibly
 #' @keywords internal
 #'
 write_spheres <- function(
@@ -176,21 +193,21 @@ write_spheres <- function(
     wb_path
   )
 
-  invisible(file.exists(sphereL_fname) & file.exists(sphereR_fname))
+  invisible(list(sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname))
 }
 
 #' @rdname resample_gifti
 #' @export
 resampleGIfTI <- function(
-  original_fname, target_fname, 
+  original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
-  ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+  ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL){
 
   resample_gifti(
-    original_fname, target_fname, 
+    original_fname, target_fname, hemisphere,
     file_type=NULL, original_res=NULL, resamp_res,
-    ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+    ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
     read_dir=NULL, write_dir=NULL, wb_path=NULL
   )
 }
@@ -198,15 +215,15 @@ resampleGIfTI <- function(
 #' @rdname resample_gifti
 #' @export
 resamplegii <- function(
-  original_fname, target_fname, 
+  original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
-  ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+  ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL){
 
   resample_gifti(
-    original_fname, target_fname, 
+    original_fname, target_fname, hemisphere,
     file_type=NULL, original_res=NULL, resamp_res,
-    ROIcortex_original_fname=NULL, validROIcortex_target_fname=NULL,
+    ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
     read_dir=NULL, write_dir=NULL, wb_path=NULL
   )
 }

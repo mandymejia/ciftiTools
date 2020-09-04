@@ -86,4 +86,6 @@ write_cifti_from_separate <- function(
   }
 
   run_wb_cmd(cmd, wb_path)
+
+  invisible(cifti_fname)
 }

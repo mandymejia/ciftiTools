@@ -8,30 +8,11 @@ check_wb <- function() {
 test_that("Reading CIFTI and GIFTI files is working", {
   check_wb()
 
-  cii_fnames <- list(
-    dtseries = system.file(
-      "extdata",
-      "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii",
-      package="ciftiTools"
-    ),
-    dscalar = system.file(
-      "extdata",
-      "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii",
-      package="ciftiTools"
-    ),
-    dlabel = system.file(
-      "extdata",
-      "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii",
-      package="ciftiTools"
-    ),
-    ones = system.file(
-      "extdata",
-      "ones.dscalar.nii",
-      package="ciftiTools"
-    )
-  )
+  fnames <- ciftiTools:::get_example_files()
 
-  for (cii_fname in cii_fnames) {
+  for (cii_fname in fnames$cifti) {
+    cat("\n\n"); cat(cii_fname); cat("\n\n")
+
     # Read file in different ways
     cii_flat <- readcii(cii_fname, flat=TRUE)
     cii_info <- info_cifti(cii_fname)
@@ -45,19 +26,5 @@ test_that("Reading CIFTI and GIFTI files is working", {
   }
 
   # Reading surfaces
-  surfL <- make_surf(
-    system.file(
-      "extdata",
-      "Conte69.L.inflated.32k_fs_LR.surf.gii",
-      package="ciftiTools"
-    )
-  )
-  surfR <- make_surf(
-    system.file(
-      "extdata",
-      "Conte69.R.inflated.32k_fs_LR.surf.gii",
-      package="ciftiTools"
-    )
-  )
-  cii <- add_surf(cii, surfL=surfL, surfR=surfR)
+  cii <- add_surf(cii, surfL=fnames$surf["left"], surfR=fnames$surf["right"])
 })

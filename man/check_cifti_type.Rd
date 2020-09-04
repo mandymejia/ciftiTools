@@ -7,15 +7,15 @@
 check_cifti_type(intent, extn)
 }
 \arguments{
-\item{intent}{The NIFTI intent_code, as a numeric integer}
+\item{intent}{The NIFTI \code{intent_code}, as a numeric integer}
 
 \item{extn}{The file name extension, e.g. "dtseries.nii"}
 }
 \value{
-If the intent is supported, \code{TRUE}.
+If the intent is supported, returns \code{TRUE}.
  If the intent is not supported, an error is raised.
 }
 \description{
-Validate the file name extension and intent code.
+Check that a CIFTI's NIFTI intent matches its file name extension.
 }
 \keyword{internal}

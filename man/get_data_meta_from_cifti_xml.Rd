@@ -2,20 +2,21 @@
 % Please edit documentation in R/info_cifti.R
 \name{get_data_meta_from_cifti_xml}
 \alias{get_data_meta_from_cifti_xml}
-\title{Extract Data-related Metadata from CIFTI Header}
+\title{Extract data-related metadata from CIFTI}
 \usage{
 get_data_meta_from_cifti_xml(xml, intent = 3000)
 }
 \arguments{
-\item{intent}{The CIFTI/NIFTI intent code. Not used right now, but may be later.
-Default: \code{3000} (NIFTI_INTENT_UNKNOWN)}
+\item{intent}{The CIFTI's NIFTI intent code. Not used right now, but might be
+used later. Default: \code{3000} (NIFTI_INTENT_UNKNOWN)}
 
-\item{x}{List representing "MatrixIndicesMap" entry XML (xii$CIFTI$Matrix[[3]])}
+\item{x}{List representing "MatrixIndicesMap" entry XML 
+(\code{xii$CIFTI$Matrix[[3]]})}
 }
 \value{
 The metadata, a list
 }
 \description{
-Extract Data-related Metadata from CIFTI Header (second "MatrixIndicesMap" entry)
+Extract data-related metadata from CIFTI header XML (second "MatrixIndicesMap" entry)
 }
 \keyword{internal}

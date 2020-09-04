@@ -32,6 +32,19 @@
 #' @name labels_Description
 NULL
 
+#' Connectome_Workbench
+#' 
+#' @section Connectome Workbench Requirement:
+#'  This function uses a system wrapper for the 'wb_command' executable. The 
+#'  user must first download and install the Connectome Workbench, available 
+#'  from https://www.humanconnectome.org/software/get-connectome-workbench . 
+#'  The \code{wb_path} argument is the full file path to the Connectome 
+#'  Workbench folder. (The full file path to the 'wb_cmd' executable also 
+#'  works.)
+#'  
+#' @name Connectome_Workbench_Description
+NULL
+
 #' brainstructures
 #'
 #' @param brainstructures Character vector indicating which brain structure(s) 
@@ -173,6 +186,24 @@ NULL
 #'  The \code{write_dir} argument can be used to place each separated file in
 #'  the same directory. 
 #' @name sep_fnames_Param
+NULL
+
+#' surfL
+#' 
+#' @param surfL (Optional) Left brain surface model. Can be a file
+#'  path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
+#'  \code{"gifti"} object representing surface geometry, or a \code{"surface"}
+#'  object.
+#' @name surfL_Param_optional
+NULL
+
+#' surfR
+#' 
+#' @param surfR (Optional) Right brain surface model. Can be a file
+#'  path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
+#'  \code{"gifti"} object representing surface geometry, or a \code{"surface"}
+#'  object.
+#' @name surfR_Param_optional
 NULL
 
 #' surfL_fname

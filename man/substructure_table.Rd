@@ -2,14 +2,21 @@
 % Please edit documentation in R/info_cifti.R
 \name{substructure_table}
 \alias{substructure_table}
-\title{Substructure Table}
+\title{Substructure table}
 \usage{
 substructure_table()
 }
 \value{
-The substructure table.
+A data.frame with each substructure along the rows. The first
+ column gives the CIFTI format name and the second column gives the
+ \code{ciftiTools} name.
 }
 \description{
-Table of labels with original names from the CIFTI file, and new names
- based on ft_read_cifti.
+Table of labels for cortex hemispheres (left and right) and subcortical
+ substructures. The names used by the CIFTI format and the names used by
+ \code{ciftiTools} are given.
+}
+\details{
+The names used by \code{ciftiTools} are based on those in 
+ \code{FT_READ_CIFTI} from the FieldTrip MATLAB toolbox.
 }
