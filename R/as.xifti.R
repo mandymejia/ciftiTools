@@ -20,7 +20,7 @@
 #'  If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
 #'  for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
 #'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or for
-#'  only non-medial wall vertices ($(V_L - mwall_L)$ x \eqn{T} data matrix). The
+#'  only non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix). The
 #'  medial wall mask will be the \code{0} values in \code{cortexL_mwall}. 
 #'  The medial wall mask should be provided for ".dscalar.nii" and ".dtseries.nii"
 #'  files where the medial wall data is not present. 
@@ -39,7 +39,7 @@
 #'  If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
 #'  for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
 #'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or for
-#'  only non-medial wall vertices ($(V_R - mwall_R)$ x \eqn{T} data matrix). The
+#'  only non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix). The
 #'  medial wall mask will be the \code{0} values in \code{cortexR_mwall}. 
 #'  The medial wall mask should be provided for ".dscalar.nii" and ".dtseries.nii"
 #'  files where the medial wall data is not present. 
@@ -48,12 +48,12 @@
 #'  \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.
 #' @param subcortVol,subcortLabs,subcortMask \code{subcortVol} represents the
 #'  data values of the subcortex. It is either a 3D/4D data array
-#'  ($i$ x $j$ x $k$ x \eqn{T}), or a vectorized data matrix (\eqn{V_S} voxels \eqn{x T} 
+#'  (\eqn{i x j x k x T}), or a vectorized data matrix (\eqn{V_S} voxels \eqn{x T} 
 #'  measurements). If it's vectorized, the voxels should be in spatial order.
 #' 
 #'  \code{subcortLabs} represents the brainstructure labels of each voxel: see
 #'  \code{\link{substructure_table}}. It is either a 3D data array 
-#'  ($i$ x $j$ x $k$) of numeric brainstructure indices, or a \eqn{V_S} length
+#'  (\eqn{i x j x k}) of numeric brainstructure indices, or a \eqn{V_S} length
 #'  vector in spatial order with brainstructure names as factors or integer
 #'  indices. The indices should be 3-21 (2 and 3 correspond to left and right
 #'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
