@@ -77,8 +77,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A data frame with column names "label" and "fname", and 
- rows corresponding to each resampled file.
+A named character vector of file paths to each resampled file.
 }
 \description{
 Performs spatial resampling of various CIFTI file components on 
@@ -87,8 +86,7 @@ Performs spatial resampling of various CIFTI file components on
  \code{surfL_original_fname} and \code{surfR_original_fname}.
 }
 \details{
-Performs resampling of CIFTI files using Connectome Workbench tools.  
- Step 1: Generate spheres in the original and target resolutions
+Step 1: Generate spheres in the original and target resolutions
  Step 2: Use -metric-resample to resample surface/cortex files 
  Step 3: Use -surface-resample to resample gifti files
 }

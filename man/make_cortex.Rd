@@ -16,7 +16,7 @@ make_cortex(
 )
 }
 \arguments{
-\item{cortex}{A file path, GIFTI object, or data matrix representing
+\item{cortex}{A file path, metric "gifti" object, or data matrix representing
 cortical data.}
 
 \item{mwall}{The medial wall mask: a logical vector with \code{FALSE} values 
@@ -47,7 +47,7 @@ to print warnings.}
 A list with components "data" and "mwall".
 }
 \description{
-Coerce a file path, GIFTI object, or data matrix to a data matrix
+Coerce a file path, metric "gifti" object, or data matrix to a data matrix
  representing cortical data (and optionally a corresponding mask). That is,
  entries for \code{xifti$data$cortex_[left/right]} and 
  \code{xifti$meta$cortex}.

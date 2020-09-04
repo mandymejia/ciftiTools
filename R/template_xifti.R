@@ -1,21 +1,34 @@
-#' Make a template "xifti" object.
+#' Make a template "xifti" object
+#' 
+#' Make a "xifti" object with all terminal entries \code{NULL}. Useful for
+#'  seeing the structure of a "xifti" object.
+#' 
+#' Additional metadata depends on the type of CIFTI file:
+#' 
+#'  \enumerate{
+#'    \item{"dtseries"}{
+#'      \enumerate{
+#'        \item{time_start}{Start time}
+#'        \item{time_step}{The TR}
+#'        \item{time_unit}{Unit of time}
+#'      }
+#'    }
+#'    \item{"dscalar"}{
+#'      \enumerate{
+#'        \item{names}{Name of each data column}
+#'      }
+#'    }
+#'    \item{"dlabels"}{
+#'      \enumerate{
+#'        \item{labels}{(L x 5 data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+#'      }
+#'    }
+#'  }
+#'
 #' 
 #' @return An empty "xifti" object with a valid list structure
 #'
 #' @keywords internal
-#' 
-#'  Additional metadata depends on the type of CIFTI file:
-#' 
-#'  For "dtseries" files:
-#'    cifti$time_start
-#'    cifti$time_step
-#'    cifti$time_unit
-#' 
-#'  For "dscalar" files:
-#'    cifti$names       (Name of each data column)
-#' 
-#'  For "dlabels" files:
-#'    cifti$labels      (L x 5 data.frame. Rows are named. Cols: KRGBA)
 #' 
 template_xifti <- function(){
   xifti <- list(

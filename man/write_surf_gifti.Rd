@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_gifti.R
 \name{write_surf_gifti}
 \alias{write_surf_gifti}
-\title{Write CIFTI Surface Data to GIFTI}
+\title{Write CIFTI surface data to GIFTI}
 \usage{
 write_surf_gifti(
   gii,

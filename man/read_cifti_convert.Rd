@@ -44,7 +44,9 @@ A \code{"xifti"} object. See \code{\link{is.xifti}}.
 Read a CIFTI file by exporting it as a single GIFTI 
  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
  and obtaining the brainordinate mapping using 
- \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
+ \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}).
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -52,4 +54,5 @@ Read a CIFTI file by exporting it as a single GIFTI
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+
 \keyword{internal}

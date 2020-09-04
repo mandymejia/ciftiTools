@@ -2,7 +2,7 @@
 % Please edit documentation in R/flatten_xifti.R
 \name{flatten_xifti}
 \alias{flatten_xifti}
-\title{Flatten a "xifti"}
+\title{Flatten a \code{"xifti"}}
 \usage{
 flatten_xifti(xifti, medial_wall = NULL, subcort_order = "alphabetical")
 }
@@ -17,13 +17,13 @@ to the medial wall mask.}
 
 \item{subcort_order}{"alphabetical" (default) to match 
 \code{-cifti-export-dense-mapping}, or "spatial" which is already the
-ordering used in the "xifti".}
+ordering used in the \code{"xifti"}.}
 }
 \value{
-The flattened "xifti", a data matrix.
+The flattened \code{"xifti"}, a data matrix.
 }
 \description{
-Concatenates the data in a "xifti" object into a single matrix.
+Concatenates the data in a \code{"xifti"} object into a single matrix.
 }
 \details{
 If all brain structures are present, and if 

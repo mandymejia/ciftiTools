@@ -27,7 +27,7 @@
 as.metric_gifti <- function(
   data, hemisphere=c("left", "right"), 
   intent="NONE", data_type=NULL){
-  
+
   # Get hemisphere.
   hemisphere <- match.arg(hemisphere, c("left", "right"))
 
@@ -63,12 +63,14 @@ as.metric_gifti <- function(
     data <- data$data
     names(data) <- rep(intent_short, length(data))
   }
-
+  
   # Format data as a list.
+  if (is.vector(data)) { data <- matrix(data, ncol=1) }
   if (suppressMessages(is.nummat(data))) {
     data <- split(t(data), seq(ncol(data)))
     names(data) <- rep(intent_short, length(data))
   }
+
   if (!is.list(data)) {
     stop("data must be a numeric matrix or a list of numeric vectors.")
   }

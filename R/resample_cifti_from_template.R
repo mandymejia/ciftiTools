@@ -1,13 +1,7 @@
 #' Resample a CIFTI from a template
 #'
-#' @description Resample a CIFTI from a template. This uses the
-#'  \code{-cifti-resample} command from Connectome Workbench.
-#'
-#'  This function uses a system wrapper for the 'wb_command' executable. The 
-#'  user must first download and install the Connectome Workbench, available 
-#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
-#'  folder. (The full file path to the 'wb_cmd' executable also works.)
+#' Resample a CIFTI from a template CIFTI using the \code{-cifti-resample} 
+#'  Connectome Workbench command.
 #' 
 #' @param original_fname A CIFTI file to resample.
 #' @param template_fname A CIFTI file to use as the template.
@@ -15,7 +9,7 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return The \code{target_fname}, invisibly
-#'
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @export
 #'
 resample_cifti_from_template <- function(
@@ -29,7 +23,10 @@ resample_cifti_from_template <- function(
   template_brainstructures <- template_info$cifti$brainstructures  
   for (b in brainstructures) {
     if (!(b %in% template_brainstructures)) {
-      stop(paste("The", b, "brainstructure is in the original CIFTI but not in the template."))
+      stop(paste(
+        "The", b, 
+        "brainstructure is in the original CIFTI but not in the template."
+      ))
     }
   }
 

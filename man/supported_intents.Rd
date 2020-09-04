@@ -2,14 +2,18 @@
 % Please edit documentation in R/info_cifti.R
 \name{supported_intents}
 \alias{supported_intents}
-\title{Table of CIFTI File Types (Intents) Supported By ciftiTools}
+\title{The NIFTI intents supported by \code{ciftiTools}}
 \usage{
 supported_intents()
 }
 \value{
-A data.frame with each supported file type along the rows.
+A data.frame with each supported file type along the rows, and
+ column names "extension", "intent_code", "value", and "intent_name"
 }
 \description{
-See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
+Table of CIFTI file types (NIFTI intents) supported By \code{ciftiTools}.
 }
-\keyword{internal}
+\details{
+See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
+ for information about the different NIFTI intents.
+}

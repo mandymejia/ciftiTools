@@ -26,7 +26,7 @@ test_that("Resampling CIFTI and GIFTI files is working", {
     # read_cifti with resampling, with surfaces
     cii <- readcii(
       cii_fname, brainstructures=brainstructures,
-      resamp_res=10000, surfL=fnames$surf$left, surfR=fnames$surf$right
+      resamp_res=10000, surfL=fnames$surf["left"], surfR=fnames$surf["right"]
     )
 
     # resample_surf
@@ -38,10 +38,10 @@ test_that("Resampling CIFTI and GIFTI files is working", {
     # resample_cifti
     cii2_fnames <- resample_cifti(
       cii_fname, basename(cii_fname), resamp_res=4001,
-      surfL_original_fname = fnames$surf$left,
-      surfR_original_fname = fnames$surf$right,
-      surfL_target_fname = basename(fnames$surf$left),
-      surfR_target_fname = basename(fnames$surf$right),
+      surfL_original_fname = fnames$surf["left"],
+      surfR_original_fname = fnames$surf["right"],
+      surfL_target_fname = basename(fnames$surf["left"]),
+      surfR_target_fname = basename(fnames$surf["right"]),
       write_dir = tdir
     )
     cii2 <- readcii(

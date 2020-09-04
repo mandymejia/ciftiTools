@@ -23,6 +23,7 @@ resample_gifti(
 resampleGIfTI(
   original_fname,
   target_fname,
+  hemisphere,
   file_type = NULL,
   original_res = NULL,
   resamp_res,
@@ -36,6 +37,7 @@ resampleGIfTI(
 resamplegii(
   original_fname,
   target_fname,
+  hemisphere,
   file_type = NULL,
   original_res = NULL,
   resamp_res,
@@ -85,6 +87,5 @@ If not provided, should be set with
 The resampled GIFTI file name, invisibly
 }
 \description{
-Performs spatial resampling of NIFTI/GIFTI data on the cortical 
- surface.
+Performs spatial resampling of GIFTI data on the cortical surface.
 }

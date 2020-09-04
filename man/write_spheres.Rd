@@ -33,8 +33,8 @@ If not provided, should be set with
 The names of the written sphere files, invisibly
 }
 \description{
-This function generates a pair of GIFTI vertex-matched left and 
- right spheres in the target resolution. These are required for resampling 
- CIFTI and GIFTI files.
+This function generates a pair of GIFTI vertex-matched left and right spheres
+ in the target resolution. These are required for resampling CIFTI and GIFTI 
+ files.
 }
 \keyword{internal}

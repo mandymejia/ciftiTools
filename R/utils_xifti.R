@@ -79,6 +79,8 @@ get_cifti_extn <- function(cifti_fname) {
   extn
 }
 
+#' Get CIFTI component suffix default
+#' 
 #' Get the default file name suffix for a certain type of GIFTI/NIFTI file
 #'
 #' @param label the file type: one of 
@@ -109,6 +111,8 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
   )
 }
 
+#' Get resampled file name default
+#' 
 #' Get the default file name for a resampled file.
 #'
 #' @param original_fname The original file name
@@ -124,7 +128,7 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
   paste("resampled", round(resamp_res), bname, sep="_")
 }
 
-#' Unmask Cortex
+#' Unmask cortex
 #' 
 #' Get cortex data with medial wall vertices
 #' 

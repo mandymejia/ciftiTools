@@ -7,58 +7,73 @@
 make_subcort(vol, labs, mask = NULL, validate_mask = FALSE)
 }
 \arguments{
-\item{vol}{represents the data values of the subcortical volume. It is either 
-a path to a NIFTI file, a 3D/4D data array (i x j x k x T), or a vectorized 
-data matrix (V_S voxels x T measurements). If it's vectorized, voxels should 
-be in spatial order.}
+\item{vol}{represents the data values of the subcortex. It is either a NIFTI 
+file path, 3D/4D data array ($i$ x $j$ x $k$ x $T$), or a vectorized data 
+matrix ($V_S$ voxels x $T$ measurements). If it's vectorized, the voxels 
+should be in spatial order.}
 
 \item{labs}{represents the brainstructure labels of each voxel: see
-\code{\link{substructure_table}}. It is either a path to a NIFTI file, a 3D 
-data array (i x j x k) of numeric brainstructure indices 3-21 with 0 representing 
-out-of-mask voxels; or, a V_S-length vector in spatial order with 
-brainstructure names as factors, or with numeric brainstructure indices as integers.}
+\code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array 
+($i$ x $j$ x $k$) of numeric brainstructure indices, or a $V_S$ length
+vector in spatial order with brainstructure names as factors or integer
+indices. The indices should be 3-21 (2 and 3 correspond to left and right
+cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
+out-of-mask voxels.}
 
-\item{mask}{is a logical 3D data array (i x j x k) where \code{TRUE}
-values indicate voxels inside the brain mask. If it is not provided, the
-mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
-(or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
-\code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
-is not provided, the mask cannot be inferred so an error occur.}
+\item{mask}{is a NIFTI file path or logical 3D data array (i x j x k) where \code{TRUE}
+values indicate subcortical voxels (in-mask). If it is not provided, the
+mask will be inferred from voxels with labels \code{0} or \code{NA} in 
+\code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
+is not provided, the mask cannot be inferred so an error will occur.}
 
 \item{validate_mask}{If \code{mask} is provided, set this to \code{TRUE} to 
-check that the mask only removes NA- and zero-valued voxels in \code{vol} 
-and \code{labs}. Default: \code{FALSE} (saves time).}
+check that the mask only removes voxels with \code{NA} and \code{0} values 
+in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).}
 }
 \value{
 A list with components "data", "labels" and "mask". The first two
  will be vectorized and ordered spatially.
 
  The volume can be recovered using: 
-   vol <- unmask_vol(data, mask, fill=NA) 
-   labs <- unmask_vol(labels, mask, fill=0)
+   \code{vol <- unmask_vol(data, mask, fill=NA)}
+   \code{labs <- unmask_vol(labels, mask, fill=0)}
 }
 \description{
 Coerce subcortical data into valid entries for \code{xifti$data$subcort}
- and \code{xifti$meta$subcort}. All data arguments can be matrices/arrays. 
- Additionally, the subcortical volume and labels can be paths to NIFTI files.
- If the mask is not provided, it will be inferred from the labels, or the 
- volume if the labels are already vectorized.
+ and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
+ NIFTI file paths. If the mask is not provided, it will be inferred from the 
+ labels.
 }
-\details{
-\code{subcortVol} is either a 3D/4D data array (i x j x k x T) or a 
- vectorized data matrix (V_S voxels x T measurements). If it's vectorized, 
- voxels should be in spatial order.
+\section{Label Levels}{
 
- \code{subcortLabs} is either a 3D data array (i x j x k) or a V_S-length 
- vector of subcortical brainstructure labels (as factors) or their indices 
- (as integers): see \code{\link{substructure_table}}. If it's vectorized,
- the labels should be in spatial order.
- 
- \code{subcortMask} is a logical 3D data array (i x j x k) where \code{TRUE}
- values indicate voxels inside the brain mask. If it is not provided, the
- mask will be inferred from zero- and NA-valued voxels in \code{subcortLabs}
- (or \code{subcortVol} if \code{subcortLabs} is vectorized). If both 
- \code{subcortVol} and \code{subcortLabs} are vectorized and \code{subcortMask}
- is not provided, the mask cannot be inferred so an error occur.
+ \code{xifti$meta$subcort$labels} is a factor with the following levels:
+
+ \describe{
+   \item{1}{Cortex-L}
+   \item{2}{Cortex-R}
+   \item{3}{Accumbens-L}
+   \item{4}{Accumbens-R}
+   \item{5}{Amygdala-L}
+   \item{6}{Amygdala-R}
+   \item{7}{Brain Stem}
+   \item{8}{Caudate-L}
+   \item{9}{Caudate-R}
+   \item{10}{Cerebellum-L}
+   \item{11}{Cerebellum-R}
+   \item{12}{Diencephalon-L}
+   \item{13}{Diencephalon-R}
+   \item{14}{Hippocampus-L}
+   \item{15}{Hippocampus-R}
+   \item{16}{Pallidum-L}
+   \item{17}{Pallidum-R}
+   \item{18}{Putamen-L}
+   \item{19}{Putamen-R}
+   \item{20}{Thalamus-L}
+   \item{21}{Thalamus-R}
+ }
+
+ Levels 1-21 correspond to the same structures as given by 
+ \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
+
 \keyword{internal}

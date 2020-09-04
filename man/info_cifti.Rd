@@ -4,7 +4,7 @@
 \alias{info_cifti}
 \alias{infoCIfTI}
 \alias{infocii}
-\title{Get CIFTI Header}
+\title{Get CIFTI metadata}
 \usage{
 info_cifti(cifti_fname, wb_path = NULL)
 
@@ -20,30 +20,42 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-The metadata component of a "xifti"
-
- Additional metadata depends on the type of CIFTI file:
-
- For "dtseries" files:
-   cifti$time_start
-   cifti$time_step
-   cifti$time_unit
-
- For "dscalar" files:
-   cifti$names       (Name of each data column)
-
- For "dlabels" files:
-   cifti$labels      (L x 5 data.frame. Rows are named. Cols: KRGBA)
+The metadata component of a "xifti" for the input CIFTI file
 }
 \description{
-Wrapper for the Connectome Workbench command 
- \code{-nifti-information}. It parses the CIFTI header XML to obtain:
+Get CIFTI metadata from the NIFTI header and XML using the Connectome
+ Workbench command \code{-nifti-information}. The information is formatted as 
+ the \code{meta} component in a \code{"xifti"} object 
+ (see \code{\link{template_xifti}}), and includes:
+ \enumerate{
+   \item medial wall masks for the left and right cortex
+   \item the subcortical labels (ordered spatially)
+   \item the subcortical mask
+   \item other NIFTI intent-specific metadata
+ }
 }
 \details{
-medial wall masks for the left and right cortex,
- the subcortical labels (ordered spatially),
- the subcortical mask,
- and other metadata.
+Additional metadata depends on the type of CIFTI file:
+
+ \enumerate{
+   \item{"dtseries"}{
+     \enumerate{
+       \item{time_start}{Start time}
+       \item{time_step}{The TR}
+       \item{time_unit}{Unit of time}
+     }
+   }
+   \item{"dscalar"}{
+     \enumerate{
+       \item{names}{Name of each data column}
+     }
+   }
+   \item{"dlabels"}{
+     \enumerate{
+       \item{labels}{(L x 5 data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+     }
+   }
+ }
 }
 \section{Label Levels}{
 

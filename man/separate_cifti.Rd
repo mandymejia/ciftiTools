@@ -100,8 +100,8 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A data.frame with column names "label" and "fname", and rows 
- corresponding to each separated NIFTI/GIFTI file.
+A named character vector with the file paths to the written 
+ NIFTI and GIFTI files.
 }
 \description{
 Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files 
@@ -123,6 +123,8 @@ Metadata such as time unit, start, and step (dtseries files), column names
  the data values include 0, because 0-valued non-medial wall vertices and
  medial wall vertices cannot be distinguished from one another within
  \code{cortexL_fname} alone.
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -130,3 +132,4 @@ Metadata such as time unit, start, and step (dtseries files), column names
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+

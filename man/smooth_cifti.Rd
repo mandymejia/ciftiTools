@@ -80,6 +80,8 @@ The \code{cifti_target_fname}, invisibly
 \description{
 Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
  from Connectome Workbench.
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -87,3 +89,4 @@ Smooth CIFTI data. This uses the \code{-cifti-smoothing} command
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+

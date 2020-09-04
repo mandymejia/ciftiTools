@@ -5,8 +5,7 @@
 #'  GIFTI surface geometry files can additionally be included: see 
 #'  \code{surfL_original_fname} and \code{surfR_original_fname}.
 #'
-#' Performs resampling of CIFTI files using Connectome Workbench tools.  
-#'  Step 1: Generate spheres in the original and target resolutions
+#' Step 1: Generate spheres in the original and target resolutions
 #'  Step 2: Use -metric-resample to resample surface/cortex files 
 #'  Step 3: Use -surface-resample to resample gifti files
 #' 
@@ -34,8 +33,7 @@
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return A data frame with column names "label" and "fname", and 
-#'  rows corresponding to each resampled file.
+#' @return A named character vector of file paths to each resampled file.
 #'
 #' @keywords internal
 #' 
@@ -155,13 +153,6 @@ resample_cifti_components <- function(
   # Step 2 and 3: Use -metric-resample or -surface-rsample to resample 
   #   cortex, ROI, and surface files into target resolution.
 
-  # Collect the paths to each file in a data.frame to return later. 
-  resamp_files <- data.frame(
-    label = names(target_fnames), 
-    fname = as.character(target_fnames),
-    stringsAsFactors=FALSE
-  )
-
   resample_gifti_kwargs_common <- list(
     original_res=original_res, resamp_res=resamp_res, wb_path=wb_path,
     #   Since we already appended read/write/sphere_target directories,
@@ -199,5 +190,5 @@ resample_cifti_components <- function(
     }
   }
   
-  invisible(resamp_files)
+  invisible(unlist(target_fnames))
 }

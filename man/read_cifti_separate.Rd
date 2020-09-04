@@ -124,6 +124,8 @@ Read a CIFTI file by separating it into GIFTI and NIFTI files
  (\code{\link{separate_cifti}}), optionally resampling them, 
  and then reading each separated 
  component into R (\code{\link{make_xifti}}).
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -131,4 +133,5 @@ Read a CIFTI file by separating it into GIFTI and NIFTI files
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+
 \keyword{internal}

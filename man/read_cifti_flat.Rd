@@ -40,7 +40,9 @@ Reads CIFTI data as a matrix by converting it to a GIFTI.
  non-empty brainordinates). All brainstructures will be obtained, but 
  they will be undifferentiable. Medial wall vertices and voxels outside the
  brain mask will not be included. No spatial information is included. This is 
- the fastest way to read in CIFTI data. 
+ the fastest way to read in CIFTI data.
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -48,4 +50,5 @@ Reads CIFTI data as a matrix by converting it to a GIFTI.
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+
 \keyword{internal}

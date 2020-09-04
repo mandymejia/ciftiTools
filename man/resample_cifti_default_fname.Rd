@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_xifti.R
 \name{resample_cifti_default_fname}
 \alias{resample_cifti_default_fname}
-\title{Get the default file name for a resampled file.}
+\title{Get resampled file name default}
 \usage{
 resample_cifti_default_fname(original_fname, resamp_res)
 }

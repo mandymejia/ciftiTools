@@ -26,5 +26,5 @@ test_that("Reading CIFTI and GIFTI files is working", {
   }
 
   # Reading surfaces
-  cii <- add_surf(cii, surfL=fnames$surf$left, surfR=fnames$surf$right)
+  cii <- add_surf(cii, surfL=fnames$surf["left"], surfR=fnames$surf["right"])
 })

@@ -2,19 +2,21 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_surf}
 \alias{make_surf}
-\title{Make "xifti" Surface Components}
+\title{Convert "gifti" to "surface" object}
 \usage{
 make_surf(surf)
 }
 \arguments{
-\item{surf}{What to coerce to a surface.}
+\item{surf}{Either a file path to a surface GIFTI; a "gifti" object (or list
+with entry \code{"data"} with subentries \code{"pointset"} and 
+\code{"triangle"}); a list with entries \code{"pointset"} and 
+\code{"triangle"}; or a "surface" object.}
 }
 \value{
-The "surface" object, a list of vertices (spatial locations) and faces
- (defined by three vertices).
+The "surface" object: a list with components \code{"vertices"}
+ (3D spatial locations) and \code{"faces"} (defined by three vertices).
 }
 \description{
-Coerce a file path, GIFTI object (list with entries "pointset" and "triangle",
- optionally as subentries to the entry "data"), or "surface" object (list of 
- vertices + faces) to a "surface" object.
+Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
+ object.
 }

@@ -22,8 +22,8 @@ test_that("Miscellaneous functions are working", {
       smooth_cifti(
         cii_fname, file.path(tdir, basename(cii_fname)),
         surface_sigma=3, volume_sigma=3,
-        surfL_fname=fnames$surf$left,
-        surfR_fname=fnames$surf$right,
+        surfL_fname=fnames$surf["left"],
+        surfR_fname=fnames$surf["right"],
         subcortical_zeroes_as_NA=TRUE
       ),
       brainstructures = brainstructures

@@ -1,7 +1,9 @@
 ---
 title: "ciftiTools Demo"
 date: "8/29/2020"
-output: html_document
+output: 
+  html_document: 
+    highlight: tango
 ---
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the following CIFTI file types: `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"`. It also supports the GIFTI surface geometry file, `".surf.gii"`. Reading, writing, and resampling CIFTI files is made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench).  The Workbench must be installed to use `ciftiTools`. Visualizing the CIFTI files is made possible using the `rgl` R package and integrated support of surface GIFTI files.
@@ -10,7 +12,6 @@ To get started, we load the `ciftiTools` package and indicate where to find the 
 
 ```{r}
 library(knitr)
-library(kableExtra)
 library(rgl)
 
 out_dir <- "output"
@@ -182,9 +183,9 @@ cii_new <- as.xifti(
   cortexL_mwall = cii$meta$cortex$medial_wall_mask$left,
   cortexR = apply(cii$data$cortex_right, 1, mean),
   cortexR_mwall = cii$meta$cortex$medial_wall_mask$right,
-  # Alternatively to unmasking, we could have used the `subcortMask` argument.
-  subcortVol = unmask_vol(vol, cii2$meta$subcort$mask, fill=0),
-  subcortLabs = cii2$meta$subcort$labels
+  subcortVol = cii2$data$subcort,
+  subcortLabs = cii2$meta$subcort$labels,
+  subcortMask = cii2$meta$subcort$mask
 )
 is.xifti(cii_new)
 cii_new
@@ -310,11 +311,11 @@ The cortical data can be written to GIFTI files, and the subcortical data can be
 
 ```{r}
 # Use default names for everything except left cortex
-separated_files = separate_cifti(
+separated_fnames = separate_cifti(
   cifti_fnames$dscalar_ones, brainstructures="all", 
   cortexL_fname="my_left_cortex.func.gii", write_dir=out_dir
 )
-kableExtra::kable_styling(kable(separated_files))
+separated_fnames
 ```
 
 Separated files can be read back in with the `oro.nifti`/`RNifti` and `gifti` packages, and made into a `"xifti"` object with `as.xifti`.

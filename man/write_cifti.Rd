@@ -3,7 +3,9 @@
 \name{write_cifti}
 \alias{write_cifti}
 \alias{writeCIfTI}
-\title{Write CIFTI}
+\alias{writecii}
+\alias{write_xifti}
+\title{Write a CIFTI file from a \code{"xifti"} object.}
 \usage{
 write_cifti(
   xifti,
@@ -22,6 +24,24 @@ writeCIfTI(
   verbose = TRUE,
   wb_path = NULL
 )
+
+writecii(
+  xifti,
+  cifti_fname,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
+
+write_xifti(
+  xifti,
+  cifti_fname,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  verbose = TRUE,
+  wb_path = NULL
+)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
@@ -29,9 +49,9 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
-\item{surfL_fname, surfR_fname}{If the left or right surface is present, it 
+\item{surfL_fname, surfR_fname}{If the [left/right] surface is present, it 
 will be a written to a GIFTI file at this file path. If \code{NULL} 
-(default), do not write out the surface file.}
+(default), do not write out the surface.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 
@@ -40,8 +60,18 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-List of the names of the resampled files
+Named character vector of the written files
 }
 \description{
-Write out a CIFTI file from a "xifti" object.
+Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI 
+ surface files.
 }
+\section{Connectome Workbench Requirement}{
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench. 
+ The 'wb_path' argument is the full file path to the Connectome Workbench 
+ folder. (The full file path to the 'wb_cmd' executable also works.)
+}
+

@@ -5,7 +5,7 @@
 \alias{readCIfTI}
 \alias{readcii}
 \alias{read_xifti}
-\title{Read a CIFTI File}
+\title{Read a CIFTI file}
 \usage{
 read_cifti(
   cifti_fname,
@@ -59,9 +59,9 @@ read_xifti(
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
 \item{flat}{Should the result be flattened into a single matrix? If \code{TRUE},
- the result will be a T x B matrix (T measurements, B brainordinates not including
- the medial wall). All below arguments will be ignored, because the brain 
- structures cannot be identified and surfaces will not be appended. 
+ the result will be a $T$ x $B$ matrix ($T$ measurements, $B$ brainordinates 
+ not including the medial wall). All below arguments will be ignored, because 
+ the brain  structures cannot be identified and surfaces will not be appended. 
  Resampling is also not possible.
 
  This is the fastest way to read in just the CIFTI data. 
@@ -102,23 +102,24 @@ If not provided, should be set with
 \code{\link{read_cifti_separate}}.}
 }
 \value{
-If \code{!flat}, a \code{"xifti"} object. Otherwise,, a T x B matrix 
- (T measurements, B brainordinates). 
-
- See \code{\link{is.xifti}} for details about \code{"xifti"} objects.
+If \code{!flat}, a \code{"xifti"} object. Otherwise, a $T$ x $B$ 
+ matrix ($T$ measurements, $B$ brainordinates).
 }
 \description{
-Make a "xifti" from CIFTI data either by exporting it as a single 
- GIFTI using the \code{-cifti-convert -to-gifti-ext} Workbench Command, or by 
- separating it into multiple GIFTIs (cortical surfaces) and a NIFTI 
- (subcortical data) using the \code{-cifti-separate} Workbench Command. The 
- former is much faster, so the latter is only used when necessary:
- if resampling is to be performed, or if the NIFTI volume must be 
- obtained without cropping. See \code{\link{read_cifti_convert}} to directly
- use the former, and \code{\link{read_cifti_separate}} to directly
- use the latter.
-
- With either method, metadata is obtained with \code{\link{info_cifti}}.
+Read a CIFTI file as a "xifti" object (see \code{\link{is.xifti}}).
+}
+\details{
+First, metadata is obtained with \code{\link{info_cifti}}. Then, if no 
+ resampling is requested, the \code{-cifti-convert -to-gifti-ext} Workbench 
+ Command is used to "flatten" the data and save it as a metric GIFTI file, 
+ which is read in and separated by brainstructure according to the metadata 
+ (\code{\link{read_cifti_convert}}). Otherwise, if sampling is requested, 
+ then the CIFTI is separated into its GIFTI and NIFTI components, resampled,
+ and then re-assembled (\code{\link{read_cifti_separate}}). The former is
+ much faster for large CIFTI files, so the latter is only used when necessary
+ for resampling.
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -126,3 +127,36 @@ Make a "xifti" from CIFTI data either by exporting it as a single
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+
+\section{Label Levels}{
+
+ \code{xifti$meta$subcort$labels} is a factor with the following levels:
+
+ \describe{
+   \item{1}{Cortex-L}
+   \item{2}{Cortex-R}
+   \item{3}{Accumbens-L}
+   \item{4}{Accumbens-R}
+   \item{5}{Amygdala-L}
+   \item{6}{Amygdala-R}
+   \item{7}{Brain Stem}
+   \item{8}{Caudate-L}
+   \item{9}{Caudate-R}
+   \item{10}{Cerebellum-L}
+   \item{11}{Cerebellum-R}
+   \item{12}{Diencephalon-L}
+   \item{13}{Diencephalon-R}
+   \item{14}{Hippocampus-L}
+   \item{15}{Hippocampus-R}
+   \item{16}{Pallidum-L}
+   \item{17}{Pallidum-R}
+   \item{18}{Putamen-L}
+   \item{19}{Putamen-R}
+   \item{20}{Thalamus-L}
+   \item{21}{Thalamus-R}
+ }
+
+ Levels 1-21 correspond to the same structures as given by 
+ \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+}
+

@@ -18,12 +18,6 @@
 #'  the data values include 0, because 0-valued non-medial wall vertices and
 #'  medial wall vertices cannot be distinguished from one another within
 #'  \code{cortexL_fname} alone.
-#' 
-#'  This function uses a system wrapper for the 'wb_command' executable. The 
-#'  user must first download and install the Connectome Workbench, available 
-#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
-#'  folder. (The full file path to the 'wb_cmd' executable also works.)
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR
@@ -54,8 +48,9 @@
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return A data.frame with column names "label" and "fname", and rows 
-#'  corresponding to each separated NIFTI/GIFTI file.
+#' @return A named character vector with the file paths to the written 
+#'  NIFTI and GIFTI files.
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @export
 #'
 separate_cifti <- function(cifti_fname, 
@@ -109,8 +104,8 @@ separate_cifti <- function(cifti_fname,
     if (ROI_do['left']) {
       if (is.null(ROIcortexL_fname)) { ROIcortexL_fname <- default_fname("ROIcortexL", extn_cifti, bname_cifti) }
       ROIcortexL_fname <- format_path(ROIcortexL_fname, write_dir, mode=2)
-    } else { ROIcortexL_fname <- "" }
-  } else { cortexL_fname <- ROIcortexL_fname <- "" }
+    } else { ROIcortexL_fname <- NULL }
+  } else { cortexL_fname <- ROIcortexL_fname <- NULL }
 
   if (do['right']) {
     # Right cortex
@@ -119,8 +114,8 @@ separate_cifti <- function(cifti_fname,
     if (ROI_do['right']) {
       if (is.null(ROIcortexR_fname)) { ROIcortexR_fname <- default_fname("ROIcortexR", extn_cifti, bname_cifti) }
       ROIcortexR_fname <- format_path(ROIcortexR_fname, write_dir, mode=2)
-    } else { ROIcortexR_fname <- "" }
-  } else { cortexR_fname <- ROIcortexR_fname <- "" }
+    } else { ROIcortexR_fname <- NULL }
+  } else { cortexR_fname <- ROIcortexR_fname <- NULL }
 
   if (do['sub']) {
     # Subcortex
@@ -131,24 +126,25 @@ separate_cifti <- function(cifti_fname,
     if (ROI_do['sub']) {
       if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort", extn_cifti, bname_cifti) }
       ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
-    } else { ROIsubcortVol_fname <- "" }
+    } else { ROIsubcortVol_fname <- NULL }
   } else { 
-    subcortVol_fname <- subcortLabs_fname <- ROIsubcortVol_fname <- "" 
+    subcortVol_fname <- subcortLabs_fname <- ROIsubcortVol_fname <- NULL 
   }
 
   # Collect the paths to each file to write in a data.frame. 
-  sep_files <- data.frame(
-    label = c("cortexL", "cortexR", "subcortVol", "subcortLabs", 
-      "ROIcortexL", "ROIcortexR", "ROIsubcortVol"),
-    fname = c(cortexL_fname, cortexR_fname, subcortVol_fname, subcortLabs_fname,
-      ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname),
-    stringsAsFactors=FALSE
-  )
-  sep_files <- sep_files[sep_files$fname != "",]
+  sep_fnames <- unlist(list(
+    cortexL = cortexL_fname,
+    ROIcortexL = ROIcortexL_fname,
+    cortexR = cortexR_fname,
+    ROIcortexR = ROIcortexR_fname,
+    subcortVol = subcortVol_fname,
+    subcortLabs = subcortLabs_fname,
+    ROIsubcortVol = ROIsubcortVol_fname
+  ))
 
   # Stop if any file paths are identical.
-  if (length(unique(sep_files$fname)) != nrow(sep_files)) {
-    print(sep_files)
+  if (length(unique(sep_fnames)) != length(sep_fnames)) {
+    print(sep_fnames)
     stop(paste0(
       "The file paths for the separated components are printed above. ",
       "Some file paths were identical, but ",
@@ -177,8 +173,7 @@ separate_cifti <- function(cifti_fname,
   # Run it.
   run_wb_cmd(cmd, wb_path)
 
-  # Return the list of file paths.
-  invisible(sep_files) # column names are "label" and "fname"
+  invisible(sep_fnames)
 }
 
 #' @rdname separate_cifti

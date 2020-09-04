@@ -1,4 +1,4 @@
-#' Write CIFTI Cortex Data to GIFTI
+#' Write CIFTI cortex data to GIFTI
 #' 
 #' Write the data for the left or right cortex to a metric GIFTI file.
 #'
@@ -71,7 +71,7 @@ write_metric_gifti <- function(
   write_gifti(gii, gifti_fname, use_parsed_transformations=TRUE)
 }
 
-#' Write CIFTI Surface Data to GIFTI
+#' Write CIFTI surface data to GIFTI
 #' 
 #' Write the data for the left or right surface to a surface GIFTI file.
 #'

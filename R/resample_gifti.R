@@ -1,7 +1,6 @@
 #' Resample a GIFTI file (with its ROI)
 #'
-#' @description Performs spatial resampling of NIFTI/GIFTI data on the cortical 
-#'  surface.
+#' Performs spatial resampling of GIFTI data on the cortical surface.
 #'
 #' @param original_fname The GIFTI file to resample.
 #' @param target_fname Where to save the resampled file.
@@ -154,9 +153,9 @@ resample_gifti <- function(
 
 #' Generate GIFTI sphere surface files
 #'
-#' @description This function generates a pair of GIFTI vertex-matched left and 
-#'  right spheres in the target resolution. These are required for resampling 
-#'  CIFTI and GIFTI files. 
+#' This function generates a pair of GIFTI vertex-matched left and right spheres
+#'  in the target resolution. These are required for resampling CIFTI and GIFTI 
+#'  files. 
 #'
 #' @param sphereL_fname File path to left-hemisphere spherical GIFTI to be 
 #'  created
@@ -200,13 +199,13 @@ write_spheres <- function(
 #' @rdname resample_gifti
 #' @export
 resampleGIfTI <- function(
-  original_fname, target_fname, 
+  original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL){
 
   resample_gifti(
-    original_fname, target_fname, 
+    original_fname, target_fname, hemisphere,
     file_type=NULL, original_res=NULL, resamp_res,
     ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
     read_dir=NULL, write_dir=NULL, wb_path=NULL
@@ -216,13 +215,13 @@ resampleGIfTI <- function(
 #' @rdname resample_gifti
 #' @export
 resamplegii <- function(
-  original_fname, target_fname, 
+  original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL){
 
   resample_gifti(
-    original_fname, target_fname, 
+    original_fname, target_fname, hemisphere,
     file_type=NULL, original_res=NULL, resamp_res,
     ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
     read_dir=NULL, write_dir=NULL, wb_path=NULL

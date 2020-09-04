@@ -1,5 +1,10 @@
-#' Write Out Each Present Component in a "xifti"
+#' Write CIFTI component files from a \code{"xifti"} object.
 #'
+#' Write metric GIFTIs for the cortical surface data and NIFTIs for the
+#'  subcortical labels and mask in a \code{"xifti"} object. Each present
+#'  brainstructure will be written, and if a brainstructure is absent
+#'  the corresponding file is not written.
+#' 
 #' @inheritParams xifti_Param
 #' @inheritParams write_dir_Param_generic
 #' @param mwall_fill Value to use for the medial wall in the cortex GIFTIs. 
@@ -24,17 +29,19 @@ write_cifti_components <- function(
 
   # Get intermediate file names.
   if (is.null(write_dir)) { write_dir <- getwd() }
-  sep_names <- c("cortexL", "cortexR", "subcortVol", "subcortLabs")
-  sep_fnames <- lapply(sep_names, cifti_component_suffix)
-  sep_fnames <- lapply(
+  sep_names <- c(
+    "cortexL", "ROIcortexL",
+    "cortexR", "ROIcortexR", 
+    "subcortVol", "subcortLabs" #"ROIsubcortVol"
+  )
+  sep_fnames <- sapply(sep_names, cifti_component_suffix)
+  sep_fnames <- sapply(
     sep_fnames, 
     function(x){format_path(paste0("sep.", x), write_dir, mode=2)}
   )
   names(sep_fnames) <- sep_names
 
-  # Write the intermediate files.
-  # TO DO: is it possible to indicate the medial wall?
-  ## Left cortex: add back medial wall.
+  # Left cortex: add back medial wall.
   if (!is.null(xifti$data$cortex_left)){
     if (verbose) {cat("Writing left cortex.\n")}
     if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
@@ -43,9 +50,10 @@ write_cifti_components <- function(
       mwall <- xifti$meta$cortex$medial_wall_mask$left
     }
     cdat <- unmask_cortex(xifti$data$cortex_left, mwall)
-    write_metric_gifti(cdat, sep_fnames$cortexL, "left")
+    write_metric_gifti(cdat, sep_fnames["cortexL"], "left")
+    write_metric_gifti(as.numeric(mwall), sep_fnames["ROIcortexL"], "left")
   } else {
-    sep_fnames$cortexL <- NULL
+    sep_fnames <- sep_fnames[!grepl("cortexL", names(sep_fnames))]
   }
 
   ## Right cortex: add back medial wall.
@@ -57,9 +65,10 @@ write_cifti_components <- function(
       mwall <- xifti$meta$cortex$medial_wall_mask$right
     }
     cdat <- unmask_cortex(xifti$data$cortex_right, mwall)
-    write_metric_gifti(cdat, sep_fnames$cortexR, "right")
+    write_metric_gifti(cdat, sep_fnames["cortexR"], "right")
+    write_metric_gifti(as.numeric(mwall), sep_fnames["ROIcortexR"], "right")
   } else {
-    sep_fnames$cortexR <- NULL
+    sep_fnames <- sep_fnames[!grepl("cortexR", names(sep_fnames))]
   }
 
   ## Subcortex: unmask to get volumetric array.
@@ -69,31 +78,34 @@ write_cifti_components <- function(
       xifti$data$subcort, 
       xifti$meta$subcort$labels, 
       xifti$meta$subcort$mask, 
-      sep_fnames$subcortVol, 
-      sep_fnames$subcortLabs, 
+      sep_fnames["subcortVol"], 
+      sep_fnames["subcortLabs"], 
+      #sep_fnames["ROIsubcortVol"],
       fill=0,
-      wb_path
+      wb_path=wb_path
     )
   } else {
-    sep_fnames$subcortVol <- sep_fnames$subcortLabs <- NULL
+    sep_fnames <- sep_fnames[!grepl("subcort", names(sep_fnames))]
   }
 
-  return(sep_fnames)
+  invisible(sep_fnames)
 }
 
-#' Write CIFTI
+#' Write a CIFTI file from a \code{"xifti"} object.
 #'
-#' Write out a CIFTI file from a "xifti" object. 
-#'
+#' Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI 
+#'  surface files. 
+#' 
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
-#' @param surfL_fname,surfR_fname If the left or right surface is present, it 
+#' @param surfL_fname,surfR_fname If the [left/right] surface is present, it 
 #'  will be a written to a GIFTI file at this file path. If \code{NULL} 
-#'  (default), do not write out the surface file.
+#'  (default), do not write out the surface.
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
-#' @return List of the names of the resampled files
+#' @return Named character vector of the written files
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @export
 #'
 write_cifti <- function(
@@ -106,19 +118,36 @@ write_cifti <- function(
   )
 
   if (verbose) { cat("Creating CIFTI file from separated components.\n") }
-  write_cifti_from_separate(
-    cifti_fname=cifti_fname, 
-    cortexL_fname=sep_fnames$cortexL, 
-    cortexR_fname=sep_fnames$cortexR,
-    subcortVol_fname=sep_fnames$subcortVol, 
-    subcortLabs_fname=sep_fnames$subcortLabs,
-    timestep=xifti$meta$cifti$time_step, timestart=xifti$meta$cifti$time_start,
-    wb_path=wb_path
+  # [TO DO]: Use ROIs
+  wcfs_kwargs <- list(
+    cifti_fname=cifti_fname,
+    timestep = xifti$meta$cifti$time_step, 
+    timestart = xifti$meta$cifti$time_start,
+    wb_path = wb_path
   )
+  if ("cortexL" %in% names(sep_fnames)) {
+    wcfs_kwargs$cortexL_fname = sep_fnames["cortexL"]
+    if ("ROIcortexL" %in% names(sep_fnames)) {
+      wcfs_kwargs$ROIcortexL_fname = sep_fnames["ROIcortexL"]
+    }
+  }
+  if ("cortexR" %in% names(sep_fnames)) {
+    wcfs_kwargs$cortexR_fname = sep_fnames["cortexR"]
+    if ("ROIcortexR" %in% names(sep_fnames)) {
+      wcfs_kwargs$ROIcortexR_fname = sep_fnames["ROIcortexR"]
+    }
+  }
+  if ("subcortVol" %in% names(sep_fnames)) {
+    wcfs_kwargs$subcortVol_fname = sep_fnames["subcortVol"]
+    if ("subcortLabs" %in% names(sep_fnames)) {
+      wcfs_kwargs$subcortLabs_fname = sep_fnames["subcortLabs"]
+    }
+  }
+  do.call(write_cifti_from_separate, wcfs_kwargs)
 
+  # Surfaces
   do_left_surf <- !is.null(surfL_fname) && !is.null(xifti$surf$cortex_left)
   do_right_surf <- !is.null(surfR_fname) && !is.null(xifti$surf$cortex_right)
-
   if (do_left_surf || do_right_surf) {
     if (verbose) { cat("Writing surface geometry GIFTI(s).\n") }
 
@@ -130,16 +159,41 @@ write_cifti <- function(
     }
   }
 
-  out <- list(
+  out <- unlist(list(
     cifti=cifti_fname, 
     surfL=surfL_fname, surfR=surfR_fname
-  )
-  out[!sapply(out, is.null)]
+  ))
 }
 
 #' @rdname write_cifti
 #' @export
-writeCIfTI <- writecii <- write_xifti <- function(
+writeCIfTI <- function(
+  xifti, cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
+  verbose=TRUE, wb_path=NULL) {
+  write_cifti(
+    xifti=xifti, cifti_fname=cifti_fname, 
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname,
+    verbose=verbose, wb_path=wb_path
+  )
+}
+
+#' @rdname write_cifti
+#' @export
+writecii <- function(
+  xifti, cifti_fname, 
+  surfL_fname=NULL, surfR_fname=NULL,
+  verbose=TRUE, wb_path=NULL) {
+  write_cifti(
+    xifti=xifti, cifti_fname=cifti_fname, 
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname,
+    verbose=verbose, wb_path=wb_path
+  )
+}
+
+#' @rdname write_cifti
+#' @export
+write_xifti <- function(
   xifti, cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {

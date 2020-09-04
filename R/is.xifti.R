@@ -92,6 +92,8 @@ is.xifti_data <- function(x) {
 #' @export
 #' 
 is.surf <- function(x) {
+  if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
+
   if (!match_exactly(names(x), c("vertices", "faces"))) {
     return(FALSE)
   }
@@ -200,6 +202,8 @@ is.3D_mask <- function(x) {
 #' @return Logical indicating whether x is a valid "meta" component.
 #' 
 is.xifti_meta <- function(x) {
+  if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
+
   y <- template_xifti()$meta
   if (!match_exactly(names(x), names(y))) { 
     message("List names are not correct.\n"); return(FALSE) 
@@ -344,25 +348,30 @@ is.xifti_meta <- function(x) {
 #' 
 #' Check if object is valid for a \code{"xifti"} object.
 #'
-#'  Requirements: the structure must match that of \code{\link{template_xifti}}. 
-#'  The size of each data entry must be compatible with the corresponding mask.
-#'  Metadata should be present if and only if the corresponding data is also 
-#'  present.
+#' Requirements: it is a list with the same structure as 
+#'  \code{\link{template_xifti}}. The size of each data entry must be 
+#'  compatible with its corresponding mask (medial wall for the cortex and 
+#'  volumetric mask for the subcortex). Metadata should be present if and only 
+#'  if the corresponding data is also present. The surfaces can be present
+#'  whether or not the cortex data are present.
 #' 
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
 #' 
 #' @param x The putative \code{"xifti"} object.
-#' @param messages If \code{x} is not a \code{"xifti"}, print messages 
+#' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
-#' @return Logical indicating whether x is a valid \code{"xifti"} object.
-#' @export
+#' @return Logical. Is \code{x} a valid \code{"xifti"} object?
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
+#' @export
+#' 
 is.xifti <- function(x, messages=TRUE) {
   if (!messages) { return(suppressMessages(is.xifti(x, messages=FALSE))) }
+
+  if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
   y <- template_xifti()
   if (!match_exactly(names(x), names(y))) { 
@@ -485,17 +494,28 @@ is_xifti <- function(x, messages=TRUE){
 #' Validate a \code{"xifti"} object.
 #' 
 #' Check if object is valid for a \code{"xifti"} object. This alias for 
-#' \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
-#' the user. We recommend using \code{\link{is.xifti}} instead.
+#'  \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
+#'  the user. We recommend using \code{\link{is.xifti}} instead.
+#'
+#' Requirements: it is a list with the same structure as 
+#'  \code{\link{template_xifti}}. The size of each data entry must be 
+#'  compatible with its corresponding mask (medial wall for the cortex and 
+#'  volumetric mask for the subcortex). Metadata should be present if and only 
+#'  if the corresponding data is also present. The surfaces can be present
+#'  whether or not the cortex data are present.
+#' 
+#'  See the "Label Levels" section for the requirements of 
+#'  \code{xifti$meta$subcort$labels}.
 #' 
 #' @param x The putative \code{"xifti"} object.
-#' @param messages If \code{x} is not a \code{"xifti"}, print messages 
+#' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
-#' @return Logical indicating whether x is a valid \code{"xifti"} object.
-#' @export
+#' @return Logical. Is \code{x} a valid \code{"xifti"} object?
 #' 
 #' @inheritSection labels_Description Label Levels
+#' 
+#' @export
 #' 
 is.cifti <- function(x, messages=TRUE){
   warning("is.cifti() is an alias for is.xifti().\n")

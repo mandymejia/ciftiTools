@@ -171,7 +171,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A list of output files written. The elements are "cifti" and
+A named character vector of written files: "cifti" and
  potentially "surfL" (if \code{surfL_original_fname} was provided) and 
  "surfR" (if \code{surfR_original_fname} was provided).
 }
@@ -179,6 +179,8 @@ A list of output files written. The elements are "cifti" and
 Performs spatial resampling of CIFTI data on the cortical surface
  by separating it into GIFTI and NIFTI files, resampling them, then putting
  them together.
+}
+\section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
@@ -186,3 +188,4 @@ Performs spatial resampling of CIFTI data on the cortical surface
  The 'wb_path' argument is the full file path to the Connectome Workbench 
  folder. (The full file path to the 'wb_cmd' executable also works.)
 }
+

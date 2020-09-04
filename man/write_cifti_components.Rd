@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_cifti.R
 \name{write_cifti_components}
 \alias{write_cifti_components}
-\title{Write Out Each Present Component in a "xifti"}
+\title{Write CIFTI component files from a \code{"xifti"} object.}
 \usage{
 write_cifti_components(
   xifti,
@@ -39,6 +39,9 @@ If not provided, should be set with
 List of written files
 }
 \description{
-Write Out Each Present Component in a "xifti"
+Write metric GIFTIs for the cortical surface data and NIFTIs for the
+ subcortical labels and mask in a \code{"xifti"} object. Each present
+ brainstructure will be written, and if a brainstructure is absent
+ the corresponding file is not written.
 }
 \keyword{internal}

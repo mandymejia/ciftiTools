@@ -5,12 +5,6 @@
 #'  and then reading each separated 
 #'  component into R (\code{\link{make_xifti}}).
 #'
-#'  This function uses a system wrapper for the 'wb_command' executable. The 
-#'  user must first download and install the Connectome Workbench, available 
-#'  from https://www.humanconnectome.org/software/get-connectome-workbench. 
-#'  The 'wb_path' argument is the full file path to the Connectome Workbench 
-#'  folder. (The full file path to the 'wb_cmd' executable also works.)
-#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
@@ -25,7 +19,7 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#'
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @keywords internal
 #' 
 read_cifti_separate <- function(
@@ -91,14 +85,11 @@ read_cifti_separate <- function(
 
   if (verbose) { cat("Separating CIFTI file.\n") }
 
-  sep_result <- separate_cifti_wrapper(
+  to_read <- separate_cifti_wrapper(
     cifti_fname=cifti_fname,
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
     sep_fnames=sep_fnames, write_dir=write_dir_sep, wb_path=wb_path
   )
-
-  to_read <- sep_result$fname
-  names(to_read) <- sep_result$label
 
   if (verbose) {
     print(Sys.time() - exec_time)
@@ -127,16 +118,10 @@ read_cifti_separate <- function(
     )
 
     # Replace resampled files.
-    to_read_resampled <- names(to_read)[names(to_read) %in% resamp_result$label]
-    to_read[to_read_resampled] <- resamp_result$fname[
-      resamp_result$label %in% to_read_resampled]
+    to_read[names(to_read) %in% names(resamp_result)] <- resamp_result[names(to_read)[names(to_read) %in% names(resamp_result)]]
 
-    if (!is.null(surfL_fname)) {
-      surfL_fname <- resamp_result$fname[resamp_result$label == "surfL"]
-    }
-    if (!is.null(surfR_fname)) {
-      surfR_fname <- resamp_result$fname[resamp_result$label == "surfR"]
-    }
+    if (!is.null(surfL_fname)) { surfL_fname <- resamp_result["surfL"] }
+    if (!is.null(surfR_fname)) { surfR_fname <- resamp_result["surfR"] }
 
     if (verbose) {
       print(Sys.time() - exec_time)
@@ -159,12 +144,12 @@ read_cifti_separate <- function(
   names(to_read)[names(to_read) == "ROIcortexR"] <- "cortexR_mwall"
   names(to_read)[names(to_read) == "ROIsubcortVol"] <- "subcortMask"
 
-  if (!is.null(surfL_fname)) { to_read$surfL <- surfL_fname }
-  if (!is.null(surfR_fname)) { to_read$surfR <- surfR_fname }
+  if (!is.null(surfL_fname)) { to_read["surfL"] <- surfL_fname }
+  if (!is.null(surfR_fname)) { to_read["surfR"] <- surfR_fname }
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
-  xifti <- do.call(make_xifti, to_read)
+  xifti <- do.call(make_xifti, as.list(to_read))
 
   # if (endsWith(cifti_fname, ".dlabel.nii")) {
   #   if ("left" %in% brainstructures) { xifti$data$cortex_left <- xifti$data$cortex_left + 1 }

@@ -1,13 +1,17 @@
 #' Get example files
 #' 
-#' Get the file paths of the ciftiTools example files
+#' Get the file paths of the example CIFTI and surface GIFTI files included
+#'  with \code{ciftiTools}.
+#' 
+#' These files are from NITRC: cifti-2_test_data-1.2.zip at https://www.nitrc.org/frs/?group_id=454
 #' 
 #' @return A list with CIFTI file names in the first entry, and surface file
 #'  names in the second.
+#' 
 #' @keywords internal 
 get_example_files <- function(){
   list(
-    cifti = list(
+    cifti = unlist(list(
       dtseries = system.file(
         "extdata",
         "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii",
@@ -28,8 +32,8 @@ get_example_files <- function(){
         "ones.dscalar.nii",
         package="ciftiTools"
       )
-    ),
-    surf = list(
+    )),
+    surf = unlist(list(
       left = system.file(
         "extdata",
         "Conte69.L.inflated.32k_fs_LR.surf.gii",
@@ -40,6 +44,6 @@ get_example_files <- function(){
         "Conte69.R.inflated.32k_fs_LR.surf.gii",
         package="ciftiTools"
       )
-    )
+    ))
   )
 }
