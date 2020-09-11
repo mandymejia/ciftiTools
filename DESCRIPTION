@@ -20,6 +20,7 @@ Description: Tools for reading and visualizing CIFTI brain imaging files. CIFTI 
     one NIFTI file representing the subcortical data, and reads the data into R. It also provides visualization tools 
     for the surface and subcortical data.  ciftiTools also includes processing functions to apply common preprocessing 
     steps to the CIFTI data (e.g. smoothing, resampling).
+Depends: R (>= 3.50)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -36,8 +37,11 @@ Imports:
 Remotes:
     muschellij2/gifti
 Suggests:
+    knitr,
+    rmarkdown,
     papayar,
-    testthat,
+    testthat (>= 2.1.0),
+    covr
 RoxygenNote: 7.1.1
 URL: https://github.com/mandymejia/ciftiTools
 BugReports: https://github.com/mandymejia/ciftiTools/issues
