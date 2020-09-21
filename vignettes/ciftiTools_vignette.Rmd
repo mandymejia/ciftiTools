@@ -122,7 +122,7 @@ view_xifti_volume(cii)
 
 ```{r eval=FALSE}
 # For information only, since papaya viewer cannot be opened during knitting
-view_xifti_volume(cii, num.slices=10, use_papaya = TRUE)
+view_xifti_volume(cii, use_papaya = TRUE)
 ```
 
 The `"xifti"` "plot" method (`plot(cii)`) will display the cortical data if possible, and the subcortical data otherwise. 
@@ -143,14 +143,8 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 ### Support for surface geometry without data
 
-A `"surface"` can be read in using `make_surf(surfL_fname)`. They can be viewed with `view_surf` or, equivalently, their `plot` method.
+A `"surface"` can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
 
-<<<<<<< Updated upstream
-```{r, out.width="50%", fig.cap="Right hemisphere surface"}
-knitr::include_graphics(plot(
-  make_surf(surfR_fname), hemisphere="right", mode="image", 
-  fname=file.path(out_dir, "surf_1.png")
-=======
 ```{r, out.width="50%", fig.cap="Left hemisphere surface"}
 knitr::include_graphics(view_surf(
   surfL_fname, mode="image", fname=file.path(out_dir, "surf_1.png")
@@ -167,7 +161,6 @@ knitr::include_graphics(ciftiTools:::plot.surface(
   mode="image", fname=file.path(out_dir, "surf_2.png"),
   # hemisphere="right", # able to be deduced from metadata
   edge_color="black", vertex_size=5
->>>>>>> Stashed changes
 ))
 rm(small_surf)
 ```
@@ -208,20 +201,20 @@ is.xifti(cii_new)
 cii_new
 ```
 
-To visualize the cortical data of the new `xifti` object, we need to add the surface geometry:
+To visualize the cortical data of the new `xifti` object, we can add surface geometry with `add_surf`, or by providing surfaces with the `surfL` and `surfR` arguments to `view_xifti_surface`. Lastly, we can use the inflated surfaces that come with `ciftiTools` by default:
 
 ```{r, fig.cap=".dtseries mean image"}
-cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
+#cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
 knitr::include_graphics(view_xifti_surface(
   cii_new, mode="image", fname=file.path(out_dir, "xifti_3.png"), 
   title=".dtseries Mean Image", zlim=c(0,4)
 ))
 ```
 
-Here's the subcortical data:
+Here's the subcortical data in sagittal view:
 
-```{r, fig.cap="Subcortical data (with random noise)"}
-view_xifti_volume(cii_new)
+```{r, fig.cap="Subcortical data, sagittal view (with random noise)"}
+view_xifti_volume(cii_new, plane="sag")
 ```
 
 We can also write out a new CIFTI file with `write_cifti`! Here's how:

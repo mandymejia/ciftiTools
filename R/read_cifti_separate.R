@@ -1,9 +1,12 @@
-#' Read in CIFTI Data
+#' Read a CIFTI file with optional resampling
 #'
-#' @description Read a CIFTI file by separating it into GIFTI and NIFTI files 
-#'  (\code{\link{separate_cifti}}), optionally resampling them, 
-#'  and then reading each separated 
-#'  component into R (\code{\link{make_xifti}}).
+#' Read a CIFTI file by writing each component into a GIFTI and NIFTI file
+#'  (\code{\link{separate_cifti}}), optionally resampling the GIFTIs, 
+#'  (\code{\link{resample_gifti}}), and then reading each separated 
+#'  component into R (\code{\link{make_xifti}}). Surfaces can also be provided; 
+#'  they will be resampled along with the CIFTI for viewing. 
+#' 
+#' The subcortical component (NIFTI) is not resampled.
 #'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
@@ -70,20 +73,13 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
   
   cifti_info <- info_cifti(cifti_fname, wb_path)
-<<<<<<< Updated upstream
-
-  if (!all(brainstructures %in% cifti_info$cifti$brainstructures)) {
-    stop(paste0(
-      "Only the following brainstructures are present in the CIFTI file:",
-      paste(cifti_info$cifti$brainstructures, collapse=", ")
-=======
   bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
   if (!all(bs_present)) {
     warning(paste0(
       "Only the following brainstructures are present in the CIFTI file: ",
       paste(cifti_info$cifti$brainstructures, collapse=", "), "\n"
->>>>>>> Stashed changes
     ))
+    brainstructures <- ROI_brainstructures <- brainstructures[bs_present]
   }
 
   if (!("left" %in% brainstructures)) {

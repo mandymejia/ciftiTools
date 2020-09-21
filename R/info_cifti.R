@@ -165,7 +165,9 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
     )
   } else if (intent == 3006) {
     meta <- list(
-      names=as.character(sapply(xml, function(x){x$MapName[[1]]}))
+      names=as.character(sapply(xml, function(x){
+        ifelse(length(x$MapName) < 1, "", x$MapName[[1]])
+      }))
     )
   } else if (intent == 3007) {
     xml <- xml[names(xml) == "NamedMap"]
@@ -281,29 +283,43 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   meta
 }
 
-#' Get CIFTI Metadata Information
+#' Get NIFTI header (of a CIFTI)
 #'
-#' Wrapper for -nifti-information
+#' Wrapper for \code{-nifti-information [fname] -print-header}
 #'
 #' @inheritParams cifti_fname_Param
-#' @param what "header" or "xml"
 #' @inheritParams wb_path_Param
 #'
-#' @return The information in a list
+#' @return The header, as a character vector
+#'
+#' @keywords internal
+#'
+header_cifti <- function(cifti_fname, wb_path=NULL){
+  run_wb_cmd(
+    paste("-nifti-information", sys_path(cifti_fname), "-print-header"),
+    wb_path, intern=TRUE
+  )
+}
+
+#' Get XML of a CIFTI
+#'
+#' Wrapper for \code{-nifti-information [fname] -print-xml}
+#'
+#' @inheritParams cifti_fname_Param
+#' @inheritParams wb_path_Param
+#'
+#' @return The XML as a list
 #'
 #' @importFrom xml2 read_xml as_list
 #'
 #' @keywords internal
 #'
-info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
-  what <- match.arg(what, c("header", "xml"))
-  what <- paste0("-print-", what)
+xml_cifti <- function(cifti_fname, wb_path=NULL){
   out <- run_wb_cmd(
-    paste("-nifti-information", sys_path(cifti_fname), what),
+    paste("-nifti-information", sys_path(cifti_fname), "-print-xml"),
     wb_path, intern=TRUE
   )
-  if (what=="-print-xml"){ out <- as_list(read_xml(paste(out, collapse="\n"))) }
-  out
+  as_list(read_xml(paste(out, collapse="\n")))
 }
 
 #' Get CIFTI metadata
@@ -361,16 +377,18 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
   # -nifti-information ---------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  cif_head <- info_cifti_raw(cifti_fname, wb_path, what="header")
-  cif_xml <- info_cifti_raw(cifti_fname, wb_path, what="xml")
+  cif_head <- header_cifti(cifti_fname, wb_path)
+  cif_xml <- xml_cifti(cifti_fname, wb_path)
 
   # ----------------------------------------------------------------------------
   # Parsing --------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
   # Header
-  sform <- as.numeric(gsub("sform_code:", "", cif_head[grepl("sform_code", cif_head)]))
-  qform <- as.numeric(gsub("qform_code:", "", cif_head[grepl("qform_code", cif_head)]))
+  ## sform and qform not typically used; instead, subcortical orientation
+  ## is given by the TransformationMatrixIJKtoXYZ element in the XML
+  #sform <- as.numeric(gsub("sform_code:", "", cif_head[grepl("sform_code", cif_head)]))
+  #qform <- as.numeric(gsub("qform_code:", "", cif_head[grepl("qform_code", cif_head)]))
   intent <- as.numeric(gsub("intent_code:", "", cif_head[grepl("intent_code", cif_head)]))
   ## Validate intent with file extension
   check_cifti_type(intent, extn)

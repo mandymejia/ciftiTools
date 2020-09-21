@@ -316,3 +316,62 @@ NULL
 #'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
 #' @name x_Param_xifti
 NULL
+
+#' surface plot
+#' 
+#' @param view Which view to display: "lateral", "medial", or "both".
+#'  If \code{NULL} (default), both views will be shown. Each view
+#'  will be shown in a separate panel row within the RGL window.
+#' @param mode One of "widget" (Default), "image", or "video":
+#'
+#'  "widget" will open an interactive RGL window. Left click and drag to rotate.
+#'  Use the scroll wheel to zoom. Run the R function
+#'  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png.
+#'  See \code{\link[rgl]{snapshot}} for more information.
+#'
+#'  "image" will open the RGL window, take a screenshot using
+#'  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
+#'  as a png in \code{write_dir} and its name will be \code{[fname].png}.
+#'
+#'  "video" will take a series of screenshots of the RGL window, while increasing
+#'  the column index. The frames can
+#'  be converted to a video file using multimedia software such as Adobe
+#'  Premiere Pro. The "video" mode is not yet supported.
+#' @param width,height The dimensions of the RGL window, in pixels. If both are
+#'  \code{NULL} (default), the dimensions will be set to
+#'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
+#'  1500 x 525 for 2x1 subplots, and
+#'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
+#'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+#'  the same aspect ratio. Both could be specified to set the dimensions exactly.
+#' @param zoom Adjustment to size of brain meshes. Default: \code{3/5}
+#'  (100\% + 3/5*100\% = 160\% the original size).
+#' @param bg Background color. \code{NULL} will not color the background (white).
+#' @param title Optional title for the plot. It will be printed at the top in
+#'  a separate subplot with 1/4 the height of the brain cortex subplots.
+#'  \code{NULL} (default) will use the time index (.dtseries) or name
+#'  (.dscalar or .dlabel) of the data column being plotted. Set to an empty
+#'  string \code{""} to omit the title. If the title is non-empty but does not
+#'  appear, \code{cex.title} may need to be lowered.
+#' @param cex.title Font size multiplier for the title. \code{NULL} (default)
+#'  will use \code{2} for titles less than 20 characters long, and smaller
+#'  sizes for increasingly longer titles.
+#' @param text_color Color for text in title and colorbar legend. Default:
+#'  "black".
+#' @param fname An identifier to use for naming the saved images
+#'  ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
+#'  Default: "xifti".
+#' @param write_dir Where should any output images be written. NULL (default)
+#'  will write them to the current working directory.
+#'
+#'  \code{write_dir} must already exist, or an error will occur.
+#' @param alpha Transparency value for mesh coloring, between 0 and 1. Default:
+#'  \code{1.0} (no transparency).
+#' @param edge_color Outline each edge in this color. Default: \code{NULL} (do
+#'  not outline the edges).
+#' @param vertex_size Draw each vertex with this size. Default: \code{0} 
+#'  (do not draw the vertices).
+#' @param vertex_color Draw each vertex in this color. Default: 
+#'  \code{"black"}. Vertices are only drawn if \code{vertex_size > 0}
+#' @name surface_plot_Params
+NULL

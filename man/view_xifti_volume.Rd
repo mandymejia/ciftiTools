@@ -11,8 +11,8 @@ view_xifti_volume(
   xifti,
   structural_img = "MNI",
   idx = 1,
-  plane = "axial",
-  num.slices = 12,
+  plane = c("axial", "sagittal", "coronal"),
+  num.slices = 9,
   use_papaya = FALSE,
   z_min = NULL,
   z_max = NULL,
@@ -24,8 +24,8 @@ view_cifti_volume(
   xifti,
   structural_img = "MNI",
   idx = 1,
-  plane = "axial",
-  num.slices = 12,
+  plane = c("axial", "sagittal", "coronal"),
+  num.slices = 9,
   use_papaya = FALSE,
   z_min = NULL,
   z_max = NULL,
@@ -37,8 +37,8 @@ viewCIfTI_volume(
   xifti,
   structural_img = "MNI",
   idx = 1,
-  plane = "axial",
-  num.slices = 12,
+  plane = c("axial", "sagittal", "coronal"),
+  num.slices = 9,
   use_papaya = FALSE,
   z_min = NULL,
   z_max = NULL,
@@ -50,8 +50,8 @@ viewcii_volume(
   xifti,
   structural_img = "MNI",
   idx = 1,
-  plane = "axial",
-  num.slices = 12,
+  plane = c("axial", "sagittal", "coronal"),
+  num.slices = 9,
   use_papaya = FALSE,
   z_min = NULL,
   z_max = NULL,
@@ -70,9 +70,11 @@ the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 \item{idx}{The time/column index of the xifti data to plot.}
 
 \item{plane}{If use_papaya=FALSE, the plane to display.
-Default: "axial". Other options are "sagittal" and "coronal".}
+Default: \code{"axial"}. Other options are \code{"sagittal"} and 
+\code{"coronal"}.}
 
-\item{num.slices}{If use_papaya=FALSE, the number of slices to display.}
+\item{num.slices}{If use_papaya=FALSE, the number of slices to display.
+Default: \code{9}.}
 
 \item{use_papaya}{use_papaya=TRUE will use papayar to allows for interactive visualization.}
 

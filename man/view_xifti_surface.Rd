@@ -28,7 +28,11 @@ view_xifti_surface(
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
-  colorbar_digits = NULL
+  colorbar_digits = NULL,
+  alpha = 1,
+  edge_color = NULL,
+  vertex_color = NULL,
+  vertex_size = 0
 )
 
 view_cifti_surface(
@@ -52,7 +56,11 @@ view_cifti_surface(
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
-  colorbar_digits = NULL
+  colorbar_digits = NULL,
+  alpha = 1,
+  edge_color = NULL,
+  vertex_color = NULL,
+  vertex_size = 0
 )
 
 viewCIfTI_surface(
@@ -76,7 +84,11 @@ viewCIfTI_surface(
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
-  colorbar_digits = NULL
+  colorbar_digits = NULL,
+  alpha = 1,
+  edge_color = NULL,
+  vertex_color = NULL,
+  vertex_size = 0
 )
 
 viewcii_surface(
@@ -100,7 +112,11 @@ viewcii_surface(
   surfL = NULL,
   surfR = NULL,
   colorbar_embedded = TRUE,
-  colorbar_digits = NULL
+  colorbar_digits = NULL,
+  alpha = 1,
+  edge_color = NULL,
+  vertex_color = NULL,
+  vertex_size = 0
 )
 }
 \arguments{
@@ -111,11 +127,18 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 Currently one a single time point is supported. Default: the first index.}
 
 \item{hemisphere}{Which brain cortex to display: "both", "left", or "right".
-If \code{NULL} (default), each available surface (e.g. if \code{surfL}
-or \code{xifti$surf$cortex_right} is not empty) will be displayed. Surfaces without
-data (e.g. \code{xifti$CORTEX_LEFT} is empty) will still be displayed,
-colored by \code{color_NA}. Each cortex will be shown in a separate panel
-column within the RGL window.}
+
+ If a brain cortex is requested but no surface is available, a default
+ inflated surface will be used.
+
+ This argument can also be null \code{NULL} (default). In this case, a
+ default inflated surface will be used for each cortex with available data 
+ (i.e. if \code{xifti$data$cortex_left} and/or \code{xifti$data$cortex_right} 
+ exist).
+
+ Surfaces without data will still be displayed, colored white.
+ 
+ Each cortex will be shown in a separate panel column within the RGL window.}
 
 \item{view}{Which view to display: "lateral", "medial", or "both".
 If \code{NULL} (default), both views will be shown. Each view
@@ -137,7 +160,15 @@ will be shown in a separate panel row within the RGL window.}
  be converted to a video file using multimedia software such as Adobe
  Premiere Pro. The "video" mode is not yet supported.}
 
-\item{width, height}{The dimensions of the RGL window, in pixels. If both are
+\item{width}{The dimensions of the RGL window, in pixels. If both are
+\code{NULL} (default), the dimensions will be set to
+1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
+1500 x 525 for 2x1 subplots, and
+500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
+within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+the same aspect ratio. Both could be specified to set the dimensions exactly.}
+
+\item{height}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), the dimensions will be set to
 1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
 1500 x 525 for 2x1 subplots, and
@@ -208,6 +239,18 @@ If \code{FALSE}, print it separately instead.}
 
 \item{colorbar_digits}{The number of digits for the colorbar legend ticks.
 If \code{NULL} (default), let \code{\link{format}} decide.}
+
+\item{alpha}{Transparency value for mesh coloring, between 0 and 1. Default:
+\code{1.0} (no transparency).}
+
+\item{edge_color}{Outline each edge in this color. Default: \code{NULL} (do
+not outline the edges).}
+
+\item{vertex_color}{Draw each vertex in this color. Default: 
+\code{"black"}. Vertices are only drawn if \code{vertex_size > 0}}
+
+\item{vertex_size}{Draw each vertex with this size. Default: \code{0} 
+(do not draw the vertices).}
 }
 \description{
 Visualize "xifti" cortical data. The \code{rgl} package is required.

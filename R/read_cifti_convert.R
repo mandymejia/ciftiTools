@@ -1,6 +1,6 @@
-#' Read a CIFTI File Quickly
+#' Read a CIFTI file quickly
 #'
-#' @description Read a CIFTI file by exporting it as a single GIFTI 
+#' Read a CIFTI file by exporting it as a single GIFTI 
 #'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
 #'  and obtaining the brainordinate mapping using 
 #'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
@@ -44,29 +44,17 @@ read_cifti_convert <- function(
 
   # Read the CIFTI info.
   xifti$meta <- info_cifti(cifti_fname, wb_path)
-<<<<<<< Updated upstream
-  if (!all(brainstructures %in% xifti$meta$cifti$brainstructures)) {
-    stop(paste0(
-      "Only the following brainstructures are present in the CIFTI file:",
-      paste(xifti$meta$cifti$brainstructures, collapse=", ")
-=======
   bs_present <- brainstructures %in% xifti$meta$cifti$brainstructures
   if (!all(bs_present)) {
     warning(paste0(
       "Only the following brainstructures are present in the CIFTI file: ",
       paste(xifti$meta$cifti$brainstructures, collapse=", "), "\n"
->>>>>>> Stashed changes
     ))
+    brainstructures <- brainstructures[bs_present]
   }
 
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
-<<<<<<< Updated upstream
-
-  # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
-  #   xifti_data <- xifti_data + 1
-  # }
-=======
   if (get_cifti_extn(cifti_fname) == "dlabel.nii") {
     if (!all(round(xifti_data) == xifti_data)) {
       warning("The CIFTI file extension was \"dlabel.nii\" but the data values were not integers.")
@@ -74,28 +62,17 @@ read_cifti_convert <- function(
       mode(xifti_data) <- "integer"
     }
   }
->>>>>>> Stashed changes
 
   # Place cortex data into the "xifti" object.
-  if (xifti$meta$cifti$intent == 3007) {
-    # Label values begin at zero. In example file, it indicates "???"
-    mwall_values <- c(NaN, NA)
-  } else {
-    mwall_values <- c(0, NaN, NA)
-  }
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
   if ("left" %in% brainstructures) {
     cortex <- make_cortex(
       xifti_data[1:last_left,, drop=FALSE],
-      side = "left", #cortex_is_masked=TRUE,
+      side = "left", 
       mwall = xifti$meta$cortex$medial_wall_mask$left,
-<<<<<<< Updated upstream
-=======
       mwall_values=mwall_values,
->>>>>>> Stashed changes
       mwall_source="the CIFTI being read in",
-      mwall_values=mwall_values
     )
     xifti$data$cortex_left <- cortex$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$mwall)
@@ -105,14 +82,10 @@ read_cifti_convert <- function(
   if ("right" %in% brainstructures) {
     cortex <- make_cortex(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
-      side = "right", #cortex_is_masked=TRUE,
+      side = "right",
       mwall = xifti$meta$cortex$medial_wall_mask$right,
-<<<<<<< Updated upstream
-=======
       mwall_values=mwall_values,
->>>>>>> Stashed changes
       mwall_source="the CIFTI being read in",
-      mwall_values=mwall_values
     )
     xifti$data$cortex_right <- cortex$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$mwall)

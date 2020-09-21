@@ -1,6 +1,11 @@
 #' Make CIFTI file
 #'
-#' Make a CIFTI file from components
+#' Make a CIFTI file from component NIFTI/GIFTI files using the 
+#'  \code{-cifti-create-...} Connectome Workbench commands.
+#' 
+#' Every provided component will be included. The ROIs are only used if the
+#'  corresponding cortex is provided. Either both or none of the subcortical
+#'  NIFTIs should be provided. 
 #'
 #' @param cifti_fname Path to the CIFTI to write.
 #' @param cortexL_fname The left cortex file.
@@ -30,16 +35,13 @@ write_cifti_from_separate <- function(
   # Determine what kind of CIFTI is being written.
   # Must be one of the following after the check in `cifti_info`
   cifti_extn <- get_cifti_extn(cifti_fname)
-  if (cifti_extn=="dlabel.nii") { stop("Writing label files is not yet implemented.") }
+
   create_cmd <- switch(cifti_extn,
     "dtseries.nii" = "-cifti-create-dense-timeseries",
     "dscalar.nii" = "-cifti-create-dense-scalar",
     "dlabel.nii" = "-cifti-create-label"
   )
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
   what <- switch(cifti_extn,
     "dtseries.nii" = "metric",
     "dscalar.nii" = "metric",
@@ -50,15 +52,10 @@ write_cifti_from_separate <- function(
       "CIFTI extension", cifti_extn, "is not yet supported by ciftiTools."
     ))
   }
+
   # TO-DO: adjust GIFTI/NIFTI written files accordingly?
 
-  # [TO DO]: Resolve the warning about orientation metadata, 
-  # qform_code/sform_code:
-  # https://brainder.org/2012/09/23/the-nifti-file-format/
-
-  cmd <- paste(
-    create_cmd, sys_path(cifti_fname)
-  )
+  cmd <- paste(create_cmd, sys_path(cifti_fname))
 
   # Volume
   if (!is.null(subcortVol_fname)){
@@ -88,6 +85,10 @@ write_cifti_from_separate <- function(
     if (!is.null(timestep)) { cmd <- paste(cmd, "-timestep", timestep) }
     if (!is.null(timestart)) { cmd <- paste(cmd, "-timestart", timestart) }
   }
+
+  # Warning for dlabel:
+  #   WARNING: label file '[the file]' contains data array with data type other than int32
+  #   --> all values are 0 ???
 
   run_wb_cmd(cmd, wb_path)
 

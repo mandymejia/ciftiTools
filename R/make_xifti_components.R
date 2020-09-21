@@ -99,12 +99,8 @@ make_cortex <- function(
 
     ## Extract data matrix.
     cortex <- do.call(cbind, cortex$data)
-<<<<<<< Updated upstream
-    dimnames(cortex) <- NULL # [TO DO]: Keep if dscalar or dlabels?
-=======
     dimnames(cortex) <- NULL
 
->>>>>>> Stashed changes
   } else {
     if (!is.numeric(cortex) && !is.matrix(cortex)) {
       stop(paste(
@@ -219,12 +215,34 @@ make_cortex <- function(
   list(data = cortex, mwall = mwall, col_names=col_names, label_table=label_table)
 }
 
-#' Make "xifti" Subcortical Components
+#' Make the subcortical transformation matrix
+#' 
+#' Make the transformation matrix for the subcortical volume from the sform
+#'  data in the header.
+#' 
+#' @param nii_fname Path to NIFTI file
+#' @return 4x4 matrix representing the transformation matrix. (This includes
+#'  the last row, \code{c(0,0,0,1)}).
+#' @keywords internal
+#' @importFrom oro.nifti nifti_header
+make_trans_mat <- function(nii_fname) {
+  head <- oro.nifti::nifti_header(nii_fname)
+  labs_trans_mat <- rbind(head@srow_x, head@srow_y, head@srow_z)
+  if (!all.equal(dim(labs_trans_mat), c(3, 4))) {
+    stop("trans_mat had unexpected dimensions.")
+  }
+  rbind(labs_trans_mat, matrix(c(0,0,0,1), nrow=1))
+}
+
+#' Make "xifti" subcortical components
 #' 
 #' Coerce subcortical data into valid entries for \code{xifti$data$subcort}
 #'  and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
 #'  NIFTI file paths. If the mask is not provided, it will be inferred from the 
 #'  labels.
+#' 
+#' To read in the labels as the primary data, use the labels NIFTI for both
+#'  \code{vol} and \code{labs}.
 #'
 #' @param vol represents the data values of the subcortex. It is either a NIFTI 
 #'  file path, 3D/4D data array (\eqn{i x j x k x T}), or a vectorized data 
@@ -250,27 +268,35 @@ make_cortex <- function(
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
-#' @return A list with components "data", "labels" and "mask". The first two
-#'  will be vectorized and ordered spatially.
+#' @return A list with components "data", "labels", "mask", and "trans_mat". The 
+#'  first two will be vectorized and ordered spatially.
 #' 
 #'  The volume can be recovered using: 
 #'    \code{vol <- unmask_vol(data, mask, fill=NA)}
 #'    \code{labs <- unmask_vol(labels, mask, fill=0)}
 #'
 #' @importFrom RNifti readNifti
+#' @importFrom oro.nifti nifti_header
 make_subcort <- function(
   vol, labs, mask=NULL, validate_mask=FALSE) {
 
+  vol_trans_mat <- labs_trans_mat <- mask_trans_mat <- NULL
+
   # Get vol.
-  if (is.fname(vol)) { vol <- readNifti(vol) }
+  if (is.fname(vol)) { 
+    vol_trans_mat <- try(make_trans_mat(vol), silent=TRUE)
+    vol <- readNifti(vol)
+  }
   vol_ndims <- length(dim(vol))
   if (vol_ndims == 0) { stop("`vol` did not have any dimensions. Check that it is a matrix or array?") }
   if (vol_ndims == 1) { vol <- matrix(vol, ncol=1) }
   vol_is_vectorized <- vol_ndims < 3
 
   # Get labels.
-  if (is.fname(labs)) { labs <- readNifti(labs) }
-
+  if (is.fname(labs)) { 
+    labs_trans_mat <- try(make_trans_mat(labs), silent=TRUE)
+    labs <- readNifti(labs)
+  }
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
 
@@ -308,11 +334,14 @@ make_subcort <- function(
     #} else if (!vol_is_vectorized) {
     #  mask <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
     } else {
-      stop("The mask could not be inferred. If the mask is not provided, the labels must not be vectorized.")
+      stop("The mask could not be inferred: if the mask is not provided, the labels must not be vectorized.")
     }
   # Otherwise, validate it if requested.
   } else {
-    if (is.fname(mask)) { mask <- readNifti(mask) }
+    if (is.fname(mask)) {
+      mask_trans_mat <- try(make_trans_mat(mask), silent=TRUE)
+      mask <- readNifti(mask)
+    }
     if (is.numeric(mask)) { mask <- mask > 0 }
     stopifnot( is.logical(mask) )
     if (validate_mask) {
@@ -333,9 +362,33 @@ make_subcort <- function(
     }
   }
 
+  if (sum(mask) == 0) { stop("The subcortical mask was empty (all `FALSE`).") }
+
   # Apply mask.
-  if (!vol_is_vectorized) { vol <- matrix(vol[mask], nrow=sum(mask)) }
-  if (!labs_is_vectorized) { labs <- labs[mask] }
+  if (!vol_is_vectorized) { 
+    vol <- matrix(vol[mask], nrow=sum(mask))
+  } else {
+    if (nrow(vol) != sum(mask)) {
+      stop(paste0(
+        "The number of subcortical voxels in the vectorized data (`vol`), ", 
+        nrow(vol), ", ",
+        "did not match the size of the subcortical mask, ", 
+        sum(mask), "."
+      ))
+    }
+  }
+  if (!labs_is_vectorized) { 
+    labs <- labs[mask]
+  } else {
+    if (length(labs) != sum(mask)) {
+      stop(paste0(
+        "The number of subcortical voxels in the vectorized labels (`labs`), ", 
+        length(labs), ", ",
+        "did not match the size of the subcortical mask, ", 
+        sum(mask), "."
+      ))
+    }
+  }
 
   substructure_levels <- substructure_table()$ciftiTools_Name
   labs <- factor(
@@ -345,10 +398,39 @@ make_subcort <- function(
   )
   stopifnot(is.subcort_labs(labs))
 
+  # Get trans_mat. Only use if all were the same.
+  trans_mat <- list(vol=vol_trans_mat, labs=labs_trans_mat, mask=mask_trans_mat)
+  trans_mat <- suppressMessages(trans_mat[sapply(trans_mat, is.nummat)])
+  if (length(trans_mat) > 0) {
+    if (length(trans_mat) == 1) {
+      trans_mat <- trans_mat[[1]]
+    } else {
+      for (ii in 1:length(trans_mat)) {
+        for (jj in 1:length(trans_mat)) {
+          if (ii <= jj) {next}
+          trans_mat_diff <- max(abs(as.vector(trans_mat[[ii]] - trans_mat[[jj]])))
+          if (trans_mat_diff > ciftiTools.getOption("EPS")) {
+            warning(paste0(
+              "sform transformation matrix for ", names(trans_mat)[[ii]], " and ",
+              names(trans_mat)[[jj]], " (for the subcortical data) did not ",
+              " match. Discarding both."
+            ))
+            trans_mat <- NULL
+            break
+          }
+        }
+      }
+      trans_mat <- trans_mat[[1]]
+    }
+  } else {
+    trans_mat <- NULL
+  }
+
   list(
     data = vol,
     labels = labs,
-    mask = mask
+    mask = mask,
+    trans_mat = trans_mat
   )
 }
 
@@ -357,22 +439,17 @@ make_subcort <- function(
 #' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
 #'  object.
 #'
-<<<<<<< Updated upstream
-#' @param surf Either a file path to a surface GIFTI; a "gifti" object (or list
-#'  with entry \code{"data"} with subentries \code{"pointset"} and 
-#'  \code{"triangle"}); or a list with entries \code{"pointset"} and 
-#'  \code{"triangle"}.
-=======
 #' @param surf A surface GIFTI, either as a file path or a "gifti" object
 #'  read by \code{\link[gifti]{readgii}}.
 #' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
 #'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
 #'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
 #'  hemisphere.
->>>>>>> Stashed changes
 #' 
 #' @return The "surface" object: a list with components \code{"vertices"}
-#'  (3D spatial locations) and \code{"faces"} (defined by three vertices).
+#'  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
+#'  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
+#'  unknown).
 #'
 #' @importFrom gifti readgii is.gifti
 #'
@@ -389,16 +466,6 @@ gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
 
   # GIFTI --> list of vertices and faces.
   if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::readgii()`.") }
-<<<<<<< Updated upstream
-  stopifnot(is.list(surf))
-  if ("data" %in% names(surf)) { surf <- surf$data }
-  stopifnot(all(c("pointset", "triangle") %in% names(surf)))
-  verts <- surf$pointset
-  faces <- surf$triangle
-  if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
-  mode(faces) <- "integer"
-  surf <- list(vertices = verts, faces = faces)
-=======
   ## Get hemisphere.
   hemisphere <- try({
     ps_idx <- which(names(surf$data) == "pointset")[1]
@@ -435,7 +502,6 @@ gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
   ## Format faces as integers starting index at 1 instead of 0
   if (min(surf$faces)==0) surf$faces <- surf$faces + 1
   mode(surf$faces) <- "integer"
->>>>>>> Stashed changes
 
   # Return cifti_surface or error.
   if (!is.surf(surf)) {
@@ -447,25 +513,20 @@ gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
 
 #' Convert "gifti" to "surface" object
 #'
-#' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
-#'  object.
+#' Coerce a file path to a surface GIFTI, a "gifti" object, or a "surface"
+#'  object to a "surface" object.
 #'
-<<<<<<< Updated upstream
-#' @param surf Either a file path to a surface GIFTI; a "gifti" object (or list
-#'  with entry \code{"data"} with subentries \code{"pointset"} and 
-#'  \code{"triangle"}); a list with entries \code{"pointset"} and 
-#'  \code{"triangle"}; or a "surface" object.
-=======
 #' @param surf Either a file path to a surface GIFTI; a "gifti" object
 #'  read by \code{\link[gifti]{readgii}}; or, an existing "surface" object.
 #' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
 #'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
 #'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
 #'  hemisphere.
->>>>>>> Stashed changes
 #' 
 #' @return The "surface" object: a list with components \code{"vertices"}
-#'  (3D spatial locations) and \code{"faces"} (defined by three vertices).
+#'  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
+#'  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
+#'  unknown).
 #'
 #' @importFrom gifti readgii is.gifti
 #'

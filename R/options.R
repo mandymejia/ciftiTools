@@ -26,6 +26,8 @@ ciftiTools.checkOption <- function(opt, val=NULL){
   invisible(NULL)
 }
 
+#' Set \code{"ciftiTools"} option
+#' 
 #' Sets an R option (with prefix "ciftiTools_"). Right now, the ciftiTool
 #'  options are "wb_path" (path to Workbench Command)
 #'  and "EPS" (Threshold for detecting constant voxels).
@@ -44,6 +46,8 @@ ciftiTools.setOption <- function(opt, val) {
   invisible(val)
 }
 
+#' Get \code{"ciftiTools"} option
+#' 
 #' Gets an R option (with prefix "ciftiTools_") value. Right now, the ciftiTool
 #'  options are "wb_path" (path to Workbench Command)
 #'  and "EPS" (Threshold for detecting constant voxels).

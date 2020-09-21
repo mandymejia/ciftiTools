@@ -2,15 +2,3 @@
 
 language: R
 cache: packages
-warnings_are_errors: true
-after_success:
-  - R script -e 'covr::coveralls(type = "all")'
-
-# for RGL
-addons:
-  apt:
-    packages:
-      - libgdal-dev
-      - libproj-dev
-before_install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libcgal-dev libglu1-mesa-dev mesa-common-dev; fi

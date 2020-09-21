@@ -16,13 +16,9 @@ resample_surf(
 
 \item{resamp_res}{The desired resolution}
 
-<<<<<<< Updated upstream
-\item{hemisphere}{"left" or "right"}
-=======
 \item{hemisphere}{"left" or "right". Only used if not indicated by 
 \code{surf$hemisphere}. An error will be raised if it does not match the 
 hemisphere indicated in the intermediate written GIFTI.}
->>>>>>> Stashed changes
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

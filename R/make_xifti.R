@@ -120,17 +120,6 @@ make_xifti <- function(
   surfL=NULL, surfR=NULL, 
   read_dir=NULL) {
   
-<<<<<<< Updated upstream
-  # # Use `read_cifti` if `cifti_fname` was provided.
-  # if (!is.null(cifti_fname)) {
-  #   if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLabs, cifti_info), is.null))) {
-  #     ciftiTools_warn("`cifti_fname` was provided, so it will be read. separate GIFTI/NIFTI data and `cifti_info` will be ignored.")
-  #   }
-  #   return( read_cifti(cifti_fname, brainstructures=cifti_brainstructures, ...) )
-  # }
-  
-=======
->>>>>>> Stashed changes
   # Add `read_dir` and check file paths.
   if (is.fname(cortexL)) { cortexL <- format_path(cortexL, read_dir, mode=4) }
   if (is.fname(cortexR)) { cortexR <- format_path(cortexR, read_dir, mode=4) }
@@ -143,14 +132,9 @@ make_xifti <- function(
   xifti <- template_xifti()
 
   # Cortex data.
-  # TO DO: see `read_cifti_convert` on using intent to change mwall infer behavior
   if (!is.null(cortexL)) {
     x <- make_cortex(
-<<<<<<< Updated upstream
-      cortexL, cortexL_mwall,
-=======
       cortexL, cortexL_mwall, mwall_values=mwall_values,
->>>>>>> Stashed changes
       side="left", mwall_source="the input `cortexL_mwall`"
     )
     xifti$data$cortex_left <- x$data
@@ -167,11 +151,7 @@ make_xifti <- function(
   }
   if (!is.null(cortexR)) {
     x <- make_cortex(
-<<<<<<< Updated upstream
-      cortexR, cortexR_mwall,
-=======
       cortexR, cortexR_mwall, mwall_values=mwall_values,
->>>>>>> Stashed changes
       side="right", mwall_source="the input `cortexR_mwall`"
     )
     xifti$data$cortex_right <- x$data
@@ -224,6 +204,7 @@ make_xifti <- function(
     xifti$data$subcort <- x$data
     xifti$meta$subcort$labels <- x$labels
     xifti$meta$subcort$mask <- x$mask
+    xifti$meta$subcort["trans_mat"] <- list(x$trans_mat)
   }
 
   # CIFTI metadata.

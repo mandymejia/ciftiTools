@@ -1,6 +1,6 @@
-#' separate_cifti with collapsed file name argument
+#' \code{separate_cifti} wrapper
 #'
-#' @description Calls \code{separate_cifti} using the file names listed in the
+#' Calls \code{separate_cifti} using the file names listed in the
 #'  argument \code{sep_fnames}. 
 #'
 #' @inheritParams cifti_fname_Param
@@ -42,9 +42,9 @@ separate_cifti_wrapper <- function(
   do.call(separate_cifti, sep_kwargs)
 }
 
-#' resample_cifti with collapsed file name argument
+#' \code{resample_cifti} wrapper
 #'
-#' @description Calls \code{resample_cifti} using the original file names 
+#' Calls \code{resample_cifti} using the original file names 
 #'  listed in the \code{original_fnames} argument and the target file names
 #'  listed in the \code{resamp_fnames} argument. 
 #'
@@ -74,7 +74,7 @@ resample_cifti_wrapper <- function(
   surfL_target_fname=NULL, surfR_target_fname=NULL, 
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
 
-  # [TO DO]: Decide: add "original"/"target" to surf?
+  # [TO DO]: surfL_fname --> surfL_original_fname? (and same for right?)
   
   # Get kwargs.
   resamp_kwargs <- list(

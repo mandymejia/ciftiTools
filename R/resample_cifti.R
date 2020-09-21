@@ -1,6 +1,6 @@
 #' Resample CIFTI Data
 #'
-#' @description Performs spatial resampling of CIFTI data on the cortical surface
+#' Performs spatial resampling of CIFTI data on the cortical surface
 #'  by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
 #'  putting them together. (The subcortex is not resampled.) 
 #'
@@ -65,7 +65,6 @@ resample_cifti <- function(
 
   stopifnot(resamp_res > 0)
 
-  # [TO DO]: consider auto-generating cifti_target_fname & make it optional
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
 
   if (verbose) { exec_time <- Sys.time() }

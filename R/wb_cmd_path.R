@@ -1,3 +1,10 @@
+#' Request \code{"wb_path"}
+#' 
+#' Print a message requesting that the \code{ciftiTools} option \code{"wb_path"}
+#'  be set.
+#' 
+#' @keywords internal
+#' @return The message (1-length character vector)
 wb_path_request <- function() {
   paste(
     "\n******************************************************************************************",
@@ -9,6 +16,8 @@ wb_path_request <- function() {
   )
 }
 
+#' Get the Connectome Workbench command path
+#' 
 #' Retrieves the Connectome Workbench path from the \code{ciftiTools_wb_path} 
 #'  option or the provided argument. This path can be the Connectome Workbench
 #'  folder or the `wb_command` executable.

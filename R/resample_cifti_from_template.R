@@ -44,7 +44,6 @@ resample_cifti_from_template <- function(
 
   # Cortical spheres.
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
-    # TO DO: what if medial wall mask is NULL?
     if (!("left" %in% brainstructures)) {
       original_res <- length(original_info$cortex$medial_wall_mask$left)
     } else {

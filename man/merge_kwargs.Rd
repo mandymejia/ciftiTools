@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{merge_kwargs}
 \alias{merge_kwargs}
-\title{Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
-an error is raised.}
+\title{Merges two kwargs}
 \usage{
 merge_kwargs(
   kwargsA,
@@ -32,7 +31,7 @@ location and remove the kwarg from the second location".}
 A list with the union of \code{kwargsA} and \code{kwargsB}.
 }
 \description{
-Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
-an error is raised.
+Merge two kwarg lists. If a kwarg is present in both lists but with different
+ values, an error is raised.
 }
 \keyword{internal}

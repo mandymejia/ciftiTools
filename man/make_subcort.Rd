@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_subcort}
 \alias{make_subcort}
-\title{Make "xifti" Subcortical Components}
+\title{Make "xifti" subcortical components}
 \usage{
 make_subcort(vol, labs, mask = NULL, validate_mask = FALSE)
 }
@@ -31,8 +31,8 @@ check that the mask only removes voxels with \code{NA} and \code{0} values
 in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).}
 }
 \value{
-A list with components "data", "labels" and "mask". The first two
- will be vectorized and ordered spatially.
+A list with components "data", "labels", "mask", and "trans_mat". The 
+ first two will be vectorized and ordered spatially.
 
  The volume can be recovered using: 
    \code{vol <- unmask_vol(data, mask, fill=NA)}
@@ -43,6 +43,10 @@ Coerce subcortical data into valid entries for \code{xifti$data$subcort}
  and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
  NIFTI file paths. If the mask is not provided, it will be inferred from the 
  labels.
+}
+\details{
+To read in the labels as the primary data, use the labels NIFTI for both
+ \code{vol} and \code{labs}.
 }
 \section{Label Levels}{
 

@@ -1,438 +1,21 @@
-#' The ROY_BIG_BL color palette, the default palette from the Connectome Workbench.
-#'
-#' Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. This is the same color palette as the
-#' default Connectime Workbench palette. Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
-#'
-#' @param min The minimum value for the color mapping. As in the original palette, the last color (aqua) is actually
-#'  placed at the bottom .5\% between the minimum and maximum.
-#' @param max The maximum value for the color mapping. If this value is lower than the minimum, the color mapping will
-#'  be reversed.
-#' @param mid (Optional) The midpoint value for the color mapping. If \code{NULL} (default), the true midpoint is used.
-#' @param pos_half Use the positive half (black --> red --> yellow) only? Default: \code{FALSE}.
-#'
-#' @export
-#' @return A data.frame with two columns: color (character: color hex codes) and value (numeric).
-#'
-ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
-  if (min==max) { stop("The minimum and maximum value should not be equal.") }
-  # if (min==max) {
-  #   return( data.frame(color = c("white", "white"), value = c(min, max)) )
-  # }
-  rev_order <- min > max
-  if (rev_order) {
-    temp <- min
-    min <- max
-    max <- temp
-  }
-  stopifnot(max > min)
-
-  # Use the same landmark color RGB values, and same spacing. Note the spacing is not equidistant between landmarks.
-  color <- c(
-    "#ffff00", "#ffc800", "#ff7800", "#ff0000", "#c80000", "#960000",
-    "#640000", "#3c0000", "#000000", "#000050", "#0000aa", "#4b007d",
-    "#7d00a0", "#4b7d00", "#00c800", "#00ff00", "#00ffff"#, "#00ffff"
-  )
-  value <- c(
-    1.00, 0.875, 0.750, 0.625, 0.500, 0.375,
-    0.250, 0.125, 0.000, -0.125, -0.250, -0.375,
-    -0.500, -0.625, -0.750, -0.875, -0.990#, -1.00
-  )
-
-  if (pos_half) {
-    # Only use the latter half.
-    value <- value[1:9]
-    color <- color[1:9]
-    # Normalize the values to [min, max].
-    value <- value * (max - min) + min
-
-  } else {
-    # Normalize the values to [min, max]. Note that the bottom .5% are all #00ffff.
-    value <- (value + 1)/2
-    value <- value * (max - min) + min
-
-    # Normalize middle value (black) to mid, if specified.
-    if (!is.null(mid)) {
-      stopifnot(mid > min & mid < max)
-      old_mid <- (min + max)/2
-      value[1:8] <- (value[1:8] - old_mid) / (max - old_mid) * (max - mid) + mid
-      value[9] <- mid
-      value[10:17] <- (value[10:17] - min) / (old_mid - min) * (mid - min) + min
-    }
-  }
-  if (rev_order) { value <- value[length(value):1] }
-  return(data.frame(color=color, value=value))
-}
-
-#' Control the mapping of values to colors with \code{colors}, \code{color_mode}, and \code{zlim}.
-#'
-#' There are three argument types for \code{colors}: \code{"ROY_BIG_BL"}, the name of an \code{RColorBrewer} palette, or
-#'  a character vector of color names.
-#'
-#' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is the same palette as the default used in
-#'  the Connectome Workbench application (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
-#'  The midpoint will be colored black. From the midpoint toward the upper bound, colors will proceed from black to red
-#'  to yellow. From the midpoint toward the lower bound, colors will proceed from black to blue to purple to green to aqua.
-#'  Note that the colors are not equally-spaced, and the bottom .5\% of the color range has the same color. Here is how
-#'  each color mode behaves if \code{colors=="ROY_BIG_BL"}:
-#'
-#' \describe{
-#'  \item{\code{color_mode=="sequential"}}{Only the second half of the pallete will be used (black --> red --> yellow).
-#'    If \code{identical(zlim, NULL)}, the colors will be mapped between \code{DATA_MIN} (black) to
-#'    \code{DATA_MAX} (yellow). If \code{length(zlim)==2}, \code{zlim[1]} will be the lower bound (black)
-#'    and \code{zlim[2]} will be the upper bound (yellow). If \code{zlim[1] > zlim[2]}, the
-#'    first value will be used as the maximum and the second will be used as the minimum, and the color scale will be
-#'    reversed with the highest value colored black and the lowest value colored yellow.
-#'  }
-#'  \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not recommended for qualitative data, so a
-#'    warning will be issued. Colors will be based on the landmark colors in the "ROY_BIG_BL" pallete. If
-#'    \code{identical(zlim, NULL)}, the colors will be mapped onto each integer between \code{DATA_MIN} and
-#'    \code{DATA_MAX}, inclusive. Color interpolation will be used if the number of colors in the palette (17) is less
-#'    than this range. If \code{length(zlim)==length(colors)}, each color will be mapped to each corresponding value.
-#'  }
-#'  \item{\code{color_mode=="diverging"}}{If \code{identical(zlim, NULL)}, the colors will be mapped from
-#'    \code{DATA_MIN} (aqua) to \code{DATA_MAX} (yellow). If \code{length(zlim)==1}, this value will be used as
-#'    the midpoint (black) instead of the data midpoint. If \code{length(zlim)==2}, \code{zlim[1]} will
-#'    be the lower bound (aqua) and \code{zlim[2]} will be the upper bound (yellow). If \code{length(zlim)==3},
-#'    these values will correspond to the lowest bound (aqua), midpoint (black), and upper bound (yellow) respectively.
-#'    If the \code{zlim} are in descending order, the first value will be used as the maximum and the last
-#'    will be used as the minimum, and the color scale will be reversed with the highest values colored aqua and the
-#'    lowest values colored yellow.
-#'  }
-#' }
-#'
-#' If \code{colors} is the name of an RColorBrewer palette (see a listing at `RColorBrewer::brewer.pal.info`), the colors
-#'  in that pallete will be used, and the below behavior applies. If \code{colors} is a character vector of color names
-#'  (hex codes or standard R color names), the below behavior applies directly:
-#'
-#' \describe{
-#'  \item{\code{color_mode=="sequential"}}{If \code{identical(zlim, NULL)}, the colors will be mapped with equal
-#'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. If \code{length(zlim)==2}, these values will be used as
-#'    the upper and lower bounds instead. If \code{zlim[1] > zlim[2]}, the first value will be used as
-#'    the maximum and the second will be used as the minimum, and the color scale will be reversed. If
-#'    \code{length(zlim)==length(colors)}, each color will be mapped to each corresponding value.
-#'  }
-#'  \item{\code{color_mode=="qualitative"}}{If \code{identical(zlim, NULL)}, the colors will be mapped onto
-#'    each integer between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color interpolation will be used if the
-#'    number of colors in the palette is less than this range. If \code{length(zlim)==length(colors)}, each
-#'    color will be mapped to each corresponding value.
-#'  }
-#'  \item{\code{color_mode=="diverging"}}{If \code{identical(zlim, NULL)}, the colors will be mapped with equal
-#'    spacing from \code{DATA_MIN} to \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of the
-#'    data. If \code{length(zlim)==1}, the middle color will correspond to this value instead. The preceeding
-#'    colors will be equally-spaced between \code{DATA_MIN} and this value; the following colors will be equally-spaced
-#'    between this value and\code{DATA_MAX}. If \code{length(zlim)==2}, \code{zlim[1]} will be the lower
-#'    bound (first color) and \code{zlim[2]} will be the upper bound (last color). If \code{length(zlim)==3},
-#'    these values will correspond to the lowest bound, midpoint, and upper bound respectively. There must be an odd
-#'    number of colors, since the diverging color mode requires a midpoint. If the \code{zlim} are in descending
-#'    order, the first value will be used as the maximum and the last will be used as the minimum, and the color scale
-#'    will be reversed. Finally, if \code{length(zlim)==length(colors)}, each color will be mapped to each
-#'    corresponding value. Thus, the middle color will correspond to the middle color_value. The length of \code{colors}
-#'    must be odd and >= 3.
-#'  }
-#' }
-#'
-#' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info and
-#'  colorbrewer2.org), or a character vector of colors. Defaults are \code{"ROY_BIG_BL"} (sequential color mode),
-#'  \code{"Set2"} (qualitative color mode), and \code{"ROY_BIG_BL"} (diverging color mode). See the description for more
-#'  details.
-#' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"}, or \code{"diverging"}. Default: "sequential".
-#'  See the description for more details.
-#' @param zlim (Optional) Controls the mapping of values to each color in \code{colors}. If the length is longer
-#'  than one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set the value to \code{DATA_MAX}. See the
-#'  description for more details.
-#' @param DATA_MIN (Optional) The minimum value of the data to make the palette for. Overrided by certain \code{zlim}.
-#' @param DATA_MAX (Optional) The maximum value of the data to make the palette for. Overrided by certain \code{zlim}.
-#'
-#' @keywords internal
-#' @importFrom grDevices colorRampPalette
-#' @import RColorBrewer
-#'
-#' @return A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
-#'
-make_color_pal <- function(colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
-                           DATA_MIN=0, DATA_MAX=1) {
-  color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
-
-  if (DATA_MIN >= DATA_MAX) { stop("DATA_MAX must be greater than DATA_MIN") }
-
-  # Use default palettes if the colors are not specified.
-  if (identical(colors, NULL)) {
-    colors <- switch(color_mode,
-                     sequential="ROY_BIG_BL", # will use pos half
-                     qualitative="Set2",
-                     diverging="ROY_BIG_BL")
-  }
-
-  N_COLORS_PRE <- length(colors)
-  N_COLOR_VALUES_PRE <- length(zlim)
-  if (N_COLORS_PRE == 1) {
-    # ROY_BIG_BL
-    if (colors == "ROY_BIG_BL") {
-      if (color_mode=="sequential") {
-        if (identical(zlim, NULL)) {
-          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, pos_half=TRUE)
-        } else if (N_COLOR_VALUES_PRE==2) {
-          RBB <- ROY_BIG_BL(zlim[1], zlim[2], pos_half=TRUE)
-        } else {
-          stop("The sequential ROY_BIG_BL palette (default) requires two (min and max values) or NULL/none zlim.")
-        }
-
-      } else if (color_mode=="qualitative") {
-        warning("The ROY_BIG_BL palette is not recommended for qualitative data.")
-        RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
-
-      } else if (color_mode=="diverging") {
-        if (identical(zlim, NULL)) {
-          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
-        } else if (N_COLOR_VALUES_PRE==1) {
-          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, mid=zlim)
-        } else if (N_COLOR_VALUES_PRE==2) {
-          RBB <- ROY_BIG_BL(zlim[1], zlim[2],
-                            mid=(zlim[1]+zlim[2])/2)
-        } else if (N_COLOR_VALUES_PRE==3) {
-          RBB <- ROY_BIG_BL(zlim[1], zlim[3], mid=zlim[2])
-        }
-      }
-
-      colors <- RBB$color
-      if (color_mode != "qualitative") { zlim <- RBB$value }
-
-    # RColorBrewer
-    } else if (colors %in% row.names(brewer.pal.info)) {
-      colors_info <- brewer.pal.info[row.names(brewer.pal.info) == colors,]
-      brewer_mode <- match.arg(as.character(colors_info$category), c("sequential", "qualitative", "diverging"))
-      if (brewer_mode != color_mode) {
-        warning(paste("The RColorBrewer palette type is", brewer_mode, "but the color_mode is", color_mode))
-      }
-      colors <- brewer.pal(as.numeric(colors_info$maxcolors), colors)
-
-    } else {
-      stop("The `colors` argument must be 'ROY_BIG_BL', an palette listed in `RColorBrewer::brewer.pal.info`, or
-        a character vector of color hex codes or standard R names with a length greater than one.")
-      }
-  }
-
-  N_COLORS <- length(colors)
-  N_COLOR_VALUES <- length(zlim)
-  if (!identical(zlim, NULL)) {
-    # Check that the color values are valid.
-    valid_color_values_lengths <- switch(color_mode,
-                                         sequential=c(2, N_COLORS),
-                                         qualitative=N_COLORS,
-                                         diverging=c(1, 2, 3, N_COLORS))
-    if (!(N_COLOR_VALUES %in% valid_color_values_lengths)) {
-      stop(paste("There are", N_COLOR_VALUES, "color values--this is not compatible for the", color_mode, "color mode. See the description for details."))
-    }
-
-    # Order color values from lowest to highest, if not already sorted.
-    color_values_order <- order(zlim)
-    zlim <- zlim[color_values_order]
-    # If the color values are descending, reverse the color scale.
-    if (identical(color_values_order, length(zlim):1)) {
-      colors <- colors[length(colors):1]
-    } else if (N_COLOR_VALUES==N_COLORS) {
-      colors <- colors[color_values_order]
-    }
-
-    # Replace infinite values with data bounds.
-    if (identical(zlim[1], -Inf)) { zlim[1] <- DATA_MIN }
-    if (identical(zlim[N_COLOR_VALUES], Inf)) { zlim[N_COLOR_VALUES] <- DATA_MAX }
-  }
-
-  # Sequential
-  if (color_mode == "sequential") {
-    pal_cols <- colors
-    if (identical(zlim, NULL)) {
-      pal_vals <- seq(DATA_MIN, DATA_MAX, length.out=length(colors))
-    } else {
-      if (N_COLOR_VALUES==2) {
-        pal_vals <- seq(zlim[1], zlim[2], length.out=length(colors))
-      } else if (N_COLOR_VALUES == N_COLORS) {
-        pal_vals <- zlim
-      } else {
-        stop("The sequential color mode requires length(zlim) == 0 (NULL), 2, or length(colors).")
-      }
-    }
-
-    #Qualitative
-  } else if (color_mode=="qualitative") {
-    if (!identical(c(DATA_MIN, DATA_MAX), round(c(DATA_MIN, DATA_MAX)))) {
-      stop("Data bounds must be integers for qualitative color mode.")
-      }
-    N_DATA_VALUES <- DATA_MAX - DATA_MIN + 1
-    if (identical(zlim, NULL)) {
-      pal_vals <- c(DATA_MIN:DATA_MAX)
-      if (length(colors) >= N_DATA_VALUES) {
-        pal_cols <- colors[1:N_DATA_VALUES]
-      } else {
-        # Might look weird for the ROY_BIG_BL pallete, but ROY_BIG_BL is not recommended anyway for qualitative data.
-        pal_cols <- colorRampPalette(colors)(N_DATA_VALUES)
-      }
-    } else if (N_COLOR_VALUES==N_COLORS) {
-      pal_vals <- zlim
-      pal_cols <- colors
-    } else {
-      stop("The qualitative color mode requires length(zlim) == 0 (NULL) or length(colors).")
-    }
-
-    # Diverging
-  } else if (color_mode=="diverging") {
-    pal_cols <- colors
-    if (identical(zlim, NULL)) {
-      pal_vals <- seq(DATA_MIN, DATA_MAX, length.out=length(colors))
-    } else {
-      if (N_COLOR_VALUES==N_COLORS) {
-        pal_vals <- zlim
-      } else {
-        # Get the minimum, middle, and maximum value for the color scale.
-        if (N_COLOR_VALUES==1) {
-          mid_val <- zlim
-          if ((mid_val <= DATA_MIN) | (mid_val >= DATA_MAX)) {
-            stop("If one color_value is used with the diverging color_mode, it represents the midpoint of the data scale
-              and must be between the data minimum and maximum. (It does not have to be the true midpoint.) Different
-              bounds can be set with color_value=c(new_min, midpoint, new_max).")
-          }
-          min_val <- DATA_MIN
-          max_val <- DATA_MAX
-        } else if (N_COLOR_VALUES==2) {
-          mid_val <- (DATA_MIN + DATA_MAX)/2
-          min_val <- zlim[1]
-          max_val <- zlim[2]
-        } else if (N_COLOR_VALUES==3) {
-          mid_val <- zlim[2]
-          min_val <- zlim[1]
-          max_val <- zlim[3]
-        }
-
-        # Interpolate between the min/mid/max to get the color values.
-        # To-do: allow for odd-length color palettes?
-        if (length(colors) %% 2 != 1) { stop("There must be an odd number of colors for the diverging color mode, to have a middle color.") }
-        low_vals <- seq(min_val, mid_val, length.out=floor(N_COLORS/2)+1)
-        low_vals <- low_vals[1:(length(low_vals)-1)]
-        high_vals <- seq(mid_val, max_val, length.out=floor(N_COLORS/2)+1)
-        high_vals <- high_vals[2:length(high_vals)]
-        pal_vals <- c(low_vals, mid_val, high_vals)
-      }
-    }
-  } else {
-    stop(paste("Unrecognized color mode", color_mode))
-  }
-
-  return(data.frame(color=pal_cols, value=pal_vals))
-}
-
-#' Interpolates between entries in the input palette to make a larger palette with at least MIN_COLOR_RES entries.
-#'
-#' @param pal The color palette to expand: a data.frame with two columns, color (character: standard color names
-#'  or hex codes) and value (numeric).
-#' @param MIN_COLOR_RES The minimum number of entries to have in the output palette. Because of rounding, there may be more
-#'  than this number of entries.
-#'
-#' @keywords internal
-#' @importFrom grDevices colorRampPalette
-#'
-#' @return A data.frame with two columns: color (character: standard color names or hex codes) and value (numeric).
-#'
-expand_color_pal <- function(pal, MIN_COLOR_RES=255) {
-  if (nrow(pal) < MIN_COLOR_RES) {
-    colors <- as.character(pal$color)
-    # Interpolate between palette values to obtain at least MIN_COLOR_RES color levels.
-    color_res <- MIN_COLOR_RES * diff(pal$value)/(max(pal$value) - min(pal$value))
-    color_res <- as.integer(round(pmax(color_res, 2)))
-    vals <- vector(length=0, mode="numeric")
-    cols <- vector(length=0, mode="character")
-    for(ii in 1:(nrow(pal)-1)) {
-      next_vals <- seq(pal$value[ii], pal$value[ii+1], length.out=color_res[ii])
-      next_vals <- next_vals[1:(length(next_vals)-1)]
-      next_cols <- colorRampPalette(c(colors[ii], colors[ii+1]))(color_res[ii])
-      next_cols <- next_cols[1:(length(next_cols)-1)]
-      vals <- c(vals, next_vals)
-      cols <- c(cols, next_cols)
-    }
-    vals <- c(vals, pal$value[nrow(pal)])
-    cols <- c(cols, colors[nrow(pal)])
-  } else {
-    vals <- pal$value
-    cols <- as.character(pal$color)
-  }
-  data.frame(color=cols, value=vals)
-}
-
-#' Applies a palette to a data vector to yield a vector of colors.
-#'
-#' @param data_values The values to map to colors
-#' @param pal The palette to use to map values to colors
-#' @param color_NA The color to use for NA values (default is "white").
-#'
-#' @return A character vector of color names
-use_color_pal <- function(data_values, pal, color_NA="white") {
-  mask <- is.na(data_values)
-  colors <- as.character(pal$color)
-  pal$cut <- -Inf
-  pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
-  out <- vector("character", length(data_values))
-  out[!mask] <- colors[apply(outer(as.numeric(data_values[!mask]), pal$cut, '>='), 1, sum)]
-  out[mask] <- color_NA
-  out
-}
-
 #' Visualize "xifti" cortical data. The \code{rgl} package is required.
 #'
 #' @inheritParams xifti_Param
 #' @param idx The time/column index of the xifti data to plot.
 #'  Currently one a single time point is supported. Default: the first index.
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right".
-#'  If \code{NULL} (default), each available surface (e.g. if \code{surfL}
-#'  or \code{xifti$surf$cortex_right} is not empty) will be displayed. Surfaces without
-#'  data (e.g. \code{xifti$CORTEX_LEFT} is empty) will still be displayed,
-#'  colored by \code{color_NA}. Each cortex will be shown in a separate panel
-#'  column within the RGL window.
-#' @param view Which view to display: "lateral", "medial", or "both".
-#'  If \code{NULL} (default), both views will be shown. Each view
-#'  will be shown in a separate panel row within the RGL window.
-#' @param mode One of "widget" (Default), "image", or "video":
-#'
-#'  "widget" will open an interactive RGL window. Left click and drag to rotate.
-#'  Use the scroll wheel to zoom. Run the R function
-#'  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png.
-#'  See \code{\link[rgl]{snapshot}} for more information.
-#'
-#'  "image" will open the RGL window, take a screenshot using
-#'  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
-#'  as a png in \code{write_dir} and its name will be \code{[fname].png}.
-#'
-#'  "video" will take a series of screenshots of the RGL window, while increasing
-#'  the column index. The frames can
-#'  be converted to a video file using multimedia software such as Adobe
-#'  Premiere Pro. The "video" mode is not yet supported.
-#' @param width,height The dimensions of the RGL window, in pixels. If both are
-#'  \code{NULL} (default), the dimensions will be set to
-#'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
-#'  1500 x 525 for 2x1 subplots, and
-#'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
-#'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
-#'  the same aspect ratio. Both could be specified to set the dimensions exactly.
-#' @param zoom Adjustment to size of brain meshes. Default: \code{3/5}
-#'  (100\% + 3/5*100\% = 160\% the original size).
-#' @param bg Background color. \code{NULL} will not color the background (white).
-#' @param title Optional title for the plot. It will be printed at the top in
-#'  a separate subplot with 1/4 the height of the brain cortex subplots.
-#'  \code{NULL} (default) will use the time index (.dtseries) or name
-#'  (.dscalar or .dlabel) of the data column being plotted. Set to an empty
-#'  string \code{""} to omit the title. If the title is non-empty but does not
-#'  appear, \code{cex.title} may need to be lowered.
-#' @param cex.title Font size multiplier for the title. \code{NULL} (default)
-#'  will use \code{2} for titles less than 20 characters long, and smaller
-#'  sizes for increasingly longer titles.
-#' @param text_color Color for text in title and colorbar legend. Default:
-#'  "black".
-#' @param fname An identifier to use for naming the saved images
-#'  ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
-#'  Default: "xifti".
-#' @param write_dir Where should any output images be written. NULL (default)
-#'  will write them to the current working directory.
-#'
-#'  \code{write_dir} must already exist, or an error will occur.
+#' 
+#'  If a brain cortex is requested but no surface is available, a default
+#'  inflated surface will be used.
+#' 
+#'  This argument can also be null \code{NULL} (default). In this case, a
+#'  default inflated surface will be used for each cortex with available data 
+#'  (i.e. if \code{xifti$data$cortex_left} and/or \code{xifti$data$cortex_right} 
+#'  exist).
+#' 
+#'  Surfaces without data will still be displayed, colored white.
+#'  
+#'  Each cortex will be shown in a separate panel column within the RGL window.
 #' @param colors (Optional) "ROY_BIG_BL", vector of colors to use,
 #'  OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info
 #'  and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential),
@@ -463,6 +46,7 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  If \code{FALSE}, print it separately instead.
 #' @param colorbar_digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
+#' @inheritParams surface_plot_Params
 #'
 #' @export
 #' @importFrom grDevices dev.list dev.off rgb
@@ -473,7 +57,9 @@ view_xifti_surface <- function(xifti, idx=1,
   fname="xifti", write_dir=NULL,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL) {
+  colorbar_embedded=TRUE, colorbar_digits=NULL,
+  alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0) {
 
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("Package \"rgl\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
@@ -495,15 +81,8 @@ view_xifti_surface <- function(xifti, idx=1,
   # ----------------------------------------------------------------------------
 
   # Check xifti, idx, and surfaces.
-  # [TO DO]: Check input surface matches the cortex!
   stopifnot(is.xifti(xifti))
   if (length(idx) > 1) stop("Only one time/column index is supported right now.")
-<<<<<<< Updated upstream
-  if (is.null(surfL)) {
-    if (is.null(xifti$surf$cortex_left) & !is.null(hemisphere)) {
-      if (hemisphere %in% c("both", "left")) {
-        stop("The left hemisphere was requested, but no surface data was provided (xifti$surf$cortex_left or the surfL argument).")
-=======
 
   if (!is.null(surfL)) {
     surfL <- make_surf(surfL, "left")
@@ -533,20 +112,9 @@ view_xifti_surface <- function(xifti, idx=1,
     if (hemisphere %in% c("both", "right")) {
       if (is.null(surfR)) {
         surfR <- make_surf(get_example_files()$surf["right"], "right")
->>>>>>> Stashed changes
       }
-    } else {
-      surfL <- xifti$surf$cortex_left
     }
   } else {
-<<<<<<< Updated upstream
-    surfL <- make_surf(surfL)
-  }
-  if (is.null(surfR)) {
-    if (is.null(xifti$surf$cortex_right) & !is.null(hemisphere)) {
-      if (hemisphere %in% c("both", "right")) {
-        stop("The right hemisphere was requested, but no surface data was provided (xifti$surf$cortex_right or the surfR argument).")
-=======
     if (is.null(surfL) && is.null(surfR)) {
       if (is.null(xifti$data$cortex_left) && is.null(xifti$data$cortex_right)) {
         stop("No cortical data nor surfaces were provided.")
@@ -576,24 +144,30 @@ view_xifti_surface <- function(xifti, idx=1,
           "provide the matching right hemisphere."
         ))
         surfR <- make_surf(get_example_files()$surf["right"], "right")
->>>>>>> Stashed changes
       }
-    } else {
-      surfR <- xifti$surf$cortex_right
     }
-  } else {
-    surfR <- make_surf(surfR)
   }
 
-  if (is.null(surfL) && is.null(surfR)) { stop("No valid surface data for either hemisphere.") }
+  if (!is.null(surfL) && !is.null(surfL$hemisphere)) {
+    if (surfL$hemisphere == "right") { 
+      warning("The left surface actually corresponds to the right cortex.\n") 
+    }
+  }
+  if (!is.null(surfR) && !is.null(surfR$hemisphere)) {
+    if (surfR$hemisphere == "left") { 
+      warning("The right surface actually corresponds to the left cortex.\n") 
+    }
+  }
 
   # Check hemisphere and view.
   if (is.null(hemisphere)) {
     hemisphere <- c("left", "right", "both")[1*(!is.null(surfL)) + 2*(!is.null(surfR))]
   }
-  view <- match.arg(view, c("both", "lateral", "medial"))
   if (hemisphere=="both") { hemisphere=c("left", "right") } # reformat
+
+  view <- match.arg(view, c("both", "lateral", "medial"))
   if (view=="both") { view=c("lateral", "medial") } # reformat
+  
   brain_panels_nrow <- length(view)
   brain_panels_ncol <- length(hemisphere)
 
@@ -660,61 +234,26 @@ view_xifti_surface <- function(xifti, idx=1,
   # Get the data values and surface models, and construct the mesh. ------------
   # ----------------------------------------------------------------------------
 
-  # Left cortex:
-  if ("left" %in% hemisphere) {
+  to_rgl <- list(
+    left <-  list(mesh=NULL, values=NULL, colors=NULL),
+    right <- list(mesh=NULL, values=NULL, colors=NULL)
+  )
+
+  for (h in hemisphere) {
+    surf_h <- switch(h, left=surfL, right=surfR)
+    mwall_h <- xifti$meta$cortex$medial_wall_mask[[h]]
+    cor_h <- switch(h, left="cortex_left", right="cortex_right")
+    val_h <- xifti$data[[cor_h]]
 
     # Check for surface data.
-    if (is.null(surfL)) {
-      stop(paste0("The left hemisphere was requested, but no surface data ",
-        "(xifti$surf$cortex_left or the surfL argument to view_xifti) was provided."))
-    }
-
-    if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
-      xifti$meta$cortex$medial_wall_mask$left <- rep(TRUE, nrow(surfL$vertices))
-    }
-    if (nrow(surfL$vertices) != length(xifti$meta$cortex$medial_wall_mask$left)) {
-      stop(paste(
-        "The left surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if medial wall mask is absent).",
-        "Are they in the same resolution?"
+    if (is.null(surf_h)) {
+      stop(paste0(
+        "The ",h," hemisphere was requested, but no surface data ",
+        "(xifti$surf",cor_h,") or the ", switch(h, "surfL", "surfR"), 
+        " argument to view_xifti) was provided."
       ))
-      #surfL <- resample_surf(surfL, length(xifti$meta$cortex$medial_wall_mask$left), "left", sphereL_fname)
     }
 
-<<<<<<< Updated upstream
-    # Get data values.
-    valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices))
-    if (!is.null(xifti$data$cortex_left)) {
-      valuesL[xifti$meta$cortex$medial_wall_mask$left,] <- xifti$data$cortex_left[,idx, drop=FALSE]
-    }
-    nvoxL <- nrow(valuesL)
-
-    ## Construct the mesh.
-    mesh_left <- rgl::tmesh3d(t(cbind(surfL$vertices,
-                                rep(1, nrow(surfL$vertices)))), # add homogenous coordinate
-                              t(surfL$faces),
-                              meshColor = "vertices")
-    mesh_left <- rgl::addNormals(mesh_left) # for smooth coloring
-  }
-  # Right cortex:
-  if ("right" %in% hemisphere) {
-
-    # Check for surface data.
-    if (is.null(surfR)) {
-      stop(paste0("The right hemisphere was requested, but no surface data ",
-        "(xifti$surf$cortex_right or the surfR argument to view_xifti) was provided."))
-    }
-
-    if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
-      xifti$meta$cortex$medial_wall_mask$right <- rep(TRUE, nrow(surfR$vertices))
-    }
-    if (nrow(surfR$vertices) != length(xifti$meta$cortex$medial_wall_mask$right)) {
-      stop(paste(
-        "The right surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if medial wall mask is absent).",
-        "Are they in the same resolution?"
-      ))
-=======
     if (is.null(mwall_h)) {
       if (is.null(val_h)) {
         mwall_h <- rep(TRUE, nrow(surf_h$vertices))
@@ -733,37 +272,32 @@ view_xifti_surface <- function(xifti, idx=1,
           )
         }
       }
->>>>>>> Stashed changes
     }
 
     # Get data values.
-    valuesR <- matrix(NA, ncol=length(idx), nrow=nrow(surfR$vertices))
-    if (!is.null(xifti$data$cortex_right)) {
-      valuesR[xifti$meta$cortex$medial_wall_mask$right,] <- xifti$data$cortex_right[,idx, drop=FALSE]
+    to_rgl[[h]]$values <- matrix(
+      NA, ncol=length(idx), nrow=nrow(surf_h$vertices)
+    )
+    if (!is.null(val_h)) {
+      to_rgl[[h]]$values[mwall_h,] <- val_h[,idx, drop=FALSE]
     }
-    nvoxR <- nrow(valuesR)
 
     ## Construct the mesh.
-    mesh_right <- rgl::tmesh3d(t(cbind(surfR$vertices,
-                                 rep(1, nrow(surfR$vertices)))), # add homogenous coordinate
-                               t(surfR$faces),
-                               meshColor = "vertices")
-    mesh_right <- rgl::addNormals(mesh_right) # for smooth coloring
+    vertices_h <- t(cbind(
+      surf_h$vertices, 
+      ### Add homogenous coordinates
+      rep(1, nrow(surf_h$vertices))
+    ))
+    faces_h <- t(surf_h$faces)
+    to_rgl[[h]]$mesh <- rgl::tmesh3d(
+      vertices_h, faces_h, meshColor = "vertices"
+    )
+    ## Add normals for smooth coloring.
+    to_rgl[[h]]$mesh <- rgl::addNormals(to_rgl[[h]]$mesh)
   }
 
-  # Put the values together.
-  if ("left" %in% hemisphere){
-    if ("right" %in% hemisphere) {
-      values <- unlist(list(left=valuesL, right=valuesR)[hemisphere], use.names=FALSE)
-    } else {
-      values <- valuesL
-    }
-  } else if ("right" %in% hemisphere) {
-    values <- valuesR
-  }
-  if (all(is.na(values))) {
-    values <- NULL
-  }
+  values <- c(to_rgl$left$values, to_rgl$right$values)
+  if (all(is.na(values))) { values <- NULL }
 
   if (!is.null(values)) {
 
@@ -773,6 +307,7 @@ view_xifti_surface <- function(xifti, idx=1,
 
     # Get the base palette.
     if (color_mode=="qualitative") {
+      # For .dlabel files, use the included labels metadata colors.
       if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
         labs <- xifti$meta$cifti$labels[[idx]]
         N_VALUES <- length(labs$Key)
@@ -780,9 +315,10 @@ view_xifti_surface <- function(xifti, idx=1,
           color = rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
           value = labs$Key
         )
+      # Otherwise, use the usual colors.
       } else {
-        values <- as.numeric(factor(values, levels=sort(unique(values))))
-        N_VALUES <- length(unique(values))
+        values <- as.numeric(factor(values, levels=sort(unique(values[!is.na(values)]))))
+        N_VALUES <- length(unique(values[!is.na(values)]))
         pal_base <- make_color_pal(
           colors=colors, color_mode=color_mode, zlim=zlim,
           DATA_MIN=1, DATA_MAX=N_VALUES
@@ -794,21 +330,28 @@ view_xifti_surface <- function(xifti, idx=1,
         DATA_MIN=min(values, na.rm=TRUE), DATA_MAX=max(values, na.rm=TRUE)
       )
     }
+
     # Interpolate colors in the base palette for higher color resolution.
     if (color_mode %in% c("sequential", "diverging")) {
       pal <- expand_color_pal(pal_base)
     } else {
       pal <- pal_base
     }
+
     # Map each vertex to a color by its value.
-    cols <- use_color_pal(values, pal) # color_NA?
+    if (nrow(pal)==1) {
+      cols <- ifelse(is.na(values), "white", pal$color[1])
+    } else {
+      cols <- use_color_pal(values, pal) # color_NA?
+    }
     if (length(hemisphere)==2) {
-      cols_left <- cols[1:nvoxL]
-      cols_right <- cols[(nvoxL+1):(nvoxL+nvoxR)]
+      nvoxL <- length(to_rgl$left$values)
+      to_rgl$left$colors <- cols[1:nvoxL]
+      to_rgl$right$colors <- cols[(nvoxL+1):length(cols)]
     } else if (hemisphere=="left") {
-      cols_left <- cols
+      to_rgl$left$colors <- cols
     } else if (hemisphere=="right") {
-      cols_right <- cols
+      to_rgl$right$colors <- cols
     }
     rm(cols)
 
@@ -816,37 +359,49 @@ view_xifti_surface <- function(xifti, idx=1,
     # Make the colorbar ----------------------------------------------------------
     # ----------------------------------------------------------------------------
 
-    colorbar_min <- ifelse(
-      color_mode=="diverging" & (identical(colors, "ROY_BIG_BL") | identical(colors, NULL)),
-      pal_base$value[1] - diff(pal_base$value[c(1,nrow(pal_base))]) / (1-.005) * .005,
-      pal_base$value[1])
     colorbar_breaks <- c(
-      colorbar_min,
+      pal_base$value[1],
       pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
       pal$value[length(pal$value)]
     )
+    colorbar_breaks <- unique(colorbar_breaks)
+
     colorbar_labs <- switch(color_mode,
-      sequential=c(colorbar_min,
-                  pal_base$value[nrow(pal_base)]),
+      sequential=c(
+        pal_base$value[1],
+        pal_base$value[nrow(pal_base)]
+      ),
       qualitative=1:N_VALUES,
-      diverging=c(colorbar_min,
-                  pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
-                  pal_base$value[nrow(pal_base)])
+      diverging=c(
+        pal_base$value[1],
+        pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
+        pal_base$value[nrow(pal_base)]
+      )
     )
-    # To-do: use colorbar_position argument.
-    colorbar_kwargs <- list(
-      legend.only = TRUE, zlim = range(pal$value), col = as.character(pal$color),
-      breaks=colorbar_breaks, #legend.lab=colorbar_label,
-      axis.args=list(cex.axis=1.7, at=colorbar_labs,
-                    col=text_color, col.ticks=text_color, col.axis=text_color,
-                    labels=format(colorbar_labs, digits=colorbar_digits))
-    )
-    #if (colorbar_position=="right") {
-    #  colorbar_kwargs <- c(
-    #    colorbar_kwargs,
-    #    list(legend.cex=2, legend.shrink=.5, legend.width=2, legend.line=7, legend.mar=12)
-    #  )
-    #} else if (colorbar_position=="bottom") {
+
+    if (length(colorbar_breaks) == 1) {
+      colorbar_kwargs <- list(
+        legend.only=TRUE, 
+        zlim=c(1,2), 
+        col=rep(pal$color[1], 2), 
+        breaks=c(0, 1, 2), 
+        axis.args=list(at=1, labels=colorbar_breaks)
+      )
+    } else {
+      colorbar_kwargs <- list(
+        legend.only = TRUE, 
+        zlim = range(pal$value), 
+        col = as.character(pal$color),
+        breaks=colorbar_breaks, 
+        #legend.lab=colorbar_label,
+        axis.args=list(
+          cex.axis=1.7, at=colorbar_labs,
+          col=text_color, col.ticks=text_color, col.axis=text_color,
+          labels=format(colorbar_labs, digits=colorbar_digits)
+        )
+      )
+    }
+
     colorbar_kwargs <- c(colorbar_kwargs,
       list(
         horizontal=TRUE, # horizontal legend
@@ -860,8 +415,8 @@ view_xifti_surface <- function(xifti, idx=1,
     )
 
   } else {
-    cols_left <- "white"
-    cols_right <- "white"
+    to_rgl$left$colors <- "white"
+    to_rgl$right$colors <- "white"
   }
 
   # ----------------------------------------------------------------------------
@@ -893,7 +448,7 @@ view_xifti_surface <- function(xifti, idx=1,
     if (is.null(title)) {
       intent <- xifti$meta$cifti$intent
       if (is.null(intent)) {
-        title <- paste("Index", idx)
+        title <- ""
       } else if (intent == 3002) {
         title <- paste("Index", idx)
         if (!any(sapply(xifti$meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
@@ -941,12 +496,14 @@ view_xifti_surface <- function(xifti, idx=1,
       c( 0,-1, 0, 0),
       c( 0, 0, 1, 0),
       c(-1, 0, 0, 0),
-      c( 0, 0, 0, 1)),
+      c( 0, 0, 0, 1)
+    ),
     right = rbind( # Outer side of right surface toward viewer
       c( 0, 1, 0, 0),
       c( 0, 0, 1, 0),
       c( 1, 0, 0, 0),
-      c( 0, 0, 0, 1)),
+      c( 0, 0, 0, 1)
+    ),
     ID = diag(4)
   )
 
@@ -954,24 +511,51 @@ view_xifti_surface <- function(xifti, idx=1,
   for(ii in 1:n_brain_panels) {
     p <- brain_panels[ii]
 
-    # Select the mesh for this panel, and determine the orientation.
+    # Get the hemisphere.
     if (grepl("left", p)) {
-      this_surf <- surfL
-      rgl::shade3d(mesh_left, col=cols_left, specular="black", legend=TRUE)
-      if (grepl("lateral", p)) {
-        this_rot <- rot$left
-      } else if (grepl("medial", p)) {
-        this_rot <- rot$right
-      } else { this_rot <- rot$ID }
+      h <- "left"; h2 <- "right"
+    } else if (grepl("right", p)) {
+      h <- "right"; h2 <- "left"
+    } else {
+      h <- "neither"; h2 <- "neither"
     }
-    if (grepl("right", p)) {
-      this_surf <- surfR
-      rgl::shade3d(mesh_right, col=cols_right, specular="black", legend=TRUE)
-      if (grepl("lateral", p)) {
-        this_rot <- rot$right
-      } else if (grepl("medial", p)) {
-        this_rot <- rot$left
-      } else { this_rot <- rot$ID }
+
+    # Get the rotation.
+    if (grepl("lateral", p)) {
+      this_rot <- rot[[h]]
+    } else if (grepl("medial", p)) {
+      this_rot <- rot[[h2]]
+    } else { this_rot <- rot$ID }
+
+    # Draw the mesh.
+    rgl::shade3d(
+      to_rgl[[h]]$mesh, 
+      color=to_rgl[[h]]$colors, 
+      specular="black", 
+      alpha=alpha,
+      legend=TRUE
+    )
+
+    ## Vertices.
+    if (vertex_size > 0) { 
+      rgl::shade3d(
+        to_rgl[[h]]$mesh, 
+        color=vertex_color, size=vertex_size,
+        specular="black",
+        front="points", back="points", 
+        legend=FALSE
+      )
+    }
+
+    ## Edges.
+    if (!is.null(edge_color)) {
+      rgl::shade3d(
+        to_rgl[[h]]$mesh, 
+        color=edge_color, 
+        specular="black",
+        front="lines", back="lines", 
+        legend=FALSE
+      )
     }
 
     ## shift brains to left to make room for legend on right
@@ -1023,8 +607,10 @@ view_xifti_surface <- function(xifti, idx=1,
 #'  the MNI T1-weighted template, or \code{NULL} to use a blank image.
 #' @param idx The time/column index of the xifti data to plot.
 #' @param plane If use_papaya=FALSE, the plane to display.
-#'  Default: "axial". Other options are "sagittal" and "coronal".
+#'  Default: \code{"axial"}. Other options are \code{"sagittal"} and 
+#'  \code{"coronal"}.
 #' @param num.slices If use_papaya=FALSE, the number of slices to display.
+#'  Default: \code{9}.
 #' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
 #' @param z_min Floor value.
 #' @param z_max Ceiling value.
@@ -1032,11 +618,10 @@ view_xifti_surface <- function(xifti, idx=1,
 #' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
 #'
 #' @export
-
 #' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
-  xifti, structural_img="MNI", idx=1, plane="axial",
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
+  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
   verbose=TRUE, ...) {
 
   if (use_papaya) {
@@ -1057,6 +642,7 @@ view_xifti_volume <- function(
 
   # Pick slices with a lot of subcortical voxels.
   if (!use_papaya) {
+    plane <- match.arg(plane, c("axial", "sagittal", "coronal"))
     if (plane=="axial") mask_count <- apply(xifti$meta$subcort$mask, 3, sum)
     if (plane=="coronal") mask_count <- apply(xifti$meta$subcort$mask, 2, sum)
     if (plane=="sagittal") mask_count <- apply(xifti$meta$subcort$mask, 1, sum)
@@ -1078,12 +664,53 @@ view_xifti_volume <- function(
 
   if (!is.null(structural_img)) {
     if (structural_img=="MNI") {
-      img <- readNIfTI(system.file("extdata/MNI152_T1_2mm.nii.gz", package="ciftiTools"), reorient=FALSE)
+      img_fname <- system.file("extdata/MNI152_T1_2mm.nii.gz", package="ciftiTools")
     } else if (is.fname(structural_img)){
-      img <- readNIfTI(structural_img, reorient=FALSE)
+      img_fname <- structural_img
     } else {
-      stop("`structural_img` argument not one of: NULL, \"MNI\", or an existing file.")
+      stop(paste(
+        "`structural_img` argument not one of:",
+        "`NULL`, `\"MNI\"`, or an existing file."
+      ))
     }
+    img <- readNIfTI(img_fname, reorient=FALSE)
+
+    # Check data dimensions.
+    if (!all.equal(dim(img), dim(vol))) {
+      stop(paste0(
+        "The subcortical data in the CIFTI and the `structural_img` are of ",
+        "different dimensions: (", paste(dim(img), collapse=", "), ") and (",
+        paste(dim(vol), collapse=", "), ") respectively."
+      ))
+    }
+
+    # Check data orientation alignment.
+    # This uses the sform method (srow_x, srow_y, and srow_z), not qform
+    #   or ANALYZE-based methods.
+    # This is because the Connectime Workbench seems to export the 
+    #   TransformationMatrixIJKtoXYZ as the sform transformation matrix
+    #   in -cifti-separate. 
+    img_trans_mat <- make_trans_mat(img_fname)
+    xii_trans_mat <- xifti$meta$subcort$trans_mat
+    if (!is.null(xii_trans_mat)) {
+      if (!all(dim(img_trans_mat) == dim(xii_trans_mat))) {
+        warning(paste(
+          "`meta$subcort$trans_mat` has different dimensions than image",
+          "trans_mat, i.e. `rbind(srow_x, srow_y, srow_z)`. This may indicate",
+          "that the volumes are not aligned."
+        ))
+      } else {
+        trans_mat_diff <- max(abs(as.numeric(img_trans_mat - xii_trans_mat)))
+        if (max(trans_mat_diff > ciftiTools.getOption("EPS"))) {
+          warning(paste(
+            "`meta$subcort$trans_mat` has different values than the image",
+            "trans_mat, i.e. `rbind(srow_x, srow_y, srow_z)`. This may indicate",
+            "that the volumes are not aligned."
+          ))
+        }
+      }
+    }
+
     img_overlay <- img*0
     img_labels <- img*0
   } else {
@@ -1094,6 +721,8 @@ view_xifti_volume <- function(
 
   img_overlay@.Data <- vol
   img_overlay@.Data[labs==0] <- NA
+  # Patch: if img_overlay@.Data is int, an error occurs.
+  img_overlay@.Data <- img_overlay@.Data * 1.0
   img_labels@.Data <- labs
   img_labels@.Data[labs==0] <- NA
 
@@ -1190,7 +819,9 @@ view_cifti_surface <- function(xifti, idx=1,
   fname="xifti", write_dir=NULL,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL){
+  colorbar_embedded=TRUE, colorbar_digits=NULL,
+  alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0){
 
   view_xifti_surface(
     xifti, idx,
@@ -1201,7 +832,8 @@ view_cifti_surface <- function(xifti, idx=1,
     colors, color_mode, zlim,
     surfL, surfR,
     colorbar_embedded,
-    colorbar_digits
+    colorbar_digits, alpha,
+    edge_color, vertex_color, vertex_size
   )
 }
 
@@ -1214,7 +846,9 @@ viewCIfTI_surface <- function(xifti, idx=1,
   fname="xifti", write_dir=NULL,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL){
+  colorbar_embedded=TRUE, colorbar_digits=NULL,
+  alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0){
 
   view_xifti_surface(
     xifti, idx,
@@ -1225,7 +859,8 @@ viewCIfTI_surface <- function(xifti, idx=1,
     colors, color_mode, zlim,
     surfL, surfR,
     colorbar_embedded,
-    colorbar_digits
+    colorbar_digits, alpha,
+    edge_color, vertex_color, vertex_size
   )
 }
 
@@ -1238,9 +873,11 @@ viewcii_surface <- function(xifti, idx=1,
   fname="xifti", write_dir=NULL,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL){
+  colorbar_embedded=TRUE, colorbar_digits=NULL,
+  alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0){
 
-  view_xifti_surface(
+  viewcii_surface(
     xifti, idx,
     hemisphere, view,
     mode, width, height, zoom,
@@ -1249,16 +886,16 @@ viewcii_surface <- function(xifti, idx=1,
     colors, color_mode, zlim,
     surfL, surfR,
     colorbar_embedded,
-    colorbar_digits
+    colorbar_digits, alpha,
+    edge_color, vertex_color, vertex_size
   )
 }
-
 
 #' @rdname view_xifti_volume
 #' @export
 view_cifti_volume <- function(
-  xifti, structural_img="MNI", idx=1, plane="axial",
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
+  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -1275,8 +912,8 @@ view_cifti_volume <- function(
 #' @rdname view_xifti_volume
 #' @export
 viewCIfTI_volume <- function(
-  xifti, structural_img="MNI", idx=1, plane="axial",
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
+  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -1293,8 +930,8 @@ viewCIfTI_volume <- function(
 #' @rdname view_xifti_volume
 #' @export
 viewcii_volume <- function(
-  xifti, structural_img="MNI", idx=1, plane="axial",
-  num.slices=12, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
+  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(

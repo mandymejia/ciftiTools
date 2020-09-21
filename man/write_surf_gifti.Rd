@@ -19,7 +19,8 @@ list with elements "pointset" and "triangle".}
 \item{gifti_fname}{Where to write the GIFTI file.}
 
 \item{hemisphere}{"left" (default) or "right". Ignored if \code{data} is already
-a "gifti" object.}
+a "gifti" object, or if it is a "surface" object with the hemisphere metadata
+already specified.}
 
 \item{encoding}{A length-2 vector with elements chosen among "ASCII", 
 "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 

@@ -24,21 +24,29 @@
 * Warning if GIFTI version is too old (need the one on github for `writegii`)
 * Tweaks to `view_xifti_surface` defaults
 * Add `view_xifti_volume` without structural image
+* If a function writes a file(s) as its main side effect, return a named character vector of the written file paths.
+    * Previously some functions returned `TRUE` while others returned a `list` or `data.frame` of written file paths
+* Out-of-mask values (medial wall for cortex and non-subcortical voxels for subcortex)
+ are no longer inferred from the data values when making a `"xifti"` from GIFTI and NIFTI files. Previously, if a mask was not provided then constant `0`, `NA`, or `NaN` values were deemed out-of-mask. Now, `ciftiTools` uses ROI files to keep track of the out-of-mask values in `read_cifti_separate` and `resample_cifti`, and requires the masks to be explicitly provided in `as.xifti`
+* Rename `make_surface` as `make_surf`
+* Rename `is.surface` as `is.surf`
+* Rename `side` argument as `hemisphere` argument (same choices: `"left"` or `"right"`)
+* Fixed the alias functions, e.g. `readCIfTI` and `readcii` for `read_cifti`
 
 ## Demo files
 
-* Taken from NITRC: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
+* The demo files from NITRC are now included with `ciftiTools`: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
 
 ## Notes for Developers
 
-* Add tests for reading and writing files
+* Add tests for most user functions
 * Rename `write_xifti_components` as `write_cifti_components`
 * Remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
 * Rename `make_helper_spheres` as `write_spheres`, and do not export it
-* Rename `make_surface` as `make_surf`
-* Rename `is.surface` as `is.surf`
 * Rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
-* Remove data-raw from R package build
+* Remove `data-raw` from R package build
+* Require `gifti > 0.7.5`
+* Clean up `onAttach` and `.Rbuildignore`
 
 ## Vignette!
 
@@ -55,7 +63,6 @@ It will be located here: https://htmlpreview.github.io/?https://github.com/mandy
 * `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::writegii`
     * Currently depends on `damondpham/gifti` but this will hopefully be merged to main repo soon
 * `write_subcort_nifti` to write out subcortical components from `"xifti"` to a NIFTI file
-    * TO DO: add orientation and transformation matrix metadata
 * `write_cifti` can also write the surfaces attached to the `"xifti"`
 * `"xifti"` objects can contain surfaces without any data. 
     * `view_xifti_surface` can view a surface without any data: `plot(as.xifti(surfL=left_surf))`

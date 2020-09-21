@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_cifti_convert.R
 \name{read_cifti_convert}
 \alias{read_cifti_convert}
-\title{Read a CIFTI File Quickly}
+\title{Read a CIFTI file quickly}
 \usage{
 read_cifti_convert(
   cifti_fname,

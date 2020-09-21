@@ -4,14 +4,9 @@
 #'
 #' @param original_fname The GIFTI file to resample.
 #' @param target_fname Where to save the resampled file.
-<<<<<<< Updated upstream
-#' @param hemisphere "left" or "right".
-#' @param file_type \code{"metric"} or \code{"surface"}, or \code{NULL} 
-=======
 #' @param hemisphere "left" (default) or "right". An error will be raised if
 #'  the hemisphere indicated in the GIFTI metadata does not match.
 #' @param file_type \code{"metric"}, \code{"label"}, \code{"surface"}, or \code{NULL} 
->>>>>>> Stashed changes
 #'  (default) to infer from \code{original_fname}.
 #' @param original_res The resolution of the original file. If \code{NULL}
 #'  (default), infer from the file.
@@ -36,7 +31,7 @@
 #' @export
 #'
 resample_gifti <- function(
-  original_fname, target_fname, hemisphere,
+  original_fname, target_fname, hemisphere=c("left", "right"),
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
@@ -49,6 +44,8 @@ resample_gifti <- function(
   if (is.null(file_type)) {
     if (grepl("func.gii", original_fname, fixed=TRUE)) { 
       file_type <- "metric" 
+    } else if (grepl("label.gii", original_fname, fixed=TRUE)) {
+      file_type <- "label"
     } else if (grepl("surf.gii", original_fname, fixed=TRUE)) { 
       file_type <- "surface" 
     } else { 
@@ -58,25 +55,19 @@ resample_gifti <- function(
       )) 
     }
   }
-  file_type <- match.arg(file_type, c("metric", "surface"))
-
-  # Hemisphere
-  hemisphere <- match.arg(hemisphere, c("left", "right"))
+  file_type <- match.arg(file_type, c("metric", "label", "surface"))
 
   # Original & target file names
   original_fname <- format_path(original_fname, read_dir, mode=4)
   stopifnot(file.exists(original_fname))
   target_fname <- format_path(target_fname, write_dir, mode=2)
 
-<<<<<<< Updated upstream
-=======
   # Hemisphere
   hemisphere <- match.arg(hemisphere, c("left", "right")) 
   if (file_type == "surface") {
     surf <- make_surf(original_fname, hemisphere)
   }
 
->>>>>>> Stashed changes
   # Original ROI & target ROI file names
   do_ROI <- !is.null(ROIcortex_original_fname)
   if (do_ROI) {
@@ -87,7 +78,7 @@ resample_gifti <- function(
     if (is.null(ROIcortex_target_fname)) { 
       ROIcortex_target_fname <- cifti_component_suffix(
         paste0("ROIcortex", switch(hemisphere, left="L", right="R")), 
-        switch(file_type, metric="func", surface="surf")
+        switch(file_type, metric="func", label="func", surface="surf")
       ) 
     }
     ROIcortex_target_fname <- format_path(
@@ -100,6 +91,7 @@ resample_gifti <- function(
     gii <- readgii(original_fname)
     original_res <- switch(file_type,
       metric = length(gii$data),
+      label = length(gii$data),
       surface = nrow(gii$data$pointset)
     )
   } else {
@@ -139,6 +131,7 @@ resample_gifti <- function(
 
   cmd_name <- switch(file_type,
     metric="-metric-resample",
+    label="-label-resample",
     surface="-surface-resample"
   )
 

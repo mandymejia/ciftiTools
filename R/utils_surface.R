@@ -10,7 +10,8 @@
 summary.surface <- function(object, ...) {
   out <- list(
     vertices = nrow(object$vertices),
-    faces = nrow(object$faces)
+    faces = nrow(object$faces),
+    hemisphere = object$hemisphere
   )
   class(out) <- "summary.surface"
   return(out)
@@ -21,8 +22,9 @@ summary.surface <- function(object, ...) {
 #' @method print summary.surface
 #' @rdname summary.surface
 print.summary.surface <- function(x, ...) {
-  cat("Vertices:", x$vertices, " \n")
-  cat("Faces:", x$faces, " \n")
+  cat("Vertices: ", x$vertices, "\n")
+  cat("Faces: ", x$faces, "\n")
+  if (!is.null(x$hemisphere)) { cat("Hemisphere: ", x$hemisphere, "\n") }
 }
 
 #' @export

@@ -31,7 +31,8 @@ format_path <- function(path, dir=NULL, mode=NA) {
   )
 
   # Check existence/writing permission/reading permission of the path.
-  #   [TO DO]: Resolve-- "Please note that it is not a good idea to use this
+  #   [NOTE]: This goes against this advice: 
+  #   "Please note that it is not a good idea to use this
   #   function to test before trying to open a file. On a multi-tasking system,
   #   it is possible that the accessibility of a file will change between the
   #   time you call file.access() and the time you try to open the file. It is
@@ -70,8 +71,9 @@ is.fname <- function(x){
   file.exists(x) & !dir.exists(x)
 }
 
-#' Format a path for \code{\link{system}}. Right now, it just escapes spaces and
-#'  parentheses with \code{"\\\\"}.
+#' Format a path for \code{\link{system}}. 
+#' 
+#' Right now, it escapes spaces and parentheses with \code{"\\\\"}.
 #'
 #' @param R_path The name of the file. It should be properly formatted: if it
 #'  exists, \code{file.exists(R_path)} should be \code{TRUE}.
@@ -84,6 +86,8 @@ sys_path <- function(R_path) {
   gsub(" ", "\\ ", R_path, fixed=TRUE)
 }
 
+#' Get kwargs
+#' 
 #' Get the names of the arguments of a function as a character vector.
 #'
 #' @param fun The function to get the argument names for.
@@ -98,8 +102,10 @@ get_kwargs <- function(fun) {
   kwargs
 }
 
-#' Merges two kwarg lsits. If a kwarg is present in both lists but with different values,
-#' an error is raised.
+#' Merges two kwargs 
+#' 
+#' Merge two kwarg lists. If a kwarg is present in both lists but with different
+#'  values, an error is raised.
 #' @param kwargsA The first list of kwargs.
 #' @param kwargsB The second list of kwargs. If duplicates are present, the default
 #'  message recommends the user to remove the kwarg here in favor of placing the
@@ -143,7 +149,9 @@ merge_kwargs <- function(kwargsA, kwargsB,
 
 #' Match user inputs to expected values
 #'
-#' Match each user input to an expected/allowed value. Raise a warning if either
+#' Match each user input to an expected/allowed value. 
+#' 
+#' Raise a warning if either
 #'  several user inputs match the same expected value, or at least one could not
 #'  be matched to any expected value. \code{ciftiTools} uses this function to
 #'  match keyword arguments for a function call. Another use is to match
@@ -209,11 +217,13 @@ match_input <- function(
   invisible(NULL)
 }
 
-#' Check if two character vectors match
-#'
+#' Do these character vectors match exactly?
+#' 
 #' Checks if a user-defined character vector matches an expected character
 #'  vector. That is, they share the same lengths and entries in the same order.
 #'  For vectors of the same lengths, the result is \code{all(a == b)}.
+#' 
+#' Attributes are ignored.
 #'
 #' @param user Character vector of user input. 
 #' @param expected Character vector of expected/allowed values.

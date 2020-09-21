@@ -12,7 +12,7 @@ as.surf_gifti(surf, hemisphere = c("left", "right"))
 
 \item{hemisphere}{The side of the brain the surface represents: \code{"left"} 
 (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
-metadata field.}
+metadata field. Only used if this metadata entry is not present in \code{surf}}
 }
 \value{
 The \code{"gifti"} object

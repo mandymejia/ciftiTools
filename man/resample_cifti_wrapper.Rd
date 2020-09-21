@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers.R
 \name{resample_cifti_wrapper}
 \alias{resample_cifti_wrapper}
-\title{resample_cifti with collapsed file name argument}
+\title{\code{resample_cifti} wrapper}
 \usage{
 resample_cifti_wrapper(
   original_fnames,

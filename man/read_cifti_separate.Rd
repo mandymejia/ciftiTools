@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_cifti_separate.R
 \name{read_cifti_separate}
 \alias{read_cifti_separate}
-\title{Read in CIFTI Data}
+\title{Read a CIFTI file with optional resampling}
 \usage{
 read_cifti_separate(
   cifti_fname,
@@ -125,10 +125,14 @@ If not provided, should be set with
 A \code{"xifti"} object. See \code{\link{is.xifti}}.
 }
 \description{
-Read a CIFTI file by separating it into GIFTI and NIFTI files 
- (\code{\link{separate_cifti}}), optionally resampling them, 
- and then reading each separated 
- component into R (\code{\link{make_xifti}}).
+Read a CIFTI file by writing each component into a GIFTI and NIFTI file
+ (\code{\link{separate_cifti}}), optionally resampling the GIFTIs, 
+ (\code{\link{resample_gifti}}), and then reading each separated 
+ component into R (\code{\link{make_xifti}}). Surfaces can also be provided; 
+ they will be resampled along with the CIFTI for viewing.
+}
+\details{
+The subcortical component (NIFTI) is not resampled.
 }
 \section{Connectome Workbench Requirement}{
 

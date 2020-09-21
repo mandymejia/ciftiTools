@@ -1,5 +1,3 @@
-## [TO DO]: is.xifti_map
-
 #' Validate a numeric matrix.
 #' 
 #' Check if object is a numeric matrix.
@@ -80,11 +78,13 @@ is.xifti_data <- function(x) {
 #' 
 #'  This is a helper function for \code{\link{is.xifti}}.
 #' 
-#'  Requirements: the surface must be a list of two components: "vertices" and 
-#'  "faces", each a numeric matrix with three columns. The values in "vertices"
-#'  represent spatial coordinates whereas the values in "faces" represent
-#'  vertex indices defining the face. Thus, values in "faces" should be integers
-#'  between 1 and the number of vertices. 
+#'  Requirements: the surface must be a list of three components: "vertices", 
+#'  "faces", and "hemisphere". The first two should each be a numeric matrix 
+#'  with three columns. The values in "vertices" represent spatial coordinates 
+#'  whereas the values in "faces" represent vertex indices defining the face. 
+#'  Thus, values in "faces" should be integers between 1 and the number of 
+#'  vertices. The last list entry, "hemisphere", should be "left", "right", 
+#'  or NULL indicating the brain hemisphere which the surface represents.
 #'
 #' @param x The putative surface.
 #'
@@ -94,7 +94,7 @@ is.xifti_data <- function(x) {
 is.surf <- function(x) {
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
-  if (!match_exactly(names(x), c("vertices", "faces"))) {
+  if (!match_exactly(names(x), c("vertices", "faces", "hemisphere"))) {
     return(FALSE)
   }
 
@@ -128,6 +128,12 @@ is.surf <- function(x) {
   }
   if (min(x$faces) < 1) {
     message("The min vertex index in x$faces is too low.\n"); return(FALSE)
+  }
+
+  if (!is.null(x$hemisphere)) {
+    if (!(x$hemisphere %in% c("left", "right"))) {
+      message("x$hemisphere must be \"left\" or \"right\".\n"); return(FALSE)
+    }
   }
 
   TRUE
@@ -279,7 +285,6 @@ is.xifti_meta <- function(x) {
 
     if (!is.null(x$cifti$intent)) {
       intent <- x$cifti$intent
-      # [TO DO]: Require these fields? No, right?
       if (intent == 3002) {
         if (!is.null(x$cifti$time_start)) {
           if (!is.numeric(x$cifti$time_start) || length(x$cifti$time_start)!=1) {
@@ -369,7 +374,7 @@ is.xifti_meta <- function(x) {
 #' @export
 #' 
 is.xifti <- function(x, messages=TRUE) {
-  if (!messages) { return(suppressMessages(is.xifti(x, messages=FALSE))) }
+  if (!messages) { return(suppressMessages(is.xifti(x, messages=TRUE))) }
 
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
@@ -472,15 +477,32 @@ is.xifti <- function(x, messages=TRUE) {
       }
     }
   }
-  # # [TO DO]: Add +1 to data from read_cifti_separate. Then add this back.
-  # if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
-  #   if (!is.null(x$meta$cifti$labels)) {
-  #     if (!(all( unique(as.vector(do.call(rbind, x$data))) %in% 1:nrow(x$meta$cifti$labels) ))) {
-  #       message("All data values must be correspond to an index in the label table.\n")
-  #       return(FALSE)
-  #     }
-  #   }
-  # }
+
+  # For intent 3007 (.dlabels.nii), each data measurement (column) should
+  #   have a corresponding label table, and all labels in the data should be
+  #   listed in the corresponding table.
+  if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
+    data_mat <- do.call(rbind, x$data)
+    if (!is.null(x$meta$cifti$labels) && !is.null(data_mat) && nrow(data_mat) > 0) {
+      if (ncol(data_mat) != length(x$meta$cifti$labels)) {
+        message("Number of labels does not match number of data columns.\n")
+        return(FALSE)
+      }
+
+      for (ii in 1:ncol(x$data$cortex_left)) {
+        all_labels <- unique(data_mat[,ii])
+        valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
+        if (!all(valid_label)) {
+          message(paste(
+            "These label values in data column", ii, 
+            "are not in the corresponding label table:\n\t",
+            paste(all_labels[!valid_label], collapse=", "), "\n"
+          ))
+          return(FALSE)
+        }
+      }
+    }
+  }
 
   TRUE
 }

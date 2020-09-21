@@ -138,54 +138,33 @@ as.metric_gifti <- function(
 #'  \code{"pointset"} and \code{"triangle"}
 #' @param hemisphere The side of the brain the surface represents: \code{"left"} 
 #'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
-#'  metadata field.
+#'  metadata field. Only used if this metadata entry is not present in \code{surf}
 #' @return The \code{"gifti"} object
 #'
 #' @keywords internal
 as.surf_gifti <- function(
   surf, hemisphere=c("left", "right")){
 
-  # Get hemisphere.
-  hemisphere <- match.arg(hemisphere, c("left", "right"))
-
-  # If already a "gifti", use the $data only.
-  if (is.gifti(surf)) {
-    hemi_idx <- surf$data_meta[[1]][,"names"] == "AnatomicalStructurePrimary"
-    hemi_idx <- which(hemi_idx)[1]
-    other_hemisphere <- switch(hemisphere, left="right", right="left")
-    meta_hemisphere <- gsub("cortex", "", tolower(surf$data_meta[[1]][hemi_idx, "vals"]))
-    if (grepl(other_hemisphere, meta_hemisphere)) {
-      warning(paste0(
-        "The requested hemisphere, \"", hemisphere, 
-        "\", was opposite the hemisphere in the existing metadata, \"", 
-        meta_hemisphere, "\"."
-      ))
-    }
-    ciftiTools_warn("Already a \"gifti\". Using the $data element and discarding metadata.\n")
-    surf <- surf$data
+  # --> "surface"
+  surf <- make_surf(surf)
+  if (is.null(surf$hemisphere)) { 
+    surf$hemisphere <- match.arg(hemisphere, c("left", "right"))
   }
 
-  # Format data as a list with elements "pointset" and "triangle"
-  if (suppressMessages(is.surf(surf))) {
-    surf <- list(pointset = surf$vertices, triangle = surf$faces)
-  }
-  if (!( length(surf)==2 || all(names(surf) %in% c("pointset", "triangle") ))) {
-    stop("`surf` must be a \"surface\" object or a list with elements \"pointset\" and \"triangle\".")
-  }
-  # Start indexing at zero.
-  if (min(surf$triangle)==1) { surf$triangle <- surf$triangle - 1 }
-
-  # Form the "gifti".
+  # "surface" --> "gifti"
   gii <- gifti_surf_template # from ciftiTools R/sysdata.rda
-  gii$data <- surf
+  gii$data <- list(
+    pointset = surf$vertices,
+    triangle = surf$faces - 1
+  )
   mode(gii$data$triangle) <- "integer"
 
-  hemi_idx <- gii$data_meta[[1]][,"names"] == "AnatomicalStructurePrimary"
-  gii$data_meta[[1]][hemi_idx, "vals"] <- switch(hemisphere, 
+  hemi_idx <- gii$data_meta[[1]][, "names"] == "AnatomicalStructurePrimary"
+  gii$data_meta[[1]][hemi_idx, "vals"] <- switch(surf$hemisphere, 
     left = "CortexLeft", 
     right = "CortexRight"
   )
-  gii$data_info$Dim0 <- c(nrow(surf$pointset), nrow(surf$triangle))
+  gii$data_info$Dim0 <- c(nrow(gii$data$pointset), nrow(gii$data$triangle))
   gii$data_info$n <- 3 * gii$data_info$Dim0
 
   stopifnot(is.gifti(gii))

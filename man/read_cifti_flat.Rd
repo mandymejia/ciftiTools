@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_cifti_flat.R
 \name{read_cifti_flat}
 \alias{read_cifti_flat}
-\title{Read Only the Data from a CIFTI File}
+\title{Read only the data matrix in a CIFTI file}
 \usage{
 read_cifti_flat(
   cifti_fname,
@@ -15,7 +15,7 @@ read_cifti_flat(
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
 
-\item{keep}{\code{read_cifti_minimal} works by saving the CIFTI as a GIFTI file, 
+\item{keep}{This function works by converting the CIFTI file to a GIFTI file 
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 (default), write it in a temporary directory regardless of \code{write_dir}.}
 
@@ -30,17 +30,19 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A T x B matrix of class "cifti_data", where T is the number of 
- measurements and B is the number of brainordinates in the CIFTI file.
+A \eqn{T x B} matrix of class \code{"cifti_data"}, where \eqn{T} is 
+ the number of measurements and \eqn{B} is the number of brainordinates in 
+ sthe CIFTI file.
 }
 \description{
-Reads CIFTI data as a matrix by converting it to a GIFTI.
- This uses the \code{-cifti-convert -to-gifti-ext} Connectome 
- Workbench command. The result will be a T x B matrix (T measurements, B 
- non-empty brainordinates). All brainstructures will be obtained, but 
- they will be undifferentiable. Medial wall vertices and voxels outside the
- brain mask will not be included. No spatial information is included. This is 
- the fastest way to read in CIFTI data.
+Reads the CIFTI data matrix by converting it to a GIFTI using the 
+ \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
+ will be a \eqn{T x B} matrix (\eqn{T} measurements, \eqn{B} non-empty 
+ brainordinates). All brainstructures in the CIFTI will be obtained, with no 
+ indication for which brainstructure each brainordinate corresponds to.    
+ Medial wall vertices and voxels outside the subcortical mask will not be 
+ included. No spatial information is included. This is the fastest way to 
+ read in CIFTI data.
 }
 \section{Connectome Workbench Requirement}{
 

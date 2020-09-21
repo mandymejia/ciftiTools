@@ -2,9 +2,7 @@
 % Please edit documentation in R/wb_cmd_path.R
 \name{get_wb_cmd_path}
 \alias{get_wb_cmd_path}
-\title{Retrieves the Connectome Workbench path from the \code{ciftiTools_wb_path} 
- option or the provided argument. This path can be the Connectome Workbench
- folder or the `wb_command` executable.}
+\title{Get the Connectome Workbench command path}
 \usage{
 get_wb_cmd_path(wb_path = NULL, verbose = FALSE)
 }

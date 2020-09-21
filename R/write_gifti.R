@@ -70,15 +70,12 @@ write_metric_gifti <- function(
     }
   }
 
-<<<<<<< Updated upstream
-=======
   T_ <- length(gii$data)
 
   if (data_type=="INT32") {
     for (ii in 1:T_) { mode(gii$data[[ii]]) <- "integer" }
   }
   
->>>>>>> Stashed changes
   # Format options
   gii$data_info$Intent <- paste0("NIFTI_INTENT_", gsub("NIFTI_INTENT_", "", toupper(intent)))
   gii$data_info$DataType <- paste0("NIFTI_TYPE_", gsub("NIFTI_TYPE_", "", toupper(data_type)))
@@ -155,7 +152,8 @@ write_metric_gifti <- function(
 #'  list with elements "pointset" and "triangle".
 #' @param gifti_fname Where to write the GIFTI file.
 #' @param hemisphere "left" (default) or "right". Ignored if \code{data} is already
-#'  a "gifti" object.
+#'  a "gifti" object, or if it is a "surface" object with the hemisphere metadata
+#'  already specified.
 #' @param encoding A length-2 vector with elements chosen among "ASCII", 
 #'  "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 
 #'  the metadata if \code{data} is a "gifti" object, or "GZipBase64Binary" for the

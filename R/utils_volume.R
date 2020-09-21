@@ -1,6 +1,6 @@
-#' Undo a mask
+#' Undo a volumetric mask
 #' 
-#' Applies a mask to vectorized data to yield its volumetric representation.
+#' Un-applies a mask to vectorized data to yield its volumetric representation.
 #'  The mask and data should have compatible dimensions: the number of rows in
 #'  \code{dat} should equal the number of locations within the \code{mask}.
 #' 
@@ -78,7 +78,7 @@ uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
 }
 
-#' Convert sparse coordinate list to non-sparse volume.
+#' Convert coordinate list to volume.
 #' 
 #' Converts a sparse coordinate list to its non-sparse volumetric representation.
 #' 

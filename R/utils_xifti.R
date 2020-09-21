@@ -17,11 +17,11 @@ summary.xifti <- function(object, ...) {
     !is.null(object$surf$cortex_left),
     !is.null(object$surf$cortex_right)
   )
-  names(out$includes) <- c("left cortex", "right cortex", "subcortex", "left geometry", "right geometry")
+  names(out$includes) <- c("left cortex", "right cortex", "subcortex", "left surface", "right surface")
   if (out$includes["left cortex"]) out$cortex_left <- dim(object$data$cortex_left)
   if (out$includes["right cortex"]) out$cortex_right <- dim(object$data$cortex_right)
-  if (out$includes["left geometry"]) out$surf_left <- TRUE
-  if (out$includes["right geometry"]) out$surf_right <- TRUE
+  if (out$includes["left surface"]) out$surf_left <- TRUE
+  if (out$includes["right surface"]) out$surf_right <- TRUE
   if (out$includes["subcortex"]){
     out$subcort <- list()
     out$subcort$dat <- dim(object$data$subcort)
@@ -39,23 +39,25 @@ print.summary.xifti <- function(x, ...) {
   cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
 
   if (x$includes["left cortex"]) {
-    cat("left cortex:", x$cortex_left[1], "surface vertices,", 
+    cat("\tleft cortex:", x$cortex_left[1], "surface vertices,", 
       x$cortex_left[2], "measurements.\n")
-    if (x$includes["left geometry"]) cat("\tleft surface model is present.\n")
+    if (x$includes["left surface"]) cat("\t\tleft surface model is present.\n")
   }
 
   if (x$includes["right cortex"]) {
-    cat("right cortex:", x$cortex_right[1], "surface vertices,", 
+    cat("\tright cortex:", x$cortex_right[1], "surface vertices,", 
       x$cortex_right[2], "measurements.\n")
-    if (x$includes["right geometry"]) cat("\tright surface model is present.\n")
+    if (x$includes["right surface"]) cat("\t\tright surface model is present.\n")
   }
 
   if (x$includes["subcortex"]) {
-    cat("subcortical:", x$subcort$dat[[1]], "voxels,",
+    cat("\tsubcortex:", x$subcort$dat[[1]], "voxels,",
       x$subcort$dat[[2]], "measurements.\n")
-    cat("subcortical labels:\n")
+    cat("\t\tsubcortical labels:\n")
     print(x$subcort$labels)
   }
+
+  cat("\n")
 }
 
 #' @export

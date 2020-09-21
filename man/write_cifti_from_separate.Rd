@@ -45,6 +45,12 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \description{
-Make a CIFTI file from components
+Make a CIFTI file from component NIFTI/GIFTI files using the 
+ \code{-cifti-create-...} Connectome Workbench commands.
+}
+\details{
+Every provided component will be included. The ROIs are only used if the
+ corresponding cortex is provided. Either both or none of the subcortical
+ NIFTIs should be provided.
 }
 \keyword{internal}

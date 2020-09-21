@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers.R
 \name{separate_cifti_wrapper}
 \alias{separate_cifti_wrapper}
-\title{separate_cifti with collapsed file name argument}
+\title{\code{separate_cifti} wrapper}
 \usage{
 separate_cifti_wrapper(
   cifti_fname,
