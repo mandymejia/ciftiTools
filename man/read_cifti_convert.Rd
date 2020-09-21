@@ -9,6 +9,7 @@ read_cifti_convert(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...

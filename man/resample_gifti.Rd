@@ -53,7 +53,12 @@ resamplegii(
 
 \item{target_fname}{Where to save the resampled file.}
 
+<<<<<<< Updated upstream
 \item{hemisphere}{"left" or "right".}
+=======
+\item{hemisphere}{"left" (default) or "right". An error will be raised if
+the hemisphere indicated in the GIFTI metadata does not match.}
+>>>>>>> Stashed changes
 
 \item{file_type}{\code{"metric"} or \code{"surface"}, or \code{NULL} 
 (default) to infer from \code{original_fname}.}

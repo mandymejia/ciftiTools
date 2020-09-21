@@ -14,6 +14,7 @@ read_cifti(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -26,6 +27,7 @@ readCIfTI(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -38,6 +40,7 @@ readcii(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -50,6 +53,7 @@ read_xifti(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -91,6 +95,10 @@ Default: \code{c("left","right")} (cortical surface only).}
 Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 have to be read in with \code{-cifti-separate}, which is slower than 
 \code{-cifti-convert -to-gifti-ext}.}
+
+\item{mwall_values}{If the medial wall locations are not indicated in the
+CIFTI, use these values to infer the medial wall mask. Default: 
+\code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

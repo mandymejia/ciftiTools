@@ -4,8 +4,14 @@
 #'
 #' @param original_fname The GIFTI file to resample.
 #' @param target_fname Where to save the resampled file.
+<<<<<<< Updated upstream
 #' @param hemisphere "left" or "right".
 #' @param file_type \code{"metric"} or \code{"surface"}, or \code{NULL} 
+=======
+#' @param hemisphere "left" (default) or "right". An error will be raised if
+#'  the hemisphere indicated in the GIFTI metadata does not match.
+#' @param file_type \code{"metric"}, \code{"label"}, \code{"surface"}, or \code{NULL} 
+>>>>>>> Stashed changes
 #'  (default) to infer from \code{original_fname}.
 #' @param original_res The resolution of the original file. If \code{NULL}
 #'  (default), infer from the file.
@@ -62,6 +68,15 @@ resample_gifti <- function(
   stopifnot(file.exists(original_fname))
   target_fname <- format_path(target_fname, write_dir, mode=2)
 
+<<<<<<< Updated upstream
+=======
+  # Hemisphere
+  hemisphere <- match.arg(hemisphere, c("left", "right")) 
+  if (file_type == "surface") {
+    surf <- make_surf(original_fname, hemisphere)
+  }
+
+>>>>>>> Stashed changes
   # Original ROI & target ROI file names
   do_ROI <- !is.null(ROIcortex_original_fname)
   if (do_ROI) {

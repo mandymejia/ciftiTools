@@ -21,7 +21,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_left)) { 
       ciftiTools_msg("Overwriting existing geometry for left cortex.\n") 
     }
-    xifti$surf$cortex_left <- make_surf(surfL)
+    xifti$surf$cortex_left <- make_surf(surfL, "left")
   }
 
   # Right.
@@ -29,7 +29,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_right)) { 
       ciftiTools_msg("Overwriting existing geometry for right cortex.\n") 
     }
-    xifti$surf$cortex_right <- make_surf(surfR)
+    xifti$surf$cortex_right <- make_surf(surfR, "right")
   }
 
   # Check.

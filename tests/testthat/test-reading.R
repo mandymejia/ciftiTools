@@ -17,9 +17,19 @@ test_that("Reading CIFTI and GIFTI files is working", {
     cii_flat <- readcii(cii_fname, flat=TRUE)
     cii_info <- info_cifti(cii_fname)
     cii <- readcii(cii_fname, brainstructures=cii_info$cifti$brainstructures)
-    expect_equal(cii_flat, ciftiTools:::flatten_xifti(cii))
+    testthat:::expect_equal(cii_flat, ciftiTools:::flatten_xifti(cii))
     cii <- readcii(cii_fname, brainstructures=cii_info$cifti$brainstructures[1])
-    cii <- readcii(cii_fname, brainstructures=cii_info$cifti$brainstructures, verbose=FALSE)
+    cii2 <- ciftiTools:::read_cifti_separate(cii_fname, brainstructures=cii_info$cifti$brainstructures[1])
+    ciftiTools:::expect_equal_xifti(cii, cii2)
+    cii <- readcii(cii_fname, brainstructures=cii_info$cifti$brainstructures, 
+      surfL_fname=fnames$surf["left"], surfR_fname=fnames$surf["right"], verbose=FALSE
+    )
+    testthat::expect_error(
+      readcii(
+        cii_fname, brainstructures=cii_info$cifti$brainstructures, 
+        surfL_fname=fnames$surf["right"], surfR_fname=fnames$surf["left"]
+      )
+    )
 
     # Test other alias
     cii <- read_cifti(cii_fname, brainstructures=cii_info$cifti$brainstructures)

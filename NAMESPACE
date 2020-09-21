@@ -72,10 +72,14 @@ export(writecii)
 import(RColorBrewer)
 importFrom(RNifti,readNifti)
 importFrom(RNifti,writeNifti)
-importFrom(fields,image.plot)
 importFrom(gifti,is.gifti)
 importFrom(gifti,readgii)
+<<<<<<< Updated upstream
 importFrom(gifti,write_gifti)
+=======
+importFrom(gifti,writegii)
+importFrom(grDevices,col2rgb)
+>>>>>>> Stashed changes
 importFrom(grDevices,colorRampPalette)
 importFrom(grDevices,dev.list)
 importFrom(grDevices,dev.off)

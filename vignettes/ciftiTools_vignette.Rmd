@@ -1,6 +1,6 @@
 ---
 title: "ciftiTools Demo"
-date: "8/29/2020"
+date: "9/20/2020"
 output: html_document
 ---
 
@@ -145,11 +145,31 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 A `"surface"` can be read in using `make_surf(surfL_fname)`. They can be viewed with `view_surf` or, equivalently, their `plot` method.
 
+<<<<<<< Updated upstream
 ```{r, out.width="50%", fig.cap="Right hemisphere surface"}
 knitr::include_graphics(plot(
   make_surf(surfR_fname), hemisphere="right", mode="image", 
   fname=file.path(out_dir, "surf_1.png")
+=======
+```{r, out.width="50%", fig.cap="Left hemisphere surface"}
+knitr::include_graphics(view_surf(
+  surfL_fname, mode="image", fname=file.path(out_dir, "surf_1.png")
 ))
+```
+
+We can additionally render the vertices and edges. Below is the right hemisphere surface. (It has been resampled so the edges and vertices are visible; see the below section on resampling.)
+
+```{r, out.width="50%", fig.cap="Right hemisphere surface (resampled) with mesh"}
+small_surf <- resample_surf(make_surf(surfR_fname), 4000)
+# Use ciftiTools:::plot.surface instead of plot because plot.surface is an S3 method from fields package (used to create legend in RGL) too
+knitr::include_graphics(ciftiTools:::plot.surface(
+  small_surf,
+  mode="image", fname=file.path(out_dir, "surf_2.png"),
+  # hemisphere="right", # able to be deduced from metadata
+  edge_color="black", vertex_size=5
+>>>>>>> Stashed changes
+))
+rm(small_surf)
 ```
 
 A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.

@@ -15,12 +15,16 @@
 #' @inheritParams resamp_keep_Param
 #' @inheritParams resamp_fnames_Param
 #' @inheritParams write_dir_Param_intermediate
+#' @param mwall_values If the medial wall locations are not indicated in the
+#'  CIFTI, use these values to infer the medial wall mask. Default: 
+#'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @keywords internal
+#' 
 #' 
 read_cifti_separate <- function(
   cifti_fname, 
@@ -29,7 +33,9 @@ read_cifti_separate <- function(
   resamp_res=NULL, 
   sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
-  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, 
+  mwall_values=c(NA, NaN), 
+  wb_path=NULL, verbose=TRUE) {
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -64,11 +70,19 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
   
   cifti_info <- info_cifti(cifti_fname, wb_path)
+<<<<<<< Updated upstream
 
   if (!all(brainstructures %in% cifti_info$cifti$brainstructures)) {
     stop(paste0(
       "Only the following brainstructures are present in the CIFTI file:",
       paste(cifti_info$cifti$brainstructures, collapse=", ")
+=======
+  bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
+  if (!all(bs_present)) {
+    warning(paste0(
+      "Only the following brainstructures are present in the CIFTI file: ",
+      paste(cifti_info$cifti$brainstructures, collapse=", "), "\n"
+>>>>>>> Stashed changes
     ))
   }
 
@@ -94,6 +108,27 @@ read_cifti_separate <- function(
   if (verbose) {
     print(Sys.time() - exec_time)
     exec_time <- Sys.time()
+  }
+
+  # ----------------------------------------------------------------------------
+  # Handle medial wall values --------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+  if (!is.null(mwall_values)) {
+    if ("left" %in% brainstructures) {
+      fix_gifti_mwall(
+        to_read["cortexL"], to_read["cortexL"], 
+        to_read["ROIcortexL"], to_read["ROIcortexL"], 
+        mwall_values
+      )
+    }
+    if ("right" %in% brainstructures) {
+      fix_gifti_mwall(
+        to_read["cortexR"], to_read["cortexR"], 
+        to_read["ROIcortexR"], to_read["ROIcortexR"], 
+        mwall_values
+      )
+    }
   }
 
   # ----------------------------------------------------------------------------
@@ -134,6 +169,8 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
 
   to_read <- as.list(to_read)
+  
+  to_read["mwall_values"] <- list(mwall_values=mwall_values)
 
   if (is.null(resamp_res)) {
     to_read <- c(to_read, list(cifti_info=cifti_info))
@@ -151,16 +188,9 @@ read_cifti_separate <- function(
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
   xifti <- do.call(make_xifti, as.list(to_read))
 
-  # if (endsWith(cifti_fname, ".dlabel.nii")) {
-  #   if ("left" %in% brainstructures) { xifti$data$cortex_left <- xifti$data$cortex_left + 1 }
-  #   if ("right" %in% brainstructures) { xifti$data$cortex_right <- xifti$data$cortex_right + 1 }
-  #   if ("subcortical" %in% brainstructures) { xifti$data$subcort <- xifti$data$subcort + 1 }
-  # }
-
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
     xifti$meta$cortex$resamp_res <- resamp_res
   }
-  xifti$meta$cifti <- cifti_info$cifti
 
   if (verbose) {
     print(Sys.time() - exec_time)

@@ -41,17 +41,58 @@ write_cifti_components <- function(
   )
   names(sep_fnames) <- sep_names
 
+<<<<<<< Updated upstream
   # Left cortex: add back medial wall.
+=======
+  if (extn_cifti == "dlabel.nii") {
+    intent <- "label"
+    data_type <- "INT32"
+    label_table <- xifti$meta$cifti$labels
+    if (length(label_table) > 1) {
+      if (length(unique(label_table)) > 1) {
+        warning(paste(
+          "CIFTI files support a different label table for each column,",
+          "but GIFTI files only support a single label table. Writing the",
+          "`xifti` requires exporting the cortical data to GIFTI files.",
+          "Using the label table for the first column."
+        ))
+      }
+    }
+    label_table <- label_table[[1]]
+    col_names <- names(xifti$meta$cifti$labels)
+  } else if (extn_cifti == "dscalar.nii") {
+    col_names <- xifti$meta$cifti$names
+    intent <- data_type <- label_table <- NULL
+  } else {
+    intent <- data_type <- label_table <- col_names <- NULL
+  }
+
+  # Left cortex
+>>>>>>> Stashed changes
   if (!is.null(xifti$data$cortex_left)){
     if (verbose) {cat("Writing left cortex.\n")}
+    # Add back medial wall.
     if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
       mwall <- rep(TRUE, nrow(xifti$data$cortex_left))
     } else {
       mwall <- xifti$meta$cortex$medial_wall_mask$left
     }
     cdat <- unmask_cortex(xifti$data$cortex_left, mwall)
+<<<<<<< Updated upstream
     write_metric_gifti(cdat, sep_fnames["cortexL"], "left")
     write_metric_gifti(as.numeric(mwall), sep_fnames["ROIcortexL"], "left")
+=======
+
+    # Write data and ROI.
+    write_metric_gifti(
+      cdat, sep_fnames["cortexL"], "left", data_type = data_type,
+      intent=intent, label_table = label_table, col_names = col_names
+    )
+    write_metric_gifti(
+      as.numeric(mwall), sep_fnames["ROIcortexL"], 
+      "left", data_type = "FLOAT32"
+    )
+>>>>>>> Stashed changes
   } else {
     sep_fnames <- sep_fnames[!grepl("cortexL", names(sep_fnames))]
   }
@@ -59,14 +100,28 @@ write_cifti_components <- function(
   ## Right cortex: add back medial wall.
   if (!is.null(xifti$data$cortex_right)){
     if (verbose) {cat("Writing right cortex.\n")}
+    # Add back medial wall.
     if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
       mwall <- rep(TRUE, nrow(xifti$data$cortex_right))
     } else {
       mwall <- xifti$meta$cortex$medial_wall_mask$right
     }
     cdat <- unmask_cortex(xifti$data$cortex_right, mwall)
+<<<<<<< Updated upstream
     write_metric_gifti(cdat, sep_fnames["cortexR"], "right")
     write_metric_gifti(as.numeric(mwall), sep_fnames["ROIcortexR"], "right")
+=======
+
+    # Write data and ROI.
+    write_metric_gifti(
+      cdat, sep_fnames["cortexR"], "right", data_type = data_type,
+      intent=intent, label_table = label_table, col_names = col_names
+    )
+    write_metric_gifti(
+      as.numeric(mwall), sep_fnames["ROIcortexR"], 
+      "right", data_type = "FLOAT32"
+    )
+>>>>>>> Stashed changes
   } else {
     sep_fnames <- sep_fnames[!grepl("cortexR", names(sep_fnames))]
   }
@@ -112,6 +167,10 @@ write_cifti <- function(
   xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE, wb_path=NULL) {
 
+<<<<<<< Updated upstream
+=======
+  extn_cifti <- get_cifti_extn(cifti_fname)
+>>>>>>> Stashed changes
   sep_fnames <- write_cifti_components(
     xifti=xifti, write_dir=tempdir(), 
     verbose=verbose, wb_path=wb_path

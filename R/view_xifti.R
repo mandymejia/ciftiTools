@@ -465,7 +465,6 @@ use_color_pal <- function(data_values, pal, color_NA="white") {
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
 #'
 #' @export
-#' @importFrom fields image.plot
 #' @importFrom grDevices dev.list dev.off rgb
 view_xifti_surface <- function(xifti, idx=1,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
@@ -478,6 +477,9 @@ view_xifti_surface <- function(xifti, idx=1,
 
   if (!requireNamespace("rgl", quietly = TRUE)) {
     stop("Package \"rgl\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
+  }
+  if (!requireNamespace("fields", quietly = TRUE)) {
+    stop("Package \"fields\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
   }
   if (!capabilities("X11")) {
     ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
@@ -496,21 +498,85 @@ view_xifti_surface <- function(xifti, idx=1,
   # [TO DO]: Check input surface matches the cortex!
   stopifnot(is.xifti(xifti))
   if (length(idx) > 1) stop("Only one time/column index is supported right now.")
+<<<<<<< Updated upstream
   if (is.null(surfL)) {
     if (is.null(xifti$surf$cortex_left) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "left")) {
         stop("The left hemisphere was requested, but no surface data was provided (xifti$surf$cortex_left or the surfL argument).")
+=======
+
+  if (!is.null(surfL)) {
+    surfL <- make_surf(surfL, "left")
+  } else if (!is.null(xifti$surf$cortex_left)) {
+    surfL <- make_surf(xifti$surf$cortex_left, "right")
+  }
+
+  if (!is.null(surfR)) {
+    surfR <- make_surf(surfR, "right")
+  } else if (!is.null(xifti$surf$cortex_right)) {
+    surfR <- make_surf(xifti$surf$cortex_right, "right")
+  }
+
+  if (!is.null(hemisphere)) {
+    if (length(hemisphere)==2) {
+      if (all(hemisphere %in% c("left", "right"))) {
+        hemisphere = "both"
+      } else {
+        stop("`hemisphere` should be \"left\", \"right\", or \"both\".")
+      }
+    }
+    if (hemisphere %in% c("both", "left")) {
+      if (is.null(surfL)) {
+        surfL <- make_surf(get_example_files()$surf["left"], "left")
+      }
+    }
+    if (hemisphere %in% c("both", "right")) {
+      if (is.null(surfR)) {
+        surfR <- make_surf(get_example_files()$surf["right"], "right")
+>>>>>>> Stashed changes
       }
     } else {
       surfL <- xifti$surf$cortex_left
     }
   } else {
+<<<<<<< Updated upstream
     surfL <- make_surf(surfL)
   }
   if (is.null(surfR)) {
     if (is.null(xifti$surf$cortex_right) & !is.null(hemisphere)) {
       if (hemisphere %in% c("both", "right")) {
         stop("The right hemisphere was requested, but no surface data was provided (xifti$surf$cortex_right or the surfR argument).")
+=======
+    if (is.null(surfL) && is.null(surfR)) {
+      if (is.null(xifti$data$cortex_left) && is.null(xifti$data$cortex_right)) {
+        stop("No cortical data nor surfaces were provided.")
+      } 
+      if (!is.null(xifti$data$cortex_left)) {
+        surfL <- make_surf(get_example_files()$surf["left"], "left")
+      }
+      if (!is.null(xifti$data$cortex_right)) {
+        surfR <- make_surf(get_example_files()$surf["right"], "right")
+      }
+    } else if (is.null(surfL)) {
+      if (!is.null(xifti$data$cortex_left)) {
+        warning(paste(
+          "Using default surface for left hemisphere, which may not match",
+          "provided surface for right hemisphere. To avoid this problem, set",
+          "`hemisphere=\"right\"` to only plot the right hemisphere or",
+          "provide the matching left hemisphere."
+        ))
+        surfL <- make_surf(get_example_files()$surf["left"], "left")
+      }
+    } else if (is.null(surfR)) {
+      if (!is.null(xifti$data$cortex_right)) {
+        warning(paste(
+          "Using default surface for right hemisphere, which may not match",
+          "provided surface for right hemisphere. To avoid this problem, set",
+          "`hemisphere=\"left\"` to only plot the left hemisphere or",
+          "provide the matching right hemisphere."
+        ))
+        surfR <- make_surf(get_example_files()$surf["right"], "right")
+>>>>>>> Stashed changes
       }
     } else {
       surfR <- xifti$surf$cortex_right
@@ -615,6 +681,7 @@ view_xifti_surface <- function(xifti, idx=1,
       #surfL <- resample_surf(surfL, length(xifti$meta$cortex$medial_wall_mask$left), "left", sphereL_fname)
     }
 
+<<<<<<< Updated upstream
     # Get data values.
     valuesL <- matrix(NA, ncol=length(idx), nrow=nrow(surfL$vertices))
     if (!is.null(xifti$data$cortex_left)) {
@@ -647,6 +714,26 @@ view_xifti_surface <- function(xifti, idx=1,
         "(length of medial wall mask, or rows in data if medial wall mask is absent).",
         "Are they in the same resolution?"
       ))
+=======
+    if (is.null(mwall_h)) {
+      if (is.null(val_h)) {
+        mwall_h <- rep(TRUE, nrow(surf_h$vertices))
+      } else {
+        mwall_h <- rep(TRUE, nrow(val_h))
+        if (nrow(surf_h$vertices) != length(mwall_h)) {
+          ciftiTools_msg(paste(
+            "The",h,"surface does not have the same number of vertices as the data",
+            "(length of medial wall mask, or rows in data if the mask is absent).",
+            "Resampling the",h,"surface. (If the \"wb_path\" option has not been",
+            "set an error will occur; set it or correct the surface prior to",
+            "plotting.)"
+          ))
+          surf_h <- resample_surf(
+            surf_h, length(mwall_h), hemisphere=h
+          )
+        }
+      }
+>>>>>>> Stashed changes
     }
 
     # Get data values.
@@ -1042,8 +1129,8 @@ view_xifti_volume <- function(
 view_xifti <- function(xifti, what=NULL, ...) {
   stopifnot(is.xifti(xifti))
   if (is.null(what)) {
-    can_do_left <- (!is.null(xifti$surf$cortex_left)) || ("surfL" %in% names(list(...)))
-    can_do_right <- (!is.null(xifti$surf$cortex_right)) || ("surfR" %in% names(list(...)))
+    can_do_left <- !is.null(xifti$data$cortex_left)
+    can_do_right <- !is.null(xifti$data$cortex_right)
     can_do_sub <- !is.null(xifti$data$subcort)
     what <- ifelse(
       can_do_left || can_do_right,

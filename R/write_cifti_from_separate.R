@@ -4,8 +4,8 @@
 #'
 #' @param cifti_fname Path to the CIFTI to write.
 #' @param cortexL_fname The left cortex file.
-#' @param cortexR_fname The right cortex file.
 #' @param ROIcortexL_fname The left cortex ROI file.
+#' @param cortexR_fname The right cortex file.
 #' @param ROIcortexR_fname The right cortex ROI file.
 #' @param subcortVol_fname The subcortical data file.
 #' @param subcortLabs_fname The subcortical labels file.
@@ -21,8 +21,8 @@
 #' 
 write_cifti_from_separate <- function(
   cifti_fname, 
-  cortexL_fname=NULL, cortexR_fname=NULL,
-  ROIcortexL_fname=NULL, ROIcortexR_fname=NULL,
+  cortexL_fname=NULL, ROIcortexL_fname=NULL,
+  cortexR_fname=NULL, ROIcortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   timestep=NULL, timestart=NULL,
   wb_path=NULL){
@@ -36,6 +36,10 @@ write_cifti_from_separate <- function(
     "dscalar.nii" = "-cifti-create-dense-scalar",
     "dlabel.nii" = "-cifti-create-label"
   )
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
   what <- switch(cifti_extn,
     "dtseries.nii" = "metric",
     "dscalar.nii" = "metric",

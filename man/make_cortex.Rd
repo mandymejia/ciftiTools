@@ -16,15 +16,27 @@ make_cortex(
 )
 }
 \arguments{
-\item{cortex}{A file path, metric "gifti" object, or data matrix representing
-cortical data.}
+\item{cortex}{A path to a metric GIFTI file, metric \code{"gifti"} object, or
+ numeric vector/matrix representing cortical data.
 
-\item{mwall}{The medial wall mask: a logical vector with \code{FALSE} values 
-indicating vertices that make up the medial wall. It will be verified, and 
-overwritten or removed if inaccurate.}
+ If \code{cortex} is a path to a metric GIFTI file or metric \code{"gifti"} 
+ object, the column names and the label table will also be extracted if they
+ exist in the GIFTI.}
 
-\item{cortex_is_masked}{Has the cortex data been masked yet? \code{NULL}
-(default) indicates whether it has been masked or not unknown.}
+\item{mwall}{A path to a metric GIFTI file, metric \code{"gifti"} object, 
+\eqn{V_{[L/R]} x 1} logical matrix or length \eqn{V_{[L/R]}} logical vector
+representing the medial wall mask. \code{FALSE} values should indicate 
+vertices that make up the medial wall. If the medial wall is unknown, use 
+\code{NULL} (default).}
+
+\item{cortex_is_masked}{Has the medial wall been masked from \code{cortex} 
+ yet? \code{NULL} (default) indicates whether it has been masked or not is 
+ unknown.
+
+If \code{!cortex_is_masked}, \code{cortex} should be \eqn{V_{[L/R]} x T}.
+ If \code{cortex_is_masked}, \code{cortex} should be 
+ \eqn{(V_{[L/R]} - mwall_{[L/R]}) x T}. If \code{is.null(cortex_is_masked)}, 
+ it may be either or.}
 
 \item{rm_blank_mwall}{If the medial wall mask is all \code{TRUE} 
 (indicating no medial wall vertices), should it be discarded? Default:
@@ -35,21 +47,24 @@ data (e.g. the vertex count doesn't add up), should it be discarded?
 Default: \code{TRUE}. If \code{FALSE}, raise an error.}
 
 \item{mwall_values}{If the medial wall mask was not provided (or if it was
-discarded), infer it from these values. Example: \code{c(0, NA, NaN)}. If 
-\code{NULL} (default), do not attempt to infer the medial wall mask.}
+discarded), infer it from rows in \code{cortex} that are constantly one of
+these values. Example: \code{c(0, NA, NaN)}. If \code{NULL} (default), 
+do not attempt to infer the medial wall mask from the data values.}
 
-\item{side}{"left" or "right"? Just used to print warnings.}
+\item{side}{\code{"left"} or \code{"right"}? Just used to print warnings.}
 
-\item{mwall_source}{Character describing where the mwall came from. Just used
+\item{mwall_source}{Description of where the mwall came from. Just used
 to print warnings.}
 }
 \value{
-A list with components "data" and "mwall".
+A list with components "data", "mwall", "col_names" and "labels".
 }
 \description{
-Coerce a file path, metric "gifti" object, or data matrix to a data matrix
- representing cortical data (and optionally a corresponding mask). That is,
- entries for \code{xifti$data$cortex_[left/right]} and 
- \code{xifti$meta$cortex}.
+Coerce a path to a GIFTI file, metric "gifti" object, data matrix or vector to a 
+ data matrix representing cortical data (and optionally a corresponding mask). 
+ That is,  entries for \code{xifti$data$cortex_[left/right]} and 
+ \code{xifti$meta$cortex$medial_wall_mask$[left/right]}. If \code{cortex} is
+ a path to a GIFTI file or a metric "gifti" object, any column names or
+ a non-empty label table will also be extracted.
 }
 \keyword{internal}

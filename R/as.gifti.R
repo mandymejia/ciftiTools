@@ -36,14 +36,14 @@ as.metric_gifti <- function(
   if (startsWith(intent, "NIFTI_INTENT_")) { 
     intent <- gsub("NIFTI_INTENT_", "", intent)
   }
-  if (!(intent %in% c("NONE", "NORMAL"))) {
+  if (!(intent %in% c("NONE", "NORMAL", "LABEL"))) {
     intent_short <- tolower(intent)
     ciftiTools_warn(paste0(
       "Names of data entries in \"gifti\" object will be \"", intent_short, 
       "\". This has not been verified to correspond with a NIFTI intent."
     ))
   } else {
-    intent_short <- list(NONE = "unknown", NORMAL = "normal")[[intent]]
+    intent_short <- list(NONE = "unknown", NORMAL = "normal", LABEL="labels")[[intent]]
   }
 
   # If already a "gifti", use the $data only.
@@ -68,6 +68,7 @@ as.metric_gifti <- function(
   if (is.vector(data)) { data <- matrix(data, ncol=1) }
   if (suppressMessages(is.nummat(data))) {
     data <- split(t(data), seq(ncol(data)))
+    data <- lapply(data, function(x){matrix(x, ncol=1)})
     names(data) <- rep(intent_short, length(data))
   }
 
@@ -89,6 +90,13 @@ as.metric_gifti <- function(
     data_type <- paste0("NIFTI_TYPE_", data_type)
   }
   stopifnot(data_type %in% c("NIFTI_TYPE_INT32", "NIFTI_TYPE_FLOAT32"))
+
+  # Make data integers
+  if (data_type == "NIFTI_TYPE_INT32") {
+    for (ii in 1:length(data)) {
+      mode(data[[ii]]) <- "integer"
+    }
+  }
 
   # Name the entries in the data by the intent.
   if (!is.null(names(data))) {

@@ -52,7 +52,8 @@ Additional metadata depends on the type of CIFTI file:
    }
    \item{"dlabels"}{
      \enumerate{
-       \item{labels}{(   \eqn{L x 5} data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+       \item{names}{(   Names of each data column.)}
+       \item{labels}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
      }
    }
  }

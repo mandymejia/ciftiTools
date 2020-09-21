@@ -178,7 +178,7 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
       labs[[ii]] <- as.data.frame(labs[[ii]])
     }
     names(labs) <- sapply(xml, function(x){x$MapName[[1]]})
-    meta <- list(labels = labs)
+    meta <- list(names=names(labs), labels = labs)
   } else { stop("Internal error: CIFTI intent not supported.") }
   meta
 }
@@ -336,7 +336,8 @@ info_cifti_raw <- function(cifti_fname, what=c("header", "xml"), wb_path=NULL){
 #'    }
 #'    \item{"dlabels"}{
 #'      \enumerate{
-#'        \item{labels}{(   \eqn{L x 5} data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+#'        \item{names}{(   Names of each data column.)}
+#'        \item{labels}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
 #'      }
 #'    }
 #'  }

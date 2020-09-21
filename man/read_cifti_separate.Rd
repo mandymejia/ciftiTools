@@ -15,8 +15,9 @@ read_cifti_separate(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
-  verbose = TRUE,
-  wb_path = NULL
+  mwall_values = c(NA, NaN),
+  wb_path = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -110,11 +111,15 @@ once instead of every new iteration.}
 
  \code{write_dir} must already exist, or an error will occur.}
 
-\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
+\item{mwall_values}{If the medial wall locations are not indicated in the
+CIFTI, use these values to infer the medial wall mask. Default: 
+\code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
+
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 }
 \value{
 A \code{"xifti"} object. See \code{\link{is.xifti}}.

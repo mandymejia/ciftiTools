@@ -11,7 +11,9 @@ write_metric_gifti(
   intent = NULL,
   data_type = NULL,
   encoding = NULL,
-  endian = c("LittleEndian", "BigEndian")
+  endian = c("LittleEndian", "BigEndian"),
+  col_names = NULL,
+  label_table = NULL
 )
 }
 \arguments{
@@ -44,6 +46,18 @@ existing data type.}
 
 \item{endian}{"LittleEndian" (default) or "BigEndian". If \code{data} is a 
 "gifti" object, it will overwrite the existing endian.}
+
+\item{col_names}{The names of each data column in \code{gii} (or entries in \code{gii$data}).}
+
+\item{label_table}{A data.frame with labels along rows. The row names should
+ be the label names. The column names should be among: "Key", "Red", "Green", "Blue", and "Alpha".
+ The "Key" column is required whereas the others are optional (but very often included).
+ Values in the "Key" column should be non-negative integers, typically beginning with 0. The other
+ columns should be floating-point numbers between 0 and 1.
+
+ Although CIFTI files support a different label table for each data column,
+ GIFTI files only support a single label table. So this label table should be
+ applicable to each data column.}
 }
 \value{
 Whether the GIFTI was successfully written

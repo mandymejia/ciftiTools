@@ -5,7 +5,13 @@
 #'
 #' @param surf A "surface" object
 #' @param resamp_res The desired resolution
+<<<<<<< Updated upstream
 #' @param hemisphere "left" or "right"
+=======
+#' @param hemisphere "left" or "right". Only used if not indicated by 
+#'  \code{surf$hemisphere}. An error will be raised if it does not match the 
+#'  hemisphere indicated in the intermediate written GIFTI. 
+>>>>>>> Stashed changes
 #' @inheritParams wb_path_Param
 #' 
 #' @return The new surface
@@ -16,7 +22,11 @@ resample_surf <- function(
 
   stopifnot(is.surf(surf))
 
+<<<<<<< Updated upstream
   hemisphere <- match.arg(hemisphere, c("left", "right"))
+=======
+  if (!is.null(surf$hemisphere)) { hemisphere <- surf$hemisphere }
+>>>>>>> Stashed changes
 
   original_res <- nrow(surf$vertices)
 
@@ -35,5 +45,5 @@ resample_surf <- function(
   )
 
   # Read new file.
-  make_surf(gii_post)
+  make_surf(gii_post, hemisphere)
 }

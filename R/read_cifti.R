@@ -36,6 +36,9 @@
 #'  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 #'  have to be read in with \code{-cifti-separate}, which is slower than 
 #'  \code{-cifti-convert -to-gifti-ext}.
+#' @param mwall_values If the medial wall locations are not indicated in the
+#'  CIFTI, use these values to infer the medial wall mask. Default: 
+#'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
 #' @inheritParams wb_path_Param
 #' @inheritParams verbose_Param_FALSE
 #' @param ... Additional arguments to \code{\link{read_cifti_convert}} or 
@@ -54,6 +57,7 @@ read_cifti <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL,
+  mwall_values=c(NA, NaN),
   wb_path=NULL, verbose=FALSE, ...){
 
   # ----------------------------------------------------------------------------
@@ -93,6 +97,7 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
+      mwall_values=mwall_values,
       wb_path=wb_path, verbose=verbose,
       ...
     ))
@@ -102,7 +107,8 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, 
-      resamp_res=resamp_res,
+      resamp_res=resamp_res, 
+      mwall_values=mwall_values,
       wb_path=wb_path, verbose=verbose,
       ...
     ))
@@ -116,13 +122,14 @@ readCIfTI <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL,
+  mwall_values=c(NA, NaN),
   wb_path=NULL, verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname, flat,
     surfL_fname, surfR_fname,
     brainstructures, 
-    resamp_res,
+    resamp_res, mwall_values,
     wb_path, verbose, ...
   )
 }
@@ -134,13 +141,14 @@ readcii <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL,
+  mwall_values=c(NA, NaN),
   wb_path=NULL, verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname, flat,
     surfL_fname, surfR_fname,
     brainstructures, 
-    resamp_res,
+    resamp_res, mwall_values,
     wb_path, verbose, ...
   )
 }
@@ -152,13 +160,14 @@ read_xifti <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL,
+  mwall_values=c(NA, NaN),
   wb_path=NULL, verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname, flat,
     surfL_fname, surfR_fname,
     brainstructures, 
-    resamp_res,
+    resamp_res, mwall_values,
     wb_path, verbose, ...
   )
 }

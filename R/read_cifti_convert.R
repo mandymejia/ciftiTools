@@ -21,6 +21,7 @@ read_cifti_convert <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
+  mwall_values=c(NA, NaN),
   wb_path=NULL, verbose=FALSE, ...){
 
   # Check arguments.
@@ -43,19 +44,37 @@ read_cifti_convert <- function(
 
   # Read the CIFTI info.
   xifti$meta <- info_cifti(cifti_fname, wb_path)
+<<<<<<< Updated upstream
   if (!all(brainstructures %in% xifti$meta$cifti$brainstructures)) {
     stop(paste0(
       "Only the following brainstructures are present in the CIFTI file:",
       paste(xifti$meta$cifti$brainstructures, collapse=", ")
+=======
+  bs_present <- brainstructures %in% xifti$meta$cifti$brainstructures
+  if (!all(bs_present)) {
+    warning(paste0(
+      "Only the following brainstructures are present in the CIFTI file: ",
+      paste(xifti$meta$cifti$brainstructures, collapse=", "), "\n"
+>>>>>>> Stashed changes
     ))
   }
 
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
+<<<<<<< Updated upstream
 
   # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
   #   xifti_data <- xifti_data + 1
   # }
+=======
+  if (get_cifti_extn(cifti_fname) == "dlabel.nii") {
+    if (!all(round(xifti_data) == xifti_data)) {
+      warning("The CIFTI file extension was \"dlabel.nii\" but the data values were not integers.")
+    } else {
+      mode(xifti_data) <- "integer"
+    }
+  }
+>>>>>>> Stashed changes
 
   # Place cortex data into the "xifti" object.
   if (xifti$meta$cifti$intent == 3007) {
@@ -71,6 +90,10 @@ read_cifti_convert <- function(
       xifti_data[1:last_left,, drop=FALSE],
       side = "left", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$left,
+<<<<<<< Updated upstream
+=======
+      mwall_values=mwall_values,
+>>>>>>> Stashed changes
       mwall_source="the CIFTI being read in",
       mwall_values=mwall_values
     )
@@ -84,6 +107,10 @@ read_cifti_convert <- function(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
       side = "right", #cortex_is_masked=TRUE,
       mwall = xifti$meta$cortex$medial_wall_mask$right,
+<<<<<<< Updated upstream
+=======
+      mwall_values=mwall_values,
+>>>>>>> Stashed changes
       mwall_source="the CIFTI being read in",
       mwall_values=mwall_values
     )
@@ -107,10 +134,10 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_surf(surfL_fname) 
+    xifti$surf$cortex_left <- make_surf(surfL_fname, "left") 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_surf(surfR_fname) 
+    xifti$surf$cortex_right <- make_surf(surfR_fname, "right") 
   }
 
   # Finish.

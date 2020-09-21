@@ -1,17 +1,31 @@
 #' Make "xifti" Cortical Components
 #' 
-#' Coerce a file path, metric "gifti" object, or data matrix to a data matrix
-#'  representing cortical data (and optionally a corresponding mask). That is,
-#'  entries for \code{xifti$data$cortex_[left/right]} and 
-#'  \code{xifti$meta$cortex}. 
-#'
-#' @param cortex A file path, metric "gifti" object, or data matrix representing
-#'  cortical data.
-#' @param mwall The medial wall mask: a logical vector with \code{FALSE} values 
-#'  indicating vertices that make up the medial wall. It will be verified, and 
-#'  overwritten or removed if inaccurate.
-#' @param cortex_is_masked Has the cortex data been masked yet? \code{NULL}
-#'  (default) indicates whether it has been masked or not unknown.
+#' Coerce a path to a GIFTI file, metric "gifti" object, data matrix or vector to a 
+#'  data matrix representing cortical data (and optionally a corresponding mask). 
+#'  That is,  entries for \code{xifti$data$cortex_[left/right]} and 
+#'  \code{xifti$meta$cortex$medial_wall_mask$[left/right]}. If \code{cortex} is
+#'  a path to a GIFTI file or a metric "gifti" object, any column names or
+#'  a non-empty label table will also be extracted.
+#' 
+#' @param cortex A path to a metric GIFTI file, metric \code{"gifti"} object, or
+#'  numeric vector/matrix representing cortical data.
+#' 
+#'  If \code{cortex} is a path to a metric GIFTI file or metric \code{"gifti"} 
+#'  object, the column names and the label table will also be extracted if they
+#'  exist in the GIFTI. 
+#' @param mwall A path to a metric GIFTI file, metric \code{"gifti"} object, 
+#'  \eqn{V_{[L/R]} x 1} logical matrix or length \eqn{V_{[L/R]}} logical vector
+#'  representing the medial wall mask. \code{FALSE} values should indicate 
+#'  vertices that make up the medial wall. If the medial wall is unknown, use 
+#'  \code{NULL} (default).
+#' @param cortex_is_masked Has the medial wall been masked from \code{cortex} 
+#'  yet? \code{NULL} (default) indicates whether it has been masked or not is 
+#'  unknown.
+#' 
+#' If \code{!cortex_is_masked}, \code{cortex} should be \eqn{V_{[L/R]} x T}.
+#'  If \code{cortex_is_masked}, \code{cortex} should be 
+#'  \eqn{(V_{[L/R]} - mwall_{[L/R]}) x T}. If \code{is.null(cortex_is_masked)}, 
+#'  it may be either or. 
 #' @param rm_blank_mwall If the medial wall mask is all \code{TRUE} 
 #'  (indicating no medial wall vertices), should it be discarded? Default:
 #'  \code{TRUE}. If \code{FALSE}, keep it.
@@ -19,13 +33,14 @@
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
 #' @param mwall_values If the medial wall mask was not provided (or if it was
-#'  discarded), infer it from these values. Example: \code{c(0, NA, NaN)}. If 
-#'  \code{NULL} (default), do not attempt to infer the medial wall mask.
-#' @param side "left" or "right"? Just used to print warnings.
-#' @param mwall_source Character describing where the mwall came from. Just used
+#'  discarded), infer it from rows in \code{cortex} that are constantly one of
+#'  these values. Example: \code{c(0, NA, NaN)}. If \code{NULL} (default), 
+#'  do not attempt to infer the medial wall mask from the data values.
+#' @param side \code{"left"} or \code{"right"}? Just used to print warnings.
+#' @param mwall_source Description of where the mwall came from. Just used
 #'  to print warnings.
 #'
-#' @return A list with components "data" and "mwall".
+#' @return A list with components "data", "mwall", "col_names" and "labels".
 #'
 #' @keywords internal
 #' 
@@ -41,6 +56,8 @@ make_cortex <- function(
 
   if (is.null(side)) {side <- ""}
   if (is.null(mwall_source)) {mwall_source <- ""}
+  
+  col_names <- label_table <- NULL
 
   # Cannot infer the medial wall if the cortex has been masked.
   infer_mwall <- !identical(mwall_values, NULL)
@@ -53,8 +70,41 @@ make_cortex <- function(
   }
   #   GIFTI --> matrix.
   if (is.gifti(cortex)) {
+    
+    ## Extract column names if present.
+    get_col_name <- function(x){
+      if (!is.matrix(x)) { return("") }
+      if (!all(sort(colnames(x)) == sort(c("names", "vals")))) { return("") }
+      meta_names <- x[colnames(x) == "names"]
+      name_match = meta_names == "Name"
+      if (sum(name_match) > 0) {
+        if (sum(name_match) > 1) { 
+          ciftiTools_warn("Multiple \"Name\" metadata entries. Using first only.")
+        }
+        return(x[name_match[1],"vals"])
+      } else {
+        return("")
+      }
+    }
+    col_names <- as.character(sapply(cortex$data_meta, get_col_name))
+    if (length(unique(col_names)) == 1 && col_names=="") {
+      col_names <- NULL
+    }
+
+    ## Extract labels if present.
+    if (nrow(cortex$label) > 1) {
+      label_table <- as.data.frame(cortex$label)
+      label_table[,] <- apply(label_table, 2, as.numeric)
+    } 
+
+    ## Extract data matrix.
     cortex <- do.call(cbind, cortex$data)
+<<<<<<< Updated upstream
     dimnames(cortex) <- NULL # [TO DO]: Keep if dscalar or dlabels?
+=======
+    dimnames(cortex) <- NULL
+
+>>>>>>> Stashed changes
   } else {
     if (!is.numeric(cortex) && !is.matrix(cortex)) {
       stop(paste(
@@ -63,7 +113,9 @@ make_cortex <- function(
         "or a numeric matrix."
       ))
     }
+
   }
+
   if (is.vector(cortex)) { cortex <- matrix(cortex, ncol=1) }
 
   # Check if medial wall mask is valid.
@@ -164,7 +216,7 @@ make_cortex <- function(
     }
   }
 
-  list(data = cortex, mwall = mwall)
+  list(data = cortex, mwall = mwall, col_names=col_names, label_table=label_table)
 }
 
 #' Make "xifti" Subcortical Components
@@ -305,10 +357,19 @@ make_subcort <- function(
 #' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
 #'  object.
 #'
+<<<<<<< Updated upstream
 #' @param surf Either a file path to a surface GIFTI; a "gifti" object (or list
 #'  with entry \code{"data"} with subentries \code{"pointset"} and 
 #'  \code{"triangle"}); or a list with entries \code{"pointset"} and 
 #'  \code{"triangle"}.
+=======
+#' @param surf A surface GIFTI, either as a file path or a "gifti" object
+#'  read by \code{\link[gifti]{readgii}}.
+#' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
+#'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
+#'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
+#'  hemisphere.
+>>>>>>> Stashed changes
 #' 
 #' @return The "surface" object: a list with components \code{"vertices"}
 #'  (3D spatial locations) and \code{"faces"} (defined by three vertices).
@@ -317,12 +378,18 @@ make_subcort <- function(
 #'
 #' @export
 #' 
-gifti_to_surface <- function(surf) {
+gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
+
+  if (!is.null(expected_hemisphere)) {
+    expected_hemisphere <- match.arg(expected_hemisphere, c("left", "right"))
+  }
+
   # File --> GIFTI.
   if (is.fname(surf)){ surf <- readgii(surf) }
 
   # GIFTI --> list of vertices and faces.
   if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::readgii()`.") }
+<<<<<<< Updated upstream
   stopifnot(is.list(surf))
   if ("data" %in% names(surf)) { surf <- surf$data }
   stopifnot(all(c("pointset", "triangle") %in% names(surf)))
@@ -331,6 +398,44 @@ gifti_to_surface <- function(surf) {
   if (min(faces)==0) faces <- faces + 1 # start indexing at 1 instead of 0
   mode(faces) <- "integer"
   surf <- list(vertices = verts, faces = faces)
+=======
+  ## Get hemisphere.
+  hemisphere <- try({
+    ps_idx <- which(names(surf$data) == "pointset")[1]
+    ps_meta <- surf$data_meta[[ps_idx]]
+    hemisphere <- ps_meta[which(ps_meta[,1] == "AnatomicalStructurePrimary"),2]
+    if (!(hemisphere %in% c("CortexLeft", "CortexRight"))) {
+      stop(paste0(
+        "The hemisphere metadata entry (AnatomicalStructurePrimary) was not ",
+        "CortexLeft or CortexRight. Instead, it was ", hemisphere, 
+        ". Discarding and leaving hemisphere entry blank."
+      ))
+    }
+    hemisphere
+  }, silent=TRUE)
+  if (inherits(hemisphere, "try-error")) { 
+    warning(hemisphere); hemisphere <- NULL
+  } else {
+    hemisphere <- switch(hemisphere, CortexLeft="left", CortexRight="right")
+  }
+  if (!is.null(expected_hemisphere)) {
+    if (hemisphere != expected_hemisphere) {
+      stop(paste(
+        "The expected hemisphere was", expected_hemisphere, 
+        "but the hemisphere indicated in the GIFTI was the opposite."
+      ))
+    }
+  }
+  ## Get vertices and faces.
+  surf <- list(
+    vertices = surf$data$pointset,
+    faces = surf$data$triangle,
+    hemisphere = hemisphere
+  )
+  ## Format faces as integers starting index at 1 instead of 0
+  if (min(surf$faces)==0) surf$faces <- surf$faces + 1
+  mode(surf$faces) <- "integer"
+>>>>>>> Stashed changes
 
   # Return cifti_surface or error.
   if (!is.surf(surf)) {
@@ -345,10 +450,19 @@ gifti_to_surface <- function(surf) {
 #' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
 #'  object.
 #'
+<<<<<<< Updated upstream
 #' @param surf Either a file path to a surface GIFTI; a "gifti" object (or list
 #'  with entry \code{"data"} with subentries \code{"pointset"} and 
 #'  \code{"triangle"}); a list with entries \code{"pointset"} and 
 #'  \code{"triangle"}; or a "surface" object.
+=======
+#' @param surf Either a file path to a surface GIFTI; a "gifti" object
+#'  read by \code{\link[gifti]{readgii}}; or, an existing "surface" object.
+#' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
+#'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
+#'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
+#'  hemisphere.
+>>>>>>> Stashed changes
 #' 
 #' @return The "surface" object: a list with components \code{"vertices"}
 #'  (3D spatial locations) and \code{"faces"} (defined by three vertices).
@@ -357,10 +471,10 @@ gifti_to_surface <- function(surf) {
 #'
 #' @export
 #' 
-make_surf <- function(surf) {
+make_surf <- function(surf, expected_hemisphere=NULL) {
 
   if (!suppressMessages(is.surf(surf))) {
-    surf <- gifti_to_surface(surf)
+    surf <- gifti_to_surface(surf, expected_hemisphere)
     if (!is.surf(surf)) {
       stop("The object could not be converted into a surface.")
     }

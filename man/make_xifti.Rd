@@ -12,6 +12,7 @@ make_xifti(
   subcortVol = NULL,
   subcortLabs = NULL,
   subcortMask = NULL,
+  mwall_values = c(NA, NaN),
   cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -20,8 +21,8 @@ make_xifti(
 }
 \arguments{
 \item{cortexL, cortexL_mwall}{\code{cortexL} represents the left cortex data.
- Each can be a file path to a metric GIFTI, a \code{"gifti"} object, or a 
- data matrix or vector.
+ Each can be a path to a GIFTI file, metric \code{"gifti"} object, data matrix
+ or vector.
 
  If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
@@ -41,8 +42,8 @@ make_xifti(
  \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.}
 
 \item{cortexR, cortexR_mwall}{\code{cortexR} represents the right cortex data.
- Each can be a file path to a metric GIFTI, a \code{"gifti"} object, or a 
- data matrix or vector.
+ Each can be a path to a GIFTI file, metric \code{"gifti"} object, data matrix
+ or vector.
 
  If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
  all vertices on the right cortical surface (\eqn{V_R x T} data matrix). There 
@@ -80,6 +81,14 @@ make_xifti(
  \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
  is not provided, the mask cannot be inferred so an error will occur.}
 
+\item{mwall_values}{If \code{cortex[L/R]_mwall} was not provided, or if it
+was invalid (i.e. bad length or all \code{TRUE}), the medial wall mask will
+be inferred from rows in \code{cortex[L/R]} that are constantly one of these
+values. Default: \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer
+the medial wall from the data values. \code{NULL} should be used if \code{NA}
+or \code{NaN} are legitimate values that non-medial wall vertices might
+take on.}
+
 \item{cifti_info}{(Optional) The result of \code{\link{info_cifti}}. If 
  GIFTI and/or NIFTI components from a CIFTI are being provided, 
  providing \code{cifti_info} gives metadata information that would otherwise
@@ -102,27 +111,31 @@ A "xifti" object; see \code{\link{template_xifti}}.
 \description{
 Assembles cortical data, subcortical data, and/or surface geometry to form a 
  "xifti". The inputs can be file paths, GIFTI or NIFTI files which have been
- read in, or objects formatted as they are in \code{ciftiTools}. See 
+ read in, or objects formatted as they are in \code{ciftiTools} (data
+ vectors, matrices or arrays, depending on the argument). See 
  \code{as.xifti} for a user-function wrapper that only works with data 
  objects. \code{make_xifti} can be used to combine the files written by 
  \code{\link{separate_cifti}}, or read individual components independent of 
  any CIFTI file.
 }
 \details{
-Each data or surface component is optional. A metadata component will be 
+Each data or surface component is optional. Metadata components
+ (\code{cortex[L/R]_mwall}, \code{subcortLabs}, \code{subcortMask}) will be 
  ignored if its corresponding data component is not provided. If no data or
  surface components are provided, then the \code{\link{template_xifti}} will 
  be returned. 
 
  If cortical data are provided without a corresponding medial wall mask, or
- if the provided mask is invalid or empty, then the medial wall metadata
- entry will be \code{NULL}. (It does not attempt to infer the medial wall
- mask from data values.)
+ if the provided mask is invalid or empty, then the medial wall will be
+ inferred from data rows that are constantly a value in \code{mwall_values}. 
+ But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
+ wall will be made and the medial wall metadata entry will be \code{NULL}.
  
- The total number of brainordinates will be \eqn{V = V_L + V_R + V_S}: \eqn{V_L} left
- vertices, \eqn{V_R} right vertices and \eqn{V_S} subcortical voxels. \eqn{T}, the total
- number of measurements (columns of data), must be the same for each
- brainstructure.
+ The total number of brainordinates will be 
+ \eqn{V = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
+ vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical 
+ voxels. \eqn{T}, the total number of measurements (columns of data), must be
+ the same for each brainstructure.
 }
 \section{Label Levels}{
 

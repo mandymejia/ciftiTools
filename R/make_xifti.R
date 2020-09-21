@@ -2,30 +2,34 @@
 #'
 #' Assembles cortical data, subcortical data, and/or surface geometry to form a 
 #'  "xifti". The inputs can be file paths, GIFTI or NIFTI files which have been
-#'  read in, or objects formatted as they are in \code{ciftiTools}. See 
+#'  read in, or objects formatted as they are in \code{ciftiTools} (data
+#'  vectors, matrices or arrays, depending on the argument). See 
 #'  \code{as.xifti} for a user-function wrapper that only works with data 
 #'  objects. \code{make_xifti} can be used to combine the files written by 
 #'  \code{\link{separate_cifti}}, or read individual components independent of 
 #'  any CIFTI file. 
 #' 
-#' Each data or surface component is optional. A metadata component will be 
+#' Each data or surface component is optional. Metadata components
+#'  (\code{cortex[L/R]_mwall}, \code{subcortLabs}, \code{subcortMask}) will be 
 #'  ignored if its corresponding data component is not provided. If no data or
 #'  surface components are provided, then the \code{\link{template_xifti}} will 
 #'  be returned. 
 #' 
 #'  If cortical data are provided without a corresponding medial wall mask, or
-#'  if the provided mask is invalid or empty, then the medial wall metadata
-#'  entry will be \code{NULL}. (It does not attempt to infer the medial wall
-#'  mask from data values.)
+#'  if the provided mask is invalid or empty, then the medial wall will be
+#'  inferred from data rows that are constantly a value in \code{mwall_values}. 
+#'  But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
+#'  wall will be made and the medial wall metadata entry will be \code{NULL}.
 #'  
-#'  The total number of brainordinates will be \eqn{V = V_L + V_R + V_S}: \eqn{V_L} left
-#'  vertices, \eqn{V_R} right vertices and \eqn{V_S} subcortical voxels. \eqn{T}, the total
-#'  number of measurements (columns of data), must be the same for each
-#'  brainstructure.
+#'  The total number of brainordinates will be 
+#'  \eqn{V = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
+#'  vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical 
+#'  voxels. \eqn{T}, the total number of measurements (columns of data), must be
+#'  the same for each brainstructure.
 #' 
 #' @param cortexL,cortexL_mwall \code{cortexL} represents the left cortex data.
-#'  Each can be a file path to a metric GIFTI, a \code{"gifti"} object, or a 
-#'  data matrix or vector.
+#'  Each can be a path to a GIFTI file, metric \code{"gifti"} object, data matrix
+#'  or vector.
 #' 
 #'  If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
 #'  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
@@ -44,8 +48,8 @@
 #'  Since the unmasked cortices must have the same number of vertices,
 #'  \code{cortexL_mwall} and \code{cortexR_mwall} should be of equal length.
 #' @param cortexR,cortexR_mwall \code{cortexR} represents the right cortex data.
-#'  Each can be a file path to a metric GIFTI, a \code{"gifti"} object, or a 
-#'  data matrix or vector.
+#'  Each can be a path to a GIFTI file, metric \code{"gifti"} object, data matrix
+#'  or vector.
 #' 
 #'  If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
 #'  all vertices on the right cortical surface (\eqn{V_R x T} data matrix). There 
@@ -81,6 +85,13 @@
 #'  mask will be inferred from voxels with labels \code{0} or \code{NA} in 
 #'  \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
 #'  is not provided, the mask cannot be inferred so an error will occur.
+#' @param mwall_values If \code{cortex[L/R]_mwall} was not provided, or if it
+#'  was invalid (i.e. bad length or all \code{TRUE}), the medial wall mask will
+#'  be inferred from rows in \code{cortex[L/R]} that are constantly one of these
+#'  values. Default: \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer
+#'  the medial wall from the data values. \code{NULL} should be used if \code{NA}
+#'  or \code{NaN} are legitimate values that non-medial wall vertices might
+#'  take on.
 #' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If 
 #'  GIFTI and/or NIFTI components from a CIFTI are being provided, 
 #'  providing \code{cifti_info} gives metadata information that would otherwise
@@ -105,10 +116,11 @@ make_xifti <- function(
   cortexL=NULL, cortexL_mwall=NULL,
   cortexR=NULL, cortexR_mwall=NULL,
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
-  cifti_info=NULL,
+  mwall_values=c(NA, NaN), cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
   read_dir=NULL) {
   
+<<<<<<< Updated upstream
   # # Use `read_cifti` if `cifti_fname` was provided.
   # if (!is.null(cifti_fname)) {
   #   if (!all(sapply(list(cortexL, cortexR, subcortVol, subcortLabs, cifti_info), is.null))) {
@@ -117,6 +129,8 @@ make_xifti <- function(
   #   return( read_cifti(cifti_fname, brainstructures=cifti_brainstructures, ...) )
   # }
   
+=======
+>>>>>>> Stashed changes
   # Add `read_dir` and check file paths.
   if (is.fname(cortexL)) { cortexL <- format_path(cortexL, read_dir, mode=4) }
   if (is.fname(cortexR)) { cortexR <- format_path(cortexR, read_dir, mode=4) }
@@ -132,19 +146,73 @@ make_xifti <- function(
   # TO DO: see `read_cifti_convert` on using intent to change mwall infer behavior
   if (!is.null(cortexL)) {
     x <- make_cortex(
+<<<<<<< Updated upstream
       cortexL, cortexL_mwall,
+=======
+      cortexL, cortexL_mwall, mwall_values=mwall_values,
+>>>>>>> Stashed changes
       side="left", mwall_source="the input `cortexL_mwall`"
     )
     xifti$data$cortex_left <- x$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(x$mwall)
+
+    ## Column names and label table.
+    xifti$meta$cifti$names <- x$col_names
+    if (!is.null(x$label_table)) {
+      xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
+      if (!is.null(x$col_names)) {
+        names(xifti$meta$cifti$labels) <- x$col_names
+      }
+    }
   }
   if (!is.null(cortexR)) {
     x <- make_cortex(
+<<<<<<< Updated upstream
       cortexR, cortexR_mwall,
+=======
+      cortexR, cortexR_mwall, mwall_values=mwall_values,
+>>>>>>> Stashed changes
       side="right", mwall_source="the input `cortexR_mwall`"
     )
     xifti$data$cortex_right <- x$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(x$mwall)
+
+    ## Column names and label table.
+    if (!is.null(x$col_names)) {
+      if (!is.null(xifti$meta$cifti$names)) {
+        if (length(x$col_names) != length(xifti$meta$cifti$names)) {
+          stop("The left and right cortex data had a different number of columns.")
+        }
+        if (!all(x$col_names == xifti$meta$cifti$names)) {
+          warning(paste0(
+            "The column names of the left cortex did not match the column names ",
+            "of the right cortex. The column names of the left cortex were:\n\t",
+            paste(xifti$meta$cifti$names, collapse=","), "\n\n",
+            "whereas the column names of the right cortex were:\n\t",
+            paste(x$col_names, collapse=","), "\n\n",
+            "Pasting them together."
+          ))
+          xifti$meta$cifti$names <- paste(x$col_names, xifti$meta$cifti$names, " ||| ")
+        }
+      }
+    } else {
+      xifti$meta$cifti$names <- x$col_names
+    }
+    if (!is.null(x$label_table)) {
+      if (!is.null(xifti$meta$cifti$labels)) {
+        if (!identical(x$label_table, xifti$meta$cifti$labels[[1]])) {
+          warning(paste(
+            "The label tables for the left and right cortex were not",
+            "identical. Using the label table from the left cortex."
+          ))
+        }
+      } else {
+        xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
+        if (!is.null(xifti$meta$cifti$col_names)) {
+          names(xifti$meta$cifti$labels) <- xifti$meta$cifti$col_names
+        }
+      }
+    }
   }
 
   # Subcortical data. 
@@ -159,11 +227,13 @@ make_xifti <- function(
   }
 
   # CIFTI metadata.
-  if (!is.null(cifti_info)) { xifti$meta$cifti <- cifti_info$cifti }
+  if (!is.null(cifti_info)) { 
+    xifti$meta$cifti[c("intent", "brainstructures", "misc")] <- cifti_info$cifti[c("intent", "brainstructures", "misc")] 
+  }
 
   # Surfaces.
-  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_surf(surfL) }
-  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_surf(surfR) }
+  if (!is.null(surfL)) { xifti$surf$cortex_left <- make_surf(surfL, "left") }
+  if (!is.null(surfR)) { xifti$surf$cortex_right <- make_surf(surfR, "right") }
 
   if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   structure(xifti, class="xifti")

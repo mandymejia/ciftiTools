@@ -7,8 +7,8 @@
 write_cifti_from_separate(
   cifti_fname,
   cortexL_fname = NULL,
-  cortexR_fname = NULL,
   ROIcortexL_fname = NULL,
+  cortexR_fname = NULL,
   ROIcortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLabs_fname = NULL,
@@ -22,9 +22,9 @@ write_cifti_from_separate(
 
 \item{cortexL_fname}{The left cortex file.}
 
-\item{cortexR_fname}{The right cortex file.}
-
 \item{ROIcortexL_fname}{The left cortex ROI file.}
+
+\item{cortexR_fname}{The right cortex file.}
 
 \item{ROIcortexR_fname}{The right cortex ROI file.}
 

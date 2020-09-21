@@ -79,6 +79,19 @@ separate_cifti <- function(cifti_fname,
   if ("all" %in% brainstructures) { 
     brainstructures <- c("left","right","subcortical")
   }
+<<<<<<< Updated upstream
+=======
+  cifti_info <- info_cifti(cifti_fname, wb_path)
+  check_cifti_type(cifti_info$cifti$intent, extn_cifti)
+  bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
+  if (!all(bs_present)) {
+    warning(paste0(
+      "Only the following brainstructures are present in the CIFTI file: ",
+      paste(cifti_info$cifti$brainstructures, collapse=", "), "\n"
+    ))
+    brainstructures <- brainstructures[bs_present]
+  }
+>>>>>>> Stashed changes
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")
 

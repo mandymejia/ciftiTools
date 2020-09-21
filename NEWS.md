@@ -1,3 +1,7 @@
+# 1.5 (September 25, 2020)
+
+* Need to write this
+
 # 1.4 (August 31, 2020)
 
 ## Changes Affecting Users
@@ -48,7 +52,7 @@ It will be located here: https://htmlpreview.github.io/?https://github.com/mandy
     * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surf(surfL_fname))`
 * `read_cifti_flat` now uses XML metadata directly (but still obtains XML via Connectome Workbench)
     * This allows for reading in more metadata such as time start/step for `.dtseries.nii`
-* `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::write_gifti`
+* `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::writegii`
     * Currently depends on `damondpham/gifti` but this will hopefully be merged to main repo soon
 * `write_subcort_nifti` to write out subcortical components from `"xifti"` to a NIFTI file
     * TO DO: add orientation and transformation matrix metadata

@@ -104,18 +104,21 @@ Assembles cortical data, subcortical data, and/or surface geometry to form a
  any CIFTI file.
 }
 \details{
-Each data or surface component is optional. A metadata component will be 
+Each data or surface component is optional. Metadata components
+ (\code{cortex[L/R]_mwall}, \code{subcortLabs}, \code{subcortMask}) will be 
  ignored if its corresponding data component is not provided. If no data or
  surface components are provided, then the \code{\link{template_xifti}} will 
  be returned. 
 
  If cortical data are provided without a corresponding medial wall mask, or
- if the provided mask is invalid or empty, then the medial wall metadata
- entry will be \code{NULL}. (It does not attempt to infer the medial wall
- mask from data values.)
+ if the provided mask is invalid or empty, then the medial wall will be
+ inferred from data rows that are constantly a value in \code{mwall_values}. 
+ But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
+ wall will be made and the medial wall metadata entry will be \code{NULL}.
  
- The total number of brainordinates will be \eqn{V = V_L + V_R + V_S}: \eqn{V_L} left
- vertices, \eqn{V_R} right vertices and \eqn{V_S} subcortical voxels. \eqn{T}, the total
- number of measurements (columns of data), must be the same for each
- brainstructure.
+ The total number of brainordinates will be 
+ \eqn{V = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
+ vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical 
+ voxels. \eqn{T}, the total number of measurements (columns of data), must be
+ the same for each brainstructure.
 }

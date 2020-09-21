@@ -4,13 +4,23 @@
 \alias{gifti_to_surface}
 \title{Convert "gifti" to "surface" object}
 \usage{
-gifti_to_surface(surf)
+gifti_to_surface(surf, expected_hemisphere = NULL)
 }
 \arguments{
+<<<<<<< Updated upstream
 \item{surf}{Either a file path to a surface GIFTI; a "gifti" object (or list
 with entry \code{"data"} with subentries \code{"pointset"} and 
 \code{"triangle"}); or a list with entries \code{"pointset"} and 
 \code{"triangle"}.}
+=======
+\item{surf}{A surface GIFTI, either as a file path or a "gifti" object
+read by \code{\link[gifti]{readgii}}.}
+
+\item{expected_hemisphere}{The expected hemisphere (\code{"left"} or \code{"right"})
+of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
+opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
+hemisphere.}
+>>>>>>> Stashed changes
 }
 \value{
 The "surface" object: a list with components \code{"vertices"}

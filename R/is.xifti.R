@@ -323,7 +323,7 @@ is.xifti_meta <- function(x) {
       intent_specific_names <- switch(as.character(intent),
         `3002` = c("time_start", "time_step", "time_unit"),
         `3006` = c("names"),
-        `3007` = c("labels")
+        `3007` = c("names", "labels")
       )
       cifti_meta_names <- c(
         "intent", "brainstructures", "misc", 
