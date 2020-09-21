@@ -1,6 +1,41 @@
 # 1.5 (September 25, 2020)
 
-* Need to write this
+* `view_xifti_surface`
+    * Option to draw vertices and edges
+    * Automatically use (and resample to match data resolution) included surfaces, in most cases where surfaces were not provided
+* `view_xifti_volume`
+    * Fix error when data are integers
+    * Check that image dimensions and transformation matrix match with MNI template before plotting
+    * Use 9 slices instead of 12 by default (when not using `papayar`)
+* New argument `mwall_values` to relevant functions. 
+    * The values will be used to infer the medial wall if the medial wall is not explicitly specified
+    * Default: `NA` and `NaN` 
+    * This argument can be set to `NULL` to not infer the medial wall from the data
+* Better reading & writing of NIFTI and GIFTI files
+    * Export and import 4x4 transformation matrix with CIFTI and NIFTI files
+        * Use the `TransformationMatrixIJKtoXYZ` in CIFTI files
+        * Use the `sform` codes in NIFTI files
+    * Export and import label table and column names with CIFTI and GIFTI files (for `dlabel` and `dscalar`)
+    * Write NIFTI with `RNifti` instead of `oro.nifti`
+* Corrected separating, writing and resampling `*.dlabel.nii` files
+* Warning if brainstructure is requested but not available (instead of error)
+* Convert smoothed `dlabel` to `dscalar` (and add warning, because it's probably something you don't want to do)
+
+* Documentation improvements
+
+## Notes for developers
+
+* Improved handling of bad arguments to `make_subcort`
+* Split `info_cifti_raw` into `header_cifti` and `xml_cifti`
+* Add the internal functions `remove_xifti`, `expect_equal_xifti` and `fix_gifti_mwall`
+* `view_surf` is now a wrapper to `view_xifti_surface` instead of being its own function
+* Move color functions to `utils_color`. 
+* Make `ROY_BIG_BL` have an extra value to fix legend range. 
+* Handle constant-valued data in `view_xifti_surface`
+* Export color functions
+* Add "hemisphere" metadata to "surface" objects, and check that it matches if it exists. For example, `as.xifti(surfL=surfR_gii)` will cause an error
+* Move `rgl` and `fields` to Suggests
+* Add a few new tests based on these changes
 
 # 1.4 (August 31, 2020)
 
