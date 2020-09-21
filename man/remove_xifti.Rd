@@ -2,18 +2,9 @@
 % Please edit documentation in R/remove_xifti.R
 \name{remove_xifti}
 \alias{remove_xifti}
-\alias{removeCIfTI}
-\alias{removecii}
-\alias{remove_cifti}
 \title{Remove \code{"xifti"} component}
 \usage{
 remove_xifti(xifti, remove = NULL)
-
-removeCIfTI(xifti, remove = NULL)
-
-removecii(xifti, remove = NULL)
-
-remove_cifti(xifti, remove = NULL)
 }
 \arguments{
 \item{xifti}{Object of class "xifti". 
@@ -25,7 +16,7 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 be removed from the \code{"xifti"}}
 }
 \value{
-The new \code{"xifti"} with the requested components removed.
+The new \code{"xifti"} with the requested components removed
 }
 \description{
 Remove a data or surface component from a \code{"xifti"}

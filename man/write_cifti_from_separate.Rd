@@ -32,11 +32,11 @@ write_cifti_from_separate(
 
 \item{subcortLabs_fname}{The subcortical labels file.}
 
-\item{timestep}{If a dense time series (dtseries.nii) file is being written,
+\item{timestep}{If a dense time series ("dtseries.nii") file is being written,
 this is the time between measurements. If \code{NULL}, use the Connectome
 Workbench default (1.0).}
 
-\item{timestart}{If a dense time series (dtseries.nii) file is being written,
+\item{timestart}{If a dense time series ("dtseries.nii") file is being written,
 this is starting time. If \code{NULL}, use the Connectome Workbench default 
 (0.0).}
 

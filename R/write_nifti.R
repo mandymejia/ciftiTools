@@ -30,7 +30,7 @@
 #' @inheritParams wb_path_Param
 #' 
 #' @return Named character vector with the \code{"subcortVol"}, 
-#'  \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written).
+#'  \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
 #' 
 #' @importFrom RNifti writeNifti sform<-
 #' @export

@@ -42,7 +42,7 @@ If not provided, should be set with
 }
 \value{
 Named character vector with the \code{"subcortVol"}, 
- \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written).
+ \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
 }
 \description{
 Write subcortical data to NIFTI files representing the data values,

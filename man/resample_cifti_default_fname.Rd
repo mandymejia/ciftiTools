@@ -13,7 +13,7 @@ resample_cifti_default_fname(original_fname, resamp_res)
 cortical surface vertices per hemisphere).}
 }
 \value{
-The default file name.
+The default file name
 }
 \description{
 Get the default file name for a resampled file.

@@ -38,6 +38,7 @@ resampleCIfTI(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )
@@ -55,6 +56,7 @@ resamplecii(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )
@@ -72,6 +74,7 @@ resample_xifti(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )

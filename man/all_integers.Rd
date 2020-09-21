@@ -10,7 +10,7 @@ all_integers(x)
 \item{x}{The data vector or matrix}
 }
 \value{
-TRUE or FALSE indicating if x is all integers
+Logical. Is \code{x} all integers?
 }
 \description{
 Check if a data vector or matrix is all integers.

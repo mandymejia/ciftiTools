@@ -32,6 +32,7 @@ supported_intents <- function(){
 #' @return A data.frame with each substructure along the rows. The first
 #'  column gives the CIFTI format name and the second column gives the
 #'  \code{ciftiTools} name.
+#' 
 #' @export
 #'  
 substructure_table <- function(){
@@ -72,6 +73,7 @@ substructure_table <- function(){
 #' 
 #' @return If the intent is supported, returns \code{TRUE}.
 #'  If the intent is not supported, an error is raised.
+#' 
 #' @keywords internal
 #' 
 check_cifti_type <- function(intent, extn){
@@ -127,7 +129,7 @@ check_cifti_type <- function(intent, extn){
 #' Extract misc metadata from CIFTI header XML ("Metadata" entry)
 #' 
 #' @param xml List representing "Metadata" entry XML 
-#'  (\code{xii$CIFTI$Matrix$MetaData})
+#'  (\code{xifti$CIFTI$Matrix$MetaData})
 #' @param intent The CIFTI's NIFTI intent code. Not used right now, but may be later.
 #'  Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
 #' 
@@ -148,7 +150,7 @@ get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' Extract intent-specific Metadata from CIFTI header XML (first "MatrixIndicesMap" entry)
 #' 
 #' @param x List representing "MatrixIndicesMap" entry XML 
-#'  (\code{xii$CIFTI$Matrix[[2]]})
+#'  (\code{xifti$CIFTI$Matrix[[2]]})
 #' @param intent The CIFTI's NIFTI intent code
 #' 
 #' @return The metadata, a list
@@ -190,7 +192,7 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' Extract data-related metadata from CIFTI header XML (second "MatrixIndicesMap" entry)
 #' 
 #' @param x List representing "MatrixIndicesMap" entry XML 
-#'  (\code{xii$CIFTI$Matrix[[3]]})
+#'  (\code{xifti$CIFTI$Matrix[[3]]})
 #' @param intent The CIFTI's NIFTI intent code. Not used right now, but might be
 #'  used later. Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
 #' 
@@ -285,8 +287,11 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 
 #' Get NIFTI header (of a CIFTI)
 #'
-#' Wrapper for \code{-nifti-information [fname] -print-header}
+#' Wrapper for Connectome Workbench command 
+#'  \code{-nifti-information [fname] -print-header}
 #'
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
@@ -303,8 +308,11 @@ header_cifti <- function(cifti_fname, wb_path=NULL){
 
 #' Get XML of a CIFTI
 #'
-#' Wrapper for \code{-nifti-information [fname] -print-xml}
+#' Wrapper for Connectome Workbench command 
+#'  \code{-nifti-information [fname] -print-xml}
 #'
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
@@ -358,12 +366,13 @@ xml_cifti <- function(cifti_fname, wb_path=NULL){
 #'    }
 #'  }
 #'
+#' @inheritSection labels_Description Label Levels
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#'  
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
-#' @return The metadata component of a "xifti" for the input CIFTI file
-#' 
-#' @inheritSection labels_Description Label Levels
+#' @return The metadata component of a \code{"xifti"} for the input CIFTI file
 #' 
 #' @export
 #' 

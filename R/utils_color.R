@@ -8,20 +8,23 @@
 #'
 #' @param min The minimum value for the color mapping. As in the original 
 #'  palette, the last color (aqua) is actually placed at the bottom .5\% between
-#'  the minimum and maximum.
+#'  the minimum and maximum. Default: \code{0}
 #' @param max The maximum value for the color mapping. If this value is lower 
 #'  than the minimum, the color mapping will be reversed. If this is equal to 
 #'  the minimum, a palette with only the color black will be returned.
+#'  Default: \code{1}.
 #' @param mid (Optional) The midpoint value for the color mapping. If 
 #'  \code{NULL} (default), the true midpoint is used.
 #' @param pos_half Use the positive half (black --> red --> yellow) only? 
 #'  Default: \code{FALSE}.
 #'
-#' @export 
 #' @return A data.frame with two columns: \code{"color"} (character: color hex 
-#'  codes) and \code{"value"} (numeric).
+#'  codes) and \code{"value"} (numeric)
+#' 
 #' @importFrom grDevices col2rgb
 #'
+#' @export 
+#' 
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
   if (min==max) {
     return( data.frame(color = c("#000000"), value = c(min)) )
@@ -199,13 +202,14 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #' @param DATA_MAX (Optional) The maximum value of the data to make the palette
 #'  for. Overrided by certain \code{zlim}.
 #'
-#' @export
+#' @return A data.frame with two columns: \code{"color"} (character: color hex 
+#'  codes) and \code{"value"} (numeric)
+#' 
 #' @importFrom grDevices colorRampPalette
 #' @import RColorBrewer
 #'
-#' @return A data.frame with two columns: \code{"color"} (character: color hex 
-#'  codes) and \code{"value"} (numeric).
-#'
+#' @export
+#' 
 make_color_pal <- function(
   colors=NULL, color_mode=c("sequential", "qualitative", "diverging"), zlim=NULL,
   DATA_MIN=0, DATA_MAX=1) {
@@ -444,12 +448,13 @@ make_color_pal <- function(
 #' @param MIN_COLOR_RES The minimum number of entries to have in the output 
 #'  palette. Because of rounding, there may be more than this number of entries.
 #'
-#' @export
-#' @importFrom grDevices colorRampPalette
-#'
 #' @return A data.frame with two columns: \code{"color"} (character: color hex 
-#'  codes) and \code{"value"} (numeric).
+#'  codes) and \code{"value"} (numeric)
 #'
+#' @importFrom grDevices colorRampPalette 
+#'
+#' @export
+#' 
 expand_color_pal <- function(pal, MIN_COLOR_RES=255) {
   if (nrow(pal) < MIN_COLOR_RES) {
     range <- max(pal$value) - min(pal$value)
@@ -488,10 +493,12 @@ expand_color_pal <- function(pal, MIN_COLOR_RES=255) {
 #'
 #' @param data_values The values to map to colors
 #' @param pal The palette to use to map values to colors
-#' @param color_NA The color to use for NA values (default is "white").
+#' @param color_NA The color to use for \code{NA} values. Default: \code{"white"}.
 #'
-#' @export
 #' @return A character vector of color names
+#' 
+#' @export
+#' 
 use_color_pal <- function(data_values, pal, color_NA="white") {
   mask <- is.na(data_values)
   colors <- as.character(pal$color)

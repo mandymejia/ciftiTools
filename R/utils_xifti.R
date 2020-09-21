@@ -31,10 +31,11 @@ summary.xifti <- function(object, ...) {
   return(out)
 }
 
-#' @inheritParams x_Param_xifti
-#' @export
-#' @method print summary.xifti
 #' @rdname summary.xifti
+#' @export
+#' 
+#' @inheritParams x_Param_xifti
+#' @method print summary.xifti
 print.summary.xifti <- function(x, ...) {
   cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
 
@@ -60,9 +61,10 @@ print.summary.xifti <- function(x, ...) {
   cat("\n")
 }
 
-#' @export
-#' @method print xifti
 #' @rdname summary.xifti
+#' @export
+#' 
+#' @method print xifti
 print.xifti <- function(x, ...) {
   print.summary.xifti(summary(x))
 }
@@ -71,7 +73,7 @@ print.xifti <- function(x, ...) {
 #'
 #' @inheritParams cifti_fname_Param
 #'
-#' @return Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii".
+#' @return Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii"
 #'
 #' @keywords internal
 #' 
@@ -93,7 +95,7 @@ get_cifti_extn <- function(cifti_fname) {
 #'  \code{"validROIcortexL"}, or \code{"validROIcortexR"}.
 #' @param GIFTI_type Used to make the suffix. Default: \code{"func"}.
 #'
-#' @return The default file name suffix.
+#' @return The default file name suffix
 #'
 #' @keywords internal
 #' 
@@ -120,7 +122,7 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
 #' @param original_fname The original file name
 #' @inheritParams resamp_res_Param_required
 #'
-#' @return The default file name.
+#' @return The default file name
 #'
 #' @keywords internal
 #' 
@@ -137,7 +139,7 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
 #' @param cortex V vertices x T measurements matrix
 #' @param mwall Logical vector with T \code{TRUE} values.
 #' @param mwall_fill The fill value to use for medial wall vertices.
-#' @return The unmasked cortex data.
+#' @return The unmasked cortex data
 #' 
 #' @export
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_cortex}
 \alias{make_cortex}
-\title{Make "xifti" Cortical Components}
+\title{Make \code{"xifti"} cortical components}
 \usage{
 make_cortex(
   cortex,

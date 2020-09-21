@@ -1,4 +1,4 @@
-#' Fix GIFTI Medial Wall
+#' Fix GIFTI medial wall
 #' 
 #' Replace implicit medial wall values (not indicated in ROI, but are in 
 #'  \code{mwall_values}) with explicit medial wall values (indicated in ROI).
@@ -9,6 +9,8 @@
 #' @param fixed_ROI_fname The revised ROI GIFTI
 #' @param mwall_values The values to use to infer the medial wall. Default: 
 #'  \code{c(NA, NaN)}.
+#' 
+#' @return \code{NULL}, invisibly
 #' 
 #' @importFrom gifti readgii writegii
 #' 
@@ -48,5 +50,7 @@ fix_gifti_mwall <- function(
       warn_msg <- paste(warn_msg, "The data did not have any vertices with values constantly in `mwall_values`. Leaving the ROI/medial wall mask empty.")
     }
     ciftiTools_warn(warn_msg)
-  } 
+  }
+
+  invisible(NULL) 
 }

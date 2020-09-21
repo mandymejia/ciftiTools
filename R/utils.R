@@ -62,7 +62,7 @@ format_path <- function(path, dir=NULL, mode=NA) {
 #'
 #' @param x The potential file name
 #'
-#' @return Whether \code{x} is an existing file.
+#' @return Logical. Is \code{x} an existing file?
 #'
 #' @keywords internal
 #'
@@ -78,7 +78,7 @@ is.fname <- function(x){
 #' @param R_path The name of the file. It should be properly formatted: if it
 #'  exists, \code{file.exists(R_path)} should be \code{TRUE}.
 #'
-#' @return The name of the file.
+#' @return The name of the file
 #'
 sys_path <- function(R_path) {
   R_path <- gsub("(", "\\(", R_path, fixed=TRUE)
@@ -92,7 +92,7 @@ sys_path <- function(R_path) {
 #'
 #' @param fun The function to get the argument names for.
 #'
-#' @return The names of the arguments of \code{fun} as a character vector.
+#' @return The names of the arguments of \code{fun} as a character vector
 #'
 #' @keywords internal
 #' 
@@ -116,7 +116,7 @@ get_kwargs <- function(fun) {
 #'  "Note that a kwarg only has to be provided to one of these. Place the correct value in the first
 #'  location and remove the kwarg from the second location".
 #'
-#' @return A list with the union of \code{kwargsA} and \code{kwargsB}.
+#' @return A list with the union of \code{kwargsA} and \code{kwargsB}
 #'
 #' @keywords internal
 #' 
@@ -167,7 +167,7 @@ merge_kwargs <- function(kwargsA, kwargsB,
 #' @param user_value_label How to refer to the user input in a stop or warning
 #'  message. If \code{NULL}, no label is used.
 #'
-#' @return The matched user inputs.
+#' @return The matched user inputs
 #'
 #' @keywords internal
 #' 
@@ -232,7 +232,7 @@ match_input <- function(
 #'  are \code{"message"} (default), \code{"warning"}, \code{"stop"}, and
 #'  \code{"nothing"}.
 #'
-#' @return Whether the two character vectors match
+#' @return Logical. Do \code{user} and \code{expected} match?
 #' 
 #' @keywords internal
 #' 
@@ -308,7 +308,7 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
 #' @param msg The message
 #' @keywords internal
 #' 
-#' @return NULL, invisibly.
+#' @return \code{NULL}, invisibly
 #' 
 ciftiTools_msg <- function(msg){
   if(!ciftiTools.getOption("suppress_msgs")) { message(msg) }
@@ -322,7 +322,7 @@ ciftiTools_msg <- function(msg){
 #' @param msg The warning message
 #' @keywords internal
 #' 
-#' @return NULL, invisibly.
+#' @return \code{NULL}, invisibly
 #' 
 ciftiTools_warn <- function(warn){
   if(!ciftiTools.getOption("suppress_msgs")) { warning(warn) }
@@ -336,9 +336,10 @@ ciftiTools_warn <- function(warn){
 #' @param x The data vector or matrix
 #' @keywords internal
 #'
-#' @return TRUE or FALSE indicating if x is all integers
+#' @return Logical. Is \code{x} all integers?
 #'
 all_integers <- function(x){
+  if (!is.numeric(x)) { return(FALSE) }
   non_integer <- max(abs(x - round(x)))
   non_integer==0 && !is.na(non_integer)
 }

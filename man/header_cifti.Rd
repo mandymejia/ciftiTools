@@ -7,7 +7,7 @@
 header_cifti(cifti_fname, wb_path = NULL)
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -17,6 +17,17 @@ If not provided, should be set with
 The header, as a character vector
 }
 \description{
-Wrapper for \code{-nifti-information [fname] -print-header}
+Wrapper for Connectome Workbench command 
+ \code{-nifti-information [fname] -print-header}
 }
+\section{Connectome Workbench Requirement}{
+
+ This function uses a system wrapper for the 'wb_command' executable. The 
+ user must first download and install the Connectome Workbench, available 
+ from https://www.humanconnectome.org/software/get-connectome-workbench . 
+ The \code{wb_path} argument is the full file path to the Connectome 
+ Workbench folder. (The full file path to the 'wb_cmd' executable also 
+ works.)
+}
+
 \keyword{internal}

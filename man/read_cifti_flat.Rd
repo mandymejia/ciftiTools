@@ -13,7 +13,7 @@ read_cifti_flat(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{keep}{This function works by converting the CIFTI file to a GIFTI file 
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
@@ -30,15 +30,14 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A \eqn{T x B} matrix of class \code{"cifti_data"}, where \eqn{T} is 
- the number of measurements and \eqn{B} is the number of brainordinates in 
- sthe CIFTI file.
+A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
+ and \eqn{G} is the number of greyordinates in the CIFTI file.
 }
 \description{
 Reads the CIFTI data matrix by converting it to a GIFTI using the 
  \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
- will be a \eqn{T x B} matrix (\eqn{T} measurements, \eqn{B} non-empty 
- brainordinates). All brainstructures in the CIFTI will be obtained, with no 
+ will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
+ greyordinates). All brainstructures in the CIFTI will be obtained, with no 
  indication for which brainstructure each brainordinate corresponds to.    
  Medial wall vertices and voxels outside the subcortical mask will not be 
  included. No spatial information is included. This is the fastest way to 

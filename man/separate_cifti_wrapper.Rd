@@ -14,23 +14,23 @@ separate_cifti_wrapper(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (cortical surface only).}
+ to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+ gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+ Default: \code{c("left","right")} (cortical surface only).
+
+ If a brain structure is indicated but does not exist, a warning will be
+ raised and that brain structure will be skipped.}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be 
-obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
-be a subset of the \code{brainstructures} argument. 
+ obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
+ be a subset of the \code{brainstructures} argument. 
 
-NOTE: ROIs are currently
-not fully supported by ciftiTools, since \code{"cifti"} objects will not contain
-the ROIs. A workaround would be to keep the separated/resampled files
-with \code{sep_keep}/\code{resamp_keep} and then read those in with
-\code{make_xifti}.}
+ROIs are typically the medial wall mask for the cortex and subcortical mask
+ for the subcortex.}
 
 \item{sep_fnames}{(Optional) Where to write the separated files (override
  their default file names). This is a named list 
@@ -63,13 +63,13 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-The return value of the separate_cifti call.
+The return value of the \code{separate_cifti} call
 }
 \description{
 Calls \code{separate_cifti} using the file names listed in the
  argument \code{sep_fnames}.
 }
 \details{
-Currently used by read_cifti and resample_cifti.
+Currently used by \code{read_cifti} and \code{resample_cifti}.
 }
 \keyword{internal}

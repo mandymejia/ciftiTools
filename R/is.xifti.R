@@ -1,4 +1,4 @@
-#' Validate a numeric matrix.
+#' Validate a numeric matrix
 #' 
 #' Check if object is a numeric matrix.
 #' 
@@ -6,7 +6,9 @@
 #' 
 #' @param x The putative numeric matrix
 #' 
-#' @return Logical indicating whether x is a valid numeric matrix.
+#' @return Logical. Is \code{x} a valid numeric matrix?
+#' 
+#' @keywords internal
 #' 
 is.nummat <- function(x) {
   if (!is.matrix(x) || !is.numeric(x)) {
@@ -25,14 +27,16 @@ is.nummat <- function(x) {
 #'
 #'  Requirements: a list with entries "cortex_left", "cortex_right", and
 #'  "subcort". Each must be either \code{NULL} or a numeric matrix with
-#'  brainordinates along the rows and measurements along the columns.
+#'  greyordinates along the rows and measurements along the columns.
 #'  The cortical matrices should have the same number of rows (vertices), and
 #'  all should have the same number of columns (measurements). At least one data
 #'  entry should be present.
 #'
 #' @param x The putative "data" component.
 #'
-#' @return Logical indicating whether x is a valid "data" component.
+#' @return Logical. Is \code{x} a valid "data" component?
+#' 
+#' @keywords internal
 #'
 is.xifti_data <- function(x) {
   # Check that the entries are as expected.
@@ -88,7 +92,8 @@ is.xifti_data <- function(x) {
 #'
 #' @param x The putative surface.
 #'
-#' @return Logical indicating whether x is a valid surface.
+#' @return Logical. Is \code{x} a valid surface?
+#' 
 #' @export
 #' 
 is.surf <- function(x) {
@@ -141,17 +146,19 @@ is.surf <- function(x) {
 
 #' Validate a factor vector of subcortical labels
 #' 
-#' Check if object is a factor vector of subcortical structures.
-#'  This is a helper function for \code{\link{is.xifti}}.
+#' Check if object is a factor vector of subcortical structures.This is a helper
+#'  function for \code{\link{is.xifti}}.
 #' 
-#'  Requirements: see the "Label Levels" section for the expected factor levels.
-#'
-#' @param x The putative factor vector of brain substructures.
-#'
-#' @return Logical indicating whether x is a factor vector of subcortical 
-#'  structures.
+#' Requirements: see the "Label Levels" section for the expected factor levels.
 #'
 #' @inheritSection labels_Description Label Levels
+#' 
+#' @param x The putative factor vector of brain substructures.
+#'
+#' @return Logical. Is \code{x} a factor vector of subcortical
+#'  structures?
+#' 
+#' @keywords internal
 #' 
 is.subcort_labs <- function(x) {
   if (!is.factor(x)) {
@@ -178,7 +185,9 @@ is.subcort_labs <- function(x) {
 #'
 #' @param x The putative subcortical mask.
 #'
-#' @return Logical indicating whether x is a valid subcortical mask.
+#' @return Logical. Is \code{x} a valid subcortical mask?
+#' 
+#' @keywords internal
 #' 
 is.3D_mask <- function(x) {
   if (!is.array(x) || !is.logical(x)) {
@@ -193,19 +202,21 @@ is.3D_mask <- function(x) {
   TRUE
 }
 
-#' Validate the "meta" component of a \code{"xifti"} object
+#' Validate the \code{"meta"} component of a \code{"xifti"} object
 #'
 #' Check if object is valid for \code{xifti$meta}, where \code{xifti} is a 
 #'  \code{"xifti"} object.
 #' 
 #'  This is a helper function for \code{\link{is.xifti}}.
 #'
-#'  Requirements: the structure must match that of the "meta" component of 
-#'  \code{\link{template_xifti}}. 
+#'  Requirements: the structure must match that of the \code{"meta"} component
+#'  of \code{\link{template_xifti}}. 
 #'
-#' @param x The putative "meta" component.
+#' @param x The putative \code{"meta"} component.
 #'
-#' @return Logical indicating whether x is a valid "meta" component.
+#' @return Logical. Is \code{x} a valid \code{"meta"} component?
+#' 
+#' @keywords internal
 #' 
 is.xifti_meta <- function(x) {
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
@@ -363,13 +374,13 @@ is.xifti_meta <- function(x) {
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
 #' 
+#' @inheritSection labels_Description Label Levels
+#' 
 #' @param x The putative \code{"xifti"} object.
 #' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
 #' @return Logical. Is \code{x} a valid \code{"xifti"} object?
-#' 
-#' @inheritSection labels_Description Label Levels
 #' 
 #' @export
 #' 
@@ -513,7 +524,7 @@ is_xifti <- function(x, messages=TRUE){
   is.xifti(x, messages=messages)
 }
 
-#' Validate a \code{"xifti"} object.
+#' Validate a \code{"xifti"} object
 #' 
 #' Check if object is valid for a \code{"xifti"} object. This alias for 
 #'  \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
@@ -529,13 +540,13 @@ is_xifti <- function(x, messages=TRUE){
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
 #' 
+#' @inheritSection labels_Description Label Levels
+#' 
 #' @param x The putative \code{"xifti"} object.
 #' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
 #' @return Logical. Is \code{x} a valid \code{"xifti"} object?
-#' 
-#' @inheritSection labels_Description Label Levels
 #' 
 #' @export
 #' 

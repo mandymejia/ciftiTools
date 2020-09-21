@@ -4,7 +4,7 @@
 #'  be set.
 #' 
 #' @keywords internal
-#' @return The message (1-length character vector)
+#' @return The message (length 1 character vector)
 wb_path_request <- function() {
   paste(
     "\n******************************************************************************************",

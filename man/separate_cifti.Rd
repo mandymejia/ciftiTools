@@ -52,13 +52,16 @@ separatecii(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (cortical surface only).}
+ to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+ gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+ Default: \code{c("left","right")} (cortical surface only).
+
+ If a brain structure is indicated but does not exist, a warning will be
+ raised and that brain structure will be skipped.}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names 
  (*.[func/label].gii) to save the [left/right] cortex data to. If not provided, 
@@ -107,7 +110,7 @@ If not provided, should be set with
 }
 \value{
 A named character vector with the file paths to the written 
- NIFTI and GIFTI files.
+ NIFTI and GIFTI files
 }
 \description{
 Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files 

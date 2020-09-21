@@ -2,7 +2,7 @@
 % Please edit documentation in R/fix_gifti_mwalls.R
 \name{fix_gifti_mwall}
 \alias{fix_gifti_mwall}
-\title{Fix GIFTI Medial Wall}
+\title{Fix GIFTI medial wall}
 \usage{
 fix_gifti_mwall(
   metric_fname,
@@ -23,6 +23,9 @@ fix_gifti_mwall(
 
 \item{mwall_values}{The values to use to infer the medial wall. Default: 
 \code{c(NA, NaN)}.}
+}
+\value{
+\code{NULL}, invisibly
 }
 \description{
 Replace implicit medial wall values (not indicated in ROI, but are in 

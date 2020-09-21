@@ -33,7 +33,7 @@
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return A named character vector of file paths to each resampled file.
+#' @return A named character vector of file paths to each resampled file
 #'
 #' @keywords internal
 #' 

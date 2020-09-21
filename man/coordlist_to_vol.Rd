@@ -20,7 +20,7 @@ data type will be the same as that of \code{fill}.
 \code{FALSE}.}
 }
 \value{
-The volumetric data.
+The volumetric data
 }
 \description{
 Converts a sparse coordinate list to its non-sparse volumetric representation.

@@ -10,7 +10,7 @@ is.fname(x)
 \item{x}{The potential file name}
 }
 \value{
-Whether \code{x} is an existing file.
+Logical. Is \code{x} an existing file?
 }
 \description{
 Simple check if something is an existing file.

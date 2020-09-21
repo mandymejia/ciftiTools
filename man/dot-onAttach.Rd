@@ -9,6 +9,9 @@
 \arguments{
 \item{...}{Not used}
 }
+\value{
+\code{NULL}, invisibly
+}
 \description{
 Direct user to indicate Connectome Workbench path and check gifti package version.
 }

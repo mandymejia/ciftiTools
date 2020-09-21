@@ -4,6 +4,7 @@
 #' 
 #' \code{cifti$intent} and \code{cifti$brainstructures} are only compared if they
 #'  exist for both files. \code{cifti$misc} is never compared. 
+#' 
 #' @param cii1 The first CIFTI
 #' @param cii2 The second CIFTI
 #' 

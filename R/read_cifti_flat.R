@@ -2,12 +2,14 @@
 #'
 #' Reads the CIFTI data matrix by converting it to a GIFTI using the 
 #'  \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
-#'  will be a \eqn{T x B} matrix (\eqn{T} measurements, \eqn{B} non-empty 
-#'  brainordinates). All brainstructures in the CIFTI will be obtained, with no 
+#'  will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
+#'  greyordinates). All brainstructures in the CIFTI will be obtained, with no 
 #'  indication for which brainstructure each brainordinate corresponds to.    
 #'  Medial wall vertices and voxels outside the subcortical mask will not be 
 #'  included. No spatial information is included. This is the fastest way to 
 #'  read in CIFTI data. 
+#' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @inheritParams cifti_fname_Param
 #' @param keep This function works by converting the CIFTI file to a GIFTI file 
@@ -21,10 +23,9 @@
 #'
 #' @importFrom gifti readgii
 #'
-#' @return A \eqn{T x B} matrix of class \code{"cifti_data"}, where \eqn{T} is 
-#'  the number of measurements and \eqn{B} is the number of brainordinates in 
-#'  sthe CIFTI file.
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' @return A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
+#'  and \eqn{G} is the number of greyordinates in the CIFTI file.
+#' 
 #' @keywords internal
 #'
 read_cifti_flat <- function(

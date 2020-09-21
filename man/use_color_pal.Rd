@@ -11,7 +11,7 @@ use_color_pal(data_values, pal, color_NA = "white")
 
 \item{pal}{The palette to use to map values to colors}
 
-\item{color_NA}{The color to use for NA values (default is "white").}
+\item{color_NA}{The color to use for \code{NA} values. Default: \code{"white"}.}
 }
 \value{
 A character vector of color names

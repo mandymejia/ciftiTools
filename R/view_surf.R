@@ -15,6 +15,7 @@
 #'  are unknown, the first will be taken as the left and the second as the
 #'  right. 
 #' @inheritParams surface_plot_Params
+#' 
 #' @export
 #' 
 view_surf <- function(
@@ -125,6 +126,7 @@ view_surf <- function(
 #'  \code{NULL}, the surface will be treated as the left hemisphere.
 #'
 #' @method plot surface
+#' 
 #' @export
 plot.surface <- function(x, ...){
   stopifnot(is.surf(x))

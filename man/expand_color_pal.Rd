@@ -16,7 +16,7 @@ palette. Because of rounding, there may be more than this number of entries.}
 }
 \value{
 A data.frame with two columns: \code{"color"} (character: color hex 
- codes) and \code{"value"} (numeric).
+ codes) and \code{"value"} (numeric)
 }
 \description{
 Interpolates between entries in the input palette to make a larger palette 

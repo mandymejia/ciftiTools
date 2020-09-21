@@ -19,6 +19,8 @@
 #'  medial wall vertices cannot be distinguished from one another within
 #'  \code{cortexL_fname} alone.
 #'
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR
 #' @param ROI_brainstructures Which ROIs should be obtained? \code{"all"} 
@@ -55,8 +57,8 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return A named character vector with the file paths to the written 
-#'  NIFTI and GIFTI files.
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#'  NIFTI and GIFTI files
+#' 
 #' @export
 #'
 separate_cifti <- function(cifti_fname, 
@@ -199,32 +201,44 @@ separate_cifti <- function(cifti_fname,
 
 #' @rdname separate_cifti
 #' @export
-separateCIfTI <- function(
-  cifti_fname, brainstructures=c("left","right"), 
-  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLabs_fname=NULL, 
-  ROI_brainstructures="all", ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
+separateCIfTI <- function(cifti_fname, 
+  brainstructures=c("left","right"), 
+  cortexL_fname=NULL, cortexR_fname=NULL, 
+  subcortVol_fname=NULL, subcortLabs_fname=NULL, 
+  ROI_brainstructures="all", 
+  ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, 
+  ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL){
 
   separate_cifti(
-    cifti_fname, brainstructures, 
-    cortexL_fname, cortexR_fname, subcortVol_fname, subcortLabs_fname, 
-    ROI_brainstructures, ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname, 
-    write_dir, wb_path
+    cifti_fname=cifti_fname, brainstructures=brainstructures, 
+    cortexL_fname=cortexL_fname, cortexR_fname=cortexR_fname, 
+    subcortVol_fname=subcortVol_fname, subcortLabs_fname=subcortLabs_fname, 
+    ROI_brainstructures=ROI_brainstructures, 
+    ROIcortexL_fname=ROIcortexL_fname, ROIcortexR_fname=ROIcortexR_fname, 
+    ROIsubcortVol_fname=ROIsubcortVol_fname, 
+    write_dir=write_dir, wb_path=wb_path
   )
 }
 
 #' @rdname separate_cifti
 #' @export
-separatecii <- function(
-  cifti_fname, brainstructures=c("left","right"), 
-  cortexL_fname=NULL, cortexR_fname=NULL, subcortVol_fname=NULL, subcortLabs_fname=NULL, 
-  ROI_brainstructures="all", ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, ROIsubcortVol_fname=NULL, 
+separatecii <- function(cifti_fname, 
+  brainstructures=c("left","right"), 
+  cortexL_fname=NULL, cortexR_fname=NULL, 
+  subcortVol_fname=NULL, subcortLabs_fname=NULL, 
+  ROI_brainstructures="all", 
+  ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, 
+  ROIsubcortVol_fname=NULL, 
   write_dir=NULL, wb_path=NULL){
 
   separate_cifti(
-    cifti_fname, brainstructures, 
-    cortexL_fname, cortexR_fname, subcortVol_fname, subcortLabs_fname, 
-    ROI_brainstructures, ROIcortexL_fname, ROIcortexR_fname, ROIsubcortVol_fname, 
-    write_dir, wb_path
+    cifti_fname=cifti_fname, brainstructures=brainstructures, 
+    cortexL_fname=cortexL_fname, cortexR_fname=cortexR_fname, 
+    subcortVol_fname=subcortVol_fname, subcortLabs_fname=subcortLabs_fname, 
+    ROI_brainstructures=ROI_brainstructures, 
+    ROIcortexL_fname=ROIcortexL_fname, ROIcortexR_fname=ROIcortexR_fname, 
+    ROIsubcortVol_fname=ROIsubcortVol_fname, 
+    write_dir=write_dir, wb_path=wb_path
   )
 }

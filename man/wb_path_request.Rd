@@ -7,7 +7,7 @@
 wb_path_request()
 }
 \value{
-The message (1-length character vector)
+The message (length 1 character vector)
 }
 \description{
 Print a message requesting that the \code{ciftiTools} option \code{"wb_path"}

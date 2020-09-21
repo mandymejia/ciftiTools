@@ -10,7 +10,7 @@ is.surf(x)
 \item{x}{The putative surface.}
 }
 \value{
-Logical indicating whether x is a valid surface.
+Logical. Is \code{x} a valid surface?
 }
 \description{
 Check if object is valid for \code{xifti$surf$cortex_left} or 

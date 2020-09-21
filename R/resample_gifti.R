@@ -4,8 +4,8 @@
 #'
 #' @param original_fname The GIFTI file to resample.
 #' @param target_fname Where to save the resampled file.
-#' @param hemisphere "left" (default) or "right". An error will be raised if
-#'  the hemisphere indicated in the GIFTI metadata does not match.
+#' @param hemisphere \code{"left"} (default) or \code{"right"}. An error will 
+#'  occur if the hemisphere indicated in the GIFTI metadata does not match.
 #' @param file_type \code{"metric"}, \code{"label"}, \code{"surface"}, or \code{NULL} 
 #'  (default) to infer from \code{original_fname}.
 #' @param original_res The resolution of the original file. If \code{NULL}
@@ -175,6 +175,7 @@ resample_gifti <- function(
 #' @inheritParams wb_path_Param
 #'
 #' @return The names of the written sphere files, invisibly
+#' 
 #' @keywords internal
 #'
 write_spheres <- function(

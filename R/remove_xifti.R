@@ -8,7 +8,8 @@
 #'  \code{"surf_left"}, and \code{"surf_right"}. Each of these components will
 #'  be removed from the \code{"xifti"}
 #' 
-#' @return The new \code{"xifti"} with the requested components removed.
+#' @return The new \code{"xifti"} with the requested components removed
+#' 
 #' @keywords internal
 #' 
 remove_xifti <- function(xifti, remove=NULL){
@@ -43,25 +44,4 @@ remove_xifti <- function(xifti, remove=NULL){
 
   stopifnot(is.xifti(xifti))
   xifti
-}
-
-#' @rdname remove_xifti
-#' @keywords internal
-removeCIfTI <- function(xifti, remove=NULL){
-
-  remove_xifti(xifti, remove=remove)
-}
-
-#' @rdname remove_xifti
-#' @keywords internal
-removecii <- function(xifti, remove=NULL){
-
-  remove_xifti(xifti, remove=remove)
-}
-
-#' @rdname remove_xifti
-#' @keywords internal
-remove_cifti <- function(xifti, remove=NULL){
-
-  remove_xifti(xifti, remove=remove)
 }

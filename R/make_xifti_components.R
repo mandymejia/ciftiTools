@@ -1,4 +1,4 @@
-#' Make "xifti" Cortical Components
+#' Make \code{"xifti"} cortical components
 #' 
 #' Coerce a path to a GIFTI file, metric "gifti" object, data matrix or vector to a 
 #'  data matrix representing cortical data (and optionally a corresponding mask). 
@@ -42,9 +42,10 @@
 #'
 #' @return A list with components "data", "mwall", "col_names" and "labels".
 #'
+#' @importFrom gifti readgii is.gifti
+#' 
 #' @keywords internal
 #' 
-#' @importFrom gifti readgii is.gifti
 make_cortex <- function(
   cortex, mwall=NULL,
   cortex_is_masked=NULL,
@@ -221,10 +222,14 @@ make_cortex <- function(
 #'  data in the header.
 #' 
 #' @param nii_fname Path to NIFTI file
+#' 
 #' @return 4x4 matrix representing the transformation matrix. (This includes
 #'  the last row, \code{c(0,0,0,1)}).
-#' @keywords internal
+#' 
 #' @importFrom oro.nifti nifti_header
+#' 
+#' @keywords internal
+#' 
 make_trans_mat <- function(nii_fname) {
   head <- oro.nifti::nifti_header(nii_fname)
   labs_trans_mat <- rbind(head@srow_x, head@srow_y, head@srow_z)
@@ -234,7 +239,7 @@ make_trans_mat <- function(nii_fname) {
   rbind(labs_trans_mat, matrix(c(0,0,0,1), nrow=1))
 }
 
-#' Make "xifti" subcortical components
+#' Make \code{"xifti"} subcortical components
 #' 
 #' Coerce subcortical data into valid entries for \code{xifti$data$subcort}
 #'  and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
@@ -244,6 +249,8 @@ make_trans_mat <- function(nii_fname) {
 #' To read in the labels as the primary data, use the labels NIFTI for both
 #'  \code{vol} and \code{labs}.
 #'
+#' @inheritSection labels_Description Label Levels
+#' 
 #' @param vol represents the data values of the subcortex. It is either a NIFTI 
 #'  file path, 3D/4D data array (\eqn{i x j x k x T}), or a vectorized data 
 #'  matrix (\eqn{V_S} voxels x \eqn{T} measurements). If it's vectorized, the voxels 
@@ -263,10 +270,6 @@ make_trans_mat <- function(nii_fname) {
 #' @param validate_mask If \code{mask} is provided, set this to \code{TRUE} to 
 #'  check that the mask only removes voxels with \code{NA} and \code{0} values 
 #'  in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).
-#'
-#' @keywords internal
-#' 
-#' @inheritSection labels_Description Label Levels
 #' 
 #' @return A list with components "data", "labels", "mask", and "trans_mat". The 
 #'  first two will be vectorized and ordered spatially.
@@ -277,6 +280,9 @@ make_trans_mat <- function(nii_fname) {
 #'
 #' @importFrom RNifti readNifti
 #' @importFrom oro.nifti nifti_header
+#' 
+#' @keywords internal
+#' 
 make_subcort <- function(
   vol, labs, mask=NULL, validate_mask=FALSE) {
 
@@ -324,7 +330,7 @@ make_subcort <- function(
   # Infer mask if not provided.
   if (is.null(mask)) {
     if (!labs_is_vectorized) {
-      mask <- labs > 0 & !is.na(labs)
+      mask <- labs > 0 & (!is.na(labs) & !is.nan(labs))
       if (validate_mask) {
         mask_vol <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
         if(!(all.equal(mask, mask_vol))) { 

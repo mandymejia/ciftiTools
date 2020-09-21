@@ -2,7 +2,7 @@
 % Please edit documentation in R/is.xifti.R
 \name{is.nummat}
 \alias{is.nummat}
-\title{Validate a numeric matrix.}
+\title{Validate a numeric matrix}
 \usage{
 is.nummat(x)
 }
@@ -10,7 +10,7 @@ is.nummat(x)
 \item{x}{The putative numeric matrix}
 }
 \value{
-Logical indicating whether x is a valid numeric matrix.
+Logical. Is \code{x} a valid numeric matrix?
 }
 \description{
 Check if object is a numeric matrix.
@@ -18,3 +18,4 @@ Check if object is a numeric matrix.
 \details{
 This is a helper function for \code{\link{is.xifti}}.
 }
+\keyword{internal}

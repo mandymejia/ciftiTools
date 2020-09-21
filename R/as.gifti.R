@@ -1,29 +1,28 @@
 #' Format metric data as a \code{"gifti"} object
 #'
-#' Format a V x T numeric matrix (V vertices, T measurements) or a length-T list 
+#' Format a \eqn{V x T} numeric matrix (V vertices, T measurements) or a length-T list 
 #'  of length-V numeric vectors as a \code{"gifti"} object using a template 
 #'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
-#'  
-#' If the data represent measurements on the cortical surface, the intent 
-#'  \code{"NORMAL"} is recommended, because that is what is used by the
-#'  \code{-cifti-separate} Connectome Workbench command for cortical data.
 #' 
 #'  If \code{data} is already a \code{"gifti"} object, \code{data$data} will be
-#'  used and any existing metadata will be discarded.
+#'  used and any metadata will be overwritten by the template or discarded.
 #'
-#' @param data V x T numeric matrix, or length-T list of length-V numeric 
-#'  vectors
+#' @param data \eqn{V x T} numeric matrix, or length \eqn{T} list of length
+#'  \eqn{V} numeric vectors
 #' @param hemisphere The side of the brain the data represents: \code{"left"} 
 #'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
 #'  metadata field.
 #' @param intent The NIFTI intent, with prefix "NIFTI_INTENT_*". Default: 
-#'  \code{"NONE"}. For a list of intents see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
-#' @param data_type The NIFTI type of \code{data}:
-#'  "NIFTI_TYPE_INT32" or "NIFTI_TYPE_FLOAT32". If \code{NULL} (default), will
-#'  be inferred from \code{data}.
+#'  \code{"NONE"}. For a list of intents see 
+#'  https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view
+#' @param data_type The NIFTI type of \code{data}: \code{"NIFTI_TYPE_INT32"} 
+#'  or \code{"NIFTI_TYPE_FLOAT32"}. Can also be \code{NULL} (default), in which
+#'  case the NIFTI type will be inferred from \code{data}.
+#' 
 #' @return The \code{"gifti"} object
 #'
 #' @keywords internal
+#' 
 as.metric_gifti <- function(
   data, hemisphere=c("left", "right"), 
   intent="NONE", data_type=NULL){
@@ -128,7 +127,7 @@ as.metric_gifti <- function(
   gii
 }
 
-#' Format a surface data as a \code{"gifti"} object
+#' Format surface data as a \code{"gifti"} object
 #'
 #' Format a \code{"surface"} object or a list with elements \code{"pointset"}
 #'  and \code{"triangle"} as a \code{"gifti"} object using a template 
@@ -138,10 +137,12 @@ as.metric_gifti <- function(
 #'  \code{"pointset"} and \code{"triangle"}
 #' @param hemisphere The side of the brain the surface represents: \code{"left"} 
 #'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
-#'  metadata field. Only used if this metadata entry is not present in \code{surf}
+#'  metadata field. Only used if \code{surf$hemisphere} is \code{NULL}.
+#' 
 #' @return The \code{"gifti"} object
 #'
 #' @keywords internal
+#' 
 as.surf_gifti <- function(
   surf, hemisphere=c("left", "right")){
 

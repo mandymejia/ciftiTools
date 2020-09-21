@@ -55,9 +55,10 @@ unmask_vol <- function(dat, mask, fill=NA) {
 #'  \code{xifti$meta$subcort$mask_padding}.
 #' @param fill Values to pad with. Default: \code{NA}.
 #'
-#' @keywords internal
-#'
 #' @return The padded array
+#'
+#' @keywords internal
+#' 
 pad_vol <- function(x, padding, fill=NA){
   new_dim <- vector("numeric", 3)
   for (ii in 1:length(dim(x))) {
@@ -93,7 +94,7 @@ uncrop_vol <- function(x, padding, fill=NA){
 #' @param fill Fill value for the volume. Must be logical or numeric. Default: 
 #'  \code{FALSE}.
 #' 
-#' @return The volumetric data.
+#' @return The volumetric data
 #'
 #' @keywords internal
 #' 

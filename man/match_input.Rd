@@ -26,7 +26,7 @@ are \code{"stop"} (default; raises an error), \code{"warning"}, and
 message. If \code{NULL}, no label is used.}
 }
 \value{
-The matched user inputs.
+The matched user inputs
 }
 \description{
 Match each user input to an expected/allowed value.

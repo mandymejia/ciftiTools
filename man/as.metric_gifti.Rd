@@ -12,34 +12,31 @@ as.metric_gifti(
 )
 }
 \arguments{
-\item{data}{V x T numeric matrix, or length-T list of length-V numeric 
-vectors}
+\item{data}{\eqn{V x T} numeric matrix, or length \eqn{T} list of length
+\eqn{V} numeric vectors}
 
 \item{hemisphere}{The side of the brain the data represents: \code{"left"} 
 (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
 metadata field.}
 
 \item{intent}{The NIFTI intent, with prefix "NIFTI_INTENT_*". Default: 
-\code{"NONE"}. For a list of intents see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view}
+\code{"NONE"}. For a list of intents see 
+https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view}
 
-\item{data_type}{The NIFTI type of \code{data}:
-"NIFTI_TYPE_INT32" or "NIFTI_TYPE_FLOAT32". If \code{NULL} (default), will
-be inferred from \code{data}.}
+\item{data_type}{The NIFTI type of \code{data}: \code{"NIFTI_TYPE_INT32"} 
+or \code{"NIFTI_TYPE_FLOAT32"}. Can also be \code{NULL} (default), in which
+case the NIFTI type will be inferred from \code{data}.}
 }
 \value{
 The \code{"gifti"} object
 }
 \description{
-Format a V x T numeric matrix (V vertices, T measurements) or a length-T list 
+Format a \eqn{V x T} numeric matrix (V vertices, T measurements) or a length-T list 
  of length-V numeric vectors as a \code{"gifti"} object using a template 
  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
- 
-If the data represent measurements on the cortical surface, the intent 
- \code{"NORMAL"} is recommended, because that is what is used by the
- \code{-cifti-separate} Connectome Workbench command for cortical data.
 }
 \details{
 If \code{data} is already a \code{"gifti"} object, \code{data$data} will be
- used and any existing metadata will be discarded.
+ used and any metadata will be overwritten by the template or discarded.
 }
 \keyword{internal}

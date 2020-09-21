@@ -4,23 +4,23 @@
 \alias{surface_plot_Params}
 \title{surface plot}
 \arguments{
-\item{view}{Which view to display: "lateral", "medial", or "both".
+\item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or \code{"both"}.
 If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
 
-\item{mode}{One of "widget" (Default), "image", or "video":
+\item{mode}{One of \code{"widget"} (default), \code{"image"}, or \code{"video"}:
 
- "widget" will open an interactive RGL window. Left click and drag to rotate.
+ \code{"widget"} will open an interactive RGL window. Left click and drag to rotate.
  Use the scroll wheel to zoom. Run the R function
  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png.
  See \code{\link[rgl]{snapshot}} for more information.
 
- "image" will open the RGL window, take a screenshot using
+ \code{"image"} will open the RGL window, take a screenshot using
  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
  as a png in \code{write_dir} and its name will be \code{[fname].png}.
 
- "video" will take a series of screenshots of the RGL window, while increasing
- the column index. The frames can
+ \code{"video"} will take a series of screenshots of the RGL window, while
+ increasing the column index. The frames can
  be converted to a video file using multimedia software such as Adobe
  Premiere Pro. The "video" mode is not yet supported.}
 
@@ -39,7 +39,7 @@ the same aspect ratio. Both could be specified to set the dimensions exactly.}
 
 \item{title}{Optional title for the plot. It will be printed at the top in
 a separate subplot with 1/4 the height of the brain cortex subplots.
-\code{NULL} (default) will use the time index (.dtseries) or name
+\code{NULL} (default) will use the time index (".dtseries") or name
 (.dscalar or .dlabel) of the data column being plotted. Set to an empty
 string \code{""} to omit the title. If the title is non-empty but does not
 appear, \code{cex.title} may need to be lowered.}
@@ -53,7 +53,7 @@ sizes for increasingly longer titles.}
 
 \item{fname}{An identifier to use for naming the saved images
 ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
-Default: "xifti".}
+Default: \code{"xifti"}.}
 
 \item{write_dir}{Where should any output images be written. NULL (default)
  will write them to the current working directory.

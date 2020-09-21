@@ -3,6 +3,8 @@
 #' Calls \code{separate_cifti} using the file names listed in the
 #'  argument \code{sep_fnames}. 
 #'
+#' Currently used by \code{read_cifti} and \code{resample_cifti}.
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams ROI_brainstructures_Param_LR
@@ -10,9 +12,7 @@
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return The return value of the separate_cifti call.
-#'
-#' @details Currently used by read_cifti and resample_cifti.
+#' @return The return value of the \code{separate_cifti} call
 #'
 #' @keywords internal
 #' 
@@ -48,6 +48,8 @@ separate_cifti_wrapper <- function(
 #'  listed in the \code{original_fnames} argument and the target file names
 #'  listed in the \code{resamp_fnames} argument. 
 #'
+#' Currently used by read_cifti and resample_cifti.
+#' 
 #' @inheritParams original_fnames_Param_resampled
 #' @inheritParams resamp_fnames_Param
 #' @param original_res The original resolution of the CIFTI cortical surface(s).
@@ -61,10 +63,8 @@ separate_cifti_wrapper <- function(
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return The return value of the resample_cifti call.
-#'
-#' @details Currently used by read_cifti and resample_cifti.
-#'
+#' @return The return value of the \code{resample_cifti} call
+#' 
 #' @keywords internal
 #' 
 resample_cifti_wrapper <- function(

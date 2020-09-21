@@ -141,6 +141,8 @@ write_cifti_components <- function(
 #' Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI 
 #'  surface files. 
 #' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
 #' @param surfL_fname,surfR_fname If the [left/right] surface is present, it 
@@ -150,7 +152,7 @@ write_cifti_components <- function(
 #' @inheritParams wb_path_Param
 #'
 #' @return Named character vector of the written files
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @export
 #'
 write_cifti <- function(

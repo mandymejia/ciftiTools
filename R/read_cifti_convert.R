@@ -5,6 +5,8 @@
 #'  and obtaining the brainordinate mapping using 
 #'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
 #' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
@@ -14,7 +16,7 @@
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @keywords internal
 #' 
 read_cifti_convert <- function(
@@ -63,7 +65,7 @@ read_cifti_convert <- function(
     }
   }
 
-  # Place cortex data into the "xifti" object.
+  # Place cortex data into the \code{"xifti"} object.
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
   if ("left" %in% brainstructures) {
@@ -93,7 +95,7 @@ read_cifti_convert <- function(
     xifti$meta$cortex$medial_wall_mask["right"] <- list(template_xifti()$meta$cortex$medial_wall_mask$right)
   }
 
-  # Place subcortical data into the "xifti" object.
+  # Place subcortical data into the \code{"xifti"} object.
   if ("subcortical" %in% brainstructures) {
     alpha_to_spatial <- order(order(xifti$meta$subcort$labels))
     subcort_order <- c((1+last_right):nrow(xifti_data))[alpha_to_spatial]

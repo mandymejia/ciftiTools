@@ -10,7 +10,7 @@ ciftiTools_msg(msg)
 \item{msg}{The message}
 }
 \value{
-NULL, invisibly.
+\code{NULL}, invisibly
 }
 \description{
 Print message only if ciftiTools Option "suppress_msgs" is TRUE

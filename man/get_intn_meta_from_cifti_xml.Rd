@@ -10,7 +10,7 @@ get_intn_meta_from_cifti_xml(xml, intent = 3000)
 \item{intent}{The CIFTI's NIFTI intent code}
 
 \item{x}{List representing "MatrixIndicesMap" entry XML 
-(\code{xii$CIFTI$Matrix[[2]]})}
+(\code{xifti$CIFTI$Matrix[[2]]})}
 }
 \value{
 The metadata, a list

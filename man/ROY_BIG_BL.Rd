@@ -9,11 +9,12 @@ ROY_BIG_BL(min = 0, max = 1, mid = NULL, pos_half = FALSE)
 \arguments{
 \item{min}{The minimum value for the color mapping. As in the original 
 palette, the last color (aqua) is actually placed at the bottom .5\% between
-the minimum and maximum.}
+the minimum and maximum. Default: \code{0}}
 
 \item{max}{The maximum value for the color mapping. If this value is lower 
 than the minimum, the color mapping will be reversed. If this is equal to 
-the minimum, a palette with only the color black will be returned.}
+the minimum, a palette with only the color black will be returned.
+Default: \code{1}.}
 
 \item{mid}{(Optional) The midpoint value for the color mapping. If 
 \code{NULL} (default), the true midpoint is used.}
@@ -23,7 +24,7 @@ Default: \code{FALSE}.}
 }
 \value{
 A data.frame with two columns: \code{"color"} (character: color hex 
- codes) and \code{"value"} (numeric).
+ codes) and \code{"value"} (numeric)
 }
 \description{
 "ROY_BIG_BL", the default palette from the Connectome Workbench.

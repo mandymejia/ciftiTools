@@ -28,7 +28,7 @@ correct one in \code{kwargsA}.}
 location and remove the kwarg from the second location".}
 }
 \value{
-A list with the union of \code{kwargsA} and \code{kwargsB}.
+A list with the union of \code{kwargsA} and \code{kwargsB}
 }
 \description{
 Merge two kwarg lists. If a kwarg is present in both lists but with different

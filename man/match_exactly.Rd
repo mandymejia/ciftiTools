@@ -21,7 +21,7 @@ are \code{"message"} (default), \code{"warning"}, \code{"stop"}, and
 \code{"nothing"}.}
 }
 \value{
-Whether the two character vectors match
+Logical. Do \code{user} and \code{expected} match?
 }
 \description{
 Checks if a user-defined character vector matches an expected character

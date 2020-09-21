@@ -11,7 +11,7 @@ sys_path(R_path)
 exists, \code{file.exists(R_path)} should be \code{TRUE}.}
 }
 \value{
-The name of the file.
+The name of the file
 }
 \description{
 Right now, it escapes spaces and parentheses with \code{"\\\\"}.

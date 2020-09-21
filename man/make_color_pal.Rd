@@ -37,7 +37,7 @@ for. Overrided by certain \code{zlim}.}
 }
 \value{
 A data.frame with two columns: \code{"color"} (character: color hex 
- codes) and \code{"value"} (numeric).
+ codes) and \code{"value"} (numeric)
 }
 \description{
 Control the mapping of values to colors with \code{colors}, 

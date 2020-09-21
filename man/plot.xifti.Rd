@@ -2,7 +2,7 @@
 % Please edit documentation in R/view_xifti.R
 \name{plot.xifti}
 \alias{plot.xifti}
-\title{S3 method: use view_xifti to plot a xifti}
+\title{S3 method: use \code{view_xifti} to plot a \code{"xifti"} object}
 \usage{
 \method{plot}{xifti}(x, ...)
 }
@@ -14,5 +14,5 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 \code{what}, which will be set to \code{NULL}.}
 }
 \description{
-S3 method: use view_xifti to plot a xifti
+S3 method: use \code{view_xifti} to plot a \code{"xifti"} object
 }

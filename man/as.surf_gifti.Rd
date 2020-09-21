@@ -2,7 +2,7 @@
 % Please edit documentation in R/as.gifti.R
 \name{as.surf_gifti}
 \alias{as.surf_gifti}
-\title{Format a surface data as a \code{"gifti"} object}
+\title{Format surface data as a \code{"gifti"} object}
 \usage{
 as.surf_gifti(surf, hemisphere = c("left", "right"))
 }
@@ -12,7 +12,7 @@ as.surf_gifti(surf, hemisphere = c("left", "right"))
 
 \item{hemisphere}{The side of the brain the surface represents: \code{"left"} 
 (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
-metadata field. Only used if this metadata entry is not present in \code{surf}}
+metadata field. Only used if \code{surf$hemisphere} is \code{NULL}.}
 }
 \value{
 The \code{"gifti"} object

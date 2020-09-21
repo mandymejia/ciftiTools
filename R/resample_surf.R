@@ -1,16 +1,17 @@
-#' Resample "surface" object
+#' Resample a \code{"surface"} object
 #'
-#' Resample a "surface" object by writing it to a GIFTI, using the Connectome
+#' Resample a \code{"surface"} object by writing it to a GIFTI, using the Connectome
 #'  Workbench to resample it, and then reading the new file.
 #'
-#' @param surf A "surface" object
+#' @param surf A \code{"surface"} object
 #' @param resamp_res The desired resolution
-#' @param hemisphere "left" or "right". Only used if not indicated by 
+#' @param hemisphere \code{"left"} or \code{"right"}. Only used if not indicated by 
 #'  \code{surf$hemisphere}. An error will be raised if it does not match the 
 #'  hemisphere indicated in the intermediate written GIFTI. 
 #' @inheritParams wb_path_Param
 #' 
 #' @return The new surface
+#' 
 #' @export
 #'
 resample_surf <- function(

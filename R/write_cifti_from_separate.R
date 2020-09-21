@@ -14,10 +14,10 @@
 #' @param ROIcortexR_fname The right cortex ROI file.
 #' @param subcortVol_fname The subcortical data file.
 #' @param subcortLabs_fname The subcortical labels file.
-#' @param timestep If a dense time series (dtseries.nii) file is being written,
+#' @param timestep If a dense time series ("dtseries.nii") file is being written,
 #'  this is the time between measurements. If \code{NULL}, use the Connectome
 #'  Workbench default (1.0).
-#' @param timestart If a dense time series (dtseries.nii) file is being written,
+#' @param timestart If a dense time series ("dtseries.nii") file is being written,
 #'  this is starting time. If \code{NULL}, use the Connectome Workbench default 
 #'  (0.0).
 #' @inheritParams wb_path_Param

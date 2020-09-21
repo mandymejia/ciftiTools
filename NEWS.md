@@ -18,6 +18,7 @@
     * Export and import label table and column names with CIFTI and GIFTI files (for `dlabel` and `dscalar`)
     * Write NIFTI with `RNifti` instead of `oro.nifti`
 * Corrected separating, writing and resampling `*.dlabel.nii` files
+* Make `cifti_fname` in `read_cifti` optional (can read in just the surfaces)
 * Warning if brainstructure is requested but not available (instead of error)
 * Convert smoothed `dlabel` to `dscalar` (and add warning, because it's probably something you don't want to do)
 

@@ -10,7 +10,7 @@ is.3D_mask(x)
 \item{x}{The putative subcortical mask.}
 }
 \value{
-Logical indicating whether x is a valid subcortical mask.
+Logical. Is \code{x} a valid subcortical mask?
 }
 \description{
 Check if object is a 3D binary mask.
@@ -22,3 +22,4 @@ This is a helper function for \code{\link{is.xifti}}.
  indicate voxels included in the mask, whereas \code{FALSE} 
  should indicate voxels outside of it.
 }
+\keyword{internal}

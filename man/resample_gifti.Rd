@@ -53,8 +53,8 @@ resamplegii(
 
 \item{target_fname}{Where to save the resampled file.}
 
-\item{hemisphere}{"left" (default) or "right". An error will be raised if
-the hemisphere indicated in the GIFTI metadata does not match.}
+\item{hemisphere}{\code{"left"} (default) or \code{"right"}. An error will 
+occur if the hemisphere indicated in the GIFTI metadata does not match.}
 
 \item{file_type}{\code{"metric"}, \code{"label"}, \code{"surface"}, or \code{NULL} 
 (default) to infer from \code{original_fname}.}

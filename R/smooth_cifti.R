@@ -8,6 +8,8 @@
 #'  Unless the label values were ordinal, this is probably not desired so a
 #'  warning will be printed.
 #' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @param cifti_original_fname The CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI.
 #' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm
@@ -24,7 +26,7 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return The \code{cifti_target_fname}, invisibly
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @export
 #'
 smooth_cifti <- function(
@@ -98,12 +100,12 @@ smoothCIfTI <- function(
   wb_path=NULL){
 
   smooth_cifti(
-    cifti_original_fname, cifti_target_fname,
-    surface_sigma, volume_sigma,
-    surfL_fname, surfR_fname, cerebellum_fname,
-    subcortical_zeroes_as_NA, cortical_zeroes_as_NA,
-    subcortical_merged,
-    wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname,
+    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
+    subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
+    subcortical_merged=subcortical_merged,
+    wb_path=wb_path
   )
 }
 
@@ -118,11 +120,11 @@ smoothcii <- function(
   wb_path=NULL){
 
   smooth_cifti(
-    cifti_original_fname, cifti_target_fname,
-    surface_sigma, volume_sigma,
-    surfL_fname, surfR_fname, cerebellum_fname,
-    subcortical_zeroes_as_NA, cortical_zeroes_as_NA,
-    subcortical_merged,
-    wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname,
+    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
+    subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
+    subcortical_merged=subcortical_merged,
+    wb_path=wb_path
   )
 }

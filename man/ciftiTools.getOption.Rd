@@ -2,7 +2,7 @@
 % Please edit documentation in R/options.R
 \name{ciftiTools.getOption}
 \alias{ciftiTools.getOption}
-\title{Get \code{"ciftiTools"} option}
+\title{Get \code{ciftiTools} option}
 \usage{
 ciftiTools.getOption(opt)
 }
@@ -10,10 +10,9 @@ ciftiTools.getOption(opt)
 \item{opt}{The option.}
 }
 \value{
-The value, \code{val}.
+The value, \code{val}
 }
 \description{
-Gets an R option (with prefix "ciftiTools_") value. Right now, the ciftiTool
- options are "wb_path" (path to Workbench Command)
- and "EPS" (Threshold for detecting constant voxels).
+Gets an R option (with prefix "ciftiTools_") value. 
+ See \code{\link{ciftiTools.listOptions}}.
 }

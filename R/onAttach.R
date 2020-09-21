@@ -3,6 +3,9 @@
 #' Direct user to indicate Connectome Workbench path and check gifti package version.
 #'
 #' @param ... Not used
+#' 
+#' @return \code{NULL}, invisibly
+#' 
 #' @importFrom utils packageVersion
 #'
 .onAttach <- function(...) {
@@ -13,4 +16,6 @@
   }
   ciftiTools.setOption("EPS", 1e-8)
   ciftiTools.setOption("suppress_msgs", TRUE)
+
+  invisible(NULL)
 }
