@@ -23,7 +23,7 @@ view_surf <- function(
   ..., view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti", write_dir=NULL,
+  fname="xifti", 
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0){
   
   surf <- list(...)
@@ -108,7 +108,7 @@ view_surf <- function(
     make_xifti(surfL=surfL, surfR=surfR), hemisphere=hemisphere,
     view=view, mode=mode, width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    fname=fname, write_dir=write_dir,
+    fname=fname,
     alpha=alpha, 
     edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size
   )

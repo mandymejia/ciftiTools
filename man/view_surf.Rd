@@ -16,7 +16,6 @@ view_surf(
   cex.title = NULL,
   text_color = "black",
   fname = "xifti",
-  write_dir = NULL,
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
@@ -90,11 +89,6 @@ sizes for increasingly longer titles.}
 \item{fname}{An identifier to use for naming the saved images
 ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
 Default: \code{"xifti"}.}
-
-\item{write_dir}{Where should any output images be written. NULL (default)
- will write them to the current working directory.
-
- \code{write_dir} must already exist, or an error will occur.}
 
 \item{alpha}{Transparency value for mesh coloring, between 0 and 1. Default:
 \code{1.0} (no transparency).}
