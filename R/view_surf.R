@@ -7,6 +7,7 @@
 #'  some arguments are not applicable (e.g. color scheme and legend). Also, 
 #'  instead of using the \code{hemisphere} argument, name the surface arguments
 #'  \code{surfL} or \code{surfR} (see parameter description for \code{...}).
+#'  Finally, the \code{"video"} mode is not applicable (since each frame would be identical).
 #' 
 #' @param ... One of: A \code{"surface"} object; two \code{"surface"} objects;
 #'  or, a \code{"xifti"} object. If a \code{"surface"} object has an empty

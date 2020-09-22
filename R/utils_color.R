@@ -494,18 +494,34 @@ expand_color_pal <- function(pal, MIN_COLOR_RES=255) {
 #' @param data_values The values to map to colors
 #' @param pal The palette to use to map values to colors
 #' @param color_NA The color to use for \code{NA} values. Default: \code{"white"}.
-#'
-#' @return A character vector of color names
+#' @param indices Return the numeric indices of colors in \code{pal$value} 
+#'  rather than the colors themselves. A value of \code{0} will be used for
+#'  missing data. Default: \code{FALSE}.
+#' 
+#' @return A character vector of color names (or integers if \code{indices}).
 #' 
 #' @export
 #' 
-use_color_pal <- function(data_values, pal, color_NA="white") {
+use_color_pal <- function(data_values, pal, color_NA="white", indices=FALSE) {
+
+  stopifnot(is.character(color_NA) && length(color_NA==1))
+
   mask <- is.na(data_values)
-  colors <- as.character(pal$color)
-  pal$cut <- -Inf
-  pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
-  out <- vector("character", length(data_values))
-  out[!mask] <- colors[apply(outer(as.numeric(data_values[!mask]), pal$cut, '>='), 1, sum)]
-  out[mask] <- color_NA
+
+  # Indices of colors for each datapoint in `data_values`
+  if (nrow(pal) == 1) {
+    out <- 1 - as.numeric(mask)
+  } else {
+    pal$cut <- -Inf
+    pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
+
+    out <- rep(0, length(data_values))
+    out[!mask] <- apply(outer(as.numeric(data_values[!mask]), pal$cut, '>='), 1, sum)
+  }
+
+  if (!indices) { 
+    out <- c(color_NA, as.character(pal$color))[out + 1]
+  }
+
   out
 }

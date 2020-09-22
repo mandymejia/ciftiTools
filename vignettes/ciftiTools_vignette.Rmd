@@ -92,6 +92,12 @@ cii
 
 Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data. Finaly, using the argument `mode=image` the Open GL window can be saved to a static image. To minimize the size of this document, we will use the image method except for one plot in the "Resampling" section.
 
+```{r}
+x <- view_xifti_surface(
+  cii, zlim=c(1,2), mode='widget'
+)
+```
+
 ```{r, fig.cap="First time point; sequential palette"}
 knitr::include_graphics(view_xifti_surface(
   cii, zlim=c(1,2), mode='image', fname=file.path(out_dir, "xifti_0.png")

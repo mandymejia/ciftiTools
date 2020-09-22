@@ -8,19 +8,20 @@
 If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
 
-\item{mode}{One of \code{"widget"} (default), \code{"image"}, or \code{"video"}:
+\item{mode}{One of \code{"widget"} (default), \code{"image"}, or 
+ \code{"video"}:
 
- \code{"widget"} will open an interactive RGL window. Left click and drag to rotate.
- Use the scroll wheel to zoom. Run the R function
- \code{rgl::snapshot("my_file.png")} to save the RGL window as a png.
- See \code{\link[rgl]{snapshot}} for more information.
+ \code{"widget"} will open an interactive RGL window. Left click and drag to 
+ rotate. Use the scroll wheel to zoom. Run \code{rgl::snapshot("my_file.png")} 
+ to save the RGL window as a png (See \code{\link[rgl]{snapshot}} for more 
+ information.). Run \code{rgl::rgl.close()} to close the window.
 
  \code{"image"} will open the RGL window, take a screenshot using
  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
- as a png in \code{write_dir} and its name will be \code{[fname].png}.
+ as a png in \code{write_dir} and its name will be \code{"[fname].png"}.
 
  \code{"video"} will take a series of screenshots of the RGL window, while
- increasing the column index. The frames can
+ for each column index in \code{idx}. The frames can
  be converted to a video file using multimedia software such as Adobe
  Premiere Pro. The "video" mode is not yet supported.}
 

@@ -1,5 +1,7 @@
 # 1.5 (September 25, 2020)
 
+## Changes affecting users
+
 * `view_xifti_surface`
     * Option to draw vertices and edges
     * Automatically use (and resample to match data resolution) included surfaces, in most cases where surfaces were not provided
@@ -21,7 +23,6 @@
 * Make `cifti_fname` in `read_cifti` optional (can read in just the surfaces)
 * Warning if brainstructure is requested but not available (instead of error)
 * Convert smoothed `dlabel` to `dscalar` (and add warning, because it's probably something you don't want to do)
-
 * Documentation improvements
 
 ## Notes for developers

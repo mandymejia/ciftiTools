@@ -4,7 +4,7 @@
 \alias{use_color_pal}
 \title{Use a color palette}
 \usage{
-use_color_pal(data_values, pal, color_NA = "white")
+use_color_pal(data_values, pal, color_NA = "white", indices = FALSE)
 }
 \arguments{
 \item{data_values}{The values to map to colors}
@@ -12,9 +12,13 @@ use_color_pal(data_values, pal, color_NA = "white")
 \item{pal}{The palette to use to map values to colors}
 
 \item{color_NA}{The color to use for \code{NA} values. Default: \code{"white"}.}
+
+\item{indices}{Return the numeric indices of colors in \code{pal$value} 
+rather than the colors themselves. A value of \code{0} will be used for
+missing data. Default: \code{FALSE}.}
 }
 \value{
-A character vector of color names
+A character vector of color names (or integers if \code{indices}).
 }
 \description{
 Applies a palette to a data vector to yield a vector of colors.
