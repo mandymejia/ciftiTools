@@ -21,7 +21,6 @@ view_xifti_surface(
   cex.title = NULL,
   text_color = "black",
   fname = "xifti",
-  write_dir = NULL,
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -49,7 +48,6 @@ view_cifti_surface(
   cex.title = NULL,
   text_color = "black",
   fname = "xifti",
-  write_dir = NULL,
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -77,7 +75,6 @@ viewCIfTI_surface(
   cex.title = NULL,
   text_color = "black",
   fname = "xifti",
-  write_dir = NULL,
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -105,7 +102,6 @@ viewcii_surface(
   cex.title = NULL,
   text_color = "black",
   fname = "xifti",
-  write_dir = NULL,
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -204,11 +200,6 @@ sizes for increasingly longer titles.}
 \item{fname}{An identifier to use for naming the saved images
 ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
 Default: \code{"xifti"}.}
-
-\item{write_dir}{Where should any output images be written. NULL (default)
- will write them to the current working directory.
-
- \code{write_dir} must already exist, or an error will occur.}
 
 \item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use,
 OR the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info

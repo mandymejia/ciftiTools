@@ -162,7 +162,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti", write_dir=NULL,
+  fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -212,17 +212,23 @@ view_xifti_surface <- function(xifti, idx=NULL,
     if (is.null(idx)) {
       idx <- 1
     } else {
-      if (length(idx) > 1) stop("Only one time/column index is supported right now.")
+      if (length(idx) > 1) stop("For widget and image modes, only one time/column index is supported right now.")
     }
   }
 
   if (mode=="image") {
     fname <- as.character(fname[1])
     if (!endsWith(fname, ".png")) { fname <- paste0(fname, ".png") }
-    img_fname <- format_path(fname, write_dir, mode=2)
   } else if (mode=="video") {
-    fname <- ifelse(length(fname)==T_, as.character(fname), as.character(fname[1]))
+    if (length(fname)==length(idx)) {
+      fname <- as.character(fname)
+    } else {
+      fname <- gsub(".png", "", fname[1], fixed=TRUE)
+      fname <- paste0(as.character(fname), "_", idx, ".png")
+    }
   }
+
+  print(fname)
 
   # Color mode
   if (is.null(color_mode)) {
@@ -386,7 +392,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
     # Map each vertex to a color by its value.
     values[,] <- use_color_pal(as.vector(values), pal, indices=TRUE)
-    
+
     # Put values back apart into left and right cortex
     if (length(hemisphere)==2) {
       values <- list(
@@ -473,187 +479,197 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Color and arrange the meshes according to the layout. ----------------------
   # ----------------------------------------------------------------------------
 
-  # Open a new RGL window.
-  rgl::open3d()
-  if (is.null(bg)) { bg <- "white" }
-  rgl::bg3d(color=bg)
-  rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
-  Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
+  # Should only loop once unless mode=="video"
 
-  all_panels_heights <- rep.int(1, brain_panels_nrow)
-  if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
-  if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  for (jj in 1:length(idx)) {
+    this_idx <- idx[jj]
 
-  # Determine the panel layout.
-  rgl::layout3d(
-    matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
-    widths=rep.int(1, all_panels_ncol),
-    heights=all_panels_heights,
-    parent = NA, sharedMouse = TRUE
-  )
-  brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
-  n_brain_panels <- length(brain_panels)
+    # Open a new RGL window.
+    rgl::open3d()
+    if (is.null(bg)) { bg <- "white" }
+    rgl::bg3d(color=bg)
+    rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
+    Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
 
-  if (!no_title) {
-    if (is.null(title)) {
-      intent <- xifti$meta$cifti$intent
-      if (is.null(intent)) {
-        title <- ""
-      } else if (intent == 3002) {
-        title <- paste("Index", idx)
-        if (!any(sapply(xifti$meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
-          title <- paste0(title, " (", xifti$meta$cifti$time_start+xifti$meta$cifti$time_step*idx, " ", xifti$meta$cifti$time_unit, "s)")
-        }
-      } else if (intent == 3006) {
-        if (!is.null(xifti$meta$cifti$names) && length(xifti$meta$cifti$names)>=idx) {
-          title <- xifti$meta$cifti$names[idx]
-        } else {
-          title <- ""
-        }
-      } else if (intent == 3007) {
-        if (!is.null(xifti$meta$cifti$labels) && length(xifti$meta$cifti$labels)>=idx) {
-          title <- names(xifti$meta$cifti$labels)[idx]
-        } else {
-          title <- ""
-        }
-      }
-    }
-    if (is.null(cex.title)) {
-      # Default: 200% font size, but increasingly smaller for longer titles
-      if (nchar(title) > 20) {
-        cex.title <- 40 / nchar(title)
-      } else {
-        cex.title <- 2
-      }
-    }
-    rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
-                cex=cex.title,
-                adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
-                font=2, # Forget if this made a difference...
-                color=text_color,
-                text=title
+    all_panels_heights <- rep.int(1, brain_panels_nrow)
+    if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
+    if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+
+    # Determine the panel layout.
+    rgl::layout3d(
+      matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
+      widths=rep.int(1, all_panels_ncol),
+      heights=all_panels_heights,
+      parent = NA, sharedMouse = TRUE
     )
-    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+    brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
+    n_brain_panels <- length(brain_panels)
 
+    if (!no_title) {
+      if (is.null(title)) {
+        intent <- xifti$meta$cifti$intent
+        if (is.null(intent)) {
+          this_title <- ""
+        } else if (intent == 3002) {
+          this_title <- paste("Index", this_idx)
+          if (!any(sapply(xifti$meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
+            this_title <- paste0(
+              this_title, " (", 
+              xifti$meta$cifti$time_start+xifti$meta$cifti$time_step*this_idx, 
+              " ", xifti$meta$cifti$time_unit, "s)"
+            )
+          }
+        } else if (intent == 3006) {
+          if (!is.null(xifti$meta$cifti$names) && length(xifti$meta$cifti$names)>=this_idx) {
+            this_title <- xifti$meta$cifti$names[this_idx]
+          } else {
+            this_title <- ""
+          }
+        } else if (intent == 3007) {
+          if (!is.null(xifti$meta$cifti$labels) && length(xifti$meta$cifti$labels)>=this_idx) {
+            this_title <- names(xifti$meta$cifti$labels)[this_idx]
+          } else {
+            this_title <- ""
+          }
+        }
+      }
+      if (is.null(cex.title)) {
+        # Default: 200% font size, but increasingly smaller for longer titles
+        if (nchar(this_title) > 20) {
+          cex.title <- 40 / nchar(this_title)
+        } else {
+          cex.title <- 2
+        }
+      }
+      rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
+                  cex=cex.title,
+                  adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
+                  font=2, # Forget if this made a difference...
+                  color=text_color,
+                  text=this_title
+      )
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+
+      if(all_panels_ncol==2){
+        rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      }
+    }
+
+    # Rotation matrices to orient meshes.
+    rot <- list(
+      left = rbind( # Outer side of left surface toward viewer
+        c( 0,-1, 0, 0),
+        c( 0, 0, 1, 0),
+        c(-1, 0, 0, 0),
+        c( 0, 0, 0, 1)
+      ),
+      right = rbind( # Outer side of right surface toward viewer
+        c( 0, 1, 0, 0),
+        c( 0, 0, 1, 0),
+        c( 1, 0, 0, 0),
+        c( 0, 0, 0, 1)
+      ),
+      ID = diag(4)
+    )
+
+    # Populate the RGL window.
+    for(ii in 1:n_brain_panels) {
+      p <- brain_panels[ii]
+
+      # Get the hemisphere.
+      if (grepl("left", p)) {
+        h <- "left"; h2 <- "right"
+      } else if (grepl("right", p)) {
+        h <- "right"; h2 <- "left"
+      } else {
+        h <- "neither"; h2 <- "neither"
+      }
+
+      # Get the rotation.
+      if (grepl("lateral", p)) {
+        this_rot <- rot[[h]]
+      } else if (grepl("medial", p)) {
+        this_rot <- rot[[h2]]
+      } else { this_rot <- rot$ID }
+
+      # Get the color.
+      if (any_colors) {
+        this_vals <- values[[h]][,this_idx]
+        color_jj <- c(NA_COLOR, as.character(pal$color))[this_vals + 1]
+      } else {
+        color_jj <- NA_COLOR
+      }
+
+      # Draw the mesh.
+      rgl::shade3d(
+        mesh[[h]], 
+        color=color_jj, 
+        specular="black", 
+        alpha=alpha,
+        legend=TRUE
+      )
+
+      ## Vertices.
+      if (vertex_size > 0) { 
+        rgl::shade3d(
+          mesh[[h]], 
+          color=vertex_color, size=vertex_size,
+          specular="black",
+          front="points", back="points", 
+          legend=FALSE
+        )
+      }
+
+      ## Edges.
+      if (!is.null(edge_color)) {
+        rgl::shade3d(
+          mesh[[h]], 
+          color=edge_color, 
+          specular="black",
+          front="lines", back="lines", 
+          legend=FALSE
+        )
+      }
+
+      ## shift brains to left to make room for legend on right
+      #displacement <- .25 * diff(range(this_surf$vertices[,2]))
+      #if (grepl("lateral", p)) { displacement <- -displacement }
+      #if (grepl("left", p)) { displacement <- -displacement }
+      #this_trans <- t(rgl::translationMatrix(0, displacement, 0))
+      this_trans <- diag(4)
+
+      this_mat <- this_rot %*% this_trans
+      rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=zoom) #Default: 167% size
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+    }
+
+    if (any_colors) {
+      if (colorbar_embedded) {
+        rgl::bgplot3d(
+          # Warning: calling par(new=TRUE) with no plot
+          # Error in par(old.par) :
+          #   invalid value specified for graphical parameter "pin"
+          try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
+          bg.color=bg
+        )
+      } else {
+        colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
+        try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
+      }
+    }
+
+    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
     if(all_panels_ncol==2){
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
     }
-  }
 
-  # Rotation matrices to orient meshes.
-  rot <- list(
-    left = rbind( # Outer side of left surface toward viewer
-      c( 0,-1, 0, 0),
-      c( 0, 0, 1, 0),
-      c(-1, 0, 0, 0),
-      c( 0, 0, 0, 1)
-    ),
-    right = rbind( # Outer side of right surface toward viewer
-      c( 0, 1, 0, 0),
-      c( 0, 0, 1, 0),
-      c( 1, 0, 0, 0),
-      c( 0, 0, 0, 1)
-    ),
-    ID = diag(4)
-  )
-
-  # Populate the RGL window.
-  for(ii in 1:n_brain_panels) {
-    p <- brain_panels[ii]
-
-    # Get the hemisphere.
-    if (grepl("left", p)) {
-      h <- "left"; h2 <- "right"
-    } else if (grepl("right", p)) {
-      h <- "right"; h2 <- "left"
-    } else {
-      h <- "neither"; h2 <- "neither"
-    }
-
-    # Get the rotation.
-    if (grepl("lateral", p)) {
-      this_rot <- rot[[h]]
-    } else if (grepl("medial", p)) {
-      this_rot <- rot[[h2]]
-    } else { this_rot <- rot$ID }
-
-    # Get the color.
-    if (any_colors) {
-      color_ii <- c(NA_COLOR, as.character(pal$color))[values[[h]][,1] + 1]
-    } else {
-      color_ii <- NA_COLOR
-    }
-
-    # Draw the mesh.
-    rgl::shade3d(
-      mesh[[h]], 
-      color=color_ii, 
-      specular="black", 
-      alpha=alpha,
-      legend=TRUE
-    )
-
-    ## Vertices.
-    if (vertex_size > 0) { 
-      rgl::shade3d(
-        mesh[[h]], 
-        color=vertex_color, size=vertex_size,
-        specular="black",
-        front="points", back="points", 
-        legend=FALSE
-      )
-    }
-
-    ## Edges.
-    if (!is.null(edge_color)) {
-      rgl::shade3d(
-        mesh[[h]], 
-        color=edge_color, 
-        specular="black",
-        front="lines", back="lines", 
-        legend=FALSE
-      )
-    }
-
-    ## shift brains to left to make room for legend on right
-    #displacement <- .25 * diff(range(this_surf$vertices[,2]))
-    #if (grepl("lateral", p)) { displacement <- -displacement }
-    #if (grepl("left", p)) { displacement <- -displacement }
-    #this_trans <- t(rgl::translationMatrix(0, displacement, 0))
-    this_trans <- diag(4)
-
-    this_mat <- this_rot %*% this_trans
-    rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=zoom) #Default: 167% size
-    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-  }
-
-  if (any_colors) {
-    if (colorbar_embedded) {
-      rgl::bgplot3d(
-        # Warning: calling par(new=TRUE) with no plot
-        # Error in par(old.par) :
-        #   invalid value specified for graphical parameter "pin"
-        try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
-        bg.color=bg
-      )
-    } else {
-      colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
-      try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
+    if (mode %in% c("image", "video")) {
+      rgl::rgl.snapshot(fname[jj])
+      rgl::rgl.close()
     }
   }
 
-  rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-  if(all_panels_ncol==2){
-    rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-  }
-
-  if (mode=="image") {
-    rgl::rgl.snapshot(img_fname)
-    rgl::rgl.close()
-    return(img_fname)
-  } else {
-    return(invisible(NULL))
-  }
+  return(invisible(fname))
 }
 
 #' @rdname view_xifti_surface
@@ -662,7 +678,7 @@ view_cifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti", write_dir=NULL,
+  fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -674,7 +690,7 @@ view_cifti_surface <- function(xifti, idx=NULL,
     hemisphere, view,
     mode, width, height, zoom,
     bg, title, cex.title, text_color,
-    fname, write_dir,
+    fname,
     colors, color_mode, zlim,
     surfL, surfR,
     colorbar_embedded,
@@ -689,7 +705,7 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti", write_dir=NULL,
+  fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -701,7 +717,7 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
     hemisphere=hemisphere, view=view,
     mode=mode, width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    fname=fname, write_dir=write_dir,
+    fname=fname,
     colors=colors, color_mode=color_mode, zlim=zlim,
     surfL=surfL, surfR=surfR,
     colorbar_embedded=colorbar_embedded,
@@ -716,7 +732,7 @@ viewcii_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   mode=c("widget", "image", "video"), width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti", write_dir=NULL,
+  fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -728,7 +744,7 @@ viewcii_surface <- function(xifti, idx=NULL,
     hemisphere=hemisphere, view=view,
     mode=mode, width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    fname=fname, write_dir=write_dir,
+    fname=fname,
     colors=colors, color_mode=color_mode, zlim=zlim,
     surfL=surfL, surfR=surfR,
     colorbar_embedded=colorbar_embedded,
