@@ -1,4 +1,3 @@
-
 #' Sort out surface & hemispehre args for \code{view_xifti_surface}
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
@@ -12,7 +11,7 @@
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.args_surf_hemi <- function(
+view_xifti_surface.surf_hemi <- function(
   xifti, surfL, surfR, hemisphere
 ){
 
@@ -96,6 +95,381 @@ view_xifti_surface.args_surf_hemi <- function(
     surfR=surfR,
     hemisphere=hemisphere
   )
+}
+
+
+#' Get the mesh(es) and data values for \code{view_xifti_surface}
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param xifti The xifti
+#' @param surfL Left surface
+#' @param surfR Right surface
+#' @param hemisphere Hemisphere
+#' @param idx Index
+#' 
+#' @return A list with entries "mesh" and "values"
+#' 
+#' @keywords internal
+#' 
+view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
+  
+  # ----------------------------------------------------------------------------
+  # Get the data values. -------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+  mesh =  list(left=NULL, right=NULL)
+  values = list(left=NULL, right=NULL)
+
+  for (h in hemisphere) {
+    surf_h <- switch(h, left=surfL, right=surfR)
+    mwall_h <- xifti$meta$cortex$medial_wall_mask[[h]]
+    cor_h <- switch(h, left="cortex_left", right="cortex_right")
+
+    if (is.null(mwall_h)) {
+      # [TO DO]: Think about this...
+      mwall_h_len <- ifelse(
+        is.null(xifti$data[[cor_h]]), 
+        nrow(surf_h$vertices), 
+        nrow(xifti$data[[cor_h]])
+      )
+      mwall_h <- rep(TRUE, mwall_h_len)
+    }
+
+    if (nrow(surf_h$vertices) != length(mwall_h)) {
+      ciftiTools_msg(paste(
+        "The",h,"surface does not have the same number of vertices as the data",
+        "(length of medial wall mask, or rows in data if the mask is absent).",
+        "Resampling the",h,"surface. (If the \"wb_path\" option has not been",
+        "set an error will occur; set it or correct the surface prior to",
+        "plotting.)"
+      ))
+      surf_h <- resample_surf(
+        surf_h, length(mwall_h), hemisphere=h
+      )
+    }
+
+    # Get data values.
+    values[[h]] <- matrix(NA, ncol=length(idx), nrow=length(mwall_h))
+    if (!is.null(xifti$data[[cor_h]])) {
+      values[[h]][mwall_h,] <- xifti$data[[cor_h]][,idx, drop=FALSE]
+    }
+
+    ## Construct the mesh.
+    vertices_h <- t(cbind(
+      surf_h$vertices, 
+      ### Add homogenous coordinates
+      rep(1, nrow(surf_h$vertices))
+    ))
+    faces_h <- t(surf_h$faces)
+    mesh[[h]] <- rgl::tmesh3d(vertices_h, faces_h, meshColor = "vertices")
+
+    ## Add normals for smooth coloring.
+    mesh[[h]] <- rgl::addNormals(mesh[[h]])
+  }
+
+  list(mesh=mesh, values=values)
+}
+
+#' Get the palettes and data color mapping for \code{view_xifti_surface}
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param values The list of \eqn{V x idx} data value matrices (one left, one right)
+#' @param idx Index/indices
+#' @param colors,color_mode,zlim see \code{\link{view_xifti_surface}}
+#' @param xifti_meta \code{xifti$meta}
+#' 
+#' @return A list with entries "pal_base", "pal", and "color_vals"
+#' 
+#' @keywords internal
+#' 
+view_xifti_surface.color <- function(hemisphere, values, idx, colors, color_mode, zlim, xifti_meta) {
+
+  # Put values together (to use data bounds across all measurements/columns)
+  nvertL <- ifelse("left" %in% hemisphere, nrow(values$left), 0)
+  if (!is.null(values)) {
+    values <- do.call(rbind, values)
+    values[values == NaN] <- NA
+    if (all(is.na(values))) { values <- NULL }
+  }
+
+  any_colors <- !is.null(values)
+  if (any_colors) {
+    # Get the base palette.
+    if (color_mode=="qualitative") {
+      # For .dlabel files, use the included labels metadata colors.
+      if (!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007) {
+        labs <- xifti_meta$cifti$labels[[idx]]
+        N_VALUES <- length(labs$Key)
+        pal_base <- data.frame(
+          color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
+          value = labs$Key
+        )
+      # Otherwise, use the usual colors.
+      } else {
+        unique_values <- sort(unique(as.vector(values[!is.na(values)])))
+        values[,] <- as.numeric(factor(values, levels=unique_values))
+        N_VALUES <- length(unique_values)
+        pal_base <- make_color_pal(
+          colors=colors, color_mode=color_mode, zlim=zlim,
+          DATA_MIN=1, DATA_MAX=N_VALUES
+        )
+      }
+    } else {
+      pal_base <- make_color_pal(
+        colors=colors, color_mode=color_mode, zlim=zlim,
+        DATA_MIN=min(as.vector(values), na.rm=TRUE), 
+        DATA_MAX=max(as.vector(values), na.rm=TRUE)
+      )
+    }
+
+    # Interpolate colors in the base palette for higher color resolution.
+    if (color_mode %in% c("sequential", "diverging")) {
+      pal <- expand_color_pal(pal_base)
+    } else {
+      pal <- pal_base
+    }
+
+    # Map each vertex to a color by its value.
+    values[,] <- use_color_pal(as.vector(values), pal, indices=TRUE)
+
+    # Put values back apart into left and right cortex
+    if (length(hemisphere) == 2) {
+      values <- list(
+        left = values[1:nvertL,, drop=FALSE],
+        right = values[(nvertL+1):nrow(values),, drop=FALSE]
+      )
+    } else if (hemisphere == "left") {
+      values <- list(
+        left = values,
+        right = NULL
+      )
+    } else if (hemisphere == "right") {
+      values <- list(
+        left = NULL,
+        right = values
+      )
+    }
+
+  } else {
+    pal <- pal_base <- NULL
+    # Will become NA_COLOR
+    values <- list(left=matrix(0), right=matrix(0))
+  }
+
+  list(pal_base=pal_base, pal=pal, color_vals=values)
+}
+
+#' Make the colorbar for \code{view_xifti_surface}
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param pal_base Base palette
+#' @param pal Full palette
+#' @param color_mode See \code{\link{view_xifti_surface}}
+#' @param text_color Color of text
+#' @param colorbar_digits See \code{\link{view_xifti_surface}}
+#' 
+#' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
+#' 
+#' @keywords internal
+#' 
+view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, colorbar_digits) {
+
+  colorbar_breaks <- c(
+    pal_base$value[1],
+    pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
+    pal$value[length(pal$value)]
+  )
+  colorbar_breaks <- unique(colorbar_breaks)
+
+  colorbar_labs <- switch(color_mode,
+    sequential=c(
+      pal_base$value[1],
+      pal_base$value[nrow(pal_base)]
+    ),
+    qualitative=1:nrow(pal_base),
+    diverging=c(
+      pal_base$value[1],
+      pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
+      pal_base$value[nrow(pal_base)]
+    )
+  )
+
+  if (length(colorbar_breaks) == 1) {
+    colorbar_kwargs <- list(
+      legend.only=TRUE, 
+      zlim=c(1,2), 
+      col=rep(pal$color[1], 2), 
+      breaks=c(0, 1, 2), 
+      axis.args=list(at=1, labels=colorbar_breaks)
+    )
+  } else {
+    colorbar_kwargs <- list(
+      legend.only = TRUE, 
+      zlim = range(pal$value), 
+      col = as.character(pal$color),
+      breaks=colorbar_breaks, 
+      #legend.lab=colorbar_label,
+      axis.args=list(
+        cex.axis=1.7, at=colorbar_labs,
+        col=text_color, col.ticks=text_color, col.axis=text_color,
+        labels=format(colorbar_labs, digits=colorbar_digits)
+      )
+    )
+  }
+
+  colorbar_kwargs <- c(colorbar_kwargs,
+    list(
+      horizontal=TRUE, # horizontal legend
+      legend.cex=2, # double size of labels (numeric limits)
+      #legend.shrink=.5, # half the width of the legend #override by smallplot
+      #legend.width=1.67, # height of colorbar #override by smallplot
+      legend.line=5, # height of lines between labels and colorbar
+      #legend.mar=4, # legend margin #override by smallplot
+      smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
+    )
+  )
+}
+
+#' Draw title in RGL
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param title Title text or \code{NULL}
+#' @param xifti_meta \code{xifti$meta}
+#' @param this_idx The index
+#' @param cex.title,text_color See \code{\link{view_xifti_surface}}
+#' 
+#' @return \code{NULL}, invisibly
+#' 
+#' @keywords internal
+#' 
+view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color){
+  if (is.null(title)) {
+    intent <- xifti_meta$cifti$intent
+
+    if (is.null(intent)) {
+      title <- ""
+
+    } else if (intent == 3002) {
+      title <- paste("Index", this_idx)
+      if (!any(sapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
+        title <- paste0(
+          title, " (", 
+          xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*this_idx, 
+          " ", xifti_meta$cifti$time_unit, "s)"
+        )
+      }
+
+    } else if (intent == 3006) {
+      if (!is.null(xifti_meta$cifti$names) && length(xifti_meta$cifti$names)>=this_idx) {
+        title <- xifti_meta$cifti$names[this_idx]
+      } else {
+        title <- ""
+      }
+      
+    } else if (intent == 3007) {
+      if (!is.null(xifti_meta$cifti$labels) && length(xifti_meta$cifti$labels)>=this_idx) {
+        title <- names(xifti_meta$cifti$labels)[this_idx]
+      } else {
+        title <- ""
+      }
+    }
+  }
+  
+  if (is.null(cex.title)) {
+    # Default: 200% font size, but increasingly smaller for longer titles
+    if (nchar(title) > 20) {
+      cex.title <- 40 / nchar(title)
+    } else {
+      cex.title <- 2
+    }
+  }
+
+  rgl::text3d(
+    x=0, y=0, z=0, #These values don't seem to do anything...
+    cex=cex.title,
+    adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
+    font=2, # Forget if this made a difference...
+    color=text_color,
+    text=title
+  )
+
+  invisible(NULL)
+}
+
+#' Draw brain hemisphere mesh in RGL
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param mesh RGL brain mesh
+#' @param rot "left", "right", or "ID"
+#' @param mesh_color The color at each vertex
+#' @param zoom,alpha,vertex_color,vertex_size,edge_color See 
+#'  \code{\link{view_xifti_surface}}
+#' 
+#' @return \code{NULL}, invisibly
+#' 
+#' @keywords internal
+#' 
+view_xifti_surface.draw_mesh <- function(
+  mesh, rot, mesh_color, 
+  zoom, alpha, 
+  vertex_color, vertex_size, edge_color){
+
+  # Rotation matrices to orient meshes.
+  rot <- list(
+    left = rbind( # Outer side of left surface toward viewer
+      c( 0,-1, 0, 0),
+      c( 0, 0, 1, 0),
+      c(-1, 0, 0, 0),
+      c( 0, 0, 0, 1)
+    ),
+    right = rbind( # Outer side of right surface toward viewer
+      c( 0, 1, 0, 0),
+      c( 0, 0, 1, 0),
+      c( 1, 0, 0, 0),
+      c( 0, 0, 0, 1)
+    ),
+    ID = diag(4)
+  )[[rot]]
+
+  # Draw the mesh.
+  rgl::shade3d(
+    mesh, 
+    color=mesh_color, 
+    specular="black", 
+    alpha=alpha,
+    legend=TRUE
+  )
+
+  ## Vertices.
+  if (vertex_size > 0) { 
+    rgl::shade3d(
+      mesh, 
+      color=vertex_color, size=vertex_size,
+      specular="black",
+      front="points", back="points", 
+      legend=FALSE
+    )
+  }
+
+  ## Edges.
+  if (!is.null(edge_color)) {
+    rgl::shade3d(
+      mesh, 
+      color=edge_color, 
+      specular="black",
+      front="lines", back="lines", 
+      legend=FALSE
+    )
+  }
+
+  rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
+
+  invisible(NULL)
 }
 
 #' View cortical surface
@@ -192,7 +566,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Check `xifti` and surfaces.
   stopifnot(is.xifti(xifti))
   T_ <- ncol(do.call(rbind, xifti$data))
-  x <- view_xifti_surface.args_surf_hemi(xifti, surfL, surfR, hemisphere)
+  x <- view_xifti_surface.surf_hemi(xifti, surfL, surfR, hemisphere)
   surfL <- x$surfL; surfR <- x$surfR; hemisphere <- x$hemisphere
 
   # Check `view`.
@@ -228,8 +602,6 @@ view_xifti_surface <- function(xifti, idx=NULL,
     }
   }
 
-  print(fname)
-
   # Color mode
   if (is.null(color_mode)) {
     if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
@@ -240,6 +612,37 @@ view_xifti_surface <- function(xifti, idx=NULL,
   } else {
     color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   }
+
+  NA_COLOR <- "white"
+
+  # ----------------------------------------------------------------------------
+  # Get the data values and surface models, and construct the mesh. ------------
+  # ----------------------------------------------------------------------------
+
+  x <- view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
+  mesh <- x$mesh; values <- x$values
+
+  # ----------------------------------------------------------------------------
+  # Get the palettes and vertex coloring. --------------------------------------
+  # ----------------------------------------------------------------------------
+
+  x <- view_xifti_surface.color(hemisphere, values, idx, colors, color_mode, zlim, xifti$meta)
+  pal_base <- x$pal_base; pal <- x$pal; color_vals <- x$color_vals
+  any_colors <- !all(sapply(color_vals, dim) == 1)
+
+  # ----------------------------------------------------------------------------
+  # Get the colorbar legend arguments. -----------------------------------------
+  # ----------------------------------------------------------------------------
+
+  if (any_colors) {
+    colorbar_kwargs <- view_xifti_surface.cbar(
+      pal_base, pal, color_mode, text_color, colorbar_digits
+    )
+  }
+
+  # ----------------------------------------------------------------------------
+  # Set up the RGL window. -----------------------------------------------------
+  # ----------------------------------------------------------------------------
 
   # Check width and height.
   brain_panels_nrow <- length(view)
@@ -283,202 +686,6 @@ view_xifti_surface <- function(xifti, idx=NULL,
     (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) *
       (all_panels_nrow - brain_panels_nrow)
 
-
-  NA_COLOR <- "white"
-
-  # ----------------------------------------------------------------------------
-  # Get the data values and surface models, and construct the mesh. ------------
-  # ----------------------------------------------------------------------------
-
-  mesh =  list(left=NULL, right=NULL)
-  values = list(left=NULL, right=NULL)
-
-  for (h in hemisphere) {
-    surf_h <- switch(h, left=surfL, right=surfR)
-    mwall_h <- xifti$meta$cortex$medial_wall_mask[[h]]
-    cor_h <- switch(h, left="cortex_left", right="cortex_right")
-
-    if (is.null(mwall_h)) {
-      # [TO DO]: Think about this...
-      mwall_h_len <- ifelse(
-        is.null(xifti$data[[cor_h]]), 
-        nrow(surf_h$vertices), 
-        nrow(xifti$data[[cor_h]])
-      )
-      mwall_h <- rep(TRUE, mwall_h_len)
-    }
-
-    if (nrow(surf_h$vertices) != length(mwall_h)) {
-      ciftiTools_msg(paste(
-        "The",h,"surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if the mask is absent).",
-        "Resampling the",h,"surface. (If the \"wb_path\" option has not been",
-        "set an error will occur; set it or correct the surface prior to",
-        "plotting.)"
-      ))
-      surf_h <- resample_surf(
-        surf_h, length(mwall_h), hemisphere=h
-      )
-    }
-
-    # Get data values.
-    values[[h]] <- matrix(NA, ncol=length(idx), nrow=length(mwall_h))
-    if (!is.null(xifti$data[[cor_h]])) {
-      values[[h]][mwall_h,] <- xifti$data[[cor_h]][,idx, drop=FALSE]
-    }
-
-    ## Construct the mesh.
-    vertices_h <- t(cbind(
-      surf_h$vertices, 
-      ### Add homogenous coordinates
-      rep(1, nrow(surf_h$vertices))
-    ))
-    faces_h <- t(surf_h$faces)
-    mesh[[h]] <- rgl::tmesh3d(vertices_h, faces_h, meshColor = "vertices")
-
-    ## Add normals for smooth coloring.
-    mesh[[h]] <- rgl::addNormals(mesh[[h]])
-  }
-
-  # Put values together (to use data bounds across all measurements/columns)
-  nvertL <- ifelse(is.null(values$left), 0, nrow(values$left))
-  if (!is.null(values)) {
-    values <- do.call(rbind, values)
-    values[values == NaN] <- NA
-    if (all(is.na(values))) { values <- NULL }
-  }
-
-  any_colors <- !is.null(values)
-
-  if (any_colors) {
-    # --------------------------------------------------------------------------
-    # Assign colors to vertices based on intensity. ----------------------------
-    # --------------------------------------------------------------------------
-
-    # Get the base palette.
-    if (color_mode=="qualitative") {
-      # For .dlabel files, use the included labels metadata colors.
-      if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
-        labs <- xifti$meta$cifti$labels[[idx]]
-        N_VALUES <- length(labs$Key)
-        pal_base <- data.frame(
-          color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
-          value = labs$Key
-        )
-      # Otherwise, use the usual colors.
-      } else {
-        unique_values <- sort(unique(as.vector(values[!is.na(values)])))
-        values[,] <- as.numeric(factor(values, levels=unique_values))
-        N_VALUES <- length(unique_values)
-        pal_base <- make_color_pal(
-          colors=colors, color_mode=color_mode, zlim=zlim,
-          DATA_MIN=1, DATA_MAX=N_VALUES
-        )
-      }
-    } else {
-      pal_base <- make_color_pal(
-        colors=colors, color_mode=color_mode, zlim=zlim,
-        DATA_MIN=min(as.vector(values), na.rm=TRUE), 
-        DATA_MAX=max(as.vector(values), na.rm=TRUE)
-      )
-    }
-
-    # Interpolate colors in the base palette for higher color resolution.
-    if (color_mode %in% c("sequential", "diverging")) {
-      pal <- expand_color_pal(pal_base)
-    } else {
-      pal <- pal_base
-    }
-
-    # Map each vertex to a color by its value.
-    values[,] <- use_color_pal(as.vector(values), pal, indices=TRUE)
-
-    # Put values back apart into left and right cortex
-    if (length(hemisphere)==2) {
-      values <- list(
-        left = values[1:nvertL,, drop=FALSE],
-        right = values[(nvertL+1):nrow(values),, drop=FALSE]
-      )
-    } else if (hemisphere=="left") {
-      values <- list(
-        left = values,
-        right = NULL
-      )
-    } else if (hemisphere=="right") {
-      values <- list(
-        left = NULL,
-        right = values
-      )
-    }
-
-    # ----------------------------------------------------------------------------
-    # Make the colorbar ----------------------------------------------------------
-    # ----------------------------------------------------------------------------
-
-    colorbar_breaks <- c(
-      pal_base$value[1],
-      pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
-      pal$value[length(pal$value)]
-    )
-    colorbar_breaks <- unique(colorbar_breaks)
-
-    colorbar_labs <- switch(color_mode,
-      sequential=c(
-        pal_base$value[1],
-        pal_base$value[nrow(pal_base)]
-      ),
-      qualitative=1:N_VALUES,
-      diverging=c(
-        pal_base$value[1],
-        pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
-        pal_base$value[nrow(pal_base)]
-      )
-    )
-
-    if (length(colorbar_breaks) == 1) {
-      colorbar_kwargs <- list(
-        legend.only=TRUE, 
-        zlim=c(1,2), 
-        col=rep(pal$color[1], 2), 
-        breaks=c(0, 1, 2), 
-        axis.args=list(at=1, labels=colorbar_breaks)
-      )
-    } else {
-      colorbar_kwargs <- list(
-        legend.only = TRUE, 
-        zlim = range(pal$value), 
-        col = as.character(pal$color),
-        breaks=colorbar_breaks, 
-        #legend.lab=colorbar_label,
-        axis.args=list(
-          cex.axis=1.7, at=colorbar_labs,
-          col=text_color, col.ticks=text_color, col.axis=text_color,
-          labels=format(colorbar_labs, digits=colorbar_digits)
-        )
-      )
-    }
-
-    colorbar_kwargs <- c(colorbar_kwargs,
-      list(
-        horizontal=TRUE, # horizontal legend
-        legend.cex=2, # double size of labels (numeric limits)
-        #legend.shrink=.5, # half the width of the legend #override by smallplot
-        #legend.width=1.67, # height of colorbar #override by smallplot
-        legend.line=5, # height of lines between labels and colorbar
-        #legend.mar=4, # legend margin #override by smallplot
-        smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
-      )
-    )
-
-  } else {
-    # Will become NA_COLOR
-    values <- list(left=matrix(0), right=matrix(0))
-  }
-
-  # ----------------------------------------------------------------------------
-  # Color and arrange the meshes according to the layout. ----------------------
-  # ----------------------------------------------------------------------------
-
   # Should only loop once unless mode=="video"
 
   for (jj in 1:length(idx)) {
@@ -505,48 +712,14 @@ view_xifti_surface <- function(xifti, idx=NULL,
     brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
     n_brain_panels <- length(brain_panels)
 
+    # --------------------------------------------------------------------------
+    # Draw title, brain, and color bar. ----------------------------------------
+    # --------------------------------------------------------------------------
+
+    # Make the title (if applicable).
     if (!no_title) {
-      if (is.null(title)) {
-        intent <- xifti$meta$cifti$intent
-        if (is.null(intent)) {
-          this_title <- ""
-        } else if (intent == 3002) {
-          this_title <- paste("Index", this_idx)
-          if (!any(sapply(xifti$meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
-            this_title <- paste0(
-              this_title, " (", 
-              xifti$meta$cifti$time_start+xifti$meta$cifti$time_step*this_idx, 
-              " ", xifti$meta$cifti$time_unit, "s)"
-            )
-          }
-        } else if (intent == 3006) {
-          if (!is.null(xifti$meta$cifti$names) && length(xifti$meta$cifti$names)>=this_idx) {
-            this_title <- xifti$meta$cifti$names[this_idx]
-          } else {
-            this_title <- ""
-          }
-        } else if (intent == 3007) {
-          if (!is.null(xifti$meta$cifti$labels) && length(xifti$meta$cifti$labels)>=this_idx) {
-            this_title <- names(xifti$meta$cifti$labels)[this_idx]
-          } else {
-            this_title <- ""
-          }
-        }
-      }
-      if (is.null(cex.title)) {
-        # Default: 200% font size, but increasingly smaller for longer titles
-        if (nchar(this_title) > 20) {
-          cex.title <- 40 / nchar(this_title)
-        } else {
-          cex.title <- 2
-        }
-      }
-      rgl::text3d(x=0, y=0, z=0, #These values don't seem to do anything...
-                  cex=cex.title,
-                  adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
-                  font=2, # Forget if this made a difference...
-                  color=text_color,
-                  text=this_title
+      view_xifti_surface.draw_title(
+        title, xifti$meta, this_idx, cex.title, text_color
       )
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
 
@@ -554,23 +727,6 @@ view_xifti_surface <- function(xifti, idx=NULL,
         rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
       }
     }
-
-    # Rotation matrices to orient meshes.
-    rot <- list(
-      left = rbind( # Outer side of left surface toward viewer
-        c( 0,-1, 0, 0),
-        c( 0, 0, 1, 0),
-        c(-1, 0, 0, 0),
-        c( 0, 0, 0, 1)
-      ),
-      right = rbind( # Outer side of right surface toward viewer
-        c( 0, 1, 0, 0),
-        c( 0, 0, 1, 0),
-        c( 1, 0, 0, 0),
-        c( 0, 0, 0, 1)
-      ),
-      ID = diag(4)
-    )
 
     # Populate the RGL window.
     for(ii in 1:n_brain_panels) {
@@ -582,64 +738,31 @@ view_xifti_surface <- function(xifti, idx=NULL,
       } else if (grepl("right", p)) {
         h <- "right"; h2 <- "left"
       } else {
-        h <- "neither"; h2 <- "neither"
+        stop()
       }
 
       # Get the rotation.
       if (grepl("lateral", p)) {
-        this_rot <- rot[[h]]
+        rot <- h
       } else if (grepl("medial", p)) {
-        this_rot <- rot[[h2]]
-      } else { this_rot <- rot$ID }
+        rot <- h2
+      } else { 
+        rot <- "ID"
+      }
 
       # Get the color.
       if (any_colors) {
-        this_vals <- values[[h]][,this_idx]
-        color_jj <- c(NA_COLOR, as.character(pal$color))[this_vals + 1]
+        mesh_color <- c(NA_COLOR, as.character(pal$color))[color_vals[[h]][,jj] + 1]
       } else {
-        color_jj <- NA_COLOR
+        mesh_color <- NA_COLOR
       }
 
-      # Draw the mesh.
-      rgl::shade3d(
-        mesh[[h]], 
-        color=color_jj, 
-        specular="black", 
-        alpha=alpha,
-        legend=TRUE
+      view_xifti_surface.draw_mesh(
+        mesh[[h]], rot, mesh_color, 
+        zoom, alpha, 
+        vertex_color, vertex_size, edge_color
       )
 
-      ## Vertices.
-      if (vertex_size > 0) { 
-        rgl::shade3d(
-          mesh[[h]], 
-          color=vertex_color, size=vertex_size,
-          specular="black",
-          front="points", back="points", 
-          legend=FALSE
-        )
-      }
-
-      ## Edges.
-      if (!is.null(edge_color)) {
-        rgl::shade3d(
-          mesh[[h]], 
-          color=edge_color, 
-          specular="black",
-          front="lines", back="lines", 
-          legend=FALSE
-        )
-      }
-
-      ## shift brains to left to make room for legend on right
-      #displacement <- .25 * diff(range(this_surf$vertices[,2]))
-      #if (grepl("lateral", p)) { displacement <- -displacement }
-      #if (grepl("left", p)) { displacement <- -displacement }
-      #this_trans <- t(rgl::translationMatrix(0, displacement, 0))
-      this_trans <- diag(4)
-
-      this_mat <- this_rot %*% this_trans
-      rgl::rgl.viewpoint(userMatrix=this_mat, fov=0, zoom=zoom) #Default: 167% size
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
     }
 
@@ -669,7 +792,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     }
   }
 
-  return(invisible(fname))
+  invisible(fname)
 }
 
 #' @rdname view_xifti_surface
