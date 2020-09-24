@@ -12,7 +12,7 @@ view_xifti_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  mode = c("widget", "image", "video"),
+  mode = c("interactive", "image", "video"),
   width = NULL,
   height = NULL,
   zoom = 0.6,
@@ -39,7 +39,7 @@ view_cifti_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  mode = c("widget", "image", "video"),
+  mode = c("interactive", "image", "video"),
   width = NULL,
   height = NULL,
   zoom = 0.6,
@@ -66,7 +66,7 @@ viewCIfTI_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  mode = c("widget", "image", "video"),
+  mode = c("interactive", "image", "video"),
   width = NULL,
   height = NULL,
   zoom = 0.6,
@@ -93,7 +93,7 @@ viewcii_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  mode = c("widget", "image", "video"),
+  mode = c("interactive", "image", "video"),
   width = NULL,
   height = NULL,
   zoom = 0.6,
@@ -121,7 +121,7 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{idx}{The time/column index of the xifti data to plot.
 
- If \code{mode} is \code{"widget"} or \code{"image"}, this should be a single
+ If \code{mode} is \code{"interactive"} or \code{"image"}, this should be a single
  number. If \code{is.null(idx)}, the first column will be used.
 
  If \code{mode} is \code{"video"}, this should be a vector of numbers. If
@@ -145,13 +145,15 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
 
-\item{mode}{One of \code{"widget"} (default), \code{"image"}, or 
+\item{mode}{One of \code{"interactive"} (default), \code{"image"}, or 
  \code{"video"}:
 
- \code{"widget"} will open an interactive RGL window. Left click and drag to 
- rotate. Use the scroll wheel to zoom. Run \code{rgl::snapshot("my_file.png")} 
- to save the RGL window as a png (See \code{\link[rgl]{snapshot}} for more 
- information.). Run \code{rgl::rgl.close()} to close the window.
+ \code{"interactive"} will open an interactive RGL window if the length of 
+ \code{idx} is one, and an interactive RGL widget if the length of \code{idx}
+ is greater than one. Left click and drag to rotate. Use the scroll wheel to 
+ zoom. Run \code{rgl::snapshot("my_file.png")} to save the RGL window as a png 
+ (See \code{\link[rgl]{snapshot}} for more information.). Run 
+ \code{rgl::rgl.close()} to close the window.
 
  \code{"image"} will open the RGL window, take a screenshot using
  \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
@@ -183,12 +185,18 @@ the same aspect ratio. Both could be specified to set the dimensions exactly.}
 
 \item{bg}{Background color. \code{NULL} will not color the background (white).}
 
-\item{title}{Optional title for the plot. It will be printed at the top in
-a separate subplot with 1/4 the height of the brain cortex subplots.
-\code{NULL} (default) will use the time index (".dtseries") or name
-(.dscalar or .dlabel) of the data column being plotted. Set to an empty
-string \code{""} to omit the title. If the title is non-empty but does not
-appear, \code{cex.title} may need to be lowered.}
+\item{title}{Optional title(s) for the plot(s). It will be printed at the top 
+ in a separate subplot with 1/4 the height of the brain cortex subplots.
+ 
+ Default: \code{NULL} will use the time index (".dtseries") or name
+ (.dscalar or .dlabel) of the data column being plotted. 
+
+ To use a custom title(s), use a length 1 character vector (same title for
+ each plot) or length \code{length(idx)} character vector (different title
+ for each plot). Set to an empty string \code{""} to omit the title. 
+
+ If the title is non-empty but does not appear, \code{cex.title} may need to 
+ be lowered.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller

@@ -76,13 +76,12 @@ make_cortex <- function(
     get_col_name <- function(x){
       if (!is.matrix(x)) { return("") }
       if (!all(sort(colnames(x)) == sort(c("names", "vals")))) { return("") }
-      meta_names <- x[colnames(x) == "names"]
-      name_match = meta_names == "Name"
+      name_match = x[,colnames(x) == "names"] == "Name"
       if (sum(name_match) > 0) {
         if (sum(name_match) > 1) { 
           ciftiTools_warn("Multiple \"Name\" metadata entries. Using first only.")
         }
-        return(x[name_match[1],"vals"])
+        return(x[,colnames(x) == "vals"][name_match])
       } else {
         return("")
       }

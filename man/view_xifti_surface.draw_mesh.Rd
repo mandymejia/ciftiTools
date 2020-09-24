@@ -6,9 +6,7 @@
 \usage{
 view_xifti_surface.draw_mesh(
   mesh,
-  rot,
   mesh_color,
-  zoom,
   alpha,
   vertex_color,
   vertex_size,
@@ -18,11 +16,9 @@ view_xifti_surface.draw_mesh(
 \arguments{
 \item{mesh}{RGL brain mesh}
 
-\item{rot}{"left", "right", or "ID"}
-
 \item{mesh_color}{The color at each vertex}
 
-\item{zoom, alpha, vertex_color, vertex_size, edge_color}{See 
+\item{alpha, vertex_color, vertex_size, edge_color}{See 
 \code{\link{view_xifti_surface}}}
 }
 \value{

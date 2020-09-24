@@ -22,7 +22,7 @@ view_xifti_surface.draw_title(
 \item{cex.title, text_color}{See \code{\link{view_xifti_surface}}}
 }
 \value{
-\code{NULL}, invisibly
+The RGL object ID for the title
 }
 \description{
 See \code{\link{view_xifti_surface}} for details.
