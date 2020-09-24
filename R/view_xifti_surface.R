@@ -607,14 +607,11 @@ view_xifti_surface <- function(xifti, idx=NULL,
   no_title = FALSE
   if (!is.null(title)) {
     if (length(title) == 1){
-      if (title == "") {
-        no_title = TRUE
-      } else {
-        title <- rep(title, length(idx))
-      }
-    } else {
-      if (length(title) != length(idx)) { stop("Length of `title` must be 1 or the same as `idx`.") }
+      title <- rep(title, length(idx))
+    } else if (length(title) != length(idx)) { 
+      stop("Length of `title` must be 1 or the same as `idx`.") 
     }
+    if (all(title == "")) { no_title = TRUE }
   }
 
   # ----------------------------------------------------------------------------
@@ -693,25 +690,34 @@ view_xifti_surface <- function(xifti, idx=NULL,
   names(rglIDs) <- idx
 
   # Open a new RGL window.
-  newRGLwindow <- function(){
-    rgl::open3d()
-    if (is.null(bg)) { bg <- "white" }
-    rgl::bg3d(color=bg)
-    rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
-    Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-    rgl::layout3d(
-      matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
-      widths=rep.int(1, all_panels_ncol),
-      heights=all_panels_heights,
-      parent = NA, sharedMouse = TRUE
-    )
-  }
-  newRGLwindow()
+  rgl::open3d()
+  if (is.null(bg)) { bg <- "white" }
+  rgl::bg3d(color=bg)
+  rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
+  Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
+  rgl::layout3d(
+    matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
+    widths=rep.int(1, all_panels_ncol),
+    heights=all_panels_heights,
+    parent = NA, sharedMouse = TRUE
+  )
 
   for (jj in 1:length(idx)) {
     this_idx <- idx[jj]
 
-    if (mode %in% c("image", "video") && jj > 1) { newRGLwindow() }
+    if (mode %in% c("image", "video") && jj > 1) {
+      rgl::open3d()
+      if (is.null(bg)) { bg <- "white" }
+      rgl::bg3d(color=bg)
+      rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
+      Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
+      rgl::layout3d(
+        matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
+        widths=rep.int(1, all_panels_ncol),
+        heights=all_panels_heights,
+        parent = NA, sharedMouse = TRUE
+      )
+    }
 
     # Determine the panel layout.
     brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
