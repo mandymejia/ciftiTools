@@ -154,6 +154,12 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
     # Get data values.
     values[[h]] <- matrix(NA, ncol=length(idx), nrow=length(mwall_h))
     if (!is.null(xifti$data[[cor_h]])) {
+      if (!all(idx %in% 1:ncol(xifti$data[[cor_h]]))) {
+        stop(paste0(
+          "At least one requested index/indices was not a valid column in",
+          " the xifti (between 1 and", ncol(xifti$data[[cor_h]]), ")." 
+        ))
+      }
       values[[h]][mwall_h,] <- xifti$data[[cor_h]][,idx, drop=FALSE]
     }
 
@@ -516,6 +522,7 @@ view_xifti_surface.draw_mesh <- function(
 #' @param colorbar_digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
 #' @inheritParams surface_plot_Params
+#' @param debug Temporary. Return the objects (mesh, coloring) before rendering RGL?
 #'
 #' @export
 #' @importFrom grDevices dev.list dev.off rgb
@@ -528,7 +535,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0,
-  edge_color=NULL, vertex_color=NULL, vertex_size=0) {
+  edge_color=NULL, vertex_color=NULL, vertex_size=0, debug=FALSE) {
 
   # Check required packages and X11
   if (!requireNamespace("rgl", quietly = TRUE)) {
@@ -639,6 +646,10 @@ view_xifti_surface <- function(xifti, idx=NULL,
     )
   }
 
+  if (debug) {
+    return(list(mesh=mesh, values=values, pal_base=pal_base, pal=pal, color_vals=color_vals))
+  }
+
   # ----------------------------------------------------------------------------
   # Set up the RGL window. -----------------------------------------------------
   # ----------------------------------------------------------------------------
@@ -684,6 +695,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
   if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
   if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
+  use_subplots <- all_panels_ncol*all_panels_nrow > 1
+
   # Should only loop once unless mode=="video"
 
   rglIDs <- vector("list", length(idx))
@@ -711,12 +724,14 @@ view_xifti_surface <- function(xifti, idx=NULL,
       rgl::bg3d(color=bg)
       rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
       Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-      rgl::layout3d(
-        matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
-        widths=rep.int(1, all_panels_ncol),
-        heights=all_panels_heights,
-        parent = NA, sharedMouse = TRUE
-      )
+      if (use_subplots) {
+          rgl::layout3d(
+          matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
+          widths=rep.int(1, all_panels_ncol),
+          heights=all_panels_heights,
+          parent = NA, sharedMouse = TRUE
+        )
+      }
     }
 
     # Determine the panel layout.
@@ -787,9 +802,9 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
       if (length(view)==2 && grepl("medial", p)) {
         this_mesh <- rglIDs[[jj]][[gsub("medial", "lateral", p)]]
-        addToSubscene3d(this_mesh$mesh_col)
-        if (!is.null(this_mesh$mesh_vert)) { addToSubscene3d(this_mesh$mesh_vert) }
-        if (!is.null(this_mesh$mesh_edge)) { addToSubscene3d(this_mesh$mesh_edge) }
+        rgl::addToSubscene3d(this_mesh$mesh_col)
+        if (!is.null(this_mesh$mesh_vert)) { rgl::addToSubscene3d(this_mesh$mesh_vert) }
+        if (!is.null(this_mesh$mesh_edge)) { rgl::addToSubscene3d(this_mesh$mesh_edge) }
         rglIDs[[jj]][[p]] <- this_mesh
       } else {
         rglIDs[[jj]][[p]] <- view_xifti_surface.draw_mesh(
@@ -800,7 +815,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
       rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
 
-      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      if (use_subplots) { rgl::next3d(current = NA, clear = FALSE, reuse = FALSE) }
     }
 
     # Make the colorbar (if applicable).

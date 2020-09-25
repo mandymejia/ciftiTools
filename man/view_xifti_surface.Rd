@@ -31,7 +31,8 @@ view_xifti_surface(
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
-  vertex_size = 0
+  vertex_size = 0,
+  debug = FALSE
 )
 
 view_cifti_surface(
@@ -256,6 +257,8 @@ not outline the edges).}
 
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0} 
 (do not draw the vertices).}
+
+\item{debug}{Temporary. Return the objects (mesh, coloring) before rendering RGL?}
 }
 \description{
 Visualize \code{"xifti"} cortical data. The \code{rgl} and \code{fields} 
