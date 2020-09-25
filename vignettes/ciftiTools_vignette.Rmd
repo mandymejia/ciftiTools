@@ -1,7 +1,9 @@
 ---
 title: "ciftiTools Demo"
+output:
+  pdf_document: default
+  html_document: default
 date: "9/20/2020"
-output: html_document
 ---
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the following CIFTI file types: `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"`. It also supports the GIFTI surface geometry file, `".surf.gii"`. Reading, writing, and resampling CIFTI files is made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench).  The Workbench must be installed to use `ciftiTools`. Visualizing the CIFTI files is made possible using the `rgl` R package and integrated support of surface GIFTI files.

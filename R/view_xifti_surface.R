@@ -474,8 +474,6 @@ view_xifti_surface.draw_mesh <- function(
 #' @inheritParams xifti_Param
 #' @param idx The time/column index of the xifti data to display.
 #' 
-#'  If \code{interactive=TRUE} and there are multiple \code{idx}, only one 
-#'  \code{view} is supported. 
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right".
 #' 
 #'  If a brain cortex is requested but no surface is available, a default
@@ -522,8 +520,17 @@ view_xifti_surface.draw_mesh <- function(
 #' @inheritParams surface_plot_Params
 #' @param debug Temporary. Return the objects (mesh, coloring) before rendering RGL?
 #'
-#' @export
+#' @return If not \code{interactive}, a vector of file paths to the written
+#'  images. 
+#' 
+#'  If \code{interactive} and the length of \code{idx} is 1, a list
+#'  of rgl object IDs that can be used to further manipulate the RGL window. 
+#'  
+#'  If \code{interactive} and the length of \code{idx} is greater than 1, an
+#'  htmlwidget that should be printed to be displayed.
+#' 
 #' @importFrom grDevices dev.list dev.off rgb
+#' @export
 view_xifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   interactive=TRUE, mode=NULL, 
@@ -574,12 +581,12 @@ view_xifti_surface <- function(xifti, idx=NULL,
     interactive <- mode == "widget"
   }
   use_widget <- interactive && (!is.null(idx) && length(idx) > 1)
-  if (use_widget) {
-    warning(paste(
-      "`interactive=TRUE` and `length(idx) > 1`.",
-      "Making the RGL widget, which is still under development.\n"
-    ))
-  }
+  # if (use_widget) {
+  #   warning(paste(
+  #     "`interactive=TRUE` and `length(idx) > 1`.",
+  #     "Making the RGL widget, which is still under development.\n"
+  #   ))
+  # }
 
   # Set `idx` if null, and check `fnames`.
   if (!interactive) {
@@ -895,7 +902,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
       controls <- c(controls, list(rightControl))
     }
 
-    cat("\nYou will need to manually close the rgl window: `rgl.close()`.\n")
+    cat("\nYou will need to manually close the rgl window: `rgl::rgl.close()`.\n")
 
     # [TO DO]: Adjust sizing
     return(

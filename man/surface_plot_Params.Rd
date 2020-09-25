@@ -13,15 +13,15 @@ will be shown in a separate panel row within the RGL window.}
  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png file
  (see \code{\link[rgl]{snapshot}} for more information). Run 
  \code{rgl::rgl.close()} to close the window. If the length of \code{idx}
- is greater than one, an rgl widget will be opened with a slider to control
- the \code{idx} being shown. But, the layout will be arranged differently,
- in a less-optimal way (the widget does not support subplots).
+ is greater than one, an rgl widget with a slider to control the \code{idx} 
+ being displayed will also be returned. (Auto-print it to view it.) 
 
  \code{FALSE} will render the surface(s) in an RGL window, take a screenshot
  using \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
  as a png in \code{write_dir}. This is repeated for every \code{idx}. If
  there is only one \code{idx} the file name will be \code{"[fname].png"}.
- Otherwise, it will be \code{"[fname]_[idx[i]].png"} for each \code{idx[i]}.}
+ Otherwise, it will be \code{"[fname]_[idx[i]].png"} for each \code{idx[i]}. 
+ The written image file names will be returned.}
 
 \item{mode}{Deprecated and will be removed. \code{"widget"} will set 
 \code{interactive=TRUE} whereas \code{"image"} and \code{"video"} will set 
