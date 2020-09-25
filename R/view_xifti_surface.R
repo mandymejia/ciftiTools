@@ -349,14 +349,12 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
 #' @param xifti_meta \code{xifti$meta}
 #' @param this_idx The index
 #' @param cex.title,text_color See \code{\link{view_xifti_surface}}
-#' @param use_subplots Using subplots? Affects positioning.
-#' @param zval For no subplots, z coordinate to place text
 #' 
 #' @return The RGL object ID for the title
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color, use_subplots, zval=NULL){
+view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color){
   if (is.null(title)) {
     intent <- xifti_meta$cifti$intent
 
@@ -402,24 +400,14 @@ view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title
     }
   }
 
-  if (use_subplots) {
-    rgl::text3d(
-      x=0, y=0, z=0, 
-      cex=cex.title,
-      adj = c(.5, .5),
-      font=2, # Forget if this made a difference...
-      color=text_color,
-      text=title
-    )
-  } else {
-    rgl::text3d(
-      x=0, y=0, z=zval,
-      cex=cex.title,
-      font=2, # Forget if this made a difference...
-      color=text_color,
-      text=title
-    )
-  }
+  rgl::text3d(
+    x=0, y=0, z=0, 
+    cex=cex.title,
+    adj = c(.5, .5),
+    font=2, # Forget if this made a difference...
+    color=text_color,
+    text=title
+  )
 }
 
 #' Draw brain hemisphere mesh in RGL
@@ -474,7 +462,8 @@ view_xifti_surface.draw_mesh <- function(
     mesh_edge <- NULL
   }
 
-  list(mesh_col=mesh_col, mesh_vert=mesh_vert, mesh_edge=mesh_edge)
+  out <- list(mesh_col=mesh_col, mesh_vert=mesh_vert, mesh_edge=mesh_edge)
+  out[!sapply(out, is.null)]
 }
 
 #' View cortical surface
@@ -538,7 +527,7 @@ view_xifti_surface.draw_mesh <- function(
 view_xifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   interactive=TRUE, mode=NULL, 
-  width=NULL, height=NULL, zoom=.6,
+  width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
@@ -580,7 +569,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
   # Check `interactive` compatibility with `idx`.
   if (!is.null(mode)) {
-    warning("`mode` is deprecated; use `interactive` instead.")
+    warning("`mode` is deprecated; use `interactive` instead.\n")
     mode <- match.arg(mode, c("widget", "image", "video"))
     interactive <- mode == "widget"
   }
@@ -588,12 +577,9 @@ view_xifti_surface <- function(xifti, idx=NULL,
   if (use_widget) {
     warning(paste(
       "`interactive=TRUE` and `length(idx) > 1`.",
-      "Making the RGL widget, which is still under development.",
-      "Only one hemisphere at a time is supported."
+      "Making the RGL widget, which is still under development.\n"
     ))
-    hemisphere=hemisphere[1]; view <- view[1]
   }
-  use_subplots <- !use_widget
 
   # Set `idx` if null, and check `fnames`.
   if (!interactive) {
@@ -636,6 +622,22 @@ view_xifti_surface <- function(xifti, idx=NULL,
       stop("Length of `title` must be 1 or the same as `idx`.") 
     }
     if (all(title == "")) { no_title = TRUE }
+  }
+
+  # Hopefully will find a better solution (controlling widget size) soon.
+  if (is.null(zoom)) {
+    zoom = .6
+    if (use_widget) { 
+      if (length(view)==1) {
+        if (length(hemisphere) == 1) {
+          zoom = .7
+        } else {
+          zoom = .85
+        }
+      } else {
+        zoom = .65
+      }
+    } 
   }
 
   # ----------------------------------------------------------------------------
@@ -726,18 +728,16 @@ view_xifti_surface <- function(xifti, idx=NULL,
       rgl::bg3d(color=bg)
       rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
       Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-      if (use_subplots) {
-          rgl::layout3d(
-          matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
-          widths=rep.int(1, all_panels_ncol),
-          heights=all_panels_heights,
-          parent = NA, sharedMouse = TRUE
-        )
-      }
+      subscenes = rgl::layout3d(
+        matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
+        widths=rep.int(1, all_panels_ncol),
+        heights=all_panels_heights,
+        parent = NA, sharedMouse = TRUE
+      )
     }
 
     # Determine the panel layout.
-    brain_panels <- as.character(t(outer(view, hemisphere, paste0))) # by row
+    brain_panels <- as.character(t(outer(view, hemisphere, paste, sep="_"))) # by row
     n_brain_panels <- length(brain_panels)
     rglIDs[[jj]] <- vector("list", length=n_brain_panels+1)
     names(rglIDs[[jj]]) <- c(brain_panels, "title")
@@ -748,32 +748,21 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
     # Make the title (if applicable).
     if (!no_title) {
-      if (use_subplots) {
-        rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
-          title[jj], xifti$meta, this_idx,
-          cex.title, text_color, use_subplots, 
-        )
+      names(subscenes)[subscenes == subsceneInfo()$id] = "title"
+      rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
+        title[jj], xifti$meta, this_idx, cex.title, text_color
+      )
 
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      if(all_panels_ncol==2){
         rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-        if(all_panels_ncol==2){
-          rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-        }
-      } else {
-        all_verts <- cbind(mesh$left$vb, mesh$right$vb)
-        zval <- max(all_verts[,3]) + ( max(all_verts[,3]) - min(all_verts[,3]) ) * 1.1
-        rm(all_verts)
-        # To do: adjust size and positioning.
-        rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
-          title[jj], xifti$meta, this_idx, 
-          cex.title, text_color, use_subplots, 
-          zval = zval
-        )
       }
     }
 
     # Make the brain.
     for(ii in 1:n_brain_panels) {
       p <- brain_panels[ii]
+      names(subscenes)[subscenes == subsceneInfo()$id] = p
 
       # Get the hemisphere.
       if (grepl("left", p)) {
@@ -815,7 +804,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
         mesh_color <- NA_COLOR
       }
 
-      if ((length(view)==2 && grepl("medial", p)) && use_subplots) {
+      if ((length(view)==2 && grepl("medial", p))) {
         this_mesh <- rglIDs[[jj]][[gsub("medial", "lateral", p)]]
         rgl::addToSubscene3d(this_mesh$mesh_col)
         if (!is.null(this_mesh$mesh_vert)) { rgl::addToSubscene3d(this_mesh$mesh_vert) }
@@ -828,45 +817,33 @@ view_xifti_surface <- function(xifti, idx=NULL,
         )
       }
 
-      if (use_subplots) { 
-        rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
-        rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-      } else {
-        rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=.8) #125% size
-      }
+      rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
     }
 
     # Make the colorbar (if applicable).
     if (any_colors) {
       if (colorbar_embedded) {
-        if (use_subplots) {
-          if (!interactive || jj==1) {
-            rgl::bgplot3d(
-              # Warning: calling par(new=TRUE) with no plot
-              # Error in par(old.par) :
-              #   invalid value specified for graphical parameter "pin"
-              try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
-              bg.color=bg
-            )
+        if (!interactive || jj==1) {
+          names(subscenes)[subscenes == subsceneInfo()$id] = "legend"
+          if (use_widget) {
+            if (length(hemisphere)==1) {
+              # Somehow fix colorbar stretching. Changing x doesn't work
+              invisible()
+            }
           }
+          rgl::bgplot3d(
+            # Warning: calling par(new=TRUE) with no plot
+            # Error in par(old.par) :
+            #   invalid value specified for graphical parameter "pin"
+            try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
+            bg.color=bg
+          )
+        }
 
+        rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+        if(all_panels_ncol==2){
           rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-          if(all_panels_ncol==2){
-            rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-          }
-
-        } else {
-          if (jj == 1) {
-            # TO DO: adjust positioning
-            colorbar_kwargs$smallplot=c(.02, .35, .06, .12) # x1 x2 y1 y2
-            rgl::bgplot3d(
-              # Warning: calling par(new=TRUE) with no plot
-              # Error in par(old.par) :
-              #   invalid value specified for graphical parameter "pin"
-              try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
-              bg.color=bg
-            )
-          }
         }
       } else {
         colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
@@ -880,28 +857,57 @@ view_xifti_surface <- function(xifti, idx=NULL,
     }
   }
 
-  rglIDs2 <- lapply(rglIDs, function(x){unique(unlist(x))})
-  if (use_widget) {
-    widget_cmd <- paste(
-      'rgl::playwidget(\n\trgl::rglwidget(),',
-      paste0('\n\tstart=0, stop=', length(idx), ' - 1, interval=1,'),
-      '\n\tcomponents="Slider",',
-      '\n\trgl::subsetControl(1, subsets = [AssignedVar]$rglIDs2)\n)'
-    )
-
-    cat("\n\nKeep the RGL window open. Run this command in the rmd document, ")
-    cat("replacing [AssignedVar] with the assigned variable, ")
-    cat("i.e. `x` in `x <- read_cifti_surface(...):`\n\n")
-    cat(widget_cmd)
-    cat("\n\nAfter running the above command, the RGL window can be closed.\n\n")
-  } else {
-    widget_cmd <- NULL
-  }
+  names(subscenes)[is.na(names(subscenes))] <- "Empty"
 
   if (!interactive) {
     return(invisible(fname))
+
+  } else if (use_widget) {
+
+    titleIDs <- titleScenes <- NULL
+    leftIDs <- leftScenes <- rightIDs <- rightScenes <- NULL
+    #return(list(subscenes=subscenes, rglIDs=rglIDs))
+    controls <- vector("list", 0)
+
+    if (!no_title) {
+      titleIDs <- lapply(rglIDs, `[[`, "title")
+      titleIDs <- lapply(titleIDs, as.integer)
+      if (length(unique(titleIDs)) > 1) {
+        titleScenes <- as.integer(subscenes[names(subscenes)=="title"])
+        titleControl <- rgl::subsetControl(1, subsets=titleIDs, subscenes=titleScenes)
+        controls <- c(controls, list(titleControl))
+      }
+    }
+
+    if ("left" %in% hemisphere) {
+      leftIDs <- lapply(rglIDs, function(x){unique( lapply(x[grepl("left", names(x))], unlist) )})
+      leftIDs <- lapply(leftIDs, as.integer)
+      leftScenes <- as.integer(subscenes[grepl("left", names(subscenes))])
+      leftControl <- rgl::subsetControl(1, subsets=leftIDs, subscenes=leftScenes)
+      controls <- c(controls, list(leftControl))
+    }
+
+    if ("right" %in% hemisphere) {
+      rightIDs <- lapply(rglIDs, function(x){unique( lapply(x[grepl("right", names(x))], unlist) )})
+      rightIDs <- lapply(rightIDs, as.integer)
+      rightScenes <- as.integer(subscenes[grepl("right", names(subscenes))])
+      rightControl <- rgl::subsetControl(1, subsets=rightIDs, subscenes=rightScenes)
+      controls <- c(controls, list(rightControl))
+    }
+
+    cat("\nYou will need to manually close the rgl window: `rgl.close()`.\n")
+
+    # [TO DO]: Adjust sizing
+    return(
+      rgl::playwidget(
+        rgl::rglwidget(), 
+        start=0, stop=length(idx)-1, interval=1,
+        components="Slider", #height=all_panels_height, width=all_panels_width,
+        controls
+      )
+    )
   } else {
-    return(invisible(list(rglIDs2=rglIDs2, widget_cmd=widget_cmd)))
+    return(invisible(rglIDs))
   }
 }
 

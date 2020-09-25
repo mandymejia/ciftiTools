@@ -98,19 +98,6 @@ knitr::include_graphics(view_xifti_surface(
 ))
 ```
 
-```{r}
-rgl::open3d()
-rgl::bg3d(color="white")
-rgl::par3d(windowRect = c(20, 20, 1000, 700))
-rgl::text3d(
-  z=200, y=0, x=0,
-  cex=2,
-  font=2, # Forget if this made a difference...
-  color="black",
-  text="Help Me Move Up"
-)
-```
-
 ```{r, fig.cap="Second time point; diverging palette"}
 knitr::include_graphics(view_xifti_surface(
   cii, idx=2, zlim=c(1,5), color_mode='diverging', interactive=FALSE, 
@@ -399,22 +386,11 @@ knitr::include_graphics(plot(
 
 We are working on a slider bar for viewing different columns/timepoints of the data.
 
-```{r, webgl=FALSE, results="hide"}
-x <- view_xifti_surface(
+```{r, webgl=TRUE}
+view_xifti_surface(
   read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
   idx=1:2,
-  bg="#d4edf5", cex.title=1.25, zlim=c(0,2)
-)
-# Note: Call rglwidget() here to display inline in RStudio.
-# rglwidget() does not work with htmlpreview, so we used the WebGL hook instead.
-```
-
-```{r, webgl=TRUE}
-rgl::playwidget(
-	rgl::rglwidget(), 
-	start=0, stop=2 - 1, interval=1, 
-	components="Slider", 
-	rgl::subsetControl(1, subsets = x$rglIDs2)
+  bg="#ECF5D4", zlim=c(0,5)
 )
 rgl.close()
 ```

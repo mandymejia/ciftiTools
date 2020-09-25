@@ -16,7 +16,7 @@ view_xifti_surface(
   mode = NULL,
   width = NULL,
   height = NULL,
-  zoom = 0.6,
+  zoom = NULL,
   bg = NULL,
   title = NULL,
   cex.title = NULL,

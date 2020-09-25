@@ -9,9 +9,7 @@ view_xifti_surface.draw_title(
   xifti_meta,
   this_idx,
   cex.title,
-  text_color,
-  use_subplots,
-  zval = NULL
+  text_color
 )
 }
 \arguments{
@@ -22,10 +20,6 @@ view_xifti_surface.draw_title(
 \item{this_idx}{The index}
 
 \item{cex.title, text_color}{See \code{\link{view_xifti_surface}}}
-
-\item{use_subplots}{Using subplots? Affects positioning.}
-
-\item{zval}{For no subplots, z coordinate to place text}
 }
 \value{
 The RGL object ID for the title
