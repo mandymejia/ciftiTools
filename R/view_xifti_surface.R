@@ -755,7 +755,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
     # Make the title (if applicable).
     if (!no_title) {
-      names(subscenes)[subscenes == subsceneInfo()$id] = "title"
+      names(subscenes)[subscenes == rgl::subsceneInfo()$id] = "title"
       rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
         title[jj], xifti$meta, this_idx, cex.title, text_color
       )
@@ -769,7 +769,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # Make the brain.
     for(ii in 1:n_brain_panels) {
       p <- brain_panels[ii]
-      names(subscenes)[subscenes == subsceneInfo()$id] = p
+      names(subscenes)[subscenes == rgl::subsceneInfo()$id] = p
 
       # Get the hemisphere.
       if (grepl("left", p)) {
@@ -832,7 +832,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     if (any_colors) {
       if (colorbar_embedded) {
         if (!interactive || jj==1) {
-          names(subscenes)[subscenes == subsceneInfo()$id] = "legend"
+          names(subscenes)[subscenes == rgl::subsceneInfo()$id] = "legend"
           if (use_widget) {
             if (length(hemisphere)==1) {
               # Somehow fix colorbar stretching. Changing x doesn't work

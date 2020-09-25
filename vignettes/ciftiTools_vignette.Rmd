@@ -1,8 +1,8 @@
 ---
 title: "ciftiTools Demo"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 date: "9/20/2020"
 ---
 
