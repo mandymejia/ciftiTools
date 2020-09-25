@@ -349,12 +349,14 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
 #' @param xifti_meta \code{xifti$meta}
 #' @param this_idx The index
 #' @param cex.title,text_color See \code{\link{view_xifti_surface}}
+#' @param use_subplots Using subplots? Affects positioning.
+#' @param zval For no subplots, z coordinate to place text
 #' 
 #' @return The RGL object ID for the title
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color){
+view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color, use_subplots, zval=NULL){
   if (is.null(title)) {
     intent <- xifti_meta$cifti$intent
 
@@ -400,14 +402,24 @@ view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title
     }
   }
 
-  rgl::text3d(
-    x=0, y=0, z=0, #These values don't seem to do anything...
-    cex=cex.title,
-    adj=c(.5,.5), #replace with adj(c(0, .5)) when coords are moved
-    font=2, # Forget if this made a difference...
-    color=text_color,
-    text=title
-  )
+  if (use_subplots) {
+    rgl::text3d(
+      x=0, y=0, z=0, 
+      cex=cex.title,
+      adj = c(.5, .5),
+      font=2, # Forget if this made a difference...
+      color=text_color,
+      text=title
+    )
+  } else {
+    rgl::text3d(
+      x=0, y=0, z=zval,
+      cex=cex.title,
+      font=2, # Forget if this made a difference...
+      color=text_color,
+      text=title
+    )
+  }
 }
 
 #' Draw brain hemisphere mesh in RGL
@@ -471,13 +483,10 @@ view_xifti_surface.draw_mesh <- function(
 #'  packages are required.
 #'
 #' @inheritParams xifti_Param
-#' @param idx The time/column index of the xifti data to plot.
+#' @param idx The time/column index of the xifti data to display.
 #' 
-#'  If \code{mode} is \code{"interactive"} or \code{"image"}, this should be a single
-#'  number. If \code{is.null(idx)}, the first column will be used.
-#' 
-#'  If \code{mode} is \code{"video"}, this should be a vector of numbers. If
-#'  \code{is.null(idx)}, all columns will be used. 
+#'  If \code{interactive=TRUE} and there are multiple \code{idx}, only one 
+#'  \code{view} is supported. 
 #' @param hemisphere Which brain cortex to display: "both", "left", or "right".
 #' 
 #'  If a brain cortex is requested but no surface is available, a default
@@ -528,7 +537,8 @@ view_xifti_surface.draw_mesh <- function(
 #' @importFrom grDevices dev.list dev.off rgb
 view_xifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("interactive", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  interactive=TRUE, mode=NULL, 
+  width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
@@ -568,33 +578,40 @@ view_xifti_surface <- function(xifti, idx=NULL,
   if ("both" %in% view) { view <- c("lateral", "medial") }
   if (length(view) == 2) { view <- c("lateral", "medial") } # lateral comes first
 
-  # Check `mode` compatibility with `idx` and `fname`.
-  mode <- match.arg(mode, c("interactive", "image", "video"))
+  # Check `interactive` compatibility with `idx`.
+  if (!is.null(mode)) {
+    warning("`mode` is deprecated; use `interactive` instead.")
+    mode <- match.arg(mode, c("widget", "image", "video"))
+    interactive <- mode == "widget"
+  }
+  use_widget <- interactive && (!is.null(idx) && length(idx) > 1)
+  if (use_widget) {
+    warning(paste(
+      "`interactive=TRUE` and `length(idx) > 1`.",
+      "Making the RGL widget, which is still under development.",
+      "Only one hemisphere at a time is supported."
+    ))
+    hemisphere=hemisphere[1]; view <- view[1]
+  }
+  use_subplots <- !use_widget
 
-  if (mode == "video") {
-    if (is.null(idx)) {
-      idx <- 1:T_
+  # Set `idx` if null, and check `fnames`.
+  if (!interactive) {
+    if (is.null(idx)) { idx <- 1 } #:ncol(do.call(rbind, xifti$data)) }
+
+    if (length(idx) == 1) {
+      fname <- as.character(fname[1])
+      if (!endsWith(fname, ".png")) { fname <- paste0(fname, ".png") }
     } else {
-      stopifnot(all(idx %in% 1:T_))
+      if (length(fname)==length(idx)) {
+        fname <- as.character(fname)
+      } else {
+        fname <- gsub(".png", "", fname[1], fixed=TRUE)
+        fname <- paste0(as.character(fname), "_", idx, ".png")
+      }
     }
   } else {
-    if (is.null(idx)) {
-      idx <- 1
-    } else {
-      if (mode == "image" && length(idx) > 1) stop("For image mode, only one time/column index is supported.")
-    }
-  }
-
-  if (mode=="image") {
-    fname <- as.character(fname[1])
-    if (!endsWith(fname, ".png")) { fname <- paste0(fname, ".png") }
-  } else if (mode=="video") {
-    if (length(fname)==length(idx)) {
-      fname <- as.character(fname)
-    } else {
-      fname <- gsub(".png", "", fname[1], fixed=TRUE)
-      fname <- paste0(as.character(fname), "_", idx, ".png")
-    }
+    if (is.null(idx)) { idx <- 1 }
   }
 
   # Color mode
@@ -695,30 +712,15 @@ view_xifti_surface <- function(xifti, idx=NULL,
   if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
   if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
-  use_subplots <- all_panels_ncol*all_panels_nrow > 1
-
-  # Should only loop once unless mode=="video"
-
   rglIDs <- vector("list", length(idx))
   names(rglIDs) <- idx
 
-  # Open a new RGL window.
-  rgl::open3d()
-  if (is.null(bg)) { bg <- "white" }
-  rgl::bg3d(color=bg)
-  rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
-  Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-  rgl::layout3d(
-    matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
-    widths=rep.int(1, all_panels_ncol),
-    heights=all_panels_heights,
-    parent = NA, sharedMouse = TRUE
-  )
-
+  # For each idx...
   for (jj in 1:length(idx)) {
     this_idx <- idx[jj]
 
-    if (mode %in% c("image", "video") && jj > 1) {
+    # Open a new window for each image, or just at the start if interactive.
+    if (jj == 1 || !interactive) {
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
@@ -746,13 +748,26 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
     # Make the title (if applicable).
     if (!no_title) {
-      rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
-        title[jj], xifti$meta, this_idx, cex.title, text_color
-      )
-      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      if (use_subplots) {
+        rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
+          title[jj], xifti$meta, this_idx,
+          cex.title, text_color, use_subplots, 
+        )
 
-      if(all_panels_ncol==2){
         rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+        if(all_panels_ncol==2){
+          rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+        }
+      } else {
+        all_verts <- cbind(mesh$left$vb, mesh$right$vb)
+        zval <- max(all_verts[,3]) + ( max(all_verts[,3]) - min(all_verts[,3]) ) * 1.1
+        rm(all_verts)
+        # To do: adjust size and positioning.
+        rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
+          title[jj], xifti$meta, this_idx, 
+          cex.title, text_color, use_subplots, 
+          zval = zval
+        )
       }
     }
 
@@ -800,7 +815,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
         mesh_color <- NA_COLOR
       }
 
-      if (length(view)==2 && grepl("medial", p)) {
+      if ((length(view)==2 && grepl("medial", p)) && use_subplots) {
         this_mesh <- rglIDs[[jj]][[gsub("medial", "lateral", p)]]
         rgl::addToSubscene3d(this_mesh$mesh_col)
         if (!is.null(this_mesh$mesh_vert)) { rgl::addToSubscene3d(this_mesh$mesh_vert) }
@@ -813,24 +828,45 @@ view_xifti_surface <- function(xifti, idx=NULL,
         )
       }
 
-      rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
-
-      if (use_subplots) { rgl::next3d(current = NA, clear = FALSE, reuse = FALSE) }
+      if (use_subplots) { 
+        rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
+        rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      } else {
+        rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=.8) #125% size
+      }
     }
 
     # Make the colorbar (if applicable).
     if (any_colors) {
       if (colorbar_embedded) {
-        rgl::bgplot3d(
-          # Warning: calling par(new=TRUE) with no plot
-          # Error in par(old.par) :
-          #   invalid value specified for graphical parameter "pin"
-          try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
-          bg.color=bg
-        )
-        rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
-        if(all_panels_ncol==2){
+        if (use_subplots) {
+          if (!interactive || jj==1) {
+            rgl::bgplot3d(
+              # Warning: calling par(new=TRUE) with no plot
+              # Error in par(old.par) :
+              #   invalid value specified for graphical parameter "pin"
+              try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
+              bg.color=bg
+            )
+          }
+
           rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+          if(all_panels_ncol==2){
+            rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+          }
+
+        } else {
+          if (jj == 1) {
+            # TO DO: adjust positioning
+            colorbar_kwargs$smallplot=c(.02, .35, .06, .12) # x1 x2 y1 y2
+            rgl::bgplot3d(
+              # Warning: calling par(new=TRUE) with no plot
+              # Error in par(old.par) :
+              #   invalid value specified for graphical parameter "pin"
+              try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
+              bg.color=bg
+            )
+          }
         }
       } else {
         colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
@@ -838,26 +874,34 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     }
 
-    if (mode %in% c("image", "video")) {
+    if (!interactive) {
       rgl::rgl.snapshot(fname[jj])
       rgl::rgl.close()
     }
   }
 
-  # rglIDs2 <- lapply(rglIDs, function(x){unique(unlist(x))})
-  # if (mode == "interactive" && length(idx) > 1) {
-  #   rgl::playwidget(
-  #     rgl::rglwidget(),
-  #     start=0, stop=length(idx) - 1, interval=1,
-  #     components="Slider",
-  #     rgl::subsetControl(1, subsets = rglIDs2),
-  #   )
-  # }
+  rglIDs2 <- lapply(rglIDs, function(x){unique(unlist(x))})
+  if (use_widget) {
+    widget_cmd <- paste(
+      'rgl::playwidget(\n\trgl::rglwidget(),',
+      paste0('\n\tstart=0, stop=', length(idx), ' - 1, interval=1,'),
+      '\n\tcomponents="Slider",',
+      '\n\trgl::subsetControl(1, subsets = [AssignedVar]$rglIDs2)\n)'
+    )
 
-  if (mode %in% c("image", "video")) {
+    cat("\n\nKeep the RGL window open. Run this command in the rmd document, ")
+    cat("replacing [AssignedVar] with the assigned variable, ")
+    cat("i.e. `x` in `x <- read_cifti_surface(...):`\n\n")
+    cat(widget_cmd)
+    cat("\n\nAfter running the above command, the RGL window can be closed.\n\n")
+  } else {
+    widget_cmd <- NULL
+  }
+
+  if (!interactive) {
     return(invisible(fname))
   } else {
-    return(invisible(rglIDs))
+    return(invisible(list(rglIDs2=rglIDs2, widget_cmd=widget_cmd)))
   }
 }
 
@@ -865,34 +909,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
 #' @export
 view_cifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("interactive", "image", "video"), width=NULL, height=NULL, zoom=.6,
-  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti",
-  colors=NULL, color_mode=NULL, zlim=NULL,
-  surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL,
-  alpha=1.0,
-  edge_color=NULL, vertex_color=NULL, vertex_size=0){
-
-  view_xifti_surface(
-    xifti, idx,
-    hemisphere, view,
-    mode, width, height, zoom,
-    bg, title, cex.title, text_color,
-    fname,
-    colors, color_mode, zlim,
-    surfL, surfR,
-    colorbar_embedded,
-    colorbar_digits, alpha,
-    edge_color, vertex_color, vertex_size
-  )
-}
-
-#' @rdname view_xifti_surface
-#' @export
-viewCIfTI_surface <- function(xifti, idx=NULL,
-  hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("interactive", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  interactive=TRUE, mode=NULL, 
+  width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
@@ -904,7 +922,35 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
   view_xifti_surface(
     xifti=xifti, idx=idx,
     hemisphere=hemisphere, view=view,
-    mode=mode, width=width, height=height, zoom=zoom,
+    interactive=interactive, mode=mode, width=width, height=height, zoom=zoom,
+    bg=bg, title=title, cex.title=cex.title, text_color=text_color,
+    fname=fname,
+    colors=colors, color_mode=color_mode, zlim=zlim,
+    surfL=surfL, surfR=surfR,
+    colorbar_embedded=colorbar_embedded,
+    colorbar_digits=colorbar_digits, alpha=alpha,
+    edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size
+  )
+}
+
+#' @rdname view_xifti_surface
+#' @export
+viewCIfTI_surface <- function(xifti, idx=NULL,
+  hemisphere=NULL, view=c("both", "lateral", "medial"),
+  interactive=TRUE, mode=NULL, 
+  width=NULL, height=NULL, zoom=.6,
+  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
+  fname="xifti",
+  colors=NULL, color_mode=NULL, zlim=NULL,
+  surfL=NULL, surfR=NULL,
+  colorbar_embedded=TRUE, colorbar_digits=NULL,
+  alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0){
+
+  view_xifti_surface(
+    xifti=xifti, idx=idx,
+    hemisphere=hemisphere, view=view,
+    interactive=interactive, mode=mode, width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
     fname=fname,
     colors=colors, color_mode=color_mode, zlim=zlim,
@@ -919,7 +965,8 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
 #' @export
 viewcii_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
-  mode=c("interactive", "image", "video"), width=NULL, height=NULL, zoom=.6,
+  interactive=TRUE, mode=NULL, 
+  width=NULL, height=NULL, zoom=.6,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
@@ -931,7 +978,7 @@ viewcii_surface <- function(xifti, idx=NULL,
   view_xifti_surface(
     xifti=xifti, idx=idx,
     hemisphere=hemisphere, view=view,
-    mode=mode, width=width, height=height, zoom=zoom,
+    interactive=interactive, mode=mode, width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
     fname=fname,
     colors=colors, color_mode=color_mode, zlim=zlim,

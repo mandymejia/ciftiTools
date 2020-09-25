@@ -90,17 +90,30 @@ cii <- read_cifti(cifti_fnames$dscalar, surfL_fname=surfL_fname, surfR_fname=sur
 cii
 ```
 
-Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data. Finaly, using the argument `mode=image` the Open GL window can be saved to a static image. To minimize the size of this document, we will use the image method except for one plot in the "Resampling" section.
+Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data. Finaly, using the argument `interactive=FALSE` the Open GL window can be saved to a static image. To minimize the size of this document, we will use the image method except for one plot in the "Resampling" section.
 
 ```{r, fig.cap="First time point; sequential palette"}
 knitr::include_graphics(view_xifti_surface(
-  cii, zlim=c(1,2), mode='image', fname=file.path(out_dir, "xifti_0.png")
+  cii, zlim=c(1,2), interactive=FALSE, fname=file.path(out_dir, "xifti_0.png")
 ))
+```
+
+```{r}
+rgl::open3d()
+rgl::bg3d(color="white")
+rgl::par3d(windowRect = c(20, 20, 1000, 700))
+rgl::text3d(
+  z=200, y=0, x=0,
+  cex=2,
+  font=2, # Forget if this made a difference...
+  color="black",
+  text="Help Me Move Up"
+)
 ```
 
 ```{r, fig.cap="Second time point; diverging palette"}
 knitr::include_graphics(view_xifti_surface(
-  cii, idx=2, zlim=c(1,5), color_mode='diverging', mode='image', 
+  cii, idx=2, zlim=c(1,5), color_mode='diverging', interactive=FALSE, 
   fname=file.path(out_dir, "xifti_1.png")
 ))
 ```
@@ -108,7 +121,7 @@ knitr::include_graphics(view_xifti_surface(
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata"}
 cii <- read_cifti(cifti_fnames$dlabel, surfL=surfL_fname, surfR=surfR_fname)
 knitr::include_graphics(view_xifti_surface(
-  cii, mode='image', fname=file.path(out_dir, "xifti_2.png")
+  cii, interactive=FALSE, fname=file.path(out_dir, "xifti_2.png")
 ))
 ```
 
@@ -147,7 +160,7 @@ A `"surface"` can be read in using `make_surf`. They can be viewed with `view_su
 
 ```{r, out.width="50%", fig.cap="Left hemisphere surface"}
 knitr::include_graphics(view_surf(
-  surfL_fname, mode="image", fname=file.path(out_dir, "surf_1.png")
+  surfL_fname, interactive=FALSE, fname=file.path(out_dir, "surf_1.png")
 ))
 ```
 
@@ -158,7 +171,7 @@ small_surf <- resample_surf(make_surf(surfR_fname), 4000)
 # Use ciftiTools:::plot.surface instead of plot because plot.surface is an S3 method from fields package (used to create legend in RGL) too
 knitr::include_graphics(ciftiTools:::plot.surface(
   small_surf,
-  mode="image", fname=file.path(out_dir, "surf_2.png"),
+  interactive=FALSE, fname=file.path(out_dir, "surf_2.png"),
   # hemisphere="right", # able to be deduced from metadata
   edge_color="black", vertex_size=5
 ))
@@ -206,7 +219,7 @@ To visualize the cortical data of the new `xifti` object, we can add surface geo
 ```{r, fig.cap=".dtseries mean image"}
 #cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
 knitr::include_graphics(view_xifti_surface(
-  cii_new, mode="image", fname=file.path(out_dir, "xifti_3.png"), 
+  cii_new, interactive=FALSE, fname=file.path(out_dir, "xifti_3.png"), 
   title=".dtseries Mean Image", zlim=c(0,4)
 ))
 ```
@@ -376,8 +389,32 @@ smooth_cifti(
 )
 knitr::include_graphics(plot(
   read_cifti(smoothed_cii_fname), 
-  surfL=surfL_fname, surfR=surfR_fname, mode="image", 
+  surfL=surfL_fname, surfR=surfR_fname, interactive=FALSE, 
   title="Smoothed CIFTI", zlim=c(1,2),
   fname=file.path(out_dir, "xifti_4.png")
 ))
+```
+
+# In Development
+
+We are working on a slider bar for viewing different columns/timepoints of the data.
+
+```{r, webgl=FALSE, results="hide"}
+x <- view_xifti_surface(
+  read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
+  idx=1:2,
+  bg="#d4edf5", cex.title=1.25, zlim=c(0,2)
+)
+# Note: Call rglwidget() here to display inline in RStudio.
+# rglwidget() does not work with htmlpreview, so we used the WebGL hook instead.
+```
+
+```{r, webgl=TRUE}
+rgl::playwidget(
+	rgl::rglwidget(), 
+	start=0, stop=2 - 1, interval=1, 
+	components="Slider", 
+	rgl::subsetControl(1, subsets = x$rglIDs2)
+)
+rgl.close()
 ```

@@ -7,7 +7,8 @@
 view_surf(
   ...,
   view = c("both", "lateral", "medial"),
-  mode = c("widget", "image", "video"),
+  interactive = TRUE,
+  mode = NULL,
   width = NULL,
   height = NULL,
   zoom = 0.6,
@@ -34,24 +35,24 @@ right.}
 If \code{NULL} (default), both views will be shown. Each view
 will be shown in a separate panel row within the RGL window.}
 
-\item{mode}{One of \code{"interactive"} (default), \code{"image"}, or 
- \code{"video"}:
+\item{interactive}{\code{TRUE} (default) will render the surface(s) in an interactive RGL 
+ window. Left click and drag to rotate. Use the scroll wheel to zoom. Run 
+ \code{rgl::snapshot("my_file.png")} to save the RGL window as a png file
+ (see \code{\link[rgl]{snapshot}} for more information). Run 
+ \code{rgl::rgl.close()} to close the window. If the length of \code{idx}
+ is greater than one, an rgl widget will be opened with a slider to control
+ the \code{idx} being shown. But, the layout will be arranged differently,
+ in a less-optimal way (the widget does not support subplots).
 
- \code{"interactive"} will open an interactive RGL window if the length of 
- \code{idx} is one, and an interactive RGL widget if the length of \code{idx}
- is greater than one. Left click and drag to rotate. Use the scroll wheel to 
- zoom. Run \code{rgl::snapshot("my_file.png")} to save the RGL window as a png 
- (See \code{\link[rgl]{snapshot}} for more information.). Run 
- \code{rgl::rgl.close()} to close the window.
+ \code{FALSE} will render the surface(s) in an RGL window, take a screenshot
+ using \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
+ as a png in \code{write_dir}. This is repeated for every \code{idx}. If
+ there is only one \code{idx} the file name will be \code{"[fname].png"}.
+ Otherwise, it will be \code{"[fname]_[idx[i]].png"} for each \code{idx[i]}.}
 
- \code{"image"} will open the RGL window, take a screenshot using
- \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
- as a png in \code{write_dir} and its name will be \code{"[fname].png"}.
-
- \code{"video"} will take a series of screenshots of the RGL window, while
- for each column index in \code{idx}. The frames can
- be converted to a video file using multimedia software such as Adobe
- Premiere Pro. The "video" mode is not yet supported.}
+\item{mode}{Deprecated and will be removed. \code{"widget"} will set 
+\code{interactive=TRUE} whereas \code{"image"} and \code{"video"} will set 
+\code{interactive=FALSE}.}
 
 \item{width}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), the dimensions will be set to
