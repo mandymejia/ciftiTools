@@ -9,6 +9,8 @@
 status](https://travis-ci.com/mandymejia/ciftiTools.svg?branch=master)](https://travis-ci.com/mandymejia/ciftiTools)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
+[![Coveralls test
+coverage](https://coveralls.io/repos/github/mandymejia/ciftiTools/badge.svg)](https://coveralls.io/r/mandymejia/ciftiTools?branch=master)
 <!-- badges: end -->
 
 Tools for reading and visualizing CIFTI brain imaging files. CIFTI files
