@@ -47,7 +47,7 @@ write_xifti(
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{surfL_fname, surfR_fname}{If the [left/right] surface is present, it 
 will be a written to a GIFTI file at this file path. If \code{NULL} 

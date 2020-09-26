@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{match_exactly}
 \alias{match_exactly}
-\title{Check if two character vectors match}
+\title{Do these character vectors match exactly?}
 \usage{
 match_exactly(
   user,
@@ -21,11 +21,14 @@ are \code{"message"} (default), \code{"warning"}, \code{"stop"}, and
 \code{"nothing"}.}
 }
 \value{
-Whether the two character vectors match
+Logical. Do \code{user} and \code{expected} match?
 }
 \description{
 Checks if a user-defined character vector matches an expected character
  vector. That is, they share the same lengths and entries in the same order.
  For vectors of the same lengths, the result is \code{all(a == b)}.
+}
+\details{
+Attributes are ignored.
 }
 \keyword{internal}

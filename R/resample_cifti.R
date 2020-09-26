@@ -1,9 +1,11 @@
 #' Resample CIFTI Data
 #'
-#' @description Performs spatial resampling of CIFTI data on the cortical surface
+#' Performs spatial resampling of CIFTI data on the cortical surface
 #'  by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
 #'  putting them together. (The subcortex is not resampled.) 
 #'
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @param cifti_original_fname A CIFTI file to resample.
 #' @param cifti_target_fname The file name to save the resampled CIFTI.
 #' @param surfL_original_fname,surfR_original_fname (Optional) File path of 
@@ -20,13 +22,20 @@
 #' @inheritParams resamp_fnames_Param
 #' @inheritParams resamp_keep_Param
 #' @inheritParams write_dir_Param_intermediate
+#' @param mwall_values If the medial wall locations are not indicated in the
+#'  CIFTI, use these values to infer the medial wall mask. Default: 
+#'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
+#' 
+#'  Correctly indicating the medial wall locations is important for resampling,
+#'  because the medial wall mask is taken into account during resampling
+#'  calculations.
 #' @inheritParams verbose_Param_TRUE
 #' @inheritParams wb_path_Param
 #'
 #' @return A named character vector of written files: \code{"cifti"} and
 #'  potentially \code{"surfL"} (if \code{surfL_original_fname} was provided) 
 #'  and/or \code{"surfR"} (if \code{surfR_original_fname} was provided).
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @export
 #'
 resample_cifti <- function(
@@ -36,7 +45,9 @@ resample_cifti <- function(
   resamp_res, 
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, 
+  mwall_values=c(NA, NaN),
+  verbose=TRUE, wb_path=NULL) {
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -55,7 +66,6 @@ resample_cifti <- function(
 
   stopifnot(resamp_res > 0)
 
-  # [TO DO]: consider auto-generating cifti_target_fname & make it optional
   cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
 
   if (verbose) { exec_time <- Sys.time() }
@@ -97,7 +107,28 @@ resample_cifti <- function(
   }
 
   # ----------------------------------------------------------------------------
-  # resample_cifti_components() --------------------------------------------------
+  # Handle medial wall values --------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+  if (!is.null(mwall_values)) {
+    if ("left" %in% brainstructures) {
+      fix_gifti_mwall(
+        to_cif["cortexL"], to_cif["cortexL"], 
+        to_cif["ROIcortexL"], to_cif["ROIcortexL"], 
+        mwall_values
+      )
+    }
+    if ("right" %in% brainstructures) {
+      fix_gifti_mwall(
+        to_cif["cortexR"], to_cif["cortexR"], 
+        to_cif["ROIcortexR"], to_cif["ROIcortexR"], 
+        mwall_values
+      )
+    }
+  }
+
+  # ----------------------------------------------------------------------------
+  # resample_cifti_components() ------------------------------------------------
   # ----------------------------------------------------------------------------
   
   # Do not resample the subcortical data.
@@ -164,16 +195,16 @@ resampleCIfTI <- function(
   resamp_res, 
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE, wb_path=NULL) {
 
   resample_cifti(
-    cifti_original_fname, cifti_target_fname, 
-    surfL_original_fname, surfR_original_fname,
-    surfL_target_fname, surfR_target_fname,
-    resamp_res,
-    sep_keep, sep_fnames, #separate_cifti
-    resamp_keep, resamp_fnames, # resample_cifti_components
-    write_dir, verbose, wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname, 
+    surfL_original_fname=surfL_original_fname, surfR_original_fname=surfR_original_fname,
+    surfL_target_fname=surfL_target_fname, surfR_target_fname=surfR_target_fname,
+    resamp_res=resamp_res,
+    sep_keep=sep_keep, sep_fnames=sep_fnames, #separate_cifti
+    resamp_keep=resamp_keep, resamp_fnames=resamp_fnames, # resample_cifti_components
+    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose, wb_path=wb_path
   ) 
 }
 
@@ -186,16 +217,16 @@ resamplecii <- function(
   resamp_res,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE, wb_path=NULL) {
 
   resample_cifti(
-    cifti_original_fname, cifti_target_fname, 
-    surfL_original_fname, surfR_original_fname,
-    surfL_target_fname, surfR_target_fname,
-    resamp_res,
-    sep_keep, sep_fnames, #separate_cifti
-    resamp_keep, resamp_fnames, # resample_cifti_components
-    write_dir, verbose, wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname, 
+    surfL_original_fname=surfL_original_fname, surfR_original_fname=surfR_original_fname,
+    surfL_target_fname=surfL_target_fname, surfR_target_fname=surfR_target_fname,
+    resamp_res=resamp_res,
+    sep_keep=sep_keep, sep_fnames=sep_fnames, #separate_cifti
+    resamp_keep=resamp_keep, resamp_fnames=resamp_fnames, # resample_cifti_components
+    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose, wb_path=wb_path
   ) 
 }
 
@@ -208,15 +239,15 @@ resample_xifti <- function(
   resamp_res,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE, wb_path=NULL) {
 
   resample_cifti(
-    cifti_original_fname, cifti_target_fname, 
-    surfL_original_fname, surfR_original_fname,
-    surfL_target_fname, surfR_target_fname,
-    resamp_res,
-    sep_keep, sep_fnames, #separate_cifti
-    resamp_keep, resamp_fnames, # resample_cifti_components
-    write_dir, verbose, wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname, 
+    surfL_original_fname=surfL_original_fname, surfR_original_fname=surfR_original_fname,
+    surfL_target_fname=surfL_target_fname, surfR_target_fname=surfR_target_fname,
+    resamp_res=resamp_res,
+    sep_keep=sep_keep, sep_fnames=sep_fnames, #separate_cifti
+    resamp_keep=resamp_keep, resamp_fnames=resamp_fnames, # resample_cifti_components
+    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose, wb_path=wb_path
   ) 
 }

@@ -14,7 +14,7 @@ unmask_cortex(cortex, mwall, mwall_fill = NA)
 \item{mwall_fill}{The fill value to use for medial wall vertices.}
 }
 \value{
-The unmasked cortex data.
+The unmasked cortex data
 }
 \description{
 Get cortex data with medial wall vertices

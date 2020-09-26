@@ -8,12 +8,13 @@
 \title{Read a CIFTI file}
 \usage{
 read_cifti(
-  cifti_fname,
+  cifti_fname = NULL,
   flat = FALSE,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -26,6 +27,7 @@ readCIfTI(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -38,6 +40,7 @@ readcii(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
@@ -50,30 +53,32 @@ read_xifti(
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
-\item{flat}{Should the result be flattened into a single matrix? If \code{TRUE},
- the result will be a \eqn{T x B} matrix (\eqn{T} measurements, \eqn{B} brainordinates 
- not including the medial wall). All below arguments will be ignored, because 
- the brain  structures cannot be identified and surfaces will not be appended. 
- Resampling is also not possible.
+\item{flat}{Should the result be flattened into a single matrix? 
 
- This is the fastest way to read in just the CIFTI data. 
+ If \code{FALSE} (default), the result will be a \code{"xifti"} object.
 
- The brainordinates will be ordered by left cortex, right cortex, and then 
- subcortical, but where each brainstructure begins, as well as which 
- structures each brainordinate represents, cannot be determined. The
- medial wall vertices and subcortical brain mask are also not included. The 
- data matrix will be identical to that created by 
- \code{-cifti-convert -to-gifti-ext}.
+ If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T} 
+ measurements, \eqn{G} greyordinates not including the medial wall if it's 
+ excluded from the ROI). All below arguments will be ignored because the 
+ brain structures cannot be identified. Surfaces will not be appended. 
+ Resampling is also not possible. \code{flat==TRUE} is the fastest way to 
+ read in just the CIFTI data. 
 
- If \code{FALSE}, the result will be a "xifti" object.}
+ If \code{TRUE}, the greyordinates will be ordered by left cortex, right 
+ cortex, and then subcortex. Subcortical voxels will be ordered by alphabetical 
+ label. However, where each brainstructure (and subcortical structure) begins
+ and ends cannot be determined. The medial wall locations and subcortical 
+ brain mask are also not included. The data matrix will be identical to that 
+ created by \code{-cifti-convert -to-gifti-ext}.}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -82,15 +87,22 @@ file representing the left cortex.}
 file representing the right cortex.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (cortical surface only).}
+ to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+ gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+ Default: \code{c("left","right")} (cortical surface only).
+
+ If a brain structure is indicated but does not exist, a warning will be
+ raised and that brain structure will be skipped.}
 
 \item{resamp_res}{Resolution to resample the cortical data and surface to.
 Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 have to be read in with \code{-cifti-separate}, which is slower than 
 \code{-cifti-convert -to-gifti-ext}.}
+
+\item{mwall_values}{If the medial wall locations are not indicated in the
+CIFTI, use these values to infer the medial wall mask. Default: 
+\code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -102,11 +114,11 @@ If not provided, should be set with
 \code{\link{read_cifti_separate}}.}
 }
 \value{
-If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x B} 
- matrix (\eqn{T} measurements, \eqn{B} brainordinates).
+If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G} 
+ matrix (\eqn{T} measurements, \eqn{G} greyordinates).
 }
 \description{
-Read a CIFTI file as a "xifti" object (see \code{\link{is.xifti}}).
+Read a CIFTI file as a \code{"xifti"} object (see \code{\link{is.xifti}}).
 }
 \details{
 First, metadata is obtained with \code{\link{info_cifti}}. Then, if no 
@@ -118,6 +130,8 @@ First, metadata is obtained with \code{\link{info_cifti}}. Then, if no
  and then re-assembled (\code{\link{read_cifti_separate}}). The former is
  much faster for large CIFTI files, so the latter is only used when necessary
  for resampling.
+
+If \code{cifti_fname} is not provided, then only the surfaces are read in.
 }
 \section{Connectome Workbench Requirement}{
 
@@ -133,31 +147,31 @@ First, metadata is obtained with \code{\link{info_cifti}}. Then, if no
 
  \code{xifti$meta$subcort$labels} is a factor with the following levels:
 
- \describe{
-   \item{1}{Cortex-L}
-   \item{2}{Cortex-R}
-   \item{3}{Accumbens-L}
-   \item{4}{Accumbens-R}
-   \item{5}{Amygdala-L}
-   \item{6}{Amygdala-R}
-   \item{7}{Brain Stem}
-   \item{8}{Caudate-L}
-   \item{9}{Caudate-R}
-   \item{10}{Cerebellum-L}
-   \item{11}{Cerebellum-R}
-   \item{12}{Diencephalon-L}
-   \item{13}{Diencephalon-R}
-   \item{14}{Hippocampus-L}
-   \item{15}{Hippocampus-R}
-   \item{16}{Pallidum-L}
-   \item{17}{Pallidum-R}
-   \item{18}{Putamen-L}
-   \item{19}{Putamen-R}
-   \item{20}{Thalamus-L}
-   \item{21}{Thalamus-R}
+ \enumerate{
+   \item{Cortex-L}
+   \item{Cortex-R}
+   \item{Accumbens-L}
+   \item{Accumbens-R}
+   \item{Amygdala-L}
+   \item{Amygdala-R}
+   \item{Brain Stem}
+   \item{Caudate-L}
+   \item{Caudate-R}
+   \item{Cerebellum-L}
+   \item{Cerebellum-R}
+   \item{Diencephalon-L}
+   \item{Diencephalon-R}
+   \item{Hippocampus-L}
+   \item{Hippocampus-R}
+   \item{Pallidum-L}
+   \item{Pallidum-R}
+   \item{Putamen-L}
+   \item{Putamen-R}
+   \item{Thalamus-L}
+   \item{Thalamus-R}
  }
 
- Levels 1-21 correspond to the same structures as given by 
+ These correspond to the same structures as given by 
  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 

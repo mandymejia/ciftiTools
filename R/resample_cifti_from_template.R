@@ -3,13 +3,15 @@
 #' Resample a CIFTI from a template CIFTI using the \code{-cifti-resample} 
 #'  Connectome Workbench command.
 #' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @param original_fname A CIFTI file to resample.
 #' @param template_fname A CIFTI file to use as the template.
 #' @param target_fname The file name to save the resampled CIFTI.
 #' @inheritParams wb_path_Param
 #'
 #' @return The \code{target_fname}, invisibly
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @export
 #'
 resample_cifti_from_template <- function(
@@ -44,7 +46,6 @@ resample_cifti_from_template <- function(
 
   # Cortical spheres.
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
-    # TO DO: what if medial wall mask is NULL?
     if (!("left" %in% brainstructures)) {
       original_res <- length(original_info$cortex$medial_wall_mask$left)
     } else {

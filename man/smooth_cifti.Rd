@@ -81,6 +81,12 @@ The \code{cifti_target_fname}, invisibly
 Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
  from Connectome Workbench.
 }
+\details{
+If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
+ to a ".dscalar" file because the values will no longer be integer indices.
+ Unless the label values were ordinal, this is probably not desired so a
+ warning will be printed.
+}
 \section{Connectome Workbench Requirement}{
 
  This function uses a system wrapper for the 'wb_command' executable. The 

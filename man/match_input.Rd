@@ -26,10 +26,13 @@ are \code{"stop"} (default; raises an error), \code{"warning"}, and
 message. If \code{NULL}, no label is used.}
 }
 \value{
-The matched user inputs.
+The matched user inputs
 }
 \description{
-Match each user input to an expected/allowed value. Raise a warning if either
+Match each user input to an expected/allowed value.
+}
+\details{
+Raise a warning if either
  several user inputs match the same expected value, or at least one could not
  be matched to any expected value. \code{ciftiTools} uses this function to
  match keyword arguments for a function call. Another use is to match

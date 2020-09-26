@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers.R
 \name{resample_cifti_wrapper}
 \alias{resample_cifti_wrapper}
-\title{resample_cifti with collapsed file name argument}
+\title{\code{resample_cifti} wrapper}
 \usage{
 resample_cifti_wrapper(
   original_fnames,
@@ -60,7 +60,7 @@ file representing the right cortex.}
 the resampled GIFTI surface geometry file representing the left/right 
 cortex. If NULL (default),}
 
-\item{read_dir}{Directory to append to the path of every original file name,
+\item{read_dir}{Directory to append to the path of every file being read,
  e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
  any directory to the path.
 
@@ -77,7 +77,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-The return value of the resample_cifti call.
+The return value of the \code{resample_cifti} call
 }
 \description{
 Calls \code{resample_cifti} using the original file names 

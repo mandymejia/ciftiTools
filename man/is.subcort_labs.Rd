@@ -10,12 +10,12 @@ is.subcort_labs(x)
 \item{x}{The putative factor vector of brain substructures.}
 }
 \value{
-Logical indicating whether x is a factor vector of subcortical 
- structures.
+Logical. Is \code{x} a factor vector of subcortical
+ structures?
 }
 \description{
-Check if object is a factor vector of subcortical structures.
- This is a helper function for \code{\link{is.xifti}}.
+Check if object is a factor vector of subcortical structures.This is a helper
+ function for \code{\link{is.xifti}}.
 }
 \details{
 Requirements: see the "Label Levels" section for the expected factor levels.
@@ -24,31 +24,32 @@ Requirements: see the "Label Levels" section for the expected factor levels.
 
  \code{xifti$meta$subcort$labels} is a factor with the following levels:
 
- \describe{
-   \item{1}{Cortex-L}
-   \item{2}{Cortex-R}
-   \item{3}{Accumbens-L}
-   \item{4}{Accumbens-R}
-   \item{5}{Amygdala-L}
-   \item{6}{Amygdala-R}
-   \item{7}{Brain Stem}
-   \item{8}{Caudate-L}
-   \item{9}{Caudate-R}
-   \item{10}{Cerebellum-L}
-   \item{11}{Cerebellum-R}
-   \item{12}{Diencephalon-L}
-   \item{13}{Diencephalon-R}
-   \item{14}{Hippocampus-L}
-   \item{15}{Hippocampus-R}
-   \item{16}{Pallidum-L}
-   \item{17}{Pallidum-R}
-   \item{18}{Putamen-L}
-   \item{19}{Putamen-R}
-   \item{20}{Thalamus-L}
-   \item{21}{Thalamus-R}
+ \enumerate{
+   \item{Cortex-L}
+   \item{Cortex-R}
+   \item{Accumbens-L}
+   \item{Accumbens-R}
+   \item{Amygdala-L}
+   \item{Amygdala-R}
+   \item{Brain Stem}
+   \item{Caudate-L}
+   \item{Caudate-R}
+   \item{Cerebellum-L}
+   \item{Cerebellum-R}
+   \item{Diencephalon-L}
+   \item{Diencephalon-R}
+   \item{Hippocampus-L}
+   \item{Hippocampus-R}
+   \item{Pallidum-L}
+   \item{Pallidum-R}
+   \item{Putamen-L}
+   \item{Putamen-R}
+   \item{Thalamus-L}
+   \item{Thalamus-R}
  }
 
- Levels 1-21 correspond to the same structures as given by 
+ These correspond to the same structures as given by 
  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
+\keyword{internal}

@@ -11,7 +11,7 @@ get_data_meta_from_cifti_xml(xml, intent = 3000)
 used later. Default: \code{3000} (NIFTI_INTENT_UNKNOWN)}
 
 \item{x}{List representing "MatrixIndicesMap" entry XML 
-(\code{xii$CIFTI$Matrix[[3]]})}
+(\code{xifti$CIFTI$Matrix[[3]]})}
 }
 \value{
 The metadata, a list

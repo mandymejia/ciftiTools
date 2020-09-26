@@ -4,7 +4,7 @@
 \alias{read_dir_Param_separated}
 \title{read_dir: separated files}
 \arguments{
-\item{read_dir}{Directory to append to the path of every original file name,
+\item{read_dir}{Directory to append to the path of every file being read,
  e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
  any directory to the path.
 

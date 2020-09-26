@@ -1,7 +1,9 @@
 ---
 title: "ciftiTools Demo"
-date: "8/29/2020"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+date: "9/20/2020"
 ---
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the following CIFTI file types: `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"`. It also supports the GIFTI surface geometry file, `".surf.gii"`. Reading, writing, and resampling CIFTI files is made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench).  The Workbench must be installed to use `ciftiTools`. Visualizing the CIFTI files is made possible using the `rgl` R package and integrated support of surface GIFTI files.
@@ -90,17 +92,17 @@ cii <- read_cifti(cifti_fnames$dscalar, surfL_fname=surfL_fname, surfR_fname=sur
 cii
 ```
 
-Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data. Finaly, using the argument `mode=image` the Open GL window can be saved to a static image. To minimize the size of this document, we will use the image method except for one plot in the "Resampling" section.
+Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an interactive Open GL window. Several default color palettes are available through the `color_mode` argument: `"sequential"` (default), `"qualitative"` and `"diverging"`.  The `"qualitative"` color mode is primarily intended for dlabel CIFTI files.  The `colors` argument can be used to choose other palettes.  The `idx` argument can be used to visualize different columns or time points in the data. Finaly, using the argument `interactive=FALSE` the Open GL window can be saved to a static image. To minimize the size of this document, we will use the image method except for one plot in the "Resampling" section.
 
 ```{r, fig.cap="First time point; sequential palette"}
 knitr::include_graphics(view_xifti_surface(
-  cii, zlim=c(1,2), mode='image', fname=file.path(out_dir, "xifti_0.png")
+  cii, zlim=c(1,2), interactive=FALSE, fname=file.path(out_dir, "xifti_0.png")
 ))
 ```
 
 ```{r, fig.cap="Second time point; diverging palette"}
 knitr::include_graphics(view_xifti_surface(
-  cii, idx=2, zlim=c(1,5), color_mode='diverging', mode='image', 
+  cii, idx=2, zlim=c(1,5), color_mode='diverging', interactive=FALSE, 
   fname=file.path(out_dir, "xifti_1.png")
 ))
 ```
@@ -108,7 +110,7 @@ knitr::include_graphics(view_xifti_surface(
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata"}
 cii <- read_cifti(cifti_fnames$dlabel, surfL=surfL_fname, surfR=surfR_fname)
 knitr::include_graphics(view_xifti_surface(
-  cii, mode='image', fname=file.path(out_dir, "xifti_2.png")
+  cii, interactive=FALSE, fname=file.path(out_dir, "xifti_2.png")
 ))
 ```
 
@@ -122,7 +124,7 @@ view_xifti_volume(cii)
 
 ```{r eval=FALSE}
 # For information only, since papaya viewer cannot be opened during knitting
-view_xifti_volume(cii, num.slices=10, use_papaya = TRUE)
+view_xifti_volume(cii, use_papaya = TRUE)
 ```
 
 The `"xifti"` "plot" method (`plot(cii)`) will display the cortical data if possible, and the subcortical data otherwise. 
@@ -143,13 +145,26 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 ### Support for surface geometry without data
 
-A `"surface"` can be read in using `make_surf(surfL_fname)`. They can be viewed with `view_surf` or, equivalently, their `plot` method.
+A `"surface"` can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
 
-```{r, out.width="50%", fig.cap="Right hemisphere surface"}
-knitr::include_graphics(plot(
-  make_surf(surfR_fname), hemisphere="right", mode="image", 
-  fname=file.path(out_dir, "surf_1.png")
+```{r, out.width="50%", fig.cap="Left hemisphere surface"}
+knitr::include_graphics(view_surf(
+  surfL_fname, interactive=FALSE, fname=file.path(out_dir, "surf_1.png")
 ))
+```
+
+We can additionally render the vertices and edges. Below is the right hemisphere surface. (It has been resampled so the edges and vertices are visible; see the below section on resampling.)
+
+```{r, out.width="50%", fig.cap="Right hemisphere surface (resampled) with mesh"}
+small_surf <- resample_surf(make_surf(surfR_fname), 4000)
+# Use ciftiTools:::plot.surface instead of plot because plot.surface is an S3 method from fields package (used to create legend in RGL) too
+knitr::include_graphics(ciftiTools:::plot.surface(
+  small_surf,
+  interactive=FALSE, fname=file.path(out_dir, "surf_2.png"),
+  # hemisphere="right", # able to be deduced from metadata
+  edge_color="black", vertex_size=5
+))
+rm(small_surf)
 ```
 
 A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
@@ -188,20 +203,20 @@ is.xifti(cii_new)
 cii_new
 ```
 
-To visualize the cortical data of the new `xifti` object, we need to add the surface geometry:
+To visualize the cortical data of the new `xifti` object, we can add surface geometry with `add_surf`, or by providing surfaces with the `surfL` and `surfR` arguments to `view_xifti_surface`. Lastly, we can use the inflated surfaces that come with `ciftiTools` by default:
 
 ```{r, fig.cap=".dtseries mean image"}
-cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
+#cii_new <- add_surf(cii_new, surfL=surfL_fname, surfR=surfR_fname)
 knitr::include_graphics(view_xifti_surface(
-  cii_new, mode="image", fname=file.path(out_dir, "xifti_3.png"), 
+  cii_new, interactive=FALSE, fname=file.path(out_dir, "xifti_3.png"), 
   title=".dtseries Mean Image", zlim=c(0,4)
 ))
 ```
 
-Here's the subcortical data:
+Here's the subcortical data in sagittal view:
 
-```{r, fig.cap="Subcortical data (with random noise)"}
-view_xifti_volume(cii_new)
+```{r, fig.cap="Subcortical data, sagittal view (with random noise)"}
+view_xifti_volume(cii_new, plane="sag")
 ```
 
 We can also write out a new CIFTI file with `write_cifti`! Here's how:
@@ -363,8 +378,21 @@ smooth_cifti(
 )
 knitr::include_graphics(plot(
   read_cifti(smoothed_cii_fname), 
-  surfL=surfL_fname, surfR=surfR_fname, mode="image", 
+  surfL=surfL_fname, surfR=surfR_fname, interactive=FALSE, 
   title="Smoothed CIFTI", zlim=c(1,2),
   fname=file.path(out_dir, "xifti_4.png")
 ))
+```
+
+# In Development
+
+We are working on a slider bar for viewing different columns/timepoints of the data.
+
+```{r, webgl=TRUE}
+view_xifti_surface(
+  read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
+  idx=1:2,
+  bg="#ECF5D4", zlim=c(0,5)
+)
+rgl.close()
 ```

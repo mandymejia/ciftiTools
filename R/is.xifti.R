@@ -1,6 +1,4 @@
-## [TO DO]: is.xifti_map
-
-#' Validate a numeric matrix.
+#' Validate a numeric matrix
 #' 
 #' Check if object is a numeric matrix.
 #' 
@@ -8,7 +6,9 @@
 #' 
 #' @param x The putative numeric matrix
 #' 
-#' @return Logical indicating whether x is a valid numeric matrix.
+#' @return Logical. Is \code{x} a valid numeric matrix?
+#' 
+#' @keywords internal
 #' 
 is.nummat <- function(x) {
   if (!is.matrix(x) || !is.numeric(x)) {
@@ -27,14 +27,16 @@ is.nummat <- function(x) {
 #'
 #'  Requirements: a list with entries "cortex_left", "cortex_right", and
 #'  "subcort". Each must be either \code{NULL} or a numeric matrix with
-#'  brainordinates along the rows and measurements along the columns.
+#'  greyordinates along the rows and measurements along the columns.
 #'  The cortical matrices should have the same number of rows (vertices), and
 #'  all should have the same number of columns (measurements). At least one data
 #'  entry should be present.
 #'
 #' @param x The putative "data" component.
 #'
-#' @return Logical indicating whether x is a valid "data" component.
+#' @return Logical. Is \code{x} a valid "data" component?
+#' 
+#' @keywords internal
 #'
 is.xifti_data <- function(x) {
   # Check that the entries are as expected.
@@ -80,21 +82,24 @@ is.xifti_data <- function(x) {
 #' 
 #'  This is a helper function for \code{\link{is.xifti}}.
 #' 
-#'  Requirements: the surface must be a list of two components: "vertices" and 
-#'  "faces", each a numeric matrix with three columns. The values in "vertices"
-#'  represent spatial coordinates whereas the values in "faces" represent
-#'  vertex indices defining the face. Thus, values in "faces" should be integers
-#'  between 1 and the number of vertices. 
+#'  Requirements: the surface must be a list of three components: "vertices", 
+#'  "faces", and "hemisphere". The first two should each be a numeric matrix 
+#'  with three columns. The values in "vertices" represent spatial coordinates 
+#'  whereas the values in "faces" represent vertex indices defining the face. 
+#'  Thus, values in "faces" should be integers between 1 and the number of 
+#'  vertices. The last list entry, "hemisphere", should be "left", "right", 
+#'  or NULL indicating the brain hemisphere which the surface represents.
 #'
 #' @param x The putative surface.
 #'
-#' @return Logical indicating whether x is a valid surface.
+#' @return Logical. Is \code{x} a valid surface?
+#' 
 #' @export
 #' 
 is.surf <- function(x) {
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
-  if (!match_exactly(names(x), c("vertices", "faces"))) {
+  if (!match_exactly(names(x), c("vertices", "faces", "hemisphere"))) {
     return(FALSE)
   }
 
@@ -130,22 +135,30 @@ is.surf <- function(x) {
     message("The min vertex index in x$faces is too low.\n"); return(FALSE)
   }
 
+  if (!is.null(x$hemisphere)) {
+    if (!(x$hemisphere %in% c("left", "right"))) {
+      message("x$hemisphere must be \"left\" or \"right\".\n"); return(FALSE)
+    }
+  }
+
   TRUE
 }
 
 #' Validate a factor vector of subcortical labels
 #' 
-#' Check if object is a factor vector of subcortical structures.
-#'  This is a helper function for \code{\link{is.xifti}}.
+#' Check if object is a factor vector of subcortical structures.This is a helper
+#'  function for \code{\link{is.xifti}}.
 #' 
-#'  Requirements: see the "Label Levels" section for the expected factor levels.
-#'
-#' @param x The putative factor vector of brain substructures.
-#'
-#' @return Logical indicating whether x is a factor vector of subcortical 
-#'  structures.
+#' Requirements: see the "Label Levels" section for the expected factor levels.
 #'
 #' @inheritSection labels_Description Label Levels
+#' 
+#' @param x The putative factor vector of brain substructures.
+#'
+#' @return Logical. Is \code{x} a factor vector of subcortical
+#'  structures?
+#' 
+#' @keywords internal
 #' 
 is.subcort_labs <- function(x) {
   if (!is.factor(x)) {
@@ -172,7 +185,9 @@ is.subcort_labs <- function(x) {
 #'
 #' @param x The putative subcortical mask.
 #'
-#' @return Logical indicating whether x is a valid subcortical mask.
+#' @return Logical. Is \code{x} a valid subcortical mask?
+#' 
+#' @keywords internal
 #' 
 is.3D_mask <- function(x) {
   if (!is.array(x) || !is.logical(x)) {
@@ -187,19 +202,21 @@ is.3D_mask <- function(x) {
   TRUE
 }
 
-#' Validate the "meta" component of a \code{"xifti"} object
+#' Validate the \code{"meta"} component of a \code{"xifti"} object
 #'
 #' Check if object is valid for \code{xifti$meta}, where \code{xifti} is a 
 #'  \code{"xifti"} object.
 #' 
 #'  This is a helper function for \code{\link{is.xifti}}.
 #'
-#'  Requirements: the structure must match that of the "meta" component of 
-#'  \code{\link{template_xifti}}. 
+#'  Requirements: the structure must match that of the \code{"meta"} component
+#'  of \code{\link{template_xifti}}. 
 #'
-#' @param x The putative "meta" component.
+#' @param x The putative \code{"meta"} component.
 #'
-#' @return Logical indicating whether x is a valid "meta" component.
+#' @return Logical. Is \code{x} a valid \code{"meta"} component?
+#' 
+#' @keywords internal
 #' 
 is.xifti_meta <- function(x) {
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
@@ -279,7 +296,6 @@ is.xifti_meta <- function(x) {
 
     if (!is.null(x$cifti$intent)) {
       intent <- x$cifti$intent
-      # [TO DO]: Require these fields? No, right?
       if (intent == 3002) {
         if (!is.null(x$cifti$time_start)) {
           if (!is.numeric(x$cifti$time_start) || length(x$cifti$time_start)!=1) {
@@ -323,7 +339,7 @@ is.xifti_meta <- function(x) {
       intent_specific_names <- switch(as.character(intent),
         `3002` = c("time_start", "time_step", "time_unit"),
         `3006` = c("names"),
-        `3007` = c("labels")
+        `3007` = c("names", "labels")
       )
       cifti_meta_names <- c(
         "intent", "brainstructures", "misc", 
@@ -358,18 +374,18 @@ is.xifti_meta <- function(x) {
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
 #' 
+#' @inheritSection labels_Description Label Levels
+#' 
 #' @param x The putative \code{"xifti"} object.
 #' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
 #' @return Logical. Is \code{x} a valid \code{"xifti"} object?
 #' 
-#' @inheritSection labels_Description Label Levels
-#' 
 #' @export
 #' 
 is.xifti <- function(x, messages=TRUE) {
-  if (!messages) { return(suppressMessages(is.xifti(x, messages=FALSE))) }
+  if (!messages) { return(suppressMessages(is.xifti(x, messages=TRUE))) }
 
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
@@ -472,15 +488,32 @@ is.xifti <- function(x, messages=TRUE) {
       }
     }
   }
-  # # [TO DO]: Add +1 to data from read_cifti_separate. Then add this back.
-  # if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
-  #   if (!is.null(x$meta$cifti$labels)) {
-  #     if (!(all( unique(as.vector(do.call(rbind, x$data))) %in% 1:nrow(x$meta$cifti$labels) ))) {
-  #       message("All data values must be correspond to an index in the label table.\n")
-  #       return(FALSE)
-  #     }
-  #   }
-  # }
+
+  # For intent 3007 (.dlabels.nii), each data measurement (column) should
+  #   have a corresponding label table, and all labels in the data should be
+  #   listed in the corresponding table.
+  if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
+    data_mat <- do.call(rbind, x$data)
+    if (!is.null(x$meta$cifti$labels) && !is.null(data_mat) && nrow(data_mat) > 0) {
+      if (ncol(data_mat) != length(x$meta$cifti$labels)) {
+        message("Number of labels does not match number of data columns.\n")
+        return(FALSE)
+      }
+
+      for (ii in 1:ncol(x$data$cortex_left)) {
+        all_labels <- unique(data_mat[,ii])
+        valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
+        if (!all(valid_label)) {
+          message(paste(
+            "These label values in data column", ii, 
+            "are not in the corresponding label table:\n\t",
+            paste(all_labels[!valid_label], collapse=", "), "\n"
+          ))
+          return(FALSE)
+        }
+      }
+    }
+  }
 
   TRUE
 }
@@ -491,7 +524,7 @@ is_xifti <- function(x, messages=TRUE){
   is.xifti(x, messages=messages)
 }
 
-#' Validate a \code{"xifti"} object.
+#' Validate a \code{"xifti"} object
 #' 
 #' Check if object is valid for a \code{"xifti"} object. This alias for 
 #'  \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
@@ -507,13 +540,13 @@ is_xifti <- function(x, messages=TRUE){
 #'  See the "Label Levels" section for the requirements of 
 #'  \code{xifti$meta$subcort$labels}.
 #' 
+#' @inheritSection labels_Description Label Levels
+#' 
 #' @param x The putative \code{"xifti"} object.
 #' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
 #' @return Logical. Is \code{x} a valid \code{"xifti"} object?
-#' 
-#' @inheritSection labels_Description Label Levels
 #' 
 #' @export
 #' 

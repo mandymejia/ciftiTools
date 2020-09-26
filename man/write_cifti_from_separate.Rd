@@ -7,8 +7,8 @@
 write_cifti_from_separate(
   cifti_fname,
   cortexL_fname = NULL,
-  cortexR_fname = NULL,
   ROIcortexL_fname = NULL,
+  cortexR_fname = NULL,
   ROIcortexR_fname = NULL,
   subcortVol_fname = NULL,
   subcortLabs_fname = NULL,
@@ -22,9 +22,9 @@ write_cifti_from_separate(
 
 \item{cortexL_fname}{The left cortex file.}
 
-\item{cortexR_fname}{The right cortex file.}
-
 \item{ROIcortexL_fname}{The left cortex ROI file.}
+
+\item{cortexR_fname}{The right cortex file.}
 
 \item{ROIcortexR_fname}{The right cortex ROI file.}
 
@@ -32,11 +32,11 @@ write_cifti_from_separate(
 
 \item{subcortLabs_fname}{The subcortical labels file.}
 
-\item{timestep}{If a dense time series (dtseries.nii) file is being written,
+\item{timestep}{If a dense time series ("dtseries.nii") file is being written,
 this is the time between measurements. If \code{NULL}, use the Connectome
 Workbench default (1.0).}
 
-\item{timestart}{If a dense time series (dtseries.nii) file is being written,
+\item{timestart}{If a dense time series ("dtseries.nii") file is being written,
 this is starting time. If \code{NULL}, use the Connectome Workbench default 
 (0.0).}
 
@@ -45,6 +45,12 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \description{
-Make a CIFTI file from components
+Make a CIFTI file from component NIFTI/GIFTI files using the 
+ \code{-cifti-create-...} Connectome Workbench commands.
+}
+\details{
+Every provided component will be included. The ROIs are only used if the
+ corresponding cortex is provided. Either both or none of the subcortical
+ NIFTIs should be provided.
 }
 \keyword{internal}

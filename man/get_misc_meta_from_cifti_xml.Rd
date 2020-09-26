@@ -8,7 +8,7 @@ get_misc_meta_from_cifti_xml(xml, intent = 3000)
 }
 \arguments{
 \item{xml}{List representing "Metadata" entry XML 
-(\code{xii$CIFTI$Matrix$MetaData})}
+(\code{xifti$CIFTI$Matrix$MetaData})}
 
 \item{intent}{The CIFTI's NIFTI intent code. Not used right now, but may be later.
 Default: \code{3000} (NIFTI_INTENT_UNKNOWN)}

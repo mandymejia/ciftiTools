@@ -2,16 +2,16 @@
 % Please edit documentation in R/template_xifti.R
 \name{template_xifti}
 \alias{template_xifti}
-\title{Make a template "xifti" object}
+\title{Make a template \code{"xifti"} object}
 \usage{
 template_xifti()
 }
 \value{
-An empty "xifti" object with a valid list structure
+An empty \code{"xifti"} object with a valid list structure
 }
 \description{
-Make a "xifti" object with all terminal entries \code{NULL}. Useful for
- seeing the structure of a "xifti" object.
+Make a \code{"xifti"} object with all terminal entries \code{NULL}. Useful for
+ seeing the structure of a \code{"xifti"} object.
 }
 \details{
 Additional metadata depends on the type of CIFTI file:

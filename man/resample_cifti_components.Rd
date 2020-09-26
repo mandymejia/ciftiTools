@@ -60,7 +60,7 @@ surface geometry file representing the left cortex at.}
 \item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI 
 surface geometry file representing the right cortex at.}
 
-\item{read_dir}{Directory to append to the path of every original file name,
+\item{read_dir}{Directory to append to the path of every file being read,
  e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
  any directory to the path.
 
@@ -77,7 +77,7 @@ If not provided, should be set with
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
-A named character vector of file paths to each resampled file.
+A named character vector of file paths to each resampled file
 }
 \description{
 Performs spatial resampling of various CIFTI file components on 

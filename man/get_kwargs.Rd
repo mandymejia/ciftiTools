@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_kwargs}
 \alias{get_kwargs}
-\title{Get the names of the arguments of a function as a character vector.}
+\title{Get kwargs}
 \usage{
 get_kwargs(fun)
 }
@@ -10,7 +10,7 @@ get_kwargs(fun)
 \item{fun}{The function to get the argument names for.}
 }
 \value{
-The names of the arguments of \code{fun} as a character vector.
+The names of the arguments of \code{fun} as a character vector
 }
 \description{
 Get the names of the arguments of a function as a character vector.

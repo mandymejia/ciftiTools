@@ -2,7 +2,7 @@
 % Please edit documentation in R/resample_surf.R
 \name{resample_surf}
 \alias{resample_surf}
-\title{Resample "surface" object}
+\title{Resample a \code{"surface"} object}
 \usage{
 resample_surf(
   surf,
@@ -12,11 +12,13 @@ resample_surf(
 )
 }
 \arguments{
-\item{surf}{A "surface" object}
+\item{surf}{A \code{"surface"} object}
 
 \item{resamp_res}{The desired resolution}
 
-\item{hemisphere}{"left" or "right"}
+\item{hemisphere}{\code{"left"} or \code{"right"}. Only used if not indicated by 
+\code{surf$hemisphere}. An error will be raised if it does not match the 
+hemisphere indicated in the intermediate written GIFTI.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
@@ -26,6 +28,6 @@ If not provided, should be set with
 The new surface
 }
 \description{
-Resample a "surface" object by writing it to a GIFTI, using the Connectome
+Resample a \code{"surface"} object by writing it to a GIFTI, using the Connectome
  Workbench to resample it, and then reading the new file.
 }

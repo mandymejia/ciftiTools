@@ -20,6 +20,7 @@ resample_cifti(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )
@@ -37,6 +38,7 @@ resampleCIfTI(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )
@@ -54,6 +56,7 @@ resamplecii(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )
@@ -71,6 +74,7 @@ resample_xifti(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
+  mwall_values = c(NA, NaN),
   verbose = TRUE,
   wb_path = NULL
 )
@@ -164,6 +168,14 @@ once instead of every new iteration.}
  names in \code{sep_fnames} and \code{resamp_fnames}.
 
  \code{write_dir} must already exist, or an error will occur.}
+
+\item{mwall_values}{If the medial wall locations are not indicated in the
+ CIFTI, use these values to infer the medial wall mask. Default: 
+ \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
+
+ Correctly indicating the medial wall locations is important for resampling,
+ because the medial wall mask is taken into account during resampling
+ calculations.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 

@@ -27,6 +27,7 @@ the \code{"xifti"} object with added surface geometry components.
 Add left or right cortical surface geometry to a \code{"xifti"} object.
 }
 \details{
-`surfL` will be added to `xifti$surf$cortex_left` and `surfR` will be added
- to `xifti$surf$cortex_right`. Any existing surfaces will be overwritten.
+\code{surfL} will be added to \code{xifti$surf$cortex_left} and \code{surfR} 
+ will be added to \code{xifti$surf$cortex_right}. Any existing surfaces will 
+ be overwritten.
 }

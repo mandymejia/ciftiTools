@@ -3,31 +3,31 @@
 #' @section Label Levels:
 #'  \code{xifti$meta$subcort$labels} is a factor with the following levels:
 #' 
-#'  \describe{
-#'    \item{1}{Cortex-L}
-#'    \item{2}{Cortex-R}
-#'    \item{3}{Accumbens-L}
-#'    \item{4}{Accumbens-R}
-#'    \item{5}{Amygdala-L}
-#'    \item{6}{Amygdala-R}
-#'    \item{7}{Brain Stem}
-#'    \item{8}{Caudate-L}
-#'    \item{9}{Caudate-R}
-#'    \item{10}{Cerebellum-L}
-#'    \item{11}{Cerebellum-R}
-#'    \item{12}{Diencephalon-L}
-#'    \item{13}{Diencephalon-R}
-#'    \item{14}{Hippocampus-L}
-#'    \item{15}{Hippocampus-R}
-#'    \item{16}{Pallidum-L}
-#'    \item{17}{Pallidum-R}
-#'    \item{18}{Putamen-L}
-#'    \item{19}{Putamen-R}
-#'    \item{20}{Thalamus-L}
-#'    \item{21}{Thalamus-R}
+#'  \enumerate{
+#'    \item{Cortex-L}
+#'    \item{Cortex-R}
+#'    \item{Accumbens-L}
+#'    \item{Accumbens-R}
+#'    \item{Amygdala-L}
+#'    \item{Amygdala-R}
+#'    \item{Brain Stem}
+#'    \item{Caudate-L}
+#'    \item{Caudate-R}
+#'    \item{Cerebellum-L}
+#'    \item{Cerebellum-R}
+#'    \item{Diencephalon-L}
+#'    \item{Diencephalon-R}
+#'    \item{Hippocampus-L}
+#'    \item{Hippocampus-R}
+#'    \item{Pallidum-L}
+#'    \item{Pallidum-R}
+#'    \item{Putamen-L}
+#'    \item{Putamen-R}
+#'    \item{Thalamus-L}
+#'    \item{Thalamus-R}
 #'  }
 #' 
-#'  Levels 1-21 correspond to the same structures as given by 
+#'  These correspond to the same structures as given by 
 #'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. 
 #' @name labels_Description
 NULL
@@ -52,6 +52,9 @@ NULL
 #'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 #'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 #'  Default: \code{"all"}. 
+#' 
+#'  If a brain structure is indicated but does not exist, a warning will be
+#'  raised and that brain structure will be skipped.
 #' @name brainstructures_Param_all
 NULL
 
@@ -62,12 +65,15 @@ NULL
 #'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
 #'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
 #'  Default: \code{c("left","right")} (cortical surface only).
+#' 
+#'  If a brain structure is indicated but does not exist, a warning will be
+#'  raised and that brain structure will be skipped.
 #' @name brainstructures_Param_LR
 NULL
 
 #' cifti_fname
 #'
-#' @param cifti_fname File path of CIFTI-format data (ending in .d*.nii).
+#' @param cifti_fname File path of CIFTI-format data (ending in ".d*.nii").
 #' @name cifti_fname_Param
 NULL
 
@@ -84,7 +90,7 @@ NULL
 
 #'  read_dir: separated files
 #'  
-#' @param read_dir Directory to append to the path of every original file name,
+#' @param read_dir Directory to append to the path of every file being read,
 #'  e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
 #'  any directory to the path.
 #' 
@@ -145,12 +151,9 @@ NULL
 #' @param ROI_brainstructures Character vector indicating which ROIs should be 
 #'  obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
 #'  be a subset of the \code{brainstructures} argument. 
-#'  
-#'  NOTE: ROIs are currently
-#'  not fully supported by ciftiTools, since \code{"cifti"} objects will not contain
-#'  the ROIs. A workaround would be to keep the separated/resampled files
-#'  with \code{sep_keep}/\code{resamp_keep} and then read those in with
-#'  \code{make_xifti}. 
+#' 
+#' ROIs are typically the medial wall mask for the cortex and subcortical mask
+#'  for the subcortex.
 #' @name ROI_brainstructures_Param_LR
 NULL
 
@@ -315,4 +318,72 @@ NULL
 #' @param x Object of class "xifti". 
 #'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
 #' @name x_Param_xifti
+NULL
+
+#' surface plot
+#' 
+#' @param view Which view to display: \code{"lateral"}, \code{"medial"}, or \code{"both"}.
+#'  If \code{NULL} (default), both views will be shown. Each view
+#'  will be shown in a separate panel row within the RGL window.
+#' @param interactive 
+#'  \code{TRUE} (default) will render the surface(s) in an interactive RGL 
+#'  window. Left click and drag to rotate. Use the scroll wheel to zoom. Run 
+#'  \code{rgl::snapshot("my_file.png")} to save the RGL window as a png file
+#'  (see \code{\link[rgl]{snapshot}} for more information). Run 
+#'  \code{rgl::rgl.close()} to close the window. If the length of \code{idx}
+#'  is greater than one, an rgl widget with a slider to control the \code{idx} 
+#'  being displayed will also be returned. (Auto-print it to view it.) 
+#'
+#'  \code{FALSE} will render the surface(s) in an RGL window, take a screenshot
+#'  using \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
+#'  as a png in \code{write_dir}. This is repeated for every \code{idx}. If
+#'  there is only one \code{idx} the file name will be \code{"[fname].png"}.
+#'  Otherwise, it will be \code{"[fname]_[idx[i]].png"} for each \code{idx[i]}. 
+#'  The written image file names will be returned.
+#' @param mode Deprecated and will be removed. \code{"widget"} will set 
+#'  \code{interactive=TRUE} whereas \code{"image"} and \code{"video"} will set 
+#'  \code{interactive=FALSE}.
+#' @param width,height The dimensions of the RGL window, in pixels. If both are
+#'  \code{NULL} (default), the dimensions will be set to
+#'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
+#'  1500 x 525 for 2x1 subplots, and
+#'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
+#'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+#'  the same aspect ratio. Both could be specified to set the dimensions exactly.
+#' @param zoom Adjustment to size of brain meshes. Default: \code{3/5}
+#'  (100\% + 3/5*100\% = 160\% the original size).
+#' @param bg Background color. \code{NULL} will not color the background (white).
+#' @param title Optional title(s) for the plot(s). It will be printed at the top 
+#'  in a separate subplot with 1/4 the height of the brain cortex subplots.
+#'  
+#'  Default: \code{NULL} will use the time index (".dtseries") or name
+#'  (.dscalar or .dlabel) of the data column being plotted. 
+#' 
+#'  To use a custom title(s), use a length 1 character vector (same title for
+#'  each plot) or length \code{length(idx)} character vector (different title
+#'  for each plot). Set to an empty string \code{""} to omit the title. 
+#' 
+#'  If the title is non-empty but does not appear, \code{cex.title} may need to 
+#'  be lowered.
+#' @param cex.title Font size multiplier for the title. \code{NULL} (default)
+#'  will use \code{2} for titles less than 20 characters long, and smaller
+#'  sizes for increasingly longer titles.
+#' @param text_color Color for text in title and colorbar legend. Default:
+#'  "black".
+#' @param fname An identifier to use for naming the saved images
+#'  ("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
+#'  Default: \code{"xifti"}.
+#' @param write_dir Where should any output images be written. NULL (default)
+#'  will write them to the current working directory.
+#'
+#'  \code{write_dir} must already exist, or an error will occur.
+#' @param alpha Transparency value for mesh coloring, between 0 and 1. Default:
+#'  \code{1.0} (no transparency).
+#' @param edge_color Outline each edge in this color. Default: \code{NULL} (do
+#'  not outline the edges).
+#' @param vertex_size Draw each vertex with this size. Default: \code{0} 
+#'  (do not draw the vertices).
+#' @param vertex_color Draw each vertex in this color. Default: 
+#'  \code{"black"}. Vertices are only drawn if \code{vertex_size > 0}
+#' @name surface_plot_Params
 NULL

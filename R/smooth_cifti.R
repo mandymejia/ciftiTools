@@ -1,7 +1,14 @@
 #' Smooth a CIFTI 
 #'
-#' @description Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
+#' Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
 #'  from Connectome Workbench.
+#' 
+#' If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
+#'  to a ".dscalar" file because the values will no longer be integer indices.
+#'  Unless the label values were ordinal, this is probably not desired so a
+#'  warning will be printed.
+#' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @param cifti_original_fname The CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI.
@@ -19,7 +26,7 @@
 #' @inheritParams wb_path_Param
 #'
 #' @return The \code{cifti_target_fname}, invisibly
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @export
 #'
 smooth_cifti <- function(
@@ -29,6 +36,19 @@ smooth_cifti <- function(
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE,
   wb_path=NULL){
+
+  stopifnot(file.exists(cifti_original_fname))
+  cifti_info <- info_cifti(cifti_original_fname)
+  fix_dlabel <- FALSE
+  if (!is.null(cifti_info$cifti$intent)) {
+    if (cifti_info$cifti$intent == 3007) {
+      warning(paste(
+        "Smoothing a label file will convert the labels to their numeric",
+        "indices. Coercing `cifti_target_fname` to a \".dscalar\" file.\n"
+      ))
+      fix_dlabel <- TRUE
+    }
+  }
 
   # Build the Connectome Workbench command. 
   cmd <- paste(
@@ -50,6 +70,21 @@ smooth_cifti <- function(
   if (subcortical_merged) { cmd <- paste(cmd, "-merged-volume") }
 
   run_wb_cmd(cmd, wb_path)
+
+  if (fix_dlabel) {
+    old_target_fname <- cifti_target_fname
+    cifti_target_fname <- gsub("dlabel", "dscalar", old_target_fname)
+    names_fname <- tempfile()
+    cat(names(cifti_info$cifti$labels), file = names_fname, sep = "\n")
+    run_wb_cmd(
+      paste(
+        "-cifti-change-mapping", old_target_fname, 
+        "ROW", cifti_target_fname,
+        "-scalar", "-name-file", names_fname
+      ),
+      wb_path
+    )
+  }
   
   invisible(cifti_target_fname)
 }
@@ -65,12 +100,12 @@ smoothCIfTI <- function(
   wb_path=NULL){
 
   smooth_cifti(
-    cifti_original_fname, cifti_target_fname,
-    surface_sigma, volume_sigma,
-    surfL_fname, surfR_fname, cerebellum_fname,
-    subcortical_zeroes_as_NA, cortical_zeroes_as_NA,
-    subcortical_merged,
-    wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname,
+    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
+    subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
+    subcortical_merged=subcortical_merged,
+    wb_path=wb_path
   )
 }
 
@@ -85,11 +120,11 @@ smoothcii <- function(
   wb_path=NULL){
 
   smooth_cifti(
-    cifti_original_fname, cifti_target_fname,
-    surface_sigma, volume_sigma,
-    surfL_fname, surfR_fname, cerebellum_fname,
-    subcortical_zeroes_as_NA, cortical_zeroes_as_NA,
-    subcortical_merged,
-    wb_path
+    cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname,
+    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
+    subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
+    subcortical_merged=subcortical_merged,
+    wb_path=wb_path
   )
 }

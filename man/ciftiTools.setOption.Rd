@@ -2,9 +2,7 @@
 % Please edit documentation in R/options.R
 \name{ciftiTools.setOption}
 \alias{ciftiTools.setOption}
-\title{Sets an R option (with prefix "ciftiTools_"). Right now, the ciftiTool
- options are "wb_path" (path to Workbench Command)
- and "EPS" (Threshold for detecting constant voxels).}
+\title{Set \code{ciftiTools} option}
 \usage{
 ciftiTools.setOption(opt, val)
 }
@@ -14,10 +12,9 @@ ciftiTools.setOption(opt, val)
 \item{val}{The value to set the option as.}
 }
 \value{
-The new value, \code{val}.
+The new value, \code{val}
 }
 \description{
-Sets an R option (with prefix "ciftiTools_"). Right now, the ciftiTool
- options are "wb_path" (path to Workbench Command)
- and "EPS" (Threshold for detecting constant voxels).
+Sets an R option (with prefix "ciftiTools_"). 
+ See \code{\link{ciftiTools.listOptions}}.
 }

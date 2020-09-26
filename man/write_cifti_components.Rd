@@ -6,6 +6,7 @@
 \usage{
 write_cifti_components(
   xifti,
+  extn_cifti,
   write_dir = NULL,
   mwall_fill = NA,
   subcort_fill = 0,
@@ -16,6 +17,8 @@ write_cifti_components(
 \arguments{
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+
+\item{extn_cifti}{The CIFTI extension e.g. "dtseries.nii"}
 
 \item{write_dir}{Where should the separated
  files be placed? \code{NULL} (default) will write them to
@@ -41,7 +44,7 @@ List of written files
 \description{
 Write metric GIFTIs for the cortical surface data and NIFTIs for the
  subcortical labels and mask in a \code{"xifti"} object. Each present
- brainstructure will be written, and if a brainstructure is absent
- the corresponding file is not written.
+ brainstructure will be written; if a brainstructure is absent the 
+ corresponding file is not written.
 }
 \keyword{internal}

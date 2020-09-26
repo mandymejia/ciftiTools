@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_volume.R
 \name{coordlist_to_vol}
 \alias{coordlist_to_vol}
-\title{Convert sparse coordinate list to non-sparse volume.}
+\title{Convert coordinate list to volume.}
 \usage{
 coordlist_to_vol(coords, fill = FALSE)
 }
@@ -20,7 +20,7 @@ data type will be the same as that of \code{fill}.
 \code{FALSE}.}
 }
 \value{
-The volumetric data.
+The volumetric data
 }
 \description{
 Converts a sparse coordinate list to its non-sparse volumetric representation.

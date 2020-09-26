@@ -1,7 +1,7 @@
-#' Make a template "xifti" object
+#' Make a template \code{"xifti"} object
 #' 
-#' Make a "xifti" object with all terminal entries \code{NULL}. Useful for
-#'  seeing the structure of a "xifti" object.
+#' Make a \code{"xifti"} object with all terminal entries \code{NULL}. Useful for
+#'  seeing the structure of a \code{"xifti"} object.
 #' 
 #' Additional metadata depends on the type of CIFTI file:
 #' 
@@ -26,7 +26,7 @@
 #'  }
 #'
 #' 
-#' @return An empty "xifti" object with a valid list structure
+#' @return An empty \code{"xifti"} object with a valid list structure
 #'
 #' @keywords internal
 #' 

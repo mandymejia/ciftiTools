@@ -32,9 +32,6 @@ test_that("Resampling CIFTI and GIFTI files is working", {
     # resample_surf
     surf <- resample_surf(cii$surf$cortex_left, hemisphere="left", resamp_res=3000)
 
-    # resample_cifti requires writing the CIFTI
-    if (grepl("dlabel", cii_fname)) { next }
-
     # resample_cifti
     cii2_fnames <- resample_cifti(
       cii_fname, basename(cii_fname), resamp_res=4001,

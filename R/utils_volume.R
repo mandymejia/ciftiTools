@@ -1,6 +1,6 @@
-#' Undo a mask
+#' Undo a volumetric mask
 #' 
-#' Applies a mask to vectorized data to yield its volumetric representation.
+#' Un-applies a mask to vectorized data to yield its volumetric representation.
 #'  The mask and data should have compatible dimensions: the number of rows in
 #'  \code{dat} should equal the number of locations within the \code{mask}.
 #' 
@@ -55,9 +55,10 @@ unmask_vol <- function(dat, mask, fill=NA) {
 #'  \code{xifti$meta$subcort$mask_padding}.
 #' @param fill Values to pad with. Default: \code{NA}.
 #'
-#' @keywords internal
-#'
 #' @return The padded array
+#'
+#' @keywords internal
+#' 
 pad_vol <- function(x, padding, fill=NA){
   new_dim <- vector("numeric", 3)
   for (ii in 1:length(dim(x))) {
@@ -78,7 +79,7 @@ uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
 }
 
-#' Convert sparse coordinate list to non-sparse volume.
+#' Convert coordinate list to volume.
 #' 
 #' Converts a sparse coordinate list to its non-sparse volumetric representation.
 #' 
@@ -93,7 +94,7 @@ uncrop_vol <- function(x, padding, fill=NA){
 #' @param fill Fill value for the volume. Must be logical or numeric. Default: 
 #'  \code{FALSE}.
 #' 
-#' @return The volumetric data.
+#' @return The volumetric data
 #'
 #' @keywords internal
 #' 

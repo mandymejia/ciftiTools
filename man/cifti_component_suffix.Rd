@@ -17,7 +17,7 @@ cifti_component_suffix(label, GIFTI_type = "func")
 \item{GIFTI_type}{Used to make the suffix. Default: \code{"func"}.}
 }
 \value{
-The default file name suffix.
+The default file name suffix
 }
 \description{
 Get the default file name suffix for a certain type of GIFTI/NIFTI file

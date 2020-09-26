@@ -33,7 +33,7 @@
 #' @inheritParams write_dir_Param_generic
 #' @inheritParams wb_path_Param
 #'
-#' @return A named character vector of file paths to each resampled file.
+#' @return A named character vector of file paths to each resampled file
 #'
 #' @keywords internal
 #' 
@@ -99,7 +99,6 @@ resample_cifti_components <- function(
       c("validROIcortexL", "validROIcortexR"), names(original_fnames)
     ))
     if (sum(missing_original) > 0) {
-      # [TO DO]: print file names too.
       ciftiTools_warn(paste0(
         "Ignoring these resampling targets because",
         " their original files were not provided:\n", 
@@ -182,7 +181,8 @@ resample_cifti_components <- function(
           )
         )
       }
-      do.call(resample_gifti, c(resample_kwargs, list(file_type="metric")))
+      file_type=ifelse(grepl(".label.gii", original_fnames[[lab]], fixed=TRUE), "label", "metric")
+      do.call(resample_gifti, c(resample_kwargs, list(file_type=file_type)))
     
     # Resample surfaces.
     } else if (lab %in% c("surfL", "surfR")) {

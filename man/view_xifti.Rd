@@ -5,7 +5,7 @@
 \alias{view_cifti}
 \alias{viewCIfTI}
 \alias{viewcii}
-\title{Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}}
+\title{View a \code{"xifti"} object}
 \usage{
 view_xifti(xifti, what = NULL, ...)
 
@@ -19,8 +19,9 @@ viewcii(xifti, what = NULL, ...)
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{what}{Either "surface" or "volume". If NULL (default), view the surface if present in the xifti file, and
-volume otherwise}
+\item{what}{Either \code{"surface"} or \code{"volume"}. If \code{NULL} 
+(default), view the surface if cortex data is present in the \code{"xifti"} 
+object, and the subcortical volume otherwise.}
 
 \item{...}{Additional arguments to pass to either view function.}
 }

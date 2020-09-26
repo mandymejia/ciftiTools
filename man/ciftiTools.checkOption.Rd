@@ -2,7 +2,7 @@
 % Please edit documentation in R/options.R
 \name{ciftiTools.checkOption}
 \alias{ciftiTools.checkOption}
-\title{Checks if a ciftiTool option (and value) are valid.}
+\title{Validate a \code{ciftiTools} option and value}
 \usage{
 ciftiTools.checkOption(opt, val = NULL)
 }
@@ -12,8 +12,9 @@ ciftiTools.checkOption(opt, val = NULL)
 \item{val}{The value to set the option as.}
 }
 \value{
-\code{NULL}.
+\code{NULL}, invisibly
 }
 \description{
-Checks if a ciftiTool option (and value) are valid.
+Checks if a ciftiTools option and value are valid.
 }
+\keyword{internal}

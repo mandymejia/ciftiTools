@@ -2,20 +2,21 @@
 % Please edit documentation in R/read_cifti_convert.R
 \name{read_cifti_convert}
 \alias{read_cifti_convert}
-\title{Read a CIFTI File Quickly}
+\title{Read a CIFTI file quickly}
 \usage{
 read_cifti_convert(
   cifti_fname,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  mwall_values = c(NA, NaN),
   wb_path = NULL,
   verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -24,10 +25,13 @@ file representing the left cortex.}
 file representing the right cortex.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (cortical surface only).}
+ to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+ gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+ Default: \code{c("left","right")} (cortical surface only).
+
+ If a brain structure is indicated but does not exist, a warning will be
+ raised and that brain structure will be skipped.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 

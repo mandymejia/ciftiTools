@@ -9,7 +9,7 @@
 resample_gifti(
   original_fname,
   target_fname,
-  hemisphere,
+  hemisphere = c("left", "right"),
   file_type = NULL,
   original_res = NULL,
   resamp_res,
@@ -53,9 +53,10 @@ resamplegii(
 
 \item{target_fname}{Where to save the resampled file.}
 
-\item{hemisphere}{"left" or "right".}
+\item{hemisphere}{\code{"left"} (default) or \code{"right"}. An error will 
+occur if the hemisphere indicated in the GIFTI metadata does not match.}
 
-\item{file_type}{\code{"metric"} or \code{"surface"}, or \code{NULL} 
+\item{file_type}{\code{"metric"}, \code{"label"}, \code{"surface"}, or \code{NULL} 
 (default) to infer from \code{original_fname}.}
 
 \item{original_res}{The resolution of the original file. If \code{NULL}

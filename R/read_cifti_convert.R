@@ -1,9 +1,11 @@
-#' Read a CIFTI File Quickly
+#' Read a CIFTI file quickly
 #'
-#' @description Read a CIFTI file by exporting it as a single GIFTI 
+#' Read a CIFTI file by exporting it as a single GIFTI 
 #'  using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}), 
 #'  and obtaining the brainordinate mapping using 
 #'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
+#' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
@@ -14,13 +16,14 @@
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' 
 #' @keywords internal
 #' 
 read_cifti_convert <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
+  mwall_values=c(NA, NaN),
   wb_path=NULL, verbose=FALSE, ...){
 
   # Check arguments.
@@ -43,36 +46,35 @@ read_cifti_convert <- function(
 
   # Read the CIFTI info.
   xifti$meta <- info_cifti(cifti_fname, wb_path)
-  if (!all(brainstructures %in% xifti$meta$cifti$brainstructures)) {
-    stop(paste0(
-      "Only the following brainstructures are present in the CIFTI file:",
-      paste(xifti$meta$cifti$brainstructures, collapse=", ")
+  bs_present <- brainstructures %in% xifti$meta$cifti$brainstructures
+  if (!all(bs_present)) {
+    warning(paste0(
+      "Only the following brainstructures are present in the CIFTI file: ",
+      paste(xifti$meta$cifti$brainstructures, collapse=", "), "\n"
     ))
+    brainstructures <- brainstructures[bs_present]
   }
 
   # Read the CIFTI data.
   xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
-
-  # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
-  #   xifti_data <- xifti_data + 1
-  # }
-
-  # Place cortex data into the "xifti" object.
-  if (xifti$meta$cifti$intent == 3007) {
-    # Label values begin at zero. In example file, it indicates "???"
-    mwall_values <- c(NaN, NA)
-  } else {
-    mwall_values <- c(0, NaN, NA)
+  if (get_cifti_extn(cifti_fname) == "dlabel.nii") {
+    if (!all(round(xifti_data) == xifti_data)) {
+      warning("The CIFTI file extension was \"dlabel.nii\" but the data values were not integers.")
+    } else {
+      mode(xifti_data) <- "integer"
+    }
   }
+
+  # Place cortex data into the \code{"xifti"} object.
   last_left <- sum(xifti$meta$cortex$medial_wall_mask$left)
   last_right <- last_left + sum(xifti$meta$cortex$medial_wall_mask$right)
   if ("left" %in% brainstructures) {
     cortex <- make_cortex(
       xifti_data[1:last_left,, drop=FALSE],
-      side = "left", #cortex_is_masked=TRUE,
+      side = "left", 
       mwall = xifti$meta$cortex$medial_wall_mask$left,
+      mwall_values=mwall_values,
       mwall_source="the CIFTI being read in",
-      mwall_values=mwall_values
     )
     xifti$data$cortex_left <- cortex$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(cortex$mwall)
@@ -82,10 +84,10 @@ read_cifti_convert <- function(
   if ("right" %in% brainstructures) {
     cortex <- make_cortex(
       xifti_data[(1+last_left):last_right,, drop=FALSE],
-      side = "right", #cortex_is_masked=TRUE,
+      side = "right",
       mwall = xifti$meta$cortex$medial_wall_mask$right,
+      mwall_values=mwall_values,
       mwall_source="the CIFTI being read in",
-      mwall_values=mwall_values
     )
     xifti$data$cortex_right <- cortex$data
     xifti$meta$cortex$medial_wall_mask["right"] <- list(cortex$mwall)
@@ -93,7 +95,7 @@ read_cifti_convert <- function(
     xifti$meta$cortex$medial_wall_mask["right"] <- list(template_xifti()$meta$cortex$medial_wall_mask$right)
   }
 
-  # Place subcortical data into the "xifti" object.
+  # Place subcortical data into the \code{"xifti"} object.
   if ("subcortical" %in% brainstructures) {
     alpha_to_spatial <- order(order(xifti$meta$subcort$labels))
     subcort_order <- c((1+last_right):nrow(xifti_data))[alpha_to_spatial]
@@ -107,10 +109,10 @@ read_cifti_convert <- function(
     if(verbose) { cat("...and surface(s).\n") }
   }
   if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_surf(surfL_fname) 
+    xifti$surf$cortex_left <- make_surf(surfL_fname, "left") 
   }
   if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_surf(surfR_fname) 
+    xifti$surf$cortex_right <- make_surf(surfR_fname, "right") 
   }
 
   # Finish.

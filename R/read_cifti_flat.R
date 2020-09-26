@@ -1,15 +1,18 @@
-#' Read Only the Data from a CIFTI File
+#' Read only the data matrix in a CIFTI file
 #'
-#' @description Reads CIFTI data as a matrix by converting it to a GIFTI.
-#'  This uses the \code{-cifti-convert -to-gifti-ext} Connectome 
-#'  Workbench command. The result will be a T x B matrix (T measurements, B 
-#'  non-empty brainordinates). All brainstructures will be obtained, but 
-#'  they will be undifferentiable. Medial wall vertices and voxels outside the
-#'  brain mask will not be included. No spatial information is included. This is 
-#'  the fastest way to read in CIFTI data. 
+#' Reads the CIFTI data matrix by converting it to a GIFTI using the 
+#'  \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
+#'  will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
+#'  greyordinates). All brainstructures in the CIFTI will be obtained, with no 
+#'  indication for which brainstructure each brainordinate corresponds to.    
+#'  Medial wall vertices and voxels outside the subcortical mask will not be 
+#'  included. No spatial information is included. This is the fastest way to 
+#'  read in CIFTI data. 
+#' 
+#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @inheritParams cifti_fname_Param
-#' @param keep \code{read_cifti_minimal} works by saving the CIFTI as a GIFTI file, 
+#' @param keep This function works by converting the CIFTI file to a GIFTI file 
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 #'  (default), write it in a temporary directory regardless of \code{write_dir}.
 #' @param gifti_fname File path of GIFTI-format data to save the CIFTI as. 
@@ -20,9 +23,9 @@
 #'
 #' @importFrom gifti readgii
 #'
-#' @return A T x B matrix of class "cifti_data", where T is the number of 
-#'  measurements and B is the number of brainordinates in the CIFTI file.
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' @return A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
+#'  and \eqn{G} is the number of greyordinates in the CIFTI file.
+#' 
 #' @keywords internal
 #'
 read_cifti_flat <- function(
@@ -59,13 +62,4 @@ read_cifti_flat <- function(
   run_wb_cmd(cmd, wb_path)
   result <- readgii(gifti_fname)
   result <- result$data$normal
-
-  # [TO DO]: don't delete since it's in tempdir(). Better way? safe to read (above line)?
-  # # Delete the GIFTI only if it is new and keep==FALSE. Also delete the ".data" file (Note: I don't know what it is?)
-  # if (!keep) {
-  #   file.remove(gifti_fname)
-  #   if (file.exists(paste0(gifti_fname, ".data"))) {
-  #     file.remove(paste0(gifti_fname, ".data"))
-  #   }
-  # }
 }

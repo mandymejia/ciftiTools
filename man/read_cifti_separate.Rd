@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_cifti_separate.R
 \name{read_cifti_separate}
 \alias{read_cifti_separate}
-\title{Read in CIFTI Data}
+\title{Read a CIFTI file with optional resampling}
 \usage{
 read_cifti_separate(
   cifti_fname,
@@ -15,12 +15,13 @@ read_cifti_separate(
   resamp_keep = FALSE,
   resamp_fnames = NULL,
   write_dir = NULL,
-  verbose = TRUE,
-  wb_path = NULL
+  mwall_values = c(NA, NaN),
+  wb_path = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in .d*.nii).}
+\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -29,10 +30,13 @@ file representing the left cortex.}
 file representing the right cortex.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s) 
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-Default: \code{c("left","right")} (cortical surface only).}
+ to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
+ cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+ gray matter). Can also be \code{"all"} (obtain all three brain structures). 
+ Default: \code{c("left","right")} (cortical surface only).
+
+ If a brain structure is indicated but does not exist, a warning will be
+ raised and that brain structure will be skipped.}
 
 \item{resamp_res}{(Optional) Target resolution for resampling (number of 
 cortical surface vertices per hemisphere). If \code{NULL} (default) or 
@@ -110,20 +114,28 @@ once instead of every new iteration.}
 
  \code{write_dir} must already exist, or an error will occur.}
 
-\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
+\item{mwall_values}{If the medial wall locations are not indicated in the
+CIFTI, use these values to infer the medial wall mask. Default: 
+\code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.}
 
 \item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
 If not provided, should be set with 
 \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
+
+\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 }
 \value{
 A \code{"xifti"} object. See \code{\link{is.xifti}}.
 }
 \description{
-Read a CIFTI file by separating it into GIFTI and NIFTI files 
- (\code{\link{separate_cifti}}), optionally resampling them, 
- and then reading each separated 
- component into R (\code{\link{make_xifti}}).
+Read a CIFTI file by writing each component into a GIFTI and NIFTI file
+ (\code{\link{separate_cifti}}), optionally resampling the GIFTIs, 
+ (\code{\link{resample_gifti}}), and then reading each separated 
+ component into R (\code{\link{make_xifti}}). Surfaces can also be provided; 
+ they will be resampled along with the CIFTI for viewing.
+}
+\details{
+The subcortical component (NIFTI) is not resampled.
 }
 \section{Connectome Workbench Requirement}{
 

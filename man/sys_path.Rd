@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{sys_path}
 \alias{sys_path}
-\title{Format a path for \code{\link{system}}. Right now, it just escapes spaces and
- parentheses with \code{"\\\\"}.}
+\title{Format a path for \code{\link{system}}.}
 \usage{
 sys_path(R_path)
 }
@@ -12,9 +11,8 @@ sys_path(R_path)
 exists, \code{file.exists(R_path)} should be \code{TRUE}.}
 }
 \value{
-The name of the file.
+The name of the file
 }
 \description{
-Format a path for \code{\link{system}}. Right now, it just escapes spaces and
- parentheses with \code{"\\\\"}.
+Right now, it escapes spaces and parentheses with \code{"\\\\"}.
 }

@@ -8,6 +8,7 @@ write_subcort_nifti(
   subcortVol,
   subcortLabs,
   subcortMask,
+  trans_mat = NULL,
   subcortVol_fname,
   subcortLabs_fname,
   ROIsubcortVol_fname = NULL,
@@ -25,6 +26,10 @@ subcortical structure labels. See \code{\link{substructure_table}}.}
 voxels (not subcortical), and values of 1 represent in-mask voxels
 (subcortical),}
 
+\item{trans_mat}{The TransformationMatrixIJKtoXYZ, or equivalently the desired
+sform matrix (srow_x, srow_y and srow_z) to write. If \code{NULL}, do not
+write it (all zeroes).}
+
 \item{subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname}{File path to
 a NIFTI to save the corresponding data. \code{ROIsubcortVol_fname} is
 optional but the rest is required.}
@@ -37,7 +42,7 @@ If not provided, should be set with
 }
 \value{
 Named character vector with the \code{"subcortVol"}, 
- \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written).
+ \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
 }
 \description{
 Write subcortical data to NIFTI files representing the data values,
@@ -46,7 +51,7 @@ Write subcortical data to NIFTI files representing the data values,
  correspond to the data structures of \code{xifti$data$subcort},
  \code{xifti$meta$subcort$labels} , and \code{xifti$meta$subcort$mask}
  respectively. \code{subcortVol} and \code{subcortLabs} should be vectorized,
- so if they are volumes consider using \code{oro.nifti::writeNIfTI}.
+ so if they are volumes consider using \code{RNifti::writeNIfTI}.
 }
 \details{
 All file path arguments are required except \code{ROIsubcortVol_fname}. If

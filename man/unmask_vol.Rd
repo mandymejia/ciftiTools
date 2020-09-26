@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_volume.R
 \name{unmask_vol}
 \alias{unmask_vol}
-\title{Undo a mask}
+\title{Undo a volumetric mask}
 \usage{
 unmask_vol(dat, mask, fill = NA)
 }
@@ -20,7 +20,7 @@ mask.}
 The 3D or 4D unflattened volume array
 }
 \description{
-Applies a mask to vectorized data to yield its volumetric representation.
+Un-applies a mask to vectorized data to yield its volumetric representation.
  The mask and data should have compatible dimensions: the number of rows in
  \code{dat} should equal the number of locations within the \code{mask}.
 }

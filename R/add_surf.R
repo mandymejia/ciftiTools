@@ -2,8 +2,9 @@
 #' 
 #' Add left or right cortical surface geometry to a \code{"xifti"} object.
 #' 
-#' `surfL` will be added to `xifti$surf$cortex_left` and `surfR` will be added
-#'  to `xifti$surf$cortex_right`. Any existing surfaces will be overwritten.
+#' \code{surfL} will be added to \code{xifti$surf$cortex_left} and \code{surfR} 
+#'  will be added to \code{xifti$surf$cortex_right}. Any existing surfaces will 
+#'  be overwritten.
 #' 
 #' @inheritParams xifti_Param
 #' @inheritParams surfL_Param_optional
@@ -21,7 +22,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_left)) { 
       ciftiTools_msg("Overwriting existing geometry for left cortex.\n") 
     }
-    xifti$surf$cortex_left <- make_surf(surfL)
+    xifti$surf$cortex_left <- make_surf(surfL, "left")
   }
 
   # Right.
@@ -29,7 +30,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_right)) { 
       ciftiTools_msg("Overwriting existing geometry for right cortex.\n") 
     }
-    xifti$surf$cortex_right <- make_surf(surfR)
+    xifti$surf$cortex_right <- make_surf(surfR, "right")
   }
 
   # Check.

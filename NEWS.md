@@ -1,3 +1,44 @@
+# 1.4.2 (September 25, 2020)
+
+## Changes affecting users
+
+* `view_xifti_surface`
+    * Option to draw vertices and edges
+    * Automatically use (and resample to match data resolution) included surfaces, in most cases where surfaces were not provided
+* `view_xifti_volume`
+    * Fix error when data are integers
+    * Check that image dimensions and transformation matrix match with MNI template before plotting
+    * Use 9 slices instead of 12 by default (when not using `papayar`)
+* New argument `mwall_values` to relevant functions. 
+    * The values will be used to infer the medial wall if the medial wall is not explicitly specified
+    * Default: `NA` and `NaN` 
+    * This argument can be set to `NULL` to not infer the medial wall from the data
+* Better reading & writing of NIFTI and GIFTI files
+    * Export and import 4x4 transformation matrix with CIFTI and NIFTI files
+        * Use the `TransformationMatrixIJKtoXYZ` in CIFTI files
+        * Use the `sform` codes in NIFTI files
+    * Export and import label table and column names with CIFTI and GIFTI files (for `dlabel` and `dscalar`)
+    * Write NIFTI with `RNifti` instead of `oro.nifti`
+* Corrected separating, writing and resampling `*.dlabel.nii` files
+* Make `cifti_fname` in `read_cifti` optional (can read in just the surfaces)
+* Warning if brainstructure is requested but not available (instead of error)
+* Convert smoothed `dlabel` to `dscalar` (and add warning, because it's probably something you don't want to do)
+* Documentation improvements
+
+## Notes for developers
+
+* Improved handling of bad arguments to `make_subcort`
+* Split `info_cifti_raw` into `header_cifti` and `xml_cifti`
+* Add the internal functions `remove_xifti`, `expect_equal_xifti` and `fix_gifti_mwall`
+* `view_surf` is now a wrapper to `view_xifti_surface` instead of being its own function
+* Move color functions to `utils_color`. 
+* Make `ROY_BIG_BL` have an extra value to fix legend range. 
+* Handle constant-valued data in `view_xifti_surface`
+* Export color functions
+* Add "hemisphere" metadata to "surface" objects, and check that it matches if it exists. For example, `as.xifti(surfL=surfR_gii)` will cause an error
+* Move `rgl` and `fields` to Suggests
+* Add a few new tests based on these changes
+
 # 1.4 (August 31, 2020)
 
 ## Changes Affecting Users
@@ -20,21 +61,29 @@
 * Warning if GIFTI version is too old (need the one on github for `writegii`)
 * Tweaks to `view_xifti_surface` defaults
 * Add `view_xifti_volume` without structural image
+* If a function writes a file(s) as its main side effect, return a named character vector of the written file paths.
+    * Previously some functions returned `TRUE` while others returned a `list` or `data.frame` of written file paths
+* Out-of-mask values (medial wall for cortex and non-subcortical voxels for subcortex)
+ are no longer inferred from the data values when making a `"xifti"` from GIFTI and NIFTI files. Previously, if a mask was not provided then constant `0`, `NA`, or `NaN` values were deemed out-of-mask. Now, `ciftiTools` uses ROI files to keep track of the out-of-mask values in `read_cifti_separate` and `resample_cifti`, and requires the masks to be explicitly provided in `as.xifti`
+* Rename `make_surface` as `make_surf`
+* Rename `is.surface` as `is.surf`
+* Rename `side` argument as `hemisphere` argument (same choices: `"left"` or `"right"`)
+* Fixed the alias functions, e.g. `readCIfTI` and `readcii` for `read_cifti`
 
 ## Demo files
 
-* Taken from NITRC: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
+* The demo files from NITRC are now included with `ciftiTools`: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
 
 ## Notes for Developers
 
-* Add tests for reading and writing files
+* Add tests for most user functions
 * Rename `write_xifti_components` as `write_cifti_components`
 * Remove `metric_resample` and `surface_resample` (use `resample_gifti` directly)
 * Rename `make_helper_spheres` as `write_spheres`, and do not export it
-* Rename `make_surface` as `make_surf`
-* Rename `is.surface` as `is.surf`
 * Rename `unmask` as `unmask_vol` (to distinguish from `unmask_cortex`)
-* Remove data-raw from R package build
+* Remove `data-raw` from R package build
+* Require `gifti > 0.7.5`
+* Clean up `onAttach` and `.Rbuildignore`
 
 ## Vignette!
 
@@ -48,10 +97,9 @@ It will be located here: https://htmlpreview.github.io/?https://github.com/mandy
     * To make a `"xifti"` from a GIFTI surface: `as.xifti(surfL=make_surf(surfL_fname))`
 * `read_cifti_flat` now uses XML metadata directly (but still obtains XML via Connectome Workbench)
     * This allows for reading in more metadata such as time start/step for `.dtseries.nii`
-* `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::write_gifti`
+* `write_surf_gifti` and `write_metric_gifti` as wrappers to the new `gifti::writegii`
     * Currently depends on `damondpham/gifti` but this will hopefully be merged to main repo soon
 * `write_subcort_nifti` to write out subcortical components from `"xifti"` to a NIFTI file
-    * TO DO: add orientation and transformation matrix metadata
 * `write_cifti` can also write the surfaces attached to the `"xifti"`
 * `"xifti"` objects can contain surfaces without any data. 
     * `view_xifti_surface` can view a surface without any data: `plot(as.xifti(surfL=left_surf))`

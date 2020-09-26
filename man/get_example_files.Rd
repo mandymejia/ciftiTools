@@ -15,6 +15,7 @@ Get the file paths of the example CIFTI and surface GIFTI files included
  with \code{ciftiTools}.
 }
 \details{
-These files are from NITRC: cifti-2_test_data-1.2.zip at https://www.nitrc.org/frs/?group_id=454
+These files are from NITRC: cifti-2_test_data-1.2.zip at 
+ https://www.nitrc.org/frs/?group_id=454
 }
 \keyword{internal}

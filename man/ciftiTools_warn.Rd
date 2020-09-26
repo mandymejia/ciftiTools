@@ -10,7 +10,7 @@ ciftiTools_warn(warn)
 \item{msg}{The warning message}
 }
 \value{
-NULL, invisibly.
+\code{NULL}, invisibly
 }
 \description{
 Print warning only if ciftiTools Option "suppress_msgs" is TRUE

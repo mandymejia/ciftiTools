@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 0.1.4
+Version: 0.1.4.2
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -20,28 +20,24 @@ Description: Tools for reading and visualizing CIFTI brain imaging files. CIFTI 
     one NIFTI file representing the subcortical data, and reads the data into R. It also provides visualization tools 
     for the surface and subcortical data.  ciftiTools also includes processing functions to apply common preprocessing 
     steps to the CIFTI data (e.g. smoothing, resampling).
-Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-    fields,
     gifti (> 0.7.5),
     grDevices,
     oro.nifti,
     R.utils,
     RNifti,
     RColorBrewer,
-    rgl,
     xml2
 Remotes:
     muschellij2/gifti
 Suggests:
-    knitr,
-    rmarkdown,
+    fields,
     papayar,
-    testthat (>= 2.1.0),
-    covr
+    rgl,
+    testthat
 RoxygenNote: 7.1.1
 URL: https://github.com/mandymejia/ciftiTools
 BugReports: https://github.com/mandymejia/ciftiTools/issues
