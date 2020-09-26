@@ -1,4 +1,4 @@
-# 1.5 (September 25, 2020)
+# 1.4.2 (September 25, 2020)
 
 ## Changes affecting users
 
