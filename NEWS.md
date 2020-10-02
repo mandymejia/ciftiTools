@@ -1,3 +1,12 @@
+# 1.5 (October 2, 2020)
+
+## Changes affecting users
+
+* Add widget with slider for `view_xifti_surface` when more than one `idx` is requested!
+    * Replace `mode` argument with `interactive` argument
+    * Automatically use widget or video frames if more than one `idx`
+* Resilience to missing "MetaData" entry in CIFTI$Matrix
+
 # 1.4.2 (September 25, 2020)
 
 ## Changes affecting users
