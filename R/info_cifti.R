@@ -403,16 +403,19 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
   check_cifti_type(intent, extn)
 
   # XML
+  Matrix_xml <- names(cif_xml$CIFTI$Matrix)
   ## General CIFTI / Misc. metadata
   if ("MetaData" %in% names(cif_xml$CIFTI$Matrix)) {
     misc <- get_misc_meta_from_cifti_xml(cif_xml$CIFTI$Matrix$MetaData, intent)
   } else {
-    misck <- NULL
+    misc <- NULL
   }
   ## Extension-specific metadata
-  intn <- get_intn_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[2]], intent)
+  ii <- which(Matrix_xml == "MatrixIndicesMap")[1]
+  intn <- get_intn_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[ii]], intent)
   ## Data
-  data <- get_data_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[3]], intent)
+  ii <- which(Matrix_xml == "MatrixIndicesMap")[2]
+  data <- get_data_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[ii]], intent)
 
   # ----------------------------------------------------------------------------
   # Formatting -----------------------------------------------------------------
