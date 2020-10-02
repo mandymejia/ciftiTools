@@ -404,7 +404,11 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
 
   # XML
   ## General CIFTI / Misc. metadata
-  misc <- get_misc_meta_from_cifti_xml(cif_xml$CIFTI$Matrix$MetaData, intent)
+  if ("MetaData" %in% names(cif_xml$CIFTI$Matrix)) {
+    misc <- get_misc_meta_from_cifti_xml(cif_xml$CIFTI$Matrix$MetaData, intent)
+  } else {
+    misck <- NULL
+  }
   ## Extension-specific metadata
   intn <- get_intn_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[2]], intent)
   ## Data
