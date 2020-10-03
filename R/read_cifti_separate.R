@@ -169,10 +169,9 @@ read_cifti_separate <- function(
   to_read <- as.list(to_read)
   
   to_read["mwall_values"] <- list(mwall_values=mwall_values)
-
-  if (is.null(resamp_res)) {
-    to_read <- c(to_read, list(cifti_info=cifti_info))
-  }
+  to_read$cifti_info$cifti <- cifti_info$cifti
+  # Erase misc metadata and replace with the name of the resampled file
+  to_read$cifti_info$cifti$misc <- list(resampled_fname=cifti_fname)
 
   # Rename ROI arguments
   names(to_read)[names(to_read) == "ROIcortexL"] <- "cortexL_mwall"
@@ -184,7 +183,7 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
-  xifti <- do.call(make_xifti, as.list(to_read))
+  xifti <- do.call(make_xifti, to_read)
 
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
     xifti$meta$cortex$resamp_res <- resamp_res

@@ -96,7 +96,8 @@
 #' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If 
 #'  GIFTI and/or NIFTI components from a CIFTI are being provided, 
 #'  providing \code{cifti_info} gives metadata information that would otherwise
-#'  have to be inferred. 
+#'  have to be inferred: the NIFTI intent, brainstructures present in the
+#'  original file, and miscellaneous metadata.
 #' 
 #'  This argument is probably not necessary for end users: reading a CIFTI
 #'  should be done by providing \code{cifti_fname}, and for reading separate
@@ -130,6 +131,16 @@ make_xifti <- function(
   # Template.
   xifti <- template_xifti()
 
+  # CIFTI metadata.
+  if (!is.null(cifti_info)) { 
+    misc_meta <- c("intent", "brainstructures", "misc")
+    xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta] 
+    if (xifti$meta$cifti$intent == 3002) {
+      time_meta <- c("time_start", "time_step", "time_unit")
+      xifti$meta$cifti[time_meta] <- cifti_info$cifti[time_meta]
+    }
+  }
+
   # Cortex data.
   if (!is.null(cortexL)) {
     x <- make_cortex(
@@ -139,12 +150,14 @@ make_xifti <- function(
     xifti$data$cortex_left <- x$data
     xifti$meta$cortex$medial_wall_mask["left"] <- list(x$mwall)
 
-    ## Column names and label table.
-    xifti$meta$cifti$names <- x$col_names
-    if (!is.null(x$label_table)) {
-      xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
-      if (!is.null(x$col_names)) {
-        names(xifti$meta$cifti$labels) <- x$col_names
+    ## Column names and label table, if intent is not dtseries.
+    if (is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent != 3002) {
+      xifti$meta$cifti$names <- x$col_names
+      if (!is.null(x$label_table)) {
+        xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
+        if (!is.null(x$col_names)) {
+          names(xifti$meta$cifti$labels) <- x$col_names
+        }
       }
     }
   }
@@ -157,38 +170,40 @@ make_xifti <- function(
     xifti$meta$cortex$medial_wall_mask["right"] <- list(x$mwall)
 
     ## Column names and label table.
-    if (!is.null(x$col_names)) {
-      if (!is.null(xifti$meta$cifti$names)) {
-        if (length(x$col_names) != length(xifti$meta$cifti$names)) {
-          stop("The left and right cortex data had a different number of columns.")
-        }
-        if (!all(x$col_names == xifti$meta$cifti$names)) {
-          warning(paste0(
-            "The column names of the left cortex did not match the column names ",
-            "of the right cortex. The column names of the left cortex were:\n\t",
-            paste(xifti$meta$cifti$names, collapse=","), "\n\n",
-            "whereas the column names of the right cortex were:\n\t",
-            paste(x$col_names, collapse=","), "\n\n",
-            "Pasting them together."
-          ))
-          xifti$meta$cifti$names <- paste(x$col_names, xifti$meta$cifti$names, " ||| ")
-        }
-      }
-    } else {
-      xifti$meta$cifti$names <- x$col_names
-    }
-    if (!is.null(x$label_table)) {
-      if (!is.null(xifti$meta$cifti$labels)) {
-        if (!identical(x$label_table, xifti$meta$cifti$labels[[1]])) {
-          warning(paste(
-            "The label tables for the left and right cortex were not",
-            "identical. Using the label table from the left cortex."
-          ))
+    if (is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent != 3002) {
+      if (!is.null(x$col_names)) {
+        if (!is.null(xifti$meta$cifti$names)) {
+          if (length(x$col_names) != length(xifti$meta$cifti$names)) {
+            stop("The left and right cortex data had a different number of columns.")
+          }
+          if (!all(x$col_names == xifti$meta$cifti$names)) {
+            warning(paste0(
+              "The column names of the left cortex did not match the column names ",
+              "of the right cortex. The column names of the left cortex were:\n\t",
+              paste(xifti$meta$cifti$names, collapse=","), "\n\n",
+              "whereas the column names of the right cortex were:\n\t",
+              paste(x$col_names, collapse=","), "\n\n",
+              "Pasting them together."
+            ))
+            xifti$meta$cifti$names <- paste(x$col_names, xifti$meta$cifti$names, " ||| ")
+          }
         }
       } else {
-        xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
-        if (!is.null(xifti$meta$cifti$col_names)) {
-          names(xifti$meta$cifti$labels) <- xifti$meta$cifti$col_names
+        xifti$meta$cifti$names <- x$col_names
+      }
+      if (!is.null(x$label_table)) {
+        if (!is.null(xifti$meta$cifti$labels)) {
+          if (!identical(x$label_table, xifti$meta$cifti$labels[[1]])) {
+            warning(paste(
+              "The label tables for the left and right cortex were not",
+              "identical. Using the label table from the left cortex."
+            ))
+          }
+        } else {
+          xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
+          if (!is.null(xifti$meta$cifti$col_names)) {
+            names(xifti$meta$cifti$labels) <- xifti$meta$cifti$col_names
+          }
         }
       }
     }
@@ -204,11 +219,6 @@ make_xifti <- function(
     xifti$meta$subcort$labels <- x$labels
     xifti$meta$subcort$mask <- x$mask
     xifti$meta$subcort["trans_mat"] <- list(x$trans_mat)
-  }
-
-  # CIFTI metadata.
-  if (!is.null(cifti_info)) { 
-    xifti$meta$cifti[c("intent", "brainstructures", "misc")] <- cifti_info$cifti[c("intent", "brainstructures", "misc")] 
   }
 
   # Surfaces.
