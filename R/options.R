@@ -5,15 +5,18 @@
 #' @export 
 #' 
 ciftiTools.listOptions <- function() {
-  Options <- c('"wb_path"', '"EPS"', '"suppress_msgs"')
-  Descriptions <- c(
+  OptionName <- c('wb_path', 'EPS', 'suppress_msgs')
+  CurrentValue <- sapply(OptionName, ciftiTools.getOption)
+  CurrentValue[sapply(CurrentValue, is.null)] <- "NULL"
+  CurrentValue <- as.character(CurrentValue)
+  Description <- c(
     "Path to the Connectome Workbench folder or executable.", 
     "Tolerance for equality between floating-point numbers.",
     "Suppress some messages and warnings that are less important or very frequent."
   )
   Notes <- c("", "Currently only used to check that subcortical transformation matrices match that of the MNI template.", "")
 
-  data.frame(Options=Options, Descriptions=Descriptions, Notes=Notes)
+  data.frame(OptionName=OptionName, CurrentValue=CurrentValue, Description=Description, Notes=Notes)
 }
 
 #' Validate a \code{ciftiTools} option and value

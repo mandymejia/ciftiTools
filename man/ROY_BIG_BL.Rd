@@ -31,6 +31,6 @@ A data.frame with two columns: \code{"color"} (character: color hex
 }
 \details{
 Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. 
- This is the same color palette as the default Connectime Workbench palette. 
+ This is the same color palette as the default Connectome Workbench palette. 
  Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 }

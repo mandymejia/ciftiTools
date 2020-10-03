@@ -3,7 +3,7 @@
 #' "ROY_BIG_BL", the default palette from the Connectome Workbench.
 #'
 #' Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. 
-#'  This is the same color palette as the default Connectime Workbench palette. 
+#'  This is the same color palette as the default Connectome Workbench palette. 
 #'  Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 #'
 #' @param min The minimum value for the color mapping. As in the original 
@@ -141,7 +141,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #' }
 #'
 #' If \code{colors} is the name of an RColorBrewer palette (see 
-#'  \code{\link[RColorBrewer]{brewer.pal.info}}), the colors in that pallete will be used, 
+#'  \code{RColorBrewer::brewer.pal.info}), the colors in that pallete will be used, 
 #'  and the following behavior applies. If \code{colors} is a character vector
 #'  of color names (hex codes or standard R color names), the below behavior 
 #'  applies directly:
@@ -185,7 +185,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #' }
 #'
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
-#'  (see \code{\link[RColorBrewer]{brewer.pal.info}} and colorbrewer2.org), or a character 
+#'  (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), or a character 
 #'  vector of colors. \code{NULL} (default) will use \code{"ROY_BIG_BL"} 
 #'  if \code{color_mode} is \code{"sequential"} or \code{"diverging"}, and 
 #'  \code{"Set2"} if \code{color_mode} is \code{"qualitative"}. See the 

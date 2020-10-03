@@ -15,6 +15,9 @@ test_that("Miscellaneous functions are working", {
 
   fnames <- ciftiTools:::get_example_files()
 
+  # List Options
+  ciftiTools.listOptions()
+
   for (cii_fname in fnames$cifti) {
     cat("\n\n"); cat(cii_fname); cat("\n\n")
 
@@ -30,6 +33,17 @@ test_that("Miscellaneous functions are working", {
         subcortical_zeroes_as_NA=TRUE
       ),
       brainstructures = "all" #warning should happen if not all are present
+    )
+    cii <- smooth_cifti(
+      cii, file.path(tdir, basename(cii_fname)),
+      surface_sigma=5, volume_sigma=5,
+      surfL_fname=fnames$surf["left"],
+      surfR_fname=fnames$surf["right"],
+      subcortical_zeroes_as_NA=TRUE
+    )
+    cii <- smooth_cifti(
+      cii, file.path(tdir, basename(cii_fname)),
+      surface_sigma=7, volume_sigma=7
     )
 
     # remove_xifti (not exported)

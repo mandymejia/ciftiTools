@@ -288,6 +288,8 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
   
   out <- system(cmd, intern=intern)
 
+  ciftiTools_msg("Using the Connectome Workbench.")
+
   if (!intern) {
     out <- out == 0
     if (!out) {
@@ -311,7 +313,9 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
 #' @return \code{NULL}, invisibly
 #' 
 ciftiTools_msg <- function(msg){
-  if(!ciftiTools.getOption("suppress_msgs")) { message(msg) }
+  if (!ciftiTools.getOption("suppress_msgs")) { 
+    cat(msg); cat("\n") 
+  }
   invisible(NULL)
 }
 
@@ -325,7 +329,9 @@ ciftiTools_msg <- function(msg){
 #' @return \code{NULL}, invisibly
 #' 
 ciftiTools_warn <- function(warn){
-  if(!ciftiTools.getOption("suppress_msgs")) { warning(warn) }
+  if (!ciftiTools.getOption("suppress_msgs")) { 
+    warning(warn, immediate. = TRUE) 
+  }
   invisible(NULL)
 }
 

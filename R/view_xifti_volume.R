@@ -88,7 +88,7 @@ view_xifti_volume <- function(
     # Check data orientation alignment.
     # This uses the sform method (srow_x, srow_y, and srow_z), not qform
     #   or ANALYZE-based methods.
-    # This is because the Connectime Workbench seems to export the 
+    # This is because the Connectome Workbench seems to export the 
     #   TransformationMatrixIJKtoXYZ as the sform transformation matrix
     #   in -cifti-separate. 
     img_trans_mat <- make_trans_mat(img_fname)

@@ -5,7 +5,7 @@
 \title{Write CIFTI surface data to GIFTI}
 \usage{
 write_surf_gifti(
-  gii,
+  x,
   gifti_fname,
   hemisphere = c("left", "right"),
   encoding = NULL,
@@ -13,7 +13,7 @@ write_surf_gifti(
 )
 }
 \arguments{
-\item{gii}{A "surface" object, an object from \code{gifti::readgii}, or a 
+\item{x}{A "surface" object, an object from \code{gifti::readgii}, or a 
 list with elements "pointset" and "triangle".}
 
 \item{gifti_fname}{Where to write the GIFTI file.}

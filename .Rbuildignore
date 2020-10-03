@@ -5,3 +5,4 @@
 ^appveyor\.yml$
 ^data-raw$
 ^vignettes$
+^tests/run_ciftiTools_tests\.R$

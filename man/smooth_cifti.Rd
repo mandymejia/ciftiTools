@@ -7,8 +7,8 @@
 \title{Smooth a CIFTI}
 \usage{
 smooth_cifti(
-  cifti_original_fname,
-  cifti_target_fname,
+  x,
+  cifti_target_fname = NULL,
   surface_sigma,
   volume_sigma,
   surfL_fname = NULL,
@@ -21,7 +21,7 @@ smooth_cifti(
 )
 
 smoothCIfTI(
-  cifti_original_fname,
+  x,
   cifti_target_fname,
   surface_sigma,
   volume_sigma,
@@ -35,7 +35,7 @@ smoothCIfTI(
 )
 
 smoothcii(
-  cifti_original_fname,
+  x,
   cifti_target_fname,
   surface_sigma,
   volume_sigma,
@@ -49,9 +49,10 @@ smoothcii(
 )
 }
 \arguments{
-\item{cifti_original_fname}{The CIFTI file to smooth.}
+\item{x}{The \code{"xifti"} object or CIFTI file to smooth.}
 
-\item{cifti_target_fname}{The file name to save the smoothed CIFTI.}
+\item{cifti_target_fname}{The file name to save the smoothed CIFTI. If
+\code{NULL}, will be set to a file in a temporary directory.}
 
 \item{surface_sigma}{The sigma for the gaussian surface smoothing kernel, in mm}
 
@@ -86,6 +87,11 @@ If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
  to a ".dscalar" file because the values will no longer be integer indices.
  Unless the label values were ordinal, this is probably not desired so a
  warning will be printed.
+
+ The input can also be a \code{"xifti"} object.
+
+ Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
+ the inflated surfaces included in \code{"ciftiTools"} will be used.
 }
 \section{Connectome Workbench Requirement}{
 

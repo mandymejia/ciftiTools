@@ -1,10 +1,21 @@
 ---
-title: "ciftiTools Demo"
+title: "Getting started with `ciftiTools`"
+author: "Amanda Mejia & Damon Pham"
 output:
   html_document: default
   pdf_document: default
-date: "9/20/2020"
+vignette: >
+  %\VignetteIndexEntry{Getting started with `ciftiTools`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r include=FALSE}
+# To do: make output compatible with output: rmarkdown::html_vignette
+
+library(knitr)
+opts_chunk$set(autodep = TRUE, cache = TRUE)
+```
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the following CIFTI file types: `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"`. It also supports the GIFTI surface geometry file, `".surf.gii"`. Reading, writing, and resampling CIFTI files is made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench).  The Workbench must be installed to use `ciftiTools`. Visualizing the CIFTI files is made possible using the `rgl` R package and integrated support of surface GIFTI files.
 
@@ -386,7 +397,7 @@ knitr::include_graphics(plot(
 
 # In Development
 
-We are working on a slider bar for viewing different columns/timepoints of the data.
+We are working on a slider bar for viewing different columns/timepoints of the data. (It will not show up in the github htmlpreview.)
 
 ```{r, webgl=TRUE}
 view_xifti_surface(
