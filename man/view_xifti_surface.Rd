@@ -33,6 +33,7 @@ view_xifti_surface(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  widget_idx_warn = NULL,
   render_rgl = TRUE,
   mode = NULL
 )
@@ -63,6 +64,7 @@ view_cifti_surface(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  widget_idx_warn = NULL,
   render_rgl = TRUE,
   mode = NULL
 )
@@ -93,6 +95,7 @@ viewCIfTI_surface(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  widget_idx_warn = NULL,
   render_rgl = TRUE,
   mode = NULL
 )
@@ -123,6 +126,7 @@ viewcii_surface(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  widget_idx_warn = NULL,
   render_rgl = TRUE,
   mode = NULL
 )
@@ -253,6 +257,15 @@ not outline the edges).}
 
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0} 
 (do not draw the vertices).}
+
+\item{widget_idx_warn}{If \code{save==FALSE} or \code{close_after_save==FALSE},
+each mesh must be rendered in the same window. This is problematic if 
+\code{idx} and the mesh size are large. So, this option can be used to print 
+a warning when \code{length(idx)} exceeds \code{widget_idx_warn} and the 
+meshes are being drawn in the same window. Use \code{Inf} to never print a
+warning. The default, \code{NULL}, will print a warning if \code{idx} times
+the number of vertices exceeds 200k (approximately three 32k meshes for both
+the left and right hemisphere.)}
 
 \item{render_rgl}{Default: \code{TRUE}. If \code{FALSE}, do not render the
 Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh

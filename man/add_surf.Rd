@@ -12,12 +12,12 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{surfL}{(Optional) Left brain surface model. Can be a file
 path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
-\code{"gifti"} object representing surface geometry, or a \code{"surface"}
+\code{"gifti"} object representing surface geometry, or a \code{"surf"}
 object.}
 
 \item{surfR}{(Optional) Right brain surface model. Can be a file
 path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
-\code{"gifti"} object representing surface geometry, or a \code{"surface"}
+\code{"gifti"} object representing surface geometry, or a \code{"surf"}
 object.}
 }
 \value{

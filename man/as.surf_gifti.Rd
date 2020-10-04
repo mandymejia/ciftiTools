@@ -7,7 +7,7 @@
 as.surf_gifti(surf, hemisphere = c("left", "right"))
 }
 \arguments{
-\item{surf}{A \code{"surface"} object or a list with elements 
+\item{surf}{A \code{"surf"} object or a list with elements 
 \code{"pointset"} and \code{"triangle"}}
 
 \item{hemisphere}{The side of the brain the surface represents: \code{"left"} 
@@ -18,7 +18,7 @@ metadata field. Only used if \code{surf$hemisphere} is \code{NULL}.}
 The \code{"gifti"} object
 }
 \description{
-Format a \code{"surface"} object or a list with elements \code{"pointset"}
+Format a \code{"surf"} object or a list with elements \code{"pointset"}
  and \code{"triangle"} as a \code{"gifti"} object using a template 
  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 }

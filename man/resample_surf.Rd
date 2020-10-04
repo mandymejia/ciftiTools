@@ -2,7 +2,7 @@
 % Please edit documentation in R/resample_surf.R
 \name{resample_surf}
 \alias{resample_surf}
-\title{Resample a \code{"surface"} object}
+\title{Resample a \code{"surf"} object}
 \usage{
 resample_surf(
   surf,
@@ -12,7 +12,7 @@ resample_surf(
 )
 }
 \arguments{
-\item{surf}{A \code{"surface"} object}
+\item{surf}{A \code{"surf"} object}
 
 \item{resamp_res}{The desired resolution}
 
@@ -28,6 +28,6 @@ If not provided, should be set with
 The new surface
 }
 \description{
-Resample a \code{"surface"} object by writing it to a GIFTI, using the Connectome
+Resample a \code{"surf"} object by writing it to a GIFTI, using the Connectome
  Workbench to resample it, and then reading the new file.
 }

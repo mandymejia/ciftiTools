@@ -3,7 +3,7 @@
 #' Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}
 #'
 #' @inheritParams xifti_Param
-#' @param what Either \code{"surface"} or \code{"volume"}. If \code{NULL} 
+#' @param what Either \code{"surf"} or \code{"volume"}. If \code{NULL} 
 #'  (default), view the surface if cortex data is present in the \code{"xifti"} 
 #'  object, and the subcortical volume otherwise.
 #' @param ... Additional arguments to pass to either view function.

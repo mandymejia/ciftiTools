@@ -523,6 +523,14 @@ view_xifti_surface.draw_mesh <- function(
 #'  If \code{FALSE}, print it separately instead.
 #' @param colorbar_digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
+#' @param widget_idx_warn If \code{save==FALSE} or \code{close_after_save==FALSE},
+#'  each mesh must be rendered in the same window. This is problematic if 
+#'  \code{idx} and the mesh size are large. So, this option can be used to print 
+#'  a warning when \code{length(idx)} exceeds \code{widget_idx_warn} and the 
+#'  meshes are being drawn in the same window. Use \code{Inf} to never print a
+#'  warning. The default, \code{NULL}, will print a warning if \code{idx} times
+#'  the number of vertices exceeds 200k (approximately three 32k meshes for both
+#'  the left and right hemisphere.)
 #' @param render_rgl Default: \code{TRUE}. If \code{FALSE}, do not render the
 #'  Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh
 #'  objects and coloring information. This should be used by developers only.
@@ -545,7 +553,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  render_rgl=TRUE, mode=NULL) {
+  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL) {
 
   # Check required packages and X11
   if (!requireNamespace("rgl", quietly = TRUE)) {
@@ -643,6 +651,23 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
   x <- view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
   mesh <- x$mesh; values <- x$values
+
+  if ((!save || !close_after_save) && !is.null(values)) {
+    
+    if (is.null(widget_idx_warn) && (length(idx) * nrow(do.call(cbind, values)) > 200000)) {
+      print_widget_idx_warn <- TRUE
+    } else if (!is.null(widget_idx_warn) && (length(idx) > widget_idx_warn)) {
+      print_widget_idx_warn <- TRUE
+    } else {
+      print_widget_idx_warn <- FALSE
+    }
+    if (print_widget_idx_warn) {
+      warning(paste(
+        "There are many brain meshes being drawn in the same window.",
+        "The render time for the htmlwidget might be slow."
+      ))
+    }
+  }
 
   # ----------------------------------------------------------------------------
   # Get the palettes and vertex coloring. --------------------------------------
@@ -922,7 +947,7 @@ view_cifti_surface <- function(xifti, idx=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  render_rgl=TRUE, mode=NULL){
+  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL){
 
   view_xifti_surface(
     xifti=xifti, idx=idx,
@@ -935,7 +960,7 @@ view_cifti_surface <- function(xifti, idx=NULL,
     colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
     alpha=alpha, edge_color=edge_color, 
     vertex_color=vertex_color, vertex_size=vertex_size,
-    render_rgl=render_rgl, mode=mode
+    widget_idx_warn=widget_idx_warn, render_rgl=render_rgl, mode=mode
   )
 }
 
@@ -950,7 +975,7 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  render_rgl=TRUE, mode=NULL){
+  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL){
 
   view_xifti_surface(
     xifti=xifti, idx=idx,
@@ -963,7 +988,7 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
     colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
     alpha=alpha, edge_color=edge_color, 
     vertex_color=vertex_color, vertex_size=vertex_size,
-    render_rgl=render_rgl, mode=mode
+    widget_idx_warn=widget_idx_warn, render_rgl=render_rgl, mode=mode
   )
 }
 
@@ -978,7 +1003,7 @@ viewcii_surface <- function(xifti, idx=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  render_rgl=TRUE, mode=NULL){
+  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL){
 
   view_xifti_surface(
     xifti=xifti, idx=idx,
@@ -991,6 +1016,6 @@ viewcii_surface <- function(xifti, idx=NULL,
     colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
     alpha=alpha, edge_color=edge_color, 
     vertex_color=vertex_color, vertex_size=vertex_size,
-    render_rgl=render_rgl, mode=mode
+    widget_idx_warn=widget_idx_warn, render_rgl=render_rgl, mode=mode
   )
 }

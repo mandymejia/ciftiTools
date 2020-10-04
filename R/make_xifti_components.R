@@ -439,9 +439,9 @@ make_subcort <- function(
   )
 }
 
-#' Convert "gifti" to "surface" object
+#' Convert "gifti" to \code{"surf"} object
 #'
-#' Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
+#' Convert a file path to a surface GIFTI or a "gifti" object to a \code{"surf"} 
 #'  object.
 #'
 #' @param surf A surface GIFTI, either as a file path or a "gifti" object
@@ -451,7 +451,7 @@ make_subcort <- function(
 #'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
 #'  hemisphere.
 #' 
-#' @return The "surface" object: a list with components \code{"vertices"}
+#' @return The \code{"surf"} object: a list with components \code{"vertices"}
 #'  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
 #'  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
 #'  unknown).
@@ -513,22 +513,22 @@ gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
     stop("The object could not be converted into a surface.")
   }
 
-  structure(surf, class="surface")
+  structure(surf, class="surf")
 }
 
-#' Convert "gifti" to "surface" object
+#' Convert "gifti" to \code{"surf"} object
 #'
-#' Coerce a file path to a surface GIFTI, a "gifti" object, or a "surface"
-#'  object to a "surface" object.
+#' Coerce a file path to a surface GIFTI, a "gifti" object, or a \code{"surf"}
+#'  object to a \code{"surf"} object.
 #'
 #' @param surf Either a file path to a surface GIFTI; a "gifti" object
-#'  read by \code{\link[gifti]{readgii}}; or, an existing "surface" object.
+#'  read by \code{\link[gifti]{readgii}}; or, an existing \code{"surf"} object.
 #' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
 #'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
 #'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
 #'  hemisphere.
 #' 
-#' @return The "surface" object: a list with components \code{"vertices"}
+#' @return The \code{"surf"} object: a list with components \code{"vertices"}
 #'  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
 #'  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
 #'  unknown).
@@ -546,5 +546,5 @@ make_surf <- function(surf, expected_hemisphere=NULL) {
     }
   }
 
-  structure(surf, class="surface")
+  structure(surf, class="surf")
 }

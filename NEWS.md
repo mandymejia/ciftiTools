@@ -35,7 +35,7 @@
 * Make `ROY_BIG_BL` have an extra value to fix legend range. 
 * Handle constant-valued data in `view_xifti_surface`
 * Export color functions
-* Add "hemisphere" metadata to "surface" objects, and check that it matches if it exists. For example, `as.xifti(surfL=surfR_gii)` will cause an error
+* Add "hemisphere" metadata to \code{"surf"} objects, and check that it matches if it exists. For example, `as.xifti(surfL=surfR_gii)` will cause an error
 * Move `rgl` and `fields` to Suggests
 * Add a few new tests based on these changes
 

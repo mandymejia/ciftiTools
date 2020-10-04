@@ -103,7 +103,7 @@
 #'  should be done by providing \code{cifti_fname}, and for reading separate
 #'  GIFTI/NIFTI components \code{cifti_info} is not applicable.
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
-#'  Can be a surface GIFTI file path or "surface" object; see 
+#'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
 #' @param read_dir (Optional) Append a directory to all file names in the
 #'  arguments. If \code{NULL} (default), do not modify file names.

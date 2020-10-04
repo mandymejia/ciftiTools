@@ -129,11 +129,11 @@ as.metric_gifti <- function(
 
 #' Format surface data as a \code{"gifti"} object
 #'
-#' Format a \code{"surface"} object or a list with elements \code{"pointset"}
+#' Format a \code{"surf"} object or a list with elements \code{"pointset"}
 #'  and \code{"triangle"} as a \code{"gifti"} object using a template 
 #'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 #'
-#' @param surf A \code{"surface"} object or a list with elements 
+#' @param surf A \code{"surf"} object or a list with elements 
 #'  \code{"pointset"} and \code{"triangle"}
 #' @param hemisphere The side of the brain the surface represents: \code{"left"} 
 #'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
@@ -146,13 +146,13 @@ as.metric_gifti <- function(
 as.surf_gifti <- function(
   surf, hemisphere=c("left", "right")){
 
-  # --> "surface"
+  # --> "surf"
   surf <- make_surf(surf)
   if (is.null(surf$hemisphere)) { 
     surf$hemisphere <- match.arg(hemisphere, c("left", "right"))
   }
 
-  # "surface" --> "gifti"
+  # "surf" --> "gifti"
   gii <- gifti_surf_template # from ciftiTools R/sysdata.rda
   gii$data <- list(
     pointset = surf$vertices,

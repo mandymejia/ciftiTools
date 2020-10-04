@@ -195,7 +195,7 @@ NULL
 #' 
 #' @param surfL (Optional) Left brain surface model. Can be a file
 #'  path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
-#'  \code{"gifti"} object representing surface geometry, or a \code{"surface"}
+#'  \code{"gifti"} object representing surface geometry, or a \code{"surf"}
 #'  object.
 #' @name surfL_Param_optional
 NULL
@@ -204,7 +204,7 @@ NULL
 #' 
 #' @param surfR (Optional) Right brain surface model. Can be a file
 #'  path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
-#'  \code{"gifti"} object representing surface geometry, or a \code{"surface"}
+#'  \code{"gifti"} object representing surface geometry, or a \code{"surf"}
 #'  object.
 #' @name surfR_Param_optional
 NULL

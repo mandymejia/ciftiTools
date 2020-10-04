@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{gifti_to_surface}
 \alias{gifti_to_surface}
-\title{Convert "gifti" to "surface" object}
+\title{Convert "gifti" to \code{"surf"} object}
 \usage{
 gifti_to_surface(surf, expected_hemisphere = NULL)
 }
@@ -16,12 +16,12 @@ opposite, an error is raised. If \code{NULL} (default), accept the GIFTI
 hemisphere.}
 }
 \value{
-The "surface" object: a list with components \code{"vertices"}
+The \code{"surf"} object: a list with components \code{"vertices"}
  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
  unknown).
 }
 \description{
-Convert a file path to a surface GIFTI or a "gifti" object to a "surface" 
+Convert a file path to a surface GIFTI or a "gifti" object to a \code{"surf"} 
  object.
 }

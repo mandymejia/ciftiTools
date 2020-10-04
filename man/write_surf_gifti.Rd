@@ -13,13 +13,13 @@ write_surf_gifti(
 )
 }
 \arguments{
-\item{x}{A "surface" object, an object from \code{gifti::readgii}, or a 
+\item{x}{A \code{"surf"} object, an object from \code{gifti::readgii}, or a 
 list with elements "pointset" and "triangle".}
 
 \item{gifti_fname}{Where to write the GIFTI file.}
 
 \item{hemisphere}{"left" (default) or "right". Ignored if \code{data} is already
-a "gifti" object, or if it is a "surface" object with the hemisphere metadata
+a "gifti" object, or if it is a \code{"surf"} object with the hemisphere metadata
 already specified.}
 
 \item{encoding}{A length-2 vector with elements chosen among "ASCII", 

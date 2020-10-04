@@ -74,7 +74,7 @@
 #'  or \code{NaN} are legitimate values that non-medial wall vertices might
 #'  take on.
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
-#'  Can be a surface GIFTI file path or \code{"surface"} object; see 
+#'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
 #'
 #' @return A \code{"xifti"} object

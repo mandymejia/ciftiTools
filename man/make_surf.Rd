@@ -2,13 +2,13 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_surf}
 \alias{make_surf}
-\title{Convert "gifti" to "surface" object}
+\title{Convert "gifti" to \code{"surf"} object}
 \usage{
 make_surf(surf, expected_hemisphere = NULL)
 }
 \arguments{
 \item{surf}{Either a file path to a surface GIFTI; a "gifti" object
-read by \code{\link[gifti]{readgii}}; or, an existing "surface" object.}
+read by \code{\link[gifti]{readgii}}; or, an existing \code{"surf"} object.}
 
 \item{expected_hemisphere}{The expected hemisphere (\code{"left"} or \code{"right"})
 of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
@@ -16,12 +16,12 @@ opposite, an error is raised. If \code{NULL} (default), accept the GIFTI
 hemisphere.}
 }
 \value{
-The "surface" object: a list with components \code{"vertices"}
+The \code{"surf"} object: a list with components \code{"vertices"}
  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
  unknown).
 }
 \description{
-Coerce a file path to a surface GIFTI, a "gifti" object, or a "surface"
- object to a "surface" object.
+Coerce a file path to a surface GIFTI, a "gifti" object, or a \code{"surf"}
+ object to a \code{"surf"} object.
 }

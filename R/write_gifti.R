@@ -151,11 +151,11 @@ write_metric_gifti <- function(
 #' 
 #' Write the data for the left or right surface to a surface GIFTI file.
 #'
-#' @param x A "surface" object, an object from \code{gifti::readgii}, or a 
+#' @param x A \code{"surf"} object, an object from \code{gifti::readgii}, or a 
 #'  list with elements "pointset" and "triangle".
 #' @param gifti_fname Where to write the GIFTI file.
 #' @param hemisphere "left" (default) or "right". Ignored if \code{data} is already
-#'  a "gifti" object, or if it is a "surface" object with the hemisphere metadata
+#'  a "gifti" object, or if it is a \code{"surf"} object with the hemisphere metadata
 #'  already specified.
 #' @param encoding A length-2 vector with elements chosen among "ASCII", 
 #'  "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 

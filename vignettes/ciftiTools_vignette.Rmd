@@ -142,7 +142,7 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 ### Support for surface geometry without data
 
-A `"surface"` can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
+A `"surf"` object can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
 
 ```{r, fig.cap="Left hemisphere surface", rgl=TRUE, format="png", fig.height=6, fig.width=4}
 view_surf(surfL_fname)
@@ -152,8 +152,7 @@ We can additionally render the vertices and edges. Below is the right hemisphere
 
 ```{r, fig.cap="Right hemisphere surface (resampled) with mesh", rgl=TRUE, format="png", fig.height=6, fig.width=4}
 small_surf <- resample_surf(make_surf(surfR_fname), 4000)
-# Use ciftiTools:::plot.surface instead of plot because plot.surface is an S3 method from fields package (used to create legend in RGL) too
-ciftiTools:::plot.surface(small_surf, edge_color="black", vertex_size=4)
+plot(small_surf, edge_color="black", vertex_size=4)
 ```
 
 A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
@@ -375,8 +374,7 @@ We are working on a slider bar for viewing different columns/timepoints of the d
 ```{r fig.height=6, fig.width=7.5}
 view_xifti_surface(
   read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
-  idx=1:2,
-  bg="#ECF5D4", zlim=c(0,5)
+  idx=1:2, bg="#ECF5D4", zlim=c(0,5)
 )
 rgl.close()
 ```

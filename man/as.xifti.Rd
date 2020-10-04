@@ -130,7 +130,7 @@ take on.}
  will occur.}
 
 \item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex. 
-Can be a surface GIFTI file path or \code{"surface"} object; see 
+Can be a surface GIFTI file path or \code{"surf"} object; see 
 \code{\link{make_surf}} for a full description of valid inputs.}
 }
 \value{

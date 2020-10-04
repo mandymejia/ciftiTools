@@ -2,7 +2,7 @@
 % Please edit documentation in R/view_surf.R
 \name{view_surf}
 \alias{view_surf}
-\title{View \code{"surface"} object(s)}
+\title{View \code{"surf"} object(s)}
 \usage{
 view_surf(
   ...,
@@ -17,19 +17,16 @@ view_surf(
   save = FALSE,
   close_after_save = TRUE,
   fname = "surf",
-  surfL = NULL,
-  surfR = NULL,
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
-  render_rgl = TRUE,
   mode = NULL
 )
 }
 \arguments{
-\item{...}{One of: A \code{"surface"} object; two \code{"surface"} objects;
-or, a \code{"xifti"} object. If a \code{"surface"} object has an empty
+\item{...}{One of: A \code{"surf"} object; two \code{"surf"} objects;
+or, a \code{"xifti"} object. If a \code{"surf"} object has an empty
 \code{"hemisphere"} metadata entry, it will be set to the opposite side 
 of the other's if known; otherwise, it will be set to the left side. If both
 are unknown, the first will be taken as the left and the second as the
@@ -107,7 +104,7 @@ not outline the edges).}
 and \code{close_after_save}.}
 }
 \description{
-Visualize one or two \code{"surface"} objects(s), or the \code{"surf"} 
+Visualize one or two \code{"surf"} objects(s), or the \code{"surf"} 
  component(s) in a \code{"xifti"} using an interactive Open GL window
  made with \code{rgl}. The \code{rgl} package is required.
 }

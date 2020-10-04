@@ -19,7 +19,7 @@ viewcii(xifti, what = NULL, ...)
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{what}{Either \code{"surface"} or \code{"volume"}. If \code{NULL} 
+\item{what}{Either \code{"surf"} or \code{"volume"}. If \code{NULL} 
 (default), view the surface if cortex data is present in the \code{"xifti"} 
 object, and the subcortical volume otherwise.}
 

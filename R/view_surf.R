@@ -1,6 +1,6 @@
-#' View \code{"surface"} object(s)
+#' View \code{"surf"} object(s)
 #' 
-#' Visualize one or two \code{"surface"} objects(s), or the \code{"surf"} 
+#' Visualize one or two \code{"surf"} objects(s), or the \code{"surf"} 
 #'  component(s) in a \code{"xifti"} using an interactive Open GL window
 #'  made with \code{rgl}. The \code{rgl} package is required.
 #' 
@@ -14,8 +14,8 @@
 #' @inheritSection rgl_interactive_plots_Description Navigating and Embedding the Interactive Plots
 #' @inheritSection rgl_static_plots_Description Embedding the Static Plots
 #' 
-#' @param ... One of: A \code{"surface"} object; two \code{"surface"} objects;
-#'  or, a \code{"xifti"} object. If a \code{"surface"} object has an empty
+#' @param ... One of: A \code{"surf"} object; two \code{"surf"} objects;
+#'  or, a \code{"xifti"} object. If a \code{"surf"} object has an empty
 #'  \code{"hemisphere"} metadata entry, it will be set to the opposite side 
 #'  of the other's if known; otherwise, it will be set to the left side. If both
 #'  are unknown, the first will be taken as the left and the second as the
@@ -29,9 +29,8 @@ view_surf <- function(
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   save=FALSE, close_after_save=TRUE, fname="surf",
-  surfL=NULL, surfR=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  render_rgl=TRUE, mode=NULL){
+  mode=NULL){
   
   surf <- list(...)
 
@@ -66,20 +65,20 @@ view_surf <- function(
   # Handle the different surface arguments.
   if (length(surf) == 1) {
     surf <- surf[[1]]
-    if (inherits(surf, "surface")) { 
+    if (inherits(surf, "surf")) { 
       if (is.null(surf$hemisphere)) { surf$hemisphere <- "left" } 
       surfL <- switch(surf$hemisphere, left=surf, right=NULL)
       surfR <- switch(surf$hemisphere, left=NULL, right=surf)
     } else if (inherits(surf, "xifti")) {
       surfL <- surf$surf$cortex_left; surfR <- surf$surf$cortex_right
     } else {
-      stop("The surface arguments must be \"surface\" or \"xifti\" objects.")
+      stop("The surface arguments must be \"surf\" or \"xifti\" objects.")
     }
   } else if (length(surf) == 2) {
-    if (!inherits(surf[[1]], "surface") || !inherits(surf[[2]], "surface")) {
+    if (!inherits(surf[[1]], "surf") || !inherits(surf[[2]], "surf")) {
       stop(paste(
         "If arguments specifying the surfaces are provided, both must be",
-        "\"surface\" objects."
+        "\"surf\" objects."
       ))
     }
     if (is.null(surf[[1]]$hemisphere)) {
@@ -119,7 +118,7 @@ view_surf <- function(
     save=save, close_after_save=close_after_save, fname=fname,
     surfL=surfL, surfR=surfR,
     alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size, 
-    render_rgl=render_rgl, mode=mode
+    mode=mode
   )
 }
 
@@ -127,7 +126,7 @@ view_surf <- function(
 #'
 #' Visualize a single surface
 #' 
-#' @param x A "surface" object
+#' @param x A \code{"surf"} object
 #' @param ... Additional arguments to \code{\link{view_xifti_surface}}. But, the
 #'  \code{hemisphere} argument behaves differently: it can be either
 #'  \code{left} or \code{right} to indicate which hemisphere \code{x} 
@@ -135,10 +134,10 @@ view_surf <- function(
 #'  \code{x} is \code{NULL}. If both the argument and the metadata entry are
 #'  \code{NULL}, the surface will be treated as the left hemisphere.
 #'
-#' @method plot surface
+#' @method plot surf
 #' 
 #' @export
-plot.surface <- function(x, ...){
+plot.surf <- function(x, ...){
   stopifnot(is.surf(x))
 
   if (is.null(x$hemisphere)) {
