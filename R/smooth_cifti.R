@@ -167,7 +167,7 @@ smooth_cifti <- function(
 
     surfL_fname <- file.path(tempdir(), "left.surf.gii")
     surfL_fname <- resample_gifti(
-      get_example_files()$surf["left"], 
+      demo_files()$surf["left"], 
       surfL_fname, hemisphere="left", file_type="surface", resamp_res=x_res
     )
   }
@@ -207,7 +207,7 @@ smooth_cifti <- function(
 
     surfR_fname <- file.path(tempdir(), "right.surf.gii")
     surfR_fname <- resample_gifti(
-      get_example_files()$surf["right"], 
+      demo_files()$surf["right"], 
       surfR_fname, hemisphere="right", file_type="surface", resamp_res=x_res
     )
   }

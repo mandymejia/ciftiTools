@@ -13,7 +13,7 @@ test_that("Miscellaneous functions are working", {
 
   tdir <- tempdir()
 
-  fnames <- ciftiTools:::get_example_files()
+  fnames <- ciftiTools:::demo_files()
 
   # List Options
   ciftiTools.listOptions()

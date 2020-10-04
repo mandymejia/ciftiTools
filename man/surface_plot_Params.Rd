@@ -4,28 +4,9 @@
 \alias{surface_plot_Params}
 \title{surface plot}
 \arguments{
-\item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or \code{"both"}.
-If \code{NULL} (default), both views will be shown. Each view
-will be shown in a separate panel row within the RGL window.}
-
-\item{interactive}{\code{TRUE} (default) will render the surface(s) in an interactive RGL 
- window. Left click and drag to rotate. Use the scroll wheel to zoom. Run 
- \code{rgl::snapshot("my_file.png")} to save the RGL window as a png file
- (see \code{\link[rgl]{snapshot}} for more information). Run 
- \code{rgl::rgl.close()} to close the window. If the length of \code{idx}
- is greater than one, an rgl widget with a slider to control the \code{idx} 
- being displayed will also be returned. (Auto-print it to view it.) 
-
- \code{FALSE} will render the surface(s) in an RGL window, take a screenshot
- using \code{\link[rgl]{snapshot}}, and close it. The screenshot will be saved
- as a png in \code{write_dir}. This is repeated for every \code{idx}. If
- there is only one \code{idx} the file name will be \code{"[fname].png"}.
- Otherwise, it will be \code{"[fname]_[idx[i]].png"} for each \code{idx[i]}. 
- The written image file names will be returned.}
-
-\item{mode}{Deprecated and will be removed. \code{"widget"} will set 
-\code{interactive=TRUE} whereas \code{"image"} and \code{"video"} will set 
-\code{interactive=FALSE}.}
+\item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or 
+\code{"both"}. If \code{NULL} (default), both views will be shown. Each view 
+will be plotted in a separate panel row.}
 
 \item{width, height}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), the dimensions will be set to
@@ -33,7 +14,7 @@ will be shown in a separate panel row within the RGL window.}
 1500 x 525 for 2x1 subplots, and
 500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
 within a 1600 x 900 screen. Specyfing only one will set the other to maintain
-the same aspect ratio. Both could be specified to set the dimensions exactly.}
+the same aspect ratio. Both can be specified to set the dimensions exactly.}
 
 \item{zoom}{Adjustment to size of brain meshes. Default: \code{3/5}
 (100\% + 3/5*100\% = 160\% the original size).}
@@ -60,14 +41,16 @@ sizes for increasingly longer titles.}
 \item{text_color}{Color for text in title and colorbar legend. Default:
 "black".}
 
+\item{save}{Save the plot to a .png file named by \code{fname}? Default:
+\code{FALSE}.}
+
+\item{close_after_save}{If \code{save==TRUE}, close the interactive Open GL 
+window at the end of this function call? Default: \code{TRUE}.}
+
 \item{fname}{An identifier to use for naming the saved images
-("[fname].png") and video frames ("[fname]_1.png", "[fname]_2.png", ...).
-Default: \code{"xifti"}.}
-
-\item{write_dir}{Where should any output images be written. NULL (default)
- will write them to the current working directory.
-
- \code{write_dir} must already exist, or an error will occur.}
+("[fname].png") or video frames ("[fname]_1.png", "[fname]_2.png", ...).
+Default: \code{"xifti"} for \code{xifti_view_surface} and \code{"surf"} for
+\code{view_surf}.}
 
 \item{alpha}{Transparency value for mesh coloring, between 0 and 1. Default:
 \code{1.0} (no transparency).}
@@ -80,6 +63,9 @@ not outline the edges).}
 
 \item{vertex_color}{Draw each vertex in this color. Default: 
 \code{"black"}. Vertices are only drawn if \code{vertex_size > 0}}
+
+\item{mode}{Deprecated: has no effect and will be removed. See \code{save}
+and \code{close_after_save}.}
 }
 \description{
 surface plot

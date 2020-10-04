@@ -1,13 +1,18 @@
-#' Visualize \code{"surface"} object(s)
+#' View \code{"surface"} object(s)
 #' 
 #' Visualize one or two \code{"surface"} objects(s), or the \code{"surf"} 
-#'  component(s) in a \code{"xifti"}.
+#'  component(s) in a \code{"xifti"} using an interactive Open GL window
+#'  made with \code{rgl}. The \code{rgl} package is required.
 #' 
 #' This function works as a wrapper to \code{\link{view_xifti_surface}}, but 
 #'  some arguments are not applicable (e.g. color scheme and legend). Also, 
 #'  instead of using the \code{hemisphere} argument, name the surface arguments
-#'  \code{surfL} or \code{surfR} (see parameter description for \code{...}).
-#'  Finally, the \code{"video"} mode is not applicable (since each frame would be identical).
+#'  \code{surfL} or \code{surfR} (see description for parameter \code{...}).
+#'  Finally, the default value for \code{param} is \code{"surf"}, not 
+#'  \code{"xifti"}.
+#' 
+#' @inheritSection rgl_interactive_plots_Description Navigating and Embedding the Interactive Plots
+#' @inheritSection rgl_static_plots_Description Embedding the Static Plots
 #' 
 #' @param ... One of: A \code{"surface"} object; two \code{"surface"} objects;
 #'  or, a \code{"xifti"} object. If a \code{"surface"} object has an empty
@@ -21,10 +26,12 @@
 #' 
 view_surf <- function(
   ..., view=c("both", "lateral", "medial"),
-  interactive=TRUE, mode=NULL, width=NULL, height=NULL, zoom=.6,
+  width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  fname="xifti", 
-  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0){
+  save=FALSE, close_after_save=TRUE, fname="surf",
+  surfL=NULL, surfR=NULL,
+  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
+  render_rgl=TRUE, mode=NULL){
   
   surf <- list(...)
 
@@ -106,11 +113,13 @@ view_surf <- function(
   # Plot
   view_xifti_surface(
     make_xifti(surfL=surfL, surfR=surfR), hemisphere=hemisphere,
-    view=view, interactive=interactive, mode=mode, 
+    view=view,
     width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    fname=fname, alpha=alpha, 
-    edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size
+    save=save, close_after_save=close_after_save, fname=fname,
+    surfL=surfL, surfR=surfR,
+    alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size, 
+    render_rgl=render_rgl, mode=mode
   )
 }
 
