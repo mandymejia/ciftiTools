@@ -33,6 +33,7 @@ view_xifti_surface(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  border_color = NULL,
   widget_idx_warn = NULL,
   render_rgl = TRUE,
   mode = NULL
@@ -257,6 +258,12 @@ not outline the edges).}
 
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0} 
 (do not draw the vertices).}
+
+\item{border_color}{Only applicable if \code{color_mode} is 
+\code{"qualitative"}. Border vertices will be identified (those that share a
+faces with at least one vertex of a different value) and drawn in this color
+instead, overriding the color indicated by their value. If \code{NULL}, do
+not draw borders.}
 
 \item{widget_idx_warn}{If \code{save==FALSE} or \code{close_after_save==FALSE},
 each mesh must be rendered in the same window. This is problematic if 

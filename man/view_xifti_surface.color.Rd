@@ -11,17 +11,20 @@ view_xifti_surface.color(
   colors,
   color_mode,
   zlim,
-  xifti_meta
+  xifti_meta,
+  border_color,
+  surfL,
+  surfR
 )
 }
 \arguments{
-\item{values}{The list of \eqn{V x idx} data value matrices (one left, one right)}
-
-\item{idx}{Index/indices}
+\item{hemisphere, values, idx}{idx see \code{\link{view_xifti_surface}}}
 
 \item{colors, color_mode, zlim}{see \code{\link{view_xifti_surface}}}
 
 \item{xifti_meta}{\code{xifti$meta}}
+
+\item{border_color, surfL, surfR}{see \code{\link{view_xifti_surface}}}
 }
 \value{
 A list with entries "pal_base", "pal", and "color_vals"

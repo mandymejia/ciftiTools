@@ -183,16 +183,20 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
 #' 
-#' @param values The list of \eqn{V x idx} data value matrices (one left, one right)
-#' @param idx Index/indices
+#' @param hemisphere,values,idx idx see \code{\link{view_xifti_surface}}
 #' @param colors,color_mode,zlim see \code{\link{view_xifti_surface}}
 #' @param xifti_meta \code{xifti$meta}
+#' @param border_color,surfL,surfR see \code{\link{view_xifti_surface}}
 #' 
 #' @return A list with entries "pal_base", "pal", and "color_vals"
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.color <- function(hemisphere, values, idx, colors, color_mode, zlim, xifti_meta) {
+view_xifti_surface.color <- function(
+  hemisphere, values, idx, 
+  colors, color_mode, zlim, 
+  xifti_meta,
+  border_color, surfL, surfR) {
 
   # Put values together (to use data bounds across all measurements/columns)
   nvertL <- ifelse("left" %in% hemisphere, nrow(values$left), 0)
@@ -207,7 +211,7 @@ view_xifti_surface.color <- function(hemisphere, values, idx, colors, color_mode
     # Get the base palette.
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
-      if (!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007) {
+      if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007) && is.null(colors)) {
         labs <- xifti_meta$cifti$labels[[idx]]
         N_VALUES <- length(labs$Key)
         pal_base <- data.frame(
@@ -523,6 +527,11 @@ view_xifti_surface.draw_mesh <- function(
 #'  If \code{FALSE}, print it separately instead.
 #' @param colorbar_digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
+#' @param border_color Only applicable if \code{color_mode} is 
+#'  \code{"qualitative"}. Border vertices will be identified (those that share a
+#'  faces with at least one vertex of a different value) and drawn in this color
+#'  instead, overriding the color indicated by their value. If \code{NULL}, do
+#'  not draw borders.
 #' @param widget_idx_warn If \code{save==FALSE} or \code{close_after_save==FALSE},
 #'  each mesh must be rendered in the same window. This is problematic if 
 #'  \code{idx} and the mesh size are large. So, this option can be used to print 
@@ -552,7 +561,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
-  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
+  alpha=1.0, 
+  edge_color=NULL, vertex_color=NULL, vertex_size=0, border_color=NULL,
   widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL) {
 
   # Check required packages and X11
@@ -673,7 +683,12 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Get the palettes and vertex coloring. --------------------------------------
   # ----------------------------------------------------------------------------
 
-  x <- view_xifti_surface.color(hemisphere, values, idx, colors, color_mode, zlim, xifti$meta)
+  x <- view_xifti_surface.color(
+    hemisphere, values, idx, 
+    colors, color_mode, zlim, 
+    xifti$meta,
+    border_color, surfL, surfR
+  )
   pal_base <- x$pal_base; pal <- x$pal; color_vals <- x$color_vals
   any_colors <- !all(unlist(sapply(color_vals, dim)) == 1)
 
@@ -819,20 +834,33 @@ view_xifti_surface <- function(xifti, idx=NULL,
         ID = diag(4)
       )
 
-      # Get the color.
-      if (any_colors) {
-        mesh_color <- c(NA_COLOR, as.character(pal$color))[color_vals[[h]][,jj] + 1]
-      } else {
-        mesh_color <- NA_COLOR
-      }
-
+      # If the lateral view was already drawn, re-use that mesh.
       if ((length(view)==2 && grepl("medial", p))) {
         this_mesh <- rglIDs[[jj]][[gsub("medial", "lateral", p)]]
         rgl::addToSubscene3d(this_mesh$mesh_col)
         if (!is.null(this_mesh$mesh_vert)) { rgl::addToSubscene3d(this_mesh$mesh_vert) }
         if (!is.null(this_mesh$mesh_edge)) { rgl::addToSubscene3d(this_mesh$mesh_edge) }
         rglIDs[[jj]][[p]] <- this_mesh
+
+      # Otherwise, draw the mesh.
       } else {
+        # Get the color.
+        if (any_colors) {
+          mesh_color <- c(NA_COLOR, as.character(pal$color))[color_vals[[h]][,jj] + 1]
+        } else {
+          mesh_color <- rep(NA_COLOR, nrow(switch(h, left=surfL, right=surfR)$vertices))
+        }
+        # Draw border.
+        if (!is.null(border_color) && color_mode=="qualitative") {
+          if (h == "left") {
+            cat("\nComputing left border (takes a while).\n")
+            mesh_color[parc_borders(values$left[,jj], surfL)] <- border_color
+          } else if (h == "right") {
+            cat("\nComputing right border (takes a while).\n")
+            mesh_color[parc_borders(values$right[,jj], surfR)] <- border_color
+          }
+        }
+        # Draw the mesh.
         rglIDs[[jj]][[p]] <- view_xifti_surface.draw_mesh(
           mesh[[h]], mesh_color, 
           alpha, vertex_color, vertex_size, edge_color
