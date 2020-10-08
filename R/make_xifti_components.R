@@ -460,7 +460,7 @@ make_subcort <- function(
 #'
 #' @export
 #' 
-gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
+gifti_to_surf <- function(surf, expected_hemisphere=NULL) {
 
   if (!is.null(expected_hemisphere)) {
     expected_hemisphere <- match.arg(expected_hemisphere, c("left", "right"))
@@ -540,7 +540,7 @@ gifti_to_surface <- function(surf, expected_hemisphere=NULL) {
 make_surf <- function(surf, expected_hemisphere=NULL) {
 
   if (!suppressMessages(is.surf(surf))) {
-    surf <- gifti_to_surface(surf, expected_hemisphere)
+    surf <- gifti_to_surf(surf, expected_hemisphere)
     if (!is.surf(surf)) {
       stop("The object could not be converted into a surface.")
     }

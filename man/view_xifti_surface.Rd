@@ -211,7 +211,7 @@ Default: \code{"xifti"} for \code{xifti_view_surface} and \code{"surf"} for
 \code{view_surf}.}
 
 \item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use,
-\emph{or} the name of a ColorBrewer palette (see RColorBrewer::brewer.pal.info
+OR the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
 and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential),
 \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
 to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
