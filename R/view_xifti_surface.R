@@ -853,10 +853,10 @@ view_xifti_surface <- function(xifti, idx=NULL,
         # Draw border.
         if (!is.null(border_color) && color_mode=="qualitative") {
           if (h == "left") {
-            cat("\nComputing left border (takes a while).\n")
+            #cat("\nComputing left border (takes a while).\n")
             mesh_color[parc_borders(values$left[,jj], surfL)] <- border_color
           } else if (h == "right") {
-            cat("\nComputing right border (takes a while).\n")
+            #cat("\nComputing right border (takes a while).\n")
             mesh_color[parc_borders(values$right[,jj], surfR)] <- border_color
           }
         }
