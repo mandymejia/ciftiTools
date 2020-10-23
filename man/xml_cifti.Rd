@@ -17,7 +17,7 @@ If not provided, should be set with
 The XML as a list
 }
 \description{
-Wrapper for Connectome Workbench command 
+Wrapper for Connectome Workbench command
  \code{-nifti-information [fname] -print-xml}
 }
 \section{Connectome Workbench Requirement}{

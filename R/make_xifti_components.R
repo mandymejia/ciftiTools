@@ -76,7 +76,7 @@ make_cortex <- function(
     get_col_name <- function(x){
       if (!is.matrix(x)) { return("") }
       if (!all(sort(colnames(x)) == sort(c("names", "vals")))) { return("") }
-      name_match = x[,colnames(x) == "names"] == "Name"
+      name_match <- x[,colnames(x) == "names"] == "Name"
       if (sum(name_match) > 0) {
         if (sum(name_match) > 1) { 
           ciftiTools_warn("Multiple \"Name\" metadata entries. Using first only.")
@@ -86,7 +86,7 @@ make_cortex <- function(
         return("")
       }
     }
-    col_names <- as.character(sapply(cortex$data_meta, get_col_name))
+    col_names <- as.character(vapply(cortex$data_meta, get_col_name, ""))
     if (length(unique(col_names)) == 1 && col_names=="") {
       col_names <- NULL
     }
@@ -398,20 +398,20 @@ make_subcort <- function(
   substructure_levels <- substructure_table()$ciftiTools_Name
   labs <- factor(
     labs, 
-    levels=1:length(substructure_levels), 
+    levels=seq_len(length(substructure_levels)), 
     labels=substructure_levels
   )
   stopifnot(is.subcort_labs(labs))
 
   # Get trans_mat. Only use if all were the same.
   trans_mat <- list(vol=vol_trans_mat, labs=labs_trans_mat, mask=mask_trans_mat)
-  trans_mat <- suppressMessages(trans_mat[sapply(trans_mat, is.nummat)])
+  trans_mat <- suppressMessages(trans_mat[vapply(trans_mat, is.nummat, FALSE)])
   if (length(trans_mat) > 0) {
     if (length(trans_mat) == 1) {
       trans_mat <- trans_mat[[1]]
     } else {
-      for (ii in 1:length(trans_mat)) {
-        for (jj in 1:length(trans_mat)) {
+      for (ii in seq_len(length(trans_mat))) {
+        for (jj in seq_len(length(trans_mat))) {
           if (ii <= jj) {next}
           trans_mat_diff <- max(abs(as.vector(trans_mat[[ii]] - trans_mat[[jj]])))
           if (trans_mat_diff > ciftiTools.getOption("EPS")) {

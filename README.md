@@ -13,14 +13,15 @@ status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools
 coverage](https://coveralls.io/repos/github/mandymejia/ciftiTools/badge.svg)](https://coveralls.io/r/mandymejia/ciftiTools?branch=master)
 <!-- badges: end -->
 
-Tools for reading and visualizing CIFTI brain imaging files. CIFTI files
-contain brain imaging data in “gray-ordinates”, which includes all the
-gray matter of the brain. The gray matter is divided into cortical
-surface (left and right) and subcortical (cerebellum, basal ganglia, and
-other deep gray matter). `ciftiTools` uses the Connectome Workbench to
-read the data into R. It also provides visualization tools for the
-surface and subcortical data, and processing functions to apply common
-preprocessing steps (e.g. smoothing, resampling).
+Tools for reading and visualizing CIFTI brain imaging files.
+
+CIFTI files contain brain imaging data in “gray-ordinates”, which
+represent the gray matter as cortical surface vertices (left and right)
+and subcortical voxels (cerebellum, basal ganglia, and other deep gray
+matter).`ciftiTools` uses the Connectome Workbench to read CIFTI files
+into R and apply common pre-processing steps (e.g. smoothing,
+resampling). It also provides tools for visualizing the cortical surface
+with GIFTI files, and for visualizing the subcortical volume.
 
 ## Installation
 

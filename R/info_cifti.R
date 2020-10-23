@@ -1,15 +1,15 @@
 #' The NIFTI intents supported by \code{ciftiTools}
-#' 
+#'
 #' Table of CIFTI file types (NIFTI intents) supported By \code{ciftiTools}.
-#' 
+#'
 #' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
 #'  for information about the different NIFTI intents.
-#' 
+#'
 #' @return A data.frame with each supported file type along the rows, and
 #'  column names "extension", "intent_code", "value", and "intent_name"
-#' 
+#'
 #' @export
-#' 
+#'
 supported_intents <- function(){
   df <- data.frame(rbind(
     c("dtseries.nii", "NIFTI_INTENT_CONNECTIVITY_DENSE_SERIES",   3002, "ConnDenseSeries"),
@@ -21,20 +21,20 @@ supported_intents <- function(){
 }
 
 #' Substructure table
-#' 
+#'
 #' Table of labels for cortex hemispheres (left and right) and subcortical
 #'  substructures. The names used by the CIFTI format and the names used by
 #'  \code{ciftiTools} are given.
-#' 
-#' The names used by \code{ciftiTools} are based on those in 
+#'
+#' The names used by \code{ciftiTools} are based on those in
 #'  \code{FT_READ_CIFTI} from the FieldTrip MATLAB toolbox.
-#' 
+#'
 #' @return A data.frame with each substructure along the rows. The first
 #'  column gives the CIFTI format name and the second column gives the
 #'  \code{ciftiTools} name.
-#' 
+#'
 #' @export
-#'  
+#'
 substructure_table <- function(){
   table <- data.frame(rbind(
     c("CORTEX_LEFT",                "Cortex-L"),
@@ -60,43 +60,43 @@ substructure_table <- function(){
     c("THALAMUS_RIGHT",             "Thalamus-R")
   ))
   colnames(table) <- c("Original_Name", "ciftiTools_Name")
-  table$Index <- 1:nrow(table)
+  table$Index <- seq_len(nrow(table))
   table
 }
 
 #' Check CIFTI type
-#' 
+#'
 #' Check that a CIFTI's NIFTI intent matches its file name extension.
-#' 
+#'
 #' @param intent The NIFTI \code{intent_code}, as a numeric integer
 #' @param extn The file name extension, e.g. "dtseries.nii"
-#' 
+#'
 #' @return If the intent is supported, returns \code{TRUE}.
 #'  If the intent is not supported, an error is raised.
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 check_cifti_type <- function(intent, extn){
   intent_idx <- which(supported_intents()$value == intent)
   extn_idx <- which(supported_intents()$extension == extn)
   if (length(extn_idx) < 1) {
     if (length(intent_idx) < 1){
       stop(paste(
-        "This CIFTI file has intent code", intent, "and extension", extn, 
+        "This CIFTI file has intent code", intent, "and extension", extn,
         "neither of which is supported by ciftiTools (yet).",
-        "Only the following types are:\n\t", 
+        "Only the following types are:\n\t",
         paste(supported_intents()$value, collapse="\n\t "),
         "\nRespectively, they correspond to these file extensions:\n\t",
-        paste(supported_intents()$extension, collapse="\n\t ") 
+        paste(supported_intents()$extension, collapse="\n\t ")
       ))
     } else {
       warning(paste(
         "This CIFTI file has extension", extn, "which is not yet supported by ciftiTools.",
-        "Only the following types are:\n\t", 
+        "Only the following types are:\n\t",
         paste(supported_intents()$extension, collapse="\n\t "),
         "\nThe intent code", intent, "is supported but does not match the extension.",
         "Was the file named incorrectly?",
-        "Continuing anyway with the intent code", intent, "and correct extension", 
+        "Continuing anyway with the intent code", intent, "and correct extension",
         supported_intents()$extension[intent_idx]
       ))
     }
@@ -104,7 +104,7 @@ check_cifti_type <- function(intent, extn){
     if (length(intent_idx) < 1){
       stop(paste(
         "This CIFTI file has intent code", intent, "which is not yet supported by ciftiTools.",
-        "Only the following types are:\n\t", 
+        "Only the following types are:\n\t",
         paste(supported_intents()$value, collapse="\n\t "),
         "\nThe extension", extn, "is supported but does not match the intent code.",
         "Was the file named incorrectly?"
@@ -112,9 +112,9 @@ check_cifti_type <- function(intent, extn){
     } else {
       if (intent_idx != extn_idx) {
         warning(paste(
-          "This CIFTI file has intent code", intent, "and extension", extn, 
+          "This CIFTI file has intent code", intent, "and extension", extn,
           "which do not match. Was the file named incorrectly?",
-          "Continuing anyway with the intent code", intent, "and correct extension", 
+          "Continuing anyway with the intent code", intent, "and correct extension",
           supported_intents()$extension[intent_idx]
         ))
       }
@@ -125,18 +125,18 @@ check_cifti_type <- function(intent, extn){
 
 
 #' Extract misc metadata from CIFTI
-#' 
+#'
 #' Extract misc metadata from CIFTI header XML ("Metadata" entry)
-#' 
-#' @param xml List representing "Metadata" entry XML 
+#'
+#' @param xml List representing "Metadata" entry XML
 #'  (\code{xifti$CIFTI$Matrix$MetaData})
 #' @param intent The CIFTI's NIFTI intent code. Not used right now, but may be later.
 #'  Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
-#' 
+#'
 #' @return The metadata, a list
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
   stopifnot(is.list(xml))
   xml <- do.call(rbind, xml)
@@ -146,64 +146,68 @@ get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
 }
 
 #' Extract intent-specific metadata from CIFTI
-#' 
+#'
 #' Extract intent-specific Metadata from CIFTI header XML (first "MatrixIndicesMap" entry)
-#' 
-#' @param x List representing "MatrixIndicesMap" entry XML 
+#'
+#' @param x List representing "MatrixIndicesMap" entry XML
 #'  (\code{xifti$CIFTI$Matrix[[2]]})
 #' @param intent The CIFTI's NIFTI intent code
-#' 
+#'
 #' @return The metadata, a list
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
   stopifnot(is.list(xml))
   if (intent == 3002) {
     meta <- list(
-      time_start=as.numeric(attributes(xml)$SeriesStart), 
-      time_step=as.numeric(attributes(xml)$SeriesStep), 
+      time_start=as.numeric(attributes(xml)$SeriesStart),
+      time_step=as.numeric(attributes(xml)$SeriesStep),
       time_unit=tolower(attributes(xml)$SeriesUnit)
     )
   } else if (intent == 3006) {
     meta <- list(
-      names=as.character(sapply(xml, function(x){
-        ifelse(length(x$MapName) < 1, "", x$MapName[[1]])
-      }))
+      names=as.character(
+        vapply(
+          xml,
+          function(x){ ifelse(length(x$MapName) < 1, "", x$MapName[[1]]) },
+          ""
+        )
+      )
     )
   } else if (intent == 3007) {
     xml <- xml[names(xml) == "NamedMap"]
     labs <- vector("list", length(xml))
-    for (ii in 1:length(xml)) {
+    for (ii in seq_len(length(xml))) {
       xml_ii <- xml[[ii]]
       labs[[ii]] <- do.call(rbind, lapply(xml_ii$LabelTable, function(x){as.numeric(attributes(x))}))
-      rownames(labs[[ii]]) <- as.character(sapply(xml_ii$LabelTable, function(x){x[[1]]}))
+      rownames(labs[[ii]]) <- as.character(vapply(xml_ii$LabelTable, function(x){x[[1]]}, ""))
       colnames(labs[[ii]]) <- c("Key", "Red", "Green", "Blue", "Alpha")
       labs[[ii]] <- as.data.frame(labs[[ii]])
     }
-    names(labs) <- sapply(xml, function(x){x$MapName[[1]]})
+    names(labs) <- vapply(xml, function(x){x$MapName[[1]]}, "")
     meta <- list(names=names(labs), labels = labs)
   } else { stop("Internal error: CIFTI intent not supported.") }
   meta
 }
 
 #' Extract data-related metadata from CIFTI
-#' 
+#'
 #' Extract data-related metadata from CIFTI header XML (second "MatrixIndicesMap" entry)
-#' 
-#' @param x List representing "MatrixIndicesMap" entry XML 
+#'
+#' @param x List representing "MatrixIndicesMap" entry XML
 #'  (\code{xifti$CIFTI$Matrix[[3]]})
 #' @param intent The CIFTI's NIFTI intent code. Not used right now, but might be
 #'  used later. Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
-#' 
+#'
 #' @return The metadata, a list
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   stopifnot(is.list(xml))
 
-  bs_names <- as.character(sapply(xml, function(x){attr(x, "BrainStructure")}))
+  bs_names <- as.character(lapply(xml, function(x){attr(x, "BrainStructure")}))
   bs_names <- gsub("CIFTI_STRUCTURE_", "", bs_names)
 
   meta <- list(
@@ -214,23 +218,23 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     subcort_labs=NULL,
     subcort_dims=NULL
   )
-  
+
   # Left Cortex
-  if ("CORTEX_LEFT" %in% bs_names) { 
+  if ("CORTEX_LEFT" %in% bs_names) {
     meta$brainstructures <- c(meta$brainstructures, "left")
-    c_idx <- xml[[which(bs_names=="CORTEX_LEFT")]] 
+    c_idx <- xml[[which(bs_names=="CORTEX_LEFT")]]
     v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
     v <- 1 + as.numeric(v[v != ""])
-    meta$cortex_left_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% v
+    meta$cortex_left_mwall <- seq_len(attr(c_idx, "SurfaceNumberOfVertices")) %in% v
   }
 
   # Right Cortex
-  if ("CORTEX_RIGHT" %in% bs_names) { 
+  if ("CORTEX_RIGHT" %in% bs_names) {
     meta$brainstructures <- c(meta$brainstructures, "right")
-    c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]] 
+    c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]]
     v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
     v <- 1 + as.numeric(v[v != ""])
-    meta$cortex_right_mwall <- (1:attr(c_idx, "SurfaceNumberOfVertices")) %in% v
+    meta$cortex_right_mwall <- seq_len(attr(c_idx, "SurfaceNumberOfVertices")) %in% v
   }
 
   # Subcortical Transformation Matrix
@@ -249,13 +253,13 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   bs_subcort <- bs_names %in% sub_names
   if (any(bs_subcort)) {
     subcort_dat <- vector("list", length(sub_names))
-    for (ii in 1:length(sub_names)) {
+    for (ii in seq_len(length(sub_names))) {
       sub_name <- sub_names[ii]
       xml_idx <- which(bs_names == sub_name)
       # stopifnot(length(xml_idx) > 1) # By CIFTI definition, only one match should be present.
       if (length(xml_idx) > 0) {
         subcort_dat[[ii]] <- cbind(do.call(
-          rbind, 
+          rbind,
           lapply(strsplit(
             strsplit(xml[[xml_idx]]$VoxelIndicesIJK[[1]], "\n")[[1]], " "
           ), as.numeric)
@@ -270,7 +274,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 
   # Unsupported
   unsupported_bs <- c(
-    "ALL_WHITE_MATTER", "ALL_GREY_MATTER", 
+    "ALL_WHITE_MATTER", "ALL_GREY_MATTER",
     "CEREBELLAR_WHITE_MATTER_LEFT", "CEREBELLAR_WHITE_MATTER_RIGHT",
     "CEREBELLUM", "CORTEX",
     "OTHER", "OTHER_GREY_MATTER", "OTHER_WHITE_MATTER"
@@ -287,11 +291,11 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 
 #' Get NIFTI header (of a CIFTI)
 #'
-#' Wrapper for Connectome Workbench command 
+#' Wrapper for Connectome Workbench command
 #'  \code{-nifti-information [fname] -print-header}
 #'
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
-#' 
+#'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
@@ -308,11 +312,11 @@ header_cifti <- function(cifti_fname, wb_path=NULL){
 
 #' Get XML of a CIFTI
 #'
-#' Wrapper for Connectome Workbench command 
+#' Wrapper for Connectome Workbench command
 #'  \code{-nifti-information [fname] -print-xml}
 #'
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
-#' 
+#'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
@@ -331,10 +335,10 @@ xml_cifti <- function(cifti_fname, wb_path=NULL){
 }
 
 #' Get CIFTI metadata
-#' 
+#'
 #' Get CIFTI metadata from the NIFTI header and XML using the Connectome
-#'  Workbench command \code{-nifti-information}. The information is formatted as 
-#'  the \code{meta} component in a \code{"xifti"} object 
+#'  Workbench command \code{-nifti-information}. The information is formatted as
+#'  the \code{meta} component in a \code{"xifti"} object
 #'  (see \code{\link{template_xifti}}), and includes:
 #'  \enumerate{
 #'    \item medial wall masks for the left and right cortex
@@ -342,9 +346,9 @@ xml_cifti <- function(cifti_fname, wb_path=NULL){
 #'    \item the subcortical mask
 #'    \item other NIFTI intent-specific metadata
 #'  }
-#' 
+#'
 #' Additional metadata depends on the type of CIFTI file:
-#' 
+#'
 #'  \enumerate{
 #'    \item{"dtseries"}{
 #'      \enumerate{
@@ -368,14 +372,14 @@ xml_cifti <- function(cifti_fname, wb_path=NULL){
 #'
 #' @inheritSection labels_Description Label Levels
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
-#'  
+#'
 #' @inheritParams cifti_fname_Param
 #' @inheritParams wb_path_Param
 #'
 #' @return The metadata component of a \code{"xifti"} for the input CIFTI file
-#' 
+#'
 #' @export
-#' 
+#'
 info_cifti <- function(cifti_fname, wb_path=NULL){
 
   # Check if this CIFTI is supported.
@@ -409,7 +413,7 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
     misc <- get_misc_meta_from_cifti_xml(cif_xml$CIFTI$Matrix$MetaData, intent)
   } else {
     misc <- NULL
-  }  
+  }
   ## Extension-specific metadata
   ii <- which(Matrix_xml == "MatrixIndicesMap")[1]
   intn <- get_intn_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[ii]], intent)
@@ -435,7 +439,7 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
     meta$subcort <- list(
       labels = factor(
         data$subcort_labs[meta$subcort$mask],
-        levels=1:nrow(substructure_table()),
+        levels=seq_len(nrow(substructure_table())),
         labels=substructure_table()$ciftiTools_Name
       ),
       mask = pad_vol(meta$subcort$mask, mask_pad, fill=FALSE),

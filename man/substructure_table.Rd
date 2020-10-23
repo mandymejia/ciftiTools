@@ -17,6 +17,6 @@ Table of labels for cortex hemispheres (left and right) and subcortical
  \code{ciftiTools} are given.
 }
 \details{
-The names used by \code{ciftiTools} are based on those in 
+The names used by \code{ciftiTools} are based on those in
  \code{FT_READ_CIFTI} from the FieldTrip MATLAB toolbox.
 }

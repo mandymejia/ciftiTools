@@ -35,12 +35,13 @@ write_cifti_components <- function(
     "cortexR", "ROIcortexR", 
     "subcortVol", "subcortLabs" #"ROIsubcortVol"
   )
-  sep_fnames <- sapply(sep_names, cifti_component_suffix)
+  sep_fnames <- vapply(sep_names, cifti_component_suffix, "")
   sep_fnames["cortexL"] <- gsub("func", "label", sep_fnames["cortexL"])
   sep_fnames["cortexR"] <- gsub("func", "label", sep_fnames["cortexR"])
-  sep_fnames <- sapply(
+  sep_fnames <- vapply(
     sep_fnames, 
-    function(x){format_path(paste0("sep.", x), write_dir, mode=2)}
+    function(x){format_path(paste0("sep.", x), write_dir, mode=2)},
+    ""
   )
   names(sep_fnames) <- sep_names
 
@@ -174,21 +175,21 @@ write_cifti <- function(
     wb_path = wb_path
   )
   if ("cortexL" %in% names(sep_fnames)) {
-    wcfs_kwargs$cortexL_fname = sep_fnames["cortexL"]
+    wcfs_kwargs$cortexL_fname <- sep_fnames["cortexL"]
     if ("ROIcortexL" %in% names(sep_fnames)) {
-      wcfs_kwargs$ROIcortexL_fname = sep_fnames["ROIcortexL"]
+      wcfs_kwargs$ROIcortexL_fname <- sep_fnames["ROIcortexL"]
     }
   }
   if ("cortexR" %in% names(sep_fnames)) {
-    wcfs_kwargs$cortexR_fname = sep_fnames["cortexR"]
+    wcfs_kwargs$cortexR_fname <- sep_fnames["cortexR"]
     if ("ROIcortexR" %in% names(sep_fnames)) {
-      wcfs_kwargs$ROIcortexR_fname = sep_fnames["ROIcortexR"]
+      wcfs_kwargs$ROIcortexR_fname <- sep_fnames["ROIcortexR"]
     }
   }
   if ("subcortVol" %in% names(sep_fnames)) {
-    wcfs_kwargs$subcortVol_fname = sep_fnames["subcortVol"]
+    wcfs_kwargs$subcortVol_fname <- sep_fnames["subcortVol"]
     if ("subcortLabs" %in% names(sep_fnames)) {
-      wcfs_kwargs$subcortLabs_fname = sep_fnames["subcortLabs"]
+      wcfs_kwargs$subcortLabs_fname <- sep_fnames["subcortLabs"]
     }
   }
   do.call(write_cifti_from_separate, wcfs_kwargs)

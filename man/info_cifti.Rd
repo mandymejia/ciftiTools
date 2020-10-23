@@ -24,8 +24,8 @@ The metadata component of a \code{"xifti"} for the input CIFTI file
 }
 \description{
 Get CIFTI metadata from the NIFTI header and XML using the Connectome
- Workbench command \code{-nifti-information}. The information is formatted as 
- the \code{meta} component in a \code{"xifti"} object 
+ Workbench command \code{-nifti-information}. The information is formatted as
+ the \code{meta} component in a \code{"xifti"} object
  (see \code{\link{template_xifti}}), and includes:
  \enumerate{
    \item medial wall masks for the left and right cortex

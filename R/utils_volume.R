@@ -36,7 +36,7 @@ unmask_vol <- function(dat, mask, fill=NA) {
 
   # Make volume and fill.
   vol <- array(fill, dim=c(dim(mask), ncol(dat)))
-  for(ii in 1:ncol(dat)) {
+  for(ii in seq_len(ncol(dat))) {
     vol[,,,ii][mask] <- dat[,ii]
   }
   if (ncol(dat)==1) { vol <- vol[,,,1] }
@@ -60,8 +60,9 @@ unmask_vol <- function(dat, mask, fill=NA) {
 #' @keywords internal
 #' 
 pad_vol <- function(x, padding, fill=NA){
+  stopifnot(length(dim(x))==3)
   new_dim <- vector("numeric", 3)
-  for (ii in 1:length(dim(x))) {
+  for (ii in seq_len(3)) {
     new_dim[ii] <- dim(x)[ii] + padding[ii,1] + padding[ii,2]
   }
   y <- array(fill, dim=new_dim)
@@ -101,9 +102,9 @@ uncrop_vol <- function(x, padding, fill=NA){
 coordlist_to_vol <- function(coords, fill=FALSE){
   stopifnot(length(fill)==1)
   if (is.logical(fill)) {
-    logical_vals=TRUE
+    logical_vals <- TRUE
   } else if (is.numeric(fill)) {
-    logical_vals=FALSE
+    logical_vals <- FALSE
   } else { stop("Fill value must be logical or numeric.") }
 
   stopifnot(is.matrix(coords) || is.data.frame(coords))

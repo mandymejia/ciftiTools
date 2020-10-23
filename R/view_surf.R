@@ -35,7 +35,7 @@ view_surf <- function(
   surf <- list(...)
 
   # Convert any file names or giftis to surfaces.
-  for (ii in 1:length(surf)) {
+  for (ii in seq_len(length(surf))) {
     if (!is.xifti(surf[[ii]], messages=FALSE)) {
       surf[[ii]] <- try(make_surf(surf[[ii]]))
       if (inherits(surf[[ii]], "try-error")) { 
@@ -103,8 +103,8 @@ view_surf <- function(
         }
       }
     }
-    surfL=switch(surf[[1]]$hemisphere, left=surf[[1]], right=surf[[2]]) 
-    surfR=switch(surf[[1]]$hemisphere, left=surf[[2]], right=surf[[1]])
+    surfL <- switch(surf[[1]]$hemisphere, left=surf[[1]], right=surf[[2]]) 
+    surfR <- switch(surf[[1]]$hemisphere, left=surf[[2]], right=surf[[1]])
   }
 
   hemisphere <- c("left", "right", "both")[1*(!is.null(surfL)) + 2*(!is.null(surfR))]

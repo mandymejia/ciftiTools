@@ -103,7 +103,7 @@ write_metric_gifti <- function(
           if (x$data_meta[[ii]][which(md_names=="Name")[1],2] != "") {
             ciftiTools_warn(paste0("Replacing the existing data column name for column ", ii))
           }
-          x$data_meta[[ii]][which(md_names=="Name")[1],2] = col_names[ii]
+          x$data_meta[[ii]][which(md_names=="Name")[1],2] <- col_names[ii]
         } else {
           x$data_meta[[ii]] <- rbind(x$data_meta[[ii]], c("names"="Name", "vals"=x$data_meta[[ii]]))
         }

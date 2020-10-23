@@ -5,9 +5,8 @@
 #' @param ... Not used
 #' 
 #' @return \code{NULL}, invisibly
-#' 
-#' @importFrom utils packageVersion
 #'
+#' @keywords internal
 .onAttach <- function(...) {
   if (interactive()) {
     if (is.null(getOption("ciftiTools_wb_path"))) {

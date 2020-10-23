@@ -61,7 +61,7 @@ rgl::rgl.open(); rgl::rgl.close()
 
 # Reading a CIFTI file with a surface, and viewing it
 
-CIFTI files organize the gray matter of the brain into “grayordinates”: vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the grayordinate data. These components are read in together with `read_cifti`:
+CIFTI files organize the gray matter of the brain into "grayordinates": vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the grayordinate data. These components are read in together with `read_cifti`:
 
 ```{r, warning=FALSE}
 cii <- read_cifti(cifti_fnames["dtseries"])

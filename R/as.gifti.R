@@ -74,7 +74,7 @@ as.metric_gifti <- function(
   if (!is.list(data)) {
     stop("data must be a numeric matrix or a list of numeric vectors.")
   }
-  stopifnot(length(unique(sapply(data, length))) == 1)
+  stopifnot(length(unique(vapply(data, length, 1))) == 1)
 
   # Get data type.
   if (is.null(data_type)) {
@@ -92,7 +92,7 @@ as.metric_gifti <- function(
 
   # Make data integers
   if (data_type == "NIFTI_TYPE_INT32") {
-    for (ii in 1:length(data)) {
+    for (ii in seq_len(length(data))) {
       mode(data[[ii]]) <- "integer"
     }
   }

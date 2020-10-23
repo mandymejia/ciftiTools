@@ -6,8 +6,8 @@
 #' 
 ciftiTools.listOptions <- function() {
   OptionName <- c('wb_path', 'EPS', 'suppress_msgs')
-  CurrentValue <- sapply(OptionName, ciftiTools.getOption)
-  CurrentValue[sapply(CurrentValue, is.null)] <- "NULL"
+  CurrentValue <- lapply(OptionName, ciftiTools.getOption)
+  CurrentValue[vapply(CurrentValue, is.null, FALSE)] <- "NULL"
   CurrentValue <- as.character(CurrentValue)
   Description <- c(
     "Path to the Connectome Workbench folder or executable.", 

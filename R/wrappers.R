@@ -38,7 +38,7 @@ separate_cifti_wrapper <- function(
     sep_kwargs[names(sep_fnames)] <- sep_fnames
   }
   # Do separate_cifti.
-  sep_kwargs[sapply(sep_kwargs, is.null)] <- NULL
+  sep_kwargs[vapply(sep_kwargs, is.null, FALSE)] <- NULL
   do.call(separate_cifti, sep_kwargs)
 }
 
@@ -103,6 +103,6 @@ resample_cifti_wrapper <- function(
   }
 
   # Do resample_cifti_components.
-  resamp_kwargs[sapply(resamp_kwargs, is.null)] <- NULL
+  resamp_kwargs[vapply(resamp_kwargs, is.null, FALSE)] <- NULL
   do.call(resample_cifti_components, resamp_kwargs)
 }

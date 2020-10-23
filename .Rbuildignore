@@ -6,3 +6,4 @@
 ^data-raw$
 ^vignettes$
 ^tests/run_ciftiTools_tests\.R$
+^cran-comments.md

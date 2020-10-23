@@ -17,7 +17,7 @@ If not provided, should be set with
 The header, as a character vector
 }
 \description{
-Wrapper for Connectome Workbench command 
+Wrapper for Connectome Workbench command
  \code{-nifti-information [fname] -print-header}
 }
 \section{Connectome Workbench Requirement}{

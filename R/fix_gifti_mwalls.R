@@ -42,7 +42,7 @@ fix_gifti_mwall <- function(
       gii_ROIcortex$data$normal[,] <- as.numeric(new_mwall)
       writegii(gii_ROIcortex, fixed_ROI_fname)
       ## Set mwall values to zero. Not sure if this is necessary.
-      for (ii in 1:length(gii_cortex$data)) {
+      for (ii in seq_len(length(gii_cortex$data))) {
         gii_cortex$data[[ii]][,][!new_mwall] <- 0
       }
       writegii(gii_cortex, fixed_metric_fname)

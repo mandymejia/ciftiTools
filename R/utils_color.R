@@ -83,7 +83,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
       value[11:19] <- (value[11:19] - min) / (old_mid - min) * (mid - min) + min
     }
   }
-  if (rev_order) { value <- value[length(value):1] }
+  if (rev_order) { value <- value[seq(length(value), 1)] }
   data.frame(color=color, value=value)
 }
 
@@ -206,7 +206,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #'  codes) and \code{"value"} (numeric)
 #' 
 #' @importFrom grDevices colorRampPalette
-#' @import RColorBrewer
+#' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #'
 #' @export
 #' 
@@ -325,8 +325,8 @@ make_color_pal <- function(
     color_values_order <- order(zlim)
     zlim <- zlim[color_values_order]
     # If the color values are descending, reverse the color scale.
-    if (identical(color_values_order, length(zlim):1)) {
-      colors <- colors[length(colors):1]
+    if (identical(color_values_order, seq(length(zlim), 1))) {
+      colors <- colors[seq(length(colors), 1)]
     } else if (N_COLOR_VALUES==N_COLORS) {
       colors <- colors[color_values_order]
     }

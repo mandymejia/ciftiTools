@@ -46,17 +46,17 @@ is.xifti_data <- function(x) {
   }
 
   ## There must be at least one non-empty data entry.
-  #not_null <- names(x)[!sapply(x, is.null)]
+  #not_null <- names(x)[!vapply(x, is.null, FALSE)]
   #if (length(not_null) < 1) { 
   #  message("At least one entry in \"data\" must be non-empty.\n"); return(FALSE)
   #}
 
   # Non-empty entries should be numeric matrices.
-  not_null <- names(x)[!sapply(x, is.null)]
+  not_null <- names(x)[!vapply(x, is.null, FALSE)]
   for (ii in not_null) { if (!is.nummat(x[[ii]])) { return(FALSE) } }
 
   # Present entries must have the same number of measurements (columns).
-  n_meas <- sapply(x[not_null], ncol)
+  n_meas <- vapply(x[not_null], ncol, 1)
   if (length(unique(n_meas)) > 1) {
     message(paste0(
       paste( 
@@ -330,7 +330,7 @@ is.xifti_meta <- function(x) {
               message("cifti$labels must be a data.frame.\n"); return(FALSE)
             }
             if (!all(colnames(lab) == c("Key", "Red", "Green", "Blue", "Alpha"))) {
-              message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n");
+              message("cifti$labels columns must be Key, Red, Green, Blue, Alpha.\n")
               return(FALSE)
             }
           }
@@ -500,7 +500,7 @@ is.xifti <- function(x, messages=TRUE) {
         return(FALSE)
       }
 
-      for (ii in 1:ncol(x$data$cortex_left)) {
+      for (ii in seq_len(ncol(x$data$cortex_left))) {
         all_labels <- unique(data_mat[,ii])
         valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
         if (!all(valid_label)) {

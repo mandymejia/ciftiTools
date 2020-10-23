@@ -54,14 +54,14 @@ resample_cifti_components <- function(
     ROIcortexL=ROIcortexL_original_fname, ROIcortexR=ROIcortexR_original_fname,
     surfL=surfL_original_fname, surfR=surfR_original_fname
   )
-  original_fnames <- original_fnames[!sapply(original_fnames, is.null)]
+  original_fnames <- original_fnames[!vapply(original_fnames, is.null, FALSE)]
 
   target_fnames <- list(
     cortexL=cortexL_target_fname, cortexR=cortexR_target_fname, 
     ROIcortexL=ROIcortexL_target_fname, ROIcortexR=ROIcortexR_target_fname,
     surfL=surfL_target_fname, surfR=surfR_target_fname
   )
-  target_fnames <- target_fnames[!sapply(target_fnames, is.null)]
+  target_fnames <- target_fnames[!vapply(target_fnames, is.null, FALSE)]
 
   all_labels <- c(
     "cortexL", "cortexR", "ROIcortexL", "ROIcortexR", "surfL", "surfR"
@@ -72,10 +72,10 @@ resample_cifti_components <- function(
   stopifnot(length(original_fnames) > 0)
   stopifnot(all(names(original_fnames) %in% all_labels))
   original_fnames <- lapply(original_fnames, format_path, read_dir, mode=4)
-  if (!all(sapply(original_fnames, file.exists))) {
+  if (!all(vapply(original_fnames, file.exists, FALSE))) {
     stop(paste("This file(s) to resample does not exist:\n\n",
       paste(unique(as.character(original_fnames)[
-        !sapply(original_fnames, file.exists)]), collapse="\n")
+        !vapply(original_fnames, file.exists, FALSE)]), collapse="\n")
     ))
   }
   # Use default names for target files if none provided.
@@ -103,7 +103,7 @@ resample_cifti_components <- function(
         "Ignoring these resampling targets because",
         " their original files were not provided:\n", 
         paste(names(target_fnames)[
-          !sapply(target_fnames, is.null)][missing_original], collapse="\n"),
+          !vapply(target_fnames, is.null, FALSE)][missing_original], collapse="\n"),
         "\n"
       ))
     }
@@ -128,7 +128,7 @@ resample_cifti_components <- function(
   }
 
   # Use default file names for targets without a specified file name.
-  for(ii in 1:length(original_fnames)) {
+  for (ii in seq_len(length(original_fnames))) {
     lab <- names(original_fnames)[ii]
     if (is.null(target_fnames[[lab]])) {
       if (grepl("validROI", lab)) {
@@ -158,7 +158,7 @@ resample_cifti_components <- function(
     #     set them to NULL.
     read_dir=NULL, write_dir=NULL
   )
-  for(ii in 1:length(original_fnames)) {
+  for (ii in seq_len(length(original_fnames))) {
     lab <- names(original_fnames)[ii]
     # Check if this file should be skipped.
     if (grepl("ROI", lab)) { next }  # Obtained with cortex[L/R].
@@ -181,7 +181,7 @@ resample_cifti_components <- function(
           )
         )
       }
-      file_type=ifelse(grepl(".label.gii", original_fnames[[lab]], fixed=TRUE), "label", "metric")
+      file_type <- ifelse(grepl(".label.gii", original_fnames[[lab]], fixed=TRUE), "label", "metric")
       do.call(resample_gifti, c(resample_kwargs, list(file_type=file_type)))
     
     # Resample surfaces.

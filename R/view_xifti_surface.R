@@ -17,7 +17,7 @@ view_xifti_surface.surf_hemi <- function(
 
   # Make hemisphere one of: "left", "right", or c("left", "right")
   if (!is.null(hemisphere)) {
-    hemisphere <- unique(sapply(hemisphere, match.arg, c("left", "right", "both")))
+    hemisphere <- unique(vapply(hemisphere, match.arg, "", c("left", "right", "both")))
     if ("both" %in% hemisphere) { hemisphere <- c("left", "right") } 
   }
 
@@ -120,8 +120,8 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
   # Get the data values. -------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  mesh =  list(left=NULL, right=NULL)
-  values = list(left=NULL, right=NULL)
+  mesh <- list(left=NULL, right=NULL)
+  values <- list(left=NULL, right=NULL)
 
   for (h in hemisphere) {
     surf_h <- switch(h, left=surfL, right=surfR)
@@ -154,7 +154,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
     # Get data values.
     values[[h]] <- matrix(NA, ncol=length(idx), nrow=length(mwall_h))
     if (!is.null(xifti$data[[cor_h]])) {
-      if (!all(idx %in% 1:ncol(xifti$data[[cor_h]]))) {
+      if (!all(idx %in% seq_len(ncol(xifti$data[[cor_h]])))) {
         stop(paste0(
           "At least one requested index/indices was not a valid column in",
           " the xifti (between 1 and", ncol(xifti$data[[cor_h]]), ")." 
@@ -301,7 +301,7 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
       pal_base$value[1],
       pal_base$value[nrow(pal_base)]
     ),
-    qualitative=1:nrow(pal_base),
+    qualitative=seq_len(nrow(pal_base)),
     diverging=c(
       pal_base$value[1],
       pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
@@ -371,7 +371,7 @@ view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title
 
     } else if (intent == 3002) {
       title <- paste("Index", this_idx)
-      if (!any(sapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null))) {
+      if (!any(vapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null, FALSE))) {
         title <- paste0(
           title, " (", 
           xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*this_idx, 
@@ -467,7 +467,7 @@ view_xifti_surface.draw_mesh <- function(
   }
 
   out <- list(mesh_col=mesh_col, mesh_vert=mesh_vert, mesh_edge=mesh_edge)
-  out[!sapply(out, is.null)]
+  out[!vapply(out, is.null, FALSE)]
 }
 
 #' View cortical surface
@@ -589,7 +589,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   surfL <- x$surfL; surfR <- x$surfR; hemisphere <- x$hemisphere
 
   # Check `view`.
-  view <- unique(sapply(view, match.arg, c("lateral", "medial", "both")))
+  view <- unique(vapply(view, match.arg, "", c("lateral", "medial", "both")))
   if ("both" %in% view) { view <- c("lateral", "medial") }
   if (length(view) == 2) { view <- c("lateral", "medial") } # lateral comes first
 
@@ -629,28 +629,28 @@ view_xifti_surface <- function(xifti, idx=NULL,
   NA_COLOR <- "white"
 
   # Title
-  no_title = FALSE
+  no_title <- FALSE
   if (!is.null(title)) {
     if (length(title) == 1){
       title <- rep(title, length(idx))
     } else if (length(title) != length(idx)) { 
       stop("Length of `title` must be 1 or the same as `idx`.") 
     }
-    if (all(title == "")) { no_title = TRUE }
+    if (all(title == "")) { no_title <- TRUE }
   }
 
   # Hopefully will find a better solution (controlling widget size) soon.
   if (is.null(zoom)) {
-    zoom = .6
+    zoom <- .6
     if (use_widget) { 
       if (length(view)==1) {
         if (length(hemisphere) == 1) {
-          zoom = .7
+          zoom <- .7
         } else {
-          zoom = .85
+          zoom <- .85
         }
       } else {
-        zoom = .65
+        zoom <- .65
       }
     } 
   }
@@ -690,7 +690,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     border_color, surfL, surfR
   )
   pal_base <- x$pal_base; pal <- x$pal; color_vals <- x$color_vals
-  any_colors <- !all(unlist(sapply(color_vals, dim)) == 1)
+  any_colors <- !all(unlist(lapply(color_vals, dim)) == 1)
 
   # ----------------------------------------------------------------------------
   # Get the colorbar legend arguments. -----------------------------------------
@@ -755,7 +755,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   names(rglIDs) <- idx
 
   # For each idx...
-  for (jj in 1:length(idx)) {
+  for (jj in seq_len(length(idx))) {
     this_idx <- idx[jj]
 
     # Open a new window at the start, as well as with each new image.
@@ -765,7 +765,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
       rgl::bg3d(color=bg)
       rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
       Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-      subscenes = rgl::layout3d(
+      subscenes <- rgl::layout3d(
         matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
         widths=rep.int(1, all_panels_ncol),
         heights=all_panels_heights,
@@ -785,7 +785,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
     # Make the title (if applicable).
     if (!no_title) {
-      names(subscenes)[subscenes == rgl::subsceneInfo()$id] = "title"
+      names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "title"
       rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
         title[jj], xifti$meta, this_idx, cex.title, text_color
       )
@@ -799,7 +799,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # Make the brain.
     for(ii in 1:n_brain_panels) {
       p <- brain_panels[ii]
-      names(subscenes)[subscenes == rgl::subsceneInfo()$id] = p
+      names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- p
 
       # Get the hemisphere.
       if (grepl("left", p)) {
@@ -880,7 +880,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
       if (colorbar_embedded) {
         if (save || jj==1) {
-          names(subscenes)[subscenes == rgl::subsceneInfo()$id] = "legend"
+          names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "legend"
           if (use_widget) {
             if (length(hemisphere)==1) {
               # Somehow fix colorbar stretching. Changing x doesn't work
@@ -901,7 +901,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
           rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
         }
       } else {
-        colorbar_kwargs$smallplot=c(.15, .85, .45, .6) # x1 x2 y1 y2
+        colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
         try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
       }
     }
