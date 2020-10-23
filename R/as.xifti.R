@@ -76,7 +76,7 @@
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
 #'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
-#'
+#' @param col_names Names of each measurement/column in the data.
 #' @return A \code{"xifti"} object
 #' 
 #' @export
@@ -86,7 +86,8 @@ as.xifti <- function(
   cortexR=NULL, cortexR_mwall=NULL,
   mwall_values=c(NA, NaN),
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
-  surfL=NULL, surfR=NULL){
+  surfL=NULL, surfR=NULL,
+  col_names=NULL){
 
   if (!is.null(cortexL)) { stopifnot(is.numeric(cortexL)) }
   if (!is.null(cortexR)) { stopifnot(is.numeric(cortexR)) }
@@ -101,7 +102,7 @@ as.xifti <- function(
     cortexR=cortexR, cortexR_mwall=cortexR_mwall,
     mwall_values=mwall_values,
     subcortVol=subcortVol, subcortLabs=subcortLabs, subcortMask=subcortMask,
-    surfL=surfL, surfR=surfR
+    surfL=surfL, surfR=surfR, col_names=col_names
   )
 }
 

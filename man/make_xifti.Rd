@@ -16,6 +16,7 @@ make_xifti(
   cifti_info = NULL,
   surfL = NULL,
   surfR = NULL,
+  col_names = NULL,
   read_dir = NULL
 )
 }
@@ -102,6 +103,9 @@ take on.}
 \item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex. 
 Can be a surface GIFTI file path or \code{"surf"} object; see 
 \code{\link{make_surf}} for a full description of valid inputs.}
+
+\item{col_names}{Names of each measurement/column in the data. Overrides
+names indicated in \code{cifti_info} or in the data components.}
 
 \item{read_dir}{(Optional) Append a directory to all file names in the
 arguments. If \code{NULL} (default), do not modify file names.}

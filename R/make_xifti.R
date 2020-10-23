@@ -105,6 +105,8 @@
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
 #'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
+#' @param col_names Names of each measurement/column in the data. Overrides
+#'  names indicated in \code{cifti_info} or in the data components.
 #' @param read_dir (Optional) Append a directory to all file names in the
 #'  arguments. If \code{NULL} (default), do not modify file names.
 #'
@@ -118,6 +120,7 @@ make_xifti <- function(
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   mwall_values=c(NA, NaN), cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
+  col_names=NULL,
   read_dir=NULL) {
   
   # Add `read_dir` and check file paths.
@@ -138,6 +141,8 @@ make_xifti <- function(
     if (xifti$meta$cifti$intent == 3002) {
       time_meta <- c("time_start", "time_step", "time_unit")
       xifti$meta$cifti[time_meta] <- cifti_info$cifti[time_meta]
+    } else if (xifti$meta$cifti$intent %in% c(3006, 3007)) {
+      xifti$meta$cifti$names <- cifti_info$cifti$names
     }
   }
 
@@ -152,6 +157,7 @@ make_xifti <- function(
 
     ## Column names and label table, if intent is not dtseries.
     if (is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent != 3002) {
+      # [TO DO]: Explain that the names are being overwritten?
       xifti$meta$cifti$names <- x$col_names
       if (!is.null(x$label_table)) {
         xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
@@ -219,11 +225,15 @@ make_xifti <- function(
     xifti$meta$subcort$labels <- x$labels
     xifti$meta$subcort$mask <- x$mask
     xifti$meta$subcort["trans_mat"] <- list(x$trans_mat)
+    # No subcortical column names.
   }
 
   # Surfaces.
   if (!is.null(surfL)) { xifti$surf$cortex_left <- make_surf(surfL, "left") }
   if (!is.null(surfR)) { xifti$surf$cortex_right <- make_surf(surfR, "right") }
+
+  # Column names.
+  if (!is.null(col_names)) { xifti$meta$cifti$names <- col_names }
 
   if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   structure(xifti, class="xifti")

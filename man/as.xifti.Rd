@@ -17,7 +17,8 @@ as.xifti(
   subcortLabs = NULL,
   subcortMask = NULL,
   surfL = NULL,
-  surfR = NULL
+  surfR = NULL,
+  col_names = NULL
 )
 
 as_xifti(
@@ -132,6 +133,8 @@ take on.}
 \item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex. 
 Can be a surface GIFTI file path or \code{"surf"} object; see 
 \code{\link{make_surf}} for a full description of valid inputs.}
+
+\item{col_names}{Names of each measurement/column in the data.}
 }
 \value{
 A \code{"xifti"} object
