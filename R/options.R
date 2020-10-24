@@ -84,6 +84,8 @@ ciftiTools.setOption <- function(opt, val) {
 #' @export
 #'
 ciftiTools.getOption <- function(opt) {
-  ciftiTools.checkOption(opt)
-  getOption(paste0("ciftiTools_", opt))
+  getOption(
+    paste0("ciftiTools_", opt), 
+    default=switch(opt, EPS=1e-8, suppress_msgs=TRUE, wb_path=wb_path_request())
+  )
 }
