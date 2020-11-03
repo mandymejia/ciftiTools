@@ -55,6 +55,16 @@ is.xifti_data <- function(x) {
   not_null <- names(x)[!vapply(x, is.null, FALSE)]
   for (ii in not_null) { if (!is.nummat(x[[ii]])) { return(FALSE) } }
 
+  if (!is.null(x$cortex_left) && nrow(x$cortex_left) > 100000) {
+    warning("The left cortex has over 100,000 vertices. Is this a mistake?")
+  }
+  if (!is.null(x$cortex_right) && nrow(x$cortex_right) > 100000) {
+    warning("The right cortex has over 100,000 vertices. Is this a mistake?")
+  }
+  if (!is.null(x$subcort) && nrow(x$subcort) > 100000) {
+    warning("The subcortex has over 100,000 voxels. Is this a mistake?")
+  }
+
   # Present entries must have the same number of measurements (columns).
   n_meas <- vapply(x[not_null], ncol, 1)
   if (length(unique(n_meas)) > 1) {
