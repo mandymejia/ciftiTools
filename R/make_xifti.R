@@ -107,6 +107,10 @@
 #'  \code{\link{make_surf}} for a full description of valid inputs.
 #' @param col_names Names of each measurement/column in the data. Overrides
 #'  names indicated in \code{cifti_info} or in the data components.
+#' @param HCP_32k_auto_mwall If left and/or right cortex data is provided, and
+#'  the number of vertices matches that of the HCP 32k mesh (29696 on left, and
+#'  29716 on right), should the medial wall masks be added to the \code{"xifti"}
+#'  if not provided? Default: \code{TRUE}.
 #' @param read_dir (Optional) Append a directory to all file names in the
 #'  arguments. If \code{NULL} (default), do not modify file names.
 #'
@@ -120,7 +124,7 @@ make_xifti <- function(
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   mwall_values=c(NA, NaN), cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
-  col_names=NULL,
+  col_names=NULL, HCP_32k_auto_mwall=TRUE,
   read_dir=NULL) {
   
   # Add `read_dir` and check file paths.
@@ -164,6 +168,14 @@ make_xifti <- function(
         if (!is.null(x$col_names)) {
           names(xifti$meta$cifti$labels) <- x$col_names
         }
+      }
+    }
+
+    ## HCP 32k medial wall
+    if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_left) == 29696) {
+      if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+        # from ciftiTools R/sysdata.rda
+        xifti$meta$cortex$medial_wall_mask$left <- HCP_32k_mwall_template[,1]
       }
     }
   }
@@ -211,6 +223,14 @@ make_xifti <- function(
             names(xifti$meta$cifti$labels) <- xifti$meta$cifti$col_names
           }
         }
+      }
+    }
+
+    ## HCP 32k medial wall
+    if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_right) == 29716) {
+      if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+        # from ciftiTools R/sysdata.rda
+        xifti$meta$cortex$medial_wall_mask$right <- HCP_32k_mwall_template[,2]
       }
     }
   }

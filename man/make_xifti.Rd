@@ -17,6 +17,7 @@ make_xifti(
   surfL = NULL,
   surfR = NULL,
   col_names = NULL,
+  HCP_32k_auto_mwall = TRUE,
   read_dir = NULL
 )
 }
@@ -106,6 +107,11 @@ Can be a surface GIFTI file path or \code{"surf"} object; see
 
 \item{col_names}{Names of each measurement/column in the data. Overrides
 names indicated in \code{cifti_info} or in the data components.}
+
+\item{HCP_32k_auto_mwall}{If left and/or right cortex data is provided, and
+the number of vertices matches that of the HCP 32k mesh (29696 on left, and
+29716 on right), should the medial wall masks be added to the \code{"xifti"}
+if not provided? Default: \code{TRUE}.}
 
 \item{read_dir}{(Optional) Append a directory to all file names in the
 arguments. If \code{NULL} (default), do not modify file names.}

@@ -77,6 +77,10 @@
 #'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
 #' @param col_names Names of each measurement/column in the data.
+#' @param HCP_32k_auto_mwall If left and/or right cortex data is provided, and
+#'  the number of vertices matches that of the HCP 32k mesh (29696 on left, and
+#'  29716 on right), should the medial wall masks be added to the \code{"xifti"}
+#'  if not provided? Default: \code{TRUE}.
 #' @return A \code{"xifti"} object
 #' 
 #' @export
@@ -87,7 +91,7 @@ as.xifti <- function(
   mwall_values=c(NA, NaN),
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   surfL=NULL, surfR=NULL,
-  col_names=NULL){
+  col_names=NULL, HCP_32k_auto_mwall=TRUE){
 
   if (!is.null(cortexL)) { stopifnot(is.numeric(cortexL)) }
   if (!is.null(cortexR)) { stopifnot(is.numeric(cortexR)) }
@@ -102,7 +106,8 @@ as.xifti <- function(
     cortexR=cortexR, cortexR_mwall=cortexR_mwall,
     mwall_values=mwall_values,
     subcortVol=subcortVol, subcortLabs=subcortLabs, subcortMask=subcortMask,
-    surfL=surfL, surfR=surfR, col_names=col_names
+    surfL=surfL, surfR=surfR, col_names=col_names, 
+    HCP_32k_auto_mwall=HCP_32k_auto_mwall
   )
 }
 
