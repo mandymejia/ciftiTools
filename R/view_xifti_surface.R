@@ -12,8 +12,7 @@
 #' @keywords internal
 #' 
 view_xifti_surface.surf_hemi <- function(
-  xifti, surfL, surfR, hemisphere
-){
+  xifti, surfL, surfR, hemisphere){
 
   # Make hemisphere one of: "left", "right", or c("left", "right")
   if (!is.null(hemisphere)) {
@@ -149,6 +148,13 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
       surf_h <- resample_surf(
         surf_h, length(mwall_h), hemisphere=h
       )
+      if (nrow(surf_h$vertices) != length(mwall_h)) {
+        stop(paste(
+          "The",h,"surface could not be resampled to match the number of",
+          "vertices in the data for the",h,"cortex. Check that the `xifti`",
+          "dimensions are as expected?"
+        ))
+      }
     }
 
     # Get data values.
