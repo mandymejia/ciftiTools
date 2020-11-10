@@ -33,6 +33,7 @@ In this vignette, we will use example data included in the `ciftiTools` package.
 * The MyelinAndCorrThickness dtseries and dscalar files contain the same data: MyelinMap_BC_decurv and corrThickness
 * The dlabel file contains three cortical parcellations
 * The "ones" dscalar file is the only file to include subcortical voxels and has all data values equal to 1.
+* To reduce the size of `ciftiTools`, the dscalar and dlabel CIFTIs were resampled to 6k and the "ones" dscalar was resampled to 1k.
 
 ```{r}
 cifti_fnames <- ciftiTools::demo_files()$cifti
@@ -41,9 +42,9 @@ surfR_fname <- ciftiTools::demo_files()$surf["right"]
   
 # cifti_fnames <- list(
 #   dtseries = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii"),
-#   dscalar = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii"),
-#   dlabel = file.path("../inst/extdata", "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii"),
-#   dscalar_ones = file.path("../inst/extdata","ones.dscalar.nii")
+#   dscalar = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.6k_fs_LR.dscalar.nii"),
+#   dlabel = file.path("../inst/extdata", "Conte69.parcellations_VGD11b.6k_fs_LR.dlabel.nii"),
+#   dscalar_ones = file.path("../inst/extdata","ones_1k.dscalar.nii")
 # )
 # surfL_fname = file.path("../inst/extdata", "Conte69.L.inflated.32k_fs_LR.surf.gii")
 # surfR_fname = file.path("../inst/extdata", "Conte69.R.inflated.32k_fs_LR.surf.gii")
@@ -64,9 +65,9 @@ rgl::rgl.open(); rgl::rgl.close()
 CIFTI files organize the gray matter of the brain into "grayordinates": vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the grayordinate data. These components are read in together with `read_cifti`:
 
 ```{r, warning=FALSE}
-cii <- read_cifti(cifti_fnames["dtseries"])
-cii
 cii <- read_cifti(cifti_fnames["dscalar"])
+cii
+cii <- read_cifti(cifti_fnames["dtseries"])
 cii
 ```
 
@@ -84,7 +85,7 @@ cii
 Alternatively, we could have provided the surfaces at the outset of reading the CIFTI file:
 
 ```{r}
-cii <- read_cifti(cifti_fnames["dscalar"], surfL_fname=surfL_fname, surfR_fname=surfR_fname)
+cii <- read_cifti(cifti_fnames["dtseries"], surfL_fname=surfL_fname, surfR_fname=surfR_fname)
 cii
 ```
 
@@ -94,21 +95,21 @@ Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the s
 * `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
 * `save` to also save a screenshot of the window to a .png file; `close_after_save` to close the window after writing the image file.
 * `idx` controls which timepoints to display.
+* `surfL` and `surfR` to use a surface not included in the input `"xifti"`. If not provided, the default surfaces included in `ciftiTools` are used.
 
 Let's see an example using each `color_mode` option. To reduce the size of this document, we will only show the static plots for now (see later in this document for an example of the interactive htmlwidget):
 
-```{r, fig.cap="First time point; sequential palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(cii, zlim=c(1,2))
+```{r, fig.cap=".dscalar file; first column; sequential palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+cii <- read_cifti(cifti_fnames["dscalar"])
+view_xifti_surface(cii, idx=1, zlim=c(1,2))
 ```
 
-```{r, fig.cap="Second time point; diverging palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(cii, zlim=c(1,2))
+```{r, fig.cap=".dscalar file; second column; Second time point; diverging palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+view_xifti_surface(cii, idx=2, zlim=c(1,5))
 ```
 
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(
-  read_cifti(cifti_fnames["dlabel"], surfL=surfL_fname, surfR=surfR_fname)
-)
+view_xifti_surface(read_cifti(cifti_fnames["dlabel"]))
 ```
 
 `view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `use_papaya=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
@@ -255,11 +256,7 @@ rgl.close()
 Resampling can also be performed while reading a file into R. 
 
 ```{r}
-read_cifti(
-  cifti_fnames["dscalar"], 
-  surfL_fname = surfL_fname, surfR_fname = surfR_fname, 
-  resamp_res=6000
-)
+read_cifti(cifti_fnames["dscalar"], resamp_res=6000)
 ```
 
 Surfaces can also be resampled:
@@ -269,7 +266,7 @@ surf <- make_surf(surf=surfL_fname)
 resample_surf(surf, resamp_res=6000)
 ```
 
-The surface GIFTI files can be resampled without a CIFTI:
+and so too the surface GIFTI files:
 
 ```{r}
 resampled_surfL_fname <- file.path(out_dir, resampled_surfL_fname)
@@ -367,9 +364,9 @@ plot(
 )
 ```
 
-# In Development
+# View multiple timepoints interactively
 
-We are working on a slider bar for viewing different columns/timepoints of the data. (It will not show up in the github htmlpreview.)
+`view_xifti_surface` adds a slider bar if multiple columns/timepoints are requested. (The widget will not show up in the github htmlpreview, but should be visible in the downloaded file.)
 
 ```{r fig.height=6, fig.width=7.5}
 view_xifti_surface(

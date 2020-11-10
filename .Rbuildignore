@@ -1,9 +1,13 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^NEWS\.md$
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^data-raw$
 ^vignettes$
 ^tests/run_ciftiTools_tests\.R$
 ^cran-comments.md
+^inst/extdata/Conte69\.MyelinAndCorrThickness\.32k_fs_LR\.dscalar\.nii$
+^inst/extdata/Conte69\.parcellations_VGD11b\.32k_fs_LR\.dlabel\.nii$
+^inst/extdata/ones\.dscalar\.nii$

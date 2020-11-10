@@ -21,17 +21,17 @@ demo_files <- function(){
       ),
       dscalar = system.file(
         "extdata",
-        "Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii",
+        "Conte69.MyelinAndCorrThickness.6k_fs_LR.dscalar.nii",
         package="ciftiTools"
       ),
       dlabel = system.file(
         "extdata",
-        "Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii",
+        "Conte69.parcellations_VGD11b.6k_fs_LR.dlabel.nii",
         package="ciftiTools"
       ),
       dscalar_ones = system.file(
         "extdata",
-        "ones.dscalar.nii",
+        "ones_1k.dscalar.nii",
         package="ciftiTools"
       )
     )),

@@ -21,20 +21,23 @@ test_that("Reading CIFTI and GIFTI files is working", {
     cii <- readcii(cii_fname, brainstructures=cii_info$cifti$brainstructures[1])
     cii2 <- ciftiTools:::read_cifti_separate(cii_fname, brainstructures=cii_info$cifti$brainstructures[1])
     ciftiTools:::expect_equal_xifti(cii, cii2)
-    cii <- readcii(cii_fname, brainstructures=cii_info$cifti$brainstructures, 
-      surfL_fname=fnames$surf["left"], surfR_fname=fnames$surf["right"], verbose=FALSE
-    )
-    testthat::expect_error(
-      readcii(
-        cii_fname, brainstructures=cii_info$cifti$brainstructures, 
-        surfL_fname=fnames$surf["right"], surfR_fname=fnames$surf["left"]
-      )
-    )
 
     # Test other alias
     cii <- read_cifti(cii_fname, brainstructures=cii_info$cifti$brainstructures)
+
+    if (cii_fname == "dtseries") {
+      # Reading surfaces (only test 32k dtseries)
+      cii <- add_surf(fnames$cifti["dtseries"], surfL=fnames$surf["left"], surfR=fnames$surf["right"])
+      cii <- readcii(fnames$cifti["dtseries"], brainstructures=cii_info$cifti$brainstructures, 
+        surfL_fname=fnames$surf["left"], surfR_fname=fnames$surf["right"], verbose=FALSE
+      )
+      testthat::expect_error(
+        readcii(
+          fnames$cifti["dtseries"], brainstructures=cii_info$cifti$brainstructures, 
+          surfL_fname=fnames$surf["right"], surfR_fname=fnames$surf["left"]
+        )
+      )
+    }
   }
 
-  # Reading surfaces
-  cii <- add_surf(cii, surfL=fnames$surf["left"], surfR=fnames$surf["right"])
 })

@@ -17,7 +17,7 @@
 resample_surf <- function(
   surf, resamp_res, hemisphere=c("left", "right"), wb_path=NULL){
 
-  stopifnot(is.surf(surf))
+  surf <- make_surf(surf)
 
   if (!is.null(surf$hemisphere)) { hemisphere <- surf$hemisphere }
 

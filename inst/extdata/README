@@ -26,6 +26,8 @@
 
     These files are provided under the Open Data Commons Public Domain Dedication and Licence (PDDL), see ODC_PDDL.rtf and/or http://opendatacommons.org/licenses/pddl/1.0/ for details.
 
+  To reduce the size of `ciftiTools`, the .dlabel and .dscalar CIFTIs were resampled to 6k, and the ones.dscalar was resampled to 1k. These smaller files replace the larger versions in the R extension build.
+
 # -----------------------------------------------------------------------
 # `subcort_label_list` --------------------------------------------------
 # -----------------------------------------------------------------------
