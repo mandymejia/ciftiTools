@@ -45,7 +45,6 @@ test_that("Miscellaneous functions are working", {
 
     brainstructures <- info_cifti(cii_fname)$cifti$brainstructures
 
-    # smooth_cifti
     surf_fnames <- switch(cii_fname,
       dscalar = list(left=surfL_6k_fname, right=surfR_6k_fname),
       dtseries = list(left=fnames$surf["left"], right=fnames$surf["right"]),
@@ -53,29 +52,28 @@ test_that("Miscellaneous functions are working", {
       dlabel = list(left=surfL_6k_fname, right=surfR_6k_fname)
     )
 
-    if (cii_fname == "dtseries") {
-      cii <- read_cifti(
-        smooth_cifti(
-          cii_fname, file.path(tdir, basename(cii_fname)),
-          surface_sigma=3, volume_sigma=3,
-          surfL_fname=surf_fnames$left,
-          surfR_fname=surf_fnames$right,
-          subcortical_zeroes_as_NA=TRUE
-        ),
-        brainstructures = "all" #warning should happen if not all are present
-      )
-      cii <- smooth_cifti(
-        cii, file.path(tdir, basename(cii_fname)),
-        surface_sigma=5, volume_sigma=5,
+    # smooth_cifti
+    cii <- read_cifti(
+      smooth_cifti(
+        cii_fname, file.path(tdir, basename(cii_fname)),
+        surface_sigma=3, volume_sigma=3,
         surfL_fname=surf_fnames$left,
         surfR_fname=surf_fnames$right,
         subcortical_zeroes_as_NA=TRUE
-      )
-      cii <- smooth_cifti(
-        cii, file.path(tdir, basename(cii_fname)),
-        surface_sigma=7, volume_sigma=7
-      )
-    }
+      ),
+      brainstructures = "all" #warning should happen if not all are present
+    )
+    cii <- smooth_cifti(
+      cii, file.path(tdir, basename(cii_fname)),
+      surface_sigma=5, volume_sigma=5,
+      surfL_fname=surf_fnames$left,
+      surfR_fname=surf_fnames$right,
+      subcortical_zeroes_as_NA=TRUE
+    )
+    cii <- smooth_cifti(
+      cii, file.path(tdir, basename(cii_fname)),
+      surface_sigma=7, volume_sigma=7
+    )
 
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
@@ -107,6 +105,5 @@ test_that("Miscellaneous functions are working", {
       testthat::expect_equal(sub2$labels, cii$meta$subcort$labels)
     }
   }
-
-
+  
 })

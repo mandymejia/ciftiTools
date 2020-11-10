@@ -1,3 +1,38 @@
+# 1.6 (November 10, 2020)
+
+## Changes affecting users
+
+* `smooth_cifti`
+    * Add smoothing a `xifti` directly
+    * `cifti_target_fname` is optional to `smooth_cifti`; will be auto-generated if `NULL`
+    * Use the surfaces included with the `ciftiTools` package if not provided to `smooth_cifti` when corresponding cortex data exists
+* `view_xifti_surface`
+    * Rename arguments regarding interactivity
+    * Add option to draw borders for qualitative coloring
+    * Add color legend with names of labels for qualitative coloring
+* Rename `surface` class to `surf`
+* `as.xifti`
+    * Use HCP 32k mwall when not provided, by default (add option to control)
+    * Add option to add column names
+* Retain more CIFTI metadata during resampling
+* Reduce package size to < 5 for CRAN by resampling demo files.
+
+## Notes for developers
+
+* Add `run_ciftiTools_tests.R` (and add to .Rbuildignore)
+* Do not try linking to RColorBrewer::brewer.pal.info because it is an object, not a function.
+* Correct `ciftiTools.listOptions` and `ciftiTools_msg`
+* Make `gifti_to_surf` an alias to `make_surf`
+
+# 1.5 (October 2, 2020)
+
+## Changes affecting users
+
+* Add widget with slider for `view_xifti_surface` when more than one `idx` is requested!
+    * Replace `mode` argument with `interactive` argument
+    * Automatically use widget or video frames if more than one `idx`
+* Resilience to missing "MetaData" entry in CIFTI$Matrix
+
 # 1.4.2 (September 25, 2020)
 
 ## Changes affecting users
