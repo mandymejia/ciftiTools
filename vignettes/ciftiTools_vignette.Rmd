@@ -21,7 +21,8 @@ To get started, we load the `ciftiTools` package and indicate where to find the 
 #devtools::install_github("mandymejia/ciftiTools")
 library(ciftiTools)
 
-# Replace '/path/to/workbench' with the actual path to the Connectome Workbench folder on your computer.
+# Replace '/path/to/workbench' with the actual path to 
+#   the Connectome Workbench folder on your computer.
 ciftiTools.setOption('wb_path', '../../workbench')
 
 # Cleaner vignette document
@@ -41,13 +42,13 @@ surfL_fname <- ciftiTools::demo_files()$surf["left"]
 surfR_fname <- ciftiTools::demo_files()$surf["right"]
   
 # cifti_fnames <- list(
-#   dtseries = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii"),
-#   dscalar = file.path("../inst/extdata", "Conte69.MyelinAndCorrThickness.6k_fs_LR.dscalar.nii"),
-#   dlabel = file.path("../inst/extdata", "Conte69.parcellations_VGD11b.6k_fs_LR.dlabel.nii"),
-#   dscalar_ones = file.path("../inst/extdata","ones_1k.dscalar.nii")
+#   dtseries = "../inst/extdata/Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii",
+#   dscalar = "../inst/extdata/Conte69.MyelinAndCorrThickness.6k_fs_LR.dscalar.nii",
+#   dlabel = "../inst/extdata/Conte69.parcellations_VGD11b.6k_fs_LR.dlabel.nii",
+#   dscalar_ones = "../inst/extdata","ones_1k.dscalar.nii"
 # )
-# surfL_fname = file.path("../inst/extdata", "Conte69.L.inflated.32k_fs_LR.surf.gii")
-# surfR_fname = file.path("../inst/extdata", "Conte69.R.inflated.32k_fs_LR.surf.gii")
+# surfL_fname = "../inst/extdata/Conte69.L.inflated.32k_fs_LR.surf.gii"
+# surfR_fname = "../inst/extdata/Conte69.R.inflated.32k_fs_LR.surf.gii"
 ```
 
 The last preliminary step is to set up the R Markdown document for including `ciftiTools` graphics made with `rgl`. See the help page for `view_xifti_surface` for more information about embedding interactive widgets or static plots from `ciftiTools` into .html documents. 
@@ -109,8 +110,12 @@ view_xifti_surface(cii, idx=2, zlim=c(1,5))
 ```
 
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-# Interactively, set qualitative_colorlegend to TRUE to view a color legend that displays the label names.
-dlabel <- view_xifti_surface(read_cifti(cifti_fnames["dlabel"]), qualitative_colorlegend=FALSE, colorlegend_ncol=5)
+dlabel <- view_xifti_surface(
+  read_cifti(cifti_fnames["dlabel"]), 
+  # Interactively, set qualitative_colorlegend to `TRUE`
+  #   for a color legend that displays the label names.
+  qualitative_colorlegend=FALSE, colorlegend_ncol=5
+)
 ```
 
 `view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `use_papaya=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
