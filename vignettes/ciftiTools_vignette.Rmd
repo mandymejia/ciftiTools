@@ -109,7 +109,8 @@ view_xifti_surface(cii, idx=2, zlim=c(1,5))
 ```
 
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(read_cifti(cifti_fnames["dlabel"]))
+# Interactively, set qualitative_colorlegend to TRUE to view a color legend that displays the label names.
+dlabel <- view_xifti_surface(read_cifti(cifti_fnames["dlabel"]), qualitative_colorlegend=FALSE, colorlegend_ncol=5)
 ```
 
 `view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `use_papaya=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.

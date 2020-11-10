@@ -35,6 +35,8 @@ Remotes:
     muschellij2/gifti
 Suggests:
     fields,
+    ggplot2,
+    ggpubr,
     knitr,
     rmarkdown,
     papayar,

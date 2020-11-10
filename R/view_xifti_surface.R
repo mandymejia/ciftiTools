@@ -219,7 +219,8 @@ view_xifti_surface.color <- function(
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
       if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007) && is.null(colors)) {
-        labs <- xifti_meta$cifti$labels[[idx]]
+        if (length(idx) > 1) { warning("Color labels from first requested column will be used.") }
+        labs <- xifti_meta$cifti$labels[[idx[1]]]
         N_VALUES <- length(labs$Key)
         pal_base <- data.frame(
           color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
@@ -350,6 +351,50 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
       smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
     )
   )
+}
+
+#' Draw color legend for qualitative mode
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param pal_base Base palette
+#' @param labels Label for each color in the palette
+#' @param leg_ncol Number of columns in legend. 
+#' @param colorbar_digits See \code{\link{view_xifti_surface}}
+#' @param scale of text
+#' 
+#' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
+#' 
+#' @keywords internal
+#' 
+view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scale=1){
+
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package \"ggplot2\" needed to make the color legend. Please install it.", call. = FALSE)
+  }
+
+  if (!requireNamespace("ggpubr", quietly = TRUE)) {
+    stop("Package \"ggpubr\" needed to make the color legend. Please install it.", call. = FALSE)
+  }
+
+  point_size = 5 * scale
+  legend_title_size = 1.5 * scale
+  legend_text_size = 1.2 * scale
+  if (is.null(leg_ncol)) { leg_ncol = floor(nrow(pal_base)/10) + 1 }
+
+  pal_base$labels <- factor(labels, levels=unique(labels))
+  colors2 <- pal_base$color; names(colors2) <- pal_base$labels
+
+  value <- NULL
+  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, color=labels)) + 
+    ggplot2::geom_point(size=point_size, shape=15) + ggplot2::theme_bw() +
+    ggplot2::scale_color_manual(values=colors2, name="Labels") +
+    ggplot2::guides(color=ggplot2::guide_legend(label.theme=ggplot2::element_text(color=text_color), ncol=leg_ncol)) +
+    ggplot2::theme(legend.title=ggplot2::element_text(
+      size=ggplot2::rel(legend_title_size)), 
+      legend.text=ggplot2::element_text(color=text_color, size=ggplot2::rel(legend_text_size))
+    )
+  leg <- ggpubr::as_ggplot(ggpubr::get_legend(plt))
 }
 
 #' Draw title in RGL
@@ -528,10 +573,17 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist.
 #'  Otherwise, leave these arguments as \code{NULL} (default) to use
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.
+#' @param qualitative_colorlegend If \code{color_mode=="qualitative"}, should 
+#'  the colorbar be replaced with a color legend? It will be printed separately 
+#'  from the RGL window. Default: \code{TRUE}.
+#' @param colorlegend_ncol Number of columns in color legend. If
+#'  \code{NULL} (default), use 10 entries per row. Only applies if the color
+#'  legend is drawn (\code{qualitative_colorlegend} is \code{TRUE} and the
+#'  qualitative color mode is used).
 #' @param colorbar_embedded Should the colorbar be embedded in the plot?
 #'  It will be positioned in the bottom-left corner, in a separate subplot
 #'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
-#'  If \code{FALSE}, print it separately instead.
+#'  If \code{FALSE}, print it separately instead. 
 #' @param colorbar_digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
 #' @param border_color Only applicable if \code{color_mode} is 
@@ -567,6 +619,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   save=FALSE, close_after_save=TRUE, fname="xifti",
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
+  qualitative_colorlegend = TRUE, colorlegend_ncol=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, 
   edge_color=NULL, vertex_color=NULL, vertex_size=0, border_color=NULL,
@@ -699,18 +752,41 @@ view_xifti_surface <- function(xifti, idx=NULL,
   pal_base <- x$pal_base; pal <- x$pal; color_vals <- x$color_vals
   any_colors <- !all(unlist(lapply(color_vals, dim)) == 1)
 
-  # ----------------------------------------------------------------------------
-  # Get the colorbar legend arguments. -----------------------------------------
-  # ----------------------------------------------------------------------------
-
-  if (any_colors) {
-    colorbar_kwargs <- view_xifti_surface.cbar(
-      pal_base, pal, color_mode, text_color, colorbar_digits
+  if (!render_rgl) {
+    return(
+      list(mesh=mesh, values=values, pal_base=pal_base, pal=pal, color_vals=color_vals)
     )
   }
 
-  if (!render_rgl) {
-    return(list(mesh=mesh, values=values, pal_base=pal_base, pal=pal, color_vals=color_vals))
+  # ----------------------------------------------------------------------------
+  # Get the colorbar/legend arguments. ----------------------------------------
+  # ----------------------------------------------------------------------------
+
+  if (any_colors) {
+
+    # Color legend
+    if (color_mode == "qualitative" && qualitative_colorlegend) {
+      use_cleg <- TRUE; colorbar_embedded <- FALSE
+      if (is.null(xifti$meta$cifti$intent)) {
+        labels <- paste0("Label ", seq(nrow(pal_base)))
+      } else if (xifti$meta$cifti$intent == "3007") {
+        labels <- rownames(xifti$meta$cifti$labels[[idx[1]]])
+      } else {
+        labels <- paste0("Label ", seq(nrow(pal_base)))
+      }
+      labels <- as.character(labels)
+      if (is.null(colorlegend_ncol)) {
+        colorlegend_ncol <- floor(nrow(pal_base)/10) + 1
+      }
+      cleg <- view_xifti_surface.cleg(pal_base, labels, colorlegend_ncol, text_color)
+    } else {
+      use_cleg <- FALSE
+    }
+
+    # Color bar
+    colorbar_kwargs <- view_xifti_surface.cbar(
+      pal_base, pal, color_mode, text_color, colorbar_digits
+    )
   }
 
   # ----------------------------------------------------------------------------
@@ -755,8 +831,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
       (all_panels_nrow - brain_panels_nrow)
 
   all_panels_heights <- rep.int(1, brain_panels_nrow)
-  if (!no_title) {all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
-  if (colorbar_embedded) {all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  if (!no_title) { all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
+  if (colorbar_embedded) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   rglIDs <- vector("list", length(idx))
   names(rglIDs) <- idx
@@ -908,8 +984,13 @@ view_xifti_surface <- function(xifti, idx=NULL,
           rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
         }
       } else {
-        colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
-        try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
+
+        if (use_cleg) {
+          print(cleg)
+        } else {
+          colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
+          try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE) 
+        }
       }
     }
 

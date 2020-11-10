@@ -27,6 +27,8 @@ view_xifti_surface(
   zlim = NULL,
   surfL = NULL,
   surfR = NULL,
+  qualitative_colorlegend = TRUE,
+  colorlegend_ncol = NULL,
   colorbar_embedded = TRUE,
   colorbar_digits = NULL,
   alpha = 1,
@@ -238,6 +240,15 @@ or a list with components "vertices" and "faces". If provided, they will overrid
 \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist.
 Otherwise, leave these arguments as \code{NULL} (default) to use
 \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.}
+
+\item{qualitative_colorlegend}{If \code{color_mode=="qualitative"}, should 
+the colorbar be replaced with a color legend? It will be printed separately 
+from the RGL window. Default: \code{TRUE}.}
+
+\item{colorlegend_ncol}{Number of columns in color legend. If
+\code{NULL} (default), use 10 entries per row. Only applies if the color
+legend is drawn (\code{qualitative_colorlegend} is \code{TRUE} and the
+qualitative color mode is used).}
 
 \item{colorbar_embedded}{Should the colorbar be embedded in the plot?
 It will be positioned in the bottom-left corner, in a separate subplot
