@@ -145,6 +145,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
         "set an error will occur; set it or correct the surface prior to",
         "plotting.)"
       ))
+
       surf_h <- resample_surf(
         surf_h, length(mwall_h), hemisphere=h
       )

@@ -439,93 +439,18 @@ make_subcort <- function(
   )
 }
 
-#' Convert "gifti" to \code{"surf"} object
+#' Convert input to a \code{"surf"} object
 #'
-#' Convert a file path to a surface GIFTI or a "gifti" object to a \code{"surf"} 
-#'  object.
-#'
-#' @param surf A surface GIFTI, either as a file path or a "gifti" object
-#'  read by \code{\link[gifti]{readgii}}.
-#' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
-#'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
-#'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
-#'  hemisphere.
-#' 
-#' @return The \code{"surf"} object: a list with components \code{"vertices"}
-#'  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
-#'  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
-#'  unknown).
-#'
-#' @importFrom gifti readgii is.gifti
-#'
-#' @export
-#' 
-gifti_to_surf <- function(surf, expected_hemisphere=NULL) {
-
-  if (!is.null(expected_hemisphere)) {
-    expected_hemisphere <- match.arg(expected_hemisphere, c("left", "right"))
-  }
-
-  # File --> GIFTI.
-  if (is.fname(surf)){ surf <- readgii(surf) }
-
-  # GIFTI --> list of vertices and faces.
-  if (!is.gifti(surf)) { stop("Input was not a file name or result of `gifti::readgii()`.") }
-  ## Get hemisphere.
-  hemisphere <- try({
-    ps_idx <- which(names(surf$data) == "pointset")[1]
-    ps_meta <- surf$data_meta[[ps_idx]]
-    hemisphere <- ps_meta[which(ps_meta[,1] == "AnatomicalStructurePrimary"),2]
-    if (!(hemisphere %in% c("CortexLeft", "CortexRight"))) {
-      stop(paste0(
-        "The hemisphere metadata entry (AnatomicalStructurePrimary) was not ",
-        "CortexLeft or CortexRight. Instead, it was ", hemisphere, 
-        ". Discarding and leaving hemisphere entry blank."
-      ))
-    }
-    hemisphere
-  }, silent=TRUE)
-  if (inherits(hemisphere, "try-error")) { 
-    warning(hemisphere); hemisphere <- NULL
-  } else {
-    hemisphere <- switch(hemisphere, CortexLeft="left", CortexRight="right")
-  }
-  if (!is.null(expected_hemisphere)) {
-    if (hemisphere != expected_hemisphere) {
-      stop(paste(
-        "The expected hemisphere was", expected_hemisphere, 
-        "but the hemisphere indicated in the GIFTI was the opposite."
-      ))
-    }
-  }
-  ## Get vertices and faces.
-  surf <- list(
-    vertices = surf$data$pointset,
-    faces = surf$data$triangle,
-    hemisphere = hemisphere
-  )
-  ## Format faces as integers starting index at 1 instead of 0
-  if (min(surf$faces)==0) surf$faces <- surf$faces + 1
-  mode(surf$faces) <- "integer"
-
-  # Return cifti_surface or error.
-  if (!is.surf(surf)) {
-    stop("The object could not be converted into a surface.")
-  }
-
-  structure(surf, class="surf")
-}
-
-#' Convert "gifti" to \code{"surf"} object
-#'
-#' Coerce a file path to a surface GIFTI, a "gifti" object, or a \code{"surf"}
-#'  object to a \code{"surf"} object.
+#' Coerce a file path to a surface GIFTI, a \code{"gifti"} object, a list with
+#'  entries "pointset" and "triangle", or a \code{"surf"} object to a 
+#'  \code{"surf"} object. 
 #'
 #' @param surf Either a file path to a surface GIFTI; a "gifti" object
-#'  read by \code{\link[gifti]{readgii}}; or, an existing \code{"surf"} object.
+#'  read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and 
+#'  "triangle"; or, a \code{"surf"} object.
 #' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
 #'  of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
-#'  opposite, an error is raised. If \code{NULL} (default), accept the GIFTI 
+#'  opposite, an error is raised. If \code{NULL} (default), use the GIFTI 
 #'  hemisphere.
 #' 
 #' @return The \code{"surf"} object: a list with components \code{"vertices"}
@@ -539,12 +464,71 @@ gifti_to_surf <- function(surf, expected_hemisphere=NULL) {
 #' 
 make_surf <- function(surf, expected_hemisphere=NULL) {
 
-  if (!suppressMessages(is.surf(surf))) {
-    surf <- gifti_to_surf(surf, expected_hemisphere)
-    if (!is.surf(surf)) {
-      stop("The object could not be converted into a surface.")
+  if (!is.null(expected_hemisphere)) {
+    expected_hemisphere <- match.arg(expected_hemisphere, c("left", "right"))
+  }
+
+  # File --> GIFTI.
+  if (is.fname(surf)){ surf <- readgii(surf) }
+
+  # GIFTI --> list of vertices and faces.
+  if (is.gifti(surf)) {
+    ## Get hemisphere.
+    hemisphere <- try({
+      ps_idx <- which(names(surf$data) == "pointset")[1]
+      ps_meta <- surf$data_meta[[ps_idx]]
+      hemisphere <- ps_meta[which(ps_meta[,1] == "AnatomicalStructurePrimary"),2]
+      if (!(hemisphere %in% c("CortexLeft", "CortexRight"))) {
+        stop(paste0(
+          "The hemisphere metadata entry (AnatomicalStructurePrimary) was not ",
+          "CortexLeft or CortexRight. Instead, it was ", hemisphere, 
+          ". Discarding and leaving hemisphere entry blank."
+        ))
+      }
+      hemisphere
+    }, silent=TRUE)
+    if (inherits(hemisphere, "try-error")) { 
+      warning(hemisphere); hemisphere <- NULL
+    } else {
+      hemisphere <- switch(hemisphere, CortexLeft="left", CortexRight="right")
     }
+    if (!is.null(expected_hemisphere)) {
+      if (hemisphere != expected_hemisphere) {
+        stop(paste(
+          "The expected hemisphere was", expected_hemisphere, 
+          "but the hemisphere indicated in the GIFTI was the opposite."
+        ))
+      }
+    }
+    surf <- surf$data
+  } else {
+    hemisphere <- NULL
+  }
+
+  if (is.list(surf) && all(c("pointset", "triangle") %in% names(surf))) {
+    surf <- list(
+      vertices = surf$pointset, faces = surf$triangle, hemisphere = hemisphere
+    )
+  } 
+
+  if (!(is.list(surf) && all(c("vertices", "faces") %in% names(surf)))) {
+    stop("The object could not be converted into a surface.")
+  } 
+
+  ## Format faces as integers starting index at 1 instead of 0
+  if (min(surf$faces)==0) surf$faces <- surf$faces + 1
+  mode(surf$faces) <- "integer"
+
+  # Return cifti_surface or error.
+  if (!is.surf(surf)) {
+    stop("The object could not be converted into a surface.")
   }
 
   structure(surf, class="surf")
+}
+
+#' @rdname make_surf
+#' @export
+gifti_to_surf <- function(surf, expected_hemisphere=NULL){
+  make_surf(surf=surf, expected_hemisphere=expected_hemisphere)
 }
