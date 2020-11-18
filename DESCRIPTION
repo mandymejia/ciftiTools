@@ -31,8 +31,6 @@ Imports:
     RNifti,
     RColorBrewer,
     xml2
-Remotes:
-    muschellij2/gifti
 Suggests:
     fields,
     ggplot2,
