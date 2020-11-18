@@ -778,7 +778,12 @@ view_xifti_surface <- function(xifti, idx=NULL,
       if (is.null(colorlegend_ncol)) {
         colorlegend_ncol <- floor(nrow(pal_base)/10) + 1
       }
-      cleg <- view_xifti_surface.cleg(pal_base, labels, colorlegend_ncol, text_color)
+      if (length(labels) > 200) {
+        use_cleg <- FALSE
+        warning("Too many labels (> 200) for qualitative color legend. Not rendering it.")
+      } else {
+        cleg <- view_xifti_surface.cleg(pal_base, labels, colorlegend_ncol, text_color)
+      }
     } else {
       use_cleg <- FALSE
     }
