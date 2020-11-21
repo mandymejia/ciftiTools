@@ -30,6 +30,7 @@
 #'  These correspond to the same structures as given by 
 #'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. 
 #' @name labels_Description
+#' @keywords internal
 NULL
 
 #' Connectome_Workbench
@@ -43,6 +44,7 @@ NULL
 #'  works.)
 #'  
 #' @name Connectome_Workbench_Description
+#' @keywords internal
 NULL
 
 #' brainstructures
@@ -56,6 +58,7 @@ NULL
 #'  If a brain structure is indicated but does not exist, a warning will be
 #'  raised and that brain structure will be skipped.
 #' @name brainstructures_Param_all
+#' @keywords internal
 NULL
 
 #' brainstructures
@@ -69,12 +72,14 @@ NULL
 #'  If a brain structure is indicated but does not exist, a warning will be
 #'  raised and that brain structure will be skipped.
 #' @name brainstructures_Param_LR
+#' @keywords internal
 NULL
 
 #' cifti_fname
 #'
 #' @param cifti_fname File path of CIFTI-format data (ending in ".d*.nii").
 #' @name cifti_fname_Param
+#' @keywords internal
 NULL
 
 #' original_fnames: for resampling
@@ -86,6 +91,7 @@ NULL
 #'  \code{read_dir} is not \code{NULL}, then all these file names should be
 #'  relative to \code{read_dir}. 
 #' @name original_fnames_Param_resampled
+#' @keywords internal
 NULL
 
 #'  read_dir: separated files
@@ -96,6 +102,7 @@ NULL
 #' 
 #'  \code{read_dir} must already exist, or an error will be raised.
 #' @name read_dir_Param_separated
+#' @keywords internal
 NULL
 
 #' resamp_fnames
@@ -119,6 +126,7 @@ NULL
 #'  The \code{write_dir} argument can be used to place each resampled file in
 #'  the same directory. 
 #' @name resamp_fnames_Param
+#' @keywords internal
 NULL
 
 #' resamp_keep
@@ -129,6 +137,7 @@ NULL
 #'  when repeatedly iterating over CIFTI files--resampling will only be done
 #'  once instead of every new iteration.
 #' @name resamp_keep_Param
+#' @keywords internal
 NULL
 
 #' resamp_res: required
@@ -136,6 +145,7 @@ NULL
 #' @param resamp_res Target resolution for resampling (number of 
 #'  cortical surface vertices per hemisphere).  
 #' @name resamp_res_Param_required
+#' @keywords internal
 NULL
 
 #' resamp_res: optional
@@ -144,6 +154,7 @@ NULL
 #'  cortical surface vertices per hemisphere). If \code{NULL} (default) or 
 #'  \code{FALSE}, do not perform resampling.
 #' @name resamp_res_Param_optional
+#' @keywords internal
 NULL
 
 #' ROI_brainstructures
@@ -155,6 +166,7 @@ NULL
 #' ROIs are typically the medial wall mask for the cortex and subcortical mask
 #'  for the subcortex.
 #' @name ROI_brainstructures_Param_LR
+#' @keywords internal
 NULL
 
 #' sep_keep
@@ -165,6 +177,7 @@ NULL
 #'  when repeatedly iterating over subjects--the CIFTI will only be separated
 #'  once instead of at each iteration.
 #' @name sep_keep_Param
+#' @keywords internal
 NULL
 
 #' sep_fnames
@@ -189,6 +202,7 @@ NULL
 #'  The \code{write_dir} argument can be used to place each separated file in
 #'  the same directory. 
 #' @name sep_fnames_Param
+#' @keywords internal
 NULL
 
 #' surfL
@@ -198,6 +212,7 @@ NULL
 #'  \code{"gifti"} object representing surface geometry, or a \code{"surf"}
 #'  object.
 #' @name surfL_Param_optional
+#' @keywords internal
 NULL
 
 #' surfR
@@ -207,6 +222,7 @@ NULL
 #'  \code{"gifti"} object representing surface geometry, or a \code{"surf"}
 #'  object.
 #' @name surfR_Param_optional
+#' @keywords internal
 NULL
 
 #' surfL_fname
@@ -214,6 +230,7 @@ NULL
 #' @param surfL_fname (Optional) File path of GIFTI surface geometry
 #'  file representing the left cortex.
 #' @name surfL_fname_Param
+#' @keywords internal
 NULL
 
 #' surfL_original_fname
@@ -221,6 +238,7 @@ NULL
 #' @param surfL_original_fname (Optional) File path of GIFTI surface geometry
 #'  file representing the left cortex.
 #' @name surfL_original_fname_Param
+#' @keywords internal
 NULL
 
 #' surfL_target_fname
@@ -228,6 +246,7 @@ NULL
 #' @param surfL_target_fname (Optional) File path to save the resampled GIFTI 
 #'  surface geometry file representing the left cortex at.
 #' @name surfL_target_fname_Param
+#' @keywords internal
 NULL
 
 #' surfR_fname
@@ -235,6 +254,7 @@ NULL
 #' @param surfR_fname (Optional) File path of GIFTI surface geometry
 #'  file representing the right cortex.
 #' @name surfR_fname_Param
+#' @keywords internal
 NULL
 
 #' surfR_original_fname
@@ -242,6 +262,7 @@ NULL
 #' @param surfR_original_fname (Optional) File path of GIFTI surface geometry
 #'  file representing the right cortex.
 #' @name surfR_original_fname_Param
+#' @keywords internal
 NULL
 
 #' surfR_target_fname
@@ -249,18 +270,21 @@ NULL
 #' @param surfR_target_fname (Optional) File path to save the resampled GIFTI 
 #'  surface geometry file representing the right cortex at.
 #' @name surfR_target_fname_Param
+#' @keywords internal
 NULL
 
 #' verbose: FALSE
 #'
 #' @param verbose Should occasional updates be printed? Default: \code{FALSE}.
 #' @name verbose_Param_FALSE
+#' @keywords internal
 NULL
 
 #' verbose: TRUE
 #'
 #' @param verbose Should occasional updates be printed? Default: \code{TRUE}.
 #' @name verbose_Param_TRUE
+#' @keywords internal
 NULL
 
 #' wb_path
@@ -269,6 +293,7 @@ NULL
 #'  If not provided, should be set with 
 #'  \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.
 #' @name wb_path_Param
+#' @keywords internal
 NULL
 
 #' write_dir: intermediate separated/resampled files
@@ -294,6 +319,7 @@ NULL
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_intermediate
+#' @keywords internal
 NULL
 
 #' write_dir: generic
@@ -304,6 +330,7 @@ NULL
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_generic
+#' @keywords internal
 NULL
 
 #' xifti
@@ -311,6 +338,7 @@ NULL
 #' @param xifti Object of class "xifti". 
 #'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
 #' @name xifti_Param
+#' @keywords internal
 NULL
 
 #' x: xifti
@@ -318,6 +346,7 @@ NULL
 #' @param x Object of class "xifti". 
 #'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
 #' @name x_Param_xifti
+#' @keywords internal
 NULL
 
 #' Navigating and Embedding the Interactive Plots
@@ -362,6 +391,7 @@ NULL
 #'  must be called in a following chunk to close the Open GL window.
 #' 
 #' @name rgl_interactive_plots_Description
+#' @keywords internal
 NULL
 
 #' Embedding the Static Plots
@@ -383,6 +413,7 @@ NULL
 #'  sense based on the dimensions of the Open GL window.
 #' 
 #' @name rgl_static_plots_Description
+#' @keywords internal
 NULL
 
 #' surface plot
@@ -436,4 +467,5 @@ NULL
 #' @param mode Deprecated: has no effect and will be removed. See \code{save}
 #'  and \code{close_after_save}.
 #' @name surface_plot_Params
+#' @keywords internal
 NULL
