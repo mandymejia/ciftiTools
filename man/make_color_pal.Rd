@@ -60,7 +60,7 @@ If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
 
 \describe{
  \item{\code{color_mode=="sequential"}}{Only the second half of the pallete 
-   will be used (black --> red --> yellow). If \code{identical(zlim, NULL)}, 
+   will be used (black --> red --> yellow). If \code{is.null(zlim)}, 
    the colors will be mapped between \code{DATA_MIN} (black) to 
    \code{DATA_MAX} (yellow). If \code{length(zlim)==2}, \code{zlim[1]} will 
    be the lower bound (black) and \code{zlim[2]} will be the upper bound 
@@ -72,13 +72,13 @@ If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
  \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not 
    recommended for qualitative data, so a warning will be issued. Colors will 
    be based on the landmark colors in the "ROY_BIG_BL" pallete. If 
-   \code{identical(zlim, NULL)}, the colors will be mapped onto each integer 
+   \code{is.null(zlim)}, the colors will be mapped onto each integer 
    between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color 
    interpolation will be used if the number of colors in the palette (17) is
    less than this range. If \code{length(zlim)==length(colors)}, each color 
    will be mapped to each corresponding value.
  }
- \item{\code{color_mode=="diverging"}}{If \code{identical(zlim, NULL)}, the 
+ \item{\code{color_mode=="diverging"}}{If \code{is.null(zlim)}, the 
    colors will be mapped from \code{DATA_MIN} (aqua) to \code{DATA_MAX} 
    (yellow). If \code{length(zlim)==1}, this value will be used as the 
    midpoint (black) instead of the data midpoint. If \code{length(zlim)==2}, 
@@ -99,7 +99,7 @@ If \code{colors} is the name of an RColorBrewer palette (see
  applies directly:
 
 \describe{
- \item{\code{color_mode=="sequential"}}{If \code{identical(zlim, NULL)}, the
+ \item{\code{color_mode=="sequential"}}{If \code{is.null(zlim)}, the
    colors will be mapped with equal spacing from \code{DATA_MIN} to 
    \code{DATA_MAX}. If \code{length(zlim)==2}, these values will be used as
    the upper and lower bounds instead. If \code{zlim[1] > zlim[2]}, the first
@@ -108,14 +108,14 @@ If \code{colors} is the name of an RColorBrewer palette (see
    \code{length(zlim)==length(colors)}, each color will be mapped to each 
    corresponding value.
  }
- \item{\code{color_mode=="qualitative"}}{If \code{identical(zlim, NULL)}, the
+ \item{\code{color_mode=="qualitative"}}{If \code{is.null(zlim)}, the
    colors will be mapped onto each integer between \code{DATA_MIN} and 
    \code{DATA_MAX}, inclusive. Color interpolation will be used if the number 
    of colors in the palette is less than this range. If 
    \code{length(zlim)==length(colors)}, each color will be mapped to each 
     corresponding value.
  }
- \item{\code{color_mode=="diverging"}}{If \code{identical(zlim, NULL)}, the 
+ \item{\code{color_mode=="diverging"}}{If \code{is.null(zlim)}, the 
    colors will be mapped with equal spacing from \code{DATA_MIN} to 
    \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of
    the data. If \code{length(zlim)==1}, the middle color will correspond to 

@@ -44,7 +44,7 @@ read_cifti_flat <- function(
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
-  if (identical(gifti_fname, NULL)) {
+  if (is.null(gifti_fname)) {
     gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }
   if (!keep) { write_dir <- tempdir() }
