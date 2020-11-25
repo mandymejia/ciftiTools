@@ -207,6 +207,9 @@ make_cortex <- function(
   if (!is.null(mwall)) {
     if (is.null(cortex_is_masked)) { cortex_is_masked <- FALSE }
     if (!cortex_is_masked) {
+      if (nrow(cortex) != length(mwall)) { 
+        stop("Cortex and medial wall have different numbers of data locations.")
+      }
       cortex <- cortex[mwall,, drop=FALSE]
       cortex_is_masked <- TRUE
     }
