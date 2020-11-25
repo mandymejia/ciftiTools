@@ -360,7 +360,7 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
 #' @param pal_base Base palette
 #' @param labels Label for each color in the palette
 #' @param leg_ncol Number of columns in legend. 
-#' @param colorbar_digits See \code{\link{view_xifti_surface}}
+#' @param colorbar_digits Not used.
 #' @param scale of text
 #' 
 #' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
@@ -728,6 +728,11 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Overrides for "auto" color mode.
   if (color_mode == "auto") {
     values_vec <- as.vector(do.call(cbind, values))
+    if (is.null(colorbar_digits)) {
+      signif_digits <- 3
+    } else {
+      signif_digits <- colorbar_digits
+    }
     # Just in case?
     if (is.null(values) || all(values_vec %in% c(NA, NaN))) { 
       color_mode=="diverging"
@@ -739,21 +744,21 @@ view_xifti_surface <- function(xifti, idx=NULL,
         color_mode <- "diverging"
         if (is.null(zlim)) { 
           zlim <- c(
-            quantile(values_vec, .05, na.rm=TRUE), 
-            quantile(values_vec, .95, na.rm=TRUE)
+            signif(quantile(values_vec, .05, na.rm=TRUE), signif_digits), 
+            signif(quantile(values_vec, .95, na.rm=TRUE), signif_digits)
           )
         }
         if (is.null(colors)) { colors <- "ROY_BIG_BL" }
       } else if (has_positive) {
         color_mode <- "sequential"
         if (is.null(zlim)) { 
-          zlim <- c(0, quantile(values_vec, .90, na.rm=TRUE))
+          zlim <- c(0, signif(quantile(values_vec, .90, na.rm=TRUE), signif_digits))
         }
         if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
       } else if (has_negative) {
         color_mode <- "sequential"
         if (is.null(zlim)) { 
-          zlim <- c(quantile(values_vec, .10, na.rm=TRUE), 0)
+          zlim <- c(signif(quantile(values_vec, .10, na.rm=TRUE), signif_digits), 0)
         }
         if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
       } else {

@@ -87,7 +87,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
     value <- value[10:19]
     color <- color[10:19]
     # Normalize the values to [min, max].
-    value <- value * (max - min) + min
+    value <- (value + 1) * (max - min) + min
   } else {
     # Normalize the values to [min, max]. 
     # Note that the bottom 0.5% are all #00ffff.
