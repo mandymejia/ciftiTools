@@ -51,7 +51,7 @@ There are three argument types for \code{colors}: \code{"ROY_BIG_BL"}, the
 If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
  the same palette as the default used in the Connectome Workbench application
  (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
- The midpoint will be olored black. From the midpoint toward the upper 
+ The midpoint will be colored black. From the midpoint toward the upper 
  bound, colors will proceed from black to red to yellow. From the midpoint 
  toward the lower bound, colors will proceed from black to blue to purple to 
  green to aqua. Note that these colors are not equally-spaced, and the bottom

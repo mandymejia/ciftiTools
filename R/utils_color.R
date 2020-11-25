@@ -15,8 +15,11 @@
 #'  Default: \code{1}.
 #' @param mid (Optional) The midpoint value for the color mapping. If 
 #'  \code{NULL} (default), the true midpoint is used.
-#' @param pos_half Use the positive half (black --> red --> yellow) only? 
-#'  Default: \code{FALSE}.
+#' @param half \code{"positive"} or \code{"negative"} to use the positive half
+#'  (black --> red --> yellow) or negative half (black --> blue --> purple -->
+#'  green --> aqua) only. \code{NULL} (default) or \code{FALSE} to use entire 
+#'  palette.
+#' @param pos_half Deprecated. Use \code{half}.
 #'
 #' @return A data.frame with two columns: \code{"color"} (character: color hex 
 #'  codes) and \code{"value"} (numeric)
@@ -25,7 +28,10 @@
 #'
 #' @export 
 #' 
-ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
+ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
+  stopifnot(length(min)==1)
+  stopifnot(length(max)==1)
+
   if (min==max) {
     return( data.frame(color = c("#000000"), value = c(min)) )
   }
@@ -35,6 +41,15 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
     min <- max
     max <- temp
   }
+
+  if (pos_half) {
+    # Deprecated.
+    half <- "positive"
+  }
+  if (is.null(half) || identical(half, FALSE)) {
+    half <- "no"
+  } 
+  half <- match.arg(half, c("no", "positive", "negative"))
 
   # Use the same landmark color RGB values, and same spacing. Note the spacing
   #   is not equidistant between landmarks.
@@ -61,13 +76,18 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
     -0.875, -0.990, -1.000
   )
 
-  if (pos_half) {
+  if (half=="positive") {
     # Only use the latter half.
     value <- value[1:10]
     color <- color[1:10]
     # Normalize the values to [min, max].
     value <- value * (max - min) + min
-
+  } else if (half=="negative") {
+    # Only use the latter half.
+    value <- value[10:19]
+    color <- color[10:19]
+    # Normalize the values to [min, max].
+    value <- value * (max - min) + min
   } else {
     # Normalize the values to [min, max]. 
     # Note that the bottom 0.5% are all #00ffff.
@@ -99,7 +119,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
 #'  the same palette as the default used in the Connectome Workbench application
 #'  (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
-#'  The midpoint will be olored black. From the midpoint toward the upper 
+#'  The midpoint will be colored black. From the midpoint toward the upper 
 #'  bound, colors will proceed from black to red to yellow. From the midpoint 
 #'  toward the lower bound, colors will proceed from black to blue to purple to 
 #'  green to aqua. Note that these colors are not equally-spaced, and the bottom
@@ -108,7 +128,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #'
 #' \describe{
 #'  \item{\code{color_mode=="sequential"}}{Only the second half of the pallete 
-#'    will be used (black --> red --> yellow). If \code{identical(zlim, NULL)}, 
+#'    will be used (black --> red --> yellow). If \code{is.null(zlim)}, 
 #'    the colors will be mapped between \code{DATA_MIN} (black) to 
 #'    \code{DATA_MAX} (yellow). If \code{length(zlim)==2}, \code{zlim[1]} will 
 #'    be the lower bound (black) and \code{zlim[2]} will be the upper bound 
@@ -120,13 +140,13 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #'  \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not 
 #'    recommended for qualitative data, so a warning will be issued. Colors will 
 #'    be based on the landmark colors in the "ROY_BIG_BL" pallete. If 
-#'    \code{identical(zlim, NULL)}, the colors will be mapped onto each integer 
+#'    \code{is.null(zlim)}, the colors will be mapped onto each integer 
 #'    between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color 
 #'    interpolation will be used if the number of colors in the palette (17) is
 #'    less than this range. If \code{length(zlim)==length(colors)}, each color 
 #'    will be mapped to each corresponding value.
 #'  }
-#'  \item{\code{color_mode=="diverging"}}{If \code{identical(zlim, NULL)}, the 
+#'  \item{\code{color_mode=="diverging"}}{If \code{is.null(zlim)}, the 
 #'    colors will be mapped from \code{DATA_MIN} (aqua) to \code{DATA_MAX} 
 #'    (yellow). If \code{length(zlim)==1}, this value will be used as the 
 #'    midpoint (black) instead of the data midpoint. If \code{length(zlim)==2}, 
@@ -147,7 +167,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #'  applies directly:
 #'
 #' \describe{
-#'  \item{\code{color_mode=="sequential"}}{If \code{identical(zlim, NULL)}, the
+#'  \item{\code{color_mode=="sequential"}}{If \code{is.null(zlim)}, the
 #'    colors will be mapped with equal spacing from \code{DATA_MIN} to 
 #'    \code{DATA_MAX}. If \code{length(zlim)==2}, these values will be used as
 #'    the upper and lower bounds instead. If \code{zlim[1] > zlim[2]}, the first
@@ -156,14 +176,14 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, pos_half=FALSE) {
 #'    \code{length(zlim)==length(colors)}, each color will be mapped to each 
 #'    corresponding value.
 #'  }
-#'  \item{\code{color_mode=="qualitative"}}{If \code{identical(zlim, NULL)}, the
+#'  \item{\code{color_mode=="qualitative"}}{If \code{is.null(zlim)}, the
 #'    colors will be mapped onto each integer between \code{DATA_MIN} and 
 #'    \code{DATA_MAX}, inclusive. Color interpolation will be used if the number 
 #'    of colors in the palette is less than this range. If 
 #'    \code{length(zlim)==length(colors)}, each color will be mapped to each 
 #'     corresponding value.
 #'  }
-#'  \item{\code{color_mode=="diverging"}}{If \code{identical(zlim, NULL)}, the 
+#'  \item{\code{color_mode=="diverging"}}{If \code{is.null(zlim)}, the 
 #'    colors will be mapped with equal spacing from \code{DATA_MIN} to 
 #'    \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of
 #'    the data. If \code{length(zlim)==1}, the middle color will correspond to 
@@ -225,7 +245,7 @@ make_color_pal <- function(
   }
 
   # Use default palettes if the colors are not specified.
-  if (identical(colors, NULL)) {
+  if (is.null(colors)) {
     colors <- switch(
       color_mode,
       sequential="ROY_BIG_BL", # will use pos half
@@ -240,12 +260,18 @@ make_color_pal <- function(
     # --------------------------------------------------------------------------
     # ROY_BIG_BL ---------------------------------------------------------------
     # --------------------------------------------------------------------------
-    if (colors == "ROY_BIG_BL") {
+    if (grepl("ROY_BIG_BL", colors)) {
+      half <- switch(colors,
+        ROY_BIG_BL=ifelse(color_mode=="sequential", "pos", "no"),
+        ROY_BIG_BL_pos="pos",
+        ROY_BIG_BL_neg="neg"
+      )
+
       if (color_mode=="sequential") {
-        if (identical(zlim, NULL)) {
-          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, pos_half=TRUE)
+        if (is.null(zlim)) {
+          RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, half=half)
         } else if (N_COLOR_VALUES_PRE==2) {
-          RBB <- ROY_BIG_BL(zlim[1], zlim[2], pos_half=TRUE)
+          RBB <- ROY_BIG_BL(zlim[1], zlim[2], half=half)
         } else {
           stop(paste(
             "The sequential ROY_BIG_BL palette (default) requires",
@@ -260,7 +286,7 @@ make_color_pal <- function(
         RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
 
       } else if (color_mode=="diverging") {
-        if (identical(zlim, NULL)) {
+        if (is.null(zlim)) {
           RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX)
         } else if (N_COLOR_VALUES_PRE==1) {
           RBB <- ROY_BIG_BL(DATA_MIN, DATA_MAX, mid=zlim)
@@ -306,7 +332,7 @@ make_color_pal <- function(
   # ----------------------------------------------------------------------------
   N_COLORS <- length(colors)
   N_COLOR_VALUES <- length(zlim)
-  if (!identical(zlim, NULL)) {
+  if (!is.null(zlim)) {
     # Check that the color values are valid.
     valid_color_values_lengths <- switch(color_mode, 
       sequential=c(2, N_COLORS),
@@ -341,7 +367,7 @@ make_color_pal <- function(
   # ----------------------------------------------------------------------------
   if (color_mode == "sequential") {
     pal_cols <- colors
-    if (identical(zlim, NULL)) {
+    if (is.null(zlim)) {
       pal_vals <- seq(DATA_MIN, DATA_MAX, length.out=length(colors))
     } else {
       if (N_COLOR_VALUES==2) {
@@ -364,7 +390,7 @@ make_color_pal <- function(
       stop("Data bounds must be integers for qualitative color mode.")
     }
     N_DATA_VALUES <- DATA_MAX - DATA_MIN + 1
-    if (identical(zlim, NULL)) {
+    if (is.null(zlim)) {
       pal_vals <- c(DATA_MIN:DATA_MAX)
       if (length(colors) >= N_DATA_VALUES) {
         pal_cols <- colors[1:N_DATA_VALUES]
@@ -388,7 +414,7 @@ make_color_pal <- function(
   # ----------------------------------------------------------------------------
   } else if (color_mode=="diverging") {
     pal_cols <- colors
-    if (identical(zlim, NULL)) {
+    if (is.null(zlim)) {
       pal_vals <- seq(DATA_MIN, DATA_MAX, length.out=length(colors))
     } else {
       if (N_COLOR_VALUES==N_COLORS) {

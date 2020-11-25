@@ -555,17 +555,19 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
 #'  to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
 #'  then the qualitative colors in the label table will be used.
-#'  See the \code{ciftiTools::make_color_pal()} description for more details.
+#'  See \code{?ciftiTools::make_color_pal()} for more details.
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
-#'  or \code{"diverging"}. \code{NULL} will use the qualitative color mode if
-#'  the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007), and the sequential
-#'  color mode otherwise. See the \code{ciftiTools::make_color_pal()}
-#'  description for more details.
+#'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
+#'  qualitative color mode if the \code{"xifti"} object represents a .dlabel 
+#'  CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
+#'  contains both positive and negative values, and the sequential mode if the
+#'  data contains only positive or only negative values. See 
+#'  \code{?ciftiTools::make_color_pal()} for more details.
 #' @param zlim (Optional) Controls the mapping of values to each
 #'  color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
-#'  the value to \code{DATA_MAX}. See the
-#'  \code{ciftiTools::make_color_pal()} description for more details.
+#'  the value to \code{DATA_MAX}. See \code{?ciftiTools::make_color_pal()} 
+#'  description for more details.
 #' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and
 #'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
 #'  Each can be a file path for a GIFTI, a file read by gifti::readgii,
@@ -611,13 +613,14 @@ view_xifti_surface.draw_mesh <- function(
 #'  to interactively control which timepoint is being displayed.
 #' 
 #' @importFrom grDevices dev.list dev.off rgb
+#' @importFrom stats quantile
 #' @export
 view_xifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
   save=FALSE, close_after_save=TRUE, fname="xifti",
-  colors=NULL, color_mode=NULL, zlim=NULL,
+  colors=NULL, color_mode="auto", zlim=NULL,
   surfL=NULL, surfR=NULL,
   qualitative_colorlegend = TRUE, colorlegend_ncol=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -676,12 +679,12 @@ view_xifti_surface <- function(xifti, idx=NULL,
   }
 
   # Color mode
-  if (is.null(color_mode)) {
+  if (is.null(color_mode)) { color_mode <- "auto" }
+  if (color_mode == "auto") {
     if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
       color_mode <- "qualitative"
-    } else {
-      color_mode <- "sequential"
-    }
+    } 
+    # Otherwise, et after call to view_xifti_surface.mesh_val
   } else {
     color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   }
@@ -721,6 +724,48 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
   x <- view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
   mesh <- x$mesh; values <- x$values
+
+  # Overrides for "auto" color mode.
+  if (color_mode == "auto") {
+    values_vec <- as.vector(do.call(cbind, values))
+    # Just in case?
+    if (is.null(values) || all(values_vec %in% c(NA, NaN))) { 
+      color_mode=="diverging"
+
+    } else {
+      has_positive <- max(values_vec, na.rm=TRUE) > 0
+      has_negative <- min(values_vec, na.rm=TRUE) < 0
+      if (has_positive && has_negative) {
+        color_mode <- "diverging"
+        if (is.null(zlim)) { 
+          zlim <- c(
+            quantile(values_vec, .05, na.rm=TRUE), 
+            quantile(values_vec, .95, na.rm=TRUE)
+          )
+        }
+        if (is.null(colors)) { colors <- "ROY_BIG_BL" }
+      } else if (has_positive) {
+        color_mode <- "sequential"
+        if (is.null(zlim)) { 
+          zlim <- c(0, quantile(values_vec, .90, na.rm=TRUE))
+        }
+        if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
+      } else if (has_negative) {
+        color_mode <- "sequential"
+        if (is.null(zlim)) { 
+          zlim <- c(quantile(values_vec, .10, na.rm=TRUE), 0)
+        }
+        if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
+      } else {
+        color_mode <- "diverging"
+        if (is.null(zlim)) { 
+          zlim <- c(-1, 1)
+        }
+        if (is.null(colors)) { colors <- "ROY_BIG_BL" }
+      }
+    }
+    rm(values_vec)
+  }
 
   if ((!save || !close_after_save) && !is.null(values)) {
     

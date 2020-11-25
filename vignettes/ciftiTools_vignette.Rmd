@@ -31,9 +31,9 @@ ciftiTools.setOption("suppress_msgs", TRUE)
 
 In this vignette, we will use example data included in the `ciftiTools` package. The files are originally from [NITRC](https://www.nitrc.org/frs/?group_id=454):
 
-* The MyelinAndCorrThickness dtseries and dscalar files contain the same data: MyelinMap_BC_decurv and corrThickness
+* The "MyelinAndCorrThickness" dtseries and dscalar files contain the same data: MyelinMap_BC_decurv and corrThickness
 * The dlabel file contains three cortical parcellations
-* The "ones" dscalar file is the only file to include subcortical voxels and has all data values equal to 1.
+* The "ones" dscalar file is the only file to include subcortical voxels. All its data values are 1. 
 * To reduce the size of `ciftiTools`, the dscalar and dlabel CIFTIs were resampled to 6k and the "ones" dscalar was resampled to 1k.
 
 ```{r}
@@ -51,7 +51,7 @@ surfR_fname <- ciftiTools::demo_files()$surf["right"]
 # surfR_fname = "../inst/extdata/Conte69.R.inflated.32k_fs_LR.surf.gii"
 ```
 
-The last preliminary step is to set up the R Markdown document for including `ciftiTools` graphics made with `rgl`. See the help page for `view_xifti_surface` for more information about embedding interactive widgets or static plots from `ciftiTools` into .html documents. 
+The last preliminary step is to set up the R Markdown document for including `ciftiTools` graphics made with `rgl`. See the help page for `view_xifti_surface` for more information about embedding interactive widgets or static plots from `ciftiTools` into html documents. 
 
 ```{r}
 library(rgl)
@@ -92,7 +92,7 @@ cii
 
 Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the surface mesh in an Open GL window using `rgl`. This function has several primary arguments:
 
-* `color_mode` specifies the nature of the data values: `"sequential"` (default), `"qualitative"` and `"diverging"`.
+* `color_mode` specifies the nature of the data values: `"sequential"`, `"qualitative"` and `"diverging"`. If it is not provided, a default mode that makes sense for the data will be used.
 * `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
 * `save` to also save a screenshot of the window to a .png file; `close_after_save` to close the window after writing the image file.
 * `idx` controls which timepoints to display.
@@ -105,8 +105,8 @@ cii <- read_cifti(cifti_fnames["dscalar"])
 view_xifti_surface(cii, idx=1, zlim=c(1,2))
 ```
 
-```{r, fig.cap=".dscalar file; second column; Second time point; diverging palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(cii, idx=2, zlim=c(1,5))
+```{r, fig.cap=".dscalar file; second column; diverging palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+view_xifti_surface(cii, idx=2, zlim=c(1,5), color_mode = "diverging")
 ```
 
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
@@ -166,7 +166,7 @@ A `"xifti"` can contain surface geometry without the corresponding data; to make
 
 # Creating a new `"xifti"` and writing it
 
-We can make a `"xifti"` from data using `as.xifti`. For example, let's make a `"xifti"` from the mean image (over time) of the `"dtseries.nii"` file. (Note that the dtseries used in this example does not truly contain fMRI timeseries data, but we use it for illustration.)
+We can make a `"xifti"` from data using `as.xifti`. For example, let's make a `"xifti"` from the mean image (over time) of the dtseries file. (Note that the dtseries used in this example does not truly contain fMRI timeseries data, but we use it for illustration.)
 
 ```{r}
 cii <- read_cifti(cifti_fnames["dtseries"])
@@ -227,7 +227,7 @@ There is only a negligible difference between the original and the written-then-
 
 # Resampling
 
-`ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k `"dtseries.nii"` file to 6k vertices. We also provide the surfaces and resample them in conjunction.
+`ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k dtseries file to 6k vertices. We also provide the surfaces and resample them in conjunction.
 
 ```{r}
 resampled_cii_fname <- "my_new_resampled.dtseries.nii"

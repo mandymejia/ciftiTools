@@ -23,7 +23,7 @@ view_xifti_surface(
   close_after_save = TRUE,
   fname = "xifti",
   colors = NULL,
-  color_mode = NULL,
+  color_mode = "auto",
   zlim = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -219,19 +219,21 @@ and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential),
 \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
 to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
 then the qualitative colors in the label table will be used.
-See the \code{ciftiTools::make_color_pal()} description for more details.}
+See \code{?ciftiTools::make_color_pal()} for more details.}
 
 \item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"},
-or \code{"diverging"}. \code{NULL} will use the qualitative color mode if
-the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007), and the sequential
-color mode otherwise. See the \code{ciftiTools::make_color_pal()}
-description for more details.}
+\code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
+qualitative color mode if the \code{"xifti"} object represents a .dlabel 
+CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
+contains both positive and negative values, and the sequential mode if the
+data contains only positive or only negative values. See 
+\code{?ciftiTools::make_color_pal()} for more details.}
 
 \item{zlim}{(Optional) Controls the mapping of values to each
 color in \code{colors}. If the length is longer than
 one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
-the value to \code{DATA_MAX}. See the
-\code{ciftiTools::make_color_pal()} description for more details.}
+the value to \code{DATA_MAX}. See \code{?ciftiTools::make_color_pal()} 
+description for more details.}
 
 \item{surfL, surfR}{(Optional if \code{xifti$surf$cortex_left} and
 \code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
