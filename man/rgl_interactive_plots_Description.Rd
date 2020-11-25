@@ -47,3 +47,4 @@ Navigating and Embedding the Interactive Plots
  must be called in a following chunk to close the Open GL window.
 }
 
+\keyword{internal}

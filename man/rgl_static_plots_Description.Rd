@@ -24,3 +24,4 @@ Embedding the Static Plots
  sense based on the dimensions of the Open GL window.
 }
 
+\keyword{internal}

@@ -10,3 +10,4 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 \description{
 x: xifti
 }
+\keyword{internal}

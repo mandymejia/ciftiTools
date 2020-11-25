@@ -10,3 +10,4 @@ file representing the right cortex.}
 \description{
 surfR_fname
 }
+\keyword{internal}

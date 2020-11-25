@@ -11,3 +11,4 @@ cortical surface vertices per hemisphere). If \code{NULL} (default) or
 \description{
 resamp_res: optional
 }
+\keyword{internal}
