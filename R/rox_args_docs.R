@@ -448,14 +448,14 @@ NULL
 #'  sizes for increasingly longer titles.
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  "black".
-#' @param save Save the plot to a .png file named by \code{fname}? Default:
-#'  \code{FALSE}.
+#' @param save Save the plot (and color legend if used) to a .png file named by 
+#' \code{fname}? Default: \code{FALSE}.
 #' @param close_after_save If \code{save==TRUE}, close the interactive Open GL 
 #'  window at the end of this function call? Default: \code{TRUE}. 
 #' @param fname An identifier to use for naming the saved images
-#'  ("[fname].png") or video frames ("[fname]_1.png", "[fname]_2.png", ...).
-#'  Default: \code{"xifti"} for \code{xifti_view_surface} and \code{"surf"} for
-#'  \code{view_surf}.
+#'  ("[fname].png") or video frames ("[fname]_1.png", "[fname]_2.png", ...), and
+#'  the color legend if used ("[fname]_legend.png"). Default: \code{"xifti"} for
+#'  \code{xifti_view_surface} and \code{"surf"} for \code{view_surf}.
 #' @param alpha Transparency value for mesh coloring, between 0 and 1. Default:
 #'  \code{1.0} (no transparency).
 #' @param edge_color Outline each edge in this color. Default: \code{NULL} (do

@@ -1042,6 +1042,10 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
         if (use_cleg) {
           print(cleg)
+          if (save) {
+            ggplot2::ggsave(gsub(".png", "_legend.png", fname))
+            if (close_after_save) { dev.off() }
+          }
         } else {
           colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
           try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE) 
