@@ -1012,10 +1012,6 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # Make the colorbar (if applicable).
     if (any_colors) {
 
-      if (!requireNamespace("fields", quietly = TRUE)) {
-        stop("Package \"fields\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
-      }
-
       if (colorbar_embedded) {
         if (save || jj==1) {
           names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "legend"
@@ -1024,6 +1020,10 @@ view_xifti_surface <- function(xifti, idx=NULL,
               # Somehow fix colorbar stretching. Changing x doesn't work
               invisible()
             }
+          }
+
+          if (!requireNamespace("fields", quietly = TRUE)) {
+            stop("Package \"fields\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
           }
           rgl::bgplot3d(
             # Warning: calling par(new=TRUE) with no plot
@@ -1046,7 +1046,11 @@ view_xifti_surface <- function(xifti, idx=NULL,
             ggplot2::ggsave(gsub(".png", "_legend.png", fname))
             if (close_after_save) { dev.off() }
           }
+
         } else {
+          if (!requireNamespace("fields", quietly = TRUE)) {
+            stop("Package \"fields\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
+          }
           colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
           try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE) 
         }
