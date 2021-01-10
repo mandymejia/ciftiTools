@@ -145,7 +145,7 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 ### Intent code
 
-`cii$meta$cifti$intent` indicates the NIFTI intent, which corresponds to a unique CIFTI file type. For example, `"dtseries.nii"` files have an intent of 3006.
+`cii$meta$cifti$intent` indicates the NIFTI intent, which corresponds to a unique CIFTI file type. For example, `"dtseries.nii"` files have an intent of 3002.
 
 ### Support for surface geometry without data
 
