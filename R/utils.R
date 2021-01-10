@@ -287,6 +287,7 @@ run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
   cmd <- paste(sys_path(wb_cmd), cmd)
   
   out <- system(cmd, intern=intern)
+  #out_print <- invisible(capture.output( out <- system(cmd, intern=intern) ))
 
   ciftiTools_msg("Using the Connectome Workbench.")
 
