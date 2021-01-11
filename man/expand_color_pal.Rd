@@ -3,16 +3,15 @@
 \name{expand_color_pal}
 \alias{expand_color_pal}
 \title{Interpolates between entries in the input palette to make a larger palette 
- with at least MIN_COLOR_RES entries.}
+ with COLOR_RES entries.}
 \usage{
-expand_color_pal(pal, MIN_COLOR_RES = 255)
+expand_color_pal(pal, COLOR_RES = 255)
 }
 \arguments{
 \item{pal}{The color palette to expand, as a data.frame with two columns: 
 \code{"color"} (character: color hex codes) and \code{"value"} (numeric).}
 
-\item{MIN_COLOR_RES}{The minimum number of entries to have in the output 
-palette. Because of rounding, there may be more than this number of entries.}
+\item{COLOR_RES}{The number of entries to have in the output palette.}
 }
 \value{
 A data.frame with two columns: \code{"color"} (character: color hex 
@@ -20,5 +19,5 @@ A data.frame with two columns: \code{"color"} (character: color hex
 }
 \description{
 Interpolates between entries in the input palette to make a larger palette 
- with at least MIN_COLOR_RES entries.
+ with COLOR_RES entries.
 }

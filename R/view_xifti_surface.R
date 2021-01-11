@@ -191,7 +191,8 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
 #' See \code{\link{view_xifti_surface}} for details.
 #' 
 #' @param hemisphere,values,idx idx see \code{\link{view_xifti_surface}}
-#' @param colors,color_mode,zlim see \code{\link{view_xifti_surface}}
+#' @param colors,color_mode,zlim, colorbar_digits see 
+#'  \code{\link{view_xifti_surface}}
 #' @param xifti_meta \code{xifti$meta}
 #' @param border_color,surfL,surfR see \code{\link{view_xifti_surface}}
 #' 
@@ -201,7 +202,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
 #' 
 view_xifti_surface.color <- function(
   hemisphere, values, idx, 
-  colors, color_mode, zlim, 
+  colors, color_mode, zlim, colorbar_digits,
   xifti_meta,
   border_color, surfL, surfR) {
 
@@ -215,11 +216,52 @@ view_xifti_surface.color <- function(
 
   any_colors <- !is.null(values)
   if (any_colors) {
-    # Get the base palette.
+
+    if (is.null(colorbar_digits)) {
+      signif_digits <- 3
+    } else {
+      signif_digits <- colorbar_digits
+    }
+    DATA_MIN <- round(min(values, na.rm=TRUE), signif_digits)
+    DATA_MAX <- round(max(values, na.rm=TRUE), signif_digits)
+
+    if (is.null(zlim)) {
+      if (color_mode=="qualitative") {
+        zlim <- c(0,1) # Placeholder: `zlim` is never used for qualitative!
+      } else {
+        pctile_10 <- round(quantile(values, .10, na.rm=TRUE), signif_digits)
+        pctile_90 <- round(quantile(values, .90, na.rm=TRUE), signif_digits)
+        pctile_10_neg <- pctile_10 < 0
+        pctile_90_pos <- pctile_90 > 0
+
+        if (!pctile_10_neg) {
+          zlim <- c(0, pctile_90)
+        } else if (!pctile_90_pos) {
+          zlim <- c(pctile_10, 0)
+        } else {
+          if (color_mode=="diverging") {
+            zlim <- c(pctile_10, 0, pctile_90)
+          } else {
+            zlim <- c(pctile_10, pctile_90)
+          }
+        }
+
+        message(paste0(
+          "Data range: ", DATA_MIN, " - ", DATA_MAX, "\n",
+          "Color range: ", min(zlim), " - ", max(zlim), "\n",
+          "(Use the `zlim` argument to change these defaults.)\n"
+        ))
+      }
+    }
+
+    zlim[zlim==-Inf] <- DATA_MIN
+    zlim[zlim==Inf] <- DATA_MAX
+
+    # Make base palette and full palette.
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
       if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007) && is.null(colors)) {
-        if (length(idx) > 1) { warning("Color labels from first requested column will be used.") }
+        if (length(idx) > 1) { message("Color labels from first requested column will be used.\n") }
         labs <- xifti_meta$cifti$labels[[idx[1]]]
         N_VALUES <- length(labs$Key)
         pal_base <- data.frame(
@@ -230,25 +272,14 @@ view_xifti_surface.color <- function(
       } else {
         unique_values <- sort(unique(as.vector(values[!is.na(values)])))
         values[,] <- as.numeric(factor(values, levels=unique_values))
-        N_VALUES <- length(unique_values)
         pal_base <- make_color_pal(
-          colors=colors, color_mode=color_mode, zlim=zlim,
-          DATA_MIN=1, DATA_MAX=N_VALUES
+          colors=colors, color_mode=color_mode, zlim=length(unique_values)
         )
       }
-    } else {
-      pal_base <- make_color_pal(
-        colors=colors, color_mode=color_mode, zlim=zlim,
-        DATA_MIN=min(as.vector(values), na.rm=TRUE), 
-        DATA_MAX=max(as.vector(values), na.rm=TRUE)
-      )
-    }
-
-    # Interpolate colors in the base palette for higher color resolution.
-    if (color_mode %in% c("sequential", "diverging")) {
-      pal <- expand_color_pal(pal_base)
-    } else {
       pal <- pal_base
+    } else {
+      pal_base <- make_color_pal(colors=colors,color_mode=color_mode, zlim=zlim)
+      pal <- expand_color_pal(pal_base)
     }
 
     # Map each vertex to a color by its value.
@@ -555,18 +586,18 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
 #'  to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
 #'  then the qualitative colors in the label table will be used.
-#'  See \code{?ciftiTools::make_color_pal()} for more details.
+#'  See \code{\link{make_color_pal}} for more details.
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
 #'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
 #'  qualitative color mode if the \code{"xifti"} object represents a .dlabel 
 #'  CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
 #'  contains both positive and negative values, and the sequential mode if the
-#'  data contains only positive or only negative values. See 
-#'  \code{?ciftiTools::make_color_pal()} for more details.
+#'  data contains >90% positive or >90% negative values. See 
+#'  \code{\link{make_color_pal}} for more details.
 #' @param zlim (Optional) Controls the mapping of values to each
 #'  color in \code{colors}. If the length is longer than
-#'  one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
-#'  the value to \code{DATA_MAX}. See \code{?ciftiTools::make_color_pal()} 
+#'  one, using -Inf will set the value to the data minimum, and Inf will set
+#'  the value to the data maximum. See \code{\link{make_color_pal}} 
 #'  description for more details.
 #' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and
 #'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
@@ -684,7 +715,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
       color_mode <- "qualitative"
     } 
-    # Otherwise, et after call to view_xifti_surface.mesh_val
+    # Otherwise, set after call to view_xifti_surface.mesh_val
   } else {
     color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   }
@@ -728,46 +759,27 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Overrides for "auto" color mode.
   if (color_mode == "auto") {
     values_vec <- as.vector(do.call(cbind, values))
-    if (is.null(colorbar_digits)) {
-      signif_digits <- 3
-    } else {
-      signif_digits <- colorbar_digits
-    }
-    # Just in case?
-    if (is.null(values) || all(values_vec %in% c(NA, NaN))) { 
-      color_mode=="diverging"
 
+    if (length(zlim) == 3) { 
+      color_mode <- "diverging"
+    } else if (is.null(values) || all(values_vec %in% c(NA, NaN))) { 
+      color_mode <- "diverging"
     } else {
-      has_positive <- max(values_vec, na.rm=TRUE) > 0
-      has_negative <- min(values_vec, na.rm=TRUE) < 0
-      if (has_positive && has_negative) {
+      pctile_10 <- quantile(values_vec, .10, na.rm=TRUE)
+      pctile_90 <- quantile(values_vec, .90, na.rm=TRUE)
+      pctile_10_neg <- pctile_10 < 0
+      pctile_90_pos <- pctile_90 > 0
+
+      if (!xor(pctile_10_neg, pctile_90_pos)) {
         color_mode <- "diverging"
-        if (is.null(zlim)) { 
-          zlim <- c(
-            signif(quantile(values_vec, .05, na.rm=TRUE), signif_digits), 
-            signif(quantile(values_vec, .95, na.rm=TRUE), signif_digits)
-          )
-        }
         if (is.null(colors)) { colors <- "ROY_BIG_BL" }
-      } else if (has_positive) {
+      } else if (pctile_90_pos) {
         color_mode <- "sequential"
-        if (is.null(zlim)) { 
-          zlim <- c(0, signif(quantile(values_vec, .90, na.rm=TRUE), signif_digits))
-        }
         if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
-      } else if (has_negative) {
+      } else if (pctile_10_neg) {
         color_mode <- "sequential"
-        if (is.null(zlim)) { 
-          zlim <- c(signif(quantile(values_vec, .10, na.rm=TRUE), signif_digits), 0)
-        }
         if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
-      } else {
-        color_mode <- "diverging"
-        if (is.null(zlim)) { 
-          zlim <- c(-1, 1)
-        }
-        if (is.null(colors)) { colors <- "ROY_BIG_BL" }
-      }
+      } else { stop() }
     }
     rm(values_vec)
   }
@@ -795,7 +807,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
   x <- view_xifti_surface.color(
     hemisphere, values, idx, 
-    colors, color_mode, zlim, 
+    colors, color_mode, zlim, colorbar_digits,
     xifti$meta,
     border_color, surfL, surfR
   )

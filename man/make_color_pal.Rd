@@ -7,9 +7,7 @@
 make_color_pal(
   colors = NULL,
   color_mode = c("sequential", "qualitative", "diverging"),
-  zlim = NULL,
-  DATA_MIN = 0,
-  DATA_MAX = 1
+  zlim = NULL
 )
 }
 \arguments{
@@ -25,15 +23,7 @@ description for more details.}
 more details.}
 
 \item{zlim}{(Optional) Controls the mapping of values to each color in 
-\code{colors}. If the length is longer than one, using \code{-Inf} will set 
-the value to \code{DATA_MIN}, and \code{Inf} will set the value to 
-\code{DATA_MAX}. See the description for more details.}
-
-\item{DATA_MIN}{(Optional) The minimum value of the data to make the palette
-for. Overrided by certain \code{zlim}.}
-
-\item{DATA_MAX}{(Optional) The maximum value of the data to make the palette
-for. Overrided by certain \code{zlim}.}
+\code{colors}. See the description for more details.}
 }
 \value{
 A data.frame with two columns: \code{"color"} (character: color hex 
@@ -44,95 +34,72 @@ Control the mapping of values to colors with \code{colors},
  \code{color_mode}, and \code{zlim}.
 }
 \details{
-There are three argument types for \code{colors}: \code{"ROY_BIG_BL"}, the 
- name of an \code{RColorBrewer} palette, or a character vector of color 
+There are three kinds of arguments for \code{colors}: \code{"ROY_BIG_BL"}, 
+ the name of an \code{RColorBrewer} palette, or a character vector of color 
  names.
 
 If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
- the same palette as the default used in the Connectome Workbench application
- (see github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx).
- The midpoint will be colored black. From the midpoint toward the upper 
- bound, colors will proceed from black to red to yellow. From the midpoint 
- toward the lower bound, colors will proceed from black to blue to purple to 
- green to aqua. Note that these colors are not equally-spaced, and the bottom
- 0.5\% of the color range has the same color. Here is how each color mode 
- behaves if \code{colors=="ROY_BIG_BL"}:
+ the same palette as the 
+ \href{github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx}{default for the Connectome Workbench application}. 
+ The midpoint will be colored 
+ black. From the midpoint toward the upper bound, colors will proceed from 
+ black to red to yellow. From the midpoint toward the lower bound, colors 
+ will proceed from black to blue to purple to green to aqua. Here is how each
+ color mode behaves if \code{colors=="ROY_BIG_BL"}:
 
 \describe{
- \item{\code{color_mode=="sequential"}}{Only the second half of the pallete 
-   will be used (black --> red --> yellow). If \code{is.null(zlim)}, 
-   the colors will be mapped between \code{DATA_MIN} (black) to 
-   \code{DATA_MAX} (yellow). If \code{length(zlim)==2}, \code{zlim[1]} will 
-   be the lower bound (black) and \code{zlim[2]} will be the upper bound 
-   (yellow). If \code{zlim[1] > zlim[2]}, the first value will be used as the
-   maximum and the second will be used as the minimum, and the color scale 
-   will be reversed with the highest value colored black and the lowest value
-   colored yellow.
+ \item{\code{color_mode=="sequential"}}{Only half of the pallete will be 
+   used. If \code{zlim} is length 2, the higher value will be the maximum and
+   the lower value will be the minimum. Set \code{zlim[1] > zlim[2]} to
+   reverse the color scale. (Note that the second half, black --> red --> 
+   yellow, is used by default. To use the negative half specify 
+   \code{colors=="ROY_BIG_BL_neg"} instead. It will also be used automatically
+   by \code{xifti_read_surface} when the data range is negative.) 
+   \code{zlim} can also be length 10, in which case each value corresponds to
+   the position of an individual color in the half palette.
  }
- \item{\code{color_mode=="qualitative"}}{The "ROY_BIG_BL" pallete is not 
-   recommended for qualitative data, so a warning will be issued. Colors will 
-   be based on the landmark colors in the "ROY_BIG_BL" pallete. If 
-   \code{is.null(zlim)}, the colors will be mapped onto each integer 
-   between \code{DATA_MIN} and \code{DATA_MAX}, inclusive. Color 
-   interpolation will be used if the number of colors in the palette (17) is
-   less than this range. If \code{length(zlim)==length(colors)}, each color 
-   will be mapped to each corresponding value.
+ \item{\code{color_mode=="qualitative"}}{"ROY_BIG_BL" is not recommended for 
+   qualitative data, so a warning will be issued. Palette colors will be
+   selected from the landmark "ROY_BIG_BL" colors, with interpolated colors
+   added if the number of colors in the palette (18) is less than this range.
+   \code{zlim} should be a single number: the number of unique colors to get.
  }
- \item{\code{color_mode=="diverging"}}{If \code{is.null(zlim)}, the 
-   colors will be mapped from \code{DATA_MIN} (aqua) to \code{DATA_MAX} 
-   (yellow). If \code{length(zlim)==1}, this value will be used as the 
-   midpoint (black) instead of the data midpoint. If \code{length(zlim)==2}, 
-   \code{zlim[1]} will be the lower bound (aqua) and \code{zlim[2]} will be 
-   the upper bound (yellow). If \code{length(zlim)==3}, these values will 
-   correspond to the lowest bound (aqua), midpoint (black), and upper bound 
-   (yellow) respectively. If the \code{zlim} are in descending order, the 
-   first value will be used as the maximum and the last will be used as the 
-   minimum, and the color scale will be reversed with the highest values 
-   colored aqua and the lowest values colored yellow.
+ \item{\code{color_mode=="diverging"}}{If \code{zlim} is length 2 or 3, the
+   lowest number will be the lower bound and the highest number will
+   be the upper bound. If \code{zlim} is length 3, the middle number will be the
+   midpoint (black). The lower and upper bounds will be aqua and yellow,
+   respectively, except if \code{zlim} is in descending order, in which case
+   the color scale will be reversed (lowest is yellow; highest is aqua).
+   \code{zlim} can also be length 19, in which case each value corresponds to
+   the position of an individual color in the palette.
  }
 }
 
 If \code{colors} is the name of an RColorBrewer palette (see 
  \code{RColorBrewer::brewer.pal.info}), the colors in that pallete will be used, 
  and the following behavior applies. If \code{colors} is a character vector
- of color names (hex codes or standard R color names), the below behavior 
+ of color names (hex codes or standard R color names), the following behavior 
  applies directly:
 
 \describe{
- \item{\code{color_mode=="sequential"}}{If \code{is.null(zlim)}, the
-   colors will be mapped with equal spacing from \code{DATA_MIN} to 
-   \code{DATA_MAX}. If \code{length(zlim)==2}, these values will be used as
-   the upper and lower bounds instead. If \code{zlim[1] > zlim[2]}, the first
-   value will be used as the maximum and the second will be used as the 
-   minimum, and the color scale will be reversed. If 
-   \code{length(zlim)==length(colors)}, each color will be mapped to each 
-   corresponding value.
+ \item{\code{color_mode=="sequential"}}{If \code{zlim} is length 2, the 
+   higher value will be the maximum and the lower value will be the minimum.
+   Set \code{zlim[1] > zlim[2]} to reverse the color scale. \code{zlim} can 
+   also be the same length as the palette, in which case each value 
+   corresponds to the position of an individual color in the palette.
  }
- \item{\code{color_mode=="qualitative"}}{If \code{is.null(zlim)}, the
-   colors will be mapped onto each integer between \code{DATA_MIN} and 
-   \code{DATA_MAX}, inclusive. Color interpolation will be used if the number 
-   of colors in the palette is less than this range. If 
+ \item{\code{color_mode=="qualitative"}}{\code{zlim} should be a single 
+   number: the number of unique colors to get. Color interpolation will be 
+   used if the number of colors in the palette is less than this range. If 
    \code{length(zlim)==length(colors)}, each color will be mapped to each 
     corresponding value.
  }
- \item{\code{color_mode=="diverging"}}{If \code{is.null(zlim)}, the 
-   colors will be mapped with equal spacing from \code{DATA_MIN} to 
-   \code{DATA_MAX}. Thus, the middle color will correspond to the midpoint of
-   the data. If \code{length(zlim)==1}, the middle color will correspond to 
-   this value instead. The preceeding colors will be equally-spaced between
-   \code{DATA_MIN} and this value; the following colors will be 
-   equally-spaced between this value and\code{DATA_MAX}. If 
-   \code{length(zlim)==2}, \code{zlim[1]} will be the lower bound (first 
-   color) and \code{zlim[2]} will be the upper bound (last color). If 
-   \code{length(zlim)==3}, these values will correspond to the lowest bound, 
-   midpoint, and upper bound respectively. There must be an odd number of 
-   colors, since the diverging color mode requires a midpoint. If the 
-   \code{zlim} are in descending order, the first value will be used as the
-   maximum and the last will be used as the minimum, and the color scale
-   will be reversed. Finally, if \code{length(zlim)==length(colors)}, each 
-   color will be mapped to each corresponding value. Thus, the middle color 
-   will correspond to the middle color_value. The length of \code{colors}
-   must be odd and >= 3.
+ \item{\code{color_mode=="diverging"}}{If \code{zlim} is length 2 or 3, the
+   lowest number will be the lower bound and the highest number will
+   be the upper bound. If \code{zlim} is length 3, the middle number will be the
+   midpoint. Set \code{zlim} in descending order to reverse the color scale.
+   \code{zlim} can also be the same length as the palette, in which case each 
+   value corresponds to the position of an individual color in the palette.
  }
 }
 }
