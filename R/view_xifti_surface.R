@@ -632,6 +632,8 @@ view_xifti_surface.draw_mesh <- function(
 #'  warning. The default, \code{NULL}, will print a warning if \code{idx} times
 #'  the number of vertices exceeds 200k (approximately three 32k meshes for both
 #'  the left and right hemisphere.)
+#' @param widget_title Label at bottom of plot that will be added if a widget
+#'  is used.
 #' @param render_rgl Default: \code{TRUE}. If \code{FALSE}, do not render the
 #'  Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh
 #'  objects and coloring information. This should be used by developers only.
@@ -657,7 +659,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, 
   edge_color=NULL, vertex_color=NULL, vertex_size=0, border_color=NULL,
-  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL) {
+  widget_idx_warn=NULL, widget_title="Index:", render_rgl=TRUE, mode=NULL) {
 
   # Check required packages and X11
   if (!requireNamespace("rgl", quietly = TRUE)) {
@@ -690,7 +692,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   if (!is.null(mode)) {
     warning("`mode` is deprecated; use `save` and `close_after_save` instead.\n")
   }
-  use_widget <- !is.null(idx) && length(idx) > 1
+  use_widget <- length(idx) > 1
 
   # Set `idx` if null, and check `fnames`.
   if (is.null(idx)) { idx <- 1 } #:ncol(do.call(rbind, xifti$data)) }
@@ -723,14 +725,14 @@ view_xifti_surface <- function(xifti, idx=NULL,
   NA_COLOR <- "white"
 
   # Title
-  no_title <- FALSE
+  use_title <- TRUE
   if (!is.null(title)) {
     if (length(title) == 1){
       title <- rep(title, length(idx))
     } else if (length(title) != length(idx)) { 
       stop("Length of `title` must be 1 or the same as `idx`.") 
     }
-    if (all(title == "")) { no_title <- TRUE }
+    if (all(title == "")) { use_title <- FALSE }
   }
 
   # Hopefully will find a better solution (controlling widget size) soon.
@@ -864,7 +866,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   brain_panels_nrow <- length(view)
   brain_panels_ncol <- length(hemisphere)
 
-  all_panels_nrow <- brain_panels_nrow + 1*(!no_title) + 1*colorbar_embedded
+  all_panels_nrow <- brain_panels_nrow + 1*use_title + 1*colorbar_embedded + 1*use_widget
   all_panels_ncol <- brain_panels_ncol
 
   if (is.null(width) | is.null(height)) {
@@ -898,8 +900,9 @@ view_xifti_surface <- function(xifti, idx=NULL,
       (all_panels_nrow - brain_panels_nrow)
 
   all_panels_heights <- rep.int(1, brain_panels_nrow)
-  if (!no_title) { all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
+  if (use_title) { all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
   if (colorbar_embedded) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  if (use_widget) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   rglIDs <- vector("list", length(idx))
   names(rglIDs) <- idx
@@ -934,7 +937,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # --------------------------------------------------------------------------
 
     # Make the title (if applicable).
-    if (!no_title) {
+    if (use_title) {
       names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "title"
       rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
         title[jj], xifti$meta, this_idx, cex.title, text_color
@@ -1069,6 +1072,20 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     }
 
+    if (use_widget) {
+      rgl::text3d(
+        x=0, y=0, z=0, 
+        adj = c(2, .5),
+        font=2, # Forget if this made a difference...
+        color=text_color,
+        text=widget_title
+      )
+      rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      if(all_panels_ncol==2){
+        rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
+      }
+    }
+
     if (save) {
       rgl::rgl.snapshot(fname[jj])
       rgl::rgl.close()
@@ -1087,7 +1104,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     #return(list(subscenes=subscenes, rglIDs=rglIDs))
     controls <- vector("list", 0)
 
-    if (!no_title) {
+    if (use_title) {
       titleIDs <- lapply(rglIDs, `[[`, "title")
       titleIDs <- lapply(titleIDs, as.integer)
       if (length(unique(titleIDs)) > 1) {

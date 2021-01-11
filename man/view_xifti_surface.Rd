@@ -37,6 +37,7 @@ view_xifti_surface(
   vertex_size = 0,
   border_color = NULL,
   widget_idx_warn = NULL,
+  widget_title = "Index:",
   render_rgl = TRUE,
   mode = NULL
 )
@@ -286,6 +287,9 @@ meshes are being drawn in the same window. Use \code{Inf} to never print a
 warning. The default, \code{NULL}, will print a warning if \code{idx} times
 the number of vertices exceeds 200k (approximately three 32k meshes for both
 the left and right hemisphere.)}
+
+\item{widget_title}{Label at bottom of plot that will be added if a widget
+is used.}
 
 \item{render_rgl}{Default: \code{TRUE}. If \code{FALSE}, do not render the
 Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh
