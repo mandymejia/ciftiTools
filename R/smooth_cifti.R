@@ -17,8 +17,8 @@
 #' @param x The \code{"xifti"} object or CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI. If
 #'  \code{NULL}, will be set to a file in a temporary directory.
-#' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm
-#' @param volume_sigma The sigma for the gaussian volume smoothing kernel, in mm
+#' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm. Default: \code{5}
+#' @param volume_sigma The sigma for the gaussian volume smoothing kernel, in mm. Default: \code{5}
 #' @param surfL_fname,surfR_fname (Required if the 
 #'  corresponding cortex is present) Surface GIFTI files for the left and right
 #'  cortical surface
@@ -36,7 +36,7 @@
 #'
 smooth_cifti <- function(
   x, cifti_target_fname=NULL,
-  surface_sigma, volume_sigma,
+  surface_sigma=5, volume_sigma=5,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE,
@@ -60,13 +60,10 @@ smooth_cifti <- function(
       x_extn <- "dscalar.nii"
     }
     ## Get brainstructures.
-    brainstructures <- x$meta$cifti$brainstructures
-    if (is.null(brainstructures)) {
-      brainstructures <- vector("character", 0)
-      if (!is.null(x$data$cortex_left)) { brainstructures <- c(brainstructures, "left") }
-      if (!is.null(x$data$cortex_right)) { brainstructures <- c(brainstructures, "right") }
-      if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcortical") }
-    }
+    brainstructures <- vector("character", 0)
+    if (!is.null(x$data$cortex_left)) { brainstructures <- c(brainstructures, "left") }
+    if (!is.null(x$data$cortex_right)) { brainstructures <- c(brainstructures, "right") }
+    if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcortical") }
 
     # Write out the CIFTI.
     cifti_original_fname <- file.path(tempdir(), paste0("to_smooth.", x_extn))

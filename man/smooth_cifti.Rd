@@ -9,8 +9,8 @@
 smooth_cifti(
   x,
   cifti_target_fname = NULL,
-  surface_sigma,
-  volume_sigma,
+  surface_sigma = 5,
+  volume_sigma = 5,
   surfL_fname = NULL,
   surfR_fname = NULL,
   cerebellum_fname = NULL,
@@ -54,9 +54,9 @@ smoothcii(
 \item{cifti_target_fname}{The file name to save the smoothed CIFTI. If
 \code{NULL}, will be set to a file in a temporary directory.}
 
-\item{surface_sigma}{The sigma for the gaussian surface smoothing kernel, in mm}
+\item{surface_sigma}{The sigma for the gaussian surface smoothing kernel, in mm. Default: \code{5}}
 
-\item{volume_sigma}{The sigma for the gaussian volume smoothing kernel, in mm}
+\item{volume_sigma}{The sigma for the gaussian volume smoothing kernel, in mm. Default: \code{5}}
 
 \item{surfL_fname, surfR_fname}{(Required if the 
 corresponding cortex is present) Surface GIFTI files for the left and right
