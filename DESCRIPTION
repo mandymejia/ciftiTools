@@ -25,20 +25,20 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
+    fields,
     gifti (> 0.7.5),
     grDevices,
     oro.nifti,
     RNifti,
     RColorBrewer,
+    rgl,
     xml2
 Suggests:
-    fields,
     ggplot2,
     ggpubr,
     knitr,
     rmarkdown,
     papayar,
-    rgl,
     testthat (>= 2.1.0),
     covr
 RoxygenNote: 7.1.1

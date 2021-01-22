@@ -229,27 +229,27 @@ view_xifti_surface.color <- function(
       if (color_mode=="qualitative") {
         zlim <- c(0,1) # Placeholder: `zlim` is never used for qualitative!
       } else {
-        pctile_10 <- round(quantile(values, .10, na.rm=TRUE), signif_digits)
-        pctile_90 <- round(quantile(values, .90, na.rm=TRUE), signif_digits)
-        pctile_10_neg <- pctile_10 < 0
-        pctile_90_pos <- pctile_90 > 0
+        pctile_05 <- round(quantile(values, .05, na.rm=TRUE), signif_digits)
+        pctile_95 <- round(quantile(values, .95, na.rm=TRUE), signif_digits)
+        pctile_05_neg <- pctile_05 < 0
+        pctile_95_pos <- pctile_95 > 0
 
-        if (!pctile_10_neg) {
-          zlim <- c(0, pctile_90)
-        } else if (!pctile_90_pos) {
-          zlim <- c(pctile_10, 0)
+        if (!pctile_05_neg) {
+          zlim <- c(0, pctile_95)
+        } else if (!pctile_95_pos) {
+          zlim <- c(pctile_05, 0)
         } else {
+          pctile_max <- max(abs(c(pctile_05, pctile_95)))
           if (color_mode=="diverging") {
-            zlim <- c(pctile_10, 0, pctile_90)
+            zlim <- c(-pctile_max, 0, pctile_max)
           } else {
-            zlim <- c(pctile_10, pctile_90)
+            zlim <- c(-pctile_max, pctile_max)
           }
         }
 
         message(paste0(
-          "Data range: ", DATA_MIN, " - ", DATA_MAX, "\n",
-          "Color range: ", min(zlim), " - ", max(zlim), "\n",
-          "(Use the `zlim` argument to change these defaults.)\n"
+          "Setting color range to ", min(zlim), " - ", max(zlim), ".\n",
+          "Use the `zlim` argument to change these defaults.\n"
         ))
       }
     }
@@ -661,12 +661,18 @@ view_xifti_surface <- function(xifti, idx=NULL,
   edge_color=NULL, vertex_color=NULL, vertex_size=0, border_color=NULL,
   widget_idx_warn=NULL, widget_title="Index:", render_rgl=TRUE, mode=NULL) {
 
-  # Check required packages and X11
-  if (!requireNamespace("rgl", quietly = TRUE)) {
-    stop("Package \"rgl\" needed to use `view_xifti_surface`. Please install it.", call. = FALSE)
-  }
+  # Check X11
   if (!capabilities("X11")) {
     ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
+  }
+
+  if (length(idx) > 1) {
+    if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+      stop(paste(
+        "Package \"rmarkdown\" will be needed by `view_xifti_surface` to",
+        "display a widget. Please install it.\n"
+      ))
+    }
   }
 
   # Try to avoid this error with colorbar:
@@ -767,18 +773,18 @@ view_xifti_surface <- function(xifti, idx=NULL,
     } else if (is.null(values) || all(values_vec %in% c(NA, NaN))) { 
       color_mode <- "diverging"
     } else {
-      pctile_10 <- quantile(values_vec, .10, na.rm=TRUE)
-      pctile_90 <- quantile(values_vec, .90, na.rm=TRUE)
-      pctile_10_neg <- pctile_10 < 0
-      pctile_90_pos <- pctile_90 > 0
+      pctile_05 <- quantile(values_vec, .05, na.rm=TRUE)
+      pctile_95 <- quantile(values_vec, .95, na.rm=TRUE)
+      pctile_05_neg <- pctile_05 < 0
+      pctile_95_pos <- pctile_95 > 0
 
-      if (!xor(pctile_10_neg, pctile_90_pos)) {
+      if (!xor(pctile_05_neg, pctile_95_pos)) {
         color_mode <- "diverging"
         if (is.null(colors)) { colors <- "ROY_BIG_BL" }
-      } else if (pctile_90_pos) {
+      } else if (pctile_95_pos) {
         color_mode <- "sequential"
         if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
-      } else if (pctile_10_neg) {
+      } else if (pctile_05_neg) {
         color_mode <- "sequential"
         if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
       } else { stop() }
