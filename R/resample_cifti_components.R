@@ -47,8 +47,6 @@ resample_cifti_components <- function(
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   read_dir=NULL, write_dir=NULL, wb_path=NULL) {
 
-  wb_cmd <- get_wb_cmd_path(wb_path)
-
   original_fnames <- list(
     cortexL=cortexL_original_fname, cortexR=cortexR_original_fname, 
     ROIcortexL=ROIcortexL_original_fname, ROIcortexR=ROIcortexR_original_fname,
