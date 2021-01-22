@@ -8,14 +8,13 @@
 #' @param hemisphere \code{"left"} or \code{"right"}. Only used if not indicated by 
 #'  \code{surf$hemisphere}. An error will be raised if it does not match the 
 #'  hemisphere indicated in the intermediate written GIFTI. 
-#' @inheritParams wb_path_Param
 #' 
 #' @return The new surface
 #' 
 #' @export
 #'
 resample_surf <- function(
-  surf, resamp_res, hemisphere=c("left", "right"), wb_path=NULL){
+  surf, resamp_res, hemisphere=c("left", "right")){
 
   surf <- make_surf(surf)
 
@@ -33,8 +32,7 @@ resample_surf <- function(
   gii_post <- format_path("to_read.surf.gii", tdir, 2)
   resample_gifti(
     gii_pre, gii_post, hemisphere=hemisphere,
-    original_res = original_res, resamp_res=resamp_res,
-    wb_path=wb_path
+    original_res = original_res, resamp_res=resamp_res
   )
 
   # Read new file.

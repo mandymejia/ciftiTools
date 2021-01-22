@@ -22,7 +22,9 @@ wb_path_request <- function() {
 #'  option or the provided argument. This path can be the Connectome Workbench
 #'  folder or the `wb_command` executable.
 #' 
-#' @inheritParams wb_path_Param
+#' @param wb_path (Optional) Path to Connectome Workbench folder or executable. 
+#'  If not provided, should be set with 
+#'  \code{ciftiTools.setOption("wb_path", "path/to/workbench")}.
 #' @param verbose Default: \code{FALSE}.
 #'
 #' @export

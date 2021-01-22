@@ -8,20 +8,18 @@
 #' @param original_fname A CIFTI file to resample.
 #' @param template_fname A CIFTI file to use as the template.
 #' @param target_fname The file name to save the resampled CIFTI.
-#' @inheritParams wb_path_Param
 #'
 #' @return The \code{target_fname}, invisibly
 #' 
 #' @export
 #'
 resample_cifti_from_template <- function(
-  original_fname, template_fname, target_fname,
-  wb_path=NULL){
+  original_fname, template_fname, target_fname){
   
   # Check brainstructures.
-  original_info <- info_cifti(original_fname, wb_path)
+  original_info <- info_cifti(original_fname)
   brainstructures <- original_info$cifti$brainstructures
-  template_info <- info_cifti(template_fname, wb_path)
+  template_info <- info_cifti(template_fname)
   template_brainstructures <- template_info$cifti$brainstructures  
   for (b in brainstructures) {
     if (!(b %in% template_brainstructures)) {
@@ -77,7 +75,7 @@ resample_cifti_from_template <- function(
   }
 
   # Run command.
-  run_wb_cmd(cmd, wb_path)
+  run_wb_cmd(cmd)
 
   invisible(target_fname)
 }

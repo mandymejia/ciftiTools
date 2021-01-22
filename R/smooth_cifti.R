@@ -28,7 +28,6 @@
 #'  the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.
 #' @param subcortical_merged Smooth across subcortical structure boundaries?
 #'  Default: \code{FALSE}.
-#' @inheritParams wb_path_Param
 #'
 #' @return The \code{cifti_target_fname}, invisibly
 #' 
@@ -39,8 +38,7 @@ smooth_cifti <- function(
   surface_sigma=5, volume_sigma=5,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
-  subcortical_merged=FALSE,
-  wb_path=NULL){
+  subcortical_merged=FALSE){
 
   input_is_xifti <- is.xifti(x, messages=FALSE)
 
@@ -219,7 +217,7 @@ smooth_cifti <- function(
 
   if (subcortical_merged) { cmd <- paste(cmd, "-merged-volume") }
 
-  run_wb_cmd(cmd, wb_path)
+  run_wb_cmd(cmd)
 
   # Fix .dlabel output ---------------------------------------------------------
   if (fix_dlabel) {
@@ -227,14 +225,11 @@ smooth_cifti <- function(
     cifti_target_fname <- gsub("dlabel", "dscalar", old_target_fname)
     names_fname <- tempfile()
     cat(names(cifti_info$cifti$labels), file = names_fname, sep = "\n")
-    run_wb_cmd(
-      paste(
-        "-cifti-change-mapping", old_target_fname, 
-        "ROW", cifti_target_fname,
-        "-scalar", "-name-file", names_fname
-      ),
-      wb_path
-    )
+    run_wb_cmd(paste(
+      "-cifti-change-mapping", old_target_fname, 
+      "ROW", cifti_target_fname,
+      "-scalar", "-name-file", names_fname
+    ))
   }
   
   # Return results -------------------------------------------------------------
@@ -252,16 +247,14 @@ smoothCIfTI <- function(
   surface_sigma, volume_sigma,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
-  subcortical_merged=FALSE,
-  wb_path=NULL){
+  subcortical_merged=FALSE){
 
   smooth_cifti(
     x=x, cifti_target_fname=cifti_target_fname,
     surface_sigma=surface_sigma, volume_sigma=volume_sigma,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
     subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
-    subcortical_merged=subcortical_merged,
-    wb_path=wb_path
+    subcortical_merged=subcortical_merged
   )
 }
 
@@ -272,15 +265,13 @@ smoothcii <- function(
   surface_sigma, volume_sigma,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
-  subcortical_merged=FALSE,
-  wb_path=NULL){
+  subcortical_merged=FALSE){
 
   smooth_cifti(
     x=x, cifti_target_fname=cifti_target_fname,
     surface_sigma=surface_sigma, volume_sigma=volume_sigma,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
     subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
-    subcortical_merged=subcortical_merged,
-    wb_path=wb_path
+    subcortical_merged=subcortical_merged
   )
 }

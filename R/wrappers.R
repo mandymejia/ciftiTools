@@ -10,7 +10,6 @@
 #' @inheritParams ROI_brainstructures_Param_LR
 #' @inheritParams sep_fnames_Param
 #' @inheritParams write_dir_Param_generic
-#' @inheritParams wb_path_Param
 #'
 #' @return The return value of the \code{separate_cifti} call
 #'
@@ -18,13 +17,13 @@
 #' 
 separate_cifti_wrapper <- function(
   cifti_fname, brainstructures=NULL, ROI_brainstructures=NULL,
-  sep_fnames=NULL, write_dir=NULL, wb_path=NULL) {
+  sep_fnames=NULL, write_dir=NULL) {
 
   # Get kwargs.
   sep_kwargs <- list(
     cifti_fname=cifti_fname,
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    write_dir=write_dir, wb_path=wb_path
+    write_dir=write_dir
   )
 
   # Get expected file names.
@@ -61,7 +60,6 @@ separate_cifti_wrapper <- function(
 #'  cortex. If NULL (default),
 #' @inheritParams read_dir_Param_separated
 #' @inheritParams write_dir_Param_generic
-#' @inheritParams wb_path_Param
 #'
 #' @return The return value of the \code{resample_cifti} call
 #' 
@@ -72,7 +70,7 @@ resample_cifti_wrapper <- function(
   original_res, resamp_res,
   surfL_fname=NULL, surfR_fname=NULL, 
   surfL_target_fname=NULL, surfR_target_fname=NULL, 
-  read_dir=NULL, write_dir=NULL, wb_path=NULL) {
+  read_dir=NULL, write_dir=NULL) {
 
   # [TO DO]: surfL_fname --> surfL_original_fname? (and same for right?)
   
@@ -82,7 +80,7 @@ resample_cifti_wrapper <- function(
     surfL_original_fname=surfL_fname, surfR_original_fname=surfR_fname,
     surfL_target_fname=surfL_target_fname, 
     surfR_target_fname=surfR_target_fname, 
-    read_dir=read_dir, write_dir=write_dir, wb_path=wb_path
+    read_dir=read_dir, write_dir=write_dir
   )
 
   # Get expected file names.

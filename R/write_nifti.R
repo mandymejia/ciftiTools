@@ -27,7 +27,6 @@
 #'  a NIFTI to save the corresponding data. \code{ROIsubcortVol_fname} is
 #'  optional but the rest is required.
 #' @param fill Values to use for out-of-mask voxels. Default: \code{0}.
-#' @inheritParams wb_path_Param
 #' 
 #' @return Named character vector with the \code{"subcortVol"}, 
 #'  \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
@@ -37,7 +36,7 @@
 write_subcort_nifti <- function(
   subcortVol, subcortLabs, subcortMask, trans_mat=NULL,
   subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname=NULL,
-  fill=0, wb_path=NULL){
+  fill=0){
 
   if (!is.null(trans_mat)) { 
     stopifnot(is.nummat(trans_mat))
@@ -73,7 +72,7 @@ write_subcort_nifti <- function(
     sys_path(subcort_lab_list), 
     sys_path(subcortLabs_fname)
   )
-  run_wb_cmd(cmd, wb_path)
+  run_wb_cmd(cmd)
 
   # Mask (as numeric).
   subcortMask <- subcortMask + 0

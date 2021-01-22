@@ -9,8 +9,7 @@ separate_cifti_wrapper(
   brainstructures = NULL,
   ROI_brainstructures = NULL,
   sep_fnames = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 }
 \arguments{
@@ -57,10 +56,6 @@ ROIs are typically the medial wall mask for the cortex and subcortical mask
  the current working directory.
 
  \code{write_dir} must already exist, or an error will occur.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The return value of the \code{separate_cifti} call

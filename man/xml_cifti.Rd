@@ -4,14 +4,10 @@
 \alias{xml_cifti}
 \title{Get XML of a CIFTI}
 \usage{
-xml_cifti(cifti_fname, wb_path = NULL)
+xml_cifti(cifti_fname)
 }
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The XML as a list
@@ -24,10 +20,7 @@ Wrapper for Connectome Workbench command
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench . 
- The \code{wb_path} argument is the full file path to the Connectome 
- Workbench folder. (The full file path to the 'wb_cmd' executable also 
- works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
 \keyword{internal}

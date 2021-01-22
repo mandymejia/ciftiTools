@@ -297,16 +297,14 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams wb_path_Param
 #'
 #' @return The header, as a character vector
 #'
 #' @keywords internal
 #'
-header_cifti <- function(cifti_fname, wb_path=NULL){
+header_cifti <- function(cifti_fname){
   run_wb_cmd(
-    paste("-nifti-information", sys_path(cifti_fname), "-print-header"),
-    wb_path, intern=TRUE
+    paste("-nifti-information", sys_path(cifti_fname), "-print-header"), intern=TRUE
   )
 }
 
@@ -318,7 +316,6 @@ header_cifti <- function(cifti_fname, wb_path=NULL){
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams wb_path_Param
 #'
 #' @return The XML as a list
 #'
@@ -326,10 +323,9 @@ header_cifti <- function(cifti_fname, wb_path=NULL){
 #'
 #' @keywords internal
 #'
-xml_cifti <- function(cifti_fname, wb_path=NULL){
+xml_cifti <- function(cifti_fname){
   out <- run_wb_cmd(
-    paste("-nifti-information", sys_path(cifti_fname), "-print-xml"),
-    wb_path, intern=TRUE
+    paste("-nifti-information", sys_path(cifti_fname), "-print-xml"), intern=TRUE
   )
   as_list(read_xml(paste(out, collapse="\n")))
 }
@@ -374,13 +370,12 @@ xml_cifti <- function(cifti_fname, wb_path=NULL){
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams wb_path_Param
 #'
 #' @return The metadata component of a \code{"xifti"} for the input CIFTI file
 #'
 #' @export
 #'
-info_cifti <- function(cifti_fname, wb_path=NULL){
+info_cifti <- function(cifti_fname){
 
   # Check if this CIFTI is supported.
   cifti_fname <- format_path(cifti_fname, mode=4)
@@ -390,8 +385,8 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
   # -nifti-information ---------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  cif_head <- header_cifti(cifti_fname, wb_path)
-  cif_xml <- xml_cifti(cifti_fname, wb_path)
+  cif_head <- header_cifti(cifti_fname)
+  cif_xml <- xml_cifti(cifti_fname)
 
   # ----------------------------------------------------------------------------
   # Parsing --------------------------------------------------------------------
@@ -456,12 +451,12 @@ info_cifti <- function(cifti_fname, wb_path=NULL){
 
 #' @rdname info_cifti
 #' @export
-infoCIfTI <- function(cifti_fname, wb_path=NULL){
-  info_cifti(cifti_fname, wb_path=NULL)
+infoCIfTI <- function(cifti_fname){
+  info_cifti(cifti_fname)
 }
 
 #' @rdname info_cifti
 #' @export
-infocii <- function(cifti_fname, wb_path=NULL){
-  info_cifti(cifti_fname, wb_path=NULL)
+infocii <- function(cifti_fname){
+  info_cifti(cifti_fname)
 }

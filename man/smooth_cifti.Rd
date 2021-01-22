@@ -16,8 +16,7 @@ smooth_cifti(
   cerebellum_fname = NULL,
   subcortical_zeroes_as_NA = FALSE,
   cortical_zeroes_as_NA = FALSE,
-  subcortical_merged = FALSE,
-  wb_path = NULL
+  subcortical_merged = FALSE
 )
 
 smoothCIfTI(
@@ -30,8 +29,7 @@ smoothCIfTI(
   cerebellum_fname = NULL,
   subcortical_zeroes_as_NA = FALSE,
   cortical_zeroes_as_NA = FALSE,
-  subcortical_merged = FALSE,
-  wb_path = NULL
+  subcortical_merged = FALSE
 )
 
 smoothcii(
@@ -44,8 +42,7 @@ smoothcii(
   cerebellum_fname = NULL,
   subcortical_zeroes_as_NA = FALSE,
   cortical_zeroes_as_NA = FALSE,
-  subcortical_merged = FALSE,
-  wb_path = NULL
+  subcortical_merged = FALSE
 )
 }
 \arguments{
@@ -70,10 +67,6 @@ the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.}
 
 \item{subcortical_merged}{Smooth across subcortical structure boundaries?
 Default: \code{FALSE}.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The \code{cifti_target_fname}, invisibly
@@ -97,9 +90,6 @@ If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench . 
- The \code{wb_path} argument is the full file path to the Connectome 
- Workbench folder. (The full file path to the 'wb_cmd' executable also 
- works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 

@@ -14,8 +14,7 @@ resample_cifti_wrapper(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   read_dir = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 }
 \arguments{
@@ -71,10 +70,6 @@ cortex. If NULL (default),}
  the current working directory.
 
  \code{write_dir} must already exist, or an error will occur.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The return value of the \code{resample_cifti} call

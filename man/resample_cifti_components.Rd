@@ -20,8 +20,7 @@ resample_cifti_components(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   read_dir = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 }
 \arguments{
@@ -71,10 +70,6 @@ surface geometry file representing the right cortex at.}
  the current working directory.
 
  \code{write_dir} must already exist, or an error will occur.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 A named character vector of file paths to each resampled file

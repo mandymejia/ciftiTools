@@ -277,13 +277,12 @@ match_exactly <- function(
 #' @param cmd The full command, beginning after the workbench path.
 #' @param intern Return printed output? If \code{FALSE} (default), return
 #'  logical indicating success instead.
-#' @inheritParams wb_path_Param
 #'
 #' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
 #'  If \code{intern==TRUE}, the printed output of the command.
 #'
-run_wb_cmd <- function(cmd, wb_path, intern=FALSE){
-  wb_cmd <- get_wb_cmd_path(wb_path)
+run_wb_cmd <- function(cmd, intern=FALSE){
+  wb_cmd <- get_wb_cmd_path(NULL)
   cmd <- paste(sys_path(wb_cmd), cmd)
   
   out <- system(cmd, intern=intern)

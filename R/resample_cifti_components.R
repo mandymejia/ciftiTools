@@ -31,7 +31,6 @@
 #' @inheritParams surfR_target_fname_Param
 #' @inheritParams read_dir_Param_separated
 #' @inheritParams write_dir_Param_generic
-#' @inheritParams wb_path_Param
 #'
 #' @return A named character vector of file paths to each resampled file
 #'
@@ -45,7 +44,7 @@ resample_cifti_components <- function(
   ROIcortexL_target_fname=NULL, ROIcortexR_target_fname=NULL,
   surfL_original_fname=NULL, surfR_original_fname=NULL, 
   surfL_target_fname=NULL, surfR_target_fname=NULL,
-  read_dir=NULL, write_dir=NULL, wb_path=NULL) {
+  read_dir=NULL, write_dir=NULL) {
 
   original_fnames <- list(
     cortexL=cortexL_original_fname, cortexR=cortexR_original_fname, 
@@ -151,7 +150,7 @@ resample_cifti_components <- function(
   #   cortex, ROI, and surface files into target resolution.
 
   resample_gifti_kwargs_common <- list(
-    original_res=original_res, resamp_res=resamp_res, wb_path=wb_path,
+    original_res=original_res, resamp_res=resamp_res,
     #   Since we already appended read/write/sphere_target directories,
     #     set them to NULL.
     read_dir=NULL, write_dir=NULL

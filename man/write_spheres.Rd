@@ -4,13 +4,7 @@
 \alias{write_spheres}
 \title{Generate GIFTI sphere surface files}
 \usage{
-write_spheres(
-  sphereL_fname,
-  sphereR_fname,
-  resamp_res,
-  write_dir = NULL,
-  wb_path = NULL
-)
+write_spheres(sphereL_fname, sphereR_fname, resamp_res, write_dir = NULL)
 }
 \arguments{
 \item{sphereL_fname}{File path to left-hemisphere spherical GIFTI to be 
@@ -24,10 +18,6 @@ cortical surface vertices per hemisphere).}
 
 \item{write_dir}{(Optional) directory to place the sphere files in. If
 \code{NULL} (default), do not append any directory to the sphere file paths.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The names of the written sphere files, invisibly

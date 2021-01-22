@@ -10,8 +10,7 @@ write_cifti_components(
   write_dir = NULL,
   mwall_fill = NA,
   subcort_fill = 0,
-  verbose = FALSE,
-  wb_path = NULL
+  verbose = FALSE
 )
 }
 \arguments{
@@ -33,10 +32,6 @@ Default: \code{NA}.}
 Default: \code{0}.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 List of written files

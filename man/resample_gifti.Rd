@@ -16,8 +16,7 @@ resample_gifti(
   ROIcortex_original_fname = NULL,
   ROIcortex_target_fname = NULL,
   read_dir = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 
 resampleGIfTI(
@@ -30,8 +29,7 @@ resampleGIfTI(
   ROIcortex_original_fname = NULL,
   ROIcortex_target_fname = NULL,
   read_dir = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 
 resamplegii(
@@ -44,8 +42,7 @@ resamplegii(
   ROIcortex_original_fname = NULL,
   ROIcortex_target_fname = NULL,
   read_dir = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 }
 \arguments{
@@ -79,10 +76,6 @@ applicable if \code{ROIcortex_original_fname} is provided.}
 \item{write_dir}{Directory to append to the path of every file name in
 \code{target_fname} and \code{ROIcortex_target_fname}. If \code{NULL} 
 (default), do not append any directory to the path.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The resampled GIFTI file name, invisibly

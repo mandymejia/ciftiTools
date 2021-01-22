@@ -8,8 +8,7 @@ read_cifti_flat(
   cifti_fname,
   keep = FALSE,
   gifti_fname = NULL,
-  write_dir = NULL,
-  wb_path = NULL
+  write_dir = NULL
 )
 }
 \arguments{
@@ -24,10 +23,6 @@ Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
 
 \item{write_dir}{The directory in which to save the GIFTI, if it is being 
 kept. If \code{NULL} (default), use the current working directory.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
@@ -47,10 +42,7 @@ Reads the CIFTI data matrix by converting it to a GIFTI using the
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench . 
- The \code{wb_path} argument is the full file path to the Connectome 
- Workbench folder. (The full file path to the 'wb_cmd' executable also 
- works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
 \keyword{internal}
