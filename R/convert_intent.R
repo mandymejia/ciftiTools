@@ -24,6 +24,13 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   
   stopifnot(is.xifti(xifti))
 
+  if (!is.null(xifti$meta$cifti$intent)) {
+    if (xifti$meta$cifti$intent == 3007) {
+      ciftiTools_warn("The input is already a `xifti`.\n")
+      return(xifti)
+    }
+  }
+
   # Get the label values.
   convert_NA <- FALSE
   if (is.null(values)) {
