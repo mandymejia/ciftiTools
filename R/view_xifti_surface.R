@@ -2,7 +2,7 @@
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
 #' 
-#' @param xifti The xifti
+#' @param xifti The \code{"xifti"}
 #' @param surfL Left surface
 #' @param surfR Right surface
 #' @param hemisphere Hemisphere
@@ -103,7 +103,7 @@ view_xifti_surface.surf_hemi <- function(
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
 #' 
-#' @param xifti The xifti
+#' @param xifti The \code{"xifti"}
 #' @param surfL Left surface
 #' @param surfR Right surface
 #' @param hemisphere Hemisphere

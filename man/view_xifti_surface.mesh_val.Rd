@@ -7,7 +7,7 @@
 view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
 }
 \arguments{
-\item{xifti}{The xifti}
+\item{xifti}{The \code{"xifti"}}
 
 \item{surfL}{Left surface}
 

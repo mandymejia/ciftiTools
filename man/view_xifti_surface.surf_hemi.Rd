@@ -7,7 +7,7 @@
 view_xifti_surface.surf_hemi(xifti, surfL, surfR, hemisphere)
 }
 \arguments{
-\item{xifti}{The xifti}
+\item{xifti}{The \code{"xifti"}}
 
 \item{surfL}{Left surface}
 
