@@ -1065,7 +1065,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
         if (use_cleg) {
           print(cleg)
           if (save) {
-            ggplot2::ggsave(gsub(".png", "_legend.png", fname))
+            ggplot2::ggsave(filename=gsub(".png", "_legend.png", fname[jj]))
             if (close_after_save) { dev.off() }
           }
 
