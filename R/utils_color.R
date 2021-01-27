@@ -114,8 +114,9 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #'  \code{color_mode}, and \code{zlim}.
 #'
 #' There are three kinds of arguments for \code{colors}: \code{"ROY_BIG_BL"}, 
-#'  the name of an \code{RColorBrewer} palette, or a character vector of color 
-#'  names.
+#'  the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info} 
+#'  and colorbrewer2.org), the name of a viridisLite palette, or a character 
+#'  vector of color names.
 #'
 #' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
 #'  the same palette as the 
@@ -155,10 +156,10 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #' }
 #'
 #' If \code{colors} is the name of an RColorBrewer palette (see 
-#'  \code{RColorBrewer::brewer.pal.info}), the colors in that pallete will be used, 
-#'  and the following behavior applies. If \code{colors} is a character vector
-#'  of color names (hex codes or standard R color names), the following behavior 
-#'  applies directly:
+#'  \code{RColorBrewer::brewer.pal.info}) or viridisLite palette, the colors in 
+#'  that pallete will be used, and the following behavior applies. 
+#'  If \code{colors} is a character vector of color names (hex codes or standard
+#'  R color names), the following behavior applies directly:
 #'
 #' \describe{
 #'  \item{\code{color_mode=="sequential"}}{If \code{zlim} is length 2, the 
@@ -183,8 +184,9 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #' }
 #'
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
-#'  (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), or a character 
-#'  vector of colors. \code{NULL} (default) will use \code{"ROY_BIG_BL"} 
+#'  (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), the name of
+#'  a viridisLite palette, or a character vector of colors. 
+#'  \code{NULL} (default) will use \code{"ROY_BIG_BL"} 
 #'  if \code{color_mode} is \code{"sequential"} or \code{"diverging"}, and 
 #'  \code{"Set2"} if \code{color_mode} is \code{"qualitative"}. See the 
 #'  description for more details.
@@ -199,6 +201,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #' 
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
+#' @import viridisLite
 #'
 #' @export
 #' 
@@ -298,6 +301,7 @@ make_color_pal <- function(
   # ----------------------------------------------------------------------------
  
   # RColor Brewer --> Individual colors
+  was_viridis <- FALSE
   if ((N_COLORS_PRE == 1) && (colors %in% row.names(brewer.pal.info))) {
     colors_info <- brewer.pal.info[row.names(brewer.pal.info) == colors,]
     brewer_mode <- match.arg(
@@ -311,6 +315,14 @@ make_color_pal <- function(
       ))
     }
     colors <- brewer.pal(as.numeric(colors_info$maxcolors), colors)
+  # viridis --> Individual colors
+  } else if ((N_COLORS_PRE == 1) && (colors %in% c("cividis", "inferno", "magma", "plasma", "viridis"))) {
+    was_viridis <- TRUE
+    vir_opt <- switch(colors, 
+      magma = "A", inferno = "B", plasma = "C", viridis = "D", cividis = "E"
+    )
+    colors <- viridisLite::viridis.map[viridisLite::viridis.map$opt==vir_opt,seq(3)]
+    colors <- apply(colors, 1, function(x){rgb(red=x[1], green=x[2], blue=x[3])})
   }
 
   # Get `values` for sequential.
@@ -329,7 +341,12 @@ make_color_pal <- function(
   # Get pallete for qualitative.
   } else if (color_mode=="qualitative") {
     pal <- data.frame(color=colors, value=seq(length(colors)))
-    pal <- expand_color_pal(pal, zlim)[seq(zlim),]
+    pal <- expand_color_pal(pal, zlim)
+    if (was_viridis) {
+      pal <- pal[round(seq(1,nrow(pal),length.out=zlim)),]
+    } else {
+      pal <- pal[seq(zlim),]
+    }
     pal$value <- seq(nrow(pal))
     return(pal)
 
@@ -357,11 +374,15 @@ make_color_pal <- function(
       }
 
       # Interpolate between the min/mid/max to get the color values.
-      if (length(colors) %% 2 != 1) { 
-        warning(paste(
-          "There must be an odd number of colors for the diverging color",
-          "mode, to have a middle color. Removing the last color."
-        ))
+      if (length(colors) %% 2 != 1) {
+        # User probably doesn't care, if there are more than 64 colors
+        # (e.g. for viridis).
+        if (length(colors) < 64) {
+          warning(paste(
+            "There must be an odd number of colors for the diverging color",
+            "mode, to have a middle color. Removing the last color."
+          ))
+        }
         colors <- colors[seq(length(colors)-1)]
       }
       low_vals <- seq(min_val, mid_val, length.out=floor(length(colors)/2)+1)

@@ -12,8 +12,9 @@ make_color_pal(
 }
 \arguments{
 \item{colors}{(Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
-(see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), or a character 
-vector of colors. \code{NULL} (default) will use \code{"ROY_BIG_BL"} 
+(see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), the name of
+a viridisLite palette, or a character vector of colors. 
+\code{NULL} (default) will use \code{"ROY_BIG_BL"} 
 if \code{color_mode} is \code{"sequential"} or \code{"diverging"}, and 
 \code{"Set2"} if \code{color_mode} is \code{"qualitative"}. See the 
 description for more details.}
@@ -35,8 +36,9 @@ Control the mapping of values to colors with \code{colors},
 }
 \details{
 There are three kinds of arguments for \code{colors}: \code{"ROY_BIG_BL"}, 
- the name of an \code{RColorBrewer} palette, or a character vector of color 
- names.
+ the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info} 
+ and colorbrewer2.org), the name of a viridisLite palette, or a character 
+ vector of color names.
 
 If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
  the same palette as the 
@@ -76,10 +78,10 @@ If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
 }
 
 If \code{colors} is the name of an RColorBrewer palette (see 
- \code{RColorBrewer::brewer.pal.info}), the colors in that pallete will be used, 
- and the following behavior applies. If \code{colors} is a character vector
- of color names (hex codes or standard R color names), the following behavior 
- applies directly:
+ \code{RColorBrewer::brewer.pal.info}) or viridisLite palette, the colors in 
+ that pallete will be used, and the following behavior applies. 
+ If \code{colors} is a character vector of color names (hex codes or standard
+ R color names), the following behavior applies directly:
 
 \describe{
  \item{\code{color_mode=="sequential"}}{If \code{zlim} is length 2, the 

@@ -10,8 +10,9 @@
 #'  mapped to integers from $0$ to $N-1$, with $N$ being the length of 
 #'  \code{values}.
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
-#'  (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), or a character 
-#'  vector of colors. Default: \code{"Set2"}.
+#'  (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), the name of
+#'  a viridisLite palette, or a character vector of colors. Default: 
+#'  \code{"Set2"}.
 #' @param add_white Append white to the beginning of the colors? Default: \code{TRUE}.
 #' @param return_conversion_table Return the conversion table along with the 
 #'  converted \code{"xifti"}? Default: \code{FALSE}

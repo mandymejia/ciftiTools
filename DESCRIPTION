@@ -32,6 +32,7 @@ Imports:
     RNifti,
     RColorBrewer,
     rgl,
+    viridisLite,
     xml2
 Suggests:
     ggplot2,
