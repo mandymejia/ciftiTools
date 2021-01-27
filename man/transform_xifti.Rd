@@ -52,7 +52,7 @@ transform_xifti(xifti, xifti2 = NULL, FUN)
 \method{log}{xifti}(x, base = exp(1))
 }
 \arguments{
-\item{xifti, xifti2}{The \code{"xifti"}s}
+\item{xifti}{The xifti}
 
 \item{xifti2}{The second xifti, if applicable. Otherwise, \code{NULL} (default)}
 
@@ -63,7 +63,9 @@ or \code{pmax}.}
 
 \item{x}{The \code{"xifti"}}
 
-\item{xifti}{The \code{"xifti"}}
+\item{digits}{The number of digits to round by}
+
+\item{base}{The log base}
 }
 \value{
 A \code{xifti} storing the result of applying \code{FUN} to the input(s).

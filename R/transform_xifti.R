@@ -13,6 +13,7 @@
 #'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
 #' @export
+#' @importFrom utils capture.output
 #' 
 transform_xifti <- function(xifti, xifti2=NULL, FUN) {
   if (!is.xifti(xifti, messages=FALSE) && (!is.null(xifti2) && !is.xifti(xifti2, messages=FALSE))) {
@@ -21,7 +22,7 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
   
   if (!is.function(FUN)) {stop("`FUN` is not a function.")}
   badFUNs <- c("sum", "min", "max")
-  FUN_char <- as.character(substitute(FUN))
+  FUN_char <- paste(as.character(substitute(FUN)), collapse="")
   if (FUN_char %in% badFUNs) {
     newFUN <- switch(FUN_char, sum=`+`, min=pmin, max=pmax)
     warning(
@@ -112,7 +113,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `+.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`+`)
@@ -120,7 +120,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `-.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`-`)
@@ -128,7 +127,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `*.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`*`)
@@ -136,7 +134,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `^.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`^`)
@@ -144,7 +141,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `%%.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`%%`)
@@ -152,7 +148,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `%/%.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`%/%`)
@@ -160,7 +155,6 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti,xifti2 The \code{"xifti"}s
 #' @export
 `/.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`/`)
@@ -213,11 +207,12 @@ ceiling.xifti <- function(x) {
 
 #' @rdname transform_xifti
 #' 
-#' @param xifti The \code{"xifti"}
+#' @param x The \code{"xifti"}
+#' @param digits The number of digits to round by
 #' @export
 #' @method round xifti
 round.xifti <- function(x, digits=0) {
-  transform_xifti(x * (10^(digits)), FUN=round) / (10^(digits))
+  transform_xifti(x, FUN=function(y){round(y,digits=digits)})
 }
 
 #' @rdname transform_xifti
@@ -232,9 +227,9 @@ exp.xifti <- function(x) {
 #' @rdname transform_xifti
 #' 
 #' @param x The \code{"xifti"}
+#' @param base The log base
 #' @export
 #' @method log xifti
 log.xifti <- function(x, base=exp(1)) {
-  if (base != exp(1)) {stop("Only base=`exp(1)` is supported.")}
-  transform_xifti(x, FUN=log)
+  transform_xifti(x, FUN=function(y){log(y,base=base)})
 }
