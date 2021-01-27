@@ -369,6 +369,13 @@ plot(
 )
 ```
 
+### Do arithmetic
+
+```{r}
+cii <- read_cifti(cifti_fnames["dscalar"])
+cii <- 1 + exp(cii) + (cii / 3)
+```
+
 # View multiple timepoints interactively
 
 `view_xifti_surface` adds a slider bar if multiple columns/timepoints are requested. (The widget will not show up in the github htmlpreview, but should be visible in the downloaded file.)
