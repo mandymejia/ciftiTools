@@ -1,0 +1,240 @@
+#' Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.
+#' 
+#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of \code{"xifti"}s. 
+#'  If a pair, they must share the same brainstructures and data dimensions.
+#' 
+#' @param xifti The xifti
+#' @param xifti2 The second xifti, if applicable. Otherwise, \code{NULL} (default)
+#' @param FUN The function. If \code{xifti2} is not provided, it should be
+#'  a univariate function like \code{log} or \code{sqrt}. If 
+#'  \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
+#'  or \code{pmax}.
+#' @return A \code{xifti} storing the result of applying \code{FUN} to the input(s).
+#'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
+#'  and the metadata of \code{xifti2} will be discarded (if provided).
+#' @export
+#' 
+transform_xifti <- function(xifti, xifti2=NULL, FUN) {
+  if (!is.xifti(xifti, messages=FALSE) && (!is.null(xifti2) && !is.xifti(xifti2, messages=FALSE))) {
+    stop("Neither argument is a xifti.")
+  }
+  
+  if (!is.function(FUN)) {stop("`FUN` is not a function.")}
+  badFUNs <- c("sum", "min", "max")
+  FUN_char <- as.character(substitute(FUN))
+  if (FUN_char %in% badFUNs) {
+    newFUN <- switch(FUN_char, sum=`+`, min=pmin, max=pmax)
+    warning(
+      "Replacing ", FUN_char, " with: ", 
+      capture.output(print(substitute(newFUN)))
+    )
+    # Not working...
+    # warning(
+    #   paste("Use", substitute(newFUN), "instead of", FUN_char, "\n")
+    # )
+    FUN <- newFUN
+  }
+
+  try_apply <- function(x, x2=NULL, FUN) {
+    if (is.null(x2)) {
+      out <- FUN(x)
+    } else {
+      out <- FUN(x, x2)
+    }
+    if (length(out) != max(length(x), length(x2))) {
+      stop(
+        "`FUN` does not properly vectorize. ",
+        "It needs to return a vector the same length as its arguments. ",
+        "For example, `+` should be used instead of `sum`, and ",
+        "`pmin` should be used instead of `min`."
+      )
+    }
+    out
+  }
+
+  # Unary
+  if (is.null(xifti2)) {
+    for (bs in names(xifti$data)) {
+      if (!is.null(xifti$data[[bs]])) {
+        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], FUN=FUN)
+      }
+    }
+  # xifti + unary
+  } else if (is.numeric(xifti2) && length(xifti2)==1){
+    for (bs in names(xifti$data)) {
+      if (!is.null(xifti$data[[bs]])) {
+        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], xifti2, FUN=FUN)
+      }
+    }
+  # unary + xifti
+  } else if (is.numeric(xifti) && length(xifti)==1 && is.xifti(xifti2, messages=FALSE)) { 
+    for (bs in names(xifti2$data)) {
+      if (!is.null(xifti2$data[[bs]])) {
+        xifti2$data[[bs]][] <- try_apply(xifti, xifti2$data[[bs]], FUN=FUN)
+      }
+    }
+    xifti <- xifti2
+  # xifti + xifti
+  } else {
+    # Checks
+    bs1 <- names(xifti$data)[!as.logical(lapply(xifti$data, is.null))]
+    bs2 <- names(xifti2$data)[!as.logical(lapply(xifti2$data, is.null))]
+    if (!identical(sort(bs1), sort(bs2))) {
+      stop(
+        "The first xifti had brainstructures ", paste(bs1, collapse=", "), ".\n",
+        "But, the second xifti had brainstructures ", paste(bs2, collapse=", "), ".\n"
+      )
+    }
+    T1 <- ncol(xifti$data[[bs1[1]]])
+    T2 <- ncol(xifti2$data[[bs2[1]]])
+    if (T1 != T2) {
+      stop(
+        "The first xifti had ", T1, " timepoints.\n",
+        "But, the second xifti had ", T2, " timepoints.\n"
+      )
+    }
+    if (!identical(xifti$meta$cifti$names, xifti2$meta$cifti$names)) {
+      warning("The xiftis have different column names.\n")
+    }
+
+    for (bs in names(xifti$data)) {
+      if (!is.null(xifti$data[[bs]])) {
+        if (nrow(xifti$data[[bs]]) != nrow(xifti2$data[[bs]])) {
+          stop("The xiftis have different number of vertices/voxels for the ", bs, " brainstructure.")
+        }
+        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], xifti2$data[[bs]], FUN=FUN)
+      }
+    }
+  }
+
+  xifti
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`+.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`+`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`-.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`-`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`*.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`*`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`^.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`^`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`%%.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`%%`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`%/%.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`%/%`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti,xifti2 The \code{"xifti"}s
+#' @export
+`/.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`/`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method abs xifti
+abs.xifti <- function(x) {
+  transform_xifti(x, FUN=abs)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method sign xifti
+sign.xifti <- function(x) {
+  transform_xifti(x, FUN=sign)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method sqrt xifti
+sqrt.xifti <- function(x) {
+  transform_xifti(x, FUN=sqrt)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method floor xifti
+floor.xifti <- function(x) {
+  transform_xifti(x, FUN=floor)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method ceiling xifti
+ceiling.xifti <- function(x) {
+  transform_xifti(x, FUN=ceiling)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param xifti The \code{"xifti"}
+#' @export
+#' @method round xifti
+round.xifti <- function(x, digits=0) {
+  transform_xifti(x * (10^(digits)), FUN=round) / (10^(digits))
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method exp xifti
+exp.xifti <- function(x) {
+  transform_xifti(x, FUN=exp)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @param x The \code{"xifti"}
+#' @export
+#' @method log xifti
+log.xifti <- function(x, base=exp(1)) {
+  if (base != exp(1)) {stop("Only base=`exp(1)` is supported.")}
+  transform_xifti(x, FUN=log)
+}

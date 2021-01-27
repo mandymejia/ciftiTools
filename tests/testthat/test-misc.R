@@ -104,6 +104,12 @@ test_that("Miscellaneous functions are working", {
       testthat::expect_equal(sub2$data, cii$data$subcort)
       testthat::expect_equal(sub2$labels, cii$meta$subcort$labels)
     }
+
+    # Operations
+    cii + cii + cii
+    cii - cii / (abs(cii) + 1)
+    (5*cii) %% round(cii, 1)
+    testthat::expect_equal(exp(1)^log(cii) + 0, cii*1)
   }
   
 })
