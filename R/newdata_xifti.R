@@ -36,7 +36,11 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
     if (length(newnames) != xifti_dim[2]) {
       stop("The length of `newnames` does not match the number of columns in the `xifti`.")
     }
-    xifti$meta$cifti$names <- newnames
+    if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3002) {
+      warning("The dtseries intent (3002) does not use column names. Ignoring `newnames`.")
+    } else {
+      xifti$meta$cifti$names <- newnames
+    }
   }
 
   # New data.
