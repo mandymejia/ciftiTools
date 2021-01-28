@@ -1,9 +1,8 @@
 #' Summarise cifti objects
 #'
-#' Summary method for class "xifti"
+#' Summary method for class \code{"xifti"}
 #'
-#' @param object Object of class "xifti". 
-#'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
+#' @param object Object of class \code{"xifti"}. 
 #' @param ... further arguments passed to or from other methods.
 #' @export
 #' @method summary xifti

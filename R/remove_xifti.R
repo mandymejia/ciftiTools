@@ -42,6 +42,6 @@ remove_xifti <- function(xifti, remove=NULL){
     xifti$surf["cortex_right"] <- list(NULL)
   }
 
-  stopifnot(is.xifti(xifti))
+  if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
   xifti
 }

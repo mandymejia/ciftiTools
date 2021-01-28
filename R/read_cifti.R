@@ -1,6 +1,6 @@
 #' Read a CIFTI file
 #' 
-#' Read a CIFTI file as a \code{"xifti"} object (see \code{\link{is.xifti}}).
+#' Read a CIFTI file as a \code{"xifti"} object.
 #' 
 #' First, metadata is obtained with \code{\link{info_cifti}}. Then, if no 
 #'  resampling is requested, the \code{-cifti-convert -to-gifti-ext} Workbench 
