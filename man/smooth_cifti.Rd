@@ -4,6 +4,7 @@
 \alias{smooth_cifti}
 \alias{smoothCIfTI}
 \alias{smoothcii}
+\alias{smooth_xifti}
 \title{Smooth a CIFTI}
 \usage{
 smooth_cifti(
@@ -33,6 +34,19 @@ smoothCIfTI(
 )
 
 smoothcii(
+  x,
+  cifti_target_fname,
+  surface_sigma,
+  volume_sigma,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  cerebellum_fname = NULL,
+  subcortical_zeroes_as_NA = FALSE,
+  cortical_zeroes_as_NA = FALSE,
+  subcortical_merged = FALSE
+)
+
+smooth_xifti(
   x,
   cifti_target_fname,
   surface_sigma,

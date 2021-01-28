@@ -275,3 +275,21 @@ smoothcii <- function(
     subcortical_merged=subcortical_merged
   )
 }
+
+#' @rdname smooth_cifti
+#' @export
+smooth_xifti <- function(
+  x, cifti_target_fname,
+  surface_sigma, volume_sigma,
+  surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
+  subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
+  subcortical_merged=FALSE){
+
+  smooth_cifti(
+    x=x, cifti_target_fname=cifti_target_fname,
+    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
+    subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
+    subcortical_merged=subcortical_merged
+  )
+}
