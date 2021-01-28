@@ -764,7 +764,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     } 
   }
 
-  use_slider_title <- !is.null(slider_title)
+  use_slider_title <- use_widget && !is.null(slider_title)
 
   # ----------------------------------------------------------------------------
   # Get the data values and surface models, and construct the mesh. ------------
@@ -917,7 +917,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   all_panels_heights <- rep.int(1, brain_panels_nrow)
   if (use_title) { all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
   if (colorbar_embedded) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
-  if (use_widget) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  if (use_slider_title) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   rglIDs <- vector("list", length(idx))
   names(rglIDs) <- idx
@@ -1088,12 +1088,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
     }
 
     if (use_slider_title) {
-      rgl::text3d(
-        x=0, y=0, z=0, 
-        adj = c(2, .5),
-        font=2, # Forget if this made a difference...
-        color=text_color,
-        text=slider_title
+      rglIDs[[jj]][["slider_title"]] <- view_xifti_surface.draw_title(
+        slider_title, xifti$meta, this_idx, cex.title, text_color
       )
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
       if(all_panels_ncol==2){
