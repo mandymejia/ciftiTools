@@ -248,7 +248,8 @@ view_xifti_surface.color <- function(
         }
 
         message(
-          "Since `zlim` was not provided, setting the color range to ", min(zlim), " - ", max(zlim), "\n",
+          "Since `zlim` was not provided, setting the color range to ", 
+          as.character(min(zlim)), " - ", as.character(max(zlim)), "."
         )
       }
     }
@@ -653,7 +654,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, fname="xifti",
+  save=FALSE, close_after_save=TRUE, 
   colors=NULL, color_mode="auto", zlim=NULL,
   surfL=NULL, surfR=NULL,
   qualitative_colorlegend = TRUE, colorlegend_ncol=NULL,
@@ -701,19 +702,24 @@ view_xifti_surface <- function(xifti, idx=NULL,
   }
   use_widget <- length(idx) > 1
 
-  # Set `idx` if null, and check `fnames`.
-  if (is.null(idx)) { idx <- 1 } #:ncol(do.call(rbind, xifti$data)) }
+  # Set `idx` if null.
+  if (is.null(idx)) { idx <- 1 }
 
-  if (save) {
+  # Check `save`
+  if (is.null(save)) { save <- FALSE }
+  if (identical(save, TRUE)) { save <- "xifti_surf" }
+  do_save <- !isFALSE(save)
+  if (do_save) {
     if (length(idx) == 1) {
-      fname <- as.character(fname[1])
-      if (!endsWith(fname, ".png")) { fname <- paste0(fname, ".png") }
+      save <- as.character(save[1])
+      if (!endsWith(save, ".png")) { save <- paste0(save, ".png") }
     } else {
-      if (length(fname)==length(idx)) {
-        fname <- as.character(fname)
+      if (length(save)==length(idx)) {
+        save <- as.character(save)
       } else {
-        fname <- gsub(".png", "", fname[1], fixed=TRUE)
-        fname <- paste0(as.character(fname), "_", idx, ".png")
+        warning("Length of `save` and `idx` differ. Using the first entry of `save`.\n")
+        save <- gsub(".png", "", save[1], fixed=TRUE)
+        save <- paste0(as.character(save), "_", idx, ".png")
       }
     }
   }
@@ -795,7 +801,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     rm(values_vec)
   }
 
-  if ((!save || !close_after_save) && !is.null(values)) {
+  if ((!do_save || !close_after_save) && !is.null(values)) {
     
     if (is.null(widget_idx_warn) && (length(idx) * nrow(do.call(cbind, values)) > 200000)) {
       print_widget_idx_warn <- TRUE
@@ -921,7 +927,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     this_idx <- idx[jj]
 
     # Open a new window at the start, as well as with each new image.
-    if (jj == 1 || save) {
+    if (jj == 1 || do_save) {
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
@@ -1037,7 +1043,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     if (any_colors) {
 
       if (colorbar_embedded) {
-        if (save || jj==1) {
+        if (do_save || jj==1) {
           names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "legend"
           if (use_widget) {
             if (length(hemisphere)==1) {
@@ -1066,8 +1072,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
         if (use_cleg) {
           print(cleg)
-          if (save) {
-            ggplot2::ggsave(filename=gsub(".png", "_legend.png", fname[jj]))
+          if (do_save) {
+            ggplot2::ggsave(filename=gsub(".png", "_legend.png", save[jj]))
             if (close_after_save) { dev.off() }
           }
 
@@ -1095,16 +1101,16 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     }
 
-    if (save) {
-      rgl::rgl.snapshot(fname[jj])
+    if (do_save) {
+      rgl::rgl.snapshot(save[jj])
       rgl::rgl.close()
     }
   }
 
   names(subscenes)[is.na(names(subscenes))] <- "Empty"
 
-  if (save && close_after_save) {
-    return(invisible(fname))
+  if (do_save && close_after_save) {
+    return(invisible(save))
 
   } else if (use_widget) {
 
@@ -1159,7 +1165,7 @@ view_cifti_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, fname="xifti",
+  save=FALSE, close_after_save=TRUE,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -1171,7 +1177,7 @@ view_cifti_surface <- function(xifti, idx=NULL,
     hemisphere=hemisphere, view=view,
     width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save, fname=fname,
+    save=save, close_after_save=close_after_save,
     colors=colors, color_mode=color_mode, zlim=zlim,
     surfL=surfL, surfR=surfR,
     colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
@@ -1187,7 +1193,7 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, fname="xifti",
+  save=FALSE, close_after_save=TRUE, 
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -1199,7 +1205,7 @@ viewCIfTI_surface <- function(xifti, idx=NULL,
     hemisphere=hemisphere, view=view,
     width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save, fname=fname,
+    save=save, close_after_save=close_after_save, 
     colors=colors, color_mode=color_mode, zlim=zlim,
     surfL=surfL, surfR=surfR,
     colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
@@ -1215,7 +1221,7 @@ viewcii_surface <- function(xifti, idx=NULL,
   hemisphere=NULL, view=c("both", "lateral", "medial"),
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, fname="xifti",
+  save=FALSE, close_after_save=TRUE,
   colors=NULL, color_mode=NULL, zlim=NULL,
   surfL=NULL, surfR=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
@@ -1227,7 +1233,7 @@ viewcii_surface <- function(xifti, idx=NULL,
     hemisphere=hemisphere, view=view,
     width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save, fname=fname,
+    save=save, close_after_save=close_after_save,
     colors=colors, color_mode=color_mode, zlim=zlim,
     surfL=surfL, surfR=surfR,
     colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
