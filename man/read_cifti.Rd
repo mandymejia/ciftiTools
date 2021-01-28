@@ -110,7 +110,7 @@ If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G}
  matrix (\eqn{T} measurements, \eqn{G} greyordinates).
 }
 \description{
-Read a CIFTI file as a \code{"xifti"} object (see \code{\link{is.xifti}}).
+Read a CIFTI file as a \code{"xifti"} object.
 }
 \details{
 First, metadata is obtained with \code{\link{info_cifti}}. Then, if no 

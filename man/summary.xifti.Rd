@@ -13,8 +13,7 @@
 \method{print}{xifti}(x, ...)
 }
 \arguments{
-\item{object}{Object of class "xifti". 
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{object}{Object of class \code{"xifti"}.}
 
 \item{...}{further arguments passed to or from other methods.}
 
@@ -22,5 +21,5 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 }
 \description{
-Summary method for class "xifti"
+Summary method for class \code{"xifti"}
 }
