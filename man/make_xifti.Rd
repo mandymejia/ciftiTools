@@ -18,7 +18,8 @@ make_xifti(
   surfR = NULL,
   col_names = NULL,
   HCP_32k_auto_mwall = TRUE,
-  read_dir = NULL
+  read_dir = NULL,
+  validate = TRUE
 )
 }
 \arguments{
@@ -115,6 +116,10 @@ if not provided? Default: \code{TRUE}.}
 
 \item{read_dir}{(Optional) Append a directory to all file names in the
 arguments. If \code{NULL} (default), do not modify file names.}
+
+\item{validate}{Validate that the result is a \code{"xifti"} object? Default:
+\code{TRUE}. If \code{FALSE}, the result may not be properly formatted
+if the inputs were invalid.}
 }
 \value{
 A \code{"xifti"} object; see \code{\link{template_xifti}}

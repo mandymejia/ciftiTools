@@ -247,10 +247,9 @@ view_xifti_surface.color <- function(
           }
         }
 
-        message(paste0(
-          "Setting color range to ", min(zlim), " - ", max(zlim), ".\n",
-          "Use the `zlim` argument to change these defaults.\n"
-        ))
+        message(
+          "Since `zlim` was not provided, setting the color range to ", min(zlim), " - ", max(zlim), "\n",
+        )
       }
     }
 
@@ -633,8 +632,9 @@ view_xifti_surface.draw_mesh <- function(
 #'  warning. The default, \code{NULL}, will print a warning if \code{idx} times
 #'  the number of vertices exceeds 200k (approximately three 32k meshes for both
 #'  the left and right hemisphere.)
-#' @param widget_title Label at bottom of plot that will be added if a widget
-#'  is used.
+#' @param slider_title Text at bottom of plot that will be added if a widget
+#'  is used, to provide a title for the slider. Default: \code{"Index:"}.
+#'  If \code{NULL}, no title will be added.
 #' @param render_rgl Default: \code{TRUE}. If \code{FALSE}, do not render the
 #'  Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh
 #'  objects and coloring information. This should be used by developers only.
@@ -660,7 +660,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   colorbar_embedded=TRUE, colorbar_digits=NULL,
   alpha=1.0, 
   edge_color=NULL, vertex_color=NULL, vertex_size=0, border_color=NULL,
-  widget_idx_warn=NULL, widget_title="Index:", render_rgl=TRUE, mode=NULL) {
+  widget_idx_warn=NULL, slider_title="Index:", render_rgl=TRUE, mode=NULL) {
 
   # Check X11
   if (!capabilities("X11")) {
@@ -757,6 +757,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     } 
   }
+
+  use_slider_title <- !is.null(slider_title)
 
   # ----------------------------------------------------------------------------
   # Get the data values and surface models, and construct the mesh. ------------
@@ -873,7 +875,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   brain_panels_nrow <- length(view)
   brain_panels_ncol <- length(hemisphere)
 
-  all_panels_nrow <- brain_panels_nrow + 1*use_title + 1*colorbar_embedded + 1*use_widget
+  all_panels_nrow <- brain_panels_nrow + 1*use_title + 1*colorbar_embedded + 1*use_slider_title
   all_panels_ncol <- brain_panels_ncol
 
   if (is.null(width) | is.null(height)) {
@@ -1079,13 +1081,13 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     }
 
-    if (use_widget) {
+    if (use_slider_title) {
       rgl::text3d(
         x=0, y=0, z=0, 
         adj = c(2, .5),
         font=2, # Forget if this made a difference...
         color=text_color,
-        text=widget_title
+        text=slider_title
       )
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
       if(all_panels_ncol==2){

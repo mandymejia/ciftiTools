@@ -113,7 +113,10 @@
 #'  if not provided? Default: \code{TRUE}.
 #' @param read_dir (Optional) Append a directory to all file names in the
 #'  arguments. If \code{NULL} (default), do not modify file names.
-#'
+#' @param validate Validate that the result is a \code{"xifti"} object? Default:
+#'  \code{TRUE}. If \code{FALSE}, the result may not be properly formatted
+#'  if the inputs were invalid.
+#' 
 #' @return A \code{"xifti"} object; see \code{\link{template_xifti}}
 #' 
 #' @keywords internal
@@ -125,7 +128,7 @@ make_xifti <- function(
   mwall_values=c(NA, NaN), cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
   col_names=NULL, HCP_32k_auto_mwall=TRUE,
-  read_dir=NULL) {
+  read_dir=NULL, validate=TRUE) {
   
   # Add `read_dir` and check file paths.
   if (is.fname(cortexL)) { cortexL <- format_path(cortexL, read_dir, mode=4) }
@@ -201,7 +204,7 @@ make_xifti <- function(
               paste(xifti$meta$cifti$names, collapse=","), "\n\n",
               "whereas the column names of the right cortex were:\n\t",
               paste(x$col_names, collapse=","), "\n\n",
-              "Pasting them together."
+              "Pasting them together.\n"
             ))
             xifti$meta$cifti$names <- paste(x$col_names, xifti$meta$cifti$names, " ||| ")
           }
@@ -214,7 +217,7 @@ make_xifti <- function(
           if (!identical(x$label_table, xifti$meta$cifti$labels[[1]])) {
             warning(paste(
               "The label tables for the left and right cortex were not",
-              "identical. Using the label table from the left cortex."
+              "identical. Using the label table from the left cortex.\n"
             ))
           }
         } else {
@@ -255,6 +258,10 @@ make_xifti <- function(
   # Column names.
   if (!is.null(col_names)) { xifti$meta$cifti$names <- col_names }
 
-  if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
+  # Validate.
+  if (validate) {
+    if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
+  }
+
   structure(xifti, class="xifti")
 }
