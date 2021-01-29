@@ -6,7 +6,7 @@
 ^appveyor\.yml$
 ^data-raw$
 ^vignettes$
-^tests/run_ciftiTools_tests\.R$
+^tests
 ^cran-comments.md
 ^inst/extdata/Conte69\.MyelinAndCorrThickness\.32k_fs_LR\.dscalar\.nii$
 ^inst/extdata/Conte69\.parcellations_VGD11b\.32k_fs_LR\.dlabel\.nii$

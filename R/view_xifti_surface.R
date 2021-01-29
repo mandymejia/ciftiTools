@@ -408,10 +408,10 @@ view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scal
     stop("Package \"ggpubr\" needed to make the color legend. Please install it.", call. = FALSE)
   }
 
-  point_size = 5 * scale
-  legend_title_size = 1.5 * scale
-  legend_text_size = 1.2 * scale
-  if (is.null(leg_ncol)) { leg_ncol = floor(nrow(pal_base)/10) + 1 }
+  point_size <- 5 * scale
+  legend_title_size <- 1.5 * scale
+  legend_text_size <- 1.2 * scale
+  if (is.null(leg_ncol)) { leg_ncol <- floor(nrow(pal_base)/10) + 1 }
 
   pal_base$labels <- factor(labels, levels=unique(labels))
   colors2 <- pal_base$color; names(colors2) <- pal_base$labels

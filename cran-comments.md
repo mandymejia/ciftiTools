@@ -1,20 +1,25 @@
-## First submission note
-
-This is the first submission of 'ciftiTools' to CRAN.
-
-Passes tests located in 'tests/run_ciftiTools_tests.R'.
-
 ## Test environments
 
-* local x86_64-w64-mingw32, R 4.0.3
-* ubuntu 12.04 (on travis-ci), R 4.0
+* Windows 10 x64, R 4.0.3
+* Linux x64, R 3.6.0
 
 ## R CMD check results
 
-0 errors v | 0 warnings v | 0 notes v
+On Windows:
 
-R CMD check succeeded
+  0 errors v | 0 warnings v | 0 notes v
+
+  R CMD check succeeded
+
+On Linux:
+
+> checking installed package size ... NOTE
+    installed size is  6.2Mb
+    sub-directories of 1Mb or more:
+      extdata   4.8Mb
+
+These files are necessary and have already been reduced in size.
 
 ## Downstream dependencies
 
-None exist, since this the first submission.
+None.

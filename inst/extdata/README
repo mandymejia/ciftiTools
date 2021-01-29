@@ -1,43 +1,17 @@
-# -----------------------------------------------------------------------
 # `Conte69.*` and `ones.dscalar.nii` ------------------------------------
-# -----------------------------------------------------------------------
+
+  Example CIFTI files.
 
   Source: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
 
-  README for these files is copied below:
+  All except dscalar have been resampled to reduce the package size.
 
-    These files are intended for testing CIFTI-2 reading code.  There are 5 CIFTI-2 files, plus two gifti surfaces and a nifti volume, for visualization purposes.
-
-    The files:
-
-    Conte69.MyelinAndCorrThickness.32k_fs_LR.dscalar.nii
-    Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii
-
-    contain the same data, which are two fairly smooth maps, with somewhat different value distributions (MyelinMap_BC_decurv ranges from 1 to 2, while corrThickness ranges from 1 to 4.8).  If you see a pattern that alternates from one vertex to the next, you have probably read the data matrix incorrectly, which may happen if you previously read data from CIFTI-1, and used the same code.  The CIFTI-2 matrix data should be read as a standard NIFTI-2 file, it does not require the special treatment that CIFTI-1 needed.
-
-    The "ones.dscalar.nii" is the only cifti file in the zip that contains voxel data.  All of the data values are 1.  The various volume components should align well with subcortical structures in "Conte69_AverageT1w_restore.nii.gz".
-
-    The files:
-
-    Conte69.MyelinAndCorrThickness.32k_fs_LR.ptseries.nii
-    Conte69.parcellations_VGD11b.32k_fs_LR.dlabel.nii
-
-    should have the first map of the .dlabel.nii file align with the areas in the .ptseries.nii file that have values.  The values in the .ptseries.nii file should match the vertex averages over the regions they cover, from the same-index map in "Conte69.MyelinAndCorrThickness.32k_fs_LR.dtseries.nii".
-
-    These files are provided under the Open Data Commons Public Domain Dedication and Licence (PDDL), see ODC_PDDL.rtf and/or http://opendatacommons.org/licenses/pddl/1.0/ for details.
-
-  To reduce the size of `ciftiTools`, the .dlabel and .dscalar CIFTIs were resampled to 6k, and the ones.dscalar was resampled to 1k. These smaller files replace the larger versions in the R extension build.
-
-# -----------------------------------------------------------------------
 # `subcort_label_list` --------------------------------------------------
-# -----------------------------------------------------------------------
 
   Subcortical color table `ciftiTools` uses for writing CIFTIs. 
 
   Source: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
 
-# -----------------------------------------------------------------------
 # `MNI152_T1_2mm.nii` ---------------------------------------------------
-# -----------------------------------------------------------------------
 
   MNI Template `ciftiTools` uses for viewing the subcortical data.
