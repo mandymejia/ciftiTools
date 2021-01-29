@@ -4,12 +4,7 @@
 \alias{resample_cifti_from_template}
 \title{Resample a CIFTI from a template}
 \usage{
-resample_cifti_from_template(
-  original_fname,
-  template_fname,
-  target_fname,
-  wb_path = NULL
-)
+resample_cifti_from_template(original_fname, template_fname, target_fname)
 }
 \arguments{
 \item{original_fname}{A CIFTI file to resample.}
@@ -17,10 +12,6 @@ resample_cifti_from_template(
 \item{template_fname}{A CIFTI file to use as the template.}
 
 \item{target_fname}{The file name to save the resampled CIFTI.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The \code{target_fname}, invisibly
@@ -33,9 +24,6 @@ Resample a CIFTI from a template CIFTI using the \code{-cifti-resample}
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench . 
- The \code{wb_path} argument is the full file path to the Connectome 
- Workbench folder. (The full file path to the 'wb_cmd' executable also 
- works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 

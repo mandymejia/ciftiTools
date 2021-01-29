@@ -21,9 +21,8 @@ view_xifti_surface(
   text_color = "black",
   save = FALSE,
   close_after_save = TRUE,
-  fname = "xifti",
   colors = NULL,
-  color_mode = NULL,
+  color_mode = "auto",
   zlim = NULL,
   surfL = NULL,
   surfR = NULL,
@@ -37,6 +36,7 @@ view_xifti_surface(
   vertex_size = 0,
   border_color = NULL,
   widget_idx_warn = NULL,
+  slider_title = "Index:",
   render_rgl = TRUE,
   mode = NULL
 )
@@ -55,7 +55,6 @@ view_cifti_surface(
   text_color = "black",
   save = FALSE,
   close_after_save = TRUE,
-  fname = "xifti",
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -86,7 +85,6 @@ viewCIfTI_surface(
   text_color = "black",
   save = FALSE,
   close_after_save = TRUE,
-  fname = "xifti",
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -117,7 +115,6 @@ viewcii_surface(
   text_color = "black",
   save = FALSE,
   close_after_save = TRUE,
-  fname = "xifti",
   colors = NULL,
   color_mode = NULL,
   zlim = NULL,
@@ -202,36 +199,42 @@ sizes for increasingly longer titles.}
 \item{text_color}{Color for text in title and colorbar legend. Default:
 "black".}
 
-\item{save}{Save the plot to a .png file named by \code{fname}? Default:
-\code{FALSE}.}
+\item{save}{Save the plot(s), and color legend(s) if applicable, to png files?
+ Set this to \code{FALSE} (default) to not save any files. Otherwise,
+ this argument can be a length-1 character vector identifier to use 
+ as the file name, a character vector with the same length as \code{idx}, or 
+ \code{TRUE} to use the identifier "xifti_surf".
+ 
+ The color legend will be saved to "[save]_legend.png".
 
-\item{close_after_save}{If \code{save==TRUE}, close the interactive Open GL 
+ If \code{length(save)==1} and \code{length(idx)>1}, the plots will be named
+ like so: "[save]_1.png", "[save]_2.png", ....}
+
+\item{close_after_save}{If \code{!is.null(save)}, close the interactive Open GL 
 window at the end of this function call? Default: \code{TRUE}.}
 
-\item{fname}{An identifier to use for naming the saved images
-("[fname].png") or video frames ("[fname]_1.png", "[fname]_2.png", ...).
-Default: \code{"xifti"} for \code{xifti_view_surface} and \code{"surf"} for
-\code{view_surf}.}
-
 \item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use,
-OR the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-and colorbrewer2.org). Defaults are \code{"ROY_BIG_BL"} (sequential),
+the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
+and colorbrewer2.org), or the name of a viridisLite palette. 
+Defaults are \code{"ROY_BIG_BL"} (sequential),
 \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
 to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
 then the qualitative colors in the label table will be used.
-See the \code{ciftiTools::make_color_pal()} description for more details.}
+See \code{\link{make_color_pal}} for more details.}
 
 \item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"},
-or \code{"diverging"}. \code{NULL} will use the qualitative color mode if
-the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007), and the sequential
-color mode otherwise. See the \code{ciftiTools::make_color_pal()}
-description for more details.}
+\code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
+qualitative color mode if the \code{"xifti"} object represents a .dlabel 
+CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
+contains both positive and negative values, and the sequential mode if the
+data contains >90% positive or >90% negative values. See 
+\code{\link{make_color_pal}} for more details.}
 
 \item{zlim}{(Optional) Controls the mapping of values to each
 color in \code{colors}. If the length is longer than
-one, using -Inf will set the value to \code{DATA_MIN}, and Inf will set
-the value to \code{DATA_MAX}. See the
-\code{ciftiTools::make_color_pal()} description for more details.}
+one, using -Inf will set the value to the data minimum, and Inf will set
+the value to the data maximum. See \code{\link{make_color_pal}} 
+description for more details.}
 
 \item{surfL, surfR}{(Optional if \code{xifti$surf$cortex_left} and
 \code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
@@ -284,6 +287,10 @@ meshes are being drawn in the same window. Use \code{Inf} to never print a
 warning. The default, \code{NULL}, will print a warning if \code{idx} times
 the number of vertices exceeds 200k (approximately three 32k meshes for both
 the left and right hemisphere.)}
+
+\item{slider_title}{Text at bottom of plot that will be added if a widget
+is used, to provide a title for the slider. Default: \code{"Index:"}.
+If \code{NULL}, no title will be added.}
 
 \item{render_rgl}{Default: \code{TRUE}. If \code{FALSE}, do not render the
 Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh

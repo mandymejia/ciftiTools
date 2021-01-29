@@ -22,7 +22,6 @@
 #' @param write_dir Directory to append to the path of every file name in
 #'  \code{target_fname} and \code{ROIcortex_target_fname}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
-#' @inheritParams wb_path_Param
 #'
 #' @return The resampled GIFTI file name, invisibly
 #'
@@ -34,7 +33,7 @@ resample_gifti <- function(
   original_fname, target_fname, hemisphere=c("left", "right"),
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
-  read_dir=NULL, write_dir=NULL, wb_path=NULL) {
+  read_dir=NULL, write_dir=NULL) {
 
   # ----------------------------------------------------------------------------
   # Check arguments. -----------------------------------------------------------
@@ -147,7 +146,7 @@ resample_gifti <- function(
       "-valid-roi-out", sys_path(ROIcortex_target_fname)
     )
   }
-  run_wb_cmd(cmd, wb_path)
+  run_wb_cmd(cmd)
 
   if (do_ROI) {
     out <- c(target_fname, ROIcortex_target_fname)
@@ -172,7 +171,6 @@ resample_gifti <- function(
 #' @inheritParams resamp_res_Param_required
 #' @param write_dir (Optional) directory to place the sphere files in. If
 #'  \code{NULL} (default), do not append any directory to the sphere file paths.
-#' @inheritParams wb_path_Param
 #'
 #' @return The names of the written sphere files, invisibly
 #' 
@@ -180,26 +178,22 @@ resample_gifti <- function(
 #'
 write_spheres <- function(
   sphereL_fname, sphereR_fname, resamp_res, 
-  write_dir=NULL, wb_path=NULL) {
+  write_dir=NULL) {
 
   sphereL_fname <- format_path(sphereL_fname, write_dir, mode=2)
   sphereR_fname <- format_path(sphereR_fname, write_dir, mode=2)
 
   run_wb_cmd(
     paste("-surface-create-sphere", resamp_res, sys_path(sphereL_fname)), 
-    wb_path
   )
   run_wb_cmd(
     paste("-surface-flip-lr", sys_path(sphereL_fname), sys_path(sphereR_fname)), 
-    wb_path
   )
   run_wb_cmd(
     paste("-set-structure", sys_path(sphereL_fname), "CORTEX_LEFT"), 
-    wb_path
   )
   run_wb_cmd(
     paste("-set-structure", sys_path(sphereR_fname), "CORTEX_RIGHT"), 
-    wb_path
   )
 
   invisible(list(sphereL_fname=sphereL_fname, sphereR_fname=sphereR_fname))
@@ -211,13 +205,13 @@ resampleGIfTI <- function(
   original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
-  read_dir=NULL, write_dir=NULL, wb_path=NULL){
+  read_dir=NULL, write_dir=NULL){
 
   resample_gifti(
     original_fname, target_fname, hemisphere,
     file_type=NULL, original_res=NULL, resamp_res,
     ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
-    read_dir=NULL, write_dir=NULL, wb_path=NULL
+    read_dir=NULL, write_dir=NULL
   )
 }
 
@@ -227,12 +221,12 @@ resamplegii <- function(
   original_fname, target_fname, hemisphere,
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
-  read_dir=NULL, write_dir=NULL, wb_path=NULL){
+  read_dir=NULL, write_dir=NULL){
 
   resample_gifti(
     original_fname, target_fname, hemisphere,
     file_type=NULL, original_res=NULL, resamp_res,
     ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
-    read_dir=NULL, write_dir=NULL, wb_path=NULL
+    read_dir=NULL, write_dir=NULL
   )
 }

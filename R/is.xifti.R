@@ -244,24 +244,26 @@ is.xifti_meta <- function(x) {
     if (!is.logical(x$cortex$medial_wall_mask$left)) {
       message("Left cortex medial wall mask must be logical.\n"); return(FALSE)
     }
+    # [TO DO]: Cleanup.
     if (mean(x$cortex$medial_wall_mask$left) < .5) {
-      message(paste(
+      warning(paste(
         "Warning: FALSE values in left medial wall mask should indicate",
         "the medial wall vertices. But, there were more FALSE values than TRUE."
       ))
-      return(FALSE)
+      #return(FALSE)
     }
   }
   if (!is.null(x$cortex$medial_wall_mask$right)) {
     if (!is.logical(x$cortex$medial_wall_mask$right)) {
       message("Right cortex medial wall mask must be logical.\n"); return(FALSE)
     }
+    # [TO DO]: Cleanup.
     if (mean(x$cortex$medial_wall_mask$right) < .5) {
-      message(paste(
+      warning(paste(
         "Warning: FALSE values in right medial wall mask should indicate",
         "the medial wall vertices. But, there were more FALSE values than TRUE."
       ))
-      return(FALSE)
+      #return(FALSE)
     }
   }
   if ((!is.null(x$cortex$medial_wall_mask$left)) && !is.null(x$cortex$medial_wall_mask$right)) {

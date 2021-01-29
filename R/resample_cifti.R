@@ -30,7 +30,6 @@
 #'  because the medial wall mask is taken into account during resampling
 #'  calculations.
 #' @inheritParams verbose_Param_TRUE
-#' @inheritParams wb_path_Param
 #'
 #' @return A named character vector of written files: \code{"cifti"} and
 #'  potentially \code{"surfL"} (if \code{surfL_original_fname} was provided) 
@@ -47,7 +46,7 @@ resample_cifti <- function(
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
   write_dir=NULL, 
   mwall_values=c(NA, NaN),
-  verbose=TRUE, wb_path=NULL) {
+  verbose=TRUE) {
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -74,7 +73,7 @@ resample_cifti <- function(
   # info_cifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
   
-  cifti_info <- info_cifti(cifti_original_fname, wb_path)
+  cifti_info <- info_cifti(cifti_original_fname)
   
   brainstructures <- ROI_brainstructures <- cifti_info$cifti$brainstructures
 
@@ -98,7 +97,7 @@ resample_cifti <- function(
   to_cif <- separate_cifti_wrapper(
     cifti_fname=cifti_original_fname, 
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_fnames=sep_fnames, write_dir=write_dir_sep, wb_path=wb_path
+    sep_fnames=sep_fnames, write_dir=write_dir_sep
   )
 
   if (verbose) { 
@@ -142,7 +141,7 @@ resample_cifti <- function(
     surfL_fname=surfL_original_fname, surfR_fname=surfR_original_fname,
     surfL_target_fname=surfL_target_fname, 
     surfR_target_fname=surfR_target_fname,
-    read_dir=NULL, write_dir=write_dir_resamp, wb_path=wb_path
+    read_dir=NULL, write_dir=write_dir_resamp
   )
 
   # Replace resampled files.
@@ -195,7 +194,7 @@ resampleCIfTI <- function(
   resamp_res, 
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
   resample_cifti(
     cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname, 
@@ -204,7 +203,7 @@ resampleCIfTI <- function(
     resamp_res=resamp_res,
     sep_keep=sep_keep, sep_fnames=sep_fnames, #separate_cifti
     resamp_keep=resamp_keep, resamp_fnames=resamp_fnames, # resample_cifti_components
-    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose, wb_path=wb_path
+    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose
   ) 
 }
 
@@ -217,7 +216,7 @@ resamplecii <- function(
   resamp_res,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
   resample_cifti(
     cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname, 
@@ -226,7 +225,7 @@ resamplecii <- function(
     resamp_res=resamp_res,
     sep_keep=sep_keep, sep_fnames=sep_fnames, #separate_cifti
     resamp_keep=resamp_keep, resamp_fnames=resamp_fnames, # resample_cifti_components
-    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose, wb_path=wb_path
+    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose
   ) 
 }
 
@@ -239,7 +238,7 @@ resample_xifti <- function(
   resamp_res,
   sep_keep=FALSE, sep_fnames=NULL, #separate_cifti
   resamp_keep=FALSE, resamp_fnames=NULL, # resample_cifti_components
-  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE, wb_path=NULL) {
+  write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
   resample_cifti(
     cifti_original_fname=cifti_original_fname, cifti_target_fname=cifti_target_fname, 
@@ -248,6 +247,6 @@ resample_xifti <- function(
     resamp_res=resamp_res,
     sep_keep=sep_keep, sep_fnames=sep_fnames, #separate_cifti
     resamp_keep=resamp_keep, resamp_fnames=resamp_fnames, # resample_cifti_components
-    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose, wb_path=wb_path
+    write_dir=write_dir, mwall_values=mwall_values, verbose=verbose
   ) 
 }

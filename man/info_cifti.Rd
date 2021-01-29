@@ -6,18 +6,14 @@
 \alias{infocii}
 \title{Get CIFTI metadata}
 \usage{
-info_cifti(cifti_fname, wb_path = NULL)
+info_cifti(cifti_fname)
 
-infoCIfTI(cifti_fname, wb_path = NULL)
+infoCIfTI(cifti_fname)
 
-infocii(cifti_fname, wb_path = NULL)
+infocii(cifti_fname)
 }
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The metadata component of a \code{"xifti"} for the input CIFTI file
@@ -94,9 +90,6 @@ Additional metadata depends on the type of CIFTI file:
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench . 
- The \code{wb_path} argument is the full file path to the Connectome 
- Workbench folder. (The full file path to the 'wb_cmd' executable also 
- works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 

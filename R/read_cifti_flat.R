@@ -19,7 +19,6 @@
 #'  Default: the CIFTI_fname but with the extension replaced with "flat.gii".
 #' @param write_dir The directory in which to save the GIFTI, if it is being 
 #'  kept. If \code{NULL} (default), use the current working directory.
-#' @inheritParams wb_path_Param
 #'
 #' @importFrom gifti readgii
 #'
@@ -30,7 +29,7 @@
 #'
 read_cifti_flat <- function(
   cifti_fname, keep=FALSE, gifti_fname=NULL,
-  write_dir=NULL, wb_path=NULL) {
+  write_dir=NULL) {
 
   # ----------------------------------------------------------------------------
   # Get the output file name ---------------------------------------------------
@@ -44,7 +43,7 @@ read_cifti_flat <- function(
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
-  if (identical(gifti_fname, NULL)) {
+  if (is.null(gifti_fname)) {
     gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
   }
   if (!keep) { write_dir <- tempdir() }
@@ -59,7 +58,7 @@ read_cifti_flat <- function(
     sys_path(cifti_fname), 
     sys_path(gifti_fname)
   )
-  run_wb_cmd(cmd, wb_path)
+  run_wb_cmd(cmd)
   result <- readgii(gifti_fname)
   result <- result$data$normal
 }

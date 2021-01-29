@@ -61,7 +61,7 @@ make_cortex <- function(
   col_names <- label_table <- NULL
 
   # Cannot infer the medial wall if the cortex has been masked.
-  infer_mwall <- !identical(mwall_values, NULL)
+  infer_mwall <- !is.null(mwall_values)
   if (!is.null(cortex_is_masked) && cortex_is_masked) { infer_mwall <- FALSE }
 
   # Cortex:
@@ -207,6 +207,9 @@ make_cortex <- function(
   if (!is.null(mwall)) {
     if (is.null(cortex_is_masked)) { cortex_is_masked <- FALSE }
     if (!cortex_is_masked) {
+      if (nrow(cortex) != length(mwall)) { 
+        stop("Cortex and medial wall have different numbers of data locations.")
+      }
       cortex <- cortex[mwall,, drop=FALSE]
       cortex_is_masked <- TRUE
     }

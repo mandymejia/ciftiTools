@@ -4,20 +4,20 @@
 \alias{smooth_cifti}
 \alias{smoothCIfTI}
 \alias{smoothcii}
+\alias{smooth_xifti}
 \title{Smooth a CIFTI}
 \usage{
 smooth_cifti(
   x,
   cifti_target_fname = NULL,
-  surface_sigma,
-  volume_sigma,
+  surface_sigma = 5,
+  volume_sigma = 5,
   surfL_fname = NULL,
   surfR_fname = NULL,
   cerebellum_fname = NULL,
   subcortical_zeroes_as_NA = FALSE,
   cortical_zeroes_as_NA = FALSE,
-  subcortical_merged = FALSE,
-  wb_path = NULL
+  subcortical_merged = FALSE
 )
 
 smoothCIfTI(
@@ -30,8 +30,7 @@ smoothCIfTI(
   cerebellum_fname = NULL,
   subcortical_zeroes_as_NA = FALSE,
   cortical_zeroes_as_NA = FALSE,
-  subcortical_merged = FALSE,
-  wb_path = NULL
+  subcortical_merged = FALSE
 )
 
 smoothcii(
@@ -44,8 +43,20 @@ smoothcii(
   cerebellum_fname = NULL,
   subcortical_zeroes_as_NA = FALSE,
   cortical_zeroes_as_NA = FALSE,
-  subcortical_merged = FALSE,
-  wb_path = NULL
+  subcortical_merged = FALSE
+)
+
+smooth_xifti(
+  x,
+  cifti_target_fname,
+  surface_sigma,
+  volume_sigma,
+  surfL_fname = NULL,
+  surfR_fname = NULL,
+  cerebellum_fname = NULL,
+  subcortical_zeroes_as_NA = FALSE,
+  cortical_zeroes_as_NA = FALSE,
+  subcortical_merged = FALSE
 )
 }
 \arguments{
@@ -54,9 +65,9 @@ smoothcii(
 \item{cifti_target_fname}{The file name to save the smoothed CIFTI. If
 \code{NULL}, will be set to a file in a temporary directory.}
 
-\item{surface_sigma}{The sigma for the gaussian surface smoothing kernel, in mm}
+\item{surface_sigma}{The sigma for the gaussian surface smoothing kernel, in mm. Default: \code{5}}
 
-\item{volume_sigma}{The sigma for the gaussian volume smoothing kernel, in mm}
+\item{volume_sigma}{The sigma for the gaussian volume smoothing kernel, in mm. Default: \code{5}}
 
 \item{surfL_fname, surfR_fname}{(Required if the 
 corresponding cortex is present) Surface GIFTI files for the left and right
@@ -70,10 +81,6 @@ the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.}
 
 \item{subcortical_merged}{Smooth across subcortical structure boundaries?
 Default: \code{FALSE}.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The \code{cifti_target_fname}, invisibly
@@ -97,9 +104,6 @@ If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
 
  This function uses a system wrapper for the 'wb_command' executable. The 
  user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench . 
- The \code{wb_path} argument is the full file path to the Connectome 
- Workbench folder. (The full file path to the 'wb_cmd' executable also 
- works.)
+ from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 

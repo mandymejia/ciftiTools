@@ -4,7 +4,7 @@
 \alias{ROY_BIG_BL}
 \title{"ROY_BIG_BL" color palette}
 \usage{
-ROY_BIG_BL(min = 0, max = 1, mid = NULL, pos_half = FALSE)
+ROY_BIG_BL(min = 0, max = 1, mid = NULL, half = NULL, pos_half = FALSE)
 }
 \arguments{
 \item{min}{The minimum value for the color mapping. As in the original 
@@ -19,8 +19,12 @@ Default: \code{1}.}
 \item{mid}{(Optional) The midpoint value for the color mapping. If 
 \code{NULL} (default), the true midpoint is used.}
 
-\item{pos_half}{Use the positive half (black --> red --> yellow) only? 
-Default: \code{FALSE}.}
+\item{half}{\code{"positive"} or \code{"negative"} to use the positive half
+(black --> red --> yellow) or negative half (black --> blue --> purple -->
+green --> aqua) only. \code{NULL} (default) or \code{FALSE} to use entire 
+palette.}
+
+\item{pos_half}{Deprecated. Use \code{half}.}
 }
 \value{
 A data.frame with two columns: \code{"color"} (character: color hex 

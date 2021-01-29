@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 0.1.6.1
+Version: 0.2.0.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -25,20 +25,21 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
+    fields,
     gifti (> 0.7.5),
     grDevices,
     oro.nifti,
     RNifti,
     RColorBrewer,
+    rgl,
+    viridisLite,
     xml2
 Suggests:
-    fields,
     ggplot2,
     ggpubr,
     knitr,
     rmarkdown,
     papayar,
-    rgl,
     testthat (>= 2.1.0),
     covr
 RoxygenNote: 7.1.1

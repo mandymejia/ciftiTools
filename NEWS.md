@@ -1,3 +1,15 @@
+# 1.6.1 (January 29, 2021)
+## Changes affecting users
+* Warn user (instead of raising an error) when the data has more medial wall vertices than non-medial wall vertices.
+* New handling of color mode, default colors and color limits.
+* Save color legends too, if saving surface plots.
+* Label for widget slider.
+* Move `fields` and `rgl` from Suggests to Imports.
+* Remove `wb_path` argument. (Use `ciftiTools.setOption("wb_path", "path/to/workbench")`)
+* `transform_xifti` to apply unary functions
+* Add mathematical operations: `exp(cii) / 5 + cii2`
+* `newdata_xifti` to substitute data
+
 # 1.6 (November 10, 2020)
 
 ## Changes affecting users

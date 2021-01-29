@@ -11,6 +11,7 @@ view_xifti_surface.color(
   colors,
   color_mode,
   zlim,
+  colorbar_digits,
   xifti_meta,
   border_color,
   surfL,
@@ -20,7 +21,8 @@ view_xifti_surface.color(
 \arguments{
 \item{hemisphere, values, idx}{idx see \code{\link{view_xifti_surface}}}
 
-\item{colors, color_mode, zlim}{see \code{\link{view_xifti_surface}}}
+\item{colors, color_mode, zlim, }{colorbar_digits see 
+\code{\link{view_xifti_surface}}}
 
 \item{xifti_meta}{\code{xifti$meta}}
 

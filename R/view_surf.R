@@ -28,7 +28,7 @@ view_surf <- function(
   ..., view=c("both", "lateral", "medial"),
   width=NULL, height=NULL, zoom=NULL,
   bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, fname="surf",
+  save=FALSE, close_after_save=TRUE,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
   mode=NULL){
   
@@ -115,7 +115,7 @@ view_surf <- function(
     view=view,
     width=width, height=height, zoom=zoom,
     bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save, fname=fname,
+    save=save, close_after_save=close_after_save,
     surfL=surfL, surfR=surfR,
     alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size, 
     mode=mode

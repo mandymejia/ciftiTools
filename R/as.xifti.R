@@ -81,6 +81,9 @@
 #'  the number of vertices matches that of the HCP 32k mesh (29696 on left, and
 #'  29716 on right), should the medial wall masks be added to the \code{"xifti"}
 #'  if not provided? Default: \code{TRUE}.
+#' @param validate Validate that the result is a \code{"xifti"} object? Default:
+#'  \code{TRUE}. If \code{FALSE}, the result may not be properly formatted
+#'  if the inputs were invalid.
 #' @return A \code{"xifti"} object
 #' 
 #' @export
@@ -91,7 +94,7 @@ as.xifti <- function(
   mwall_values=c(NA, NaN),
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   surfL=NULL, surfR=NULL,
-  col_names=NULL, HCP_32k_auto_mwall=TRUE){
+  col_names=NULL, HCP_32k_auto_mwall=TRUE, validate=TRUE){
 
   if (!is.null(cortexL)) { stopifnot(is.numeric(cortexL)) }
   if (!is.null(cortexR)) { stopifnot(is.numeric(cortexR)) }
@@ -107,7 +110,8 @@ as.xifti <- function(
     mwall_values=mwall_values,
     subcortVol=subcortVol, subcortLabs=subcortLabs, subcortMask=subcortMask,
     surfL=surfL, surfR=surfR, col_names=col_names, 
-    HCP_32k_auto_mwall=HCP_32k_auto_mwall
+    HCP_32k_auto_mwall=HCP_32k_auto_mwall,
+    validate=validate
   )
 }
 

@@ -24,7 +24,6 @@
 #'  CIFTI, use these values to infer the medial wall mask. Default: 
 #'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
 #' @inheritParams verbose_Param_TRUE
-#' @inheritParams wb_path_Param
 #'
 #' @return A \code{"xifti"} object. See \code{\link{is.xifti}}.
 #' 
@@ -39,8 +38,7 @@ read_cifti_separate <- function(
   sep_keep=FALSE, sep_fnames=NULL,
   resamp_keep=FALSE, resamp_fnames=NULL,
   write_dir=NULL, 
-  mwall_values=c(NA, NaN), 
-  wb_path=NULL, verbose=TRUE) {
+  mwall_values=c(NA, NaN), verbose=TRUE) {
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
@@ -74,7 +72,7 @@ read_cifti_separate <- function(
   # info_cifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
   
-  cifti_info <- info_cifti(cifti_fname, wb_path)
+  cifti_info <- info_cifti(cifti_fname)
   bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
   if (!all(bs_present)) {
     warning(paste0(
@@ -100,7 +98,7 @@ read_cifti_separate <- function(
   to_read <- separate_cifti_wrapper(
     cifti_fname=cifti_fname,
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_fnames=sep_fnames, write_dir=write_dir_sep, wb_path=wb_path
+    sep_fnames=sep_fnames, write_dir=write_dir_sep
   )
 
   if (verbose) {
@@ -147,7 +145,7 @@ read_cifti_separate <- function(
       original_res=original_res, resamp_res=resamp_res, 
       original_fnames=to_resample, resamp_fnames=resamp_fnames,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-      read_dir=NULL, write_dir=write_dir_resamp, wb_path=wb_path
+      read_dir=NULL, write_dir=write_dir_resamp
     )
 
     # Replace resampled files.

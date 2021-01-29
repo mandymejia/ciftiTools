@@ -11,7 +11,6 @@
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
-#' @inheritParams wb_path_Param
 #' @inheritParams verbose_Param_FALSE
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
@@ -23,8 +22,7 @@ read_cifti_convert <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
-  mwall_values=c(NA, NaN),
-  wb_path=NULL, verbose=FALSE, ...){
+  mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   # Check arguments.
   brainstructures <- match_input(
@@ -45,7 +43,7 @@ read_cifti_convert <- function(
   if (verbose) { cat("Reading CIFTI file.\n") }
 
   # Read the CIFTI info.
-  xifti$meta <- info_cifti(cifti_fname, wb_path)
+  xifti$meta <- info_cifti(cifti_fname)
   bs_present <- brainstructures %in% xifti$meta$cifti$brainstructures
   if (!all(bs_present)) {
     warning(paste0(
@@ -56,7 +54,7 @@ read_cifti_convert <- function(
   }
 
   # Read the CIFTI data.
-  xifti_data <- read_cifti_flat(cifti_fname, wb_path=wb_path, ...)
+  xifti_data <- read_cifti_flat(cifti_fname, ...)
   if (get_cifti_extn(cifti_fname) == "dlabel.nii") {
     if (!all(round(xifti_data) == xifti_data)) {
       warning("The CIFTI file extension was \"dlabel.nii\" but the data values were not integers.")

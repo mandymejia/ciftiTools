@@ -4,14 +4,10 @@
 \alias{run_wb_cmd}
 \title{Wrapper for Connectome Workbench Commands}
 \usage{
-run_wb_cmd(cmd, wb_path, intern = FALSE)
+run_wb_cmd(cmd, intern = FALSE)
 }
 \arguments{
 \item{cmd}{The full command, beginning after the workbench path.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 
 \item{intern}{Return printed output? If \code{FALSE} (default), return
 logical indicating success instead.}

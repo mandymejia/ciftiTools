@@ -4,12 +4,7 @@
 \alias{resample_surf}
 \title{Resample a \code{"surf"} object}
 \usage{
-resample_surf(
-  surf,
-  resamp_res,
-  hemisphere = c("left", "right"),
-  wb_path = NULL
-)
+resample_surf(surf, resamp_res, hemisphere = c("left", "right"))
 }
 \arguments{
 \item{surf}{A \code{"surf"} object}
@@ -19,10 +14,6 @@ resample_surf(
 \item{hemisphere}{\code{"left"} or \code{"right"}. Only used if not indicated by 
 \code{surf$hemisphere}. An error will be raised if it does not match the 
 hemisphere indicated in the intermediate written GIFTI.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 The new surface

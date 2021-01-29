@@ -15,7 +15,7 @@ view_xifti_surface.cleg(pal_base, labels, leg_ncol, text_color, scale = 1)
 
 \item{scale}{of text}
 
-\item{colorbar_digits}{See \code{\link{view_xifti_surface}}}
+\item{colorbar_digits}{Not used.}
 }
 \value{
 A list of keyword arguments to \code{\link[fields]{image.plot}}

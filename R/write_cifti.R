@@ -13,7 +13,6 @@
 #' @param subcort_fill Value to use for out-of-mask voxels in the subcortex. 
 #'  Default: \code{0}.
 #' @inheritParams verbose_Param_FALSE
-#' @inheritParams wb_path_Param
 #'
 #' @return List of written files
 #' @importFrom RNifti writeNifti
@@ -23,7 +22,7 @@
 write_cifti_components <- function(
   xifti, extn_cifti, write_dir=NULL, 
   mwall_fill=NA, subcort_fill=0,
-  verbose=FALSE, wb_path=NULL) {
+  verbose=FALSE) {
   # Check arguments.
   stopifnot(is.xifti(xifti))
   stopifnot(length(mwall_fill)==1)
@@ -127,8 +126,7 @@ write_cifti_components <- function(
       sep_fnames["subcortVol"], 
       sep_fnames["subcortLabs"], 
       #sep_fnames["ROIsubcortVol"],
-      fill=0,
-      wb_path=wb_path
+      fill=0
     )
   } else {
     sep_fnames <- sep_fnames[!grepl("subcort", names(sep_fnames))]
@@ -150,7 +148,6 @@ write_cifti_components <- function(
 #'  will be a written to a GIFTI file at this file path. If \code{NULL} 
 #'  (default), do not write out the surface.
 #' @inheritParams verbose_Param_TRUE
-#' @inheritParams wb_path_Param
 #'
 #' @return Named character vector of the written files
 #' 
@@ -158,21 +155,20 @@ write_cifti_components <- function(
 #'
 write_cifti <- function(
   xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
-  verbose=TRUE, wb_path=NULL) {
+  verbose=TRUE) {
 
   extn_cifti <- get_cifti_extn(cifti_fname)
   sep_fnames <- write_cifti_components(
     xifti=xifti, extn_cifti=extn_cifti,
     write_dir=tempdir(), 
-    verbose=verbose, wb_path=wb_path
+    verbose=verbose
   )
 
   if (verbose) { cat("Creating CIFTI file from separated components.\n") }
   wcfs_kwargs <- list(
     cifti_fname=cifti_fname,
     timestep = xifti$meta$cifti$time_step, 
-    timestart = xifti$meta$cifti$time_start,
-    wb_path = wb_path
+    timestart = xifti$meta$cifti$time_start
   )
   if ("cortexL" %in% names(sep_fnames)) {
     wcfs_kwargs$cortexL_fname <- sep_fnames["cortexL"]
@@ -219,11 +215,11 @@ write_cifti <- function(
 writeCIfTI <- function(
   xifti, cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
-  verbose=TRUE, wb_path=NULL) {
+  verbose=TRUE) {
   write_cifti(
     xifti=xifti, cifti_fname=cifti_fname, 
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-    verbose=verbose, wb_path=wb_path
+    verbose=verbose
   )
 }
 
@@ -232,11 +228,11 @@ writeCIfTI <- function(
 writecii <- function(
   xifti, cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
-  verbose=TRUE, wb_path=NULL) {
+  verbose=TRUE) {
   write_cifti(
     xifti=xifti, cifti_fname=cifti_fname, 
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-    verbose=verbose, wb_path=wb_path
+    verbose=verbose
   )
 }
 
@@ -245,10 +241,10 @@ writecii <- function(
 write_xifti <- function(
   xifti, cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
-  verbose=TRUE, wb_path=NULL) {
+  verbose=TRUE) {
   write_cifti(
     xifti=xifti, cifti_fname=cifti_fname, 
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-    verbose=verbose, wb_path=wb_path
+    verbose=verbose
   )
 }

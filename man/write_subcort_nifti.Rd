@@ -12,8 +12,7 @@ write_subcort_nifti(
   subcortVol_fname,
   subcortLabs_fname,
   ROIsubcortVol_fname = NULL,
-  fill = 0,
-  wb_path = NULL
+  fill = 0
 )
 }
 \arguments{
@@ -35,10 +34,6 @@ a NIFTI to save the corresponding data. \code{ROIsubcortVol_fname} is
 optional but the rest is required.}
 
 \item{fill}{Values to use for out-of-mask voxels. Default: \code{0}.}
-
-\item{wb_path}{(Optional) Path to Connectome Workbench folder or executable. 
-If not provided, should be set with 
-\code{ciftiTools.setOption("wb_path", "path/to/workbench")}.}
 }
 \value{
 Named character vector with the \code{"subcortVol"}, 

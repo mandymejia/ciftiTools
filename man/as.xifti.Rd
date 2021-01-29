@@ -19,7 +19,8 @@ as.xifti(
   surfL = NULL,
   surfR = NULL,
   col_names = NULL,
-  HCP_32k_auto_mwall = TRUE
+  HCP_32k_auto_mwall = TRUE,
+  validate = TRUE
 )
 
 as_xifti(
@@ -141,6 +142,10 @@ Can be a surface GIFTI file path or \code{"surf"} object; see
 the number of vertices matches that of the HCP 32k mesh (29696 on left, and
 29716 on right), should the medial wall masks be added to the \code{"xifti"}
 if not provided? Default: \code{TRUE}.}
+
+\item{validate}{Validate that the result is a \code{"xifti"} object? Default:
+\code{TRUE}. If \code{FALSE}, the result may not be properly formatted
+if the inputs were invalid.}
 }
 \value{
 A \code{"xifti"} object
