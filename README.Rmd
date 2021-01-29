@@ -34,7 +34,7 @@ You can install `ciftiTools` from [CRAN](https://cran.r-project.org/) with:
 install.packages("ciftiTools")
 ```
 
-Most of the `ciftiTools` functions require the Connectome Workbench, which can be installed from the [HCP website](https://www.humanconnectome.org/software/get-connectome-workbench).
+Additionally, most of the `ciftiTools` functions require the Connectome Workbench, which can be installed from the [HCP website](https://www.humanconnectome.org/software/get-connectome-workbench).
 
 ## Quick start guide
 

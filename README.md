@@ -32,6 +32,10 @@ with:
 install.packages("ciftiTools")
 ```
 
+Additionally, most of the `ciftiTools` functions require the Connectome
+Workbench, which can be installed from the [HCP
+website](https://www.humanconnectome.org/software/get-connectome-workbench).
+
 ## Quick start guide
 
 ``` r
