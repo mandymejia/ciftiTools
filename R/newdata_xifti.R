@@ -12,6 +12,7 @@
 #' @param newnames Replace the names in the \code{xifti}. If \code{NULL}
 #'  (default), keep the original names.
 #' @return The new \code{"xifti"}
+#' @export
 newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   newdata_dim <- dim(newdata)
   if (length(newdata_dim)==1) { newdata <- matrix(newdata, ncol=1) }
