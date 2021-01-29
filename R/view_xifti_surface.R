@@ -717,7 +717,9 @@ view_xifti_surface <- function(xifti, idx=NULL,
       if (length(save)==length(idx)) {
         save <- as.character(save)
       } else {
-        warning("Length of `save` and `idx` differ. Using the first entry of `save`.\n")
+        if (length(save) != 1) {
+          warning("Length of `save` and `idx` differ. Using the first entry of `save`.\n")
+        }
         save <- gsub(".png", "", save[1], fixed=TRUE)
         save <- paste0(as.character(save), "_", idx, ".png")
       }
