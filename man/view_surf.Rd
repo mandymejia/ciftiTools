@@ -136,7 +136,7 @@ This function works as a wrapper to \code{\link{view_xifti_surface}}, but
  using one of two methods. The first is executing \code{\link[rgl]{rglwidget}}
  in the chunk where the plot is made. This first method should work within
  both the RStudio IDE and a knitted .html file. The second method is 
- executing \code{\link[rgl:hook_rgl]{setupKnitr}} at the start of the document and 
+ executing \code{rgl::hook_rgl} at the start of the document and 
  then using the chunk option \code{webgl=TRUE} in the chunk where the plot is
  made. The second method is specifically for knitted .html files. Although
  the first method is the newest approach and is recommended by others, we
