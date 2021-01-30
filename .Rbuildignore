@@ -1,7 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
-^NEWS\.md$
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^data-raw$
