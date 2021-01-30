@@ -37,7 +37,7 @@ Navigating and Embedding the Interactive Plots
  dimensions of the Open GL window.
  
  For \code{view_xifti_surface}, if \code{length(idx) > 1}, this function will
- automaticaly return an htmlwidget using the first method, but with a
+ automatically return an htmlwidget using the first method, but with a
  \code{\link[rgl]{playwidget}} wrapper to add a slider to control which
  column index is being displayed. All the meshes will be rendered on top of
  one another in the Open GL window, so only the widget will be useful for

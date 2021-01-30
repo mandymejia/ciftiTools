@@ -4,7 +4,7 @@
 \alias{summary.xifti}
 \alias{print.summary.xifti}
 \alias{print.xifti}
-\title{Summarise cifti objects}
+\title{Summarize cifti objects}
 \usage{
 \method{summary}{xifti}(object, ...)
 

@@ -15,7 +15,7 @@ cortical data? If \code{NULL} (default), do not include them. If any other
 value, use that value to fill rows corresponding to the medial wall mask.}
 
 \item{subcort_order}{"alphabetical" (default) to match the Connectome 
-Worbench command \code{-cifti-export-dense-mapping}, or "spatial" which is 
+Workbench command \code{-cifti-export-dense-mapping}, or "spatial" which is 
 already the ordering used in the \code{"xifti"}.}
 }
 \value{

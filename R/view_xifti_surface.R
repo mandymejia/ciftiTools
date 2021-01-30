@@ -1,4 +1,4 @@
-#' Sort out surface & hemispehre args for \code{view_xifti_surface}
+#' Sort out surface & hemisphere args for \code{view_xifti_surface}
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
 #' 

@@ -1,4 +1,4 @@
-#' Summarise cifti objects
+#' Summarize cifti objects
 #'
 #' Summary method for class "surf"
 #'

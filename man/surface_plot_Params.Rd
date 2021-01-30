@@ -13,7 +13,7 @@ will be plotted in a separate panel row.}
 1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
 1500 x 525 for 2x1 subplots, and
 500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
-within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+within a 1600 x 900 screen. Specifying only one will set the other to maintain
 the same aspect ratio. Both can be specified to set the dimensions exactly.}
 
 \item{zoom}{Adjustment to size of brain meshes. Default: \code{3/5}

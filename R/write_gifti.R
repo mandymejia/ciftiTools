@@ -160,7 +160,7 @@ write_metric_gifti <- function(
 #' @param encoding A length-2 vector with elements chosen among "ASCII", 
 #'  "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 
 #'  the metadata if \code{data} is a "gifti" object, or "GZipBase64Binary" for the
-#'  "pointset" and "ASCII" for the "traingles" if \code{data} is not already
+#'  "pointset" and "ASCII" for the "triangles" if \code{data} is not already
 #'  a GIFTI.
 #' @param endian "LittleEndian" (default) or "BigEndian".
 #'

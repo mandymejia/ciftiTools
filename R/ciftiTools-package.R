@@ -9,7 +9,7 @@
 #'  \item{\code{read_xifti}:}{ Read in CIFTI data as a \code{"xifti"}.}
 #'  \item{\code{resample_xifti}:}{ Resample the data.}
 #'  \item{\code{smooth_xifti}:}{ Smooth the data.}
-#'  \item{\code{transform_xifti}:}{ Apply univarate or bivariate functions over the data.}
+#'  \item{\code{transform_xifti}:}{ Apply univariate or bivariate functions over the data.}
 #'  \item{\code{view_xifti_surface}:}{ Plot the cortical data.}
 #'  \item{\code{view_xifti_volume}:}{ Plot the subcortical data.}
 #'  \item{\code{write_xifti}:}{ Write a \code{"xifti"} to a CIFTI file.}

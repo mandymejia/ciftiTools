@@ -369,7 +369,7 @@ NULL
 #'  dimensions of the Open GL window.
 #'  
 #'  For \code{view_xifti_surface}, if \code{length(idx) > 1}, this function will
-#'  automaticaly return an htmlwidget using the first method, but with a
+#'  automatically return an htmlwidget using the first method, but with a
 #'  \code{\link[rgl]{playwidget}} wrapper to add a slider to control which
 #'  column index is being displayed. All the meshes will be rendered on top of
 #'  one another in the Open GL window, so only the widget will be useful for
@@ -414,7 +414,7 @@ NULL
 #'  1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
 #'  1500 x 525 for 2x1 subplots, and
 #'  500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
-#'  within a 1600 x 900 screen. Specyfing only one will set the other to maintain
+#'  within a 1600 x 900 screen. Specifying only one will set the other to maintain
 #'  the same aspect ratio. Both can be specified to set the dimensions exactly.
 #' @param zoom Adjustment to size of brain meshes. Default: \code{3/5}
 #'  (100\% + 3/5*100\% = 160\% the original size).

@@ -16,7 +16,7 @@ match_exactly(
 \item{expected}{Character vector of expected/allowed values.}
 
 \item{fail_action}{If any value in \code{user} could not be
-matched, or repeated matches occured, what should happen? Possible values
+matched, or repeated matches occurred, what should happen? Possible values
 are \code{"message"} (default), \code{"warning"}, \code{"stop"}, and
 \code{"nothing"}.}
 }

@@ -100,7 +100,7 @@
     * Use column index or name as the default title
     * Improved qualitative color mode
     * Use qualitative color mode and label table colors if the CIFTI is a `dlabel.nii` file (intent 3007)
-* `view_xifti_volume` improvments:
+* `view_xifti_volume` improvements:
     * Fix `num.slices` argument
     * Add `...` for additional arguments
 * Add `view_surface` for `"surface"` objects
