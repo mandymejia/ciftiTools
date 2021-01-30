@@ -10,3 +10,4 @@
 ^inst/extdata/Conte69\.MyelinAndCorrThickness\.32k_fs_LR\.dscalar\.nii$
 ^inst/extdata/Conte69\.parcellations_VGD11b\.32k_fs_LR\.dlabel\.nii$
 ^inst/extdata/ones\.dscalar\.nii$
+^CRAN-RELEASE$
