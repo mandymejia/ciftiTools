@@ -23,3 +23,7 @@ These files are necessary and have already been reduced in size.
 ## Downstream dependencies
 
 None.
+
+## Tests
+
+Passes all the tests in `tests/run_ciftiTools_tests.R`

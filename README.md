@@ -108,18 +108,15 @@ properly-formatted CIFTI files. Don’t worry about them\!
 ## Related R extensions
 
   - NIFTI files:
-    [`oro.nifti`](https://cran.r-project.org/web/packages/oro.nifti/index.html),
-    [`RNifti`](https://cran.r-project.org/web/packages/RNifti/index.html)
-  - GIFTI files:
-    [`gifti`](https://cran.r-project.org/web/packages/gifti/index.html)
-  - CIFTI files:
-    [`cifti`](https://cran.r-project.org/web/packages/cifti/index.html)
-    can read in any CIFTI file, whereas `ciftiTools` provides a
+    [`oro.nifti`](https://CRAN.R-project.org/package=oro.nifti),
+    [`RNifti`](https://CRAN.R-project.org/package=RNifti)
+  - GIFTI files: [`gifti`](https://CRAN.R-project.org/package=gifti)
+  - CIFTI files: [`cifti`](https://CRAN.R-project.org/package=cifti) can
+    read in any CIFTI file, whereas `ciftiTools` provides a
     user-friendly interface for CIFTI files with the dscalar, dlabel,
     and dtseries intents only.
   - Other structural neuroimaging files:
-    [`fsbrain`](https://cran.r-project.org/web/packages/fsbrain/index.html)
-  - xml files:
-    [`xml2`](https://cran.r-project.org/web/packages/xml2/index.html)
+    [`fsbrain`](https://CRAN.R-project.org/package=fsbrain)
+  - xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
   - Interactive 3D rendering:
-    [`rgl`](https://cran.r-project.org/web/packages/rgl/index.html)
+    [`rgl`](https://CRAN.R-project.org/package=rgl)
