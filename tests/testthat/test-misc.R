@@ -56,7 +56,7 @@ test_that("Miscellaneous functions are working", {
     cii <- read_cifti(
       smooth_cifti(
         cii_fname, file.path(tdir, basename(cii_fname)),
-        surface_sigma=3, volume_sigma=3,
+        surf_FWHM=3, vol_FWHM=3,
         surfL_fname=surf_fnames$left,
         surfR_fname=surf_fnames$right,
         subcortical_zeroes_as_NA=TRUE
@@ -65,14 +65,14 @@ test_that("Miscellaneous functions are working", {
     )
     cii <- smooth_cifti(
       cii, file.path(tdir, basename(cii_fname)),
-      surface_sigma=5, volume_sigma=5,
+      surf_FWHM=5, vol_FWHM=5,
       surfL_fname=surf_fnames$left,
       surfR_fname=surf_fnames$right,
       subcortical_zeroes_as_NA=TRUE
     )
     cii <- smooth_cifti(
       cii, file.path(tdir, basename(cii_fname)),
-      surface_sigma=7, volume_sigma=7
+      surf_FWHM=7, vol_FWHM=7
     )
 
     # remove_xifti (not exported)

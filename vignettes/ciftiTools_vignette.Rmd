@@ -358,7 +358,7 @@ Use `smooth_cifti` to perform smoothing. This function works for both CIFTI file
 smoothed_cii_fname <- file.path(out_dir, "my_smoothed_cifti.dtseries.nii")
 smooth_cifti(
   cifti_fnames["dtseries"], smoothed_cii_fname,
-  surface_sigma=2, volume_sigma=2,
+  surf_FWHM=2, vol_FWHM=2,
   surfL_fname=surfL_fname, surfR_fname=surfR_fname,
   subcortical_zeroes_as_NA=TRUE
 )

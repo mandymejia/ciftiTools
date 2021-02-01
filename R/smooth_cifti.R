@@ -17,8 +17,8 @@
 #' @param x The \code{"xifti"} object or CIFTI file to smooth.
 #' @param cifti_target_fname The file name to save the smoothed CIFTI. If
 #'  \code{NULL}, will be set to a file in a temporary directory.
-#' @param surface_sigma The sigma for the gaussian surface smoothing kernel, in mm. Default: \code{5}
-#' @param volume_sigma The sigma for the gaussian volume smoothing kernel, in mm. Default: \code{5}
+#' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) paramter
+#'  for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
 #' @param surfL_fname,surfR_fname (Required if the 
 #'  corresponding cortex is present) Surface GIFTI files for the left and right
 #'  cortical surface
@@ -35,7 +35,7 @@
 #'
 smooth_cifti <- function(
   x, cifti_target_fname=NULL,
-  surface_sigma=5, volume_sigma=5,
+  surf_FWHM=5, vol_FWHM=5,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
@@ -118,8 +118,8 @@ smooth_cifti <- function(
   cmd <- paste(
     "-cifti-smoothing", 
     sys_path(cifti_original_fname), 
-    surface_sigma,
-    volume_sigma,
+    surf_FWHM / (2*sqrt(2*log(2))),
+    vol_FWHM / (2*sqrt(2*log(2))),
     "COLUMN",
     sys_path(cifti_target_fname)
   )
@@ -244,14 +244,14 @@ smooth_cifti <- function(
 #' @export
 smoothCIfTI <- function(
   x, cifti_target_fname,
-  surface_sigma, volume_sigma,
+  surf_FWHM, vol_FWHM,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
 
   smooth_cifti(
     x=x, cifti_target_fname=cifti_target_fname,
-    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surf_FWHM=surf_FWHM, vol_FWHM=vol_FWHM,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
     subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
     subcortical_merged=subcortical_merged
@@ -262,14 +262,14 @@ smoothCIfTI <- function(
 #' @export
 smoothcii <- function(
   x, cifti_target_fname,
-  surface_sigma, volume_sigma,
+  surf_FWHM, vol_FWHM,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
 
   smooth_cifti(
     x=x, cifti_target_fname=cifti_target_fname,
-    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surf_FWHM=surf_FWHM, vol_FWHM=vol_FWHM,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
     subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
     subcortical_merged=subcortical_merged
@@ -280,14 +280,14 @@ smoothcii <- function(
 #' @export
 smooth_xifti <- function(
   x, cifti_target_fname,
-  surface_sigma, volume_sigma,
+  surf_FWHM, vol_FWHM,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
 
   smooth_cifti(
     x=x, cifti_target_fname=cifti_target_fname,
-    surface_sigma=surface_sigma, volume_sigma=volume_sigma,
+    surf_FWHM=surf_FWHM, vol_FWHM=vol_FWHM,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname, cerebellum_fname=cerebellum_fname,
     subcortical_zeroes_as_NA=subcortical_zeroes_as_NA, cortical_zeroes_as_NA=cortical_zeroes_as_NA,
     subcortical_merged=subcortical_merged
