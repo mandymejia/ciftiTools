@@ -19,9 +19,11 @@ viewcii(xifti, what = NULL, ...)
 \item{xifti}{Object of class "xifti". 
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
-\item{what}{Either \code{"surf"} or \code{"volume"}. If \code{NULL} 
-(default), view the surface if cortex data is present in the \code{"xifti"} 
-object, and the subcortical volume otherwise.}
+\item{what}{Either \code{"surface"} or \code{"volume"}. \code{NULL} will infer
+based on the contents of the \code{"xifti"}: if there is data, plot the 
+surface cortex data if present, and the volumetric subcortical data 
+otherwise. If there is no data, plot the surface geometry if present, and
+do nothing otherwise.}
 
 \item{...}{Additional arguments to pass to either view function.}
 }

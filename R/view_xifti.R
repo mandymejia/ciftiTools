@@ -3,9 +3,11 @@
 #' Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}
 #'
 #' @inheritParams xifti_Param
-#' @param what Either \code{"surf"} or \code{"volume"}. If \code{NULL} 
-#'  (default), view the surface if cortex data is present in the \code{"xifti"} 
-#'  object, and the subcortical volume otherwise.
+#' @param what Either \code{"surface"} or \code{"volume"}. \code{NULL} will infer
+#'  based on the contents of the \code{"xifti"}: if there is data, plot the 
+#'  surface cortex data if present, and the volumetric subcortical data 
+#'  otherwise. If there is no data, plot the surface geometry if present, and
+#'  do nothing otherwise.
 #' @param ... Additional arguments to pass to either view function.
 #'
 #' @return The return value of \code{view_xifti_surface} or
@@ -15,27 +17,39 @@
 #'
 view_xifti <- function(xifti, what=NULL, ...) {
   stopifnot(is.xifti(xifti))
-  if (is.null(what)) {
-    can_do_left <- !is.null(xifti$data$cortex_left)
-    can_do_right <- !is.null(xifti$data$cortex_right)
-    can_do_sub <- !is.null(xifti$data$subcort)
-    what <- ifelse(
-      can_do_left || can_do_right,
-      "surface",
-      ifelse(can_do_sub, "volume", "error")
-    )
-  }
-  if (what == "surface") {
-    return(view_xifti_surface(xifti, ...))
-  } else if (what == "volume") {
-    return(view_xifti_volume(xifti, ...))
+  
+  has_left <- !is.null(xifti$data$cortex_left)
+  has_right <- !is.null(xifti$data$cortex_right)
+  has_sub <- !is.null(xifti$data$subcort)
+  has_surfL <- !is.null(xifti$surf$cortex_left)
+  has_surfR <- !is.null(xifti$surf$cortex_right)
+
+  if (is.null(what)) { 
+    if (has_left | has_right) { 
+      what <- "surface" 
+    } else if (has_sub) {
+      what <- "volume"
+    } else if (has_surfL | has_surfR) {
+      what <- "surface"
+    } else {
+      cat("Nothing to plot: the `xifti` is empty.\n")
+      return(NULL)
+    }
   } else {
-    stop(paste(
-      "No valid cortical surface, and no valid subcortical data.",
-      "Did you forget to provide surfL/surfR?",
-      "Or, did you forget to read in the subcortical data too?"
-    ))
+    what <- match.arg(what, c("surface", "volume"))
+    if (what == "surface" && !any(c(has_left, has_right, has_surfL, has_surfR))) {
+      stop("No cortical data nor surface geometry are present in the `xifti`, so the surface cannot be plotted.")
+    }
+    if (what == "volume" && !has_sub) {
+      stop("No subcortical data are present in the `xifti`, so the volume cannnot be plotted.")
+    }
   }
+
+  return(switch(
+    what, 
+    surface = view_xifti_surface(xifti, ...),
+    volume = view_xifti_volume(xifti, ...)
+  ))
 }
 
 #' S3 method: use \code{view_xifti} to plot a \code{"xifti"} object
