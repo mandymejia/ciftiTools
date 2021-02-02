@@ -40,6 +40,7 @@ smooth_cifti <- function(
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
 
+  surfL_return <- surfR_return <- FALSE
   input_is_xifti <- is.xifti(x, messages=FALSE)
 
   # Setup ----------------------------------------------------------------------
@@ -77,10 +78,12 @@ smooth_cifti <- function(
 
     # Get the surfaces present.
     if (is.null(surfL_fname) && !is.null(x$surf$cortex_left)) {
+      surfL_return <- TRUE
       surfL_fname <- file.path(tempdir(), "left.surf.gii")
       write_surf_gifti(x$surf$cortex_left, surfL_fname, hemisphere="left")
     }
     if (is.null(surfR_fname) && !is.null(x$surf$cortex_right)) {
+      surfR_return <- TRUE
       surfR_fname <- file.path(tempdir(), "right.surf.gii")
       write_surf_gifti(x$surf$cortex_right, surfR_fname, hemisphere="right")
     }
@@ -234,7 +237,13 @@ smooth_cifti <- function(
   
   # Return results -------------------------------------------------------------
   if (input_is_xifti) {
-    return(read_xifti(cifti_target_fname, brainstructures=brainstructures))
+    read_xifti_args <- list(
+      cifti_fname = cifti_target_fname, 
+      brainstructures = brainstructures
+    )
+    if (surfL_return) { read_xifti_args$surfL_fname <- surfL_fname }
+    if (surfR_return) { read_xifti_args$surfR_fname <- surfR_fname }
+    return(do.call(read_xifti, read_xifti_args))
   } else {
     return(invisible(cifti_target_fname))
   }
