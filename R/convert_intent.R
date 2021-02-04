@@ -36,7 +36,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   convert_NA <- FALSE
   if (is.null(values)) {
     # Infer the new values.
-    values <- unique(as.vector(do.call(rbind, xifti$data)))
+    values <- sort(unique(as.vector(do.call(rbind, xifti$data))))
     if (any(is.na(as.vector(do.call(rbind, xifti$data))))) {
       if (!any(is.nan(as.vector(do.call(rbind, xifti$data))))) {
         convert_NA <- TRUE
@@ -49,32 +49,24 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   } else {
     # Check the new values.
     if (any(duplicated(values))) { warning("Removing duplicate `values`.\n") }
-    values <- unique(values)
+    values <- sort(unique(values))
   }
   if (length(values) > 100) { warning("Over 100 unique `values` in the `xifti`.\n") }
   conversion_table <- data.frame(values=values, label=seq(length(values))-1)
 
   # Convert data to label values.
-  if (!is.null(xifti$data$cortex_left)) {
-    if (convert_NA) { 
-      xifti$data$cortex_left[] <- ifelse(is.na(as.vector(xifti$data$cortex_left)), NaN, as.vector(xifti$data$cortex_left)) 
+  for (bs in names(xifti$data)) {
+    if (is.null(xifti$data[[bs]])) { next }
+
+    if (convert_NA) {
+      xifti$data[[bs]][] <- ifelse(
+        is.na(as.vector(xifti$data[[bs]])), 
+        NaN, as.vector(xifti$data[[bs]])
+      )
     }
-    stopifnot(all(xifti$data$cortex_left[] %in% values))
-    xifti$data$cortex_left[] <- as.numeric(factor(xifti$data$cortex_left[], levels=values)) - 1
-  }
-  if (!is.null(xifti$data$cortex_right)) {
-    if (convert_NA) { 
-      xifti$data$cortex_right[] <- ifelse(is.na(as.vector(xifti$data$cortex_right)), NaN, as.vector(xifti$data$cortex_right)) 
-    }
-    stopifnot(all(xifti$data$cortex_right[] %in% values))
-    xifti$data$cortex_right[] <- as.numeric(factor(xifti$data$cortex_right[], levels=values)) - 1
-  }
-  if (!is.null(xifti$data$subcort)) {
-    if (convert_NA) { 
-      xifti$data$subcort[] <- ifelse(is.na(as.vector(xifti$data$subcort)), NaN, as.vector(xifti$data$subcort)) 
-    }
-    stopifnot(all(xifti$data$subcort[] %in% values))
-    xifti$data$subcort[] <- as.numeric(factor(xifti$data$subcort[], levels=values)) - 1
+
+    stopifnot(all(xifti$data[[bs]][] %in% values))
+    xifti$data[[bs]][] <- as.numeric(factor(xifti$data[[bs]][], levels=values)) - 1
   }
 
   # Make color table.
@@ -96,6 +88,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   col_table <- rbind(seq(N_)-1, col_table)
   rownames(col_table) <- c("Key", "Red", "Green", "Blue", "Alpha")
   col_table <- as.data.frame(t(col_table))
+  rownames(col_table) <- values
 
   # Add components to xifti
   T_ <- ncol(do.call(rbind, xifti$data))
