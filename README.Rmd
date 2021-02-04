@@ -96,10 +96,6 @@ xii <- as.xifti(surfL=make_surf(demo_files()$surf["left"]))
 view_xifti_surface(xii)
 ```
 
-#### What are these messages I see when reading a CIFTI file? "WARNING: no sform or qform code found, using ANALYZE coordinates!" and “WARNING: unrecognized spatial unit in nifti header”
-
-These warnings are from the Connectome Workbench, and may occur even for properly-formatted CIFTI files. Don't worry about them!
-
 ## Related R extensions
 
 * NIFTI files: [`oro.nifti`](https://CRAN.R-project.org/package=oro.nifti), [`RNifti`](https://CRAN.R-project.org/package=RNifti)
