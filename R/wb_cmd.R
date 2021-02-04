@@ -39,7 +39,7 @@ get_wb_cmd_path <- function(wb_path) {
       wb_path, "' does not reference an existing directory or file. ",
       "Will try to use it anyway. If this problem persists, try ",
       "providing the full path to the Connectome Workbench executable ",
-      "rather than the containing folder.\n"
+      "rather than the path to the containing folder, or a relative path.\n"
     ))
     wb_cmd_path <- wb_path
     return(wb_cmd_path)
@@ -68,7 +68,7 @@ get_wb_cmd_path <- function(wb_path) {
         "nor a folder containing the executable. Will try to use it anyway. ",
         "If this problem persists, try ",
         "providing the full path to the Connectome Workbench executable ",
-        "rather than the containing folder.\n"
+        "rather than the path to the containing folder, or a relative path.\n"
       ))
       wb_cmd_path <- wb_path
     } else if (length(possible_paths) > 1) {
@@ -76,7 +76,8 @@ get_wb_cmd_path <- function(wb_path) {
         "Found these possible Workbench executables: '",
         paste0(possible_paths, collapse="', '"), "'. ",
         "Using the first. If another should be used, provide the full path ",
-        "to the executable rather than the containing folder.\n"
+        "to the executable rather than the path to the containing folder, or",
+        "a relative path.\n"
       ))
       wb_cmd_path <- possible_paths[1]
     } else {
