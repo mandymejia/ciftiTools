@@ -196,7 +196,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
 #' @param xifti_meta \code{xifti$meta}
 #' @param border_color,surfL,surfR see \code{\link{view_xifti_surface}}
 #' 
-#' @return A list with entries "pal_base", "pal", and "color_vals"
+#' @return A list with entries "pal_base", "pal", "color_vals", and "unique_vals"
 #' 
 #' @keywords internal
 #' 
@@ -205,6 +205,9 @@ view_xifti_surface.color <- function(
   colors, color_mode, zlim, colorbar_digits,
   xifti_meta,
   border_color, surfL, surfR) {
+
+  # For qualitative color legend if xifti was not dlabel
+  unique_vals <- NULL
 
   # Put values together (to use data bounds across all measurements/columns)
   nvertL <- ifelse("left" %in% hemisphere, nrow(values$left), 0)
@@ -227,7 +230,9 @@ view_xifti_surface.color <- function(
 
     if (is.null(zlim)) {
       if (color_mode=="qualitative") {
-        zlim <- c(0,1) # Placeholder: `zlim` is never used for qualitative!
+        # Placeholder: the color limits will actually be 1 to the number of unique values.
+        # This variable `zlim` won't be used.
+        zlim <- c(0,1)
       } else {
         pctile_05 <- round(quantile(values, .05, na.rm=TRUE), signif_digits)
         pctile_95 <- round(quantile(values, .95, na.rm=TRUE), signif_digits)
@@ -270,10 +275,10 @@ view_xifti_surface.color <- function(
         )
       # Otherwise, use the usual colors.
       } else {
-        unique_values <- sort(unique(as.vector(values[!is.na(values)])))
-        values[,] <- as.numeric(factor(values, levels=unique_values))
+        unique_vals <- sort(unique(as.vector(values[!is.na(values)])))
+        values[,] <- as.numeric(factor(values, levels=unique_vals))
         pal_base <- make_color_pal(
-          colors=colors, color_mode=color_mode, zlim=length(unique_values)
+          colors=colors, color_mode=color_mode, zlim=length(unique_vals)
         )
       }
       pal <- pal_base
@@ -309,7 +314,7 @@ view_xifti_surface.color <- function(
     values <- list(left=matrix(0), right=matrix(0))
   }
 
-  list(pal_base=pal_base, pal=pal, color_vals=values)
+  list(pal_base=pal_base, pal=pal, color_vals=values, unique_vals=unique_vals)
 }
 
 #' Make the colorbar for \code{view_xifti_surface}
@@ -830,7 +835,8 @@ view_xifti_surface <- function(xifti, idx=NULL,
     xifti$meta,
     border_color, surfL, surfR
   )
-  pal_base <- x$pal_base; pal <- x$pal; color_vals <- x$color_vals
+  pal_base <- x$pal_base; pal <- x$pal
+  color_vals <- x$color_vals; unique_vals <- x$unique_vals
   any_colors <- !all(unlist(lapply(color_vals, dim)) == 1)
 
   if (!render_rgl) {
@@ -848,12 +854,14 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # Color legend
     if (color_mode == "qualitative" && qualitative_colorlegend) {
       use_cleg <- TRUE; colorbar_embedded <- FALSE
-      if (is.null(xifti$meta$cifti$intent)) {
-        labels <- paste0("Label ", seq(nrow(pal_base)))
-      } else if (xifti$meta$cifti$intent == "3007") {
-        labels <- rownames(xifti$meta$cifti$labels[[idx[1]]])
+      if (!is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent == "3007") {
+        if (!is.null(unique_vals)) {
+          labels <- unique_vals
+        } else {
+          labels <- paste0("Label ", seq(nrow(pal_base)))
+        }
       } else {
-        labels <- paste0("Label ", seq(nrow(pal_base)))
+        labels <- rownames(xifti$meta$cifti$labels[[idx[1]]])
       }
       labels <- as.character(labels)
       if (is.null(colorlegend_ncol)) {

@@ -29,7 +29,7 @@ view_xifti_surface.color(
 \item{border_color, surfL, surfR}{see \code{\link{view_xifti_surface}}}
 }
 \value{
-A list with entries "pal_base", "pal", and "color_vals"
+A list with entries "pal_base", "pal", "color_vals", and "unique_vals"
 }
 \description{
 See \code{\link{view_xifti_surface}} for details.
