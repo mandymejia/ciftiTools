@@ -416,7 +416,7 @@ view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scal
   point_size <- 5 * scale
   legend_title_size <- 1.5 * scale
   legend_text_size <- 1.2 * scale
-  if (is.null(leg_ncol)) { leg_ncol <- floor(nrow(pal_base)/10) + 1 }
+  if (is.null(leg_ncol)) { leg_ncol <- floor(sqrt(nrow(pal_base))) }
 
   pal_base$labels <- factor(labels, levels=unique(labels))
   colors2 <- pal_base$color; names(colors2) <- pal_base$labels
@@ -854,24 +854,25 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # Color legend
     if (color_mode == "qualitative" && qualitative_colorlegend) {
       use_cleg <- TRUE; colorbar_embedded <- FALSE
-      if (!is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent == "3007") {
+      if (is.null(xifti$meta$cifti$intent) || (xifti$meta$cifti$intent != "3007")) {
         if (!is.null(unique_vals)) {
-          labels <- unique_vals
+          cleg_labs <- unique_vals
         } else {
-          labels <- paste0("Label ", seq(nrow(pal_base)))
+          cleg_labs <- paste0("Label ", seq(nrow(pal_base)))
         }
       } else {
-        labels <- rownames(xifti$meta$cifti$labels[[idx[1]]])
+        cleg_labs <- rownames(xifti$meta$cifti$labels[[idx[1]]])
       }
-      labels <- as.character(labels)
+      cleg_labs <- as.character(cleg_labs)
       if (is.null(colorlegend_ncol)) {
-        colorlegend_ncol <- floor(nrow(pal_base)/10) + 1
+        colorlegend_ncol <- floor(sqrt(nrow(pal_base)))
+        colorlegend_nrow <- ceiling(nrow(pal_base) / colorlegend_ncol)
       }
-      if (length(labels) > 200) {
+      if (length(cleg_labs) > 200) {
         use_cleg <- FALSE
         warning("Too many labels (> 200) for qualitative color legend. Not rendering it.")
       } else {
-        cleg <- view_xifti_surface.cleg(pal_base, labels, colorlegend_ncol, text_color)
+        cleg <- view_xifti_surface.cleg(pal_base, cleg_labs, colorlegend_ncol, text_color)
       }
     } else {
       use_cleg <- FALSE
@@ -1083,7 +1084,13 @@ view_xifti_surface <- function(xifti, idx=NULL,
         if (use_cleg) {
           print(cleg)
           if (do_save) {
-            ggplot2::ggsave(filename=gsub(".png", "_legend.png", save[jj]))
+            cleg_h_per_row <- 1/3 #inches
+            cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
+            ggplot2::ggsave(
+              filename = gsub(".png", "_legend.png", save[jj]),
+              height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
+              width = (colorlegend_ncol) * cleg_h_per_row * cleg_w_factor
+            )
             if (close_after_save) { dev.off() }
           }
 
