@@ -102,41 +102,6 @@ NULL
 #' @keywords internal
 NULL
 
-#' resamp_fnames
-#'
-#' @param resamp_fnames Where to write the resampled files. This is a named list 
-#'  where each entry's name is a file type label, and each entry's value
-#'  is a file name indicating where to write the corresponding resampled file. 
-#'  The recognized file type labels are: "cortexL", "cortexR", 
-#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
-#'  
-#'  Entry values can be \code{NULL}, in which case a default file name will be 
-#'  used: see \code{\link{resample_cifti_default_fname}}. Default file names
-#'  will also be used for files that need to be resampled/written but without a
-#'  corresponding entry in \code{resamp_fnames}.
-#'  
-#'  Entries in \code{resamp_fnames} will be ignored if they are not needed
-#'  based on \code{[ROI_]brainstructures}. For example, if
-#'  \code{brainstructures="left"}, then \code{resamp_fnames$cortexR} will be 
-#'  ignored if specified. 
-#'
-#'  The \code{write_dir} argument can be used to place each resampled file in
-#'  the same directory. 
-#' @name resamp_fnames_Param
-#' @keywords internal
-NULL
-
-#' resamp_keep
-#'
-#' @param resamp_keep If resampled files are created, will they be kept or 
-#'  deleted at the end of this function call? Default: \code{FALSE} (delete).
-#'  Keeping the resampled files may help speed up certain tasks, for example
-#'  when repeatedly iterating over CIFTI files--resampling will only be done
-#'  once instead of every new iteration.
-#' @name resamp_keep_Param
-#' @keywords internal
-NULL
-
 #' resamp_res: required
 #'
 #' @param resamp_res Target resolution for resampling (number of 
@@ -163,42 +128,6 @@ NULL
 #' ROIs are typically the medial wall mask for the cortex and subcortical mask
 #'  for the subcortex.
 #' @name ROI_brainstructures_Param_LR
-#' @keywords internal
-NULL
-
-#' sep_keep
-#'
-#' @param sep_keep If separated files are created, should they be kept or 
-#'  deleted at the end of this function call? Default: \code{FALSE} (delete).
-#'  Keeping the separated files may help speed up certain tasks, for example
-#'  when repeatedly iterating over subjects--the CIFTI will only be separated
-#'  once instead of at each iteration.
-#' @name sep_keep_Param
-#' @keywords internal
-NULL
-
-#' sep_fnames
-#'
-#' @param sep_fnames (Optional) Where to write the separated files (override
-#'  their default file names). This is a named list 
-#'  where each entry's name is a file type label, and each entry's value
-#'  is a file name indicating where to write the corresponding separated file. 
-#'  The recognized file type labels are: "cortexL", "cortexR", 
-#'  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLabs".
-#'  
-#'  Entry values can be \code{NULL}, in which case a default file name will be 
-#'  used: see \code{\link{cifti_component_suffix}}. Default file names
-#'  will also be used for files that need to be separated/written but without a
-#'  corresponding entry in \code{sep_fnames}.
-#'  
-#'  Entries in \code{sep_fnames} will be ignored if they are not needed
-#'  based on \code{[ROI_]brainstructures}. For example, if
-#'  \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
-#'  ignored if specified. 
-#'
-#'  The \code{write_dir} argument can be used to place each separated file in
-#'  the same directory. 
-#' @name sep_fnames_Param
 #' @keywords internal
 NULL
 
@@ -281,32 +210,6 @@ NULL
 #'
 #' @param verbose Should occasional updates be printed? Default: \code{TRUE}.
 #' @name verbose_Param_TRUE
-#' @keywords internal
-NULL
-
-#' write_dir: intermediate separated/resampled files
-#'  
-#' @param write_dir Where should any output files be written? \code{NULL}
-#'  (default) will write them to the current working directory.
-#'
-#'  Files flagged for deletion will be written to a temporary directory, and
-#'  thus are not affected by this argument. So if \code{sep_keep} is 
-#'  \code{TRUE}, the separated files will be written to \code{write_dir}, but if
-#'  \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
-#'  and later deleted. \code{resamp_keep} works similarly. 
-#'
-#'  For \code{read_cifti_separate}, the surface files (\code{surfL} or \code{surfR})
-#'  are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
-#'  be written to \code{tempdir()}. But for \code{resample_cifti}, the
-#'  surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
-#'  will always be written to \code{write_dir}. 
-#' 
-#'  Different subfolders for the separated, resampled, and final output files
-#'  cannot be specified by \code{write_dir}. Instead, modify the individual file
-#'  names in \code{sep_fnames} and \code{resamp_fnames}.
-#' 
-#'  \code{write_dir} must already exist, or an error will occur.
-#' @name write_dir_Param_intermediate
 #' @keywords internal
 NULL
 

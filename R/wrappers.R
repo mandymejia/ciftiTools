@@ -8,7 +8,25 @@
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams ROI_brainstructures_Param_LR
-#' @inheritParams sep_fnames_Param
+#' @param sep_fnames  Where to write the separated files (override
+#'  their default file names). This is a named list 
+#'  where each entry's name is a file type label, and each entry's value
+#'  is a file name indicating where to write the corresponding separated file. 
+#'  The recognized file type labels are: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLabs".
+#'  
+#'  Entry values can be \code{NULL}, in which case a default file name will be 
+#'  used: see \code{\link{cifti_component_suffix}}. Default file names
+#'  will also be used for files that need to be separated/written but without a
+#'  corresponding entry in \code{sep_fnames}.
+#'  
+#'  Entries in \code{sep_fnames} will be ignored if they are not needed
+#'  based on \code{[ROI_]brainstructures}. For example, if
+#'  \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
+#'  ignored if specified. 
+#'
+#'  The \code{write_dir} argument can be used to place each separated file in
+#'  the same directory. 
 #' @inheritParams write_dir_Param_generic
 #'
 #' @return The return value of the \code{separate_cifti} call
@@ -50,7 +68,24 @@ separate_cifti_wrapper <- function(
 #' Currently used by read_cifti and resample_cifti.
 #' 
 #' @inheritParams original_fnames_Param_resampled
-#' @inheritParams resamp_fnames_Param
+#' @param resamp_fnames Where to write the resampled files. This is a named list 
+#'  where each entry's name is a file type label, and each entry's value
+#'  is a file name indicating where to write the corresponding resampled file. 
+#'  The recognized file type labels are: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
+#'  
+#'  Entry values can be \code{NULL}, in which case a default file name will be 
+#'  used: see \code{\link{resample_cifti_default_fname}}. Default file names
+#'  will also be used for files that need to be resampled/written but without a
+#'  corresponding entry in \code{resamp_fnames}.
+#'  
+#'  Entries in \code{resamp_fnames} will be ignored if they are not needed
+#'  based on \code{[ROI_]brainstructures}. For example, if
+#'  \code{brainstructures="left"}, then \code{resamp_fnames$cortexR} will be 
+#'  ignored if specified. 
+#'
+#'  The \code{write_dir} argument can be used to place each resampled file in
+#'  the same directory. 
 #' @param original_res The original resolution of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
 #' @inheritParams surfL_fname_Param
@@ -66,7 +101,7 @@ separate_cifti_wrapper <- function(
 #' @keywords internal
 #' 
 resample_cifti_wrapper <- function(
-  original_fnames, resamp_fnames,
+  original_fnames, resamp_fnames=NULL,
   original_res, resamp_res,
   surfL_fname=NULL, surfR_fname=NULL, 
   surfL_target_fname=NULL, surfR_target_fname=NULL, 

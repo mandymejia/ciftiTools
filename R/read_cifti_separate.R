@@ -15,11 +15,6 @@
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams resamp_res_Param_optional
-#' @inheritParams sep_keep_Param
-#' @inheritParams sep_fnames_Param
-#' @inheritParams resamp_keep_Param
-#' @inheritParams resamp_fnames_Param
-#' @inheritParams write_dir_Param_intermediate
 #' @param mwall_values If the medial wall locations are not indicated in the
 #'  CIFTI, use these values to infer the medial wall mask. Default: 
 #'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
@@ -31,29 +26,16 @@
 #' 
 #' 
 read_cifti_separate <- function(
-  cifti_fname, 
-  surfL_fname=NULL, surfR_fname=NULL,
+  cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"),
-  resamp_res=NULL, 
-  sep_keep=FALSE, sep_fnames=NULL,
-  resamp_keep=FALSE, resamp_fnames=NULL,
-  write_dir=NULL, 
-  mwall_values=c(NA, NaN), verbose=TRUE) {
+  resamp_res=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
   # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  if (sep_keep) {
-    write_dir_sep <- write_dir
-  } else {
-    write_dir_sep <- tempdir()
-  }
-  if (resamp_keep) {
-    write_dir_resamp <- write_dir
-  } else {
-    write_dir_resamp <- tempdir()
-  }
+  # Write separated and resampled intermediate/helper files to a temp. dir.
+  write_dir_sep <- write_dir_resamp <- tempdir()
 
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical","all"),
@@ -98,7 +80,7 @@ read_cifti_separate <- function(
   to_read <- separate_cifti_wrapper(
     cifti_fname=cifti_fname,
     brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
-    sep_fnames=sep_fnames, write_dir=write_dir_sep
+    sep_fnames=NULL, write_dir=write_dir_sep
   )
 
   if (verbose) {
@@ -143,7 +125,7 @@ read_cifti_separate <- function(
     # Do resample_cifti_separate.
     resamp_result <- resample_cifti_wrapper(
       original_res=original_res, resamp_res=resamp_res, 
-      original_fnames=to_resample, resamp_fnames=resamp_fnames,
+      original_fnames=to_resample, resamp_fnames=NULL,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       read_dir=NULL, write_dir=write_dir_resamp
     )

@@ -15,10 +15,6 @@ resample_cifti(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sep_keep = FALSE,
-  sep_fnames = NULL,
-  resamp_keep = FALSE,
-  resamp_fnames = NULL,
   write_dir = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
@@ -32,10 +28,6 @@ resampleCIfTI(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sep_keep = FALSE,
-  sep_fnames = NULL,
-  resamp_keep = FALSE,
-  resamp_fnames = NULL,
   write_dir = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
@@ -49,10 +41,6 @@ resamplecii(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sep_keep = FALSE,
-  sep_fnames = NULL,
-  resamp_keep = FALSE,
-  resamp_fnames = NULL,
   write_dir = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
@@ -66,10 +54,6 @@ resample_xifti(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
-  sep_keep = FALSE,
-  sep_fnames = NULL,
-  resamp_keep = FALSE,
-  resamp_fnames = NULL,
   write_dir = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
@@ -93,77 +77,8 @@ cortex. If NULL (default), will use default names: see
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
 
-\item{sep_keep}{If separated files are created, should they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).
-Keeping the separated files may help speed up certain tasks, for example
-when repeatedly iterating over subjects--the CIFTI will only be separated
-once instead of at each iteration.}
-
-\item{sep_fnames}{(Optional) Where to write the separated files (override
- their default file names). This is a named list 
- where each entry's name is a file type label, and each entry's value
- is a file name indicating where to write the corresponding separated file. 
- The recognized file type labels are: "cortexL", "cortexR", 
- "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLabs".
- 
- Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{cifti_component_suffix}}. Default file names
- will also be used for files that need to be separated/written but without a
- corresponding entry in \code{sep_fnames}.
- 
- Entries in \code{sep_fnames} will be ignored if they are not needed
- based on \code{[ROI_]brainstructures}. For example, if
- \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
- ignored if specified. 
-
- The \code{write_dir} argument can be used to place each separated file in
- the same directory.}
-
-\item{resamp_keep}{If resampled files are created, will they be kept or 
-deleted at the end of this function call? Default: \code{FALSE} (delete).
-Keeping the resampled files may help speed up certain tasks, for example
-when repeatedly iterating over CIFTI files--resampling will only be done
-once instead of every new iteration.}
-
-\item{resamp_fnames}{Where to write the resampled files. This is a named list 
- where each entry's name is a file type label, and each entry's value
- is a file name indicating where to write the corresponding resampled file. 
- The recognized file type labels are: "cortexL", "cortexR", 
- "ROIcortexL", "ROIcortexR", "validROIcortexL", and "validROIcortexR".
- 
- Entry values can be \code{NULL}, in which case a default file name will be 
- used: see \code{\link{resample_cifti_default_fname}}. Default file names
- will also be used for files that need to be resampled/written but without a
- corresponding entry in \code{resamp_fnames}.
- 
- Entries in \code{resamp_fnames} will be ignored if they are not needed
- based on \code{[ROI_]brainstructures}. For example, if
- \code{brainstructures="left"}, then \code{resamp_fnames$cortexR} will be 
- ignored if specified. 
-
- The \code{write_dir} argument can be used to place each resampled file in
- the same directory.}
-
-\item{write_dir}{Where should any output files be written? \code{NULL}
- (default) will write them to the current working directory.
-
- Files flagged for deletion will be written to a temporary directory, and
- thus are not affected by this argument. So if \code{sep_keep} is 
- \code{TRUE}, the separated files will be written to \code{write_dir}, but if
- \code{sep_keep} is \code{FALSE}, they will be written to \code{tempdir()} 
- and later deleted. \code{resamp_keep} works similarly. 
-
- For \code{read_cifti_separate}, the surface files (\code{surfL} or \code{surfR})
- are deleted if \code{resamp_keep} is \code{FALSE}, so in this case they will
- be written to \code{tempdir()}. But for \code{resample_cifti}, the
- surface files are kept even if \code{resamp_keep} is \code{FALSE}, so they 
- will always be written to \code{write_dir}. 
-
- Different subfolders for the separated, resampled, and final output files
- cannot be specified by \code{write_dir}. Instead, modify the individual file
- names in \code{sep_fnames} and \code{resamp_fnames}.
-
- \code{write_dir} must already exist, or an error will occur.}
+\item{write_dir}{Where should the resampled CIFTI (and GIFTIs for the surfaces)
+be written? \code{NULL} will use the current working directory.}
 
 \item{mwall_values}{If the medial wall locations are not indicated in the
  CIFTI, use these values to infer the medial wall mask. Default: 

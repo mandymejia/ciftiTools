@@ -6,7 +6,7 @@
 \usage{
 resample_cifti_wrapper(
   original_fnames,
-  resamp_fnames,
+  resamp_fnames = NULL,
   original_res,
   resamp_res,
   surfL_fname = NULL,
