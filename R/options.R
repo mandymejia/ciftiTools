@@ -26,20 +26,15 @@ ciftiTools.listOptions <- function() {
 #' @param opt The option. 
 #' @param val The value to set the option as.
 #' 
-#' @return \code{NULL}, invisibly
+#' @return The (corrected) \code{val}
 #'
 #' @keywords internal
 #' 
 ciftiTools.checkOption <- function(opt, val=NULL){
   stopifnot(opt %in% c("wb_path", "EPS", "suppress_msgs"))
-  if(is.null(val)){ return(invisible(NULL)) }
+  if (is.null(val)) { return(invisible(NULL)) }
   if (opt == "wb_path") {
-    if (!file.exists(val)) { 
-      warning(paste0(
-        "The wb_path value '" , normalizePath(val, mustWork=FALSE), 
-        "' does not exist."
-      )) 
-    }
+    val <- get_wb_cmd_path(val)
   } else if (opt == "EPS") {
     stopifnot(is.numeric(val))
     stopifnot(val > 0)
@@ -49,7 +44,7 @@ ciftiTools.checkOption <- function(opt, val=NULL){
     stopifnot(length(val) == 1)
   } else { stop() }
 
-  invisible(NULL)
+  val
 }
 
 #' Set \code{ciftiTools} option
@@ -65,7 +60,7 @@ ciftiTools.checkOption <- function(opt, val=NULL){
 #' @export
 #'
 ciftiTools.setOption <- function(opt, val) {
-  ciftiTools.checkOption(opt, val)
+  val <- ciftiTools.checkOption(opt, val)
   val <- list(val)
   names(val) <- paste0("ciftiTools_", opt)
   options(val)
@@ -86,6 +81,6 @@ ciftiTools.setOption <- function(opt, val) {
 ciftiTools.getOption <- function(opt) {
   getOption(
     paste0("ciftiTools_", opt), 
-    default=switch(opt, EPS=1e-8, suppress_msgs=TRUE, wb_path=wb_path_request())
+    default=switch(opt, EPS=1e-8, suppress_msgs=TRUE, wb_path=NULL)
   )
 }

@@ -20,7 +20,7 @@ To get started, we load the `ciftiTools` package and indicate where to find the 
 ```{r}
 library(ciftiTools)
 
-# Replace '/path/to/workbench' with the actual path to 
+# Replace '../../workbench' with the actual path to 
 #   the Connectome Workbench folder on your computer.
 ciftiTools.setOption('wb_path', '../../workbench')
 

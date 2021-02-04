@@ -12,7 +12,7 @@ ciftiTools.checkOption(opt, val = NULL)
 \item{val}{The value to set the option as.}
 }
 \value{
-\code{NULL}, invisibly
+The (corrected) \code{val}
 }
 \description{
 Checks if a ciftiTools option and value are valid.

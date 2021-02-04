@@ -270,39 +270,6 @@ match_exactly <- function(
   return(TRUE)
 }
 
-#' Wrapper for Connectome Workbench Commands
-#'
-#' Runs a Connectome Workbench command that has already been formatted.
-#'
-#' @param cmd The full command, beginning after the workbench path.
-#' @param intern Return printed output? If \code{FALSE} (default), return
-#'  logical indicating success instead.
-#'
-#' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
-#'  If \code{intern==TRUE}, the printed output of the command.
-#'
-run_wb_cmd <- function(cmd, intern=FALSE){
-  wb_cmd <- get_wb_cmd_path(NULL)
-  cmd <- paste(sys_path(wb_cmd), cmd)
-  
-  out <- system(cmd, intern=intern)
-  #out_print <- invisible(capture.output( out <- system(cmd, intern=intern) ))
-
-  ciftiTools_msg("Using the Connectome Workbench.")
-
-  if (!intern) {
-    out <- out == 0
-    if (!out) {
-      message(paste0(
-        "The Connectome Workbench command failed with code ", out, 
-        ". The command was:\n", cmd
-      ))
-    }
-  }
-
-  invisible(out)
-}
-
 #' Print Suppressable Message
 #' 
 #' Print message only if ciftiTools Option "suppress_msgs" is TRUE

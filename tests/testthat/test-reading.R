@@ -1,6 +1,5 @@
 check_wb <- function() {
-  wb_path <- try(get_wb_cmd_path(ciftiTools.getOption("wb_path"), verbose=FALSE), silent=TRUE)
-  if ("try-error" %in% class(wb_path)) {
+  if (is.null(ciftiTools.getOption("wb_path"))) {
     skip("Connectome Workbench is not available.")
   }
 }
