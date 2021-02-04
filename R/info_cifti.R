@@ -85,15 +85,15 @@ check_cifti_type <- function(intent, extn){
         "This CIFTI file has intent code", intent, "and extension", extn,
         "neither of which is supported by ciftiTools (yet).",
         "Only the following types are:\n\t",
-        paste(supported_intents()$value, collapse="\n\t "),
+        paste(supported_intents()$value, collapse="\t "),
         "\nRespectively, they correspond to these file extensions:\n\t",
-        paste(supported_intents()$extension, collapse="\n\t ")
+        paste(supported_intents()$extension, collapse="\t ")
       ))
     } else {
       warning(paste(
         "This CIFTI file has extension", extn, "which is not yet supported by ciftiTools.",
-        "Only the following types are:\n\t",
-        paste(supported_intents()$extension, collapse="\n\t "),
+        "Only the following types are:\t",
+        paste(supported_intents()$extension, collapse="\t "),
         "\nThe intent code", intent, "is supported but does not match the extension.",
         "Was the file named incorrectly?",
         "Continuing anyway with the intent code", intent, "and correct extension",
