@@ -303,9 +303,15 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' @keywords internal
 #'
 header_cifti <- function(cifti_fname){
-  run_wb_cmd(
-    paste("-nifti-information", sys_path(cifti_fname), "-print-header"), intern=TRUE
-  )
+  cmd <- paste("-nifti-information", sys_path(cifti_fname), "-print-header")
+  out <- run_wb_cmd(cmd, intern=TRUE, ignore.stdout=FALSE)
+  if (length(out) == 0) {
+    stop(
+      "Workbench command '", paste(sys_path(ciftiTools.getOption("wb_path")), cmd), 
+      "' failed."
+    )
+  }
+  out
 }
 
 #' Get XML of a CIFTI
@@ -324,9 +330,14 @@ header_cifti <- function(cifti_fname){
 #' @keywords internal
 #'
 xml_cifti <- function(cifti_fname){
-  out <- run_wb_cmd(
-    paste("-nifti-information", sys_path(cifti_fname), "-print-xml"), intern=TRUE
-  )
+  cmd <- paste("-nifti-information", sys_path(cifti_fname), "-print-xml")
+  out <- run_wb_cmd(cmd, intern=TRUE, ignore.stdout=FALSE)
+  if (length(out) == 0) {
+    stop(
+      "Workbench command '", paste(sys_path(ciftiTools.getOption("wb_path")), cmd), 
+      "' failed."
+    )
+  }
   as_list(read_xml(paste(out, collapse="\n")))
 }
 

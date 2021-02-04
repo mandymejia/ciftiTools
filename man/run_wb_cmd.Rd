@@ -4,17 +4,22 @@
 \alias{run_wb_cmd}
 \title{Wrapper for Connectome Workbench Commands}
 \usage{
-run_wb_cmd(cmd, intern = FALSE)
+run_wb_cmd(cmd, intern = TRUE, ignore.stdout = NULL, ignore.stderr = NULL)
 }
 \arguments{
 \item{cmd}{The full command, beginning after the workbench path.}
 
-\item{intern}{Return printed output? If \code{FALSE} (default), return
-logical indicating success instead.}
+\item{intern}{Return printed output? If \code{FALSE}, return
+logical indicating success instead. Default: \code{TRUE}.}
+
+\item{ignore.stdout, ignore.stderr}{The "ignore.stdout" and "ignore.stderr"
+arguments to \code{\link[base]{system}}. Should be logical or \code{NULL},
+(default) which will use \code{ciftiTools.getOption("suppress_msgs")}.}
 }
 \value{
-If \code{intern==FALSE}, a logical indicating if the command finished successfully.
- If \code{intern==TRUE}, the printed output of the command.
+If \code{intern==TRUE}, the printed output of the command.
+ If \code{intern==FALSE}, a logical indicating if the command finished 
+ successfully.
 }
 \description{
 Runs a Connectome Workbench command that has already been formatted.

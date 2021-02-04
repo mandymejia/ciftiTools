@@ -23,9 +23,6 @@ library(ciftiTools)
 # Replace '../../workbench' with the actual path to 
 #   the Connectome Workbench folder on your computer.
 ciftiTools.setOption('wb_path', '../../workbench')
-
-# Cleaner vignette document
-ciftiTools.setOption("suppress_msgs", TRUE)
 ```
 
 In this vignette, we will use example data included in the `ciftiTools` package. The files are originally from [NITRC](https://www.nitrc.org/frs/?group_id=454):

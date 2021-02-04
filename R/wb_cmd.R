@@ -36,9 +36,9 @@ get_wb_cmd_path <- function(wb_path) {
   if (!file.exists(wb_path)) {
     warning(paste0(
       "The `wb_path` option value '",
-      wb_path, "' does not reference an existing directory or file. ",
-      "Will try to use it anyway. If this problem persists, try ",
-      "providing the full path to the Connectome Workbench executable ",
+      wb_path, "' does not seem to reference an existing directory or file. ",
+      "Will try to use it anyway. If this message persists, try ",
+      "providing the absolute path to the Connectome Workbench executable ",
       "rather than the path to the containing folder, or a relative path.\n"
     ))
     wb_cmd_path <- wb_path
@@ -67,7 +67,7 @@ get_wb_cmd_path <- function(wb_path) {
         wb_path, "' exists, but does not seem to be the Workbench executable, ",
         "nor a folder containing the executable. Will try to use it anyway. ",
         "If this problem persists, try ",
-        "providing the full path to the Connectome Workbench executable ",
+        "providing the absolute path to the Connectome Workbench executable ",
         "rather than the path to the containing folder, or a relative path.\n"
       ))
       wb_cmd_path <- wb_path
@@ -75,7 +75,7 @@ get_wb_cmd_path <- function(wb_path) {
       warning(paste0(
         "Found these possible Workbench executables: '",
         paste0(possible_paths, collapse="', '"), "'. ",
-        "Using the first. If another should be used, provide the full path ",
+        "Using the first. If another should be used, provide the absolute path ",
         "to the executable rather than the path to the containing folder, or",
         "a relative path.\n"
       ))
@@ -89,27 +89,85 @@ get_wb_cmd_path <- function(wb_path) {
   wb_cmd_path
 }
 
+#' Confirm the Connectome Workbench command path
+#' 
+#' Confirm that the path to the Connectome Workbench executable is valid.
+#'  (For example, if the "wb_path" option was relative and the user changed the 
+#'  current working directory, the path is no longer valid.)
+#' 
+#' @param wb_path (Optional) Path to the Connectome Workbench folder or 
+#'  executable. 
+#' @return \code{NULL}, invisibly
+#'
+#' @keywords internal
+#'
+confirm_wb_cmd_path <- function(wb_path) {
+  if (is.null(wb_path)) { stop(wb_path_request()) } 
+
+  # Complain if `wb_path` doesn't exist.
+  #   Use `cat` instead of `warning` because sometimes the warnings are
+  #   witheld from printed output of a subfunction in RStudio, and only
+  #   visible with a call to `warning()`.
+  if (!file.exists(wb_path)) {
+    cat(paste0(
+      "WARNING: The `wb_path` option value '",
+      wb_path, "' does not seem to reference an existing directory or file. ",
+      "If `wb_path` is relative and the current working directory has changed, ",
+      "the new path needs to be given with `ciftiTools.setOption('wb_path', ...)`. ",
+      "Using an absolute path instead of a relative path could avoid this problem.\n\n",
+      "Will try to use `wb_path` anyway, but the command will most likely fail.\n"
+    ))
+  # Complain if `wb_path` doesn't seem to be the command.
+  } else if (!grepl("wb_command$|wb_command\\.exe$", wb_path)) {
+    cat(paste0(
+      "WARNING: The `wb_path` option value '", wb_path, "' appears invalid. Set it ",
+      "again with `ciftiTools.setOption('wb_path', ...)`.\n\n",
+      "Will try to use `wb_path` anyway, but the command will most likely fail.\n"
+    ))
+  }
+  NULL
+}
+
 #' Wrapper for Connectome Workbench Commands
 #'
 #' Runs a Connectome Workbench command that has already been formatted.
 #'
 #' @param cmd The full command, beginning after the workbench path.
-#' @param intern Return printed output? If \code{FALSE} (default), return
-#'  logical indicating success instead.
+#' @param intern Return printed output? If \code{FALSE}, return
+#'  logical indicating success instead. Default: \code{TRUE}.
+#' @param ignore.stdout,ignore.stderr The "ignore.stdout" and "ignore.stderr"
+#'  arguments to \code{\link[base]{system}}. Should be logical or \code{NULL},
+#'  (default) which will use \code{ciftiTools.getOption("suppress_msgs")}.
 #'
-#' @return If \code{intern==FALSE}, a logical indicating if the command finished successfully.
-#'  If \code{intern==TRUE}, the printed output of the command.
+#' @return If \code{intern==TRUE}, the printed output of the command.
+#'  If \code{intern==FALSE}, a logical indicating if the command finished 
+#'  successfully.
 #'
-run_wb_cmd <- function(cmd, intern=FALSE){
+#' @export
+#'
+run_wb_cmd <- function(cmd, intern=TRUE, ignore.stdout=NULL, ignore.stderr=NULL){
   wb_cmd <- ciftiTools.getOption("wb_path")
-  if (is.null(wb_cmd)) { stop(wb_path_request()) }
+  confirm_wb_cmd_path(wb_cmd)
 
   cmd <- paste(sys_path(wb_cmd), cmd)
-  
-  out <- system(cmd, intern=intern)
-  #out_print <- invisible(capture.output( out <- system(cmd, intern=intern) ))
+
+  if (is.null(ignore.stdout)) {
+    ignore.stdout <- ciftiTools.getOption("suppress_msgs")
+  } else {
+    stopifnot(is.logical(ignore.stdout)); ignore.stdout <- ignore.stdout[1]
+  }
+  if (is.null(ignore.stderr)) {
+    ignore.stderr <- ciftiTools.getOption("suppress_msgs")
+  } else {
+    stopifnot(is.logical(ignore.stderr)); ignore.stderr <- ignore.stderr[1]
+  }
 
   ciftiTools_msg("Using the Connectome Workbench.")
+
+  # out_print <- invisible(capture.output( out <- system(cmd, intern=intern) ))
+  out <- system(
+    cmd, intern=intern, ignore.stdout=ignore.stdout, ignore.stderr=ignore.stderr
+  )
 
   if (!intern) {
     out <- out == 0
