@@ -53,7 +53,14 @@ is.xifti_data <- function(x) {
 
   # Non-empty entries should be numeric matrices.
   not_null <- names(x)[!vapply(x, is.null, FALSE)]
-  for (ii in not_null) { if (!is.nummat(x[[ii]])) { return(FALSE) } }
+  for (ii in not_null) { 
+    if (!is.nummat(x[[ii]])) {
+      message(
+        "`xifti` data can be coerced to numeric matrices using `fix_xifti`.\n"
+      )
+      return(FALSE)
+    } 
+  }
 
   if (!is.null(x$cortex_left) && nrow(x$cortex_left) > 200000) {
     warning("The left cortex has over 200,000 vertices. Is this a mistake?")

@@ -19,6 +19,6 @@ Make adjustments to a putative \code{"xifti"} so that it is valid. Each
  adjustment is reported.
 }
 \details{
-Right now it only coerces the data to numeric.
+Right now it only coerces the data to numeric matrices.
 }
 \keyword{internal}
