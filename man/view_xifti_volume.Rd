@@ -14,8 +14,7 @@ view_xifti_volume(
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
   use_papaya = FALSE,
-  z_min = NULL,
-  z_max = NULL,
+  zlim = NULL,
   verbose = TRUE,
   ...
 )
@@ -27,8 +26,7 @@ view_cifti_volume(
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
   use_papaya = FALSE,
-  z_min = NULL,
-  z_max = NULL,
+  zlim = NULL,
   verbose = TRUE,
   ...
 )
@@ -40,8 +38,7 @@ viewCIfTI_volume(
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
   use_papaya = FALSE,
-  z_min = NULL,
-  z_max = NULL,
+  zlim = NULL,
   verbose = TRUE,
   ...
 )
@@ -53,8 +50,7 @@ viewcii_volume(
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
   use_papaya = FALSE,
-  z_min = NULL,
-  z_max = NULL,
+  zlim = NULL,
   verbose = TRUE,
   ...
 )
@@ -79,9 +75,9 @@ Default: \code{9}.}
 
 \item{use_papaya}{use_papaya=TRUE will use papayar to allows for interactive visualization.}
 
-\item{z_min}{Floor value.}
-
-\item{z_max}{Ceiling value.}
+\item{zlim}{A length-2 numeric vector giving the minimum and maximum values to
+plot. Data values beyond this range will be truncated to the min/max. If
+\code{NULL} (default), will use the min and max of the data.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
 

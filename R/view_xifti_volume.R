@@ -14,8 +14,10 @@
 #' @param num.slices If use_papaya=FALSE, the number of slices to display.
 #'  Default: \code{9}.
 #' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
-#' @param z_min Floor value.
-#' @param z_max Ceiling value.
+#' @param zlim A length-2 numeric vector giving the minimum and maximum values to
+#'  plot. Data values beyond this range will be truncated to the min/max. If
+#'  \code{NULL} (default), will use the min and max of the data.
+#'  
 #' @inheritParams verbose_Param_TRUE
 #' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
 #'
@@ -23,7 +25,7 @@
 #' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  num.slices=9, use_papaya=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   if (use_papaya) {
@@ -56,8 +58,21 @@ view_xifti_volume <- function(
     slices <- slices[inds]
   }
 
-  if (!is.null(z_min)) values[values < z_min] <- z_min
-  if (!is.null(z_max)) values[values > z_max] <- z_max
+  if (!is.null(zlim)) {
+    if (length(zlim) != 2) {
+      stop("`zlim` must be a length 2 vector giving the min and max values to plot.")
+    }
+    if (zlim[1] > zlim[2]) {
+      warning(
+        "The first entry of zlim was greater than the second. ",
+        "Using the first as the max and second as the min."
+      )
+      zlim <- rev(zlim)
+    }
+    values[values < zlim[1]] <- zlim[1]
+    values[values > zlim[2]] <- zlim[2]
+  }
+
   if (verbose) {
     cat(paste0(
       "Values to be plotted range from ",
@@ -151,7 +166,7 @@ view_xifti_volume <- function(
 #' @export
 view_cifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  num.slices=9, use_papaya=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -160,7 +175,7 @@ view_cifti_volume <- function(
     idx=idx, plane=plane,
     num.slices=num.slices,
     use_papaya=use_papaya,
-    z_min=z_min, z_max=z_max,
+    zlim=zlim,
     verbose=verbose, ...
   )
 }
@@ -169,7 +184,7 @@ view_cifti_volume <- function(
 #' @export
 viewCIfTI_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  num.slices=9, use_papaya=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -178,7 +193,7 @@ viewCIfTI_volume <- function(
     idx=idx, plane=plane,
     num.slices=num.slices,
     use_papaya=use_papaya,
-    z_min=z_min, z_max=z_max,
+    zlim=zlim,
     verbose=verbose, ...
   )
 }
@@ -187,7 +202,7 @@ viewCIfTI_volume <- function(
 #' @export
 viewcii_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, z_min=NULL, z_max=NULL,
+  num.slices=9, use_papaya=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -196,7 +211,7 @@ viewcii_volume <- function(
     idx=idx, plane=plane,
     num.slices=num.slices,
     use_papaya=use_papaya,
-    z_min=z_min, z_max=z_max,
+    zlim=zlim,
     verbose=verbose, ...
   )
 }
