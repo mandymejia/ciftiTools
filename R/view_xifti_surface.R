@@ -164,7 +164,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
       if (!all(idx %in% seq_len(ncol(xifti$data[[cor_h]])))) {
         stop(paste0(
           "At least one requested index/indices was not a valid column in",
-          " the xifti (between 1 and", ncol(xifti$data[[cor_h]]), ")." 
+          " the xifti (between 1 and ", ncol(xifti$data[[cor_h]]), ")." 
         ))
       }
       values[[h]][mwall_h,] <- xifti$data[[cor_h]][,idx, drop=FALSE]
