@@ -42,7 +42,7 @@ There are three kinds of arguments for \code{colors}: \code{"ROY_BIG_BL"},
 
 If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
  the same palette as the 
- \href{github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx}{default for the Connectome Workbench application}. 
+ \href{https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx}{default for the Connectome Workbench application}. 
  The midpoint will be colored 
  black. From the midpoint toward the upper bound, colors will proceed from 
  black to red to yellow. From the midpoint toward the lower bound, colors 

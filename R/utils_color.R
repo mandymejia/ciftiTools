@@ -4,7 +4,7 @@
 #'
 #' Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. 
 #'  This is the same color palette as the default Connectome Workbench palette. 
-#'  Source: github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
+#'  Source: https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 #'
 #' @param min The minimum value for the color mapping. As in the original 
 #'  palette, the last color (aqua) is actually placed at the bottom .5\% between
@@ -120,7 +120,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #'
 #' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
 #'  the same palette as the 
-#'  \href{github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx}{default for the Connectome Workbench application}. 
+#'  \href{https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx}{default for the Connectome Workbench application}. 
 #'  The midpoint will be colored 
 #'  black. From the midpoint toward the upper bound, colors will proceed from 
 #'  black to red to yellow. From the midpoint toward the lower bound, colors 
