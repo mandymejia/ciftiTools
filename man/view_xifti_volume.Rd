@@ -67,7 +67,8 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 subcortical values. Can be a file name, \code{"MNI"} (default) to use
 the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 
-\item{idx}{The time/column index of the \code{"xifti"} data to plot.}
+\item{idx}{The time/column index of the \code{"xifti"} data to plot. Must
+be a single index (length 1).}
 
 \item{plane}{If use_papaya=FALSE, the plane to display.
 Default: \code{"axial"}. Other options are \code{"sagittal"} and 

@@ -6,7 +6,8 @@
 #' @param structural_img The structural MRI image on which to overlay the
 #'  subcortical values. Can be a file name, \code{"MNI"} (default) to use
 #'  the MNI T1-weighted template, or \code{NULL} to use a blank image.
-#' @param idx The time/column index of the \code{"xifti"} data to plot.
+#' @param idx The time/column index of the \code{"xifti"} data to plot. Must
+#'  be a single index (length 1).
 #' @param plane If use_papaya=FALSE, the plane to display.
 #'  Default: \code{"axial"}. Other options are \code{"sagittal"} and 
 #'  \code{"coronal"}.
@@ -32,7 +33,9 @@ view_xifti_volume <- function(
     }
   }
 
-  #stop("Does not work.")
+  if (length(idx) > 1) {
+    stop("Only one `idx` at a time is supported for `view_xifti_volume`.")
+  }
 
   stopifnot(is.xifti(xifti))
 
