@@ -13,7 +13,7 @@ view_xifti_volume(
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
-  use_papaya = FALSE,
+  interactive = FALSE,
   zlim = NULL,
   verbose = TRUE,
   ...
@@ -25,7 +25,7 @@ view_cifti_volume(
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
-  use_papaya = FALSE,
+  interactive = FALSE,
   zlim = NULL,
   verbose = TRUE,
   ...
@@ -37,7 +37,7 @@ viewCIfTI_volume(
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
-  use_papaya = FALSE,
+  interactive = FALSE,
   zlim = NULL,
   verbose = TRUE,
   ...
@@ -49,7 +49,7 @@ viewcii_volume(
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
   num.slices = 9,
-  use_papaya = FALSE,
+  interactive = FALSE,
   zlim = NULL,
   verbose = TRUE,
   ...
@@ -66,14 +66,14 @@ the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 \item{idx}{The time/column index of the \code{"xifti"} data to plot. Must
 be a single index (length 1).}
 
-\item{plane}{If use_papaya=FALSE, the plane to display.
+\item{plane}{If interactive=FALSE, the plane to display.
 Default: \code{"axial"}. Other options are \code{"sagittal"} and 
 \code{"coronal"}.}
 
-\item{num.slices}{If use_papaya=FALSE, the number of slices to display.
+\item{num.slices}{If interactive=FALSE, the number of slices to display.
 Default: \code{9}.}
 
-\item{use_papaya}{use_papaya=TRUE will use papayar to allows for interactive visualization.}
+\item{interactive}{interactive=TRUE will use papayar to allows for interactive visualization.}
 
 \item{zlim}{A length-2 numeric vector giving the minimum and maximum values to
 plot. Data values beyond this range will be truncated to the min/max. If

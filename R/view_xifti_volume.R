@@ -8,12 +8,12 @@
 #'  the MNI T1-weighted template, or \code{NULL} to use a blank image.
 #' @param idx The time/column index of the \code{"xifti"} data to plot. Must
 #'  be a single index (length 1).
-#' @param plane If use_papaya=FALSE, the plane to display.
+#' @param plane If interactive=FALSE, the plane to display.
 #'  Default: \code{"axial"}. Other options are \code{"sagittal"} and 
 #'  \code{"coronal"}.
-#' @param num.slices If use_papaya=FALSE, the number of slices to display.
+#' @param num.slices If interactive=FALSE, the number of slices to display.
 #'  Default: \code{9}.
-#' @param use_papaya use_papaya=TRUE will use papayar to allows for interactive visualization.
+#' @param interactive interactive=TRUE will use papayar to allows for interactive visualization.
 #' @param zlim A length-2 numeric vector giving the minimum and maximum values to
 #'  plot. Data values beyond this range will be truncated to the min/max. If
 #'  \code{NULL} (default), will use the min and max of the data.
@@ -25,10 +25,10 @@
 #' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, zlim=NULL,
+  num.slices=9, interactive=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
-  if (use_papaya) {
+  if (interactive) {
     if (!requireNamespace("papayar", quietly = TRUE)) {
       stop("Package \"papayar\" needed for this function to work. Please install it.",
            call. = FALSE)
@@ -47,7 +47,7 @@ view_xifti_volume <- function(
   labs <- unmask_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Pick slices with a lot of subcortical voxels.
-  if (!use_papaya) {
+  if (!interactive) {
     plane <- match.arg(plane, c("axial", "sagittal", "coronal"))
     if (plane=="axial") mask_count <- apply(xifti$meta$subcort$mask, 3, sum)
     if (plane=="coronal") mask_count <- apply(xifti$meta$subcort$mask, 2, sum)
@@ -145,7 +145,7 @@ view_xifti_volume <- function(
   img_labels@.Data <- labs
   img_labels@.Data[labs==0] <- NA
 
-  if (!use_papaya) {
+  if (!interactive) {
     if (plane=="axial") {
       img <- img[,,slices]
       img_overlay <- img_overlay[,,slices]
@@ -166,7 +166,7 @@ view_xifti_volume <- function(
 #' @export
 view_cifti_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, zlim=NULL,
+  num.slices=9, interactive=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -174,7 +174,7 @@ view_cifti_volume <- function(
     structural_img=structural_img,
     idx=idx, plane=plane,
     num.slices=num.slices,
-    use_papaya=use_papaya,
+    interactive=interactive,
     zlim=zlim,
     verbose=verbose, ...
   )
@@ -184,7 +184,7 @@ view_cifti_volume <- function(
 #' @export
 viewCIfTI_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, zlim=NULL,
+  num.slices=9, interactive=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -192,7 +192,7 @@ viewCIfTI_volume <- function(
     structural_img=structural_img,
     idx=idx, plane=plane,
     num.slices=num.slices,
-    use_papaya=use_papaya,
+    interactive=interactive,
     zlim=zlim,
     verbose=verbose, ...
   )
@@ -202,7 +202,7 @@ viewCIfTI_volume <- function(
 #' @export
 viewcii_volume <- function(
   xifti, structural_img="MNI", idx=1, plane=c("axial", "sagittal", "coronal"),
-  num.slices=9, use_papaya=FALSE, zlim=NULL,
+  num.slices=9, interactive=FALSE, zlim=NULL,
   verbose=TRUE, ...) {
 
   view_xifti_volume(
@@ -210,7 +210,7 @@ viewcii_volume <- function(
     structural_img=structural_img,
     idx=idx, plane=plane,
     num.slices=num.slices,
-    use_papaya=use_papaya,
+    interactive=interactive,
     zlim=zlim,
     verbose=verbose, ...
   )

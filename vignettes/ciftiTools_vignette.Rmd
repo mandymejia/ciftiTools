@@ -114,7 +114,7 @@ dlabel <- view_xifti_surface(
 )
 ```
 
-`view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `use_papaya=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
+`view_xifti_volume(cii)` displays the subcortical data in slices. To view interactively in a web browser, set `interactive=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
 
 ```{r, fig.cap="Subcortical data (all ones)", fig.height=6, fig.width=4}
 # cifti_fnames["dscalar_ones"] is the only file with subcortical data
@@ -124,7 +124,7 @@ view_xifti_volume(cii)
 
 ```{r eval=FALSE}
 # For information only, since papaya viewer cannot be opened during knitting
-view_xifti_volume(cii, use_papaya = TRUE)
+view_xifti_volume(cii, interactive = TRUE)
 ```
 
 The `"xifti"` "plot" method (`plot(cii)`) will display the cortical data if possible, and the subcortical data otherwise. 
