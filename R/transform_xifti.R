@@ -55,6 +55,7 @@ transform_xifti <- function(xifti, xifti2=NULL, FUN) {
 
   # Unary
   if (is.null(xifti2)) {
+    if (!is.xifti(xifti)) { stop("`xifti` is invalid.") }
     for (bs in names(xifti$data)) {
       if (!is.null(xifti$data[[bs]])) {
         xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], FUN=FUN)
