@@ -136,8 +136,9 @@ confirm_wb_cmd_path <- function(wb_path) {
 #' @param intern Return printed output? If \code{FALSE}, return
 #'  logical indicating success instead. Default: \code{TRUE}.
 #' @param ignore.stdout,ignore.stderr The "ignore.stdout" and "ignore.stderr"
-#'  arguments to \code{\link[base]{system}}. Should be logical or \code{NULL},
-#'  (default) which will use \code{ciftiTools.getOption("suppress_msgs")}.
+#'  arguments to \code{\link[base]{system}}. Should be logical or \code{NULL}.
+#'  If \code{NULL} (default), messages will be controlled by 
+#'  \code{ciftiTools.getOption("suppress_msgs")} and errors will not be ignored.
 #'
 #' @return If \code{intern==TRUE}, the printed output of the command.
 #'  If \code{intern==FALSE}, a logical indicating if the command finished 
@@ -157,7 +158,7 @@ run_wb_cmd <- function(cmd, intern=TRUE, ignore.stdout=NULL, ignore.stderr=NULL)
     stopifnot(is.logical(ignore.stdout)); ignore.stdout <- ignore.stdout[1]
   }
   if (is.null(ignore.stderr)) {
-    ignore.stderr <- ciftiTools.getOption("suppress_msgs")
+    ignore.stderr <- FALSE # ciftiTools.getOption("suppress_msgs")
   } else {
     stopifnot(is.logical(ignore.stderr)); ignore.stderr <- ignore.stderr[1]
   }

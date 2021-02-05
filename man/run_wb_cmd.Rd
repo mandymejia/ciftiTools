@@ -13,8 +13,9 @@ run_wb_cmd(cmd, intern = TRUE, ignore.stdout = NULL, ignore.stderr = NULL)
 logical indicating success instead. Default: \code{TRUE}.}
 
 \item{ignore.stdout, ignore.stderr}{The "ignore.stdout" and "ignore.stderr"
-arguments to \code{\link[base]{system}}. Should be logical or \code{NULL},
-(default) which will use \code{ciftiTools.getOption("suppress_msgs")}.}
+arguments to \code{\link[base]{system}}. Should be logical or \code{NULL}.
+If \code{NULL} (default), messages will be controlled by 
+\code{ciftiTools.getOption("suppress_msgs")} and errors will not be ignored.}
 }
 \value{
 If \code{intern==TRUE}, the printed output of the command.
