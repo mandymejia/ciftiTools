@@ -4,18 +4,18 @@
 #'  If a pair, they must share the same brainstructures and data dimensions.
 #' 
 #' @param xifti The xifti
-#' @param xifti2 The second xifti, if applicable. Otherwise, \code{NULL} (default)
 #' @param FUN The function. If \code{xifti2} is not provided, it should be
 #'  a univariate function like \code{log} or \code{sqrt}. If 
 #'  \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
 #'  or \code{pmax}.
+#' @param xifti2 The second xifti, if applicable. Otherwise, \code{NULL} (default)
 #' @return A \code{xifti} storing the result of applying \code{FUN} to the input(s).
 #'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
 #' @export
 #' @importFrom utils capture.output
 #' 
-transform_xifti <- function(xifti, xifti2=NULL, FUN) {
+transform_xifti <- function(xifti, FUN, xifti2=NULL) {
   if (!is.xifti(xifti, messages=FALSE) && (!is.null(xifti2) && !is.xifti(xifti2, messages=FALSE))) {
     stop("Neither argument is a xifti.")
   }

@@ -19,7 +19,7 @@
 \alias{log.xifti}
 \title{Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.}
 \usage{
-transform_xifti(xifti, xifti2 = NULL, FUN)
+transform_xifti(xifti, FUN, xifti2 = NULL)
 
 \method{+}{xifti}(xifti, xifti2)
 
@@ -54,12 +54,12 @@ transform_xifti(xifti, xifti2 = NULL, FUN)
 \arguments{
 \item{xifti}{The xifti}
 
-\item{xifti2}{The second xifti, if applicable. Otherwise, \code{NULL} (default)}
-
 \item{FUN}{The function. If \code{xifti2} is not provided, it should be
 a univariate function like \code{log} or \code{sqrt}. If 
 \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
 or \code{pmax}.}
+
+\item{xifti2}{The second xifti, if applicable. Otherwise, \code{NULL} (default)}
 
 \item{x}{The \code{"xifti"}}
 
