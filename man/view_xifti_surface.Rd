@@ -47,6 +47,7 @@ view_cifti_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
+  widget = TRUE,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,

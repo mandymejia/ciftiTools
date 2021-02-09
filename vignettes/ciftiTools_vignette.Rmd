@@ -381,5 +381,4 @@ view_xifti_surface(
   read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
   idx=1:2, bg="#ECF5D4", zlim=c(0,5), slider_title = ""
 )
-rgl::rgl.close()
 ```

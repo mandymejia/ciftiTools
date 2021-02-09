@@ -687,6 +687,9 @@ view_xifti_surface <- function(
       warning("Nothing to plot in `view_xifti_surface`.")
       return(NULL)
     } else {
+      if (!is.null(idx) && (length(idx)>1 || idx!=1)) {
+        warning("Ignoring `idx` argument, since there is no data to plot.")
+      }
       return(
         view_xifti_surface(
           xifti=make_xifti(surfL=surfL, surfR=surfR),
@@ -939,7 +942,10 @@ view_xifti_surface <- function(
       # Skip if there are too many legend labels.
       if (length(cleg_labs) > 200) {
         use_cleg <- FALSE
-        warning("Too many labels (> 200) for qualitative color legend. Not rendering it.")
+        warning("Too many labels (> 200) for qualitative color legend. Not rendering it.\n")
+      } else if (!requireNamespace("ggpubr", quietly = TRUE)) {
+        use_cleg <- FALSE
+        warning("Package \"ggpubr\" needed to make the color legend. Please install it. Skipping the color legend for now.\n")
       } else {
         cleg <- view_xifti_surface.cleg(pal_base, cleg_labs, legend_ncol, text_color)
       }
@@ -1235,14 +1241,14 @@ view_xifti_surface <- function(
     }
 
     # [TO DO]: Adjust sizing
-    return(
-      rgl::playwidget(
-        rgl::rglwidget(), 
-        start=0, stop=length(idx)-1, interval=1,
-        components="Slider", #height=all_panels_height, width=all_panels_width,
-        controls
-      )
+    out <- rgl::playwidget(
+      rgl::rglwidget(), 
+      start=0, stop=length(idx)-1, interval=1,
+      components="Slider", #height=all_panels_height, width=all_panels_width,
+      controls
     )
+    rgl::rgl.close()
+    return(out)
   } else {
     return(invisible(rglIDs))
   }
@@ -1253,7 +1259,7 @@ view_xifti_surface <- function(
 view_cifti_surface <- function(
   xifti, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"),
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
   legend_ncol=NULL, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
