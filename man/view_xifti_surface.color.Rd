@@ -11,9 +11,8 @@ view_xifti_surface.color(
   colors,
   color_mode,
   zlim,
-  colorbar_digits,
+  digits,
   xifti_meta,
-  border_color,
   surfL,
   surfR
 )
@@ -21,12 +20,12 @@ view_xifti_surface.color(
 \arguments{
 \item{hemisphere, values, idx}{idx see \code{\link{view_xifti_surface}}}
 
-\item{colors, color_mode, zlim, }{colorbar_digits see 
+\item{colors, color_mode, zlim, }{digits see 
 \code{\link{view_xifti_surface}}}
 
 \item{xifti_meta}{\code{xifti$meta}}
 
-\item{border_color, surfL, surfR}{see \code{\link{view_xifti_surface}}}
+\item{surfL, surfR}{see \code{\link{view_xifti_surface}}}
 }
 \value{
 A list with entries "pal_base", "pal", "color_vals", and "unique_vals"

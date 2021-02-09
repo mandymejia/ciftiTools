@@ -16,7 +16,7 @@ test_that("plot_xifti_surface and related functions are working", {
     plot(cii); rgl::rgl.close()
     print("sequential")
     plot(cii, color_mode="sequential"); rgl::rgl.close()
-    plot(cii, color_mode="sequential", zlim=c(2, 5)); rgl::rgl.close()
+    plot(cii, color_mode="sequential", zlim=c(2, 5), title=""); rgl::rgl.close()
     plot(cii, color_mode="sequential", zlim=c(5, 2)); rgl::rgl.close()
     print("diverging")
     plot(cii, color_mode="diverging"); rgl::rgl.close()
@@ -35,5 +35,7 @@ test_that("plot_xifti_surface and related functions are working", {
       plot(cii); rgl::rgl.close()
     }
   }
+
+  plot(make_surf(demo_files()$surf["left"]))
 
 })

@@ -25,12 +25,11 @@
 #' @export
 #' 
 view_surf <- function(
-  ..., view=c("both", "lateral", "medial"),
-  width=NULL, height=NULL, zoom=NULL,
-  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE,
+  ..., view=c("both", "lateral", "medial"), title=NULL,
+  fname=FALSE, 
+  cex.title=NULL, text_color="black", bg=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  mode=NULL){
+  width=NULL, height=NULL, zoom=NULL){
   
   surf <- list(...)
 
@@ -111,14 +110,12 @@ view_surf <- function(
 
   # Plot
   view_xifti_surface(
-    make_xifti(surfL=surfL, surfR=surfR), hemisphere=hemisphere,
-    view=view,
-    width=width, height=height, zoom=zoom,
-    bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save,
-    surfL=surfL, surfR=surfR,
-    alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size, 
-    mode=mode
+    xifti=make_xifti(surfL=surfL, surfR=surfR),
+    hemisphere=hemisphere, view=view, fname=fname, 
+    cex.title=cex.title, text_color=text_color, bg=bg,
+    alpha=alpha, edge_color=edge_color, 
+    vertex_color=vertex_color, vertex_size=vertex_size,
+    width=width, height=height, zoom=zoom
   )
 }
 

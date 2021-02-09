@@ -108,9 +108,8 @@ view_xifti_surface(cii, idx=2, zlim=c(1,5), color_mode = "diverging")
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
 dlabel <- view_xifti_surface(
   read_cifti(cifti_fnames["dlabel"]), 
-  # Interactively, set qualitative_colorlegend to `TRUE`
-  #   for a color legend that displays the label names.
-  qualitative_colorlegend=FALSE, colorlegend_ncol=5
+  # Interactively, a color legend that displays the label names will also be printed.
+  legend_ncol=5
 )
 ```
 
