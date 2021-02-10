@@ -42,8 +42,9 @@ widget nor the Open GL window are able to be displayed.}
 \item{title}{Optional title(s) for the plot(s). It will be printed at the top 
  in a separate subplot with 1/4 the height of the brain cortex subplots.
  
- Default: \code{NULL} will use the time index (".dtseries") or name
- (.dscalar or .dlabel) of the data column being plotted. 
+ Default: \code{NULL} will not use any title if \code{length(idx)==1}.
+ Otherwise, it will use the time index (".dtseries") or name
+ (.dscalar or .dlabel) of each data column.
 
  To use a custom title(s), use a length 1 character vector (same title for
  each plot) or length \code{length(idx)} character vector (different title

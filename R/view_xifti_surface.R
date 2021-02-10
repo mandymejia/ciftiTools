@@ -745,6 +745,8 @@ view_xifti_surface <- function(
       stop("Length of `title` must be 1 or the same as the length of `idx`.") 
     }
     if (all(title == "")) { use_title <- FALSE }
+  } else {
+    if (length(idx)==1) { use_title <- FALSE }
   }
 
   # `fname`, `fname_suffix`
