@@ -60,20 +60,20 @@ smooth_xifti(
 )
 }
 \arguments{
-\item{x}{The \code{"xifti"} object or CIFTI file to smooth.}
+\item{x}{The CIFTI file name or \code{"xifti"} object to resample.}
 
-\item{cifti_target_fname}{The file name to save the smoothed CIFTI. If
-\code{NULL}, will be set to a file in a temporary directory.}
+\item{cifti_target_fname}{File name for the smoothed CIFTI. If
+\code{NULL}, will be written to "smoothed.d*.nii" in the current working
+directory if \code{x} was a CIFTI file, and in a temporary directory if 
+\code{x} was a \code{"xifti"} object.}
 
 \item{surf_FWHM, vol_FWHM}{The full width at half maximum (FWHM) paramter
 for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}}
 
-\item{surfL_fname, surfR_fname}{(Required if the 
-corresponding cortex is present) Surface GIFTI files for the left and right
-cortical surface}
+\item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is 
+present) Surface GIFTI files for the left and right cortical surfaces}
 
-\item{cerebellum_fname}{(Optional) Surface GIFTI file for the 
-cerebellar surface}
+\item{cerebellum_fname}{(Optional) Surface GIFTI file for the cerebellar surface}
 
 \item{subcortical_zeroes_as_NA, cortical_zeroes_as_NA}{Should zero-values in 
 the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.}
@@ -94,7 +94,7 @@ If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
  Unless the label values were ordinal, this is probably not desired so a
  warning will be printed.
 
- The input can also be a \code{"xifti"} object.
+ Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
  Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
  the inflated surfaces included in \code{"ciftiTools"} will be used.

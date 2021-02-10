@@ -9,11 +9,11 @@
 \usage{
 read_cifti(
   cifti_fname = NULL,
-  flat = FALSE,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  flat = FALSE,
   mwall_values = c(NA, NaN),
   verbose = FALSE,
   ...
@@ -21,11 +21,11 @@ read_cifti(
 
 readCIfTI(
   cifti_fname,
-  flat = FALSE,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  flat = FALSE,
   mwall_values = c(NA, NaN),
   verbose = FALSE,
   ...
@@ -33,11 +33,11 @@ readCIfTI(
 
 readcii(
   cifti_fname,
-  flat = FALSE,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  flat = FALSE,
   mwall_values = c(NA, NaN),
   verbose = FALSE,
   ...
@@ -45,11 +45,11 @@ readcii(
 
 read_xifti(
   cifti_fname,
-  flat = FALSE,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
   resamp_res = NULL,
+  flat = FALSE,
   mwall_values = c(NA, NaN),
   verbose = FALSE,
   ...
@@ -57,24 +57,6 @@ read_xifti(
 }
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
-
-\item{flat}{Should the result be flattened into a single matrix? 
-
- If \code{FALSE} (default), the result will be a \code{"xifti"} object.
-
- If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T} 
- measurements, \eqn{G} greyordinates not including the medial wall if it's 
- excluded from the ROI). All below arguments will be ignored because the 
- brain structures cannot be identified. Surfaces will not be appended. 
- Resampling is also not possible. \code{flat==TRUE} is the fastest way to 
- read in just the CIFTI data. 
-
- If \code{TRUE}, the greyordinates will be ordered by left cortex, right 
- cortex, and then subcortex. Subcortical voxels will be ordered by alphabetical 
- label. However, where each brainstructure (and subcortical structure) begins
- and ends cannot be determined. The medial wall locations and subcortical 
- brain mask are also not included. The data matrix will be identical to that 
- created by \code{-cifti-convert -to-gifti-ext}.}
 
 \item{surfL_fname}{(Optional) File path of GIFTI surface geometry
 file representing the left cortex.}
@@ -95,6 +77,24 @@ file representing the right cortex.}
 Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 have to be read in with \code{-cifti-separate}, which is slower than 
 \code{-cifti-convert -to-gifti-ext}.}
+
+\item{flat}{Should the result be flattened into a single matrix?
+
+ If \code{FALSE} (default), the result will be a \code{"xifti"} object.
+
+ If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T} 
+ measurements, \eqn{G} greyordinates not including the medial wall if it's 
+ excluded from the ROI). All below arguments will be ignored because the 
+ brain structures cannot be identified. Surfaces will not be appended. 
+ Resampling is also not possible. \code{flat==TRUE} is the fastest way to 
+ read in just the CIFTI data. 
+
+ If \code{TRUE}, the greyordinates will be ordered by left cortex, right 
+ cortex, and then subcortex. Subcortical voxels will be ordered by alphabetical 
+ label. However, where each brainstructure (and subcortical structure) begins
+ and ends cannot be determined. The medial wall locations and subcortical 
+ brain mask are also not included. The data matrix will be identical to that 
+ created by \code{-cifti-convert -to-gifti-ext}.}
 
 \item{mwall_values}{If the medial wall locations are not indicated in the
 CIFTI, use these values to infer the medial wall mask. Default: 

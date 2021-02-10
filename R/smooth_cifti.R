@@ -8,22 +8,23 @@
 #'  Unless the label values were ordinal, this is probably not desired so a
 #'  warning will be printed.
 #' 
-#'  The input can also be a \code{"xifti"} object.
+#'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 #' 
 #'  Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
 #'  the inflated surfaces included in \code{"ciftiTools"} will be used.
+#' 
 #' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
-#' @param x The \code{"xifti"} object or CIFTI file to smooth.
-#' @param cifti_target_fname The file name to save the smoothed CIFTI. If
-#'  \code{NULL}, will be set to a file in a temporary directory.
+#' @param x The CIFTI file name or \code{"xifti"} object to resample.
+#' @param cifti_target_fname File name for the smoothed CIFTI. If
+#'  \code{NULL}, will be written to "smoothed.d*.nii" in the current working
+#'  directory if \code{x} was a CIFTI file, and in a temporary directory if 
+#'  \code{x} was a \code{"xifti"} object.
 #' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) paramter
 #'  for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
-#' @param surfL_fname,surfR_fname (Required if the 
-#'  corresponding cortex is present) Surface GIFTI files for the left and right
-#'  cortical surface
-#' @param cerebellum_fname (Optional) Surface GIFTI file for the 
-#'  cerebellar surface
+#' @param surfL_fname,surfR_fname (Required if the corresponding cortex is 
+#'  present) Surface GIFTI files for the left and right cortical surfaces
+#' @param cerebellum_fname (Optional) Surface GIFTI file for the cerebellar surface
 #' @param subcortical_zeroes_as_NA,cortical_zeroes_as_NA Should zero-values in 
 #'  the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.
 #' @param subcortical_merged Smooth across subcortical structure boundaries?
@@ -40,17 +41,13 @@ smooth_cifti <- function(
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
 
-  surfL_return <- surfR_return <- FALSE
+  # Args check -----------------------------------------------------------------
   input_is_xifti <- is.xifti(x, messages=FALSE)
+  surfL_return <- surfR_return <- FALSE
 
   # Setup ----------------------------------------------------------------------
-  # Get the metadata and set `cifti_target_fname` if NULL.
-  # Also write out the CIFTI and get the surfaces present if x is a "xifti"
   if (input_is_xifti) {
-
-    # Get metadata.
-    cifti_info <- x$meta
-    ## Get Intent.
+    # Check intent. Treat unknown intents as dscalar.
     x_intent <- x$meta$cifti$intent
     if (!is.null(x_intent) && (x_intent %in% supported_intents()$value)) {
       x_extn <- supported_intents()$extension[supported_intents()$value == x_intent]
@@ -58,21 +55,15 @@ smooth_cifti <- function(
       warning("The CIFTI intent was unknown, so smoothing as a dscalar.")
       x_extn <- "dscalar.nii"
     }
-    ## Get brainstructures.
-    brainstructures <- vector("character", 0)
-    if (!is.null(x$data$cortex_left)) { brainstructures <- c(brainstructures, "left") }
-    if (!is.null(x$data$cortex_right)) { brainstructures <- c(brainstructures, "right") }
-    if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcortical") }
 
     # Write out the CIFTI.
     cifti_original_fname <- file.path(tempdir(), paste0("to_smooth.", x_extn))
     write_cifti(x, cifti_original_fname, verbose=FALSE)
 
-    # Set the target CIFTI file name if null.
+    # Set the target CIFTI file name.
     if (is.null(cifti_target_fname)) {
       cifti_target_fname <- gsub(
-        "to_smooth.", "smoothed.", 
-        cifti_original_fname, fixed=TRUE
+        "to_smooth.", "smoothed.", cifti_original_fname, fixed=TRUE
       )
     }
 
@@ -88,20 +79,27 @@ smooth_cifti <- function(
       write_surf_gifti(x$surf$cortex_right, surfR_fname, hemisphere="right")
     }
 
+    cifti_info <- x$meta
+    brainstructures <- vector("character")
+    if (!is.null(x$data$cortex_left)) { brainstructures <- c(brainstructures, "left") }
+    if (!is.null(x$data$cortex_right)) { brainstructures <- c(brainstructures, "right") }
+    if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcort") }
+  
   } else {
+    # Check that the original file is valid.
     cifti_original_fname <- x
     stopifnot(file.exists(cifti_original_fname))
-    # Get metadata.
     cifti_info <- info_cifti(cifti_original_fname)
-    ## Get brainstructures.
     brainstructures <- cifti_info$cifti$brainstructures
-    # Set the target CIFTI file name if null.
+    # Set the target CIFTI file name.
     if (is.null(cifti_target_fname)) {
-      cifti_target_fname <- file.path(tempdir(), basename(cifti_original_fname))
+      cifti_target_fname <- file.path(
+        getwd(), paste0("smoothed.", get_cifti_extn(cifti_original_fname))
+      )
     }
   }
 
-  # If the input is a .dlabel file, the target should be .dscalar not .dlabel.
+  # If the input is a .dlabel file, the target should be .dscalar not .dlabel. -
   fix_dlabel <- FALSE
   if (!is.null(cifti_info$cifti$intent)) {
     if (cifti_info$cifti$intent == 3007) {

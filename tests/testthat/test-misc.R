@@ -13,23 +13,23 @@ test_that("Miscellaneous functions are working", {
 
   surfL_6k_fname <- file.path(tdir, "L_6k.surf.gii")
   resample_gifti(
-    fnames$surf["left"], surfL_6k_fname, 
+    fnames$surf["left"], surfL_6k_fname,
     hemisphere="left", resamp_res=6000
   )
   surfR_6k_fname <- file.path(tdir, "R_6k.surf.gii")
   resample_gifti(
-    fnames$surf["right"], surfR_6k_fname, 
+    fnames$surf["right"], surfR_6k_fname,
     hemisphere="right", resamp_res=6000
   )
 
   surfL_1k_fname <- file.path(tdir, "L_1k.surf.gii")
   resample_gifti(
-    fnames$surf["left"], surfL_1k_fname, 
+    fnames$surf["left"], surfL_1k_fname,
     hemisphere="left", resamp_res=1000
   )
   surfR_1k_fname <- file.path(tdir, "R_1k.surf.gii")
   resample_gifti(
-    fnames$surf["right"], surfR_1k_fname, 
+    fnames$surf["right"], surfR_1k_fname,
     hemisphere="right", resamp_res=1000
   )
 
@@ -41,7 +41,7 @@ test_that("Miscellaneous functions are working", {
 
     brainstructures <- info_cifti(cii_fname)$cifti$brainstructures
 
-    surf_fnames <- switch(cii_fname,
+    surf_fnames <- switch(gsub(".nii", "", ciftiTools:::get_cifti_extn(cii_fname), fixed=TRUE),
       dscalar = list(left=surfL_6k_fname, right=surfR_6k_fname),
       dtseries = list(left=fnames$surf["left"], right=fnames$surf["right"]),
       dscalar_ones = list(left=surfL_1k_fname, right=surfR_1k_fname),
@@ -107,5 +107,5 @@ test_that("Miscellaneous functions are working", {
     (5*cii) %% round(cii, 1)
     testthat::expect_equal(exp(1)^log(cii) + 0, cii*1)
   }
-  
+
 })

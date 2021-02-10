@@ -8,8 +8,8 @@
 \title{Resample CIFTI Data}
 \usage{
 resample_cifti(
-  cifti_original_fname,
-  cifti_target_fname,
+  x = NULL,
+  cifti_target_fname = NULL,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
@@ -21,7 +21,7 @@ resample_cifti(
 )
 
 resampleCIfTI(
-  cifti_original_fname,
+  x,
   cifti_target_fname,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
@@ -34,7 +34,7 @@ resampleCIfTI(
 )
 
 resamplecii(
-  cifti_original_fname,
+  x,
   cifti_target_fname,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
@@ -47,7 +47,7 @@ resamplecii(
 )
 
 resample_xifti(
-  cifti_original_fname,
+  x,
   cifti_target_fname,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
@@ -60,25 +60,34 @@ resample_xifti(
 )
 }
 \arguments{
-\item{cifti_original_fname}{A CIFTI file to resample.}
+\item{x}{The CIFTI file name or \code{"xifti"} object to resample. If
+\code{NULL}, the result will be a \code{"xifti"} with resampled surfaces 
+given by \code{surfL_original_fname} and \code{surfR_original_fname}.}
 
-\item{cifti_target_fname}{The file name to save the resampled CIFTI.}
+\item{cifti_target_fname}{File name for the resampled CIFTI. Will be placed
+in \code{write_dir}. If \code{NULL}, will be written to "resampled.d*.nii". 
+\code{write_dir} will be appended to the beginning of the path.}
 
-\item{surfL_original_fname, surfR_original_fname}{(Optional) File path of 
-existing GIFTI surface geometry file representing the left/right cortex. 
-One or both can be provided. These will be resampled too, and are convenient
-for visualizing the resampled data.}
+\item{surfL_original_fname, surfR_original_fname}{(Optional) Path to a GIFTI 
+ surface geometry file representing the left/right cortex. One or both can be
+ provided. These will be resampled too, and are convenient for visualizing
+ the resampled data. 
 
-\item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
-the resampled GIFTI surface geometry file representing the left/right 
-cortex. If NULL (default), will use default names: see 
-\code{resample_cifti_default_fname}.}
+ If \code{x} is a \code{"xifti"} object with surfaces, these arguments
+ will override the surfaces in the \code{"xifti"}.}
+
+\item{surfL_target_fname, surfR_target_fname}{(Optional) File names for the
+resampled GIFTI surface geometry files. Will be placed in \code{write_dir}. 
+If \code{NULL} (default), will use default names created by 
+\code{\link{resample_cifti_default_fname}}.}
 
 \item{resamp_res}{Target resolution for resampling (number of 
 cortical surface vertices per hemisphere).}
 
-\item{write_dir}{Where should the resampled CIFTI (and GIFTIs for the surfaces)
-be written? \code{NULL} will use the current working directory.}
+\item{write_dir}{Where to write the resampled CIFTI (and surfaces if present.)
+If \code{NULL} (default), will use the current working directory if \code{x}
+was a CIFTI file, and a temporary directory if \code{x} was a \code{"xifti"}
+object.}
 
 \item{mwall_values}{If the medial wall locations are not indicated in the
  CIFTI, use these values to infer the medial wall mask. Default: 
@@ -99,6 +108,9 @@ A named character vector of written files: \code{"cifti"} and
 Performs spatial resampling of CIFTI data on the cortical surface
  by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
  putting them together. (The subcortex is not resampled.)
+}
+\details{
+Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 }
 \section{Connectome Workbench Requirement}{
 

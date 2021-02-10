@@ -4,7 +4,7 @@
 \alias{view_xifti_surface.cbar}
 \title{Make the colorbar for \code{view_xifti_surface}}
 \usage{
-view_xifti_surface.cbar(pal_base, pal, color_mode, text_color, colorbar_digits)
+view_xifti_surface.cbar(pal_base, pal, color_mode, text_color, digits)
 }
 \arguments{
 \item{pal_base}{Base palette}
@@ -15,7 +15,7 @@ view_xifti_surface.cbar(pal_base, pal, color_mode, text_color, colorbar_digits)
 
 \item{text_color}{Color of text}
 
-\item{colorbar_digits}{See \code{\link{view_xifti_surface}}}
+\item{digits}{See \code{\link{view_xifti_surface}}}
 }
 \value{
 A list of keyword arguments to \code{\link[fields]{image.plot}}

@@ -191,10 +191,10 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
 #' See \code{\link{view_xifti_surface}} for details.
 #' 
 #' @param hemisphere,values,idx idx see \code{\link{view_xifti_surface}}
-#' @param colors,color_mode,zlim, colorbar_digits see 
+#' @param colors,color_mode,zlim, digits see 
 #'  \code{\link{view_xifti_surface}}
 #' @param xifti_meta \code{xifti$meta}
-#' @param border_color,surfL,surfR see \code{\link{view_xifti_surface}}
+#' @param surfL,surfR see \code{\link{view_xifti_surface}}
 #' 
 #' @return A list with entries "pal_base", "pal", "color_vals", and "unique_vals"
 #' 
@@ -202,9 +202,9 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
 #' 
 view_xifti_surface.color <- function(
   hemisphere, values, idx, 
-  colors, color_mode, zlim, colorbar_digits,
+  colors, color_mode, zlim, digits,
   xifti_meta,
-  border_color, surfL, surfR) {
+  surfL, surfR) {
 
   # For qualitative color legend if xifti was not dlabel
   unique_vals <- NULL
@@ -220,10 +220,10 @@ view_xifti_surface.color <- function(
   any_colors <- !is.null(values)
   if (any_colors) {
 
-    if (is.null(colorbar_digits)) {
+    if (is.null(digits)) {
       signif_digits <- 3
     } else {
-      signif_digits <- colorbar_digits
+      signif_digits <- digits
     }
     DATA_MIN <- round(min(values, na.rm=TRUE), signif_digits)
     DATA_MAX <- round(max(values, na.rm=TRUE), signif_digits)
@@ -325,13 +325,13 @@ view_xifti_surface.color <- function(
 #' @param pal Full palette
 #' @param color_mode See \code{\link{view_xifti_surface}}
 #' @param text_color Color of text
-#' @param colorbar_digits See \code{\link{view_xifti_surface}}
+#' @param digits See \code{\link{view_xifti_surface}}
 #' 
 #' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, colorbar_digits) {
+view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, digits) {
 
   colorbar_breaks <- c(
     pal_base$value[1],
@@ -371,7 +371,7 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
       axis.args=list(
         cex.axis=1.7, at=colorbar_labs,
         col=text_color, col.ticks=text_color, col.axis=text_color,
-        labels=format(colorbar_labs, digits=colorbar_digits)
+        labels=format(colorbar_labs, digits=digits)
       )
     )
   }
@@ -396,7 +396,7 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, color
 #' @param pal_base Base palette
 #' @param labels Label for each color in the palette
 #' @param leg_ncol Number of columns in legend. 
-#' @param colorbar_digits Not used.
+#' @param digits Not used.
 #' @param scale of text
 #' 
 #' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
@@ -561,38 +561,21 @@ view_xifti_surface.draw_mesh <- function(
 #' View cortical surface
 #' 
 #' Visualize \code{"xifti"} cortical data using an interactive Open GL window
-#'  made with \code{rgl}. The \code{rgl} and \code{fields} packages are required.
+#'  made with \code{rgl}. Can also render an htmlwidget to control display of
+#'  multiple timepoints. The \code{rmarkdown} package is required for the htmlwidget
+#'  functionality.
 #'
 #' @inheritSection rgl_interactive_plots_Description Navigating and Embedding the Interactive Plots
 #' @inheritSection rgl_static_plots_Description Embedding the Static Plots
 #' 
 #' @inheritParams xifti_Param
-#' @inheritParams surface_plot_Params
-#' @param idx The time/column index of the data to display. If its length is
-#'  greater than one and \code{save==FALSE}, use the widget instead of the 
-#'  OpenGL window to view the plot interactively, because the widget's slider
-#'  will control what time/column is being displayed in the widget whereas all 
-#'  meshes will be rendered on top of one another in the Open GL window.
-#' @param hemisphere Which brain cortex to display: "both", "left", or "right".
-#'  Each will be plotted in a separate panel column.
-#' 
-#'  If a brain cortex is requested but no surface is available, a default
-#'  inflated surface will be used.
-#' 
-#'  This argument can also be \code{NULL} (default). In this case, the default
-#'  inflated surface included with \code{ciftiTools} will be used for each
-#'  cortex with data (i.e. if \code{xifti$data$cortex_left} and/or 
-#'  \code{xifti$data$cortex_right} exist).
-#' 
-#'  Surfaces without data will be colored white. 
-#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use,
-#'  the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-#'  and colorbrewer2.org), or the name of a viridisLite palette. 
-#'  Defaults are \code{"ROY_BIG_BL"} (sequential),
-#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
-#'  to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
-#'  then the qualitative colors in the label table will be used.
-#'  See \code{\link{make_color_pal}} for more details.
+#' @param surfL,surfR (Optional) The brain surface model to use.
+#'  Each can be a file path for a GIFTI, a file read by gifti::readgii,
+#'  or a list with components "vertices" and "faces". If provided, they will override
+#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if those exist.
+#'  Leave as \code{NULL} (default) to use \code{xifti$surf$cortex_left} and 
+#'  \code{xifti$surf$cortex_right} if those exist, or the default inflated surfaces
+#'  if those do not exist. 
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
 #'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
 #'  qualitative color mode if the \code{"xifti"} object represents a .dlabel 
@@ -605,45 +588,52 @@ view_xifti_surface.draw_mesh <- function(
 #'  one, using -Inf will set the value to the data minimum, and Inf will set
 #'  the value to the data maximum. See \code{\link{make_color_pal}} 
 #'  description for more details.
-#' @param surfL,surfR (Optional if \code{xifti$surf$cortex_left} and
-#'  \code{xifti$surf$cortex_right} are not empty) The brain surface model to use.
-#'  Each can be a file path for a GIFTI, a file read by gifti::readgii,
-#'  or a list with components "vertices" and "faces". If provided, they will override
-#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if they exist.
-#'  Otherwise, leave these arguments as \code{NULL} (default) to use
-#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right}.
-#' @param qualitative_colorlegend If \code{color_mode=="qualitative"}, should 
-#'  the colorbar be replaced with a color legend? It will be printed separately 
-#'  from the RGL window. Default: \code{TRUE}.
-#' @param colorlegend_ncol Number of columns in color legend. If
+#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use,
+#'  the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
+#'  and colorbrewer2.org), or the name of a viridisLite palette. 
+#'  Defaults are \code{"ROY_BIG_BL"} (sequential),
+#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
+#'  to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
+#'  then the qualitative colors in the label table will be used.
+#'  See \code{\link{make_color_pal}} for more details.
+#' @param idx The time/column index of the data to display. 
+#' 
+#'  If its length is greater than one and \code{!save}, will display the results
+#'  in an htmlwidget with a slider to control what time/column is being displayed.
+#'  The OpenGL window will display all meshes on top of one another; it should be
+#'  closed manually. 
+#' @param hemisphere Which brain cortex to display: "both" (default), "left",
+#'  or "right". Each will be plotted in a separate panel column.
+#' 
+#'  If a brain cortex is requested but no surface is available, a default
+#'  inflated surface will be used.
+#' 
+#'  This argument can also be \code{NULL} (default). In this case, the default
+#'  inflated surface included with \code{ciftiTools} will be used for each
+#'  cortex with data (i.e. if \code{xifti$data$cortex_left} and/or 
+#'  \code{xifti$data$cortex_right} exist).
+#' 
+#'  Surfaces without data will be colored white. 
+#' @inheritParams surface_plot_Params
+#' @param slider_title Text at bottom of plot that will be added if a widget
+#'  is used, to provide a title for the slider. Default: \code{"Index"}.
+#'  If \code{NULL}, no title will be added.
+#' @param legend_ncol Number of columns in color legend. If
 #'  \code{NULL} (default), use 10 entries per row. Only applies if the color
-#'  legend is drawn (\code{qualitative_colorlegend} is \code{TRUE} and the
-#'  qualitative color mode is used).
-#' @param colorbar_embedded Should the colorbar be embedded in the plot?
+#'  legend is used (qualitative data).
+#' @param legend_embed Should the colorbar be embedded in the plot?
 #'  It will be positioned in the bottom-left corner, in a separate subplot
 #'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
-#'  If \code{FALSE}, print it separately instead. 
-#' @param colorbar_digits The number of digits for the colorbar legend ticks.
+#'  If \code{FALSE}, print it separately instead. Only applies if the color
+#'  bar is used (sequential or diverging data).
+#' @param digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
-#' @param border_color Only applicable if \code{color_mode} is 
-#'  \code{"qualitative"}. Border vertices will be identified (those that share a
-#'  faces with at least one vertex of a different value) and drawn in this color
-#'  instead, overriding the color indicated by their value. If \code{NULL}, do
+#' @param borders Only applicable if \code{color_mode} is \code{"qualitative"}.
+#'  Border vertices will be identified (those that share a face with at least 
+#'  one vertex of a different value) and colored over. If this argument is
+#'  \code{TRUE} borders will be colored in black; provide the name of a different
+#'  color to use that instead. If \code{FALSE} or \code{NULL} (default), do
 #'  not draw borders.
-#' @param widget_idx_warn If \code{save==FALSE} or \code{close_after_save==FALSE},
-#'  each mesh must be rendered in the same window. This is problematic if 
-#'  \code{idx} and the mesh size are large. So, this option can be used to print 
-#'  a warning when \code{length(idx)} exceeds \code{widget_idx_warn} and the 
-#'  meshes are being drawn in the same window. Use \code{Inf} to never print a
-#'  warning. The default, \code{NULL}, will print a warning if \code{idx} times
-#'  the number of vertices exceeds 200k (approximately three 32k meshes for both
-#'  the left and right hemisphere.)
-#' @param slider_title Text at bottom of plot that will be added if a widget
-#'  is used, to provide a title for the slider. Default: \code{"Index:"}.
-#'  If \code{NULL}, no title will be added.
-#' @param render_rgl Default: \code{TRUE}. If \code{FALSE}, do not render the
-#'  Open GL window, widget, or image(s). Instead, return the \code{rgl} mesh
-#'  objects and coloring information. This should be used by developers only.
 #' @return If \code{save} and \code{close_after_save}, the name(s) of the image
 #'  file(s) that were written. 
 #' 
@@ -655,24 +645,24 @@ view_xifti_surface.draw_mesh <- function(
 #' @importFrom grDevices dev.list dev.off rgb
 #' @importFrom stats quantile
 #' @export
-view_xifti_surface <- function(xifti, idx=NULL,
-  hemisphere=NULL, view=c("both", "lateral", "medial"),
-  width=NULL, height=NULL, zoom=NULL,
-  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, 
-  colors=NULL, color_mode="auto", zlim=NULL,
-  surfL=NULL, surfR=NULL,
-  qualitative_colorlegend = TRUE, colorlegend_ncol=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL,
-  alpha=1.0, 
-  edge_color=NULL, vertex_color=NULL, vertex_size=0, border_color=NULL,
-  widget_idx_warn=NULL, slider_title="Index:", render_rgl=TRUE, mode=NULL) {
+view_xifti_surface <- function(
+  xifti=NULL, surfL=NULL, surfR=NULL, 
+  color_mode="auto", zlim=NULL, colors=NULL, 
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
+  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
+  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  cex.title=NULL, text_color="black", bg=NULL,
+  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  width=NULL, height=NULL, zoom=NULL
+  ) {
 
   # Check X11
   if (!capabilities("X11")) {
     ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
   }
 
+  # Check `rmarkdown` if widget is being used.
+  # [TO DO: not needed if save, right?]
   if (length(idx) > 1) {
     if (!requireNamespace("rmarkdown", quietly = TRUE)) {
       stop(paste(
@@ -691,47 +681,33 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Check arguments ------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # Check `xifti` and surfaces.
+  # `xifti`, `surfL`, `surfR`
+  if (is.null(xifti)) {
+    if (is.null(surfL) && is.null(surfR)) {
+      warning("Nothing to plot in `view_xifti_surface`.")
+      return(NULL)
+    } else {
+      if (!is.null(idx) && (length(idx)>1 || idx!=1)) {
+        warning("Ignoring `idx` argument, since there is no data to plot.")
+      }
+      return(
+        view_xifti_surface(
+          xifti=make_xifti(surfL=surfL, surfR=surfR),
+          hemisphere=hemisphere, view=view, fname=fname, 
+          cex.title=cex.title, text_color=text_color, bg=bg,
+          alpha=alpha, edge_color=edge_color, 
+          vertex_color=vertex_color, vertex_size=vertex_size,
+          width=width, height=height, zoom=zoom
+        )
+      )
+    }
+  }
   stopifnot(is.xifti(xifti))
   T_ <- ncol(do.call(rbind, xifti$data))
   x <- view_xifti_surface.surf_hemi(xifti, surfL, surfR, hemisphere)
   surfL <- x$surfL; surfR <- x$surfR; hemisphere <- x$hemisphere
 
-  # Check `view`.
-  view <- unique(vapply(view, match.arg, "", c("lateral", "medial", "both")))
-  if ("both" %in% view) { view <- c("lateral", "medial") }
-  if (length(view) == 2) { view <- c("lateral", "medial") } # lateral comes first
-
-  if (!is.null(mode)) {
-    warning("`mode` is deprecated; use `save` and `close_after_save` instead.\n")
-  }
-  use_widget <- length(idx) > 1
-
-  # Set `idx` if null.
-  if (is.null(idx)) { idx <- 1 }
-
-  # Check `save`
-  if (is.null(save)) { save <- FALSE }
-  if (identical(save, TRUE)) { save <- "xifti_surf" }
-  do_save <- !isFALSE(save)
-  if (do_save) {
-    if (length(idx) == 1) {
-      save <- as.character(save[1])
-      if (!endsWith(save, ".png")) { save <- paste0(save, ".png") }
-    } else {
-      if (length(save)==length(idx)) {
-        save <- as.character(save)
-      } else {
-        if (length(save) != 1) {
-          warning("Length of `save` and `idx` differ. Using the first entry of `save`.\n")
-        }
-        save <- gsub(".png", "", save[1], fixed=TRUE)
-        save <- paste0(as.character(save), "_", idx, ".png")
-      }
-    }
-  }
-
-  # Color mode
+  # `color_mode`
   if (is.null(color_mode)) { color_mode <- "auto" }
   if (color_mode == "auto") {
     if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
@@ -742,23 +718,112 @@ view_xifti_surface <- function(xifti, idx=NULL,
     color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
   }
 
-  NA_COLOR <- "white"
+  # `zlim`, `colors` handled later
 
-  # Title
+  # `idx`
+  if (is.null(idx)) { idx <- 1 }
+  idx <- as.numeric(idx)
+
+  # `hemisphere`
+  hemisphere <- as.character(hemisphere)
+  hemisphere <- unique(vapply(hemisphere, match.arg, "", c("left", "right", "both")))
+  if ("both" %in% hemisphere) { hemisphere <- c("left", "right") }
+  if (length(hemisphere) > 1) { hemisphere <- c("left", "right") } # left first
+
+  # `view`
+  view <- as.character(view)
+  view <- unique(vapply(view, match.arg, "", c("lateral", "medial", "both")))
+  if ("both" %in% view) { view <- c("lateral", "medial") }
+  if (length(view) > 1) { view <- c("lateral", "medial") } # lateral first
+
+  # `title`
   use_title <- TRUE
   if (!is.null(title)) {
     if (length(title) == 1){
       title <- rep(title, length(idx))
     } else if (length(title) != length(idx)) { 
-      stop("Length of `title` must be 1 or the same as `idx`.") 
+      stop("Length of `title` must be 1 or the same as the length of `idx`.") 
     }
     if (all(title == "")) { use_title <- FALSE }
+  } else {
+    if (length(idx)==1) { use_title <- FALSE }
   }
 
-  # Hopefully will find a better solution (controlling widget size) soon.
+  # `fname`, `fname_suffix`
+  if (is.null(fname)) { fname <- FALSE }
+  if (identical(fname, TRUE)) { 
+    if (!is.null(xifti$meta$cifti$names)) {
+      fname <- xifti$meta$cifti$names[idx]
+    } else {
+      fname <- "xifti_surf"
+    }
+  }
+  save_fname <- !isFALSE(fname)
+  if (save_fname) {
+    fname <- as.character(fname)
+    if (!(length(fname) %in% c(1, length(idx)))) {
+      warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.")
+      fname <- fname[1]
+    }
+    if (length(fname) == 1 && length(idx) > 1) {
+      fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
+      if (fname_suffix == "names") {
+        if (is.null(xifti$meta$cifti$names)) {
+          fname <- paste0(fname, "_", as.character(idx))
+        } else {
+          fname <- paste0(fname, "_", xifti$meta$cifti$names)
+        }
+      } else {
+        fname <- paste0(fname, "_", as.character(idx)) 
+      }
+    }
+    fname[!endsWith(fname, ".png")] <- paste0(fname[!endsWith(fname, ".png")], ".png")
+  }
+
+  if (length(idx) > 1 && !isFALSE(fname)) {
+    widget <- FALSE
+  }
+
+  # `slider_title`
+  use_slider_title <- widget && length(idx)>1 && !is.null(slider_title)
+  if (use_slider_title) {
+    slider_title <- as.character(slider_title)[1]
+    use_slider_title <- widget && (slider_title != "")
+  }
+
+  # `legend_ncol`, `legend_embed`, `digits`
+  if (!is.null(legend_ncol)) { legend_ncol <- as.numeric(legend_ncol) }
+  if (is.null(legend_embed)) { legend_embed <- FALSE }
+  legend_embed <- as.logical(legend_embed)
+  if (!is.null(digits)) { digits <- as.numeric(digits) }
+
+  # `cex.title`, `text_color`, "bg"
+  if (!is.null(cex.title)) { cex.title <- as.numeric(cex.title) }
+  text_color <- as.character(text_color)
+  if (!is.null(bg)) { bg <- as.character(bg) }
+
+  # `borders`, `alpha`, `edge_color`, `vertex_color`, `vertex_size`
+  if (!is.null(borders)) {
+    if (length(borders) > 1) { warning("Using first entry of `borders` only.") }
+    borders <- borders[1]
+    if (isFALSE(borders)) {
+      borders <- NULL
+    } else if (isTRUE(borders)) {
+      borders <- "black"
+    } else {
+      borders <- as.character(borders)
+    }
+  }
+  alpha <- as.numeric(alpha)
+  if (!is.null(edge_color)) { edge_color <- as.character(edge_color) }
+  if (!is.null(vertex_color)) { vertex_color <- as.character(vertex_color) }
+  if (!is.null(vertex_size)) { vertex_size <- as.numeric(vertex_size) }
+
+  # `width`, `height`, `zoom`
+  # [TO DO]: Improve this?
   if (is.null(zoom)) {
     zoom <- .6
-    if (use_widget) { 
+    if (widget) { 
       if (length(view)==1) {
         if (length(hemisphere) == 1) {
           zoom <- .7
@@ -770,8 +835,14 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     } 
   }
+  if (!is.null(width)) { width <- as.numeric(width) }
+  if (!is.null(height)) { height <- as.numeric(height) }
 
-  use_slider_title <- use_widget && !is.null(slider_title)
+  # Former arguments that are now internal
+  render_rgl <- TRUE # for debugging
+  NA_COLOR <- "white" # surfaces without data will be white
+  close_after_save <- TRUE # always close after saving
+  widget_idx_warn <- TRUE # always warn if widget might take a while to load
 
   # ----------------------------------------------------------------------------
   # Get the data values and surface models, and construct the mesh. ------------
@@ -780,7 +851,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   x <- view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
   mesh <- x$mesh; values <- x$values
 
-  # Overrides for "auto" color mode.
+  # Set `color_mode` if `"auto"`
   if (color_mode == "auto") {
     values_vec <- as.vector(do.call(cbind, values))
 
@@ -808,19 +879,12 @@ view_xifti_surface <- function(xifti, idx=NULL,
     rm(values_vec)
   }
 
-  if ((!do_save || !close_after_save) && !is.null(values)) {
-    
-    if (is.null(widget_idx_warn) && (length(idx) * nrow(do.call(cbind, values)) > 200000)) {
-      print_widget_idx_warn <- TRUE
-    } else if (!is.null(widget_idx_warn) && (length(idx) > widget_idx_warn)) {
-      print_widget_idx_warn <- TRUE
-    } else {
-      print_widget_idx_warn <- FALSE
-    }
-    if (print_widget_idx_warn) {
+  # Warn user if widget rendering may take a while.
+  if (widget && !is.null(values)) {
+    if (widget_idx_warn && length(idx) * nrow(do.call(cbind, values)) > 200000) {
       warning(paste(
-        "There are many brain meshes being drawn in the same window.",
-        "The render time for the htmlwidget might be slow."
+        "There are many brain meshes being drawn.",
+        "The render time for the htmlwidget might be slow.\n"
       ))
     }
   }
@@ -831,14 +895,14 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
   x <- view_xifti_surface.color(
     hemisphere, values, idx, 
-    colors, color_mode, zlim, colorbar_digits,
-    xifti$meta,
-    border_color, surfL, surfR
+    colors, color_mode, zlim, digits,
+    xifti$meta, surfL, surfR
   )
   pal_base <- x$pal_base; pal <- x$pal
   color_vals <- x$color_vals; unique_vals <- x$unique_vals
   any_colors <- !all(unlist(lapply(color_vals, dim)) == 1)
 
+  # Return `rgl` input info instead of rendering mesh (for debugging).
   if (!render_rgl) {
     return(
       list(mesh=mesh, values=values, pal_base=pal_base, pal=pal, color_vals=color_vals)
@@ -849,11 +913,19 @@ view_xifti_surface <- function(xifti, idx=NULL,
   # Get the colorbar/legend arguments. ----------------------------------------
   # ----------------------------------------------------------------------------
 
+  use_cleg <- FALSE
   if (any_colors) {
-
     # Color legend
-    if (color_mode == "qualitative" && qualitative_colorlegend) {
-      use_cleg <- TRUE; colorbar_embedded <- FALSE
+    if (color_mode == "qualitative") {
+      if (isTRUE(legend_embed)) {
+        warning(paste(
+          "`legend_embed` is `TRUE`, but only color bars can be embedded at",
+          "the moment. The qualitative color mode uses a list of colors",
+          "instead of a color bar.\n"
+        ))
+      }
+      use_cleg <- TRUE; legend_embed <- FALSE
+      # Get the labels for the color legend list.
       if (is.null(xifti$meta$cifti$intent) || (xifti$meta$cifti$intent != "3007")) {
         if (!is.null(unique_vals)) {
           cleg_labs <- unique_vals
@@ -864,24 +936,36 @@ view_xifti_surface <- function(xifti, idx=NULL,
         cleg_labs <- rownames(xifti$meta$cifti$labels[[idx[1]]])
       }
       cleg_labs <- as.character(cleg_labs)
-      if (is.null(colorlegend_ncol)) {
-        colorlegend_ncol <- floor(sqrt(nrow(pal_base)))
-        colorlegend_nrow <- ceiling(nrow(pal_base) / colorlegend_ncol)
+      # Get the color legend list dimensions.
+      if (is.null(legend_ncol)) {
+        legend_ncol <- floor(sqrt(nrow(pal_base)))
+        colorlegend_nrow <- ceiling(nrow(pal_base) / legend_ncol)
       }
+      # Skip if there are too many legend labels.
       if (length(cleg_labs) > 200) {
         use_cleg <- FALSE
-        warning("Too many labels (> 200) for qualitative color legend. Not rendering it.")
+        warning("Too many labels (> 200) for qualitative color legend. Not rendering it.\n")
+      } else if (!requireNamespace("ggpubr", quietly = TRUE)) {
+        use_cleg <- FALSE
+        warning("Package \"ggpubr\" needed to make the color legend. Please install it. Skipping the color legend for now.\n")
       } else {
-        cleg <- view_xifti_surface.cleg(pal_base, cleg_labs, colorlegend_ncol, text_color)
+        cleg <- view_xifti_surface.cleg(pal_base, cleg_labs, legend_ncol, text_color)
       }
     } else {
-      use_cleg <- FALSE
+      legend_embed <- TRUE
     }
 
     # Color bar
     colorbar_kwargs <- view_xifti_surface.cbar(
-      pal_base, pal, color_mode, text_color, colorbar_digits
+      pal_base, pal, color_mode, text_color, digits
     )
+  } else {
+    if (isTRUE(legend_embed)) {
+      warning(paste(
+        "`legend_embed` is `TRUE`, but there is no data. Setting to `FALSE`.\n"
+      ))
+    }
+    legend_embed <- FALSE
   }
 
   # ----------------------------------------------------------------------------
@@ -892,7 +976,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
   brain_panels_nrow <- length(view)
   brain_panels_ncol <- length(hemisphere)
 
-  all_panels_nrow <- brain_panels_nrow + 1*use_title + 1*colorbar_embedded + 1*use_slider_title
+  all_panels_nrow <- brain_panels_nrow + 1*use_title + 1*legend_embed + 1*use_slider_title
   all_panels_ncol <- brain_panels_ncol
 
   if (is.null(width) | is.null(height)) {
@@ -927,7 +1011,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
   all_panels_heights <- rep.int(1, brain_panels_nrow)
   if (use_title) { all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
-  if (colorbar_embedded) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  if (legend_embed) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
   if (use_slider_title) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   rglIDs <- vector("list", length(idx))
@@ -938,7 +1022,7 @@ view_xifti_surface <- function(xifti, idx=NULL,
     this_idx <- idx[jj]
 
     # Open a new window at the start, as well as with each new image.
-    if (jj == 1 || do_save) {
+    if (jj == 1 || save_fname) {
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
@@ -1030,13 +1114,13 @@ view_xifti_surface <- function(xifti, idx=NULL,
           mesh_color <- rep(NA_COLOR, nrow(switch(h, left=surfL, right=surfR)$vertices))
         }
         # Draw border.
-        if (!is.null(border_color) && color_mode=="qualitative") {
+        if (!is.null(borders) && color_mode=="qualitative") {
           if (h == "left") {
             #cat("\nComputing left border (takes a while).\n")
-            mesh_color[parc_borders(values$left[,jj], surfL)] <- border_color
+            mesh_color[parc_borders(values$left[,jj], surfL)] <- borders
           } else if (h == "right") {
             #cat("\nComputing right border (takes a while).\n")
-            mesh_color[parc_borders(values$right[,jj], surfR)] <- border_color
+            mesh_color[parc_borders(values$right[,jj], surfR)] <- borders
           }
         }
         # Draw the mesh.
@@ -1053,10 +1137,10 @@ view_xifti_surface <- function(xifti, idx=NULL,
     # Make the colorbar (if applicable).
     if (any_colors) {
 
-      if (colorbar_embedded) {
-        if (do_save || jj==1) {
+      if (legend_embed) {
+        if (save_fname || jj==1) {
           names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "legend"
-          if (use_widget) {
+          if (widget) {
             if (length(hemisphere)==1) {
               # Somehow fix colorbar stretching. Changing x doesn't work
               invisible()
@@ -1079,18 +1163,20 @@ view_xifti_surface <- function(xifti, idx=NULL,
         if(all_panels_ncol==2){
           rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
         }
-      } else {
 
+      } else {
         if (use_cleg) {
           print(cleg)
-          if (do_save) {
-            cleg_h_per_row <- 1/3 #inches
-            cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
-            ggplot2::ggsave(
-              filename = gsub(".png", "_legend.png", save[jj]),
-              height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
-              width = (colorlegend_ncol) * cleg_h_per_row * cleg_w_factor
-            )
+          if (!isFALSE(fname)) {
+              if (jj==1) {
+              cleg_h_per_row <- 1/3 #inches
+              cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
+              ggplot2::ggsave(
+                filename = gsub(".png", "_legend.png", fname[jj]),
+                height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
+                width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
+              )
+            }
             if (close_after_save) { dev.off() }
           }
 
@@ -1114,18 +1200,15 @@ view_xifti_surface <- function(xifti, idx=NULL,
       }
     }
 
-    if (do_save) {
-      rgl::rgl.snapshot(save[jj])
-      rgl::rgl.close()
+    if (save_fname) {
+      rgl::rgl.snapshot(fname[jj])
+      if (length(idx) > 1 || isFALSE(fname)) { rgl::rgl.close() }
     }
   }
 
   names(subscenes)[is.na(names(subscenes))] <- "Empty"
 
-  if (do_save && close_after_save) {
-    return(invisible(save))
-
-  } else if (use_widget) {
+  if (widget) {
 
     titleIDs <- titleScenes <- NULL
     leftIDs <- leftScenes <- rightIDs <- rightScenes <- NULL
@@ -1159,14 +1242,19 @@ view_xifti_surface <- function(xifti, idx=NULL,
     }
 
     # [TO DO]: Adjust sizing
-    return(
-      rgl::playwidget(
-        rgl::rglwidget(), 
-        start=0, stop=length(idx)-1, interval=1,
+    if (length(idx) == 1) {
+      out <- rgl::rglwidget()
+    } else {
+      out <- rgl::playwidget(
+        rgl::rglwidget(), start=0, stop=length(idx)-1, interval=1,
         components="Slider", #height=all_panels_height, width=all_panels_width,
         controls
       )
-    )
+    }
+    rgl::rgl.close()
+    return(out)
+  } else if (save_fname && close_after_save) {
+    return(invisible(fname))
   } else {
     return(invisible(rglIDs))
   }
@@ -1174,84 +1262,72 @@ view_xifti_surface <- function(xifti, idx=NULL,
 
 #' @rdname view_xifti_surface
 #' @export
-view_cifti_surface <- function(xifti, idx=NULL,
-  hemisphere=NULL, view=c("both", "lateral", "medial"),
-  width=NULL, height=NULL, zoom=NULL,
-  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE,
-  colors=NULL, color_mode=NULL, zlim=NULL,
-  surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL,
-  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL){
+view_cifti_surface <- function(
+  xifti, surfL=NULL, surfR=NULL, 
+  color_mode="auto", zlim=NULL, colors=NULL, 
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
+  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
+  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  cex.title=NULL, text_color="black", bg=NULL,
+  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
-    xifti=xifti, idx=idx,
-    hemisphere=hemisphere, view=view,
-    width=width, height=height, zoom=zoom,
-    bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save,
-    colors=colors, color_mode=color_mode, zlim=zlim,
-    surfL=surfL, surfR=surfR,
-    colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
-    alpha=alpha, edge_color=edge_color, 
-    vertex_color=vertex_color, vertex_size=vertex_size,
-    widget_idx_warn=widget_idx_warn, render_rgl=render_rgl, mode=mode
+    xifti=xifti, surfL=surfL, surfR=surfR, 
+    color_mode=color_mode, zlim=zlim, colors=colors,
+    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
+    title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
+    legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
+    cex.title=cex.title, text_color=text_color, bg=bg,
+    borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    width=width, height=height, zoom=zoom
   )
 }
 
 #' @rdname view_xifti_surface
 #' @export
-viewCIfTI_surface <- function(xifti, idx=NULL,
-  hemisphere=NULL, view=c("both", "lateral", "medial"),
-  width=NULL, height=NULL, zoom=NULL,
-  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE, 
-  colors=NULL, color_mode=NULL, zlim=NULL,
-  surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL,
-  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL){
+viewCIfTI_surface <- function(
+  xifti, surfL=NULL, surfR=NULL, 
+  color_mode="auto", zlim=NULL, colors=NULL, 
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
+  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
+  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  cex.title=NULL, text_color="black", bg=NULL,
+  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
-    xifti=xifti, idx=idx,
-    hemisphere=hemisphere, view=view,
-    width=width, height=height, zoom=zoom,
-    bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save, 
-    colors=colors, color_mode=color_mode, zlim=zlim,
-    surfL=surfL, surfR=surfR,
-    colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
-    alpha=alpha, edge_color=edge_color, 
-    vertex_color=vertex_color, vertex_size=vertex_size,
-    widget_idx_warn=widget_idx_warn, render_rgl=render_rgl, mode=mode
+    xifti=xifti, surfL=surfL, surfR=surfR, 
+    color_mode=color_mode, zlim=zlim, colors=colors,
+    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
+    title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
+    legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
+    cex.title=cex.title, text_color=text_color, bg=bg,
+    borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    width=width, height=height, zoom=zoom
   )
 }
 
 #' @rdname view_xifti_surface
 #' @export
-viewcii_surface <- function(xifti, idx=NULL,
-  hemisphere=NULL, view=c("both", "lateral", "medial"),
-  width=NULL, height=NULL, zoom=NULL,
-  bg=NULL, title=NULL, cex.title=NULL, text_color="black",
-  save=FALSE, close_after_save=TRUE,
-  colors=NULL, color_mode=NULL, zlim=NULL,
-  surfL=NULL, surfR=NULL,
-  colorbar_embedded=TRUE, colorbar_digits=NULL,
-  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
-  widget_idx_warn=NULL, render_rgl=TRUE, mode=NULL){
+viewcii_surface <- function(
+  xifti, surfL=NULL, surfR=NULL, 
+  color_mode="auto", zlim=NULL, colors=NULL, 
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
+  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
+  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  cex.title=NULL, text_color="black", bg=NULL,
+  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
-    xifti=xifti, idx=idx,
-    hemisphere=hemisphere, view=view,
-    width=width, height=height, zoom=zoom,
-    bg=bg, title=title, cex.title=cex.title, text_color=text_color,
-    save=save, close_after_save=close_after_save,
-    colors=colors, color_mode=color_mode, zlim=zlim,
-    surfL=surfL, surfR=surfR,
-    colorbar_embedded=colorbar_embedded, colorbar_digits=colorbar_digits, 
-    alpha=alpha, edge_color=edge_color, 
-    vertex_color=vertex_color, vertex_size=vertex_size,
-    widget_idx_warn=widget_idx_warn, render_rgl=render_rgl, mode=mode
+    xifti=xifti, surfL=surfL, surfR=surfR, 
+    color_mode=color_mode, zlim=zlim, colors=colors,
+    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
+    title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
+    legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
+    cex.title=cex.title, text_color=text_color, bg=bg,
+    borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    width=width, height=height, zoom=zoom
   )
 }
