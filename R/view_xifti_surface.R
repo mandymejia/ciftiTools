@@ -122,44 +122,67 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
   mesh <- list(left=NULL, right=NULL)
   values <- list(left=NULL, right=NULL)
 
+  # solve for cortical resolution. assume left and right have the same resolution
+  res <- NULL
+  if (!is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+    res <- length(xifti$meta$cortex$medial_wall_mask$left)
+  } else if (!is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+    res <- length(xifti$meta$cortex$medial_wall_mask$right)
+  } else {
+    if (!is.null(xifti$data$cortex_left) && !is.null(xifti$data$cortex_right)) {
+      if (nrow(xifti$data$cortex_left) == nrow(xifti$data$cortex_right)) {
+        res <- nrow(xifti$data$cortex_left)
+      }
+    } else if (!is.null(xifti$data$cortex_left)) {
+      prop_mwall <- nrow(xifti$data$cortex_left) / nrow(surfL$vertices)
+      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfL$vertices) } else { res <- nrow(xifti$data$cortex_left) }
+    } else if (!is.null(xifti$data$cortex_right)) {
+      prop_mwall <- nrow(xifti$data$cortex_right) / nrow(surfR$vertices)
+      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfR$vertices) } else { res <- nrow(xifti$data$cortex_right) }
+    }
+  }
+  if (is.null(res)) { res <- min(nrow(surfL$vertices), nrow(surfR$vertices)) }
+
+  # get the mesh and values for each hemisphere
   for (h in hemisphere) {
+    h2 <- switch(h, left="right", right="left")
     surf_h <- switch(h, left=surfL, right=surfR)
     mwall_h <- xifti$meta$cortex$medial_wall_mask[[h]]
     cor_h <- switch(h, left="cortex_left", right="cortex_right")
+    cor_h2 <- switch(h, left="cortex_right", right="cortex_left")
 
     if (is.null(mwall_h)) {
-      # [TO DO]: Think about this...
-      mwall_h_len <- ifelse(
-        is.null(xifti$data[[cor_h]]), 
-        nrow(surf_h$vertices), 
-        nrow(xifti$data[[cor_h]])
-      )
-      mwall_h <- rep(TRUE, mwall_h_len)
+      if (!is.null(xifti$data[[cor_h]]) && (nrow(xifti$data[[cor_h]]) != res)) {
+        stop(
+          "Cannot infer medial wall locations on ", h, 
+          " cortex. Please provide $meta$cortex$medial_wall_mask$", cor_h
+        )
+      } else {
+        mwall_h <- rep(TRUE, res)
+      }
     }
 
-    if (nrow(surf_h$vertices) != length(mwall_h)) {
+    if (nrow(surf_h$vertices) != res) {
       ciftiTools_msg(paste(
-        "The",h,"surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if the mask is absent).",
+        "The",h,"surface is not in the inferred resolution,", res, ".",
         "Resampling the",h,"surface. (If the \"wb_path\" option has not been",
         "set an error will occur; set it or correct the surface prior to",
         "plotting.)"
       ))
 
-      surf_h <- resample_surf(
-        surf_h, length(mwall_h), hemisphere=h
-      )
-      if (nrow(surf_h$vertices) != length(mwall_h)) {
+      surf_h <- resample_surf(surf_h, res, hemisphere=h)
+
+      if (nrow(surf_h$vertices) != res) {
         stop(paste(
-          "The",h,"surface could not be resampled to match the number of",
-          "vertices in the data for the",h,"cortex. Check that the `xifti`",
-          "dimensions are as expected?"
+          "The",h,"surface could not be resampled to match the inferred resolution,", 
+          res, ".", 
+          "Check that the `xifti` dimensions are as expected?"
         ))
       }
     }
 
     # Get data values.
-    values[[h]] <- matrix(NA, ncol=length(idx), nrow=length(mwall_h))
+    values[[h]] <- matrix(NA, ncol=length(idx), nrow=res)
     if (!is.null(xifti$data[[cor_h]])) {
       if (!all(idx %in% seq_len(ncol(xifti$data[[cor_h]])))) {
         stop(paste0(

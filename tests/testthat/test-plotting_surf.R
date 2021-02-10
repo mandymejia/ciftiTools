@@ -34,8 +34,12 @@ test_that("plot_xifti_surface and related functions are working", {
       cii <- convert_to_dlabel(cii)
       plot(cii)
     }
+    cii <- readcii(cii_fname, brainstructures=c("left"), resamp_res=2000)
+    plot(cii, hemisphere="both")
+    plot(cii, surfR=demo_files()$surf["right"], hemisphere="both")
   }
 
   plot(make_surf(demo_files()$surf["left"]))
+  plot(as.xifti(surfR=make_surf(demo_files()$surf["right"])), hemisphere="both", title="My Awesome Surfs")
 
 })
