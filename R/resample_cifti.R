@@ -51,7 +51,7 @@ resample_cifti <- function(
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
-  # Handle if `x` is NULL ------------------------------------------------------
+  # Handle if no data ----------------------------------------------------------
   if (is.null(x)) {
     if (is.null(surfL_original_fname) && is.null(surfR_original_fname)) {
       warning("`x`, `surfL_original_fname` and `surfR_original_fname` were all NULL: Nothing to resample!\n")
@@ -62,6 +62,17 @@ resample_cifti <- function(
       surfR_fname=surfR_original_fname,
       resamp_res=resamp_res
     ))
+  }
+  
+  if (all(vapply(x$data, is.null, FALSE))) {
+    x <- add_surf(x, surfL=surfL_original_fname, surfR=surfR_original_fname)
+    if (!is.null(x$surf$cortex_left)) {
+      x$surf$cortex_left <- resample_surf(x$surf$cortex_left, resamp_res, "left")
+    }
+    if (!is.null(x$surf$cortex_right)) {
+      x$surf$cortex_right <- resample_surf(x$surf$cortex_right, resamp_res, "right")
+    }
+    return(x)
   }
 
   # Args check -----------------------------------------------------------------
