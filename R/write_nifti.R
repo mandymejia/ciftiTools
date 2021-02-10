@@ -72,7 +72,7 @@ write_subcort_nifti <- function(
     sys_path(subcort_lab_list), 
     sys_path(subcortLabs_fname)
   )
-  run_wb_cmd(cmd)
+  run_wb_cmd(cmd, ignore.stderr=TRUE)
 
   # Mask (as numeric).
   subcortMask <- subcortMask + 0
