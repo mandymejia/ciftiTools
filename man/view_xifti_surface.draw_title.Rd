@@ -9,7 +9,8 @@ view_xifti_surface.draw_title(
   xifti_meta,
   this_idx,
   cex.title,
-  text_color
+  text_color,
+  widget
 )
 }
 \arguments{
@@ -19,7 +20,7 @@ view_xifti_surface.draw_title(
 
 \item{this_idx}{The index}
 
-\item{cex.title, text_color}{See \code{\link{view_xifti_surface}}}
+\item{cex.title, text_color, widget}{See \code{\link{view_xifti_surface}}}
 }
 \value{
 The RGL object ID for the title

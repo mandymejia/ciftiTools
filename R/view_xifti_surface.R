@@ -463,13 +463,13 @@ view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scal
 #' @param title Title text or \code{NULL}
 #' @param xifti_meta \code{xifti$meta}
 #' @param this_idx The index
-#' @param cex.title,text_color See \code{\link{view_xifti_surface}}
+#' @param cex.title,text_color,widget See \code{\link{view_xifti_surface}}
 #' 
 #' @return The RGL object ID for the title
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color){
+view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color, widget){
   if (is.null(title)) {
     intent <- xifti_meta$cifti$intent
 
@@ -507,12 +507,14 @@ view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title
   }
   
   if (is.null(cex.title)) {
-    # Default: 200% font size, but increasingly smaller for longer titles
+    # Default: 200% font size for Open GL and 100% for htmlwidget, but
+    # increasingly smaller for longer titles.
     if (nchar(title) > 20) {
       cex.title <- 40 / nchar(title)
     } else {
       cex.title <- 2
     }
+    if (widget) { cex.title <- cex.title * .67 }
   }
 
   rgl::text3d(
@@ -1072,7 +1074,7 @@ view_xifti_surface <- function(
     if (use_title) {
       names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "title"
       rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
-        title[jj], xifti$meta, this_idx, cex.title, text_color
+        title[jj], xifti$meta, this_idx, cex.title, text_color, widget
       )
 
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
@@ -1214,7 +1216,7 @@ view_xifti_surface <- function(
 
     if (use_slider_title) {
       rglIDs[[jj]][["slider_title"]] <- view_xifti_surface.draw_title(
-        slider_title, xifti$meta, this_idx, cex.title, text_color
+        slider_title, xifti$meta, this_idx, cex.title, text_color, widget
       )
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
       if(all_panels_ncol==2){
