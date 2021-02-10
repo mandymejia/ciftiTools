@@ -21,6 +21,7 @@ test_that("Resampling CIFTI and GIFTI files is working", {
       cii_fname, brainstructures=brainstructures,
       resamp_res=5000
     )
+    cii <- resample_cifti(cii, resamp_res=1000)
 
     if (cii_fname == "dtseries") {
       # read_cifti with resampling, with surfaces
@@ -28,6 +29,7 @@ test_that("Resampling CIFTI and GIFTI files is working", {
         cii_fname, brainstructures=brainstructures,
         resamp_res=10000, surfL=fnames$surf["left"], surfR=fnames$surf["right"]
       )
+      cii <- resample_cifti(cii, resamp_res=1000)
 
       # resample_surf
       surf <- resample_surf(cii$surf$cortex_left, hemisphere="left", resamp_res=3000)
