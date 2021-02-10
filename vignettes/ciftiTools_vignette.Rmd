@@ -98,18 +98,18 @@ Let's see an example using each `color_mode` option. To reduce the size of this 
 
 ```{r, fig.cap=".dscalar file; first column; sequential palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
 cii <- read_cifti(cifti_fnames["dscalar"])
-view_xifti_surface(cii, idx=1, zlim=c(1,2))
+view_xifti_surface(cii, idx=1, zlim=c(1,2), widget=FALSE)
 ```
 
 ```{r, fig.cap=".dscalar file; second column; diverging palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(cii, idx=2, zlim=c(1,5), color_mode = "diverging")
+view_xifti_surface(cii, idx=2, zlim=c(1,5), color_mode = "diverging", widget=FALSE)
 ```
 
 ```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
 dlabel <- view_xifti_surface(
   read_cifti(cifti_fnames["dlabel"]), 
   # Interactively, a color legend that displays the label names will also be printed.
-  legend_ncol=5
+  legend_ncol=5, widget=FALSE
 )
 ```
 
@@ -147,14 +147,14 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 A `"surf"` object can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
 
 ```{r, fig.cap="Left hemisphere surface", rgl=TRUE, format="png", fig.height=6, fig.width=4}
-view_surf(surfL_fname)
+view_surf(surfL_fname, widget=FALSE)
 ```
 
 We can additionally render the vertices and edges. Below is the right hemisphere surface. (It has been resampled so the edges and vertices are visible; see the below section on resampling.)
 
 ```{r, fig.cap="Right hemisphere surface (resampled) with mesh", rgl=TRUE, format="png", fig.height=6, fig.width=4}
 small_surf <- resample_surf(make_surf(surfR_fname), 4000)
-plot(small_surf, edge_color="black", vertex_size=4)
+plot(small_surf, edge_color="black", vertex_size=4, widget=FALSE)
 ```
 
 A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
@@ -196,7 +196,7 @@ cii_new
 To visualize the cortical data of the new `xifti` object, we can add surface geometry with `add_surf`, or by providing surfaces with the `surfL` and `surfR` arguments to `view_xifti_surface`. We can also just use the inflated surfaces that come with `ciftiTools` by default:
 
 ```{r, fig.cap=".dtseries mean image", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(cii_new, title=".dtseries Mean Image", zlim=c(0,4))
+view_xifti_surface(cii_new, title=".dtseries Mean Image", zlim=c(0,4), widget=FALSE)
 ```
 
 Here's the subcortical data in sagittal view:
@@ -361,7 +361,7 @@ smooth_cifti(
 plot(
   read_cifti(smoothed_cii_fname), 
   surfL=surfL_fname, surfR=surfR_fname, 
-  title="Smoothed CIFTI", zlim=c(1,2)
+  title="Smoothed CIFTI", zlim=c(1,2), widget=FALSE
 )
 ```
 
@@ -372,9 +372,9 @@ cii <- read_cifti(cifti_fnames["dscalar"])
 cii <- 1 + exp(cii) + (cii / 3)
 ```
 
-# View multiple timepoints interactively
+### View multiple timepoints interactively
 
-`view_xifti_surface` adds a slider bar if multiple columns/timepoints are requested. (The widget will not show up in the github htmlpreview, but should be visible in the downloaded file.)
+`view_xifti_surface` adds a slider bar if multiple columns/timepoints are requested.
 
 ```{r fig.height=6, fig.width=7.5}
 view_xifti_surface(

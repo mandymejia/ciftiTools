@@ -648,7 +648,7 @@ view_xifti_surface.draw_mesh <- function(
 view_xifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"),
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
   legend_ncol=NULL, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
@@ -724,9 +724,6 @@ view_xifti_surface <- function(
   if (is.null(idx)) { idx <- 1 }
   idx <- as.numeric(idx)
 
-  # Set `use_widget`
-  use_widget <- (length(idx) > 1) # later, will be set to FALSE if `save_fname`
-
   # `hemisphere`
   hemisphere <- as.character(hemisphere)
   hemisphere <- unique(vapply(hemisphere, match.arg, "", c("left", "right", "both")))
@@ -759,34 +756,37 @@ view_xifti_surface <- function(
       fname <- "xifti_surf"
     }
   }
-  save_fname <- isTRUE(fname)
+  save_fname <- !isFALSE(fname)
   if (save_fname) {
-    use_widget <- FALSE
     fname <- as.character(fname)
     if (!(length(fname) %in% c(1, length(idx)))) {
       warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.")
       fname <- fname[1]
     }
-    fname[!endsWith(fname, ".png")] <- paste0(fname[!endsWith(fname, ".png")], ".png")
     if (length(fname) == 1 && length(idx) > 1) {
       fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
       if (fname_suffix == "names") {
         if (is.null(xifti$meta$cifti$names)) {
-          fname <- paste0(fname, "_", as.character(idx), ".png")
+          fname <- paste0(fname, "_", as.character(idx))
         } else {
-          fname <- paste0(fname, "_", xifti$meta$cifti$names, ".png")
+          fname <- paste0(fname, "_", xifti$meta$cifti$names)
         }
       } else {
-        fname <- paste0(fname, "_", as.character(idx), ".png") 
+        fname <- paste0(fname, "_", as.character(idx)) 
       }
     }
+    fname[!endsWith(fname, ".png")] <- paste0(fname[!endsWith(fname, ".png")], ".png")
+  }
+
+  if (length(idx) > 1 && !isFALSE(fname)) {
+    widget <- FALSE
   }
 
   # `slider_title`
-  use_slider_title <- use_widget && !is.null(slider_title)
+  use_slider_title <- widget && length(idx)>1 && !is.null(slider_title)
   if (use_slider_title) {
     slider_title <- as.character(slider_title)[1]
-    use_slider_title <- use_widget && (slider_title != "")
+    use_slider_title <- widget && (slider_title != "")
   }
 
   # `legend_ncol`, `legend_embed`, `digits`
@@ -821,7 +821,7 @@ view_xifti_surface <- function(
   # [TO DO]: Improve this?
   if (is.null(zoom)) {
     zoom <- .6
-    if (use_widget) { 
+    if (widget) { 
       if (length(view)==1) {
         if (length(hemisphere) == 1) {
           zoom <- .7
@@ -878,7 +878,7 @@ view_xifti_surface <- function(
   }
 
   # Warn user if widget rendering may take a while.
-  if (use_widget && !is.null(values)) {
+  if (widget && !is.null(values)) {
     if (widget_idx_warn && length(idx) * nrow(do.call(cbind, values)) > 200000) {
       warning(paste(
         "There are many brain meshes being drawn.",
@@ -1138,7 +1138,7 @@ view_xifti_surface <- function(
       if (legend_embed) {
         if (save_fname || jj==1) {
           names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "legend"
-          if (use_widget) {
+          if (widget) {
             if (length(hemisphere)==1) {
               # Somehow fix colorbar stretching. Changing x doesn't work
               invisible()
@@ -1161,18 +1161,20 @@ view_xifti_surface <- function(
         if(all_panels_ncol==2){
           rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
         }
-      } else {
 
+      } else {
         if (use_cleg) {
           print(cleg)
-          if (save_fname) {
-            cleg_h_per_row <- 1/3 #inches
-            cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
-            ggplot2::ggsave(
-              filename = gsub(".png", "_legend.png", fname[jj]),
-              height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
-              width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
-            )
+          if (!isFALSE(fname)) {
+              if (jj==1) {
+              cleg_h_per_row <- 1/3 #inches
+              cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
+              ggplot2::ggsave(
+                filename = gsub(".png", "_legend.png", fname[jj]),
+                height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
+                width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
+              )
+            }
             if (close_after_save) { dev.off() }
           }
 
@@ -1198,16 +1200,13 @@ view_xifti_surface <- function(
 
     if (save_fname) {
       rgl::rgl.snapshot(fname[jj])
-      rgl::rgl.close()
+      if (length(idx) > 1 || isFALSE(fname)) { rgl::rgl.close() }
     }
   }
 
   names(subscenes)[is.na(names(subscenes))] <- "Empty"
 
-  if (save_fname && close_after_save) {
-    return(invisible(fname))
-
-  } else if (use_widget) {
+  if (widget) {
 
     titleIDs <- titleScenes <- NULL
     leftIDs <- leftScenes <- rightIDs <- rightScenes <- NULL
@@ -1241,14 +1240,19 @@ view_xifti_surface <- function(
     }
 
     # [TO DO]: Adjust sizing
-    out <- rgl::playwidget(
-      rgl::rglwidget(), 
-      start=0, stop=length(idx)-1, interval=1,
-      components="Slider", #height=all_panels_height, width=all_panels_width,
-      controls
-    )
+    if (length(idx) == 1) {
+      out <- rgl::rglwidget()
+    } else {
+      out <- rgl::playwidget(
+        rgl::rglwidget(), start=0, stop=length(idx)-1, interval=1,
+        components="Slider", #height=all_panels_height, width=all_panels_width,
+        controls
+      )
+    }
     rgl::rgl.close()
     return(out)
+  } else if (save_fname && close_after_save) {
+    return(invisible(fname))
   } else {
     return(invisible(rglIDs))
   }
@@ -1269,7 +1273,7 @@ view_cifti_surface <- function(
   view_xifti_surface(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
-    idx=idx, hemisphere=hemisphere, view=view,
+    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
     title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
     legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
     cex.title=cex.title, text_color=text_color, bg=bg,
@@ -1283,7 +1287,7 @@ view_cifti_surface <- function(
 viewCIfTI_surface <- function(
   xifti, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"),
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
   legend_ncol=NULL, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
@@ -1293,7 +1297,7 @@ viewCIfTI_surface <- function(
   view_xifti_surface(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
-    idx=idx, hemisphere=hemisphere, view=view,
+    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
     title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
     legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
     cex.title=cex.title, text_color=text_color, bg=bg,
@@ -1307,7 +1311,7 @@ viewCIfTI_surface <- function(
 viewcii_surface <- function(
   xifti, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"),
+  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
   legend_ncol=NULL, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
@@ -1317,7 +1321,7 @@ viewcii_surface <- function(
   view_xifti_surface(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
-    idx=idx, hemisphere=hemisphere, view=view,
+    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
     title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
     legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
     cex.title=cex.title, text_color=text_color, bg=bg,

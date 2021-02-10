@@ -25,9 +25,8 @@
 #' @export
 #' 
 view_surf <- function(
-  ..., view=c("both", "lateral", "medial"), title=NULL,
-  fname=FALSE, 
-  cex.title=NULL, text_color="black", bg=NULL,
+  ..., view=c("both", "lateral", "medial"), widget=TRUE, title=NULL,
+  fname=FALSE, cex.title=NULL, text_color="black", bg=NULL,
   alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
   width=NULL, height=NULL, zoom=NULL){
   
@@ -111,8 +110,8 @@ view_surf <- function(
   # Plot
   view_xifti_surface(
     xifti=make_xifti(surfL=surfL, surfR=surfR),
-    hemisphere=hemisphere, view=view, fname=fname, 
-    cex.title=cex.title, text_color=text_color, bg=bg,
+    hemisphere=hemisphere, view=view, widget=widget, title=title, 
+    fname=fname, cex.title=cex.title, text_color=text_color, bg=bg,
     alpha=alpha, edge_color=edge_color, 
     vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom

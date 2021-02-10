@@ -312,6 +312,10 @@ NULL
 #' @param view Which view to display: \code{"lateral"}, \code{"medial"}, or 
 #'  \code{"both"}. If \code{NULL} (default), both views will be shown. Each view 
 #'  will be plotted in a separate panel row.
+#' @param widget Display the plot in an htmlwidget? Default: \code{TRUE}. If
+#'  \code{FALSE}, use an Open GL Window instead. If multiple files are being
+#'  written (\code{length(idx) > 1} and \code{!isFALSE(fname)}), curently neither the
+#'  widget nor the Open GL window are able to be displayed.
 #' @param title Optional title(s) for the plot(s). It will be printed at the top 
 #'  in a separate subplot with 1/4 the height of the brain cortex subplots.
 #'  
