@@ -9,8 +9,8 @@
 will be plotted in a separate panel row.}
 
 \item{widget}{Display the plot in an htmlwidget? Default: \code{TRUE}. If
-\code{FALSE}, use an Open GL Window instead. If multiple files are being
-written (\code{length(idx) > 1} and \code{!isFALSE(fname)}), curently neither the
+\code{FALSE}, use an Open GL Window instead. Currently, if multiple files are being
+written (\code{length(idx) > 1} and \code{!isFALSE(fname)}), neither the
 widget nor the Open GL window are able to be displayed.}
 
 \item{title}{Optional title(s) for the plot(s). It will be printed at the top 
@@ -32,12 +32,12 @@ widget nor the Open GL window are able to be displayed.}
  index (and corresponding legend, if applicable) will be saved to a file.
  Set \code{fname} to \code{TRUE} to name the files by the data column names. (Spaces
  will be replaced with underscores). Set \code{fname} to a length 1 character vector
- to name files by this suffix followed by the \code{suffix}: either the
+ to name files by this suffix followed by the \code{fname_suffix}: either the
  data column names (\code{"names"}) or the index value (\code{"idx"}). 
  Set this to a character vector with the same length as \code{idx} to name 
  the files exactly. 
 
- The color legend(s) will be saved to "[surf_fname_for_this_idx]_legend.png".}
+ The color legend will be saved to "[first_surf_fname]_legend.png".}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller

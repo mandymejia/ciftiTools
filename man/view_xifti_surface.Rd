@@ -168,10 +168,8 @@ See \code{\link{make_color_pal}} for more details.}
 
 \item{idx}{The time/column index of the data to display. 
 
- If its length is greater than one and \code{!save}, will display the results
- in an htmlwidget with a slider to control what time/column is being displayed.
- The OpenGL window will display all meshes on top of one another; it should be
- closed manually.}
+ If its length is greater than one, \code{widget} should be \code{TRUE}. A
+ slider will be added to the widget to control what time/column is being displayed.}
 
 \item{hemisphere}{Which brain cortex to display: "both" (default), "left",
  or "right". Each will be plotted in a separate panel column.
@@ -191,8 +189,8 @@ See \code{\link{make_color_pal}} for more details.}
 will be plotted in a separate panel row.}
 
 \item{widget}{Display the plot in an htmlwidget? Default: \code{TRUE}. If
-\code{FALSE}, use an Open GL Window instead. If multiple files are being
-written (\code{length(idx) > 1} and \code{!isFALSE(fname)}), curently neither the
+\code{FALSE}, use an Open GL Window instead. Currently, if multiple files are being
+written (\code{length(idx) > 1} and \code{!isFALSE(fname)}), neither the
 widget nor the Open GL window are able to be displayed.}
 
 \item{title}{Optional title(s) for the plot(s). It will be printed at the top 
@@ -218,24 +216,24 @@ If \code{NULL}, no title will be added.}
  index (and corresponding legend, if applicable) will be saved to a file.
  Set \code{fname} to \code{TRUE} to name the files by the data column names. (Spaces
  will be replaced with underscores). Set \code{fname} to a length 1 character vector
- to name files by this suffix followed by the \code{suffix}: either the
+ to name files by this suffix followed by the \code{fname_suffix}: either the
  data column names (\code{"names"}) or the index value (\code{"idx"}). 
  Set this to a character vector with the same length as \code{idx} to name 
  the files exactly. 
 
- The color legend(s) will be saved to "[surf_fname_for_this_idx]_legend.png".}
+ The color legend will be saved to "[first_surf_fname]_legend.png".}
 
 \item{fname_suffix}{Save the plot(s), and color legend(s) if applicable, to png files?
  Set \code{fname} to \code{FALSE} (default) to not save any files. Otherwise, each
  index (and corresponding legend, if applicable) will be saved to a file.
  Set \code{fname} to \code{TRUE} to name the files by the data column names. (Spaces
  will be replaced with underscores). Set \code{fname} to a length 1 character vector
- to name files by this suffix followed by the \code{suffix}: either the
+ to name files by this suffix followed by the \code{fname_suffix}: either the
  data column names (\code{"names"}) or the index value (\code{"idx"}). 
  Set this to a character vector with the same length as \code{idx} to name 
  the files exactly. 
 
- The color legend(s) will be saved to "[surf_fname_for_this_idx]_legend.png".}
+ The color legend will be saved to "[first_surf_fname]_legend.png".}
 
 \item{legend_ncol}{Number of columns in color legend. If
 \code{NULL} (default), use 10 entries per row. Only applies if the color
@@ -298,19 +296,18 @@ the same aspect ratio. Both can be specified to set the dimensions exactly.}
 (100\% + 3/5*100\% = 160\% the original size).}
 }
 \value{
-If \code{save} and \code{close_after_save}, the name(s) of the image
- file(s) that were written. 
+If \code{widget}, the html widget. Should be printed implicitly to be
+ rendered. 
 
- Otherwise, if the length of \code{idx} is equal to one, a list of the rgl
- object IDs which can be used to further manipulate the Open GL window; if
- the length of \code{idx} is greater than one, the htmlwidget with slider
- to interactively control which timepoint is being displayed.
+ Otherwise, if \code{!isFALSE(fname)}, a list of the rgl
+ object IDs which can be used to further manipulate the Open GL window, and 
+ if \code{!isFALSE(fname)}, the name(s) of the image file(s) that 
+ were written.
 }
 \description{
 Visualize \code{"xifti"} cortical data using an interactive Open GL window
- made with \code{rgl}. Can also render an htmlwidget to control display of
- multiple timepoints. The \code{rmarkdown} package is required for the htmlwidget
- functionality.
+ or htmlwidget made with \code{rgl}. The \code{rmarkdown} package is 
+ required for the htmlwidget functionality.
 }
 \section{Navigating and Embedding the Interactive Plots}{
 
