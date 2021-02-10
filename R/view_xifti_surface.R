@@ -561,9 +561,8 @@ view_xifti_surface.draw_mesh <- function(
 #' View cortical surface
 #' 
 #' Visualize \code{"xifti"} cortical data using an interactive Open GL window
-#'  made with \code{rgl}. Can also render an htmlwidget to control display of
-#'  multiple timepoints. The \code{rmarkdown} package is required for the htmlwidget
-#'  functionality.
+#'  or htmlwidget made with \code{rgl}. The \code{rmarkdown} package is 
+#'  required for the htmlwidget functionality.
 #'
 #' @inheritSection rgl_interactive_plots_Description Navigating and Embedding the Interactive Plots
 #' @inheritSection rgl_static_plots_Description Embedding the Static Plots
@@ -598,10 +597,8 @@ view_xifti_surface.draw_mesh <- function(
 #'  See \code{\link{make_color_pal}} for more details.
 #' @param idx The time/column index of the data to display. 
 #' 
-#'  If its length is greater than one and \code{!save}, will display the results
-#'  in an htmlwidget with a slider to control what time/column is being displayed.
-#'  The OpenGL window will display all meshes on top of one another; it should be
-#'  closed manually. 
+#'  If its length is greater than one, \code{widget} should be \code{TRUE}. A
+#'  slider will be added to the widget to control what time/column is being displayed.
 #' @param hemisphere Which brain cortex to display: "both" (default), "left",
 #'  or "right". Each will be plotted in a separate panel column.
 #' 
@@ -634,13 +631,13 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{TRUE} borders will be colored in black; provide the name of a different
 #'  color to use that instead. If \code{FALSE} or \code{NULL} (default), do
 #'  not draw borders.
-#' @return If \code{save} and \code{close_after_save}, the name(s) of the image
-#'  file(s) that were written. 
+#' @return If \code{widget}, the html widget. Should be printed implicitly to be
+#'  rendered. 
 #' 
-#'  Otherwise, if the length of \code{idx} is equal to one, a list of the rgl
-#'  object IDs which can be used to further manipulate the Open GL window; if
-#'  the length of \code{idx} is greater than one, the htmlwidget with slider
-#'  to interactively control which timepoint is being displayed.
+#'  Otherwise, if \code{!isFALSE(fname)}, a list of the rgl
+#'  object IDs which can be used to further manipulate the Open GL window, and 
+#'  if \code{!isFALSE(fname)}, the name(s) of the image file(s) that 
+#'  were written.
 #' 
 #' @importFrom grDevices dev.list dev.off rgb
 #' @importFrom stats quantile
@@ -723,6 +720,7 @@ view_xifti_surface <- function(
   # `idx`
   if (is.null(idx)) { idx <- 1 }
   idx <- as.numeric(idx)
+  if (length(idx)>1 && !widget) { warning("Cannot display multiple timepoints in Open GL window. Use `widget=TRUE` or a single `idx`.") }
 
   # `hemisphere`
   hemisphere <- as.character(hemisphere)
@@ -761,6 +759,7 @@ view_xifti_surface <- function(
   save_fname <- !isFALSE(fname)
   if (save_fname) {
     fname <- as.character(fname)
+    fname <- gsub(".png$", "", fname)
     if (!(length(fname) %in% c(1, length(idx)))) {
       warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.")
       fname <- fname[1]
@@ -777,7 +776,7 @@ view_xifti_surface <- function(
         fname <- paste0(fname, "_", as.character(idx)) 
       }
     }
-    fname[!endsWith(fname, ".png")] <- paste0(fname[!endsWith(fname, ".png")], ".png")
+    fname <- paste0(fname, ".png")
   }
 
   if (length(idx) > 1 && !isFALSE(fname)) {

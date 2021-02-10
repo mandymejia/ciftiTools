@@ -88,7 +88,7 @@ write_cifti_from_separate <- function(
   #   WARNING: label file '[the file]' contains data array with data type other than int32
   #   --> all values are 0 ???
 
-  run_wb_cmd(cmd)
+  run_wb_cmd(cmd, ignore.stderr=TRUE)
 
   invisible(cifti_fname)
 }
