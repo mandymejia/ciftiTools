@@ -122,44 +122,67 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
   mesh <- list(left=NULL, right=NULL)
   values <- list(left=NULL, right=NULL)
 
+  # solve for cortical resolution. assume left and right have the same resolution
+  res <- NULL
+  if (!is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+    res <- length(xifti$meta$cortex$medial_wall_mask$left)
+  } else if (!is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+    res <- length(xifti$meta$cortex$medial_wall_mask$right)
+  } else {
+    if (!is.null(xifti$data$cortex_left) && !is.null(xifti$data$cortex_right)) {
+      if (nrow(xifti$data$cortex_left) == nrow(xifti$data$cortex_right)) {
+        res <- nrow(xifti$data$cortex_left)
+      }
+    } else if (!is.null(xifti$data$cortex_left)) {
+      prop_mwall <- nrow(xifti$data$cortex_left) / nrow(surfL$vertices)
+      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfL$vertices) } else { res <- nrow(xifti$data$cortex_left) }
+    } else if (!is.null(xifti$data$cortex_right)) {
+      prop_mwall <- nrow(xifti$data$cortex_right) / nrow(surfR$vertices)
+      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfR$vertices) } else { res <- nrow(xifti$data$cortex_right) }
+    }
+  }
+  if (is.null(res)) { res <- min(nrow(surfL$vertices), nrow(surfR$vertices)) }
+
+  # get the mesh and values for each hemisphere
   for (h in hemisphere) {
+    h2 <- switch(h, left="right", right="left")
     surf_h <- switch(h, left=surfL, right=surfR)
     mwall_h <- xifti$meta$cortex$medial_wall_mask[[h]]
     cor_h <- switch(h, left="cortex_left", right="cortex_right")
+    cor_h2 <- switch(h, left="cortex_right", right="cortex_left")
 
     if (is.null(mwall_h)) {
-      # [TO DO]: Think about this...
-      mwall_h_len <- ifelse(
-        is.null(xifti$data[[cor_h]]), 
-        nrow(surf_h$vertices), 
-        nrow(xifti$data[[cor_h]])
-      )
-      mwall_h <- rep(TRUE, mwall_h_len)
+      if (!is.null(xifti$data[[cor_h]]) && (nrow(xifti$data[[cor_h]]) != res)) {
+        stop(
+          "Cannot infer medial wall locations on ", h, 
+          " cortex. Please provide $meta$cortex$medial_wall_mask$", cor_h
+        )
+      } else {
+        mwall_h <- rep(TRUE, res)
+      }
     }
 
-    if (nrow(surf_h$vertices) != length(mwall_h)) {
+    if (nrow(surf_h$vertices) != res) {
       ciftiTools_msg(paste(
-        "The",h,"surface does not have the same number of vertices as the data",
-        "(length of medial wall mask, or rows in data if the mask is absent).",
+        "The",h,"surface is not in the inferred resolution,", res, ".",
         "Resampling the",h,"surface. (If the \"wb_path\" option has not been",
         "set an error will occur; set it or correct the surface prior to",
         "plotting.)"
       ))
 
-      surf_h <- resample_surf(
-        surf_h, length(mwall_h), hemisphere=h
-      )
-      if (nrow(surf_h$vertices) != length(mwall_h)) {
+      surf_h <- resample_surf(surf_h, res, hemisphere=h)
+
+      if (nrow(surf_h$vertices) != res) {
         stop(paste(
-          "The",h,"surface could not be resampled to match the number of",
-          "vertices in the data for the",h,"cortex. Check that the `xifti`",
-          "dimensions are as expected?"
+          "The",h,"surface could not be resampled to match the inferred resolution,", 
+          res, ".", 
+          "Check that the `xifti` dimensions are as expected?"
         ))
       }
     }
 
     # Get data values.
-    values[[h]] <- matrix(NA, ncol=length(idx), nrow=length(mwall_h))
+    values[[h]] <- matrix(NA, ncol=length(idx), nrow=res)
     if (!is.null(xifti$data[[cor_h]])) {
       if (!all(idx %in% seq_len(ncol(xifti$data[[cor_h]])))) {
         stop(paste0(
@@ -441,12 +464,13 @@ view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scal
 #' @param xifti_meta \code{xifti$meta}
 #' @param this_idx The index
 #' @param cex.title,text_color See \code{\link{view_xifti_surface}}
+#' @param indiv_panel_width The width of the panel to write the title in
 #' 
 #' @return The RGL object ID for the title
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color){
+view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color, indiv_panel_width){
   if (is.null(title)) {
     intent <- xifti_meta$cifti$intent
 
@@ -484,12 +508,9 @@ view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title
   }
   
   if (is.null(cex.title)) {
-    # Default: 200% font size, but increasingly smaller for longer titles
-    if (nchar(title) > 20) {
-      cex.title <- 40 / nchar(title)
-    } else {
-      cex.title <- 2
-    }
+    cex.title <- indiv_panel_width / 250
+    if (nchar(title) > 20) { cex.title <- cex.title * (20 / nchar(title)) }
+    cex.title <- round(cex.title*100)/100
   }
 
   rgl::text3d(
@@ -821,18 +842,15 @@ view_xifti_surface <- function(
   # `width`, `height`, `zoom`
   # [TO DO]: Improve this?
   if (is.null(zoom)) {
-    zoom <- .6
-    if (widget) { 
-      if (length(view)==1) {
-        if (length(hemisphere) == 1) {
-          zoom <- .7
-        } else {
-          zoom <- .85
-        }
-      } else {
-        zoom <- .65
-      }
-    } 
+    if (widget) { zoom <- .67 } else { zoom <- .6 }
+    # if (widget) { 
+    #   if (length(view)==1) {
+    #     if (length(hemisphere) == 1) { zoom <- .7 } else { zoom <- .85 }
+    #   } else {
+    #     if (length(hemisphere) == 1 ) { zoom <- .62 } else { zoom <- .65 }
+    #   }
+    #   if (!use_slider_title) { zoom <- zoom * 1.2 }
+    # }
   }
   if (!is.null(width)) { width <- as.numeric(width) }
   if (!is.null(height)) { height <- as.numeric(height) }
@@ -979,39 +997,41 @@ view_xifti_surface <- function(
   all_panels_ncol <- brain_panels_ncol
 
   if (is.null(width) | is.null(height)) {
-    DEF_ASPECT_PER_PANEL <- c(10, 7) # aspect ratio
-    def_aspect <- DEF_ASPECT_PER_PANEL * c(brain_panels_ncol, brain_panels_nrow)
-    DEF_MAX_SIZE <- c(1500, 700)
+    DEF_ASPECT_PER_BRAIN_PANEL <- c(10, 7) # aspect ratio
+    def_aspect <- DEF_ASPECT_PER_BRAIN_PANEL * c(brain_panels_ncol, brain_panels_nrow)
+    if (widget) {
+      DEF_MAX_SIZE <- c(600, 700)
+    } else {
+      DEF_MAX_SIZE <- c(1500, 700)
+    }
 
     if (is.null(width) & is.null(height)) {
-      window_dims <- def_aspect*floor(min(DEF_MAX_SIZE/def_aspect))
+      brain_panels_dims <- def_aspect*floor(min(DEF_MAX_SIZE/def_aspect))
     } else if (is.null(width)) {
-      height <- as.integer(height)
-      window_dims <- c(floor(height*def_aspect[1]/def_aspect[2]), height)
+      height <- round(height)
+      brain_panels_dims <- c(floor(height*def_aspect[1]/def_aspect[2]), height)
     } else if (is.null(height)) {
-      width <- as.integer(width)
-      window_dims <- c(width, floor(width*def_aspect[2]/def_aspect[1]))
+      width <- round(width)
+      brain_panels_dims <- c(width, floor(width*def_aspect[2]/def_aspect[1]))
     }
-    brain_panels_width <- window_dims[1]
-    brain_panels_height <- window_dims[2]
+    brain_panels_dims <- as.integer(brain_panels_dims)
   } else {
-    brain_panels_width <- as.integer(width)
-    brain_panels_height <- as.integer(height)
+    brain_panels_dims <- as.integer(round(c(width, height)))
   }
 
-  indiv_panel_width <- brain_panels_width/brain_panels_ncol
-  indiv_panel_height <- brain_panels_height/brain_panels_nrow
+  indiv_panel_width <- brain_panels_dims[1]/brain_panels_ncol
+  indiv_panel_height <- brain_panels_dims[2]/brain_panels_nrow
 
-  TITLE_AND_LEGEND_HEIGHT_RATIO <- 1/6
-  all_panels_width <- brain_panels_width
-  all_panels_height <- brain_panels_height +
-    (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) *
-      (all_panels_nrow - brain_panels_nrow)
+  TITLE_AND_LEGEND_HEIGHT_RATIO <- 1/5 # formerly 1/6
+  all_panels_width <- brain_panels_dims[1]
+  # Add to height to account for title and slider title.
+  all_panels_height <- brain_panels_dims[2] +
+    (indiv_panel_height * TITLE_AND_LEGEND_HEIGHT_RATIO) * (all_panels_nrow - brain_panels_nrow)
 
-  all_panels_heights <- rep.int(1, brain_panels_nrow)
-  if (use_title) { all_panels_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, all_panels_heights) }
-  if (legend_embed) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
-  if (use_slider_title) { all_panels_heights <- c(all_panels_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  panels_rel_heights <- rep.int(1, brain_panels_nrow)
+  if (use_title) { panels_rel_heights <- c(TITLE_AND_LEGEND_HEIGHT_RATIO, panels_rel_heights) }
+  if (legend_embed) { panels_rel_heights <- c(panels_rel_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
+  if (use_slider_title) { panels_rel_heights <- c(panels_rel_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
   rglIDs <- vector("list", length(idx))
   names(rglIDs) <- idx
@@ -1025,12 +1045,12 @@ view_xifti_surface <- function(
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
-      rgl::par3d(windowRect = c(20, 20, all_panels_width, all_panels_height))
+      rgl::par3d(windowRect = 40 + c(0, 0, round(all_panels_width), round(all_panels_height)))
       Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
       subscenes <- rgl::layout3d(
         matrix(1:(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T),
         widths=rep.int(1, all_panels_ncol),
-        heights=all_panels_heights,
+        heights=panels_rel_heights,
         parent = NA, sharedMouse = TRUE
       )
     }
@@ -1049,7 +1069,7 @@ view_xifti_surface <- function(
     if (use_title) {
       names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "title"
       rglIDs[[jj]][["title"]] <- view_xifti_surface.draw_title(
-        title[jj], xifti$meta, this_idx, cex.title, text_color
+        title[jj], xifti$meta, this_idx, cex.title, text_color, indiv_panel_width
       )
 
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
@@ -1129,7 +1149,7 @@ view_xifti_surface <- function(
         )
       }
 
-      rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom) #Default: 167% size
+      rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom)
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
     }
 
@@ -1191,7 +1211,7 @@ view_xifti_surface <- function(
 
     if (use_slider_title) {
       rglIDs[[jj]][["slider_title"]] <- view_xifti_surface.draw_title(
-        slider_title, xifti$meta, this_idx, cex.title, text_color
+        slider_title, xifti$meta, this_idx, cex.title, text_color, widget
       )
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
       if(all_panels_ncol==2){
@@ -1241,13 +1261,15 @@ view_xifti_surface <- function(
     }
 
     # [TO DO]: Adjust sizing
-    if (length(idx) == 1) {
-      out <- rgl::rglwidget()
-    } else {
+    out <- rgl::rglwidget(
+      # For some reason the height you give, isn't exactly the height it uses???
+      height=round(all_panels_height/1.1), 
+      width=round(all_panels_width/1.1)
+    )
+    if (length(idx) > 1) {
       out <- rgl::playwidget(
-        rgl::rglwidget(), start=0, stop=length(idx)-1, interval=1,
-        components="Slider", #height=all_panels_height, width=all_panels_width,
-        controls
+        out, start=0, stop=length(idx)-1, interval=1,
+        components="Slider", controls
       )
     }
     rgl::rgl.close()

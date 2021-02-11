@@ -96,20 +96,27 @@ Let's take a look! `view_xifti_surface(cii)` displays the cortical data on the s
 
 Let's see an example using each `color_mode` option. To reduce the size of this document, we will only show the static plots for now (see later in this document for an example of the interactive htmlwidget):
 
-```{r, fig.cap=".dscalar file; first column; sequential palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+```{r, fig.cap=".dscalar file; first column; sequential palette", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
 cii <- read_cifti(cifti_fnames["dscalar"])
-view_xifti_surface(cii, idx=1, zlim=c(1,2), widget=FALSE)
+# Normally `cex.title` doesn't need to be set, as it defaults to a good choice.
+# But when knitting static images this way, the default becomes a bit too big
+# based on how knitting works.
+view_xifti_surface(cii, idx=1, zlim=c(1,2), widget=FALSE, title="Sequential", cex.title=1.2)
 ```
 
-```{r, fig.cap=".dscalar file; second column; diverging palette", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
-view_xifti_surface(cii, idx=2, zlim=c(1,5), color_mode = "diverging", widget=FALSE)
+```{r, fig.cap=".dscalar file; second column; diverging palette", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
+view_xifti_surface(
+  cii, idx=2, zlim=c(1,5), color_mode = "diverging", widget=FALSE, 
+  title="Diverging", cex.title=1.2
+)
 ```
 
-```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+```{r, fig.cap=".dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
 dlabel <- view_xifti_surface(
   read_cifti(cifti_fnames["dlabel"]), 
   # Interactively, a color legend that displays the label names will also be printed.
-  legend_ncol=5, widget=FALSE
+  legend_ncol=5, widget=FALSE, 
+  title="Qualitative", cex.title=1.2
 )
 ```
 
@@ -146,15 +153,15 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 A `"surf"` object can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
 
-```{r, fig.cap="Left hemisphere surface", rgl=TRUE, format="png", fig.height=6, fig.width=4}
+```{r, fig.cap="Left hemisphere surface", rgl=TRUE, format="png", fig.height=3.5, fig.width=2.5}
 view_surf(surfL_fname, widget=FALSE)
 ```
 
 We can additionally render the vertices and edges. Below is the right hemisphere surface. (It has been resampled so the edges and vertices are visible; see the below section on resampling.)
 
-```{r, fig.cap="Right hemisphere surface (resampled) with mesh", rgl=TRUE, format="png", fig.height=6, fig.width=4}
+```{r, fig.cap="Right hemisphere surface (resampled) with mesh", rgl=TRUE, format="png", fig.height=3.5, fig.width=2.5}
 small_surf <- resample_surf(make_surf(surfR_fname), 4000)
-plot(small_surf, edge_color="black", vertex_size=4, widget=FALSE)
+plot(small_surf, edge_color="black", vertex_size=3, widget=FALSE)
 ```
 
 A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
@@ -195,7 +202,7 @@ cii_new
 
 To visualize the cortical data of the new `xifti` object, we can add surface geometry with `add_surf`, or by providing surfaces with the `surfL` and `surfR` arguments to `view_xifti_surface`. We can also just use the inflated surfaces that come with `ciftiTools` by default:
 
-```{r, fig.cap=".dtseries mean image", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+```{r, fig.cap=".dtseries mean image", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
 view_xifti_surface(cii_new, title=".dtseries Mean Image", zlim=c(0,4), widget=FALSE)
 ```
 
@@ -240,18 +247,11 @@ cii_6k <- resample_cifti(
 
 The new files can be viewed together with `read_cifti`. Let's make this plot interactive, since the meshes are now much lower-res! Try clicking and dragging around the plot to rotate, and scrolling to zoom in and out. We'll also use a blue background color to highlight this interactive figure within the vignette.
 
-```{r, webgl=TRUE, fig.height=6, fig.width=7.5}
+```{r, fig.height=5, fig.width=6}
 view_xifti_surface(
   read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
-  zoom=7/10, bg="#d4edf5", cex.title=1.25, 
-  title=".dtseries resampled to 6k", zlim=c(0,2)
+  bg="#d4edf5", title=".dtseries resampled to 6k", zlim=c(0,2)
 )
-```
-
-We need to execute `rgl.close()` whenever an htmlwidget is made, to close the Open GL window:
-
-```{r}
-rgl.close()
 ```
 
 Resampling can also be performed while reading a file into R. 
@@ -350,7 +350,7 @@ is.xifti(cii)
 
 Use `smooth_cifti` to perform smoothing. This function works for both CIFTI files and `"xifti"` objects.
 
-```{r, fig.cap="Smoothed CIFTI", rgl=TRUE, format="png", fig.height=6, fig.width=7.5}
+```{r, fig.cap="Smoothed CIFTI", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
 smoothed_cii_fname <- file.path(out_dir, "my_smoothed_cifti.dtseries.nii")
 smooth_cifti(
   cifti_fnames["dtseries"], smoothed_cii_fname,
@@ -361,7 +361,7 @@ smooth_cifti(
 plot(
   read_cifti(smoothed_cii_fname), 
   surfL=surfL_fname, surfR=surfR_fname, 
-  title="Smoothed CIFTI", zlim=c(1,2), widget=FALSE
+  zlim=c(1,2), widget=FALSE
 )
 ```
 
@@ -376,7 +376,7 @@ cii <- 1 + exp(cii) + (cii / 3)
 
 `view_xifti_surface` adds a slider bar if multiple columns/timepoints are requested.
 
-```{r fig.height=6, fig.width=7.5}
+```{r fig.height=5, fig.width=6}
 view_xifti_surface(
   read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
   idx=1:2, bg="#ECF5D4", zlim=c(0,5), slider_title = ""
