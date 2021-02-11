@@ -10,7 +10,7 @@ view_xifti_surface.draw_title(
   this_idx,
   cex.title,
   text_color,
-  widget
+  indiv_panel_width
 )
 }
 \arguments{
@@ -20,7 +20,9 @@ view_xifti_surface.draw_title(
 
 \item{this_idx}{The index}
 
-\item{cex.title, text_color, widget}{See \code{\link{view_xifti_surface}}}
+\item{cex.title, text_color}{See \code{\link{view_xifti_surface}}}
+
+\item{indiv_panel_width}{The width of the panel to write the title in}
 }
 \value{
 The RGL object ID for the title

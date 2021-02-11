@@ -63,8 +63,9 @@ resample_cifti <- function(
       resamp_res=resamp_res
     ))
   }
-  
-  if (all(vapply(x$data, is.null, FALSE))) {
+
+  input_is_xifti <- is.xifti(x, messages=FALSE)
+  if (input_is_xifti && all(vapply(x$data, is.null, FALSE))) {
     x <- add_surf(x, surfL=surfL_original_fname, surfR=surfR_original_fname)
     if (!is.null(x$surf$cortex_left)) {
       x$surf$cortex_left <- resample_surf(x$surf$cortex_left, resamp_res, "left")
@@ -76,7 +77,6 @@ resample_cifti <- function(
   }
 
   # Args check -----------------------------------------------------------------
-  input_is_xifti <- is.xifti(x, messages=FALSE)
   if (is.null(write_dir)) { 
     write_dir <- ifelse(input_is_xifti, tempdir(), getwd())
   }
