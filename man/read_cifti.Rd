@@ -20,7 +20,7 @@ read_cifti(
 )
 
 readCIfTI(
-  cifti_fname,
+  cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
@@ -32,7 +32,7 @@ readCIfTI(
 )
 
 readcii(
-  cifti_fname,
+  cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
@@ -44,7 +44,7 @@ readcii(
 )
 
 read_xifti(
-  cifti_fname,
+  cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),

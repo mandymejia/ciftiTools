@@ -136,7 +136,7 @@ read_cifti <- function(
 #' @rdname read_cifti
 #' @export
 readCIfTI <- function(
-  cifti_fname,
+  cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL, flat=FALSE,
@@ -154,7 +154,7 @@ readCIfTI <- function(
 #' @rdname read_cifti
 #' @export
 readcii <- function(
-  cifti_fname,
+  cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL, flat=FALSE,
@@ -172,7 +172,7 @@ readcii <- function(
 #' @rdname read_cifti
 #' @export
 read_xifti <- function(
-  cifti_fname,
+  cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), 
   resamp_res=NULL, flat=FALSE,
