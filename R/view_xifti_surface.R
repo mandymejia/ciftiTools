@@ -1033,9 +1033,6 @@ view_xifti_surface <- function(
   if (legend_embed) { panels_rel_heights <- c(panels_rel_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
   if (use_slider_title) { panels_rel_heights <- c(panels_rel_heights, TITLE_AND_LEGEND_HEIGHT_RATIO) }
 
-  print("all_panels_width"); print(all_panels_width)
-  print("all_panels_height"); print(all_panels_height)
-
   rglIDs <- vector("list", length(idx))
   names(rglIDs) <- idx
 
