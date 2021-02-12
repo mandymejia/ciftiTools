@@ -184,7 +184,9 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
     # Get data values.
     values[[h]] <- matrix(NA, ncol=length(idx), nrow=res)
     if (!is.null(xifti$data[[cor_h]])) {
-      if (!all(idx %in% seq_len(ncol(xifti$data[[cor_h]])))) {
+      if (ncol(xifti$data[[cor_h]]) == 0) {
+        stop("There are zero data columns in the `xifti`.")
+      } else if (!all(idx %in% seq_len(ncol(xifti$data[[cor_h]])))) {
         stop(paste0(
           "At least one requested index/indices was not a valid column in",
           " the xifti (between 1 and ", ncol(xifti$data[[cor_h]]), ")." 
@@ -676,6 +678,8 @@ view_xifti_surface <- function(
 
   # Check X11
   if (!capabilities("X11")) {
+    # widget = AUTO
+    # have widget be FALSE by default, but if X11 is not there, set to TRUE
     ciftiTools_warn("X11 capability is needed to open the rgl window for `view_xifti_surface`.")
   }
 
