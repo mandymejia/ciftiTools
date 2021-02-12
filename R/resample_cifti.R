@@ -262,7 +262,7 @@ resample_cifti <- function(
 #' @rdname resample_cifti
 #' @export
 resampleCIfTI <- function(
-  x, cifti_target_fname, 
+  x=NULL, cifti_target_fname=NULL, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
@@ -278,7 +278,7 @@ resampleCIfTI <- function(
 #' @rdname resample_cifti
 #' @export
 resamplecii <- function(
-  x, cifti_target_fname, 
+  x=NULL, cifti_target_fname=NULL, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
@@ -294,7 +294,7 @@ resamplecii <- function(
 #' @rdname resample_cifti
 #' @export
 resample_xifti <- function(
-  x, cifti_target_fname, 
+  x=NULL, cifti_target_fname=NULL, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   resamp_res, write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {

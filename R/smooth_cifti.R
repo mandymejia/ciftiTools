@@ -250,8 +250,8 @@ smooth_cifti <- function(
 #' @rdname smooth_cifti
 #' @export
 smoothCIfTI <- function(
-  x, cifti_target_fname,
-  surf_FWHM, vol_FWHM,
+  x, cifti_target_fname=NULL,
+  surf_FWHM=5, vol_FWHM=5,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
@@ -268,8 +268,8 @@ smoothCIfTI <- function(
 #' @rdname smooth_cifti
 #' @export
 smoothcii <- function(
-  x, cifti_target_fname,
-  surf_FWHM, vol_FWHM,
+  x, cifti_target_fname=NULL,
+  surf_FWHM=5, vol_FWHM=5,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
@@ -286,8 +286,8 @@ smoothcii <- function(
 #' @rdname smooth_cifti
 #' @export
 smooth_xifti <- function(
-  x, cifti_target_fname,
-  surf_FWHM, vol_FWHM,
+  x, cifti_target_fname=NULL,
+  surf_FWHM=5, vol_FWHM=5,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){

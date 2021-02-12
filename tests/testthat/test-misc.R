@@ -50,7 +50,7 @@ test_that("Miscellaneous functions are working", {
 
     # smooth_cifti
     # not sure why it doesn't work for ones_1k (because all data are equal?)
-    if (!grepl("ones_1k", cii_fname)) {
+    if (!grepl("ones_1k", cii_fname) && !grepl("dlabel", cii_fname)) {
       cii <- read_cifti(
         smooth_cifti(
           cii_fname, file.path(tdir, basename(cii_fname)),
@@ -75,7 +75,9 @@ test_that("Miscellaneous functions are working", {
     }
 
     cii <- read_cifti(cii_fname, brainstructures = brainstructures)
-    cii <- add_surf(cii, surfL=resample_surf(surf_fnames$left, 1000))
+    if (!is.null(cii$meta$cortex$medial_wall_mask$left)) {
+      cii <- add_surf(cii, surfL=resample_surf(surf_fnames$left, resamp_res=length(cii$meta$cortex$medial_wall_mask$left)))
+    }
 
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
@@ -111,7 +113,9 @@ test_that("Miscellaneous functions are working", {
     cii + cii + cii
     cii - cii / (abs(cii) + 1)
     (5*cii) %% round(cii, 1)
-    testthat::expect_equal(exp(1)^log(cii) + 0, cii*1)
+    if (!grepl("dlabel", cii_fname)) {
+      testthat::expect_equal(exp(1)^log(cii) + 0, cii*1)
+    }
   }
 
 })

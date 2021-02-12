@@ -39,7 +39,7 @@ view_xifti_surface(
 )
 
 view_cifti_surface(
-  xifti,
+  xifti = NULL,
   surfL = NULL,
   surfR = NULL,
   color_mode = "auto",
@@ -70,7 +70,7 @@ view_cifti_surface(
 )
 
 viewCIfTI_surface(
-  xifti,
+  xifti = NULL,
   surfL = NULL,
   surfR = NULL,
   color_mode = "auto",
@@ -101,7 +101,7 @@ viewCIfTI_surface(
 )
 
 viewcii_surface(
-  xifti,
+  xifti = NULL,
   surfL = NULL,
   surfR = NULL,
   color_mode = "auto",

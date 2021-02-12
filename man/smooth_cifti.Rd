@@ -22,9 +22,9 @@ smooth_cifti(
 
 smoothCIfTI(
   x,
-  cifti_target_fname,
-  surf_FWHM,
-  vol_FWHM,
+  cifti_target_fname = NULL,
+  surf_FWHM = 5,
+  vol_FWHM = 5,
   surfL_fname = NULL,
   surfR_fname = NULL,
   cerebellum_fname = NULL,
@@ -35,9 +35,9 @@ smoothCIfTI(
 
 smoothcii(
   x,
-  cifti_target_fname,
-  surf_FWHM,
-  vol_FWHM,
+  cifti_target_fname = NULL,
+  surf_FWHM = 5,
+  vol_FWHM = 5,
   surfL_fname = NULL,
   surfR_fname = NULL,
   cerebellum_fname = NULL,
@@ -48,9 +48,9 @@ smoothcii(
 
 smooth_xifti(
   x,
-  cifti_target_fname,
-  surf_FWHM,
-  vol_FWHM,
+  cifti_target_fname = NULL,
+  surf_FWHM = 5,
+  vol_FWHM = 5,
   surfL_fname = NULL,
   surfR_fname = NULL,
   cerebellum_fname = NULL,
