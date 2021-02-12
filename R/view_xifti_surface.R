@@ -1284,7 +1284,7 @@ view_xifti_surface <- function(
 #' @rdname view_xifti_surface
 #' @export
 view_cifti_surface <- function(
-  xifti, surfL=NULL, surfR=NULL, 
+  xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
@@ -1308,7 +1308,7 @@ view_cifti_surface <- function(
 #' @rdname view_xifti_surface
 #' @export
 viewCIfTI_surface <- function(
-  xifti, surfL=NULL, surfR=NULL, 
+  xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
@@ -1332,7 +1332,7 @@ viewCIfTI_surface <- function(
 #' @rdname view_xifti_surface
 #' @export
 viewcii_surface <- function(
-  xifti, surfL=NULL, surfR=NULL, 
+  xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=TRUE,
   title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),

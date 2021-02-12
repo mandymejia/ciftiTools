@@ -21,8 +21,8 @@ resample_cifti(
 )
 
 resampleCIfTI(
-  x,
-  cifti_target_fname,
+  x = NULL,
+  cifti_target_fname = NULL,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
@@ -34,8 +34,8 @@ resampleCIfTI(
 )
 
 resamplecii(
-  x,
-  cifti_target_fname,
+  x = NULL,
+  cifti_target_fname = NULL,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
@@ -47,8 +47,8 @@ resamplecii(
 )
 
 resample_xifti(
-  x,
-  cifti_target_fname,
+  x = NULL,
+  cifti_target_fname = NULL,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
