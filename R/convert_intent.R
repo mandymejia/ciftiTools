@@ -72,7 +72,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   # Make color table.
   # [TO DO]: Allow input of custom colors
   N_ <- length(values)
-  pal <- make_color_pal(colors=colors, color_mode="qualitative")
+  pal <- make_color_pal(colors=colors, color_mode="qualitative", zlim=ifelse(add_white, N_-1, N_))
   if (add_white) {
     pal <- rbind(c("white", 0), pal)
     pal$value <- seq(nrow(pal)) - 1
