@@ -116,6 +116,9 @@ test_that("Miscellaneous functions are working", {
     if (!grepl("dlabel", cii_fname)) {
       testthat::expect_equal(exp(1)^log(cii) + 0, cii*1)
     }
+
+    # Select
+    cii <- select_xifti(cii, 1)
   }
 
 })
