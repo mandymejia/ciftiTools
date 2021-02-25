@@ -17,7 +17,7 @@ view_xifti_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  widget = TRUE,
+  widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
@@ -48,7 +48,7 @@ view_cifti_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  widget = TRUE,
+  widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
@@ -79,7 +79,7 @@ viewCIfTI_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  widget = TRUE,
+  widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
@@ -110,7 +110,7 @@ viewcii_surface(
   idx = NULL,
   hemisphere = NULL,
   view = c("both", "lateral", "medial"),
-  widget = TRUE,
+  widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
@@ -148,7 +148,7 @@ if those do not exist.}
 qualitative color mode if the \code{"xifti"} object represents a .dlabel 
 CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
 contains both positive and negative values, and the sequential mode if the
-data contains >90% positive or >90% negative values. See 
+data contains >90\% positive or >90\% negative values. See 
 \code{\link{make_color_pal}} for more details.}
 
 \item{zlim}{(Optional) Controls the mapping of values to each
@@ -168,8 +168,10 @@ See \code{\link{make_color_pal}} for more details.}
 
 \item{idx}{The time/column index of the data to display. 
 
- If its length is greater than one, \code{widget} should be \code{TRUE}. A
- slider will be added to the widget to control what time/column is being displayed.}
+ If its length is greater than one, and \code{isFALSE(fname)}, 
+ a widget must be used since a single OpenGL window cannot show multiple
+ indexes. A slider will be added to the widget to control what time/column 
+ is being displayed.}
 
 \item{hemisphere}{Which brain cortex to display: "both" (default), "left",
  or "right". Each will be plotted in a separate panel column.
@@ -188,10 +190,10 @@ See \code{\link{make_color_pal}} for more details.}
 \code{"both"}. If \code{NULL} (default), both views will be shown. Each view 
 will be plotted in a separate panel row.}
 
-\item{widget}{Display the plot in an htmlwidget? Default: \code{TRUE}. If
-\code{FALSE}, use an Open GL Window instead. Currently, if multiple files are being
-written (\code{length(idx) > 1} and \code{!isFALSE(fname)}), neither the
-widget nor the Open GL window are able to be displayed.}
+\item{widget}{Display the plot in an htmlwidget? Should be logical or 
+\code{NULL} (default), in which case a widget will be used only if needed
+(\code{length(idx)>1 & isFALSE(fname)}, \code{fname} is a file path to an 
+.html file, or if \code{rgl.useNULL()}).}
 
 \item{title}{Optional title(s) for the plot(s). It will be printed at the top 
  in a separate subplot with 1/4 the height of the brain cortex subplots.
@@ -202,48 +204,61 @@ widget nor the Open GL window are able to be displayed.}
 
  To use a custom title(s), use a length 1 character vector (same title for
  each plot) or length \code{length(idx)} character vector (different title
- for each plot). Set to an empty string \code{""} to omit the title. 
+ for each plot). Set to \code{NULL} or an empty character to omit the title. 
 
- If the title is non-empty but does not appear, \code{cex.title} may need to 
- be lowered.}
+ If the title is non-empty but does not appear, try lowering \code{cex.title}.}
 
-\item{slider_title}{Text at bottom of plot that will be added if a widget
-is used, to provide a title for the slider. Default: \code{"Index"}.
-If \code{NULL}, no title will be added.}
+\item{slider_title}{Text at bottom of plot that will be added if a slider
+is used, to provide a title for it. Default: \code{"Index"}.
+If \code{NULL} or an empty character, no title will be added.}
 
-\item{fname}{Save the plot(s), and color legend(s) if applicable, to png files?
- Set \code{fname} to \code{FALSE} (default) to not save any files. Otherwise, each
- index (and corresponding legend, if applicable) will be saved to a file.
- Set \code{fname} to \code{TRUE} to name the files by the data column names. (Spaces
- will be replaced with underscores). Set \code{fname} to a length 1 character vector
- to name files by this suffix followed by the \code{fname_suffix}: either the
- data column names (\code{"names"}) or the index value (\code{"idx"}). 
- Set this to a character vector with the same length as \code{idx} to name 
- the files exactly. 
+\item{fname}{Save the plot(s) (and color legend if applicable)?
+ 
+ If \code{isFALSE(fname)} (default), no files will be written.
 
- The color legend will be saved to "[first_surf_fname]_legend.png".}
+ If \code{fname} is a length-1 character vector ending in ".html", an html
+ with an interactive widget will be written.
 
-\item{fname_suffix}{Save the plot(s), and color legend(s) if applicable, to png files?
- Set \code{fname} to \code{FALSE} (default) to not save any files. Otherwise, each
- index (and corresponding legend, if applicable) will be saved to a file.
- Set \code{fname} to \code{TRUE} to name the files by the data column names. (Spaces
- will be replaced with underscores). Set \code{fname} to a length 1 character vector
- to name files by this suffix followed by the \code{fname_suffix}: either the
- data column names (\code{"names"}) or the index value (\code{"idx"}). 
- Set this to a character vector with the same length as \code{idx} to name 
- the files exactly. 
+ If neither of the cases above apply, a png image will be written for each
+ \code{idx}. If \code{isTRUE(fname)} the files will be named by the
+ data column names (underscores will replace spaces). Set \code{fname} to a 
+ length 1 character vector to name files by this suffix followed by the 
+ \code{fname_suffix}: either the data column names (\code{"names"}) or the 
+ index value (\code{"idx"}). Set this to a character vector with the same 
+ length as \code{idx} to name the files exactly. 
 
- The color legend will be saved to "[first_surf_fname]_legend.png".}
+ If a separate color legend exists and \code{!isFALSE(fname)}, it will be 
+ saved to "[first_surf_fname]_legend.png".}
+
+\item{fname_suffix}{Save the plot(s) (and color legend if applicable)?
+ 
+ If \code{isFALSE(fname)} (default), no files will be written.
+
+ If \code{fname} is a length-1 character vector ending in ".html", an html
+ with an interactive widget will be written.
+
+ If neither of the cases above apply, a png image will be written for each
+ \code{idx}. If \code{isTRUE(fname)} the files will be named by the
+ data column names (underscores will replace spaces). Set \code{fname} to a 
+ length 1 character vector to name files by this suffix followed by the 
+ \code{fname_suffix}: either the data column names (\code{"names"}) or the 
+ index value (\code{"idx"}). Set this to a character vector with the same 
+ length as \code{idx} to name the files exactly. 
+
+ If a separate color legend exists and \code{!isFALSE(fname)}, it will be 
+ saved to "[first_surf_fname]_legend.png".}
 
 \item{legend_ncol}{Number of columns in color legend. If
 \code{NULL} (default), use 10 entries per row. Only applies if the color
 legend is used (qualitative data).}
 
 \item{legend_embed}{Should the colorbar be embedded in the plot?
-It will be positioned in the bottom-left corner, in a separate subplot
-with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
-If \code{FALSE}, print it separately instead. Only applies if the color
-bar is used (sequential or diverging data).}
+ It will be positioned in the bottom-left corner, in a separate subplot
+ with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
+ If \code{FALSE}, print/save it separately instead. 
+
+ Only applies if the color bar is used (sequential or diverging data).
+ The color legend (qualitative data) cannot be embedded at the moment.}
 
 \item{digits}{The number of digits for the colorbar legend ticks.
 If \code{NULL} (default), let \code{\link{format}} decide.}
@@ -277,32 +292,35 @@ not outline the edges).}
 (do not draw the vertices).}
 
 \item{width}{The dimensions of the RGL window, in pixels. If both are
-\code{NULL} (default), the dimensions will be set to
-1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
-1500 x 525 for 2x1 subplots, and
-500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
-within a 1600 x 900 screen. Specifying only one will set the other to maintain
-the same aspect ratio. Both can be specified to set the dimensions exactly.}
+\code{NULL} (default), these dimensions depend on type of output (Open GL
+window or widget) and subplots (\code{hemisphere}, \code{view}, \code{title},
+and \code{slider_title}) and are chosen to be the largest plot within a
+1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
+a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one 
+will set the other to maintain this aspect ratio. Both can be specified to 
+set the dimensions exactly. (These arguments do not affect the size of the 
+legend, which cannot be controlled.)}
 
 \item{height}{The dimensions of the RGL window, in pixels. If both are
-\code{NULL} (default), the dimensions will be set to
-1000 (width) x 700 (height) for 1x1 and 2x2 subplots,
-1500 x 525 for 2x1 subplots, and
-500 x 700 for 1x2 subplots. These defaults are chosen to fit comfortably
-within a 1600 x 900 screen. Specifying only one will set the other to maintain
-the same aspect ratio. Both can be specified to set the dimensions exactly.}
+\code{NULL} (default), these dimensions depend on type of output (Open GL
+window or widget) and subplots (\code{hemisphere}, \code{view}, \code{title},
+and \code{slider_title}) and are chosen to be the largest plot within a
+1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
+a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one 
+will set the other to maintain this aspect ratio. Both can be specified to 
+set the dimensions exactly. (These arguments do not affect the size of the 
+legend, which cannot be controlled.)}
 
-\item{zoom}{Adjustment to size of brain meshes. Default: \code{3/5}
-(100\% + 3/5*100\% = 160\% the original size).}
+\item{zoom}{Adjust the sizes of the brain meshes. Default: \code{NULL} (will
+be set to 0.6 or 160\% for the Open GL window, and 0.67 or 167\% for the 
+widget.)}
 }
 \value{
-If \code{widget}, the html widget. Should be printed implicitly to be
- rendered. 
-
- Otherwise, if \code{!isFALSE(fname)}, a list of the rgl
- object IDs which can be used to further manipulate the Open GL window, and 
- if \code{!isFALSE(fname)}, the name(s) of the image file(s) that 
- were written.
+If a png or html file(s) were written, the names of the files for
+ each index will be returned. Otherwise, the widget itself is returned
+ if a widget was used, and the rgl object IDs are returned if an Open GL
+ window was used. The rgl object IDs are useful for further programmatic 
+ manipulation of the Open GL window.
 }
 \description{
 Visualize \code{"xifti"} cortical data using an interactive Open GL window
