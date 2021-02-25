@@ -252,33 +252,9 @@ NULL
 #'  \code{\link[rgl:rgl.open]{rgl.close}} to close the window, and 
 #'  \code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
 #'  perspective.
-#' 
-#'  The Open GL window can be embedded as an htmlwidget in an R Markdown document
-#'  using one of two methods. The first is executing \code{\link[rgl]{rglwidget}}
-#'  in the chunk where the plot is made. This first method should work within
-#'  both the RStudio IDE and a knitted .html file. The second method is 
-#'  executing \code{rgl::hook_rgl} at the start of the document and 
-#'  then using the chunk option \code{webgl=TRUE} in the chunk where the plot is
-#'  made. The second method is specifically for knitted .html files. Although
-#'  the first method is the newest approach and is recommended by others, we
-#'  used the second method in the \code{ciftiTools} vignette because the first
-#'  is not compatible with htmlpreview. For both methods, the window still
-#'  needs to be open to render the widget. Also for both methods, you will 
-#'  probably need to tweak the image dimensions e.g. 
-#'  \code{fig.width=8, fig.height=5} in the chunk options, because it uses the 
-#'  defaults from RMarkdown/Knitr instead of what makes sense based on the 
-#'  dimensions of the Open GL window.
 #'  
-#'  For \code{view_xifti_surface}, if \code{length(idx) > 1}, this function will
-#'  automatically return an htmlwidget using the first method, but with a
-#'  \code{\link[rgl]{playwidget}} wrapper to add a slider to control which
-#'  column index is being displayed. All the meshes will be rendered on top of
-#'  one another in the Open GL window, so only the widget will be useful for
-#'  viewing the data interactively. Since it uses the first method, it will not
-#'  be visible with htmlpreview. No additional call to 
-#'  \code{\link[rgl]{rglwidget}} is necessary, but \code{\link[rgl:rgl.open]{rgl.close}}
-#'  must be called in a following chunk to close the Open GL window.
-#' 
+#'  See the vignette for examples on embedding snapshots of the Open GL window
+#'  or interactive html widgets in an R Markdown document.
 #' @name rgl_interactive_plots_Description
 #' @keywords internal
 NULL

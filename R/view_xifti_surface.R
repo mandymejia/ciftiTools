@@ -1102,7 +1102,7 @@ view_xifti_surface <- function(
       rgl::bg3d(color=bg)
       rgl::par3d(windowRect = 40 + c(0, 0, round(all_panels_width), round(all_panels_height)))
       Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
-      if (use_title) {
+      if (use_title && length(hemisphere) > 1) {
         layout_matrix <- matrix(c(1, seq(all_panels_ncol*all_panels_nrow - 1)), nrow=all_panels_nrow, byrow=T)
       } else {
         layout_matrix <- matrix(seq(all_panels_ncol*all_panels_nrow), nrow=all_panels_nrow, byrow=T)
