@@ -27,7 +27,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
 
   if (!is.null(xifti$meta$cifti$intent)) {
     if (xifti$meta$cifti$intent == 3007) {
-      ciftiTools_warn("The input is already a `xifti`.\n")
+      ciftiTools_warn("The input is already a dlabel `xifti`.\n")
       return(xifti)
     }
   }

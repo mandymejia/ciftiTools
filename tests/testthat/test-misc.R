@@ -118,7 +118,17 @@ test_that("Miscellaneous functions are working", {
     }
 
     # Select
-    cii <- select_xifti(cii, 1)
+    L <- ncol(do.call(rbind, cii$data))
+    if (L > 1) {
+      cii <- select_xifti(cii, seq(2,1))
+      # Concat
+      cii <- concat_xifti(xifti_list=list(concat_xifti(cii, cii), cii))
+      testthat::expect_equal(
+        select_xifti(cii, rep(seq(ncol(do.call(rbind, cii$data))), 2))$data,
+        concat_xifti(cii, cii)$data
+      )
+    }
+    # [TO DO]: Test concatenating xiftis of different types
   }
 
 })

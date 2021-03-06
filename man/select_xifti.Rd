@@ -7,9 +7,9 @@
 select_xifti(xifti, idx, add_meta = "select")
 }
 \arguments{
-\item{xifti}{The \code{"xifti"} object}
+\item{xifti}{The \code{"xifti"} object.}
 
-\item{idx}{The column indices to keep}
+\item{idx}{The column indices to keep, in order.}
 
 \item{add_meta}{Add \code{idx} to \code{xifti$meta$cifti$misc[[add_meta]]}
 for reference. Default: \code{"select"}. If \code{NULL} or an empty string,
@@ -19,5 +19,6 @@ do not add a metadata entry.}
 The \code{"xifti"} with only the selected columns.
 }
 \description{
-Select a subset of column indices to keep in a \code{"xifti"}.
+Select column indices to keep in a \code{"xifti"}. Can also be used to
+ reorder the columns.
 }
