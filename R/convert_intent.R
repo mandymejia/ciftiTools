@@ -117,3 +117,31 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   }
   stop()
 }
+
+#' Convert the intent of a \code{"xifti"} to ".dscalar"
+#' 
+#' Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
+#'  \code{"xifti"} object. 
+#' 
+#' @param xifti The \code{"xifti"}
+#' 
+#' @return The ".dscalar" \code{"xifti"}
+#' @export
+convert_to_dscalar <- function(xifti) {
+  
+  stopifnot(is.xifti(xifti))
+
+  if (!is.null(xifti$meta$cifti$intent)) {
+    if (xifti$meta$cifti$intent == 3006) {
+      ciftiTools_warn("The input is already a dscalar `xifti`.\n")
+      return(xifti)
+    }
+  }
+
+  # Change intent and check it.
+  xifti$meta$cifti$intent <- 3006
+  xifti$meta$cifti[c("time_start", "time_step", "time_unit", "labels")] <- NULL
+  stopifnot(is.xifti(xifti))
+
+  xifti
+}
