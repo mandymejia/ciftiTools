@@ -278,8 +278,10 @@ view_xifti_surface.color <- function(
         }
 
         message(
-          "Since `zlim` was not provided, setting the color range to ", 
-          as.character(min(zlim)), " - ", as.character(max(zlim)), "."
+          "`zlim` not provided: using color range ", 
+          as.character(min(zlim)), " - ", as.character(max(zlim)), " ",
+          "(data limits: ", as.character(min(DATA_MIN)), " - ", 
+          as.character(max(DATA_MAX)), ")."
         )
       }
     }
