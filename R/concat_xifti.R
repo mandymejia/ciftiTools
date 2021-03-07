@@ -44,7 +44,9 @@ concat_xifti <- function(..., xifti_list=NULL) {
   }
 
   # Check labels.
-  xifti_labels <- length(unique( lapply(xifti_list, function(x){x$meta$cifti$labels}) ))
+  # A mixture of label & non-label xiftis shouldn't happen anyway, since the medial
+  #   wall is typically masked out for non-label xiftis but not in label xiftis.
+  xifti_labels <- lapply(xifti_list, function(x){x$meta$cifti$labels})
   if (!all(vapply(xifti_labels, is.null, FALSE))) {
     for (ii in seq(L)) {
       if (is.null(xifti_list[[ii]]$meta$cifti$labels)) {
