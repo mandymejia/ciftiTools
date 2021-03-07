@@ -690,6 +690,7 @@ view_xifti_surface <- function(
   # Determine output type.
   # Based on: `idx`, `widget`, and `fname`.
   if (is.null(idx)) { idx <- 1 }
+  if (is.null(fname)) { fname <- FALSE }
   idx <- as.numeric(idx)
   if (length(widget) > 1) { 
     warning("Using the first entry of `widget`.")
@@ -714,6 +715,8 @@ view_xifti_surface <- function(
       }
       if (is.null(widget)) { widget <- length(idx) > 1 }
     } else {
+      fname_dirs <- unique(dirname(fname))
+      if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
       if (any(grepl("html", fname))) {
         if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
         if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
