@@ -37,6 +37,7 @@ Imports:
 Suggests:
     ggplot2,
     ggpubr,
+    htmlwidgets,
     knitr,
     rmarkdown,
     papayar,

@@ -21,4 +21,3 @@ The new \code{"xifti"} with the requested components removed
 \description{
 Remove a data or surface component from a \code{"xifti"}
 }
-\keyword{internal}

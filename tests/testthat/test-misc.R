@@ -110,12 +110,23 @@ test_that("Miscellaneous functions are working", {
     }
 
     # Operations
-    cii + cii + cii
-    cii - cii / (abs(cii) + 1)
-    (5*cii) %% round(cii, 1)
-    if (!grepl("dlabel", cii_fname)) {
-      testthat::expect_equal(exp(1)^log(cii) + 0, cii*1)
+    is.xifti(cii + cii + cii)
+    is.xifti(cii - cii / (abs(cii) + 1))
+    is.xifti((5*cii) %% round(cii, 1))
+    testthat::expect_equal((exp(1)^log(cii) + 0)$data, (cii*1)$data)
+
+    # Select
+    L <- ncol(do.call(rbind, cii$data))
+    if (L > 1) {
+      cii <- select_xifti(cii, seq(2,1))
+      # Concat
+      cii <- concat_xifti(xifti_list=list(concat_xifti(cii, cii), cii))
+      testthat::expect_equal(
+        select_xifti(cii, rep(seq(ncol(do.call(rbind, cii$data))), 2))$data,
+        concat_xifti(cii, cii)$data
+      )
     }
+    # [TO DO]: Test concatenating xiftis of different types
   }
 
 })

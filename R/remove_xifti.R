@@ -10,7 +10,7 @@
 #' 
 #' @return The new \code{"xifti"} with the requested components removed
 #' 
-#' @keywords internal
+#' @export
 #' 
 remove_xifti <- function(xifti, remove=NULL){
   if (is.null(remove)) { stop("Must specify which components to `remove`.") }
