@@ -61,7 +61,7 @@ view_xifti_surface(xii)
 cortexL <- xii$data$cortex_left
 cortexL_mwall <- xii$meta$medial_wall_mask$left
 cortexR <- xii$data$cortex_right
-cortexR_mwall <- xii$meta$medial_Wall_mask$right
+cortexR_mwall <- xii$meta$medial_wall_mask$right
 # subcortVol <- xii$data$subcort
 # subcortLabs <- xii$meta$subcort$labels
 # subcortMask <- xii$meta$subcort$mask
