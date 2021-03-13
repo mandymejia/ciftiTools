@@ -20,7 +20,11 @@
 #'    }
 #'    \item{"dlabels"}{
 #'      \enumerate{
-#'        \item{labels}{(L x 5 data.frame. Row names are the data column names. Column names are Key, Red, Green, Blue, and Alpha.)}
+#'        \item{labels}{
+#'          Length \eqn{T} list of \eqn{L \times 5} data.frames. List entry 
+#'          names are data column names. Row names are label names. 
+#'          Column names are: Key, Red, Green, Blue, and Alpha.
+#'        }
 #'      }
 #'    }
 #'  }
