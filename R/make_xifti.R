@@ -144,8 +144,8 @@ make_xifti <- function(
   # CIFTI metadata.
   if (!is.null(cifti_info)) { 
     misc_meta <- c("intent", "brainstructures", "misc")
-    xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta] 
-    if (xifti$meta$cifti$intent == 3002) {
+    xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta]
+    if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3002) {
       time_meta <- c("time_start", "time_step", "time_unit")
       xifti$meta$cifti[time_meta] <- cifti_info$cifti[time_meta]
     } else if (xifti$meta$cifti$intent %in% c(3006, 3007)) {

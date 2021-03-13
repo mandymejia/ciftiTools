@@ -101,18 +101,16 @@ smooth_cifti <- function(
 
   # If the input is a .dlabel file, the target should be .dscalar not .dlabel. -
   fix_dlabel <- FALSE
-  if (!is.null(cifti_info$cifti$intent)) {
-    if (cifti_info$cifti$intent == 3007) {
-      warning(paste(
-        "Smoothing a label file will convert the labels to their numeric",
-        "indices. Coercing `cifti_target_fname` to a \".dscalar\" file.\n"
-      ))
-      fix_dlabel <- TRUE
-      cifti_target_fname <- gsub(
-        "dlabel.nii", "dscalar.nii", 
-        cifti_target_fname, fixed=TRUE
-      )
-    }
+  if (!is.null(cifti_info$cifti$intent) && cifti_info$cifti$intent == 3007) {
+    warning(paste(
+      "Smoothing a label file will convert the labels to their numeric",
+      "indices. Coercing `cifti_target_fname` to a \".dscalar\" file.\n"
+    ))
+    fix_dlabel <- TRUE
+    cifti_target_fname <- gsub(
+      "dlabel.nii", "dscalar.nii", 
+      cifti_target_fname, fixed=TRUE
+    )
   }
 
   # Build the Connectome Workbench command. 
