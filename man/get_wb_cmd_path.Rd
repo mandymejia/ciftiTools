@@ -7,7 +7,7 @@
 get_wb_cmd_path(wb_path)
 }
 \arguments{
-\item{wb_path}{(Optional) Path to the Connectome Workbench folder or 
+\item{wb_path}{(Optional) Path to the Connectome Workbench folder or
 executable.}
 }
 \value{
@@ -15,7 +15,7 @@ The path to the Connectome Workbench executable
 }
 \description{
 Retrieves the path to the Connectome Workbench executable from a file path
- that may point to the executable itself, or to the Workbench folder which
- contains it (i.e., "path/to/workbench/bin_linux64/wb_command" or 
- "path/to/workbench".)
+that may point to the executable itself, or to the Workbench folder which
+contains it (i.e., "path/to/workbench/bin_linux64/wb_command" or
+"path/to/workbench".)
 }

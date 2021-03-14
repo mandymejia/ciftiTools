@@ -36,16 +36,16 @@ this is the time between measurements. If \code{NULL}, use the Connectome
 Workbench default (1.0).}
 
 \item{timestart}{If a dense time series ("dtseries.nii") file is being written,
-this is starting time. If \code{NULL}, use the Connectome Workbench default 
+this is starting time. If \code{NULL}, use the Connectome Workbench default
 (0.0).}
 }
 \description{
-Make a CIFTI file from component NIFTI/GIFTI files using the 
- \code{-cifti-create-...} Connectome Workbench commands.
+Make a CIFTI file from component NIFTI/GIFTI files using the
+\code{-cifti-create-...} Connectome Workbench commands.
 }
 \details{
 Every provided component will be included. The ROIs are only used if the
- corresponding cortex is provided. Either both or none of the subcortical
- NIFTIs should be provided.
+corresponding cortex is provided. Either both or none of the subcortical
+NIFTIs should be provided.
 }
 \keyword{internal}

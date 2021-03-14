@@ -112,7 +112,7 @@ get_kwargs <- function(fun) {
 #'  correct one in \code{kwargsA}.
 #' @param labelA (Optional) Descriptor of \code{kwargsA} for error statement. Default "first kwarg(s)".
 #' @param labelB (Optional) Descriptor of \code{kwargsB} for error statement. Default "second kwarg(s)".
-#' @param extraMsg (Optional) Extra text for error statement. "[DEFAULT]" (default) will use this message:
+#' @param extraMsg (Optional) Extra text for error statement. "\[DEFAULT\]" (default) will use this message:
 #'  "Note that a kwarg only has to be provided to one of these. Place the correct value in the first
 #'  location and remove the kwarg from the second location".
 #'

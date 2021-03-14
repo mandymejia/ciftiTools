@@ -20,76 +20,76 @@ The metadata component of a \code{"xifti"} for the input CIFTI file
 }
 \description{
 Get CIFTI metadata from the NIFTI header and XML using the Connectome
- Workbench command \code{-nifti-information}. The information is formatted as
- the \code{meta} component in a \code{"xifti"} object
- (see \code{\link{template_xifti}}), and includes:
- \enumerate{
-   \item medial wall masks for the left and right cortex
-   \item the subcortical labels (ordered spatially)
-   \item the subcortical mask
-   \item other NIFTI intent-specific metadata
- }
+Workbench command \code{-nifti-information}. The information is formatted as
+the \code{meta} component in a \code{"xifti"} object
+(see \code{\link{template_xifti}}), and includes:
+\enumerate{
+\item medial wall masks for the left and right cortex
+\item the subcortical labels (ordered spatially)
+\item the subcortical mask
+\item other NIFTI intent-specific metadata
+}
 }
 \details{
 Additional metadata depends on the type of CIFTI file:
 
- \enumerate{
-   \item{"dtseries"}{
-     \enumerate{
-       \item{time_start}{   Start time}
-       \item{time_step}{   The TR}
-       \item{time_unit}{   Unit of time}
-     }
-   }
-   \item{"dscalar"}{
-     \enumerate{
-       \item{names}{   Name of each data column}
-     }
-   }
-   \item{"dlabels"}{
-     \enumerate{
-       \item{names}{(   Names of each data column.)}
-       \item{labels}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
-     }
-   }
- }
+\enumerate{
+\item{"dtseries"}{
+\enumerate{
+\item{time_start}{   Start time}
+\item{time_step}{   The TR}
+\item{time_unit}{   Unit of time}
+}
+}
+\item{"dscalar"}{
+\enumerate{
+\item{names}{   Name of each data column}
+}
+}
+\item{"dlabels"}{
+\enumerate{
+\item{names}{(   Names of each data column.)}
+\item{labels}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
+}
+}
+}
 }
 \section{Label Levels}{
 
- \code{xifti$meta$subcort$labels} is a factor with the following levels:
+\code{xifti$meta$subcort$labels} is a factor with the following levels:
 
- \enumerate{
-   \item{Cortex-L}
-   \item{Cortex-R}
-   \item{Accumbens-L}
-   \item{Accumbens-R}
-   \item{Amygdala-L}
-   \item{Amygdala-R}
-   \item{Brain Stem}
-   \item{Caudate-L}
-   \item{Caudate-R}
-   \item{Cerebellum-L}
-   \item{Cerebellum-R}
-   \item{Diencephalon-L}
-   \item{Diencephalon-R}
-   \item{Hippocampus-L}
-   \item{Hippocampus-R}
-   \item{Pallidum-L}
-   \item{Pallidum-R}
-   \item{Putamen-L}
-   \item{Putamen-R}
-   \item{Thalamus-L}
-   \item{Thalamus-R}
- }
+\enumerate{
+\item{Cortex-L}
+\item{Cortex-R}
+\item{Accumbens-L}
+\item{Accumbens-R}
+\item{Amygdala-L}
+\item{Amygdala-R}
+\item{Brain Stem}
+\item{Caudate-L}
+\item{Caudate-R}
+\item{Cerebellum-L}
+\item{Cerebellum-R}
+\item{Diencephalon-L}
+\item{Diencephalon-R}
+\item{Hippocampus-L}
+\item{Hippocampus-R}
+\item{Pallidum-L}
+\item{Pallidum-R}
+\item{Putamen-L}
+\item{Putamen-R}
+\item{Thalamus-L}
+\item{Thalamus-R}
+}
 
- These correspond to the same structures as given by 
- \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+These correspond to the same structures as given by
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
 \section{Connectome Workbench Requirement}{
 
- This function uses a system wrapper for the 'wb_command' executable. The 
- user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function uses a system wrapper for the 'wb_command' executable. The
+user must first download and install the Connectome Workbench, available
+from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 

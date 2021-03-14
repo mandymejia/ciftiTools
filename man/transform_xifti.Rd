@@ -55,7 +55,7 @@ transform_xifti(xifti, FUN, xifti2 = NULL)
 \item{xifti}{The xifti}
 
 \item{FUN}{The function. If \code{xifti2} is not provided, it should be
-a univariate function like \code{log} or \code{sqrt}. If 
+a univariate function like \code{log} or \code{sqrt}. If
 \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
 or \code{pmax}.}
 
@@ -69,10 +69,16 @@ or \code{pmax}.}
 }
 \value{
 A \code{xifti} storing the result of applying \code{FUN} to the input(s).
- The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
- and the metadata of \code{xifti2} will be discarded (if provided).
+The data dimensions will be the same. The metadata of \code{xifti} will be retained,
+and the metadata of \code{xifti2} will be discarded (if provided).
 }
 \description{
-Apply a univariate transformation to each value in a \code{"xifti"} or pair of \code{"xifti"}s. 
- If a pair, they must share the same brainstructures and data dimensions.
+Apply a univariate transformation to each value in a \code{"xifti"} or pair of
+\code{"xifti"}s. If a pair, they must share the same brainstructures and
+data dimensions.
+}
+\details{
+If the \code{"xifti"} had the dlabel intent, and the transformation creates
+any value that is not a label value (e.g. a non-integer), then it is converted
+to a dscalar.
 }

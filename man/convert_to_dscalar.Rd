@@ -14,5 +14,5 @@ The ".dscalar" \code{"xifti"}
 }
 \description{
 Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
- \code{"xifti"} object.
+\code{"xifti"} object.
 }

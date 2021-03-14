@@ -13,6 +13,6 @@ ciftiTools.getOption(opt)
 The value, \code{val}
 }
 \description{
-Gets an R option (with prefix "ciftiTools_") value. 
- See \code{\link{ciftiTools.listOptions}}.
+Gets an R option (with prefix "ciftiTools_") value.
+See \code{\link{ciftiTools.listOptions}}.
 }

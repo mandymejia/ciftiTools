@@ -16,7 +16,7 @@ The fixed \code{"xifti"}
 }
 \description{
 Make adjustments to a putative \code{"xifti"} so that it is valid. Each
- adjustment is reported.
+adjustment is reported.
 }
 \details{
 Right now it only coerces the data to numeric matrices.

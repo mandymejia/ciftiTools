@@ -4,14 +4,14 @@
 \alias{brainstructures_Param_LR}
 \title{brainstructures}
 \arguments{
-\item{brainstructures}{Character vector indicating which brain structure(s) 
- to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
- cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
- gray matter). Can also be \code{"all"} (obtain all three brain structures). 
- Default: \code{c("left","right")} (cortical surface only).
+\item{brainstructures}{Character vector indicating which brain structure(s)
+to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures).
+Default: \code{c("left","right")} (cortical surface only).
 
- If a brain structure is indicated but does not exist, a warning will be
- raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist, a warning will be
+raised and that brain structure will be skipped.}
 }
 \description{
 brainstructures

@@ -17,26 +17,26 @@ convert_to_dlabel(
 
 \item{values}{(Optional) A vector of the original data values. They should all
 be unique. They may not all occur in the \code{"xifti"} data, but every
-datapoint in the \code{"xifti"} must occur in \code{values}. Data will be 
-mapped to integers from $0$ to $N-1$, with $N$ being the length of 
+datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
+mapped to integers from $0$ to $N-1$, with $N$ being the length of
 \code{values}.}
 
-\item{colors}{(Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
+\item{colors}{(Optional) "ROY_BIG_BL", the name of a ColorBrewer palette
 (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), the name of
-a viridisLite palette, or a character vector of colors. Default: 
+a viridisLite palette, or a character vector of colors. Default:
 \code{"Set2"}.}
 
 \item{add_white}{Append white to the beginning of the colors? Default: \code{TRUE}.}
 
-\item{return_conversion_table}{Return the conversion table along with the 
+\item{return_conversion_table}{Return the conversion table along with the
 converted \code{"xifti"}? Default: \code{FALSE}}
 }
 \value{
 If \code{return_conversion_table}, a length-2 list with the first
- entry being the ".dlabel" \code{"xifti"} and the second being the conversion
- table. Otherwise, only the \code{"xifti"} is returned.
+entry being the ".dlabel" \code{"xifti"} and the second being the conversion
+table. Otherwise, only the \code{"xifti"} is returned.
 }
 \description{
 Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
- \code{"xifti"} object. Will use the same label table for each data column.
+\code{"xifti"} object. Will use the same label table for each data column.
 }

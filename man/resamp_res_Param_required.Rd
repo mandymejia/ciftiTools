@@ -4,7 +4,7 @@
 \alias{resamp_res_Param_required}
 \title{resamp_res: required}
 \arguments{
-\item{resamp_res}{Target resolution for resampling (number of 
+\item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
 }
 \description{

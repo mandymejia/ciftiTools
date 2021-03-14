@@ -7,7 +7,7 @@
 confirm_wb_cmd_path(wb_path)
 }
 \arguments{
-\item{wb_path}{(Optional) Path to the Connectome Workbench folder or 
+\item{wb_path}{(Optional) Path to the Connectome Workbench folder or
 executable.}
 }
 \value{
@@ -15,7 +15,7 @@ executable.}
 }
 \description{
 Confirm that the path to the Connectome Workbench executable is valid.
- (For example, if the "wb_path" option was relative and the user changed the 
- current working directory, the path is no longer valid.)
+(For example, if the "wb_path" option was relative and the user changed the
+current working directory, the path is no longer valid.)
 }
 \keyword{internal}

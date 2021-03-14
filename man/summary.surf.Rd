@@ -13,7 +13,7 @@
 \method{print}{surf}(x, ...)
 }
 \arguments{
-\item{object}{Object of class "surf". 
+\item{object}{Object of class "surf".
 See \code{\link{is.surf}} and \code{\link{make_surf}}.}
 
 \item{...}{further arguments passed to or from other methods.}

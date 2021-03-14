@@ -13,13 +13,13 @@ is.xifti_meta(x)
 Logical. Is \code{x} a valid \code{"meta"} component?
 }
 \description{
-Check if object is valid for \code{xifti$meta}, where \code{xifti} is a 
- \code{"xifti"} object.
+Check if object is valid for \code{xifti$meta}, where \code{xifti} is a
+\code{"xifti"} object.
 }
 \details{
 This is a helper function for \code{\link{is.xifti}}.
 
- Requirements: the structure must match that of the \code{"meta"} component
- of \code{\link{template_xifti}}.
+Requirements: the structure must match that of the \code{"meta"} component
+of \code{\link{template_xifti}}.
 }
 \keyword{internal}

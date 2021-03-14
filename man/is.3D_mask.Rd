@@ -18,8 +18,8 @@ Check if object is a 3D binary mask.
 \details{
 This is a helper function for \code{\link{is.xifti}}.
 
- Requirements: the mask must be a boolean 3D array. \code{TRUE} should
- indicate voxels included in the mask, whereas \code{FALSE} 
- should indicate voxels outside of it.
+Requirements: the mask must be a boolean 3D array. \code{TRUE} should
+indicate voxels included in the mask, whereas \code{FALSE}
+should indicate voxels outside of it.
 }
 \keyword{internal}

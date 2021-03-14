@@ -8,15 +8,15 @@ substructure_table()
 }
 \value{
 A data.frame with each substructure along the rows. The first
- column gives the CIFTI format name and the second column gives the
- \code{ciftiTools} name.
+column gives the CIFTI format name and the second column gives the
+\code{ciftiTools} name.
 }
 \description{
 Table of labels for cortex hemispheres (left and right) and subcortical
- substructures. The names used by the CIFTI format and the names used by
- \code{ciftiTools} are given.
+substructures. The names used by the CIFTI format and the names used by
+\code{ciftiTools} are given.
 }
 \details{
 The names used by \code{ciftiTools} are based on those in
- \code{FT_READ_CIFTI} from the FieldTrip MATLAB toolbox.
+\code{FT_READ_CIFTI} from the FieldTrip MATLAB toolbox.
 }

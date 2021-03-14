@@ -15,6 +15,6 @@ ciftiTools.setOption(opt, val)
 The new value, \code{val}
 }
 \description{
-Sets an R option (with prefix "ciftiTools_"). 
- See \code{\link{ciftiTools.listOptions}}.
+Sets an R option (with prefix "ciftiTools_").
+See \code{\link{ciftiTools.listOptions}}.
 }

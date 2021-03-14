@@ -8,34 +8,34 @@ labels
 }
 \section{Label Levels}{
 
- \code{xifti$meta$subcort$labels} is a factor with the following levels:
+\code{xifti$meta$subcort$labels} is a factor with the following levels:
 
- \enumerate{
-   \item{Cortex-L}
-   \item{Cortex-R}
-   \item{Accumbens-L}
-   \item{Accumbens-R}
-   \item{Amygdala-L}
-   \item{Amygdala-R}
-   \item{Brain Stem}
-   \item{Caudate-L}
-   \item{Caudate-R}
-   \item{Cerebellum-L}
-   \item{Cerebellum-R}
-   \item{Diencephalon-L}
-   \item{Diencephalon-R}
-   \item{Hippocampus-L}
-   \item{Hippocampus-R}
-   \item{Pallidum-L}
-   \item{Pallidum-R}
-   \item{Putamen-L}
-   \item{Putamen-R}
-   \item{Thalamus-L}
-   \item{Thalamus-R}
- }
+\enumerate{
+\item{Cortex-L}
+\item{Cortex-R}
+\item{Accumbens-L}
+\item{Accumbens-R}
+\item{Amygdala-L}
+\item{Amygdala-R}
+\item{Brain Stem}
+\item{Caudate-L}
+\item{Caudate-R}
+\item{Cerebellum-L}
+\item{Cerebellum-R}
+\item{Diencephalon-L}
+\item{Diencephalon-R}
+\item{Hippocampus-L}
+\item{Hippocampus-R}
+\item{Pallidum-L}
+\item{Pallidum-R}
+\item{Putamen-L}
+\item{Putamen-R}
+\item{Thalamus-L}
+\item{Thalamus-R}
+}
 
- These correspond to the same structures as given by 
- \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+These correspond to the same structures as given by
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
 \keyword{internal}

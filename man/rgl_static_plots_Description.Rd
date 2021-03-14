@@ -8,20 +8,20 @@ Embedding the Static Plots
 }
 \section{Embedding the Static Plots}{
 
- If \code{save==TRUE}, the plot(s) is written to a .png file. (For 
- \code{view_xifti_surface}, if \code{length(idx) > 1}, each \code{idx} will
- be written to a separate image file.) You can use 
- \code{\link[knitr]{include_graphics}} to embed an image file in an R
- Markdown document. If \code{close_after_save==TRUE}, the return value of this
- function call is the name(s) of the image file(s) that were written, so it
- can be used directly to display the image.
+If \code{save==TRUE}, the plot(s) is written to a .png file. (For
+\code{view_xifti_surface}, if \code{length(idx) > 1}, each \code{idx} will
+be written to a separate image file.) You can use
+\code{\link[knitr]{include_graphics}} to embed an image file in an R
+Markdown document. If \code{close_after_save==TRUE}, the return value of this
+function call is the name(s) of the image file(s) that were written, so it
+can be used directly to display the image.
 
- There's an additional way to embed an image of this plot without writing a
- .png file: use \code{save==FALSE} and set the chunk options 
- \code{rgl=TRUE, format="png"}. You will probably need to tweak the image
- dimensions e.g. \code{fig.width=8, fig.height=5} in the chunk options, 
- because it uses the defaults from RMarkdown/Knitr instead of what makes
- sense based on the dimensions of the Open GL window.
+There's an additional way to embed an image of this plot without writing a
+.png file: use \code{save==FALSE} and set the chunk options
+\code{rgl=TRUE, format="png"}. You will probably need to tweak the image
+dimensions e.g. \code{fig.width=8, fig.height=5} in the chunk options,
+because it uses the defaults from RMarkdown/Knitr instead of what makes
+sense based on the dimensions of the Open GL window.
 }
 
 \keyword{internal}

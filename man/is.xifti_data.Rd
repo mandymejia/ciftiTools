@@ -13,17 +13,17 @@ is.xifti_data(x)
 Logical. Is \code{x} a valid "data" component?
 }
 \description{
-Check if object is valid for \code{xifti$data}, where \code{xifti} is a 
- \code{"xifti"} object.
+Check if object is valid for \code{xifti$data}, where \code{xifti} is a
+\code{"xifti"} object.
 }
 \details{
 This is a helper function for \code{\link{is.xifti}}.
 
- Requirements: a list with entries "cortex_left", "cortex_right", and
- "subcort". Each must be either \code{NULL} or a numeric matrix with
- greyordinates along the rows and measurements along the columns.
- The cortical matrices should have the same number of rows (vertices), and
- all should have the same number of columns (measurements). At least one data
- entry should be present.
+Requirements: a list with entries "cortex_left", "cortex_right", and
+"subcort". Each must be either \code{NULL} or a numeric matrix with
+greyordinates along the rows and measurements along the columns.
+The cortical matrices should have the same number of rows (vertices), and
+all should have the same number of columns (measurements). At least one data
+entry should be present.
 }
 \keyword{internal}

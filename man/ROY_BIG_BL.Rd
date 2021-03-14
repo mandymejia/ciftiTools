@@ -7,34 +7,34 @@
 ROY_BIG_BL(min = 0, max = 1, mid = NULL, half = NULL, pos_half = FALSE)
 }
 \arguments{
-\item{min}{The minimum value for the color mapping. As in the original 
-palette, the last color (aqua) is actually placed at the bottom .5\% between
+\item{min}{The minimum value for the color mapping. As in the original
+palette, the last color (aqua) is actually placed at the bottom .5\\% between
 the minimum and maximum. Default: \code{0}}
 
-\item{max}{The maximum value for the color mapping. If this value is lower 
-than the minimum, the color mapping will be reversed. If this is equal to 
+\item{max}{The maximum value for the color mapping. If this value is lower
+than the minimum, the color mapping will be reversed. If this is equal to
 the minimum, a palette with only the color black will be returned.
 Default: \code{1}.}
 
-\item{mid}{(Optional) The midpoint value for the color mapping. If 
+\item{mid}{(Optional) The midpoint value for the color mapping. If
 \code{NULL} (default), the true midpoint is used.}
 
 \item{half}{\code{"positive"} or \code{"negative"} to use the positive half
 (black --> red --> yellow) or negative half (black --> blue --> purple -->
-green --> aqua) only. \code{NULL} (default) or \code{FALSE} to use entire 
+green --> aqua) only. \code{NULL} (default) or \code{FALSE} to use entire
 palette.}
 
 \item{pos_half}{Deprecated. Use \code{half}.}
 }
 \value{
-A data.frame with two columns: \code{"color"} (character: color hex 
- codes) and \code{"value"} (numeric)
+A data.frame with two columns: \code{"color"} (character: color hex
+codes) and \code{"value"} (numeric)
 }
 \description{
 "ROY_BIG_BL", the default palette from the Connectome Workbench.
 }
 \details{
-Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette. 
- This is the same color palette as the default Connectome Workbench palette. 
- Source: https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
+Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette.
+This is the same color palette as the default Connectome Workbench palette.
+Source: https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 }

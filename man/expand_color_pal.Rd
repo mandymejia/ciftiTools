@@ -2,22 +2,22 @@
 % Please edit documentation in R/utils_color.R
 \name{expand_color_pal}
 \alias{expand_color_pal}
-\title{Interpolates between entries in the input palette to make a larger palette 
- with COLOR_RES entries.}
+\title{Interpolates between entries in the input palette to make a larger palette
+with COLOR_RES entries.}
 \usage{
 expand_color_pal(pal, COLOR_RES = 255)
 }
 \arguments{
-\item{pal}{The color palette to expand, as a data.frame with two columns: 
+\item{pal}{The color palette to expand, as a data.frame with two columns:
 \code{"color"} (character: color hex codes) and \code{"value"} (numeric).}
 
 \item{COLOR_RES}{The number of entries to have in the output palette.}
 }
 \value{
-A data.frame with two columns: \code{"color"} (character: color hex 
- codes) and \code{"value"} (numeric)
+A data.frame with two columns: \code{"color"} (character: color hex
+codes) and \code{"value"} (numeric)
 }
 \description{
-Interpolates between entries in the input palette to make a larger palette 
- with COLOR_RES entries.
+Interpolates between entries in the input palette to make a larger palette
+with COLOR_RES entries.
 }

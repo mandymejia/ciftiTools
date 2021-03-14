@@ -26,25 +26,25 @@ resample_cifti_components(
 \arguments{
 \item{original_res}{The original resolution of the CIFTI cortical surface(s).}
 
-\item{resamp_res}{Target resolution for resampling (number of 
+\item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
 
-\item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of 
+\item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of
 GIFTI data for [left/right] cortex to resample.}
 
-\item{cortexL_target_fname, cortexR_target_fname}{(Optional) File path to 
+\item{cortexL_target_fname, cortexR_target_fname}{(Optional) File path to
 save the resampled GIFTI data for [left/right] cortex as.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it
 will be named by \code{\link{cifti_component_suffix}}.}
 
-\item{ROIcortexL_original_fname, ROIcortexR_original_fname}{(Optional) File 
-path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to 
+\item{ROIcortexL_original_fname, ROIcortexR_original_fname}{(Optional) File
+path of GIFTI ROI corresponding to \code{cortex[L/R]_original_fname} to
 resample.}
 
-\item{ROIcortexL_target_fname, ROIcortexR_target_fname}{(Optional) File path 
-of to save the resampled GIFTI ROI corresponding to 
+\item{ROIcortexL_target_fname, ROIcortexR_target_fname}{(Optional) File path
+of to save the resampled GIFTI ROI corresponding to
 \code{cortex[L/R]_target_fname} as.
-If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
+If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it
 will be named by \code{\link{cifti_component_suffix}}.}
 
 \item{surfL_original_fname}{(Optional) File path of GIFTI surface geometry
@@ -53,36 +53,36 @@ file representing the left cortex.}
 \item{surfR_original_fname}{(Optional) File path of GIFTI surface geometry
 file representing the right cortex.}
 
-\item{surfL_target_fname}{(Optional) File path to save the resampled GIFTI 
+\item{surfL_target_fname}{(Optional) File path to save the resampled GIFTI
 surface geometry file representing the left cortex at.}
 
-\item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI 
+\item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI
 surface geometry file representing the right cortex at.}
 
 \item{read_dir}{Directory to append to the path of every file being read,
- e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
- any directory to the path.
+e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
+any directory to the path.
 
- \code{read_dir} must already exist, or an error will be raised.}
+\code{read_dir} must already exist, or an error will be raised.}
 
 \item{write_dir}{Where should the separated
- files be placed? \code{NULL} (default) will write them to
- the current working directory.
+files be placed? \code{NULL} (default) will write them to
+the current working directory.
 
- \code{write_dir} must already exist, or an error will occur.}
+\code{write_dir} must already exist, or an error will occur.}
 }
 \value{
 A named character vector of file paths to each resampled file
 }
 \description{
-Performs spatial resampling of various CIFTI file components on 
- the cortical surface. (The subcortical data is not resampled here.) 
- GIFTI surface geometry files can additionally be included: see 
- \code{surfL_original_fname} and \code{surfR_original_fname}.
+Performs spatial resampling of various CIFTI file components on
+the cortical surface. (The subcortical data is not resampled here.)
+GIFTI surface geometry files can additionally be included: see
+\code{surfL_original_fname} and \code{surfR_original_fname}.
 }
 \details{
 Step 1: Generate spheres in the original and target resolutions
- Step 2: Use -metric-resample to resample surface/cortex files 
- Step 3: Use -surface-resample to resample gifti files
+Step 2: Use -metric-resample to resample surface/cortex files
+Step 3: Use -surface-resample to resample gifti files
 }
 \keyword{internal}

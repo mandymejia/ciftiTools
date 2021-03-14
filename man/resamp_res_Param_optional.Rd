@@ -4,8 +4,8 @@
 \alias{resamp_res_Param_optional}
 \title{resamp_res: optional}
 \arguments{
-\item{resamp_res}{(Optional) Target resolution for resampling (number of 
-cortical surface vertices per hemisphere). If \code{NULL} (default) or 
+\item{resamp_res}{(Optional) Target resolution for resampling (number of
+cortical surface vertices per hemisphere). If \code{NULL} (default) or
 \code{FALSE}, do not perform resampling.}
 }
 \description{

@@ -56,7 +56,7 @@ viewcii_volume(
 )
 }
 \arguments{
-\item{xifti}{Object of class "xifti". 
+\item{xifti}{Object of class "xifti".
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{structural_img}{The structural MRI image on which to overlay the
@@ -67,7 +67,7 @@ the MNI T1-weighted template, or \code{NULL} to use a blank image.}
 be a single index (length 1).}
 
 \item{plane}{If interactive=FALSE, the plane to display.
-Default: \code{"axial"}. Other options are \code{"sagittal"} and 
+Default: \code{"axial"}. Other options are \code{"sagittal"} and
 \code{"coronal"}.}
 
 \item{num.slices}{If interactive=FALSE, the number of slices to display.

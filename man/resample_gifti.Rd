@@ -50,31 +50,31 @@ resamplegii(
 
 \item{target_fname}{Where to save the resampled file.}
 
-\item{hemisphere}{\code{"left"} (default) or \code{"right"}. An error will 
+\item{hemisphere}{\code{"left"} (default) or \code{"right"}. An error will
 occur if the hemisphere indicated in the GIFTI metadata does not match.}
 
-\item{file_type}{\code{"metric"}, \code{"label"}, \code{"surf"}, or \code{NULL} 
+\item{file_type}{\code{"metric"}, \code{"label"}, \code{"surf"}, or \code{NULL}
 (default) to infer from \code{original_fname}.}
 
 \item{original_res}{The resolution of the original file. If \code{NULL}
 (default), infer from the file.}
 
-\item{resamp_res}{Target resolution for resampling (number of 
+\item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
 
-\item{ROIcortex_original_fname}{The name of the ROI file corresponding to 
+\item{ROIcortex_original_fname}{The name of the ROI file corresponding to
 \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
 or shouldn't be resampled.}
 
-\item{ROIcortex_target_fname}{The name of the resampled ROI file. Only 
+\item{ROIcortex_target_fname}{The name of the resampled ROI file. Only
 applicable if \code{ROIcortex_original_fname} is provided.}
 
 \item{read_dir}{Directory to append to the path of every file name in
-\code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
+\code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL}
 (default), do not append any directory to the path.}
 
 \item{write_dir}{Directory to append to the path of every file name in
-\code{target_fname} and \code{ROIcortex_target_fname}. If \code{NULL} 
+\code{target_fname} and \code{ROIcortex_target_fname}. If \code{NULL}
 (default), do not append any directory to the path.}
 }
 \value{

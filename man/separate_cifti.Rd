@@ -51,85 +51,85 @@ separatecii(
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
-\item{brainstructures}{Character vector indicating which brain structure(s) 
- to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
- cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
- gray matter). Can also be \code{"all"} (obtain all three brain structures). 
- Default: \code{c("left","right")} (cortical surface only).
+\item{brainstructures}{Character vector indicating which brain structure(s)
+to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
+cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
+gray matter). Can also be \code{"all"} (obtain all three brain structures).
+Default: \code{c("left","right")} (cortical surface only).
 
- If a brain structure is indicated but does not exist, a warning will be
- raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist, a warning will be
+raised and that brain structure will be skipped.}
 
-\item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names 
- (*.[func/label].gii) to save the [left/right] cortex data to. If not provided, 
- defaults to \code{"*[L/R].[func/label].gii"}, where * is the file name
- component of \code{cifti_fname}. Will be written in \code{write_dir}. 
+\item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names
+(*.[func/label].gii) to save the [left/right] cortex data to. If not provided,
+defaults to \code{"*[L/R].\[func/label\].gii"}, where * is the file name
+component of \code{cifti_fname}. Will be written in \code{write_dir}.
 
- dtseries and dscalar files should use "func", whereas dlabel files should 
- use "label".}
+dtseries and dscalar files should use "func", whereas dlabel files should
+use "label".}
 
 \item{subcortVol_fname, subcortLabs_fname}{(Optional) NIFTI file names to save
-the subcortical [volume/labels] to. If not provided, defaults to 
-\code{"*[/.labels].nii"}, where * is the file name component of 
+the subcortical [volume/labels] to. If not provided, defaults to
+\code{"*[/.labels].nii"}, where * is the file name component of
 \code{cifti_fname}. Will be written in \code{write_dir}.}
 
-\item{ROI_brainstructures}{Which ROIs should be obtained? \code{"all"} 
-(default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL} 
+\item{ROI_brainstructures}{Which ROIs should be obtained? \code{"all"}
+(default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL}
 to not obtain any ROIs. This should be a subset of \code{brainstructures}.}
 
 \item{ROIcortexL_fname, ROIcortexR_fname}{(Optional) GIFTI file names
- (*.[func/label].gii) to save the [left/right] cortex ROI to. If not provided, 
- defaults to \code{"*ROI_[L/R].[func/label].gii"}, where * is the file name component
- of \code{cifti_fname}. The cortical ROIs typically represent the medial wall 
- mask, with values of 1 for in-ROI (non-medial wall) vertices and 0 for 
- out-of-ROI (medial wall) vertices. Will be written in \code{write_dir}.
+(*.[func/label].gii) to save the [left/right] cortex ROI to. If not provided,
+defaults to \code{"*ROI_[L/R].\[func/label\].gii"}, where * is the file name component
+of \code{cifti_fname}. The cortical ROIs typically represent the medial wall
+mask, with values of 1 for in-ROI (non-medial wall) vertices and 0 for
+out-of-ROI (medial wall) vertices. Will be written in \code{write_dir}.
 
- dtseries and dscalar files should use "func", whereas dlabel files should
- use "label".}
+dtseries and dscalar files should use "func", whereas dlabel files should
+use "label".}
 
 \item{ROIsubcortVol_fname}{(Optional) NIFTI file names to save
-the subcortical ROI to. If not provided, defaults to 
-\code{"*ROI.nii"}, where * is the file name component of 
+the subcortical ROI to. If not provided, defaults to
+\code{"*ROI.nii"}, where * is the file name component of
 \code{cifti_fname}. The subcortical ROI typically represents the volumetric
-mask for the entire subcortical structure, with values of 1 for in-ROI 
-(in subcortex) voxels and 0 for out-of-ROI (not in subcortex) voxels. Will 
+mask for the entire subcortical structure, with values of 1 for in-ROI
+(in subcortex) voxels and 0 for out-of-ROI (not in subcortex) voxels. Will
 be written in \code{write_dir}.}
 
 \item{write_dir}{Where should the separated
- files be placed? \code{NULL} (default) will write them to
- the current working directory.
+files be placed? \code{NULL} (default) will write them to
+the current working directory.
 
- \code{write_dir} must already exist, or an error will occur.}
+\code{write_dir} must already exist, or an error will occur.}
 }
 \value{
-A named character vector with the file paths to the written 
- NIFTI and GIFTI files
+A named character vector with the file paths to the written
+NIFTI and GIFTI files
 }
 \description{
-Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files 
- for the subcortical data and labels. ROIs can also be written to indicate 
- the medial wall mask (cortex) and volume mask (subcortex). This uses the
- Connectome Workbench command \code{-cifti-separate}.
+Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files
+for the subcortical data and labels. ROIs can also be written to indicate
+the medial wall mask (cortex) and volume mask (subcortex). This uses the
+Connectome Workbench command \code{-cifti-separate}.
 }
 \details{
-Time unit, start, and step (dtseries files) will not be written to the GIFTI/NIFTIs. 
- Column names (dscalar files) will not be written to the GIFTIs, as well as label 
- names and colors (dlabel files). (Haven't checked the NIFTIs yet.)
+Time unit, start, and step (dtseries files) will not be written to the GIFTI/NIFTIs.
+Column names (dscalar files) will not be written to the GIFTIs, as well as label
+names and colors (dlabel files). (Haven't checked the NIFTIs yet.)
 
- ROI/medial wall behavior: If there are 32k vertices in the left cortex with
- 3k representing the medial wall, then both \code{cortexL_fname} and 
- \code{ROIcortexL_fname} will have 32k entries, 3k of which having a value of
- 0 indicating the medial wall. The non-medial wall entries will have the 
- data values in \code{cortexL_fname} and a value of 1 in 
- \code{ROIcortexL_fname}. Thus, exporting \code{ROIcortexL_fname} is vital if 
- the data values include 0, because 0-valued non-medial wall vertices and
- medial wall vertices cannot be distinguished from one another within
- \code{cortexL_fname} alone.
+ROI/medial wall behavior: If there are 32k vertices in the left cortex with
+3k representing the medial wall, then both \code{cortexL_fname} and
+\code{ROIcortexL_fname} will have 32k entries, 3k of which having a value of
+0 indicating the medial wall. The non-medial wall entries will have the
+data values in \code{cortexL_fname} and a value of 1 in
+\code{ROIcortexL_fname}. Thus, exporting \code{ROIcortexL_fname} is vital if
+the data values include 0, because 0-valued non-medial wall vertices and
+medial wall vertices cannot be distinguished from one another within
+\code{cortexL_fname} alone.
 }
 \section{Connectome Workbench Requirement}{
 
- This function uses a system wrapper for the 'wb_command' executable. The 
- user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function uses a system wrapper for the 'wb_command' executable. The
+user must first download and install the Connectome Workbench, available
+from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 

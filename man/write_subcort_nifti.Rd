@@ -18,7 +18,7 @@ write_subcort_nifti(
 \arguments{
 \item{subcortVol}{A vectorized data matrix: V voxels by T measurements}
 
-\item{subcortLabs}{Numeric (0 and 3-21) or factor vector corresponding to 
+\item{subcortLabs}{Numeric (0 and 3-21) or factor vector corresponding to
 subcortical structure labels. See \code{\link{substructure_table}}.}
 
 \item{subcortMask}{Logical volumetric mask. Values of 0 represent out-of-mask
@@ -36,21 +36,21 @@ optional but the rest is required.}
 \item{fill}{Values to use for out-of-mask voxels. Default: \code{0}.}
 }
 \value{
-Named character vector with the \code{"subcortVol"}, 
- \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
+Named character vector with the \code{"subcortVol"},
+\code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
 }
 \description{
 Write subcortical data to NIFTI files representing the data values,
- subcortical structure labels, and volumetric mask. The input formats of
- \code{subcortVol}, \code{subcortLabs}, and \code{subcortMask}
- correspond to the data structures of \code{xifti$data$subcort},
- \code{xifti$meta$subcort$labels} , and \code{xifti$meta$subcort$mask}
- respectively. \code{subcortVol} and \code{subcortLabs} should be vectorized,
- so if they are volumes consider using \code{RNifti::writeNIfTI}.
+subcortical structure labels, and volumetric mask. The input formats of
+\code{subcortVol}, \code{subcortLabs}, and \code{subcortMask}
+correspond to the data structures of \code{xifti$data$subcort},
+\code{xifti$meta$subcort$labels} , and \code{xifti$meta$subcort$mask}
+respectively. \code{subcortVol} and \code{subcortLabs} should be vectorized,
+so if they are volumes consider using \code{RNifti::writeNIfTI}.
 }
 \details{
 All file path arguments are required except \code{ROIsubcortVol_fname}. If
- not provided, the volumetric mask will not be written. (It's redundant with
- the 0 values in \code{subcortLabs_fname} because valid labels have positive
- indexes.)
+not provided, the volumetric mask will not be written. (It's redundant with
+the 0 values in \code{subcortLabs_fname} because valid labels have positive
+indexes.)
 }

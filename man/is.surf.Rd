@@ -13,18 +13,18 @@ is.surf(x)
 Logical. Is \code{x} a valid surface?
 }
 \description{
-Check if object is valid for \code{xifti$surf$cortex_left} or 
- \code{xifti$surf$cortex_right}, where \code{xifti} is a \code{"xifti"}
- object.
+Check if object is valid for \code{xifti$surf$cortex_left} or
+\code{xifti$surf$cortex_right}, where \code{xifti} is a \code{"xifti"}
+object.
 }
 \details{
 This is a helper function for \code{\link{is.xifti}}.
 
- Requirements: the surface must be a list of three components: "vertices", 
- "faces", and "hemisphere". The first two should each be a numeric matrix 
- with three columns. The values in "vertices" represent spatial coordinates 
- whereas the values in "faces" represent vertex indices defining the face. 
- Thus, values in "faces" should be integers between 1 and the number of 
- vertices. The last list entry, "hemisphere", should be "left", "right", 
- or NULL indicating the brain hemisphere which the surface represents.
+Requirements: the surface must be a list of three components: "vertices",
+"faces", and "hemisphere". The first two should each be a numeric matrix
+with three columns. The values in "vertices" represent spatial coordinates
+whereas the values in "faces" represent vertex indices defining the face.
+Thus, values in "faces" should be integers between 1 and the number of
+vertices. The last list entry, "hemisphere", should be "left", "right",
+or NULL indicating the brain hemisphere which the surface represents.
 }

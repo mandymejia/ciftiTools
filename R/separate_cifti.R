@@ -27,15 +27,15 @@
 #'  (default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL} 
 #'  to not obtain any ROIs. This should be a subset of \code{brainstructures}.
 #' @param cortexL_fname,cortexR_fname (Optional) GIFTI file names 
-#'  (*.[func/label].gii) to save the [left/right] cortex data to. If not provided, 
-#'  defaults to \code{"*[L/R].[func/label].gii"}, where * is the file name
+#'  (*.\[func/label\].gii) to save the \[left/right\] cortex data to. If not provided, 
+#'  defaults to \code{"*[L/R].\[func/label\].gii"}, where * is the file name
 #'  component of \code{cifti_fname}. Will be written in \code{write_dir}. 
 #' 
 #'  dtseries and dscalar files should use "func", whereas dlabel files should 
 #'  use "label".
 #' @param ROIcortexL_fname,ROIcortexR_fname (Optional) GIFTI file names
-#'  (*.[func/label].gii) to save the [left/right] cortex ROI to. If not provided, 
-#'  defaults to \code{"*ROI_[L/R].[func/label].gii"}, where * is the file name component
+#'  (*.\[func/label\].gii) to save the \[left/right\] cortex ROI to. If not provided, 
+#'  defaults to \code{"*ROI_[L/R].\[func/label\].gii"}, where * is the file name component
 #'  of \code{cifti_fname}. The cortical ROIs typically represent the medial wall 
 #'  mask, with values of 1 for in-ROI (non-medial wall) vertices and 0 for 
 #'  out-of-ROI (medial wall) vertices. Will be written in \code{write_dir}.
@@ -43,7 +43,7 @@
 #'  dtseries and dscalar files should use "func", whereas dlabel files should
 #'  use "label".
 #' @param subcortVol_fname,subcortLabs_fname (Optional) NIFTI file names to save
-#'  the subcortical [volume/labels] to. If not provided, defaults to 
+#'  the subcortical \[volume/labels\] to. If not provided, defaults to 
 #'  \code{"*[/.labels].nii"}, where * is the file name component of 
 #'  \code{cifti_fname}. Will be written in \code{write_dir}.
 #' @param ROIsubcortVol_fname (Optional) NIFTI file names to save

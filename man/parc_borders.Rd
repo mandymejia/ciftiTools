@@ -12,15 +12,15 @@ entry indicates the parcel that vertex belongs to.}
 
 \item{surf}{The surface which the vertices belong to, or just the \code{"faces"}
 component (\eqn{F x 3} matrix where each row indicates the vertices which
-comprise a face). If not provided, the (resampled) default \code{hemisphere} 
+comprise a face). If not provided, the (resampled) default \code{hemisphere}
 surface included with \code{ciftiTools} will be used.}
 
-\item{hemisphere}{Only used to choose which default surface to use if 
+\item{hemisphere}{Only used to choose which default surface to use if
 \code{is.null(surf)}. Should be \code{"left"} (default) or \code{"right"}.}
 }
 \value{
 Logical vector the same length as \code{parc} indicating if the
- vertex lies on a border.
+vertex lies on a border.
 }
 \description{
 Identify vertices which lie on the border of different parcels.

@@ -16,12 +16,12 @@ viewCIfTI(xifti, what = NULL, ...)
 viewcii(xifti, what = NULL, ...)
 }
 \arguments{
-\item{xifti}{Object of class "xifti". 
+\item{xifti}{Object of class "xifti".
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{what}{Either \code{"surface"} or \code{"volume"}. \code{NULL} will infer
-based on the contents of the \code{"xifti"}: if there is data, plot the 
-surface cortex data if present, and the volumetric subcortical data 
+based on the contents of the \code{"xifti"}: if there is data, plot the
+surface cortex data if present, and the volumetric subcortical data
 otherwise. If there is no data, plot the surface geometry if present, and
 do nothing otherwise.}
 
@@ -29,7 +29,7 @@ do nothing otherwise.}
 }
 \value{
 The return value of \code{view_xifti_surface} or
- \code{view_xifti_volume}.
+\code{view_xifti_volume}.
 }
 \description{
 Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}

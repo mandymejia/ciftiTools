@@ -8,7 +8,7 @@ coordlist_to_vol(coords, fill = FALSE)
 }
 \arguments{
 \item{coords}{The sparse coordinate list. Should be a data.frame or matrix
-with voxels along the rows and three or four columns. The first three 
+with voxels along the rows and three or four columns. The first three
 columns should be integers indicating the spatial coordinates of the voxel.
 If the fourth column is present, it will be the value used for that voxel.
 If it is absent, the value will be \code{TRUE} or \code{1} if \code{fill}
@@ -16,7 +16,7 @@ is not those values, and \code{FALSE} or \code{0} if \code{fill} is. The
 data type will be the same as that of \code{fill}.
 \code{fill}. The fourth column must be logical or numeric.}
 
-\item{fill}{Fill value for the volume. Must be logical or numeric. Default: 
+\item{fill}{Fill value for the volume. Must be logical or numeric. Default:
 \code{FALSE}.}
 }
 \value{

@@ -11,10 +11,10 @@ make_trans_mat(nii_fname)
 }
 \value{
 4x4 matrix representing the transformation matrix. (This includes
- the last row, \code{c(0,0,0,1)}).
+the last row, \code{c(0,0,0,1)}).
 }
 \description{
 Make the transformation matrix for the subcortical volume from the sform
- data in the header.
+data in the header.
 }
 \keyword{internal}

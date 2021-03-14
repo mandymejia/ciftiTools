@@ -4,7 +4,7 @@
 \alias{surfR_target_fname_Param}
 \title{surfR_target_fname}
 \arguments{
-\item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI 
+\item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI
 surface geometry file representing the right cortex at.}
 }
 \description{

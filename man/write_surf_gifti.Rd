@@ -13,7 +13,7 @@ write_surf_gifti(
 )
 }
 \arguments{
-\item{x}{A \code{"surf"} object, an object from \code{gifti::readgii}, or a 
+\item{x}{A \code{"surf"} object, an object from \code{gifti::readgii}, or a
 list with elements "pointset" and "triangle".}
 
 \item{gifti_fname}{Where to write the GIFTI file.}
@@ -22,8 +22,8 @@ list with elements "pointset" and "triangle".}
 a "gifti" object, or if it is a \code{"surf"} object with the hemisphere metadata
 already specified.}
 
-\item{encoding}{A length-2 vector with elements chosen among "ASCII", 
-"Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 
+\item{encoding}{A length-2 vector with elements chosen among "ASCII",
+"Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use
 the metadata if \code{data} is a "gifti" object, or "GZipBase64Binary" for the
 "pointset" and "ASCII" for the "triangles" if \code{data} is not already
 a GIFTI.}

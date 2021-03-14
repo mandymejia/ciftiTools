@@ -1,7 +1,12 @@
 #' Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.
 #' 
-#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of \code{"xifti"}s. 
-#'  If a pair, they must share the same brainstructures and data dimensions.
+#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of 
+#'  \code{"xifti"}s. If a pair, they must share the same brainstructures and 
+#'  data dimensions.
+#' 
+#' If the \code{"xifti"} had the dlabel intent, and the transformation creates
+#'  any value that is not a label value (e.g. a non-integer), then it is converted
+#'  to a dscalar.
 #' 
 #' @param xifti The xifti
 #' @param FUN The function. If \code{xifti2} is not provided, it should be

@@ -14,13 +14,13 @@ The XML as a list
 }
 \description{
 Wrapper for Connectome Workbench command
- \code{-nifti-information [fname] -print-xml}
+\code{-nifti-information [fname] -print-xml}
 }
 \section{Connectome Workbench Requirement}{
 
- This function uses a system wrapper for the 'wb_command' executable. The 
- user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function uses a system wrapper for the 'wb_command' executable. The
+user must first download and install the Connectome Workbench, available
+from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
 \keyword{internal}

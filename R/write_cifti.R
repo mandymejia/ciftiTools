@@ -144,7 +144,7 @@ write_cifti_components <- function(
 #' 
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
-#' @param surfL_fname,surfR_fname If the [left/right] surface is present, it 
+#' @param surfL_fname,surfR_fname If the \[left/right\] surface is present, it 
 #'  will be a written to a GIFTI file at this file path. If \code{NULL} 
 #'  (default), do not write out the surface.
 #' @inheritParams verbose_Param_TRUE

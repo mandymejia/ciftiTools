@@ -7,13 +7,13 @@
 make_subcort(vol, labs, mask = NULL, validate_mask = FALSE)
 }
 \arguments{
-\item{vol}{represents the data values of the subcortex. It is either a NIFTI 
-file path, 3D/4D data array (\eqn{i x j x k x T}), or a vectorized data 
-matrix (\eqn{V_S} voxels x \eqn{T} measurements). If it's vectorized, the voxels 
+\item{vol}{represents the data values of the subcortex. It is either a NIFTI
+file path, 3D/4D data array (\eqn{i x j x k x T}), or a vectorized data
+matrix (\eqn{V_S} voxels x \eqn{T} measurements). If it's vectorized, the voxels
 should be in spatial order.}
 
 \item{labs}{represents the brainstructure labels of each voxel: see
-\code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array 
+\code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array
 (\eqn{i x j x k}) of numeric brainstructure indices, or a \eqn{V_S} length
 vector in spatial order with brainstructure names as factors or integer
 indices. The indices should be 3-21 (2 and 3 correspond to left and right
@@ -22,62 +22,62 @@ out-of-mask voxels.}
 
 \item{mask}{is a NIFTI file path or logical 3D data array (\eqn{i x j x k}) where \code{TRUE}
 values indicate subcortical voxels (in-mask). If it is not provided, the
-mask will be inferred from voxels with labels \code{0} or \code{NA} in 
+mask will be inferred from voxels with labels \code{0} or \code{NA} in
 \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
 is not provided, the mask cannot be inferred so an error will occur.}
 
-\item{validate_mask}{If \code{mask} is provided, set this to \code{TRUE} to 
-check that the mask only removes voxels with \code{NA} and \code{0} values 
+\item{validate_mask}{If \code{mask} is provided, set this to \code{TRUE} to
+check that the mask only removes voxels with \code{NA} and \code{0} values
 in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).}
 }
 \value{
-A list with components "data", "labels", "mask", and "trans_mat". The 
- first two will be vectorized and ordered spatially.
+A list with components "data", "labels", "mask", and "trans_mat". The
+first two will be vectorized and ordered spatially.
 
- The volume can be recovered using: 
-   \code{vol <- unmask_vol(data, mask, fill=NA)}
-   \code{labs <- unmask_vol(labels, mask, fill=0)}
+The volume can be recovered using:
+\code{vol <- unmask_vol(data, mask, fill=NA)}
+\code{labs <- unmask_vol(labels, mask, fill=0)}
 }
 \description{
 Coerce subcortical data into valid entries for \code{xifti$data$subcort}
- and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
- NIFTI file paths. If the mask is not provided, it will be inferred from the 
- labels.
+and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
+NIFTI file paths. If the mask is not provided, it will be inferred from the
+labels.
 }
 \details{
 To read in the labels as the primary data, use the labels NIFTI for both
- \code{vol} and \code{labs}.
+\code{vol} and \code{labs}.
 }
 \section{Label Levels}{
 
- \code{xifti$meta$subcort$labels} is a factor with the following levels:
+\code{xifti$meta$subcort$labels} is a factor with the following levels:
 
- \enumerate{
-   \item{Cortex-L}
-   \item{Cortex-R}
-   \item{Accumbens-L}
-   \item{Accumbens-R}
-   \item{Amygdala-L}
-   \item{Amygdala-R}
-   \item{Brain Stem}
-   \item{Caudate-L}
-   \item{Caudate-R}
-   \item{Cerebellum-L}
-   \item{Cerebellum-R}
-   \item{Diencephalon-L}
-   \item{Diencephalon-R}
-   \item{Hippocampus-L}
-   \item{Hippocampus-R}
-   \item{Pallidum-L}
-   \item{Pallidum-R}
-   \item{Putamen-L}
-   \item{Putamen-R}
-   \item{Thalamus-L}
-   \item{Thalamus-R}
- }
+\enumerate{
+\item{Cortex-L}
+\item{Cortex-R}
+\item{Accumbens-L}
+\item{Accumbens-R}
+\item{Amygdala-L}
+\item{Amygdala-R}
+\item{Brain Stem}
+\item{Caudate-L}
+\item{Caudate-R}
+\item{Cerebellum-L}
+\item{Cerebellum-R}
+\item{Diencephalon-L}
+\item{Diencephalon-R}
+\item{Hippocampus-L}
+\item{Hippocampus-R}
+\item{Pallidum-L}
+\item{Pallidum-R}
+\item{Putamen-L}
+\item{Putamen-R}
+\item{Thalamus-L}
+\item{Thalamus-R}
+}
 
- These correspond to the same structures as given by 
- \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+These correspond to the same structures as given by
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
 \keyword{internal}
