@@ -102,16 +102,16 @@ view_xifti_surface(xii)
 
 ## Related R extensions
 
-  - NIFTI files:
+-   NIFTI files:
     [`oro.nifti`](https://CRAN.R-project.org/package=oro.nifti),
     [`RNifti`](https://CRAN.R-project.org/package=RNifti)
-  - GIFTI files: [`gifti`](https://CRAN.R-project.org/package=gifti)
-  - CIFTI files: [`cifti`](https://CRAN.R-project.org/package=cifti) can
+-   GIFTI files: [`gifti`](https://CRAN.R-project.org/package=gifti)
+-   CIFTI files: [`cifti`](https://CRAN.R-project.org/package=cifti) can
     read in any CIFTI file, whereas `ciftiTools` provides a
     user-friendly interface for CIFTI files with the dscalar, dlabel,
     and dtseries intents only.
-  - Other structural neuroimaging files:
+-   Other structural neuroimaging files:
     [`fsbrain`](https://CRAN.R-project.org/package=fsbrain)
-  - xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
-  - Interactive 3D rendering:
+-   xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
+-   Interactive 3D rendering:
     [`rgl`](https://CRAN.R-project.org/package=rgl)

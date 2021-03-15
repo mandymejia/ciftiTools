@@ -32,6 +32,6 @@ A list with the union of \code{kwargsA} and \code{kwargsB}
 }
 \description{
 Merge two kwarg lists. If a kwarg is present in both lists but with different
- values, an error is raised.
+values, an error is raised.
 }
 \keyword{internal}

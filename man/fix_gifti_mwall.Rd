@@ -21,14 +21,14 @@ fix_gifti_mwall(
 
 \item{fixed_ROI_fname}{The revised ROI GIFTI}
 
-\item{mwall_values}{The values to use to infer the medial wall. Default: 
+\item{mwall_values}{The values to use to infer the medial wall. Default:
 \code{c(NA, NaN)}.}
 }
 \value{
 \code{NULL}, invisibly
 }
 \description{
-Replace implicit medial wall values (not indicated in ROI, but are in 
- \code{mwall_values}) with explicit medial wall values (indicated in ROI).
+Replace implicit medial wall values (not indicated in ROI, but are in
+\code{mwall_values}) with explicit medial wall values (indicated in ROI).
 }
 \keyword{internal}

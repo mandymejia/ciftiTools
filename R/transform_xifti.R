@@ -1,7 +1,12 @@
 #' Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.
 #' 
-#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of \code{"xifti"}s. 
-#'  If a pair, they must share the same brainstructures and data dimensions.
+#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of 
+#'  \code{"xifti"}s. If a pair, they must share the same brainstructures and 
+#'  data dimensions.
+#' 
+#' If the \code{"xifti"} had the dlabel intent, and the transformation creates
+#'  any value that is not a label value (e.g. a non-integer), then it is converted
+#'  to a dscalar.
 #' 
 #' @param xifti The xifti
 #' @param FUN The function. If \code{xifti2} is not provided, it should be
@@ -111,7 +116,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL) {
 
   # Convert from dlabel to dscalar if non-label values were introduced by
   #   the transformation function.
-  if (xifti$meta$cifti$intent == 3007) {
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
     v <- unique(do.call(rbind, xifti$data))
     for (T_ in seq(ncol(v))) {
       if (!all(v[,T_] %in% xifti$meta$cifti$labels[[T_]]$Key)) {

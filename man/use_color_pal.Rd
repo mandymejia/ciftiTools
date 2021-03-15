@@ -13,7 +13,7 @@ use_color_pal(data_values, pal, color_NA = "white", indices = FALSE)
 
 \item{color_NA}{The color to use for \code{NA} values. Default: \code{"white"}.}
 
-\item{indices}{Return the numeric indices of colors in \code{pal$value} 
+\item{indices}{Return the numeric indices of colors in \code{pal$value}
 rather than the colors themselves. A value of \code{0} will be used for
 missing data. Default: \code{FALSE}.}
 }

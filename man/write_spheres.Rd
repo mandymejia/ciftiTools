@@ -7,13 +7,13 @@
 write_spheres(sphereL_fname, sphereR_fname, resamp_res, write_dir = NULL)
 }
 \arguments{
-\item{sphereL_fname}{File path to left-hemisphere spherical GIFTI to be 
+\item{sphereL_fname}{File path to left-hemisphere spherical GIFTI to be
 created}
 
-\item{sphereR_fname}{File path to right-hemisphere spherical GIFTI to be 
+\item{sphereR_fname}{File path to right-hemisphere spherical GIFTI to be
 created}
 
-\item{resamp_res}{Target resolution for resampling (number of 
+\item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
 
 \item{write_dir}{(Optional) directory to place the sphere files in. If
@@ -24,7 +24,7 @@ The names of the written sphere files, invisibly
 }
 \description{
 This function generates a pair of GIFTI vertex-matched left and right spheres
- in the target resolution. These are required for resampling CIFTI and GIFTI 
- files.
+in the target resolution. These are required for resampling CIFTI and GIFTI
+files.
 }
 \keyword{internal}

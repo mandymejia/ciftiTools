@@ -11,22 +11,22 @@ gifti_to_surf(surf, expected_hemisphere = NULL)
 }
 \arguments{
 \item{surf}{Either a file path to a surface GIFTI; a "gifti" object
-read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and 
+read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and
 "triangle"; or, a \code{"surf"} object.}
 
 \item{expected_hemisphere}{The expected hemisphere (\code{"left"} or \code{"right"})
-of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the 
-opposite, an error is raised. If \code{NULL} (default), use the GIFTI 
+of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the
+opposite, an error is raised. If \code{NULL} (default), use the GIFTI
 hemisphere.}
 }
 \value{
 The \code{"surf"} object: a list with components \code{"vertices"}
- (3D spatial locations), \code{"faces"} (defined by three vertices), and 
- \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
- unknown).
+(3D spatial locations), \code{"faces"} (defined by three vertices), and
+\code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if
+unknown).
 }
 \description{
 Coerce a file path to a surface GIFTI, a \code{"gifti"} object, a list with
- entries "pointset" and "triangle", or a \code{"surf"} object to a 
- \code{"surf"} object.
+entries "pointset" and "triangle", or a \code{"surf"} object to a
+\code{"surf"} object.
 }

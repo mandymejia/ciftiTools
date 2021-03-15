@@ -14,13 +14,13 @@ logical indicating success instead. Default: \code{TRUE}.}
 
 \item{ignore.stdout, ignore.stderr}{The "ignore.stdout" and "ignore.stderr"
 arguments to \code{\link[base]{system}}. Should be logical or \code{NULL}.
-If \code{NULL} (default), messages will be controlled by 
+If \code{NULL} (default), messages will be controlled by
 \code{ciftiTools.getOption("suppress_msgs")} and errors will not be ignored.}
 }
 \value{
 If \code{intern==TRUE}, the printed output of the command.
- If \code{intern==FALSE}, a logical indicating if the command finished 
- successfully.
+If \code{intern==FALSE}, a logical indicating if the command finished
+successfully.
 }
 \description{
 Runs a Connectome Workbench command that has already been formatted.

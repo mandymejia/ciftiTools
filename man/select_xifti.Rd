@@ -20,5 +20,5 @@ The \code{"xifti"} with only the selected columns.
 }
 \description{
 Select column indices to keep in a \code{"xifti"}. Can also be used to
- reorder the columns.
+reorder the columns.
 }

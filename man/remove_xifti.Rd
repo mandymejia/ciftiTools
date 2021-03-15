@@ -7,11 +7,11 @@
 remove_xifti(xifti, remove = NULL)
 }
 \arguments{
-\item{xifti}{Object of class "xifti". 
+\item{xifti}{Object of class "xifti".
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{remove}{A character vector containing one or more of the following:
-\code{"cortex_left"}, \code{"cortex_right"}, \code{"subcortical"}, 
+\code{"cortex_left"}, \code{"cortex_right"}, \code{"subcortical"},
 \code{"surf_left"}, and \code{"surf_right"}. Each of these components will
 be removed from the \code{"xifti"}}
 }

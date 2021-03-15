@@ -18,7 +18,7 @@ view_xifti_surface.draw_mesh(
 
 \item{mesh_color}{The color at each vertex}
 
-\item{alpha, vertex_color, vertex_size, edge_color}{See 
+\item{alpha, vertex_color, vertex_size, edge_color}{See
 \code{\link{view_xifti_surface}}}
 }
 \value{

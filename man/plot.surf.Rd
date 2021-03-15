@@ -11,8 +11,8 @@
 
 \item{...}{Additional arguments to \code{\link{view_xifti_surface}}. But, the
 \code{hemisphere} argument behaves differently: it can be either
-\code{left} or \code{right} to indicate which hemisphere \code{x} 
-represents. It is only used if the \code{"hemisphere"} metadata entry in 
+\code{left} or \code{right} to indicate which hemisphere \code{x}
+represents. It is only used if the \code{"hemisphere"} metadata entry in
 \code{x} is \code{NULL}. If both the argument and the metadata entry are
 \code{NULL}, the surface will be treated as the left hemisphere.}
 }

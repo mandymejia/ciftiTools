@@ -20,7 +20,7 @@
 #'  \code{NULL}, will be written to "smoothed.d*.nii" in the current working
 #'  directory if \code{x} was a CIFTI file, and in a temporary directory if 
 #'  \code{x} was a \code{"xifti"} object.
-#' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) paramter
+#' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) parameter
 #'  for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
 #' @param surfL_fname,surfR_fname (Required if the corresponding cortex is 
 #'  present) Surface GIFTI files for the left and right cortical surfaces
@@ -101,18 +101,16 @@ smooth_cifti <- function(
 
   # If the input is a .dlabel file, the target should be .dscalar not .dlabel. -
   fix_dlabel <- FALSE
-  if (!is.null(cifti_info$cifti$intent)) {
-    if (cifti_info$cifti$intent == 3007) {
-      warning(paste(
-        "Smoothing a label file will convert the labels to their numeric",
-        "indices. Coercing `cifti_target_fname` to a \".dscalar\" file.\n"
-      ))
-      fix_dlabel <- TRUE
-      cifti_target_fname <- gsub(
-        "dlabel.nii", "dscalar.nii", 
-        cifti_target_fname, fixed=TRUE
-      )
-    }
+  if (!is.null(cifti_info$cifti$intent) && cifti_info$cifti$intent == 3007) {
+    warning(paste(
+      "Smoothing a label file will convert the labels to their numeric",
+      "indices. Coercing `cifti_target_fname` to a \".dscalar\" file.\n"
+    ))
+    fix_dlabel <- TRUE
+    cifti_target_fname <- gsub(
+      "dlabel.nii", "dscalar.nii", 
+      cifti_target_fname, fixed=TRUE
+    )
   }
 
   # Build the Connectome Workbench command. 

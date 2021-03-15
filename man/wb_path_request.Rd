@@ -11,6 +11,6 @@ The message (length 1 character vector)
 }
 \description{
 Print a message requesting that the \code{ciftiTools} option \code{"wb_path"}
- be set.
+be set.
 }
 \keyword{internal}

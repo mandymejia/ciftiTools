@@ -17,7 +17,7 @@
 
 \item{...}{further arguments passed to or from other methods.}
 
-\item{x}{Object of class "xifti". 
+\item{x}{Object of class "xifti".
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 }
 \description{

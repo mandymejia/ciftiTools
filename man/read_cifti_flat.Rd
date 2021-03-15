@@ -14,35 +14,35 @@ read_cifti_flat(
 \arguments{
 \item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
 
-\item{keep}{This function works by converting the CIFTI file to a GIFTI file 
+\item{keep}{This function works by converting the CIFTI file to a GIFTI file
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 (default), write it in a temporary directory regardless of \code{write_dir}.}
 
-\item{gifti_fname}{File path of GIFTI-format data to save the CIFTI as. 
+\item{gifti_fname}{File path of GIFTI-format data to save the CIFTI as.
 Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
 
-\item{write_dir}{The directory in which to save the GIFTI, if it is being 
+\item{write_dir}{The directory in which to save the GIFTI, if it is being
 kept. If \code{NULL} (default), use the current working directory.}
 }
 \value{
-A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
- and \eqn{G} is the number of greyordinates in the CIFTI file.
+A \eqn{T x G} matrix, where \eqn{T} is the number of measurements
+and \eqn{G} is the number of greyordinates in the CIFTI file.
 }
 \description{
-Reads the CIFTI data matrix by converting it to a GIFTI using the 
- \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
- will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
- greyordinates). All brainstructures in the CIFTI will be obtained, with no 
- indication for which brainstructure each brainordinate corresponds to.    
- Medial wall vertices and voxels outside the subcortical mask will not be 
- included. No spatial information is included. This is the fastest way to 
- read in CIFTI data.
+Reads the CIFTI data matrix by converting it to a GIFTI using the
+\code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result
+will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty
+greyordinates). All brainstructures in the CIFTI will be obtained, with no
+indication for which brainstructure each brainordinate corresponds to.
+Medial wall vertices and voxels outside the subcortical mask will not be
+included. No spatial information is included. This is the fastest way to
+read in CIFTI data.
 }
 \section{Connectome Workbench Requirement}{
 
- This function uses a system wrapper for the 'wb_command' executable. The 
- user must first download and install the Connectome Workbench, available 
- from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function uses a system wrapper for the 'wb_command' executable. The
+user must first download and install the Connectome Workbench, available
+from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
 \keyword{internal}

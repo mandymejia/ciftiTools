@@ -25,11 +25,9 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   
   stopifnot(is.xifti(xifti))
 
-  if (!is.null(xifti$meta$cifti$intent)) {
-    if (xifti$meta$cifti$intent == 3007) {
-      ciftiTools_warn("The input is already a dlabel `xifti`.\n")
-      return(xifti)
-    }
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+    ciftiTools_warn("The input is already a dlabel `xifti`.\n")
+    return(xifti)
   }
 
   # Get the label values.
@@ -79,7 +77,9 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
       colors=colors, color_mode="qualitative", zlim=ifelse(add_white, N_-1, N_)
     )
     if (add_white) {
+      pal$color <- as.character(pal$color)
       pal <- rbind(c("white", 0), pal)
+      pal$color <- factor(pal$color, levels=pal$color)
       pal$value <- seq(nrow(pal)) - 1
     }
   }

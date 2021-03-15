@@ -11,33 +11,33 @@ An empty \code{"xifti"} object with a valid list structure
 }
 \description{
 Make a \code{"xifti"} object with all terminal entries \code{NULL}. Useful for
- seeing the structure of a \code{"xifti"} object.
+seeing the structure of a \code{"xifti"} object.
 }
 \details{
 Additional metadata depends on the type of CIFTI file:
 
- \enumerate{
-   \item{"dtseries"}{
-     \enumerate{
-       \item{time_start}{Start time}
-       \item{time_step}{The TR}
-       \item{time_unit}{Unit of time}
-     }
-   }
-   \item{"dscalar"}{
-     \enumerate{
-       \item{names}{Name of each data column}
-     }
-   }
-   \item{"dlabels"}{
-     \enumerate{
-       \item{labels}{
-         Length \eqn{T} list of \eqn{L \times 5} data.frames. List entry 
-         names are data column names. Row names are label names. 
-         Column names are: Key, Red, Green, Blue, and Alpha.
-       }
-     }
-   }
- }
+\enumerate{
+\item{"dtseries"}{
+\enumerate{
+\item{time_start}{Start time}
+\item{time_step}{The TR}
+\item{time_unit}{Unit of time}
+}
+}
+\item{"dscalar"}{
+\enumerate{
+\item{names}{Name of each data column}
+}
+}
+\item{"dlabels"}{
+\enumerate{
+\item{labels}{
+Length \eqn{T} list of \eqn{L \times 5} data.frames. List entry
+names are data column names. Row names are label names.
+Column names are: Key, Red, Green, Blue, and Alpha.
+}
+}
+}
+}
 }
 \keyword{internal}

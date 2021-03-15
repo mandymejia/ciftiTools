@@ -14,21 +14,21 @@ write_cifti_components(
 )
 }
 \arguments{
-\item{xifti}{Object of class "xifti". 
+\item{xifti}{Object of class "xifti".
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 
 \item{extn_cifti}{The CIFTI extension e.g. "dtseries.nii"}
 
 \item{write_dir}{Where should the separated
- files be placed? \code{NULL} (default) will write them to
- the current working directory.
+files be placed? \code{NULL} (default) will write them to
+the current working directory.
 
- \code{write_dir} must already exist, or an error will occur.}
+\code{write_dir} must already exist, or an error will occur.}
 
-\item{mwall_fill}{Value to use for the medial wall in the cortex GIFTIs. 
+\item{mwall_fill}{Value to use for the medial wall in the cortex GIFTIs.
 Default: \code{NA}.}
 
-\item{subcort_fill}{Value to use for out-of-mask voxels in the subcortex. 
+\item{subcort_fill}{Value to use for out-of-mask voxels in the subcortex.
 Default: \code{0}.}
 
 \item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
@@ -38,8 +38,8 @@ List of written files
 }
 \description{
 Write metric GIFTIs for the cortical surface data and NIFTIs for the
- subcortical labels and mask in a \code{"xifti"} object. Each present
- brainstructure will be written; if a brainstructure is absent the 
- corresponding file is not written.
+subcortical labels and mask in a \code{"xifti"} object. Each present
+brainstructure will be written; if a brainstructure is absent the
+corresponding file is not written.
 }
 \keyword{internal}

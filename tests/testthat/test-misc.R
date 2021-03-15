@@ -110,6 +110,7 @@ test_that("Miscellaneous functions are working", {
     }
 
     # Operations
+    # warnings should happen for dlabel file
     is.xifti(cii + cii + cii)
     is.xifti(cii - cii / (abs(cii) + 1))
     is.xifti((5*cii) %% round(cii, 1))

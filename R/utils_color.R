@@ -118,9 +118,9 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #'  and colorbrewer2.org), the name of a viridisLite palette, or a character 
 #'  vector of color names.
 #'
-#' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" pallete will be used. It is
-#'  the same palette as the 
-#'  \href{https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx}{default for the Connectome Workbench application}. 
+#' If \code{colors=="ROY_BIG_BL"}, the "ROY_BIG_BL" palette will be used. It is
+#'  the same palette as the default for the Connectome Workbench application 
+#'  (https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx). 
 #'  The midpoint will be colored 
 #'  black. From the midpoint toward the upper bound, colors will proceed from 
 #'  black to red to yellow. From the midpoint toward the lower bound, colors 
@@ -128,7 +128,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #'  color mode behaves if \code{colors=="ROY_BIG_BL"}:
 #'
 #' \describe{
-#'  \item{\code{color_mode=="sequential"}}{Only half of the pallete will be 
+#'  \item{\code{color_mode=="sequential"}}{Only half of the palette will be 
 #'    used. If \code{zlim} is length 2, the higher value will be the maximum and
 #'    the lower value will be the minimum. Set \code{zlim[1] > zlim[2]} to
 #'    reverse the color scale. (Note that the second half, black --> red --> 
@@ -157,7 +157,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #'
 #' If \code{colors} is the name of an RColorBrewer palette (see 
 #'  \code{RColorBrewer::brewer.pal.info}) or viridisLite palette, the colors in 
-#'  that pallete will be used, and the following behavior applies. 
+#'  that palette will be used, and the following behavior applies. 
 #'  If \code{colors} is a character vector of color names (hex codes or standard
 #'  R color names), the following behavior applies directly:
 #'
@@ -338,7 +338,7 @@ make_color_pal <- function(
       ))
     }
 
-  # Get pallete for qualitative.
+  # Get palette for qualitative.
   } else if (color_mode=="qualitative") {
     pal <- data.frame(color=colors, value=seq(length(colors)))
     pal <- expand_color_pal(pal, zlim)

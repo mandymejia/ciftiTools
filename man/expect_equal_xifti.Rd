@@ -19,6 +19,6 @@ Raise an error if the CIFTIs do not match.
 }
 \details{
 \code{cifti$intent} and \code{cifti$brainstructures} are only compared if they
- exist for both files. \code{cifti$misc} is never compared.
+exist for both files. \code{cifti$misc} is never compared.
 }
 \keyword{internal}

@@ -2,8 +2,8 @@
 #' 
 #' Coerce a path to a GIFTI file, metric "gifti" object, data matrix or vector to a 
 #'  data matrix representing cortical data (and optionally a corresponding mask). 
-#'  That is,  entries for \code{xifti$data$cortex_[left/right]} and 
-#'  \code{xifti$meta$cortex$medial_wall_mask$[left/right]}. If \code{cortex} is
+#'  That is,  entries for \code{xifti$data$cortex_\[left/right\]} and 
+#'  \code{xifti$meta$cortex$medial_wall_mask$\[left/right\]}. If \code{cortex} is
 #'  a path to a GIFTI file or a metric "gifti" object, any column names or
 #'  a non-empty label table will also be extracted.
 #' 

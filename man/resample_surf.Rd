@@ -11,8 +11,8 @@ resample_surf(surf, resamp_res, hemisphere = c("left", "right"))
 
 \item{resamp_res}{The desired resolution}
 
-\item{hemisphere}{\code{"left"} or \code{"right"}. Only used if not indicated by 
-\code{surf$hemisphere}. An error will be raised if it does not match the 
+\item{hemisphere}{\code{"left"} or \code{"right"}. Only used if not indicated by
+\code{surf$hemisphere}. An error will be raised if it does not match the
 hemisphere indicated in the intermediate written GIFTI.}
 }
 \value{
@@ -20,5 +20,5 @@ The new surface
 }
 \description{
 Resample a \code{"surf"} object by writing it to a GIFTI, using the Connectome
- Workbench to resample it, and then reading the new file.
+Workbench to resample it, and then reading the new file.
 }

@@ -10,13 +10,13 @@ rotate_surf(surf, r1 = 0, r2 = 0, r3 = 0, units = c("radians", "degrees"))
 \item{surf}{The \code{"surface"} object: see \code{\link{is.surf}}.}
 
 \item{r1, r2, r3}{Angle to rotate along the first, second, and third column's
- axis, in \code{units} (e.g. changing \code{r1} will change the vertex positions
- in the second and third dimensions/columns, since the mesh is being rotated
- with respect to the first column's axis). Default: \code{0}.
+axis, in \code{units} (e.g. changing \code{r1} will change the vertex positions
+in the second and third dimensions/columns, since the mesh is being rotated
+with respect to the first column's axis). Default: \code{0}.
 
- With \code{view_xifti_surface} and other mesh rendering functions that 
- use \code{rgl}, these rotations seem to correspond to yaw, pitch, and 
- roll, respectively.}
+With \code{view_xifti_surface} and other mesh rendering functions that
+use \code{rgl}, these rotations seem to correspond to yaw, pitch, and
+roll, respectively.}
 
 \item{units}{\code{"radians"} (default) or \code{"degrees"}.}
 }
@@ -25,5 +25,5 @@ The rotated \code{"surface"}.
 }
 \description{
 Rotate a \code{"surface"}. Can be used to adjust the mesh orientation prior
- to \code{\link{view_xifti_surface}}.
+to \code{\link{view_xifti_surface}}.
 }

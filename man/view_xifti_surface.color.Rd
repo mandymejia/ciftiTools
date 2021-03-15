@@ -20,7 +20,7 @@ view_xifti_surface.color(
 \arguments{
 \item{hemisphere, values, idx}{idx see \code{\link{view_xifti_surface}}}
 
-\item{colors, color_mode, zlim, }{digits see 
+\item{colors, color_mode, zlim, }{digits see
 \code{\link{view_xifti_surface}}}
 
 \item{xifti_meta}{\code{xifti$meta}}

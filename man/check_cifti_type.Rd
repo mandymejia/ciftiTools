@@ -13,7 +13,7 @@ check_cifti_type(intent, extn)
 }
 \value{
 If the intent is supported, returns \code{TRUE}.
- If the intent is not supported, an error is raised.
+If the intent is not supported, an error is raised.
 }
 \description{
 Check that a CIFTI's NIFTI intent matches its file name extension.

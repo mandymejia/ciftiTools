@@ -12,9 +12,9 @@
 #' @param original_res The original resolution of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
 #' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of 
-#'  GIFTI data for [left/right] cortex to resample.
+#'  GIFTI data for \[left/right\] cortex to resample.
 #' @param cortexL_target_fname,cortexR_target_fname (Optional) File path to 
-#'  save the resampled GIFTI data for [left/right] cortex as.
+#'  save the resampled GIFTI data for \[left/right\] cortex as.
 #'  If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it 
 #'  will be named by \code{\link{cifti_component_suffix}}.
 #' @param ROIcortexL_original_fname,ROIcortexR_original_fname (Optional) File 

@@ -4,7 +4,7 @@
 \alias{xifti_Param}
 \title{xifti}
 \arguments{
-\item{xifti}{Object of class "xifti". 
+\item{xifti}{Object of class "xifti".
 See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 }
 \description{

@@ -23,66 +23,66 @@ make_xifti(
 )
 }
 \arguments{
-\item{cortexL, cortexL_mwall}{Left cortex data and ROI. Each must be a path to 
- a GIFTI file, metric \code{"gifti"} object, data matrix or vector.
+\item{cortexL, cortexL_mwall}{Left cortex data and ROI. Each must be a path to
+a GIFTI file, metric \code{"gifti"} object, data matrix or vector.
 
- If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
- all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
- will not be a mask for the medial wall. Not providing the medial wall mask 
- is appropriate for ".dlabels.nii" files where the medial wall may have its 
- own label and therefore should not be treated as missing data.
+If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
+all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There
+will not be a mask for the medial wall. Not providing the medial wall mask
+is appropriate for ".dlabels.nii" files where the medial wall may have its
+own label and therefore should not be treated as missing data.
 
- If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
- for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
- filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data 
- only for non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix).
- The medial wall mask will be the \code{0} values in \code{cortexL_mwall}. 
- The medial wall mask should be provided whenever the medial wall should be
- treated as missing data. 
+If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
+for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
+filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data
+only for non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix).
+The medial wall mask will be the \code{0} values in \code{cortexL_mwall}.
+The medial wall mask should be provided whenever the medial wall should be
+treated as missing data.
 
- Since the unmasked cortices must have the same number of vertices,
- \code{V_L} should match \code{V_R}.}
+Since the unmasked cortices must have the same number of vertices,
+\code{V_L} should match \code{V_R}.}
 
-\item{cortexR, cortexR_mwall}{Right cortex data and ROI. Each must be a path to 
- a GIFTI file, metric \code{"gifti"} object, data matrix or vector.
+\item{cortexR, cortexR_mwall}{Right cortex data and ROI. Each must be a path to
+a GIFTI file, metric \code{"gifti"} object, data matrix or vector.
 
- If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
- all vertices on the right cortical surface (\eqn{V_R x T} data mre 
- will not be a mask for the medial wall. Not providing the medial wall mask 
- is appropriate for ".dlabels.nii" files where the medial wall may have its 
- own label and therefore should not be treated as missing data.
+If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
+all vertices on the right cortical surface (\eqn{V_R x T} data mre
+will not be a mask for the medial wall. Not providing the medial wall mask
+is appropriate for ".dlabels.nii" files where the medial wall may have its
+own label and therefore should not be treated as missing data.
 
- If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
- for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
- filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data 
- only for non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix).
- The medial wall mask will be the \code{0} values in \code{cortexR_mwall}. 
- The medial wall mask should be provided whenever the medial wall should be
- treated as missing data. 
+If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
+for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
+filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data
+only for non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix).
+The medial wall mask will be the \code{0} values in \code{cortexR_mwall}.
+The medial wall mask should be provided whenever the medial wall should be
+treated as missing data.
 
- Since the unmasked cortices must have the same number of vertices,
- \code{V_L} should match \code{V_R}.}
+Since the unmasked cortices must have the same number of vertices,
+\code{V_L} should match \code{V_R}.}
 
 \item{subcortVol, subcortLabs, subcortMask}{\code{subcortVol} represents the
- data values of the subcortex. It is either a NIFTI file path, 3D/4D data array
- (\eqn{i x j x k x T}), or a vectorized data matrix (\eqn{V_S} voxels by \eqn{T} 
- measurements). If it's vectorized, the voxels should be in spatial order 
- (\eqn{i} index increasing fastest, then \eqn{j}, then \eqn{k}).
+data values of the subcortex. It is either a NIFTI file path, 3D/4D data array
+(\eqn{i x j x k x T}), or a vectorized data matrix (\eqn{V_S} voxels by \eqn{T}
+measurements). If it's vectorized, the voxels should be in spatial order
+(\eqn{i} index increasing fastest, then \eqn{j}, then \eqn{k}).
 
- \code{subcortLabs} represents the brainstructure labels of each voxel: see
- \code{\link{substructure_table}}. It is either a NIFTI file path, 3D data array 
- (\eqn{i x j x k}) of integer brainstructure indices, or a \eqn{V_S} length
- vector in spatial order with brainstructure names as factors or integer
- indices. The indices should be 3-21 (1 and 2 correspond to left and right
- cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
- out-of-mask voxels.
- 
- \code{subcortMask} is NIFTI file path or logical 3D data array (\eqn{i x j x k}) 
- where \code{TRUE} values indicate subcortical voxels (in-mask). If it is not 
- provided, the mask will be inferred from voxels with labels \code{0}, 
- \code{NA}, or \code{NaN} in \code{subcortLabs}. If \code{subcortLabs} are 
- vectorized and \code{subcortMask} is not provided, the mask cannot be 
- inferred so an error will occur.}
+\code{subcortLabs} represents the brainstructure labels of each voxel: see
+\code{\link{substructure_table}}. It is either a NIFTI file path, 3D data array
+(\eqn{i x j x k}) of integer brainstructure indices, or a \eqn{V_S} length
+vector in spatial order with brainstructure names as factors or integer
+indices. The indices should be 3-21 (1 and 2 correspond to left and right
+cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
+out-of-mask voxels.
+
+\code{subcortMask} is NIFTI file path or logical 3D data array (\eqn{i x j x k})
+where \code{TRUE} values indicate subcortical voxels (in-mask). If it is not
+provided, the mask will be inferred from voxels with labels \code{0},
+\code{NA}, or \code{NaN} in \code{subcortLabs}. If \code{subcortLabs} are
+vectorized and \code{subcortMask} is not provided, the mask cannot be
+inferred so an error will occur.}
 
 \item{mwall_values}{If \code{cortex[L/R]_mwall} was not provided, or if it
 was invalid (i.e. bad length or all \code{TRUE}), the medial wall mask will
@@ -92,18 +92,18 @@ the medial wall from the data values. \code{NULL} should be used if \code{NA}
 or \code{NaN} are legitimate values that non-medial wall vertices might
 take on.}
 
-\item{cifti_info}{(Optional) The result of \code{\link{info_cifti}}. If 
- GIFTI and/or NIFTI components from a CIFTI are being provided, 
- providing \code{cifti_info} gives metadata information that would otherwise
- have to be inferred: the NIFTI intent, brainstructures present in the
- original file, and miscellaneous metadata.
+\item{cifti_info}{(Optional) The result of \code{\link{info_cifti}}. If
+GIFTI and/or NIFTI components from a CIFTI are being provided,
+providing \code{cifti_info} gives metadata information that would otherwise
+have to be inferred: the NIFTI intent, brainstructures present in the
+original file, and miscellaneous metadata.
 
- This argument is probably not necessary for end users: reading a CIFTI
- should be done by providing \code{cifti_fname}, and for reading separate
- GIFTI/NIFTI components \code{cifti_info} is not applicable.}
+This argument is probably not necessary for end users: reading a CIFTI
+should be done by providing \code{cifti_fname}, and for reading separate
+GIFTI/NIFTI components \code{cifti_info} is not applicable.}
 
-\item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex. 
-Can be a surface GIFTI file path or \code{"surf"} object; see 
+\item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex.
+Can be a surface GIFTI file path or \code{"surf"} object; see
 \code{\link{make_surf}} for a full description of valid inputs.}
 
 \item{col_names}{Names of each measurement/column in the data. Overrides
@@ -125,63 +125,63 @@ if the inputs were invalid.}
 A \code{"xifti"} object; see \code{\link{template_xifti}}
 }
 \description{
-Assembles cortical data, subcortical data, and/or surface geometry to form a 
- \code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files 
- which have been read in, or data objects (vectors, matrices or arrays, 
- depending on the argument). See \code{as.xifti} for a user-function wrapper 
- that only works with data objects. \code{make_xifti} can be used to combine 
- the files written by \code{\link{separate_cifti}}, or read individual 
- components independent of any CIFTI file.
+Assembles cortical data, subcortical data, and/or surface geometry to form a
+\code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files
+which have been read in, or data objects (vectors, matrices or arrays,
+depending on the argument). See \code{as.xifti} for a user-function wrapper
+that only works with data objects. \code{make_xifti} can be used to combine
+the files written by \code{\link{separate_cifti}}, or read individual
+components independent of any CIFTI file.
 }
 \details{
 Each data or surface component is optional. Metadata components
- (\code{cortex[L/R]_mwall}, \code{subcortLabs}, and \code{subcortMask}) will 
- be ignored if its corresponding data component is not provided. If no data or
- surface components are provided, then the \code{\link{template_xifti}} will 
- be returned. 
+(\code{cortex[L/R]_mwall}, \code{subcortLabs}, and \code{subcortMask}) will
+be ignored if its corresponding data component is not provided. If no data or
+surface components are provided, then the \code{\link{template_xifti}} will
+be returned.
 
- If cortical data are provided without a corresponding medial wall mask, or
- if the provided mask is invalid or empty, then the medial wall will be
- inferred from data rows that are constantly a value in \code{mwall_values}. 
- But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
- wall will be made and the medial wall metadata entry will be \code{NULL}.
- 
- The total number of greyordinates will be 
- \eqn{G = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
- vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical 
- voxels. \eqn{T}, the total number of measurements (columns of data), must be
- the same for each brainstructure.
+If cortical data are provided without a corresponding medial wall mask, or
+if the provided mask is invalid or empty, then the medial wall will be
+inferred from data rows that are constantly a value in \code{mwall_values}.
+But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
+wall will be made and the medial wall metadata entry will be \code{NULL}.
+
+The total number of greyordinates will be
+\eqn{G = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
+vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical
+voxels. \eqn{T}, the total number of measurements (columns of data), must be
+the same for each brainstructure.
 }
 \section{Label Levels}{
 
- \code{xifti$meta$subcort$labels} is a factor with the following levels:
+\code{xifti$meta$subcort$labels} is a factor with the following levels:
 
- \enumerate{
-   \item{Cortex-L}
-   \item{Cortex-R}
-   \item{Accumbens-L}
-   \item{Accumbens-R}
-   \item{Amygdala-L}
-   \item{Amygdala-R}
-   \item{Brain Stem}
-   \item{Caudate-L}
-   \item{Caudate-R}
-   \item{Cerebellum-L}
-   \item{Cerebellum-R}
-   \item{Diencephalon-L}
-   \item{Diencephalon-R}
-   \item{Hippocampus-L}
-   \item{Hippocampus-R}
-   \item{Pallidum-L}
-   \item{Pallidum-R}
-   \item{Putamen-L}
-   \item{Putamen-R}
-   \item{Thalamus-L}
-   \item{Thalamus-R}
- }
+\enumerate{
+\item{Cortex-L}
+\item{Cortex-R}
+\item{Accumbens-L}
+\item{Accumbens-R}
+\item{Amygdala-L}
+\item{Amygdala-R}
+\item{Brain Stem}
+\item{Caudate-L}
+\item{Caudate-R}
+\item{Cerebellum-L}
+\item{Cerebellum-R}
+\item{Diencephalon-L}
+\item{Diencephalon-R}
+\item{Hippocampus-L}
+\item{Hippocampus-R}
+\item{Pallidum-L}
+\item{Pallidum-R}
+\item{Putamen-L}
+\item{Putamen-R}
+\item{Thalamus-L}
+\item{Thalamus-R}
+}
 
- These correspond to the same structures as given by 
- \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+These correspond to the same structures as given by
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
 \keyword{internal}

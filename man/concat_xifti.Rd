@@ -7,8 +7,8 @@
 concat_xifti(..., xifti_list = NULL)
 }
 \arguments{
-\item{..., xifti_list}{Provide as arguments the \code{"xifti"} objects to 
-concatenate, OR the single argument \code{xifti_list} which should be a 
+\item{..., xifti_list}{Provide as arguments the \code{"xifti"} objects to
+concatenate, OR the single argument \code{xifti_list} which should be a
 list of \code{"xifti"} objects. (If \code{xifti_list} is provided all other
 inputs will be ignored.)}
 }
@@ -17,6 +17,6 @@ The concatenated \code{"xifti"} object.
 }
 \description{
 Concatenate \code{"xifti"} objects along the columns. They must have the same
- brainstructures. The first \code{"xifti"}'s metadata will be retained, including
- its intent.
+brainstructures. The first \code{"xifti"}'s metadata will be retained, including
+its intent.
 }

@@ -4,45 +4,45 @@
 \alias{surface_plot_Params}
 \title{surface plot}
 \arguments{
-\item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or 
-\code{"both"}. If \code{NULL} (default), both views will be shown. Each view 
+\item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or
+\code{"both"}. If \code{NULL} (default), both views will be shown. Each view
 will be plotted in a separate panel row.}
 
-\item{widget}{Display the plot in an htmlwidget? Should be logical or 
+\item{widget}{Display the plot in an htmlwidget? Should be logical or
 \code{NULL} (default), in which case a widget will be used only if needed
-(\code{length(idx)>1 & isFALSE(fname)}, \code{fname} is a file path to an 
+(\code{length(idx)>1 & isFALSE(fname)}, \code{fname} is a file path to an
 .html file, or if \code{rgl.useNULL()}).}
 
-\item{title}{Optional title(s) for the plot(s). It will be printed at the top 
- in a separate subplot with 1/4 the height of the brain cortex subplots.
- 
- Default: \code{NULL} will not use any title if \code{length(idx)==1}.
- Otherwise, it will use the time index (".dtseries") or name
- (.dscalar or .dlabel) of each data column.
+\item{title}{Optional title(s) for the plot(s). It will be printed at the top
+in a separate subplot with 1/4 the height of the brain cortex subplots.
 
- To use a custom title(s), use a length 1 character vector (same title for
- each plot) or length \code{length(idx)} character vector (different title
- for each plot). Set to \code{NULL} or an empty character to omit the title. 
+Default: \code{NULL} will not use any title if \code{length(idx)==1}.
+Otherwise, it will use the time index (".dtseries") or name
+(.dscalar or .dlabel) of each data column.
 
- If the title is non-empty but does not appear, try lowering \code{cex.title}.}
+To use a custom title(s), use a length 1 character vector (same title for
+each plot) or length \code{length(idx)} character vector (different title
+for each plot). Set to \code{NULL} or an empty character to omit the title.
+
+If the title is non-empty but does not appear, try lowering \code{cex.title}.}
 
 \item{fname, fname_suffix}{Save the plot(s) (and color legend if applicable)?
- 
- If \code{isFALSE(fname)} (default), no files will be written.
 
- If \code{fname} is a length-1 character vector ending in ".html", an html
- with an interactive widget will be written.
+If \code{isFALSE(fname)} (default), no files will be written.
 
- If neither of the cases above apply, a png image will be written for each
- \code{idx}. If \code{isTRUE(fname)} the files will be named by the
- data column names (underscores will replace spaces). Set \code{fname} to a 
- length 1 character vector to name files by this suffix followed by the 
- \code{fname_suffix}: either the data column names (\code{"names"}) or the 
- index value (\code{"idx"}). Set this to a character vector with the same 
- length as \code{idx} to name the files exactly. 
+If \code{fname} is a length-1 character vector ending in ".html", an html
+with an interactive widget will be written.
 
- If a separate color legend exists and \code{!isFALSE(fname)}, it will be 
- saved to "[first_surf_fname]_legend.png".}
+If neither of the cases above apply, a png image will be written for each
+\code{idx}. If \code{isTRUE(fname)} the files will be named by the
+data column names (underscores will replace spaces). Set \code{fname} to a
+length 1 character vector to name files by this suffix followed by the
+\code{fname_suffix}: either the data column names (\code{"names"}) or the
+index value (\code{"idx"}). Set this to a character vector with the same
+length as \code{idx} to name the files exactly.
+
+If a separate color legend exists and \code{!isFALSE(fname)}, it will be
+saved to "[first_surf_fname]_legend.png".}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller
@@ -59,10 +59,10 @@ sizes for increasingly longer titles.}
 \item{edge_color}{Outline each edge in this color. Default: \code{NULL} (do
 not outline the edges).}
 
-\item{vertex_color}{Draw each vertex in this color. Default: 
+\item{vertex_color}{Draw each vertex in this color. Default:
 \code{"black"}. Vertices are only drawn if \code{vertex_size > 0}}
 
-\item{vertex_size}{Draw each vertex with this size. Default: \code{0} 
+\item{vertex_size}{Draw each vertex with this size. Default: \code{0}
 (do not draw the vertices).}
 
 \item{width, height}{The dimensions of the RGL window, in pixels. If both are
@@ -70,13 +70,13 @@ not outline the edges).}
 window or widget) and subplots (\code{hemisphere}, \code{view}, \code{title},
 and \code{slider_title}) and are chosen to be the largest plot within a
 1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
-a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one 
-will set the other to maintain this aspect ratio. Both can be specified to 
-set the dimensions exactly. (These arguments do not affect the size of the 
+a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
+will set the other to maintain this aspect ratio. Both can be specified to
+set the dimensions exactly. (These arguments do not affect the size of the
 legend, which cannot be controlled.)}
 
 \item{zoom}{Adjust the sizes of the brain meshes. Default: \code{NULL} (will
-be set to 0.6 or 160\% for the Open GL window, and 0.67 or 167\% for the 
+be set to 0.6 or 160\\% for the Open GL window, and 0.67 or 167\\% for the
 widget.)}
 }
 \description{

@@ -102,11 +102,9 @@ resample_cifti <- function(
 
     # Set the target CIFTI file name.
     if (is.null(cifti_target_fname)) {
-      cifti_target_fname <- gsub(
+      cifti_target_fname <- basename(gsub(
         "to_resample.", "resampled.", cifti_original_fname, fixed=TRUE
-      )
-    } else {
-      cifti_target_fname <- format_path(write_dir, cifti_target_fname, mode=2)
+      ))
     }
 
     # Get the surfaces present.
@@ -136,11 +134,10 @@ resample_cifti <- function(
     brainstructures <- ROI_brainstructures <- cifti_info$cifti$brainstructures
     # Set the target CIFTI file name.
     if (is.null(cifti_target_fname)) {
-      cifti_target_fname <- file.path(
-        write_dir, paste0("resampled.", get_cifti_extn(cifti_original_fname))
-      )
+      cifti_target_fname <- paste0("resampled.", get_cifti_extn(cifti_original_fname))
     }
   }
+  cifti_target_fname <- format_path(cifti_target_fname, write_dir, mode=2)
 
   # Check that at least one surface is present.
   if (!("left" %in% brainstructures || "right" %in% brainstructures)) {
@@ -154,7 +151,22 @@ resample_cifti <- function(
   } else {
     original_res <- length(cifti_info$cortex$medial_wall_mask$right)
   }
-  if (original_res < 2) {
+  ## If the medial wall mask is not present, the original resolution must
+  ## be the length of the data.
+  if (original_res == 0) { 
+    ## i.e. dlabel  case
+    if (input_is_xifti) { 
+      if (!("left" %in% brainstructures)) {
+        original_res <- nrow(x$data$cortex_left)
+      } else {
+        original_res <- nrow(x$data$cortex_right)
+      }
+    } else {
+      ## It cannot be inferred.
+      original_res <- NULL
+    }
+  }
+  if (!is.null(original_res) && original_res < 2) {
     warning("The CIFTI resolution is already too low (< 2 vertices).")
     if (input_is_xifti) { return(x) } else { return(NULL) }
   }

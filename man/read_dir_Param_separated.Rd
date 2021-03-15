@@ -5,10 +5,10 @@
 \title{read_dir: separated files}
 \arguments{
 \item{read_dir}{Directory to append to the path of every file being read,
- e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
- any directory to the path.
+e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
+any directory to the path.
 
- \code{read_dir} must already exist, or an error will be raised.}
+\code{read_dir} must already exist, or an error will be raised.}
 }
 \description{
 read_dir: separated files

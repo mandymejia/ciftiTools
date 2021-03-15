@@ -4,12 +4,12 @@
 \alias{ROI_brainstructures_Param_LR}
 \title{ROI_brainstructures}
 \arguments{
-\item{ROI_brainstructures}{Character vector indicating which ROIs should be 
- obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
- be a subset of the \code{brainstructures} argument. 
+\item{ROI_brainstructures}{Character vector indicating which ROIs should be
+obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should
+be a subset of the \code{brainstructures} argument.
 
 ROIs are typically the medial wall mask for the cortex and subcortical mask
- for the subcortex.}
+for the subcortex.}
 }
 \description{
 ROI_brainstructures

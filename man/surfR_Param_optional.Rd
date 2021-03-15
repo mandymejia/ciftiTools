@@ -5,7 +5,7 @@
 \title{surfR}
 \arguments{
 \item{surfR}{(Optional) Right brain surface model. Can be a file
-path to a GIFTI surface geometry file (ends in "*.surf.gii"), a 
+path to a GIFTI surface geometry file (ends in "*.surf.gii"), a
 \code{"gifti"} object representing surface geometry, or a \code{"surf"}
 object.}
 }

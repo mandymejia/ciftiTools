@@ -8,18 +8,18 @@ Navigating and Embedding the Interactive Plots
 }
 \section{Navigating and Embedding the Interactive Plots}{
 
- Here are instructions for using the interactive Open GL window and html widget:
+Here are instructions for using the interactive Open GL window and html widget:
 
- To navigate the plot, left click and drag the cursor to rotate. Use the 
- scroll wheel or right click and drag to zoom. Press the scroll wheel and drag
- to change the field-of-view. For Open GL windows, execute 
- \code{\link[rgl]{snapshot}} to save the current window as a .png file, 
- \code{\link[rgl:rgl.open]{rgl.close}} to close the window, and 
- \code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
- perspective.
- 
- See the vignette for examples on embedding snapshots of the Open GL window
- or interactive html widgets in an R Markdown document.
+To navigate the plot, left click and drag the cursor to rotate. Use the
+scroll wheel or right click and drag to zoom. Press the scroll wheel and drag
+to change the field-of-view. For Open GL windows, execute
+\code{\link[rgl]{snapshot}} to save the current window as a .png file,
+\code{\link[rgl:rgl.open]{rgl.close}} to close the window, and
+\code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
+perspective.
+
+See the vignette for examples on embedding snapshots of the Open GL window
+or interactive html widgets in an R Markdown document.
 }
 
 \keyword{internal}

@@ -1,6 +1,6 @@
 ## Test environments
 
-* Windows 10 x64, R 4.0.3
+* Windows 10 x64, R 4.0.4
 * Linux x64, R 3.6.0
 
 ## R CMD check results
@@ -27,3 +27,6 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Response to previous submission feeedback
+

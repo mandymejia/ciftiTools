@@ -9,7 +9,7 @@ resample_cifti_default_fname(original_fname, resamp_res)
 \arguments{
 \item{original_fname}{The original file name}
 
-\item{resamp_res}{Target resolution for resampling (number of 
+\item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
 }
 \value{
