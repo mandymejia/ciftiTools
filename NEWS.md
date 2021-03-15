@@ -1,3 +1,20 @@
+# 2.1 (March 15, 2021)
+
+## Changes affecting users
+* Search for "wb_path" during `ciftiTools.setOption` call, and never afterward
+* Ignore Workbench warnings, for the most part
+* Remove arguments concering intermediate files in `resample_cifti` and `read_cifti`
+* Too many changes to document for `view_xifti_surface`!
+* `transform_xifti` improvements
+* Export `remove_xifti`
+* Add `rotate_surf`, `select_xifti` and `concat_xifti`
+
+# 2.0 (February 2, 2021)
+
+## Changes affecting users
+* Replace `surface_sigma` with `surf_FWHM` and likewise for volume
+* Better handling of plotting surface or volume in `view_xifti`
+
 # 1.6.1 (January 29, 2021)
 ## Changes affecting users
 * Warn user (instead of raising an error) when the data has more medial wall vertices than non-medial wall vertices.

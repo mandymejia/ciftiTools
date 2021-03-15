@@ -49,11 +49,19 @@ resample_cifti_from_template <- function(
     } else {
       original_res <- length(original_info$cortex$medial_wall_mask$right)
     }
+    # [TO DO]: Handle this case i.e. dlabels
+    if (original_res == 0) { 
+      stop("Could not infer original CIFTI's resolution from its metadata.")
+    }
 
     if (!("left" %in% template_brainstructures)) {
       resamp_res <- length(template_info$cortex$medial_wall_mask$left)
     } else {
       resamp_res <- length(template_info$cortex$medial_wall_mask$right)
+    }
+    # [TO DO]: Handle this case i.e. dlabels
+    if (original_res == 0) { 
+      stop("Could not infer template CIFTI's resolution from its metadata.")
     }
 
     tdir <- tempdir()

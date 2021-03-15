@@ -27,3 +27,6 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Response to previous submission feeedback
+

@@ -50,7 +50,7 @@ unmask_vol <- function(dat, mask, fill=NA) {
 #'  This effectively undoes a crop.
 #'
 #' @param x A 3D array, e.g. \code{unmask_vol(xifti$data$subcort, xifti$meta$subcort$mask)}.
-#' @param padding A dx2 matrix indicating the number of 
+#' @param padding A \eqn{d \times 2} matrix indicating the number of 
 #'  slices to add at the beginning and end of each of the d dimensions, e.g.
 #'  \code{xifti$meta$subcort$mask_padding}.
 #' @param fill Values to pad with. Default: \code{NA}.

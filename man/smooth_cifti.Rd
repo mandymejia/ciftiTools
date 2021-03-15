@@ -67,7 +67,7 @@ smooth_xifti(
 directory if \code{x} was a CIFTI file, and in a temporary directory if
 \code{x} was a \code{"xifti"} object.}
 
-\item{surf_FWHM, vol_FWHM}{The full width at half maximum (FWHM) paramter
+\item{surf_FWHM, vol_FWHM}{The full width at half maximum (FWHM) parameter
 for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}}
 
 \item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is

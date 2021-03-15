@@ -10,7 +10,7 @@ vignette: >
 
 ```{r include=FALSE}
 library(knitr)
-knitr::opts_chunk$set(autodep = TRUE, cache = TRUE)
+knitr::opts_chunk$set(autodep = TRUE, cache = FALSE)
 ```
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the following CIFTI file types: `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"`. It also supports the GIFTI surface geometry file, `".surf.gii"`. Reading, writing, resampling, and other operations on CIFTI files are made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). Therefore, the Workbench must be installed to use `ciftiTools`. Visualizing CIFTI files is made possible using the `rgl` R package and integrated support of surface GIFTI files.
@@ -181,7 +181,7 @@ cii_new <- as.xifti(
 is.xifti(cii_new)
 ```
 
-We can also include artifical subcortical data using the mask from `"ones.dscalar.nii"`. 
+We can also include artificial subcortical data using the mask from `"ones.dscalar.nii"`. 
 
 ```{r}
 cii2 <- read_cifti(cifti_fnames["dscalar_ones"], brainstructures="subcortical")
@@ -250,7 +250,7 @@ The new files can be viewed together with `read_cifti`. Let's make this plot int
 ```{r, fig.height=5, fig.width=6}
 view_xifti_surface(
   read_cifti(cifti_fname=cii_6k["cifti"], surfL=cii_6k["surfL"], surfR=cii_6k["surfR"]), 
-  bg="#d4edf5", title=".dtseries resampled to 6k", zlim=c(0,2)
+  bg="#d4edf5", title=".dtseries resampled to 6k", zlim=c(0,2), widget=TRUE
 )
 ```
 
