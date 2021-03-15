@@ -11,7 +11,7 @@ On Windows:
 
   R CMD check succeeded
 
-On Linux:
+On macos-highsierra-release-cran:
 
 > checking installed package size ... NOTE
     installed size is  5.0Mb
