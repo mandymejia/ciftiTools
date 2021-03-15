@@ -14,7 +14,7 @@ On Windows:
 On Linux:
 
 > checking installed package size ... NOTE
-    installed size is  6.2Mb
+    installed size is  5.0Mb
     sub-directories of 1Mb or more:
       extdata   4.8Mb
 
@@ -27,6 +27,3 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
-
-## Response to previous submission feeedback
-
