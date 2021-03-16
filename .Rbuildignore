@@ -11,3 +11,4 @@
 ^inst/extdata/ones\.dscalar\.nii$
 ^CRAN-RELEASE$
 ^\.github$
+^tests/run_ciftiTools_tests\.R$

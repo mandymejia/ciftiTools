@@ -27,3 +27,16 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Submission revision
+
+The previous submission errored because the custom test script `tests/run_ciftiTools_tests.R` was included in the build. It is now added to the `.Rbuildignore`.
+
+The previous submission has a NOTE for solaris:
+
+> checking installed package size ... NOTE
+    installed size is 5.6Mb
+    sub-directories of 1Mb or more:
+      extdata 4.8Mb
+
+Again, these files are needed for proper function of `ciftiTools` and have already been reduced in size.
