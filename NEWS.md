@@ -1,3 +1,13 @@
+# 2.2 (March 16, 2021)
+
+## Changes affecting users
+
+None
+
+## Notes for developers
+
+* Add `run_ciftiTools_tests.R` to `.Rbuildignore`
+
 # 2.1 (March 15, 2021)
 
 ## Changes affecting users
