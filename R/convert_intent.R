@@ -71,15 +71,18 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   # [TO DO]: Allow input of custom colors
   N_ <- length(values)
   if (N_ == 1 && add_white) {
-    pal <- data.frame(value=1, color="white")
+    pal <- data.frame(value=0, color=factor("white", "white"))
   } else {
     pal <- make_color_pal(
       colors=colors, color_mode="qualitative", zlim=ifelse(add_white, N_-1, N_)
     )
+    if (length(pal$color) != length(unique(pal$color))) {
+      warning("Some colors are assigned to more than one label.")
+    }
     if (add_white) {
       pal$color <- as.character(pal$color)
       pal <- rbind(c("white", 0), pal)
-      pal$color <- factor(pal$color, levels=pal$color)
+      pal$color <- factor(pal$color, levels=unique(pal$color))
       pal$value <- seq(nrow(pal)) - 1
     }
   }
@@ -87,6 +90,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
     pal <- expand_color_pal(pal, N_)
   } else if (nrow(pal) > N_) {
     pal <- pal[seq(N_),]
+    pal$color <- factor(pal$color, levels=unique(pal$color))
   }
 
   # Format color table in .dlabel style
