@@ -253,7 +253,7 @@ is.xifti_meta <- function(x) {
     }
     # [TO DO]: Cleanup.
     if (mean(x$cortex$medial_wall_mask$left) < .5) {
-      if (!is.null(x$meta$cifti$small_ROI) && isTRUE(x$meta$cifti$small_ROI)) {
+      if (!(!is.null(x$cifti$small_ROI) && isTRUE(x$cifti$small_ROI))) {
         warning(paste(
           "Warning: FALSE values in left medial wall mask should indicate",
           "the medial wall vertices. But, there were more FALSE values than TRUE."
@@ -267,7 +267,7 @@ is.xifti_meta <- function(x) {
     }
     # [TO DO]: Cleanup.
     if (mean(x$cortex$medial_wall_mask$right) < .5) {
-      if (!is.null(x$meta$cifti$small_ROI) && isTRUE(x$meta$cifti$small_ROI)) {
+      if (!(!is.null(x$cifti$small_ROI) && isTRUE(x$cifti$small_ROI))) {
         warning(paste(
           "Warning: FALSE values in right medial wall mask should indicate",
           "the medial wall vertices. But, there were more FALSE values than TRUE."

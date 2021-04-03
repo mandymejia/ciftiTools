@@ -264,7 +264,7 @@ make_xifti <- function(
 
     # Special case: disable future warnings about medial wall mask size.
     for (h in c("left", "right")) {
-      if (!is.null(xifti$cortex$medial_wall_mask[[h]]) && mean(xifti$cortex$medial_wall_mask[[h]]) < .5) {
+      if (!is.null(xifti$meta$cortex$medial_wall_mask[[h]]) && mean(xifti$meta$cortex$medial_wall_mask[[h]]) < .5) {
         if (is.null(xifti$meta$cifti$small_ROI)) { xifti$meta$cifti$small_ROI <- TRUE }
       }
     }
