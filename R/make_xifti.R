@@ -261,6 +261,13 @@ make_xifti <- function(
   # Validate.
   if (validate) {
     if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
+
+    # Special case: disable future warnings about medial wall mask size.
+    for (h in c("left", "right")) {
+      if (!is.null(xifti$cortex$medial_wall_mask[[h]]) && mean(xifti$cortex$medial_wall_mask[[h]]) < .5) {
+        if (is.null(xifti$meta$cifti$small_ROI)) { xifti$meta$cifti$small_ROI <- TRUE }
+      }
+    }
   }
 
   structure(xifti, class="xifti")

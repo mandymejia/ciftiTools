@@ -22,6 +22,7 @@ view_xifti_surface(
   slider_title = "Index",
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
   legend_ncol = NULL,
   legend_embed = NULL,
   digits = NULL,
@@ -247,6 +248,14 @@ length as \code{idx} to name the files exactly.
 
 If a separate color legend exists and \code{!isFALSE(fname)}, it will be
 saved to "[first_surf_fname]_legend.png".}
+
+\item{legend_fname}{Save the color legend? Since the legend is the same
+for each \code{idx} only one legend is written even if \code{length(idx)>1}.
+This argument can be \code{NULL} to not save the legend, an exact file
+path, or a length-one character vector with "[fname]" in it, which will
+name the legend based on \code{fname\[1\]}. For example, if \code{fname\[1\]}
+is \code{"plots/my_cifti.png"} and \code{legend_fname} is \code{"\[fname\]_legend"}
+(default), then the legend plot will be saved to \code{"plots/my_cifti_legend.png"}.}
 
 \item{legend_ncol}{Number of columns in color legend. If
 \code{NULL} (default), use 10 entries per row. Only applies if the color

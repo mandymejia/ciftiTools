@@ -642,6 +642,13 @@ view_xifti_surface.draw_mesh <- function(
 #' @param slider_title Text at bottom of plot that will be added if a slider
 #'  is used, to provide a title for it. Default: \code{"Index"}.
 #'  If \code{NULL} or an empty character, no title will be added.
+#' @param legend_fname Save the color legend? Since the legend is the same
+#'  for each \code{idx} only one legend is written even if \code{length(idx)>1}.
+#'  This argument can be \code{NULL} to not save the legend, an exact file
+#'  path, or a length-one character vector with "\[fname\]" in it, which will
+#'  name the legend based on \code{fname\[1\]}. For example, if \code{fname\[1\]}
+#'  is \code{"plots/my_cifti.png"} and \code{legend_fname} is \code{"\[fname\]_legend"}
+#'  (default), then the legend plot will be saved to \code{"plots/my_cifti_legend.png"}.
 #' @param legend_ncol Number of columns in color legend. If
 #'  \code{NULL} (default), use 10 entries per row. Only applies if the color
 #'  legend is used (qualitative data).
@@ -673,7 +680,8 @@ view_xifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=NULL,
-  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
+  title=NULL, slider_title="Index", 
+  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
@@ -693,6 +701,7 @@ view_xifti_surface <- function(
   # Based on: `idx`, `widget`, and `fname`.
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
+  if (is.null(legend_fname)) { legend_fname <- FALSE }
   idx <- as.numeric(idx)
   if (length(widget) > 1) { 
     warning("Using the first entry of `widget`.")
@@ -741,6 +750,7 @@ view_xifti_surface <- function(
   } # `widget` should be `TRUE` or `FALSE` now.
 
   save_fname <- !isFALSE(fname)
+
   if (save_fname) {
     if (isTRUE(fname)) { 
       if (!is.null(xifti$meta$cifti$names)) {
@@ -797,7 +807,30 @@ view_xifti_surface <- function(
 
     fname_dirs <- unique(dirname(fname))
     if (!all(file.exists(fname_dirs))) {
-      stop("These directories do not exist: ", paste0(fname_dirs[!dir.exists(fname_dirs)], collapse=" "))
+      stop(
+        "These directories do not exist: ", 
+        paste0(fname_dirs[!dir.exists(fname_dirs)], 
+        collapse=" ")
+      )
+    }
+
+    if (!is.null(legend_fname)) {
+      if (!(length(legend_fname) == 1)) {
+        warning("Using first entry of `legend_fname`.")
+        legend_fname <- legend_fname[1]
+      }
+      if (grepl("\\[fname\\]", legend_fname)) {
+        legend_fname_prefix <- gsub("\\[fname\\].*", "", legend_fname)
+        legend_fname_suffix <- gsub(".*\\[fname\\]", "", legend_fname)
+        legend_fname <- file.path(
+          dirname(legend_fname),
+          paste0(
+            legend_fname_prefix, 
+            gsub("\\.html|\\.png", "", fname[1]), 
+            legend_fname_suffix, ".png"
+          )
+        )
+      }
     }
   }
 
@@ -1256,11 +1289,13 @@ view_xifti_surface <- function(
             if (!isFALSE(fname)) {
               cleg_h_per_row <- 1/3 #inches
               cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
-              ggplot2::ggsave(
-                filename = gsub(".png", "_legend.png", gsub(".html", ".png", fname[jj])),
-                height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
-                width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
-              )
+              if (!isFALSE(legend_fname)) {
+                ggplot2::ggsave(
+                  filename = legend_fname,
+                  height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
+                  width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
+                )
+              }
               if (close_after_save) { dev.off() }
             }
 
@@ -1268,7 +1303,7 @@ view_xifti_surface <- function(
             if (!requireNamespace("fields", quietly = TRUE)) {
               stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
             }
-            if (!isFALSE(fname)) { png(gsub(".png", "_legend.png", gsub(".html", ".png", fname[jj]))) }
+            if (!isFALSE(fname)) { png(legend_fname) }
             colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
             try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
             if (!isFALSE(fname)) { if (close_after_save) { dev.off() } }
