@@ -32,6 +32,8 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
     }
   }
 
+  # [TO DO]: for `dlabel` xifti, check that newdata values are valid.
+
   # New names.
   if (!is.null(newnames)) {
     if (length(newnames) != xifti_dim[2]) {
@@ -49,7 +51,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   for (bs in names(xifti$data)) {
     if (!is.null(xifti$data[[bs]])) {
       V_bs <- nrow(xifti$data[[bs]])
-      xifti$data[[bs]] <- newdata[seq(V_start+1, V_bs+V_start),]
+      xifti$data[[bs]] <- newdata[seq(V_start+1, V_bs+V_start),,drop=FALSE]
       V_start <- V_bs+V_start
     }
   }

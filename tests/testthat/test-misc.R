@@ -127,7 +127,10 @@ test_that("Miscellaneous functions are working", {
         concat_xifti(cii, cii)$data
       )
     }
+
     # [TO DO]: Test concatenating xiftis of different types
+    # [TO DO]: newdata
+
   }
 
 })
