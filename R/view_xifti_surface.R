@@ -752,7 +752,7 @@ view_xifti_surface <- function(
   save_fname <- !isFALSE(fname)
 
   if (save_fname) {
-    if (isTRUE(fname)) { 
+    if (isTRUE(fname)) {
       if (!is.null(xifti$meta$cifti$names)) {
         fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
         if (length(fname) != length(unique(fname))) {
@@ -814,7 +814,7 @@ view_xifti_surface <- function(
       )
     }
 
-    if (!is.null(legend_fname)) {
+    if (!isFALSE(legend_fname)) {
       if (!(length(legend_fname) == 1)) {
         warning("Using first entry of `legend_fname`.")
         legend_fname <- legend_fname[1]
@@ -826,6 +826,7 @@ view_xifti_surface <- function(
           legend_fname
         )
       }
+      print(legend_fname)
       if (!endsWith(legend_fname, ".png")) { legend_fname <- paste0(legend_fname, ".png") }
     }
   }
@@ -1299,7 +1300,7 @@ view_xifti_surface <- function(
             if (!requireNamespace("fields", quietly = TRUE)) {
               stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
             }
-            if (!isFALSE(fname)) { png(legend_fname) }
+            if (!isFALSE(legend_fname)) { png(legend_fname) }
             colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
             try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
             if (!isFALSE(fname)) { if (close_after_save) { dev.off() } }
