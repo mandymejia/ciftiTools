@@ -820,8 +820,8 @@ view_xifti_surface <- function(
         legend_fname <- legend_fname[1]
       }
       if (grepl("\\[fname\\]", legend_fname)) {
-        legend_fname_prefix <- gsub("\\[fname\\].*", "", legend_fname)
-        legend_fname_suffix <- gsub(".*\\[fname\\]", "", legend_fname)
+        legend_fname_prefix <- gsub("\\[fname\\].*", "", basename(legend_fname))
+        legend_fname_suffix <- gsub(".*\\[fname\\]", "", basename(legend_fname))
         legend_fname <- file.path(
           dirname(legend_fname),
           paste0(
