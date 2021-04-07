@@ -820,17 +820,13 @@ view_xifti_surface <- function(
         legend_fname <- legend_fname[1]
       }
       if (grepl("\\[fname\\]", legend_fname)) {
-        legend_fname_prefix <- gsub("\\[fname\\].*", "", basename(legend_fname))
-        legend_fname_suffix <- gsub(".*\\[fname\\]", "", basename(legend_fname))
-        legend_fname <- file.path(
-          dirname(legend_fname),
-          paste0(
-            legend_fname_prefix, 
-            gsub("\\.html|\\.png", "", fname[1]), 
-            legend_fname_suffix, ".png"
-          )
+        legend_fname <- gsub(
+          "\\[fname\\].*", 
+          gsub("\\.png|\\.html", "", basename(fname[1])), 
+          legend_fname
         )
       }
+      if (!endsWith(legend_fname, ".png")) { legend_fname <- paste0(legend_fname, ".png") }
     }
   }
 
