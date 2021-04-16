@@ -101,7 +101,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   rownames(col_table) <- values
 
   # Add components to xifti
-  T_ <- ncol(do.call(rbind, xifti$data))
+  T_ <- ncol_xifti(xifti)
   if (is.null(xifti$meta$cifti$names)) {
     # [TO DO]: Double check this is correct default name?
     xifti$meta$cifti$names <- paste("Column", seq(T_))

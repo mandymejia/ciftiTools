@@ -864,7 +864,6 @@ view_xifti_surface <- function(
     }
   }
   stopifnot(is.xifti(xifti))
-  T_ <- ncol(do.call(rbind, xifti$data))
   x <- view_xifti_surface.surf_hemi(xifti, surfL, surfR, hemisphere)
   surfL <- x$surfL; surfR <- x$surfR; hemisphere <- x$hemisphere
 

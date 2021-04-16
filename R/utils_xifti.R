@@ -147,3 +147,21 @@ unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
   cdat[mwall,] <- cortex
   cdat
 }
+
+#' Counts the number of columns in a \code{"xifti"}.
+#' 
+#' Counts the number of columns in the \code{"xifti"} data. Doesn't bother
+#'  to validate the input.
+#' 
+#' @param xifti The \code{"xifti"} object
+#' 
+#' @keywords internal
+#' 
+ncol_xifti <- function(xifti) {
+  bs_present <- !vapply(xifti$data, is.null, FALSE)
+  if (!any(bs_present)) { 
+    return(0)
+  } else {
+    return(ncol(xifti$data[[which(bs_present)[1]]]))
+  }
+}
