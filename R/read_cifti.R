@@ -69,7 +69,7 @@ read_cifti <- function(
       xifti <- template_xifti()
       xifti <- add_surf(xifti, surfL=surfL_fname, surfR=surfR_fname)
       if (!is.null(resamp_res)) {
-        if (!is.null(xifti$surf$cortex_lef)) {
+        if (!is.null(xifti$surf$cortex_left)) {
           xifti$surf$cortex_left <- resample_surf(xifti$surf$cortex_left, resamp_res, "left")
         }
         if (!is.null(xifti$surf$cortex_right)) {

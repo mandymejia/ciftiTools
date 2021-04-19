@@ -36,24 +36,24 @@ test_that("Writing CIFTI and GIFTI files is working", {
     # Put back together
     if ("left" %in% brainstructures) {
       parts <- c(
-        parts, 
+        parts,
         list(
-          cortexL = cii_sep["cortexL"], 
+          cortexL = cii_sep["cortexL"],
           cortexL_mwall = cii_sep["ROIcortexL"]
         )
       )
     }
     if ("right" %in% brainstructures) {
       parts <- c(
-        parts, 
+        parts,
         list(
-          cortexR = cii_sep["cortexR"], 
+          cortexR = cii_sep["cortexR"],
           cortexR_mwall = cii_sep["ROIcortexR"]
         )
       )    }
     if ("subcortical" %in% brainstructures) {
       parts <- c(
-        parts, 
+        parts,
         list(
           subcortVol = cii_sep["subcortVol"],
           subcortLabs = cii_sep["subcortLabs"],
@@ -66,6 +66,15 @@ test_that("Writing CIFTI and GIFTI files is working", {
     # Check if same
     # (Some metadata will be different)
     ciftiTools:::expect_equal_xifti(cii, cii2)
+
+    # Remove subcort and test `read_xifti2`
+    cii_sep <- as.list(cii_sep[!grepl("subcort", names(cii_sep))])
+    names(cii_sep)[names(cii_sep) == "ROIcortexL"] <- "cortexL_mwall"
+    names(cii_sep)[names(cii_sep) == "ROIcortexR"] <- "cortexR_mwall"
+    cii2 <- do.call(read_xifti2, cii_sep[1])
+    cii2 <- do.call(read_xifti2, cii_sep)
+    cii2 <- do.call(read_xifti2, c(cii_sep[1], list(resamp_res=1000)))
+    cii2 <- do.call(read_xifti2, c(cii_sep, list(resamp_res=1000, surfL=demo_files()$surf["left"])))
   }
 
   # Writing surfaces
