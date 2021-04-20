@@ -9,6 +9,9 @@ ncol_xifti(xifti)
 \arguments{
 \item{xifti}{The \code{"xifti"} object}
 }
+\value{
+The number of columns in the \code{"xifti"} data.
+}
 \description{
 Counts the number of columns in the \code{"xifti"} data. Doesn't bother
 to validate the input.

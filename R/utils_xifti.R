@@ -148,12 +148,34 @@ unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
   cdat
 }
 
+#' Counts the number of rows (vertices + voxels) in a \code{"xifti"}.
+#' 
+#' Counts the number of data locations in the \code{"xifti"} data. Doesn't bother
+#'  to validate the input.
+#' 
+#' @param xifti The \code{"xifti"} object
+#' @return The number of rows in the \code{"xifti"} data.
+#' 
+#' @keywords internal
+#' 
+nrow_xifti <- function(xifti) {
+  # This function is generic because nrow(xii) will actually use dim(xii)[1]
+  #   which calls this function.
+  bs_present <- !vapply(xifti$data, is.null, FALSE)
+  if (!any(bs_present)) { 
+    return(0)
+  } else {
+    return(sum(vapply(xifti$data[bs_present], nrow, 0)))
+  }
+}
+
 #' Counts the number of columns in a \code{"xifti"}.
 #' 
 #' Counts the number of columns in the \code{"xifti"} data. Doesn't bother
 #'  to validate the input.
 #' 
 #' @param xifti The \code{"xifti"} object
+#' @return The number of columns in the \code{"xifti"} data.
 #' 
 #' @keywords internal
 #' 
@@ -164,4 +186,18 @@ ncol_xifti <- function(xifti) {
   } else {
     return(ncol(xifti$data[[which(bs_present)[1]]]))
   }
+}
+
+#' Dimensions of a \code{"xifti"}
+#' 
+#' Returns the number of rows and columns in the \code{"xifti"} data. Doesn't
+#'  bother to validate the input.
+#' 
+#' @param x The \code{"xifti"} object
+#' @return The number of rows and columns in the \code{"xifti"} data.
+#' 
+#' @export 
+#' @method dim xifti
+dim.xifti <- function(x) {
+  c(nrow_xifti(x), ncol_xifti(x))
 }

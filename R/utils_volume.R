@@ -36,7 +36,7 @@ unmask_vol <- function(dat, mask, fill=NA) {
 
   # Make volume and fill.
   vol <- array(fill, dim=c(dim(mask), ncol(dat)))
-  for(ii in seq_len(ncol(dat))) {
+  for (ii in seq_len(ncol(dat))) {
     vol[,,,ii][mask] <- dat[,ii]
   }
   if (ncol(dat)==1) { vol <- vol[,,,1] }
