@@ -650,8 +650,8 @@ view_xifti_surface.draw_mesh <- function(
 #' @param legend_ncol Number of columns in color legend. If
 #'  \code{NULL} (default), use 10 entries per row. Only applies if the color
 #'  legend is used (qualitative data).
-#' @param legend_alllevels Show all label levels in the color legend? Default:
-#'  \code{TRUE}. If \code{FALSE}, only show the levels present in the data being
+#' @param legend_alllevels Show all label levels in the color legend? If 
+#'  \code{FALSE} (default), just show the levels present in the data being
 #'  viewed. Only applies if the color legend is used (qualitative data).
 #' @param legend_embed Should the colorbar be embedded in the plot?
 #'  It will be positioned in the bottom-left corner, in a separate subplot
@@ -683,7 +683,7 @@ view_xifti_surface <- function(
   idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index", 
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=TRUE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL

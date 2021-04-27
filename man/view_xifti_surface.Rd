@@ -24,7 +24,7 @@ view_xifti_surface(
   fname_suffix = c("names", "idx"),
   legend_fname = "[fname]_legend",
   legend_ncol = NULL,
-  legend_alllevels = TRUE,
+  legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
@@ -262,8 +262,8 @@ is \code{"plots/my_cifti.png"} and \code{legend_fname} is \code{"\[fname\]_legen
 \code{NULL} (default), use 10 entries per row. Only applies if the color
 legend is used (qualitative data).}
 
-\item{legend_alllevels}{Show all label levels in the color legend? Default:
-\code{TRUE}. If \code{FALSE}, only show the levels present in the data being
+\item{legend_alllevels}{Show all label levels in the color legend? If
+\code{FALSE} (default), just show the levels present in the data being
 viewed. Only applies if the color legend is used (qualitative data).}
 
 \item{legend_embed}{Should the colorbar be embedded in the plot?
