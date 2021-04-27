@@ -4,21 +4,19 @@
 \alias{view_xifti_surface.cleg}
 \title{Draw color legend for qualitative mode}
 \usage{
-view_xifti_surface.cleg(pal_base, labels, leg_ncol, text_color, scale = 1)
+view_xifti_surface.cleg(pal_base, leg_ncol, text_color, scale = 1)
 }
 \arguments{
-\item{pal_base}{Base palette}
-
-\item{labels}{Label for each color in the palette}
+\item{pal_base}{Base palette + labels for each row}
 
 \item{leg_ncol}{Number of columns in legend.}
 
-\item{scale}{of text}
+\item{text_color}{Color of text}
 
-\item{digits}{Not used.}
+\item{scale}{of text}
 }
 \value{
-A list of keyword arguments to \code{\link[fields]{image.plot}}
+A color legend from ggplot2
 }
 \description{
 See \code{\link{view_xifti_surface}} for details.

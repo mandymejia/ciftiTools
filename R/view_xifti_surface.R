@@ -420,17 +420,16 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, digit
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
 #' 
-#' @param pal_base Base palette
-#' @param labels Label for each color in the palette
+#' @param pal_base Base palette + labels for each row
 #' @param leg_ncol Number of columns in legend. 
-#' @param digits Not used.
+#' @param text_color Color of text
 #' @param scale of text
 #' 
-#' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
+#' @return A color legend from ggplot2
 #' 
 #' @keywords internal
 #' 
-view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scale=1){
+view_xifti_surface.cleg <- function(pal_base, leg_ncol, text_color, scale=1){
 
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package \"ggplot2\" needed to make the color legend. Please install it.", call. = FALSE)
@@ -445,7 +444,6 @@ view_xifti_surface.cleg <- function(pal_base, labels, leg_ncol, text_color, scal
   legend_text_size <- 1.2 * scale
   if (is.null(leg_ncol)) { leg_ncol <- floor(sqrt(nrow(pal_base))) }
 
-  pal_base$labels <- factor(labels, levels=unique(labels))
   colors2 <- pal_base$color; names(colors2) <- pal_base$labels
 
   value <- NULL
@@ -652,6 +650,9 @@ view_xifti_surface.draw_mesh <- function(
 #' @param legend_ncol Number of columns in color legend. If
 #'  \code{NULL} (default), use 10 entries per row. Only applies if the color
 #'  legend is used (qualitative data).
+#' @param legend_alllevels Show all label levels in the color legend? Default:
+#'  \code{TRUE}. If \code{FALSE}, only show the levels present in the data being
+#'  viewed. Only applies if the color legend is used (qualitative data).
 #' @param legend_embed Should the colorbar be embedded in the plot?
 #'  It will be positioned in the bottom-left corner, in a separate subplot
 #'  with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
@@ -682,7 +683,7 @@ view_xifti_surface <- function(
   idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index", 
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=TRUE, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL
@@ -1046,11 +1047,6 @@ view_xifti_surface <- function(
           cleg_labs <- rownames(xifti$meta$cifti$labels[[idx[1]]])
         }
         cleg_labs <- as.character(cleg_labs)
-        # Get the color legend list dimensions.
-        if (is.null(legend_ncol)) {
-          legend_ncol <- floor(sqrt(nrow(pal_base)))
-          colorlegend_nrow <- ceiling(nrow(pal_base) / legend_ncol)
-        }
         # Skip if there are too many legend labels.
         if (length(cleg_labs) > 200) {
           use_cleg <- FALSE
@@ -1059,7 +1055,21 @@ view_xifti_surface <- function(
           use_cleg <- FALSE
           warning("Package \"ggpubr\" needed to make the color legend. Please install it. Skipping the color legend for now.\n")
         } else {
-          cleg <- view_xifti_surface.cleg(pal_base, cleg_labs, legend_ncol, text_color)
+          cleg <- pal_base
+          cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
+          if (!legend_alllevels) { 
+            cleg <- cleg[cleg$value %in% as.vector(do.call(cbind, values)),] 
+          }
+          if (nrow(cleg) < 1) {
+            use_cleg <- FALSE
+          } else {
+            # Get the color legend list dimensions.
+            if (is.null(legend_ncol)) {
+              legend_ncol <- max(1, floor(.8 * sqrt(nrow(cleg))))
+              colorlegend_nrow <- ceiling(nrow(cleg) / legend_ncol)
+            }
+            cleg <- view_xifti_surface.cleg(cleg, legend_ncol, text_color)
+          }
         }
       }
       colorbar_kwargs <- NULL
