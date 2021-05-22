@@ -38,6 +38,8 @@ summary.xifti <- function(object, ...) {
 print.summary.xifti <- function(x, ...) {
   cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
 
+  # [TO DO]: mention medial wall count?
+
   if (x$includes["left cortex"]) {
     cat("\tleft cortex:", x$cortex_left[1], "surface vertices,", 
       x$cortex_left[2], "measurements.\n")

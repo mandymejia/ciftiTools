@@ -145,6 +145,7 @@ convert_to_dscalar <- function(xifti) {
   # Change intent and check it.
   xifti$meta$cifti$intent <- 3006
   xifti$meta$cifti[c("time_start", "time_step", "time_unit", "labels")] <- NULL
+  #[TO DO] add names
   stopifnot(is.xifti(xifti))
 
   xifti
