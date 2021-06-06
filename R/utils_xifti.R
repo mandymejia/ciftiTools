@@ -27,6 +27,7 @@ summary.xifti <- function(object, ...) {
     out$subcort$labels <- table(object$meta$subcort$labels)
     out$subcort$mask <- dim(object$meta$subcort$mask)
   }
+  out$intent <- object$meta$cifti$intent
   return(out)
 }
 
@@ -57,6 +58,14 @@ print.summary.xifti <- function(x, ...) {
       x$subcort$dat[[2]], "measurements.\n")
     cat("\t\tsubcortical labels:\n")
     print(x$subcort$labels)
+  }
+
+  if (!is.null(x$intent)) {
+    cat(paste0(
+      "\tintent: ", x$intent, " (", 
+      c("dtseries", "dscalar", "dlabel")[match(x$intent, c(3002, 3006, 3007))], 
+      ").\n"
+    ))
   }
 
   cat("\n")
