@@ -1,3 +1,16 @@
+# 3.0 (In-progress)
+
+## Changes affecting users
+
+* Add `combine_xifti`
+* Add S3 method `dim` for `xifti` objects
+* Add `legend_alllevels` arg to `view_xifti_surface`
+* More control over legend file name in `view_xifti_surface`
+
+## Notes for developers
+
+None
+
 # 2.2 (March 16, 2021)
 
 ## Changes affecting users

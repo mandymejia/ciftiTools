@@ -13,6 +13,8 @@ library(knitr)
 knitr::opts_chunk$set(autodep = TRUE, cache = FALSE)
 ```
 
+# Introduction and setup
+
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. It supports the "dscalar," "dtseries," and "dlabel" CIFTI intents. It also supports GIFTI files for functional data ("metric" or "label") and surface geometry data ("surf"). Reading, writing, resampling, and other operations on these files are made possible using the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). Therefore, the Workbench must be installed to use `ciftiTools`. Visualizing these files is made possible using the `rgl` R package and integrated support of the surface GIFTI files.
 
 To get started, we load the `ciftiTools` package and indicate where to find the Connectome Workbench folder:
@@ -59,7 +61,7 @@ rgl::setupKnitr()
 rgl::rgl.open(); rgl::rgl.close()
 ```
 
-# Reading a CIFTI file with a surface, and viewing it
+# Reading and viewing CIFTI data with surfaces
 
 CIFTI files organize the gray matter of the brain into "greyordinates": vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the greyordinate data. These components are read in together with `read_cifti`:
 
@@ -140,13 +142,13 @@ view_xifti_volume(cii, interactive = TRUE)
 
 The S3 method `plot(cii)` will display the cortical data if possible, and the subcortical data otherwise. 
 
-# More about `"xifti"` objects
+# More about the `"xifti"` object format
 
-### Medial wall(s) of the cortical data
+### Medial wall(s) of the cortex
 
 Medial wall vertices are typically masked out of the `cortex_left` and `cortex_right` components of `data`. In this case, a data matrix for the left cortex which includes empty rows for the medial wall vertices can be obtained with `unmask_cortex(cii$data$cortex_left, cii$meta$cortex$medial_wall_mask$left)` (and similarly for the right cortex). If the medial walls were not masked out in the input CIFTI file, the `medial_wall_mask` entries will be `NULL`.
 
-### Vectorization of the subcortical data
+### Vectorization of the subcortex
 
 The subcortical data is stored in vectorized form. To recover the subcortical volume, use `unmask_vol(cii$data$subcort, cii$meta$subcort$mask, fill=NA)` for the data and `unmask_vol(cii$meta$subcort$labels, cii$meta$subcort$mask, fill=0)` for the labels.
 
@@ -154,24 +156,7 @@ The subcortical data is stored in vectorized form. To recover the subcortical vo
 
 `cii$meta$cifti$intent` indicates the NIFTI intent, which corresponds to a unique CIFTI file type. dtseries files have an intent of 3002, dscalar files have an intent of 3006, and dlabel files have an intent of 3007. Other intents are not supported by `ciftiTools`.
 
-### Support for surface geometry without data
-
-A `"surf"` object can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
-
-```{r, fig.cap="Left hemisphere surface", rgl=TRUE, format="png", fig.height=3.5, fig.width=2.5}
-view_surf(surfL_fname)
-```
-
-We can additionally render the vertices and edges. Below is the right hemisphere surface. (It has been resampled so the edges and vertices are visible; see the below section on resampling.)
-
-```{r, fig.cap="Right hemisphere surface (resampled) with mesh", rgl=TRUE, format="png", fig.height=3.5, fig.width=2.5}
-small_surf <- resample_surf(make_surf(surfR_fname), 4000)
-plot(small_surf, edge_color="black", vertex_size=3)
-```
-
-A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
-
-# Creating a new `"xifti"` and writing it
+# Creating and writing `"xifti"` data
 
 We can make a `"xifti"` from data using `as.xifti`. For example, let's make a `"xifti"` from the mean image (over time) of the dtseries file, and also include artificial subcortical data using the mask from `"ones.dscalar.nii"`. 
 
@@ -219,6 +204,27 @@ try(testthat::expect_equal(cii_new$data, cii_new_copy$data))
 ```
 
 There is only a negligible difference between the original and the written-then-read copy due to rounding.
+
+# Support for other files
+
+### Functional GIFTIs (metric and label)
+
+### Surface geometry GIFTIs
+
+A `"surf"` object can be read in using `make_surf`. They can be viewed with `view_surf` or, equivalently, their `plot` method. Here is the left hemisphere surface:
+
+```{r, fig.cap="Left hemisphere surface", rgl=TRUE, format="png", fig.height=3.5, fig.width=2.5}
+view_surf(surfL_fname)
+```
+
+We can additionally render the vertices and edges. Below is the right hemisphere surface. (It has been resampled so the edges and vertices are visible; see the below section on resampling.)
+
+```{r, fig.cap="Right hemisphere surface (resampled) with mesh", rgl=TRUE, format="png", fig.height=3.5, fig.width=2.5}
+small_surf <- resample_surf(make_surf(surfR_fname), 4000)
+plot(small_surf, edge_color="black", vertex_size=3)
+```
+
+A `"xifti"` can contain surface geometry without the corresponding data; to make it, use `as.xifti(surfL=make_surf(surfL_fname))`.
 
 # Resampling
 
@@ -322,24 +328,7 @@ To only read the CIFTI header, use `info_cifti`.
 cii_info <- ciftiTools::info_cifti(cifti_fnames["dlabel"])
 ```
 
-### Verify a CIFTI
-
-Use `is.xifti` to check if one has been properly formed:
-
-```{r}
-cii <- read_cifti(cifti_fnames["dtseries"])
-is.xifti(cii)
-```
-
-This can be helpful if it was directly edited:
-
-```{r}
-# Make a mistake and have different numbers of columns for the left and right cortex
-cii$data$cortex_left <- cii$data$cortex_left[,1,drop=FALSE]
-is.xifti(cii)
-```
-
-### Smooth a CIFTI
+### Smooth CIFTI or GIFTI data
 
 Use `smooth_cifti` to perform smoothing. This function works for both CIFTI files and `"xifti"` objects.
 
@@ -358,6 +347,27 @@ plot(
 )
 ```
 
+### Verify a `"xifti"`
+
+Use `is.xifti` to check if one has been properly formed:
+
+```{r}
+cii <- read_cifti(cifti_fnames["dtseries"])
+is.xifti(cii)
+```
+
+This can be helpful if it was directly edited:
+
+```{r}
+# Make a mistake and have different numbers of columns for the left and right cortex
+cii$data$cortex_left <- cii$data$cortex_left[,1,drop=FALSE]
+is.xifti(cii)
+```
+
+### Organize `"xifti"` objects
+
+concat_xifti combine_xifti convert_intent remove_xifti
+
 ### Do arithmetic
 
 ```{r}
@@ -375,3 +385,5 @@ view_xifti_surface(
   idx=seq(2), bg="#ECF5D4", zlim=c(0,5), slider_title = ""
 )
 ```
+
+### Rotate `"surf"` objects

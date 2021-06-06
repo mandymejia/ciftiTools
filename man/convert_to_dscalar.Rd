@@ -4,10 +4,13 @@
 \alias{convert_to_dscalar}
 \title{Convert the intent of a \code{"xifti"} to ".dscalar"}
 \usage{
-convert_to_dscalar(xifti)
+convert_to_dscalar(xifti, names = NULL)
 }
 \arguments{
 \item{xifti}{The \code{"xifti"}}
+
+\item{names}{The column names. If \code{NULL} (default), will be set to
+"Column 1", "Column 2", ... .}
 }
 \value{
 The ".dscalar" \code{"xifti"}

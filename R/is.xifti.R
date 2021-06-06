@@ -521,15 +521,21 @@ is.xifti <- function(x, messages=TRUE) {
         return(FALSE)
       }
 
+      vl_show_max <- 20
+
       if (!is.null(x$data$cortex_left)) {
         for (ii in seq_len(ncol(x$data$cortex_left))) {
           all_labels <- unique(data_mat[,ii])
           valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
           if (!all(valid_label)) {
+            vl_show <- which(!valid_label)
+            vl_trnc <- length(vl_show) > vl_show_max
+            if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
             message(paste(
               "These label values in the left cortex data column", ii, 
               "are not in the corresponding label table:\n\t",
-              paste(all_labels[!valid_label], collapse=", "), "\n"
+              paste(all_labels[vl_show], collapse=", "), 
+              ifelse(vl_trnc, "[TRUNCATED]", ""), "\n"
             ))
             return(FALSE)
           }
@@ -541,10 +547,14 @@ is.xifti <- function(x, messages=TRUE) {
           all_labels <- unique(data_mat[,ii])
           valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
           if (!all(valid_label)) {
+            vl_show <- which(!valid_label)
+            vl_trnc <- length(vl_show) > vl_show_max
+            if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
             message(paste(
               "These label values in the right cortex data column", ii, 
               "are not in the corresponding label table:\n\t",
-              paste(all_labels[!valid_label], collapse=", "), "\n"
+              paste(all_labels[vl_show], collapse=", "), 
+              ifelse(vl_trnc, "[TRUNCATED]", ""), "\n"
             ))
             return(FALSE)
           }
@@ -556,10 +566,14 @@ is.xifti <- function(x, messages=TRUE) {
           all_labels <- unique(data_mat[,ii])
           valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
           if (!all(valid_label)) {
+            vl_show <- which(!valid_label)
+            vl_trnc <- length(vl_show) > vl_show_max
+            if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
             message(paste(
               "These label values in the subcortex data column", ii, 
               "are not in the corresponding label table:\n\t",
-              paste(all_labels[!valid_label], collapse=", "), "\n"
+              paste(all_labels[vl_show], collapse=", "), 
+              ifelse(vl_trnc, "[TRUNCATED]", ""), "\n"
             ))
             return(FALSE)
           }

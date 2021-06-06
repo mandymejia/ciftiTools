@@ -128,10 +128,12 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
 #'  \code{"xifti"} object. 
 #' 
 #' @param xifti The \code{"xifti"}
+#' @param names The column names. If \code{NULL} (default), will be set to
+#'  "Column 1", "Column 2", ... .
 #' 
 #' @return The ".dscalar" \code{"xifti"}
 #' @export
-convert_to_dscalar <- function(xifti) {
+convert_to_dscalar <- function(xifti, names=NULL) {
   
   stopifnot(is.xifti(xifti))
 
@@ -142,10 +144,21 @@ convert_to_dscalar <- function(xifti) {
     }
   }
 
-  # Change intent and check it.
+  T_ <- ncol_xifti(xifti)
+
+  # Change intent.
   xifti$meta$cifti$intent <- 3006
   xifti$meta$cifti[c("time_start", "time_step", "time_unit", "labels")] <- NULL
-  #[TO DO] add names
+  if (!is.null(names)) {
+    if (length(names) != T_) { 
+      stop("The data has ", T_, " columns but `names` is length ", length(names), ".") 
+    }
+    xifti$meta$cifti$names <- as.character(names)
+  } else {
+    # [TO DO]: Double check this is correct default name?
+    xifti$meta$cifti$names <- paste("Column", seq(T_))
+  }
+
   stopifnot(is.xifti(xifti))
 
   xifti

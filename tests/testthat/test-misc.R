@@ -137,8 +137,9 @@ test_that("Miscellaneous functions are working", {
     testthat::expect_equal(cii1, cii2)
     # [TO DO]: test with different intents; test expected errors
 
-    # [TO DO]: Test concatenating xiftis of different types
-    # [TO DO]: newdata
+    cii2 <- newdata_xifti(cii2, do.call(rbind, cii2$data))
   }
+
+  # [TO DO]: Test concatenating xiftis of different types
 
 })
