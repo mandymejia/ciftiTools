@@ -10,7 +10,7 @@ Authors@R: c(
     person(given = "Damon",
            family = "Pham",
            email = "damondpham@gmail.com",
-           role = c("aut", "ctb"),
+           role = c("aut"),
            comment = c(ORCID = "0000-0001-7563-4727")))
 Maintainer: Amanda Mejia <mandy.mejia@gmail.com>
 Description: CIFTI files contain brain imaging data in "gray-ordinates", which 
