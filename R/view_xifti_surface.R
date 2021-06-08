@@ -702,7 +702,7 @@ view_xifti_surface <- function(
   # Based on: `idx`, `widget`, and `fname`.
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
-  if (is.null(legend_fname)) { legend_fname <- FALSE }
+  if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
   idx <- as.numeric(idx)
   if (length(widget) > 1) { 
     warning("Using the first entry of `widget`.")
@@ -822,14 +822,15 @@ view_xifti_surface <- function(
       }
       if (grepl("\\[fname\\]", legend_fname)) {
         legend_fname <- gsub(
-          "\\[fname\\].*", 
+          "\\[fname\\]", 
           gsub("\\.png|\\.html", "", basename(fname[1])), 
           legend_fname
         )
       }
-      print(legend_fname)
       if (!endsWith(legend_fname, ".png")) { legend_fname <- paste0(legend_fname, ".png") }
     }
+  } else {
+    legend_fname <- FALSE
   }
 
   # Check `rmarkdown`
@@ -1312,7 +1313,7 @@ view_xifti_surface <- function(
             if (!isFALSE(legend_fname)) { png(legend_fname) }
             colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
             try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
-            if (!isFALSE(fname)) { if (close_after_save) { dev.off() } }
+            if (!isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
           }
         }
       }
