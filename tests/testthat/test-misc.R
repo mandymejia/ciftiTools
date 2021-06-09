@@ -79,6 +79,10 @@ test_that("Miscellaneous functions are working", {
       cii <- add_surf(cii, surfL=resample_surf(surf_fnames$left, resamp_res=length(cii$meta$cortex$medial_wall_mask$left)))
     }
 
+    convert_xifti(cii, "dscalar")
+    convert_xifti(cii, "dtseries")
+    convert_xifti(round(cii*5), "dlabel")
+
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
 

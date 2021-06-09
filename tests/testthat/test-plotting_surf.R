@@ -32,7 +32,7 @@ test_that("plot_xifti_surface and related functions are working", {
       plot2(cii, color_mode="qualitative")
       plot2(cii, color_mode="qualitative", zlim=3)
       #plot2(cii, color_mode="qualitative", zlim=30)
-      cii <- convert_to_dlabel(cii)
+      cii <- convert_xifti(cii, "dlabel")
       plot2(cii)
     }
     cii <- readcii(cii_fname, brainstructures=c("left"), resamp_res=2000)

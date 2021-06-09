@@ -1,4 +1,4 @@
-#' Convert the intent of a \code{"xifti"} to ".dlabel"
+#' @describeIn convert_xifti
 #' 
 #' Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
 #'  \code{"xifti"} object. Will use the same label table for each data column.
@@ -17,10 +17,7 @@
 #' @param return_conversion_table Return the conversion table along with the 
 #'  converted \code{"xifti"}? Default: \code{FALSE}
 #' 
-#' @return If \code{return_conversion_table}, a length-2 list with the first
-#'  entry being the ".dlabel" \code{"xifti"} and the second being the conversion
-#'  table. Otherwise, only the \code{"xifti"} is returned.
-#' @export
+#' @keywords internal
 convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE, return_conversion_table=FALSE) {
   
   stopifnot(is.xifti(xifti))
@@ -122,7 +119,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
   stop()
 }
 
-#' Convert the intent of a \code{"xifti"} to ".dscalar"
+#' @describeIn convert_xifti
 #' 
 #' Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
 #'  \code{"xifti"} object. 
@@ -131,8 +128,7 @@ convert_to_dlabel <- function(xifti, values=NULL, colors="Set2", add_white=TRUE,
 #' @param names The column names. If \code{NULL} (default), will be set to
 #'  "Column 1", "Column 2", ... .
 #' 
-#' @return The ".dscalar" \code{"xifti"}
-#' @export
+#' @keywords internal
 convert_to_dscalar <- function(xifti, names=NULL) {
   
   stopifnot(is.xifti(xifti))
@@ -162,4 +158,67 @@ convert_to_dscalar <- function(xifti, names=NULL) {
   stopifnot(is.xifti(xifti))
 
   xifti
+}
+
+#' @describeIn convert_xifti
+#' 
+#' Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
+#'  \code{"xifti"} object. 
+#' 
+#' @param xifti The \code{"xifti"}
+#' @param time_start,time_step,time_unit (Optional) metadata for the new dtseries
+#' 
+#' @keywords internal
+convert_to_dtseries <- function(
+  xifti, time_start=0, time_step=1, time_unit=c("second", "hertz", "meter", "radian")) {
+  
+  stopifnot(is.xifti(xifti))
+
+  if (!is.null(xifti$meta$cifti$intent)) {
+    if (xifti$meta$cifti$intent == 3002) {
+      ciftiTools_warn("The input is already a dtseries `xifti`.\n")
+      return(xifti)
+    }
+  }
+
+  T_ <- ncol_xifti(xifti)
+
+  time_start <- as.numeric(time_start[1])
+  time_step <- as.numeric(time_step[1])
+  time_unit <- match.arg(time_unit, c("second", "hertz", "meter", "radian"))
+
+  # Change intent.
+  xifti$meta$cifti$intent <- 3002
+  xifti$meta$cifti[c("names", "labels")] <- NULL
+  xifti$meta$cifti$time_start <- time_start
+  xifti$meta$cifti$time_step <- time_step
+  xifti$meta$cifti$time_unit <- time_unit
+
+  stopifnot(is.xifti(xifti))
+
+  xifti
+}
+
+#' Convert the intent of a \code{"xifti"}
+#' 
+#' @param xifti The \code{"xifti"}
+#' @param to The desired intent: \code{"dscalar"} (default), \code{"dtseries"},
+#'  or \code{"dlabel"}
+#' @param ... Additional options specific to the target intent, e.g. for
+#'  \code{convert_to_dlabel}.
+#' 
+#' @return If the target is a \code{"dlabel"} and \code{return_conversion_table}, 
+#'  a length-2 list with the first entry being the ".dlabel" \code{"xifti"} and 
+#'  the second being the conversion table. Otherwise, the \code{"xifti"} is 
+#'  directly returned.
+#' 
+#' @export
+convert_xifti <- function(xifti, to=c("dscalar", "dtseries", "dlabel"), ...){
+  to <- match.arg(to, c("dscalar", "dtseries", "dlabel"))
+
+  switch(to,
+    dscalar = convert_to_dscalar(xifti, ...),
+    dtseries = convert_to_dtseries(xifti, ...),
+    dlabel = convert_to_dlabel(xifti, ...)
+  )
 }
