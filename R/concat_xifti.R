@@ -12,7 +12,7 @@
 #' @return The concatenated \code{"xifti"} object. 
 #' 
 #' @export
-concat_xifti <- function(..., xifti_list=NULL) {
+merge_xifti <- function(..., xifti_list=NULL) {
   if (is.null(xifti_list)) { xifti_list <- list(...) }
   if (!all(vapply(xifti_list, is.xifti, FALSE, messages=FALSE))) {
     stop("At least one input was not a `'xifti'`.")

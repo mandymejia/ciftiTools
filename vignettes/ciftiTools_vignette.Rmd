@@ -366,7 +366,7 @@ is.xifti(cii)
 
 ### Organize `"xifti"` objects
 
-concat_xifti combine_xifti convert_intent remove_xifti
+merge_xifti combine_xifti convert_intent remove_xifti
 
 ### Do arithmetic
 

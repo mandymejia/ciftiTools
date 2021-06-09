@@ -2,12 +2,12 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_surf}
 \alias{make_surf}
-\alias{gifti_to_surf}
+\alias{read_surf}
 \title{Convert input to a \code{"surf"} object}
 \usage{
 make_surf(surf, expected_hemisphere = NULL)
 
-gifti_to_surf(surf, expected_hemisphere = NULL)
+read_surf(surf, expected_hemisphere = NULL)
 }
 \arguments{
 \item{surf}{Either a file path to a surface GIFTI; a "gifti" object

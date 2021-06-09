@@ -121,10 +121,10 @@ test_that("Miscellaneous functions are working", {
     if (L > 1) {
       cii <- select_xifti(cii, seq(2,1))
       # Concat
-      cii <- concat_xifti(xifti_list=list(concat_xifti(cii, cii), cii))
+      cii <- merge_xifti(xifti_list=list(merge_xifti(cii, cii), cii))
       testthat::expect_equal(
         select_xifti(cii, rep(seq(ciftiTools:::ncol_xifti(cii)), 2))$data,
-        concat_xifti(cii, cii)$data
+        merge_xifti(cii, cii)$data
       )
     }
 

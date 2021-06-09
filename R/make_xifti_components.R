@@ -530,10 +530,8 @@ make_surf <- function(surf, expected_hemisphere=NULL) {
   structure(surf, class="surf")
 }
 
-# [TO DO] read_surf alias?
-
 #' @rdname make_surf
 #' @export
-gifti_to_surf <- function(surf, expected_hemisphere=NULL){
+read_surf <- function(surf, expected_hemisphere=NULL){
   make_surf(surf=surf, expected_hemisphere=expected_hemisphere)
 }

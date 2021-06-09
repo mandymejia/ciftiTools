@@ -2,6 +2,7 @@
 
 ## Changes affecting users
 
+* Rename `gifti_to_surf` as `read_surf`
 * Add `combine_xifti`
 * Add S3 method `dim` for `xifti` objects
 * Add `legend_alllevels` arg to `view_xifti_surface`
