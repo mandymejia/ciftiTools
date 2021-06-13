@@ -19,7 +19,7 @@ select_xifti <- function(xifti, idx, add_meta="select") {
   if (any(idx < 1) || !all(idx == round(idx))) { 
     stop("`idx` are the indices to select, so they should be positive integers.")
   }
-  T_ <- ncol(do.call(rbind, xifti$data))
+  T_ <- ncol_xifti(xifti)
   if (T_ < 1) { warning("No columns to select!"); return(xifti) }
   if (any(idx > T_)) { stop("At least one `idx` greater than the number of columns in the xifti (", T_, ").") }
 

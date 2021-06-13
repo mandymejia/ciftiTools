@@ -12,7 +12,7 @@
 #' @return The concatenated \code{"xifti"} object. 
 #' 
 #' @export
-concat_xifti <- function(..., xifti_list=NULL) {
+merge_xifti <- function(..., xifti_list=NULL) {
   if (is.null(xifti_list)) { xifti_list <- list(...) }
   if (!all(vapply(xifti_list, is.xifti, FALSE, messages=FALSE))) {
     stop("At least one input was not a `'xifti'`.")
@@ -32,7 +32,7 @@ concat_xifti <- function(..., xifti_list=NULL) {
   if (!all(vapply(xifti_names, is.null, FALSE))) {
     for (ii in seq(L)) {
       if (is.null(xifti_list[[ii]]$meta$cifti$names)) {
-        xifti_list[[ii]]$meta$cifti$names <- rep("", ncol(do.call(rbind, xifti_list[[ii]]$data)))
+        xifti_list[[ii]]$meta$cifti$names <- rep("", ncol_xifti(xifti_list[[ii]]))
       }
     }
     if (is.null(xifti_out$meta$cifti$intent) || xifti_out$meta$cifti$intent != 3002) {
@@ -50,7 +50,7 @@ concat_xifti <- function(..., xifti_list=NULL) {
   if (!all(vapply(xifti_labels, is.null, FALSE))) {
     for (ii in seq(L)) {
       if (is.null(xifti_list[[ii]]$meta$cifti$labels)) {
-        xifti_list[[ii]]$meta$cifti$labels <- rep(list(NULL), ncol(do.call(rbind, xifti_list[[ii]]$data)))
+        xifti_list[[ii]]$meta$cifti$labels <- rep(list(NULL), ncol(xifti_list[[ii]]))
       }
     }
     if (is.null(xifti_out$meta$cifti$intent) || xifti_out$meta$cifti$intent == 3007) {

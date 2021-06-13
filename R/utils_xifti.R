@@ -27,6 +27,7 @@ summary.xifti <- function(object, ...) {
     out$subcort$labels <- table(object$meta$subcort$labels)
     out$subcort$mask <- dim(object$meta$subcort$mask)
   }
+  out$intent <- object$meta$cifti$intent
   return(out)
 }
 
@@ -37,6 +38,8 @@ summary.xifti <- function(object, ...) {
 #' @method print summary.xifti
 print.summary.xifti <- function(x, ...) {
   cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
+
+  # [TO DO]: mention medial wall count?
 
   if (x$includes["left cortex"]) {
     cat("\tleft cortex:", x$cortex_left[1], "surface vertices,", 
@@ -55,6 +58,14 @@ print.summary.xifti <- function(x, ...) {
       x$subcort$dat[[2]], "measurements.\n")
     cat("\t\tsubcortical labels:\n")
     print(x$subcort$labels)
+  }
+
+  if (!is.null(x$intent)) {
+    cat(paste0(
+      "Intent: ", x$intent, " (", 
+      c("dtseries", "dscalar", "dlabel")[match(x$intent, c(3002, 3006, 3007))], 
+      ").\n"
+    ))
   }
 
   cat("\n")
@@ -146,4 +157,58 @@ unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
   cdat <- matrix(mwall_fill, nrow=length(mwall),  ncol=ncol(cortex))
   cdat[mwall,] <- cortex
   cdat
+}
+
+#' Counts the number of rows (vertices + voxels) in a \code{"xifti"}.
+#' 
+#' Counts the number of data locations in the \code{"xifti"} data. Doesn't bother
+#'  to validate the input.
+#' 
+#' @param xifti The \code{"xifti"} object
+#' @return The number of rows in the \code{"xifti"} data.
+#' 
+#' @keywords internal
+#' 
+nrow_xifti <- function(xifti) {
+  # This function is generic because nrow(xii) will actually use dim(xii)[1]
+  #   which calls this function.
+  bs_present <- !vapply(xifti$data, is.null, FALSE)
+  if (!any(bs_present)) { 
+    return(0)
+  } else {
+    return(sum(vapply(xifti$data[bs_present], nrow, 0)))
+  }
+}
+
+#' Counts the number of columns in a \code{"xifti"}.
+#' 
+#' Counts the number of columns in the \code{"xifti"} data. Doesn't bother
+#'  to validate the input.
+#' 
+#' @param xifti The \code{"xifti"} object
+#' @return The number of columns in the \code{"xifti"} data.
+#' 
+#' @keywords internal
+#' 
+ncol_xifti <- function(xifti) {
+  bs_present <- !vapply(xifti$data, is.null, FALSE)
+  if (!any(bs_present)) { 
+    return(0)
+  } else {
+    return(ncol(xifti$data[[which(bs_present)[1]]]))
+  }
+}
+
+#' Dimensions of a \code{"xifti"}
+#' 
+#' Returns the number of rows and columns in the \code{"xifti"} data. Doesn't
+#'  bother to validate the input.
+#' 
+#' @param x The \code{"xifti"} object
+#' @return The number of rows and columns in the \code{"xifti"} data.
+#' 
+#' @export 
+#' @method dim xifti
+dim.xifti <- function(x) {
+  c(nrow_xifti(x), ncol_xifti(x))
 }

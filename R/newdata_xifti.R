@@ -14,8 +14,15 @@
 #' @return The new \code{"xifti"}
 #' @export
 newdata_xifti <- function(xifti, newdata, newnames=NULL) {
+  stopifnot(is.xifti(xifti))
+
+  xifti_dim <- dim(xifti)
+
   newdata_dim <- dim(newdata)
-  if (length(newdata_dim)==1) { newdata <- matrix(newdata, ncol=1) }
+  if (is.null(newdata_dim)) { 
+    newdata <- matrix(newdata, ncol=xifti_dim[2])
+    newdata_dim <- dim(newdata)
+  }
   stopifnot(length(newdata_dim)==2)
 
   xifti_dim <- dim(do.call(rbind, xifti$data))
@@ -29,6 +36,15 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
         "The `xifti` has ", xifti_dim[1], " greyordinates and ", xifti_dim[2], " timepoints.\n",
         "Meanwhile, `newdata` is ", newdata_dim[1], " by ", newdata_dim[2], "."
       )
+    }
+  }
+
+  # For `dlabel` xifti, check that newdata values are valid.
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+    for (cc in seq(xifti_dim[2])) {
+      if (!all(newdata[,cc] %in% xifti$meta$cifti$labels[[cc]]$Key)) {
+        stop("`newdata` has values that are not in the label table for column ", cc, ".")
+      }
     }
   }
 
@@ -49,7 +65,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   for (bs in names(xifti$data)) {
     if (!is.null(xifti$data[[bs]])) {
       V_bs <- nrow(xifti$data[[bs]])
-      xifti$data[[bs]] <- newdata[seq(V_start+1, V_bs+V_start),]
+      xifti$data[[bs]] <- newdata[seq(V_start+1, V_bs+V_start),,drop=FALSE]
       V_start <- V_bs+V_start
     }
   }

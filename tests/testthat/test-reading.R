@@ -21,6 +21,10 @@ test_that("Reading CIFTI and GIFTI files is working", {
     cii2 <- ciftiTools:::read_cifti_separate(cii_fname, brainstructures=cii_info$cifti$brainstructures[1])
     ciftiTools:::expect_equal_xifti(cii, cii2)
 
+    # Basic properties
+    summary(cii)
+    dim(cii)
+
     # Test other alias
     cii <- read_cifti(cii_fname, brainstructures=cii_info$cifti$brainstructures)
 

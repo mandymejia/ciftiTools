@@ -89,8 +89,8 @@ resample_gifti <- function(
   if (is.null(original_res)) {
     gii <- readgii(original_fname)
     original_res <- switch(file_type,
-      metric = length(gii$data),
-      label = length(gii$data),
+      metric = nrow(gii$data[[1]]),
+      label = nrow(gii$data[[1]]),
       surface = nrow(gii$data$pointset)
     )
   } else {

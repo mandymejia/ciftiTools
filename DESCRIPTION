@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 0.2.2
+Version: 0.3.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -10,7 +10,7 @@ Authors@R: c(
     person(given = "Damon",
            family = "Pham",
            email = "damondpham@gmail.com",
-           role = c("ctb"),
+           role = c("aut"),
            comment = c(ORCID = "0000-0001-7563-4727")))
 Maintainer: Amanda Mejia <mandy.mejia@gmail.com>
 Description: CIFTI files contain brain imaging data in "gray-ordinates", which 

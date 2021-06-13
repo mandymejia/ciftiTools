@@ -181,6 +181,10 @@ make_xifti <- function(
         xifti$meta$cortex$medial_wall_mask$left <- HCP_32k_mwall_template[,1]
       }
     }
+  } else {
+    if (!is.null(cortexL_mwall)) {
+      warning("Ignoring left cortex ROI, since no left cortex data was provided.")
+    }
   }
   if (!is.null(cortexR)) {
     x <- make_cortex(
@@ -227,7 +231,7 @@ make_xifti <- function(
           }
         }
       }
-    }
+    } 
 
     ## HCP 32k medial wall
     if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_right) == 29716) {
@@ -235,6 +239,10 @@ make_xifti <- function(
         # from ciftiTools R/sysdata.rda
         xifti$meta$cortex$medial_wall_mask$right <- HCP_32k_mwall_template[,2]
       }
+    }
+  } else {
+    if (!is.null(cortexR_mwall)) {
+      warning("Ignoring right cortex ROI, since no right cortex data was provided.")
     }
   }
 
@@ -261,6 +269,13 @@ make_xifti <- function(
   # Validate.
   if (validate) {
     if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }
+
+    # Special case: disable future warnings about medial wall mask size.
+    for (h in c("left", "right")) {
+      if (!is.null(xifti$meta$cortex$medial_wall_mask[[h]]) && mean(xifti$meta$cortex$medial_wall_mask[[h]]) < .5) {
+        if (is.null(xifti$meta$cifti$small_ROI)) { xifti$meta$cifti$small_ROI <- TRUE }
+      }
+    }
   }
 
   structure(xifti, class="xifti")

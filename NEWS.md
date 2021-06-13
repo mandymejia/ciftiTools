@@ -1,3 +1,20 @@
+# 3.0 (June 13, 2021)
+
+## Changes affecting users
+
+* Rename `concat_xifti` as `merge_xifti`
+* Rename `gifti_to_surf` as `read_surf`
+* Add `combine_xifti`
+* Add `convert_xifti` and make the individual conversion functions (e.g. `convert_to_dlabel`) internal
+* Add S3 method `dim` for `xifti` objects
+* Add `legend_alllevels` arg to `view_xifti_surface`
+* More control over legend file name in `view_xifti_surface`
+* Add intent to summary output
+
+## Notes for developers
+
+None
+
 # 2.2 (March 16, 2021)
 
 ## Changes affecting users

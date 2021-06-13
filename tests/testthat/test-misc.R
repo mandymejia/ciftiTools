@@ -79,6 +79,10 @@ test_that("Miscellaneous functions are working", {
       cii <- add_surf(cii, surfL=resample_surf(surf_fnames$left, resamp_res=length(cii$meta$cortex$medial_wall_mask$left)))
     }
 
+    convert_xifti(cii, "dscalar")
+    convert_xifti(cii, "dtseries")
+    convert_xifti(round(cii*5), "dlabel")
+
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
 
@@ -117,17 +121,29 @@ test_that("Miscellaneous functions are working", {
     testthat::expect_equal((exp(1)^log(cii) + 0)$data, (cii*1)$data)
 
     # Select
-    L <- ncol(do.call(rbind, cii$data))
+    L <- ciftiTools:::ncol_xifti(cii)
     if (L > 1) {
       cii <- select_xifti(cii, seq(2,1))
       # Concat
-      cii <- concat_xifti(xifti_list=list(concat_xifti(cii, cii), cii))
+      cii <- merge_xifti(xifti_list=list(merge_xifti(cii, cii), cii))
       testthat::expect_equal(
-        select_xifti(cii, rep(seq(ncol(do.call(rbind, cii$data))), 2))$data,
-        concat_xifti(cii, cii)$data
+        select_xifti(cii, rep(seq(ciftiTools:::ncol_xifti(cii)), 2))$data,
+        merge_xifti(cii, cii)$data
       )
     }
-    # [TO DO]: Test concatenating xiftis of different types
+
+    # combine_xifti
+    cii1 <- combine_xifti(
+      read_xifti(cii_fname, brainstructures="left"),
+      read_xifti(cii_fname, brainstructures="right")
+    )
+    cii2 <- read_xifti(cii_fname)
+    testthat::expect_equal(cii1, cii2)
+    # [TO DO]: test with different intents; test expected errors
+
+    cii2 <- newdata_xifti(cii2, do.call(rbind, cii2$data))
   }
+
+  # [TO DO]: Test concatenating xiftis of different types
 
 })
