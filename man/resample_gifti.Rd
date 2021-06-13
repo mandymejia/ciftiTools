@@ -4,7 +4,7 @@
 \alias{resample_gifti}
 \alias{resampleGIfTI}
 \alias{resamplegii}
-\title{Resample a GIFTI file (with its ROI)}
+\title{Resample a metric GIFTI file (with its ROI)}
 \usage{
 resample_gifti(
   original_fname,

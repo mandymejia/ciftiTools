@@ -29,6 +29,8 @@ test_that("Writing CIFTI and GIFTI files is working", {
     # (Some metadata will be different)
     ciftiTools:::expect_equal_xifti(cii, cii2)
 
+    write_cifti(cii, file.path(tdir, "temp")) # intent is not provided in name
+
     # Write separate components
     cii_sep <- separate_cifti(cii_fname, write_dir=tdir, brainstructures=brainstructures)
     parts <- list()

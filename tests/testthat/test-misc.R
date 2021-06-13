@@ -142,7 +142,25 @@ test_that("Miscellaneous functions are working", {
     # [TO DO]: test with different intents; test expected errors
 
     cii2 <- newdata_xifti(cii2, do.call(rbind, cii2$data))
+
+    if (!grepl("dlabel", cii_fname)) {
+      # Smooth metric GIFTI
+      fnames_sep <- separate_cifti(cii_fname, write_dir=tdir)
+      smooth_gifti(fnames_sep[1], file.path(tdir, "sm.metric.gii"), hemisphere="left")
+      smg1 <- gifti::readgii(
+        smooth_gifti(
+          fnames_sep[3], file.path(tdir, "sm.metric.gii"),
+          ROI_fname=fnames_sep[4], hemisphere="right"
+        )
+      )
+      smg2 <- gifti::readgii(separate_cifti(
+        smooth_cifti(cii_fname, file.path(tdir, paste0("smooth.", basename(cii_fname)))),
+        write_dir=tdir
+      )[3])
+      testthat::expect_equal(smg1$data$normal, smg2$data$normal)
+    }
   }
+
 
   # [TO DO]: Test concatenating xiftis of different types
 

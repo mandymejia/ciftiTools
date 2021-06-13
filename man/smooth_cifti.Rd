@@ -71,7 +71,8 @@ directory if \code{x} was a CIFTI file, and in a temporary directory if
 for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}}
 
 \item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is
-present) Surface GIFTI files for the left and right cortical surfaces}
+present) Surface GIFTI files for the left and right cortical surfaces. If not
+provided, the default very inflated surfaces will be used.}
 
 \item{cerebellum_fname}{(Optional) Surface GIFTI file for the cerebellar surface}
 
