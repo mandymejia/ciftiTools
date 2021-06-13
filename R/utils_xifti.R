@@ -62,7 +62,7 @@ print.summary.xifti <- function(x, ...) {
 
   if (!is.null(x$intent)) {
     cat(paste0(
-      "\tintent: ", x$intent, " (", 
+      "Intent: ", x$intent, " (", 
       c("dtseries", "dscalar", "dlabel")[match(x$intent, c(3002, 3006, 3007))], 
       ").\n"
     ))
