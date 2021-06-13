@@ -5,9 +5,11 @@
 * Rename `concat_xifti` as `merge_xifti`
 * Rename `gifti_to_surf` as `read_surf`
 * Add `combine_xifti`
+* Add `convert_xifti` and make the individual conversion functions (e.g. `convert_to_dlabel`) internal
 * Add S3 method `dim` for `xifti` objects
 * Add `legend_alllevels` arg to `view_xifti_surface`
 * More control over legend file name in `view_xifti_surface`
+* Add intent to summary output
 
 ## Notes for developers
 
