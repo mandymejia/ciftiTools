@@ -23,7 +23,8 @@
 #' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) parameter
 #'  for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
 #' @param surfL_fname,surfR_fname (Required if the corresponding cortex is 
-#'  present) Surface GIFTI files for the left and right cortical surfaces
+#'  present) Surface GIFTI files for the left and right cortical surfaces. If not
+#'  provided, the default very inflated surfaces will be used.
 #' @param cerebellum_fname (Optional) Surface GIFTI file for the cerebellar surface
 #' @param subcortical_zeroes_as_NA,cortical_zeroes_as_NA Should zero-values in 
 #'  the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.
