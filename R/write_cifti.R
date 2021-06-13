@@ -23,6 +23,9 @@ write_cifti_components <- function(
   xifti, extn_cifti, write_dir=NULL, 
   mwall_fill=NA, subcort_fill=0,
   verbose=FALSE) {
+
+  # [TO DO] write label GIFTI from dlabel CIFTI?
+
   # Check arguments.
   stopifnot(is.xifti(xifti))
   stopifnot(length(mwall_fill)==1)
@@ -158,6 +161,20 @@ write_cifti <- function(
   verbose=TRUE) {
 
   extn_cifti <- get_cifti_extn(cifti_fname)
+  # If the intent isn't included in the output file name,
+  if (!(extn_cifti %in% c("dtseries.nii", "dlabel.nii", "dscalar.nii"))) {
+    ## First try to use the intent in the metadata.
+    if (!is.null(xifti$meta$cifti$intent)) {
+      extn_cifti <- supported_intents()$extension[
+        xifti$meta$cifti$intent == supported_intents()$value
+      ]
+    ## If that's not available, use a dscalar.
+    } else {
+      extn_cifti <- "dscalar.nii"
+    }
+    cifti_fname <- paste0(cifti_fname, ".", extn_cifti)
+  }
+
   sep_fnames <- write_cifti_components(
     xifti=xifti, extn_cifti=extn_cifti,
     write_dir=tempdir(), 

@@ -6,11 +6,12 @@
 * Rename `gifti_to_surf` as `read_surf`
 * Add `combine_xifti`
 * Add `convert_xifti` and make the individual conversion functions (e.g. `convert_to_dlabel`) internal
+* Add `smooth_gifti` for metric GIFTI smoothing
 * Add S3 method `dim` for `xifti` objects
 * Add `legend_alllevels` arg to `view_xifti_surface`
 * More control over legend file name in `view_xifti_surface`
 * Add intent to summary output
-
+* `write_xifti` will infer the intent/extension if not included in output file name
 ## Notes for developers
 
 None
