@@ -1,4 +1,4 @@
-# 3.0 (In-progress)
+# 3.0 (June 13, 2021)
 
 ## Changes affecting users
 
