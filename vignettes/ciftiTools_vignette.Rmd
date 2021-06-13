@@ -258,3 +258,31 @@ S3 methods allow for univariate transformations of `"xifti"` objects as well as 
 xii <- 1 + exp(xii) + (xii / 3)
 xii
 ```
+
+# Working with surfaces
+
+`ciftiTools` also includes functionality for working with surface geometry GIFTI files separately from any metric data. Surfaces that are read in are `"surf"` objects:
+
+```{r}
+# Reading
+surf <- read_surf(surfL_fname)
+surf
+```
+
+These can be written back to GIFTI files or visualized:
+
+```{r, rgl=TRUE, format="png", fig.height=3.8, fig.width=2.5}
+# Writing
+write_surf_gifti(surf, file.path(out_dir, "my.L.surf"))
+# Visualizing
+plot(surf, vertex_size=1, vertex_color="black")
+```
+
+Resampling can be performed on the `"surf"` objects or the surface GIFTI files directly:
+
+```{r}
+# Resample a `"surf"` object
+resample_surf(surf, 2000, "left")
+# Resample a GIFTI file
+resample_gifti(surfL_fname, file.path(out_dir, "my.L.2k.surf.gii"), "left", resamp_res=2000)
+```
