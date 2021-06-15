@@ -4,6 +4,7 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^data-raw$
+^README_media$
 ^vignettes$
 ^cran-comments.md
 ^inst/extdata/Conte69\.MyelinAndCorrThickness\.32k_fs_LR\.dscalar\.nii$

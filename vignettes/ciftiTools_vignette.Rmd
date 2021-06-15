@@ -19,7 +19,7 @@ To get started, the first time you use the `ciftiTools` package, install it via 
 or Github (with `install_github()` from the `devtools` package). Here, we will use the CRAN version.
 
 ```{r}
-#check if package installed. If not, install it.
+# Check if package installed. If not, install it.
 if(!require('ciftiTools')){
   install.packages('ciftiTools')
   #install_github('mandymejia/ciftiTools') # development version
@@ -33,11 +33,12 @@ Now we load the `ciftiTools` package.
 library(ciftiTools)
 ```
 
-Next, we indicate where to find the Connectome Workbench folder:
+Next, we indicate where to find the Connectome Workbench. This can be the full path to the Connectome Workbench executable file, or the path to its containing folder, in which case `ciftiTools` will locate the full path. Here, we will use the latter:
 
 ```{r}
 # Replace '/Applications/workbench' with the actual path to 
 #   the Connectome Workbench folder on your computer.
+#   If successful, the full path to the Workbench executable will be printed.
 ciftiTools.setOption('wb_path', '../../workbench')
 ```
 
@@ -58,13 +59,15 @@ surfR_fname <- ciftiTools::demo_files()$surf["right"]
 
 # Reading and Writing
 
+### Reading
+
 CIFTI files organize the gray matter of the brain into "greyordinates": vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the greyordinate data. These components are read in together with `read_cifti`:
 
 ```{r, warning=FALSE}
-cifti_fnames["dscalar"]
+basename(cifti_fnames["dscalar"])
 xii <- read_xifti(cifti_fnames["dscalar"])
 xii
-#plot(xii) #for visualization, we'll get to that next!
+#plot(xii) # for visualization, we'll get to that next!
 ```
 
 By default, `read_cifti` only reads in the left and right cortex data. The subcortical data can be included by using the argument `brainstructures="all"`. Other brainstructure combinations can be specified too, e.g. `brainstructures=c("left", "subcortical")`. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`, or `"all"` for all three.
@@ -74,7 +77,7 @@ The resulting object produced by `read_cifti` is a `"xifti"` with components `da
 We can add GIFTI surface geometries like so:
 
 ```{r}
-cifti_fnames["dtseries"]
+basename(cifti_fnames["dtseries"])
 xii <- read_xifti(cifti_fnames["dtseries"])
 xii <- add_surf(xii, surfL=surfL_fname, surfR=surfR_fname)
 xii
@@ -91,8 +94,10 @@ To only read the CIFTI header, use `info_cifti`.
 
 ```{r}
 xii_info <- ciftiTools::info_cifti(cifti_fnames["dscalar"])
-str(xii_info) #shows header structure
+str(xii_info) # shows header structure
 ```
+
+### Writing
 
 When `"xifti"` object is written to files, the CIFTI components are placed in a CIFTI file and the surface geometries, if any, are placed in GIFTI files.
 
@@ -113,7 +118,8 @@ separated_fnames = separate_cifti(
   cifti_fnames["dscalar_ones"], brainstructures="all", 
   cortexL_fname="my_left_cortex.func.gii", write_dir = out_dir
 )
-basename(separated_fnames) #do not show file path (files written to current working directory)
+# Files written to `out_dir`, or current working dir. if not specified
+basename(separated_fnames)
 ```
 
 Separated files can be read into R with the `oro.nifti`/`RNifti` and `gifti` packages, and combined into a `"xifti"` object with `as.xifti`.
@@ -130,24 +136,28 @@ rgl::setupKnitr()
 rgl::rgl.open(); rgl::rgl.close()
 ```
 
-Now let's take a look! `view_xifti_surface(xii)` displays the cortical data on the surface mesh. This function has several primary arguments:
+Now let's take a look! 
+
+### Surface visualization
+
+`view_xifti_surface(xii)` displays the cortical data on the surface mesh. This function has several primary arguments:
 
 * `color_mode` specifies the nature of the data values: `"sequential"`, `"qualitative"` and `"diverging"`. If it is not provided, a default mode that makes sense for the data will be used.
 * `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
 * `idx` controls which column(s) to display.
-* `widget` and `fname` control the output type. By default, the plot is rendered in an Open GL window if the length of `idx` is one, and an embedded htmlwidget if the length of `idx` is greater than one.
+* `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an Open GL window if the length of `idx` is one, and an embedded htmlwidget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image (png) files for each `idx` are created, unless `fname` ends in `.html` in which case a separate, interactive html file will be saved. Lastly, Open GL windows can be embedded in R Markdown documents for knitting; refer to the source code of this vignette to see how this works.
 * `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the very inflated surfaces included in `ciftiTools` are used.
 
 Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. We'll also make the second plot interactive by requesting display of two `idx`. Try clicking and dragging around the second plot to rotate, and scrolling to zoom in and out.
 
 ```{r, fig.cap="dtseries file; first column; sequential palette", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
 # Normally `cex.title` doesn't need to be set, as it defaults to a good choice.
-# But when knitting static images this way, the default becomes a bit too big
-# based on how knitting works.
+#   But when knitting static images this way, the default becomes a bit too big
+#   based on how knitting works.
 view_xifti_surface(xii, idx=1, zlim=c(1,2), title='color_mode = "sequential"', cex.title=1.3)
 ```
 
-```{r, fig.cap="dscalar file; second column; diverging palette", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
+```{r fig.height=4.2, fig.width=5}
 xii <- read_cifti(cifti_fnames["dscalar"]) # no GIFTI included, so the very inflated surface is used.
 view_xifti_surface(
   xii, idx=1:2, zlim=c(0,5), color_mode = "diverging",
@@ -166,6 +176,8 @@ dlabel <- view_xifti_surface(
 
 (Note that the dtseries used in this example does not truly contain fMRI BOLD timeseries data, but we use it for illustration.)
 
+### Volume visualization
+
 `view_xifti_volume(xii)` displays the subcortical data in slices. To view interactively in a web browser, set `interactive=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation, numbers of slices, index and value range can be adjusted.
 
 ```{r, fig.cap="Subcortical data (all ones)", fig.height=6, fig.width=4}
@@ -182,6 +194,8 @@ view_xifti_volume(xii, interactive = TRUE)
 The S3 method `plot(xii)` will display the cortical data if possible, and the subcortical data otherwise. 
 
 # Resampling and smoothing
+
+### Resampling
 
 `ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k dtseries file to 6k vertices. We also provide the surfaces and resample them in conjunction.
 
@@ -204,6 +218,8 @@ Resampling can also be performed while reading a file into R.
 ```{r}
 read_cifti(cifti_fnames["dscalar"], resamp_res=2000)
 ```
+
+### Smoothing
 
 Use `smooth_cifti` to perform smoothing. This function works for both CIFTI files and `"xifti"` objects.
 
