@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -23,7 +23,6 @@ Description: CIFTI files contain brain imaging data in "gray-ordinates", which
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Imports:
     fields,
     gifti (> 0.7.5),
