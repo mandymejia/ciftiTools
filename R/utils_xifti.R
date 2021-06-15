@@ -37,7 +37,7 @@ summary.xifti <- function(object, ...) {
 #' @inheritParams x_Param_xifti
 #' @method print summary.xifti
 print.summary.xifti <- function(x, ...) {
-  cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
+  cat("Brain Structures:", paste(names(x$includes[seq(3)])[x$includes[seq(3)]], collapse=", "), " \n")
 
   # [TO DO]: mention medial wall count?
 
