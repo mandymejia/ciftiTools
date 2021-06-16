@@ -212,3 +212,17 @@ ncol_xifti <- function(xifti) {
 dim.xifti <- function(x) {
   c(nrow_xifti(x), ncol_xifti(x))
 }
+
+#' Convert a \code{"xifti"} to a matrix
+#' 
+#' Converts a \code{"xifti"} to a matrix. Surfaces and metadata are discarded.
+#' 
+#' @param x The \code{"xifti"} object
+#' @param ... Unused
+#' @return The input as a matrix. Each brainstructure's data is concatenated.
+#' 
+#' @export
+#' @method as.matrix xifti
+as.matrix.xifti <- function(x, ...) {
+  do.call(rbind, x$data)
+}

@@ -503,7 +503,7 @@ is.xifti <- function(x, messages=TRUE) {
   # For intent 3006 (.dscalar.nii), each measurement should be named.
   if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3006)) {
     if (!is.null(x$meta$cifti$names)) {
-      if (length(x$meta$cifti$names) != ncol(do.call(rbind, x$data))) {
+      if (length(x$meta$cifti$names) != ncol(x)) {
         message("There must be as many meta$cifti$names as there are data columns.\n")
         return(FALSE)
       }
@@ -514,7 +514,7 @@ is.xifti <- function(x, messages=TRUE) {
   #   have a corresponding label table, and all labels in the data should be
   #   listed in the corresponding table.
   if (!is.null(x$meta$cifti$intent) && (x$meta$cifti$intent == 3007)) {
-    data_mat <- do.call(rbind, x$data)
+    data_mat <- as.matrix(x)
     if (!is.null(x$meta$cifti$labels) && !is.null(data_mat) && nrow(data_mat) > 0) {
       if (ncol(data_mat) != length(x$meta$cifti$labels)) {
         message("Number of labels does not match number of data columns.\n")

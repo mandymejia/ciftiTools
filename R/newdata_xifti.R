@@ -25,7 +25,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   }
   stopifnot(length(newdata_dim)==2)
 
-  xifti_dim <- dim(do.call(rbind, xifti$data))
+  xifti_dim <- dim(xifti)
   if (!all(xifti_dim == newdata_dim)) {
     if (all(xifti_dim == rev(newdata_dim))) {
       warning("Transposing `newdata`.\n")

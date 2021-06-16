@@ -117,7 +117,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL) {
   # Convert from dlabel to dscalar if non-label values were introduced by
   #   the transformation function.
   if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
-    v <- unique(do.call(rbind, xifti$data))
+    v <- unique(as.matrix(xifti))
     for (T_ in seq(ncol(v))) {
       if (!all(v[,T_] %in% xifti$meta$cifti$labels[[T_]]$Key)) {
         warning(
