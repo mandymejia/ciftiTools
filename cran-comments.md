@@ -21,3 +21,7 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Submission revision
+
+The previous submission errored because the DESCRIPTION contained this line: `LazyData: true`. However, no data directory exists. This line has been removed.
