@@ -170,6 +170,7 @@ write_cifti <- function(
       ]
     ## If that's not available, use a dscalar.
     } else {
+      ciftiTools_warn("Writing a dscalar since no intent indicated.\n")
       extn_cifti <- "dscalar.nii"
     }
     cifti_fname <- paste0(cifti_fname, ".", extn_cifti)
