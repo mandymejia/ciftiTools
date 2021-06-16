@@ -37,7 +37,7 @@ summary.xifti <- function(object, ...) {
 #' @inheritParams x_Param_xifti
 #' @method print summary.xifti
 print.summary.xifti <- function(x, ...) {
-  cat("Brain Structures:", paste(names(x$includes)[x$includes], collapse=", "), " \n")
+  cat("Brain Structures:", paste(names(x$includes[seq(3)])[x$includes[seq(3)]], collapse=", "), " \n")
 
   # [TO DO]: mention medial wall count?
 
@@ -211,4 +211,18 @@ ncol_xifti <- function(xifti) {
 #' @method dim xifti
 dim.xifti <- function(x) {
   c(nrow_xifti(x), ncol_xifti(x))
+}
+
+#' Convert a \code{"xifti"} to a matrix
+#' 
+#' Converts a \code{"xifti"} to a matrix. Surfaces and metadata are discarded.
+#' 
+#' @param x The \code{"xifti"} object
+#' @param ... Unused
+#' @return The input as a matrix. Each brainstructure's data is concatenated.
+#' 
+#' @export
+#' @method as.matrix xifti
+as.matrix.xifti <- function(x, ...) {
+  do.call(rbind, x$data)
 }

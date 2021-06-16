@@ -51,7 +51,7 @@ test_that("Miscellaneous functions are working", {
     # smooth_cifti
     # not sure why it doesn't work for ones_1k (because all data are equal?)
     if (!grepl("ones_1k", cii_fname) && !grepl("dlabel", cii_fname)) {
-      cii <- read_cifti(
+      testthat::expect_warning(cii <- read_cifti(
         smooth_cifti(
           cii_fname, file.path(tdir, basename(cii_fname)),
           surf_FWHM=3, vol_FWHM=3,
@@ -60,7 +60,7 @@ test_that("Miscellaneous functions are working", {
           subcortical_zeroes_as_NA=TRUE
         ),
         brainstructures = "all" #warning should happen if not all are present
-      )
+      ))
       cii <- smooth_cifti(
         cii, file.path(tdir, basename(cii_fname)),
         surf_FWHM=5, vol_FWHM=5,
@@ -79,9 +79,22 @@ test_that("Miscellaneous functions are working", {
       cii <- add_surf(cii, surfL=resample_surf(surf_fnames$left, resamp_res=length(cii$meta$cortex$medial_wall_mask$left)))
     }
 
-    convert_xifti(cii, "dscalar")
-    convert_xifti(cii, "dtseries")
-    convert_xifti(round(cii*5), "dlabel")
+    cii_s <- convert_xifti(cii, "dscalar")
+    cii_t <- convert_xifti(cii, "dtseries")
+    if (grepl("label", cii_fname)) {
+      cii_l <- convert_xifti(cii, "dlabel", nsig=3)
+      cii_l1 <- read_xifti(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3), brainstructures = brainstructures)
+      # [TO DO] error if subcort exists?
+    } else if (!grepl("ones", cii_fname)) {
+      cii_l <- testthat::expect_warning(convert_xifti(cii, "dlabel", nsig=3))
+      cii_l1 <- read_xifti(testthat::expect_warning(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3)), brainstructures = brainstructures)
+    }
+    cii_s1 <- read_xifti(convert_xifti(cii_fname, "dscalar", file.path(tdir, "cii.dscalar.nii")), brainstructures = brainstructures)
+    cii_t1 <- read_xifti(convert_xifti(cii_fname, "dtseries", file.path(tdir, "cii.dtseries.nii")), brainstructures = brainstructures)
+    testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_s1))
+    testthat::expect_equal(as.matrix(cii_t), as.matrix(cii_t1))
+    testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_t))
+    # testthat::expect_equal(as.matrix(cii_l), as.matrix(cii_l1)) # [TO DO]: off by one due to l1 having `???` Key at 0
 
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
@@ -115,10 +128,20 @@ test_that("Miscellaneous functions are working", {
 
     # Operations
     # warnings should happen for dlabel file
-    is.xifti(cii + cii + cii)
-    is.xifti(cii - cii / (abs(cii) + 1))
-    is.xifti((5*cii) %% round(cii, 1))
-    testthat::expect_equal((exp(1)^log(cii) + 0)$data, (cii*1)$data)
+    if (grepl("label", cii_fname)) {
+      is.xifti(testthat::expect_warning(cii + cii + cii))
+      is.xifti(testthat::expect_warning(cii - cii / (abs(cii) + 1)))
+      is.xifti(testthat::expect_warning((5*cii) %% round(cii, 1)))
+      testthat::expect_equal(
+        testthat::expect_warning((exp(1)^log(cii) + 0)$data),
+        (cii*1)$data
+      )
+    } else {
+      is.xifti(cii + cii + cii)
+      is.xifti(cii - cii / (abs(cii) + 1))
+      is.xifti((5*cii) %% round(cii, 1))
+      testthat::expect_equal((exp(1)^log(cii) + 0)$data, (cii*1)$data)
+    }
 
     # Select
     L <- ciftiTools:::ncol_xifti(cii)
@@ -141,7 +164,7 @@ test_that("Miscellaneous functions are working", {
     testthat::expect_equal(cii1, cii2)
     # [TO DO]: test with different intents; test expected errors
 
-    cii2 <- newdata_xifti(cii2, do.call(rbind, cii2$data))
+    cii2 <- newdata_xifti(cii2, as.matrix(cii2))
 
     if (!grepl("dlabel", cii_fname)) {
       # Smooth metric GIFTI

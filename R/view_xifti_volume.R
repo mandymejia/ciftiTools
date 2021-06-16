@@ -158,7 +158,7 @@ view_xifti_volume <- function(
     }
     oro.nifti::overlay(x=img, y=img_overlay, plane=plane, ...)
   } else {
-    papayar::papaya(list(img, img_overlay, img_labels), ...)
+    papayar::papaya(list(img, img_labels, img_overlay), ...)
   }
 }
 

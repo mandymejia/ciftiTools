@@ -87,6 +87,12 @@ See [this
 link](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html)
 to view the tutorial vignette.
 
+## Graphical summary
+
+<figure>
+<img src="README_media/ciftiTools_summary.jpg" style="width:65.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
+</figure>
+
 ## FAQ
 
 #### Why is a CIFTI file that has been read in called a `"xifti"`?

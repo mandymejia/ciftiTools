@@ -76,6 +76,10 @@ write_cifti(xii2, new_cifti_fname)
 
 See [this link](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html) to view the tutorial vignette.
 
+## Graphical summary
+
+![ciftiTools graphical summary](README_media/ciftiTools_summary.jpg){width=65%}
+
 ## FAQ
 
 #### Why is a CIFTI file that has been read in called a `"xifti"`?
