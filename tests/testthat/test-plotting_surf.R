@@ -37,10 +37,14 @@ test_that("plot_xifti_surface and related functions are working", {
     }
     cii <- readcii(cii_fname, brainstructures=c("left"), resamp_res=2000)
     plot2(cii, hemisphere="both")
-    plot2(cii, surfR=demo_files()$surf["right"], hemisphere="both")
+    testthat::expect_warning(
+      plot2(cii, surfR=demo_files()$surf["right"], hemisphere="both")
+    )
   }
 
   plot2(make_surf(demo_files()$surf["left"]))
-  plot2(as.xifti(surfR=make_surf(demo_files()$surf["right"])), hemisphere="both", title="My Awesome Surfs")
+  testthat::expect_warning(
+    plot2(as.xifti(surfR=make_surf(demo_files()$surf["right"])), hemisphere="both", title="My Awesome Surfs")
+  )
 
 })
