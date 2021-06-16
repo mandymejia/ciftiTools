@@ -135,8 +135,8 @@ write_metric_gifti <- function(
     } else {
       label_vals <- as.numeric(label_table[,colnames(label_table) == "Key"])
       data_vals <- unique(as.vector(do.call(cbind, x$data)))
-      if (!all(data_vals %in% label_vals)) {
-        stop(paste0("These data values were not in the label table:", paste(data_vals, collapse=", ")))
+      if (!all(data_vals %in% c(NA, label_vals))) {
+        stop(paste0("These data values were not in the label table:", paste(data_vals[!(data_vals %in% label_vals)], collapse=", ")))
       }
     }
 
