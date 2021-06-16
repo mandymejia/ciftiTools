@@ -79,9 +79,16 @@ test_that("Miscellaneous functions are working", {
       cii <- add_surf(cii, surfL=resample_surf(surf_fnames$left, resamp_res=length(cii$meta$cortex$medial_wall_mask$left)))
     }
 
-    convert_xifti(cii, "dscalar")
-    convert_xifti(cii, "dtseries")
-    convert_xifti(round(cii*5), "dlabel")
+    cii_s <- convert_xifti(cii, "dscalar")
+    cii_t <- convert_xifti(cii, "dtseries")
+    cii_l <- convert_xifti(round(cii*5), "dlabel", nsig=3)
+    cii_s1 <- read_xifti(convert_xifti(cii_fname, "dscalar", file.path(tdir, "cii.dscalar.nii")))
+    cii_t1 <- read_xifti(convert_xifti(cii_fname, "dtseries", file.path(tdir, "cii.dtseries.nii")))
+    cii_l1 <- read_xifti(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3))
+    testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_s1))
+    testthat::expect_equal(as.matrix(cii_t), as.matrix(cii_t1))
+    testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_t))
+    testthat::expect_equal(as.matrix(cii_l), as.matrix(cii_l1))
 
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
@@ -141,7 +148,7 @@ test_that("Miscellaneous functions are working", {
     testthat::expect_equal(cii1, cii2)
     # [TO DO]: test with different intents; test expected errors
 
-    cii2 <- newdata_xifti(cii2, do.call(rbind, cii2$data))
+    cii2 <- newdata_xifti(cii2, as.matrix(cii2))
 
     if (!grepl("dlabel", cii_fname)) {
       # Smooth metric GIFTI

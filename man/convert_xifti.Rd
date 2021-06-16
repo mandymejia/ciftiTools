@@ -5,35 +5,50 @@
 \alias{convert_to_dscalar}
 \alias{convert_to_dtseries}
 \alias{convert_xifti}
-\title{Convert the intent of a \code{"xifti"}}
+\title{Convert the intent of a CIFTI file or \code{"xifti"} object}
 \usage{
 convert_to_dlabel(
-  xifti,
+  x,
+  cifti_target_fname = NULL,
   values = NULL,
+  nsig = Inf,
   colors = "Set2",
   add_white = TRUE,
   return_conversion_table = FALSE
 )
 
-convert_to_dscalar(xifti, names = NULL)
+convert_to_dscalar(x, cifti_target_fname = NULL, names = NULL)
 
 convert_to_dtseries(
-  xifti,
+  x,
+  cifti_target_fname = NULL,
   time_start = 0,
   time_step = 1,
   time_unit = c("second", "hertz", "meter", "radian")
 )
 
-convert_xifti(xifti, to = c("dscalar", "dtseries", "dlabel"), ...)
+convert_xifti(
+  x,
+  to = c("dscalar", "dtseries", "dlabel"),
+  cifti_target_fname = NULL,
+  ...
+)
 }
 \arguments{
-\item{xifti}{The \code{"xifti"}}
+\item{x}{The CIFTI file name or \code{"xifti"} object to convert.}
+
+\item{cifti_target_fname}{File name for the converted CIFTI. Only used if
+\code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
+name as \code{x} but with the extension updated.}
 
 \item{values}{(Optional) A vector of the original data values. They should all
 be unique. They may not all occur in the \code{"xifti"} data, but every
 datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
 mapped to integers from $0$ to $N-1$, with $N$ being the length of
 \code{values}.}
+
+\item{nsig}{Take this many significant digits for the data values. If
+\code{Inf} (default), do not round.}
 
 \item{colors}{(Optional) "ROY_BIG_BL", the name of a ColorBrewer palette
 (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), the name of
@@ -53,17 +68,21 @@ converted \code{"xifti"}? Default: \code{FALSE}}
 \item{to}{The desired intent: \code{"dscalar"} (default), \code{"dtseries"},
 or \code{"dlabel"}}
 
-\item{...}{Additional options specific to the target intent, e.g. for
+\item{...}{Only used if \code{x} is a \code{"xifti"} object. Additional
+options specific to the target type and intent, e.g. for
 \code{convert_to_dlabel}.}
+
+\item{xifti}{The \code{"xifti"}}
 }
 \value{
-If the target is a \code{"dlabel"} and \code{return_conversion_table},
-a length-2 list with the first entry being the ".dlabel" \code{"xifti"} and
-the second being the conversion table. Otherwise, the \code{"xifti"} is
-directly returned.
+If \code{x} is a CIFTI, the target is a \code{"dlabel"} and
+\code{return_conversion_table}, a length-2 list with the first entry being
+the ".dlabel" \code{"xifti"} and the second being the conversion table.
+Otherwise, the \code{"xifti"} or the output CIFTI file name is directly
+returned.
 }
 \description{
-Convert the intent of a \code{"xifti"}
+Convert the intent of a CIFTI file or \code{"xifti"} object
 }
 \section{Functions}{
 \itemize{
@@ -71,7 +90,7 @@ Convert the intent of a \code{"xifti"}
 \code{"xifti"} object. Will use the same label table for each data column.
 
 \item \code{convert_to_dscalar}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
-\code{"xifti"} object.
+CIFTI file or \code{"xifti"} object.
 
 \item \code{convert_to_dtseries}: Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
 \code{"xifti"} object.
