@@ -1,3 +1,14 @@
+# 3.1 (June 16, 2021)
+
+## Changes affecting users
+
+* `convert_xifti` accepts CIFTI files too
+* Add `as.matrix` S3 method
+* Fix interactive papayar view for `view_xifti_volume`
+
+## Notes for developers
+
+None
 # 3.0 (June 13, 2021)
 
 ## Changes affecting users
