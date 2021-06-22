@@ -2,9 +2,18 @@
 % Please edit documentation in R/write_gifti.R
 \name{write_surf_gifti}
 \alias{write_surf_gifti}
+\alias{write_surf}
 \title{Write CIFTI surface data to GIFTI}
 \usage{
 write_surf_gifti(
+  x,
+  gifti_fname,
+  hemisphere = c("left", "right"),
+  encoding = NULL,
+  endian = c("LittleEndian", "BigEndian")
+)
+
+write_surf(
   x,
   gifti_fname,
   hemisphere = c("left", "right"),

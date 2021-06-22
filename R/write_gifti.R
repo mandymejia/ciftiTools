@@ -206,3 +206,12 @@ write_surf_gifti <- function(
 
   writegii(x, gifti_fname, use_parsed_transformations=TRUE)
 }
+
+#' @rdname write_surf_gifti
+#' @export
+write_surf <- function(
+  x, gifti_fname, hemisphere=c("left", "right"),
+  encoding=NULL, endian=c("LittleEndian", "BigEndian")){
+
+  write_surf_gifti(x, gifti_fname, hemisphere, encoding, endian)
+}
