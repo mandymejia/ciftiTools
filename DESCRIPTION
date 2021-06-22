@@ -11,7 +11,13 @@ Authors@R: c(
            family = "Pham",
            email = "damondpham@gmail.com",
            role = c("aut"),
-           comment = c(ORCID = "0000-0001-7563-4727")))
+           comment = c(ORCID = "0000-0001-7563-4727")),
+    person(given = "John",
+           family = "Muschelli",
+           email = "muschellij2@gmail.com",
+           role = c("ctb"),
+           comment = c(ORCID = "0000-0001-6469-1750"))
+    )
 Maintainer: Amanda Mejia <mandy.mejia@gmail.com>
 Description: CIFTI files contain brain imaging data in "gray-ordinates", which 
     represent the gray matter as cortical surface vertices (left and right) and
