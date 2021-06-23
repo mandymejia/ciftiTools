@@ -13,15 +13,16 @@ status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools
 coverage](https://coveralls.io/repos/github/mandymejia/ciftiTools/badge.svg)](https://coveralls.io/github/mandymejia/ciftiTools)
 <!-- badges: end -->
 
-Tools for reading and visualizing CIFTI brain imaging files.
-
-CIFTI files contain brain imaging data in “gray-ordinates”, which
+CIFTI files contain brain imaging data in “grayordinates,” which
 represent the gray matter as cortical surface vertices (left and right)
 and subcortical voxels (cerebellum, basal ganglia, and other deep gray
-matter).`ciftiTools` uses the Connectome Workbench to read CIFTI files
-into R and apply common pre-processing steps (e.g. smoothing,
-resampling). It also provides tools for visualizing the cortical surface
-with GIFTI files, and for visualizing the subcortical volume.
+matter). `ciftiTools` provides a unified environment for reading,
+writing, visualizing and manipulating CIFTI-format data. It supports the
+“dscalar,” “dlabel,” and “dtseries” intents. Greyordinate data is read
+in as a `"xifti"` object, which is structured for convenient access to
+the data and metadata, and includes support for surface geometry files
+to enable spatially-dependent functionality such as static or
+interactive visualizations and smoothing.
 
 ## Installation
 
@@ -87,10 +88,14 @@ See [this
 link](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html)
 to view the tutorial vignette.
 
-## Graphical summary
+## Illustrations
 
 <figure>
-<img src="README_media/ciftiTools_summary.jpg" style="width:65.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
+<img src="README_media/ciftiTools_summary.jpg" style="width:70.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
+</figure>
+
+<figure>
+<img src="README_media/xifti_structure.png" style="width:70.0%" alt="“xifti” object structure" /><figcaption aria-hidden="true">“xifti” object structure</figcaption>
 </figure>
 
 ## FAQ
@@ -105,6 +110,9 @@ GIFTI:
 xii <- as.xifti(surfL=make_surf(demo_files()$surf["left"]))
 view_xifti_surface(xii)
 ```
+
+We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
+(or vice versa) using the `"xifti"` object as an intermediary.
 
 ## Related R extensions
 
