@@ -1,0 +1,16 @@
+citHeader("To cite {ciftiTools} in publications use:")
+
+ciftiTools_citations <- c(
+	bibentry(
+		bibtype      = "Misc",
+		title        = "ciftiTools: A package for reading, writing, visualizing and manipulating CIFTI files in R",
+		author       = personList(
+			as.person("Damon D Pham"),
+			as.person("John Muschelli"),
+			as.person("Amanda F Mejia")
+		),
+		year				 = "2021",
+		url     		 = "https://arxiv.org/abs/2106.11338",
+		key          = "pham2021ciftitools"
+	)
+)
