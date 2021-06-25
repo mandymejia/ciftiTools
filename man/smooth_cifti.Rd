@@ -72,7 +72,7 @@ for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}}
 
 \item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is
 present) Surface GIFTI files for the left and right cortical surfaces. If not
-provided, the default very inflated surfaces will be used.}
+provided, the default surfaces will be used.}
 
 \item{cerebellum_fname}{(Optional) Surface GIFTI file for the cerebellar surface}
 
@@ -98,7 +98,8 @@ warning will be printed.
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
 Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
-the inflated surfaces included in \code{"ciftiTools"} will be used.
+the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
+option is "inflated" by default. It can be set to "very inflated" or "midthickness".
 }
 \section{Connectome Workbench Requirement}{
 
