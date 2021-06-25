@@ -38,12 +38,12 @@ demo_files <- function(){
     surf = unlist(list(
       left = system.file(
         "extdata",
-        paste0("S1200.L.", ciftiTools.getOption("surf"), "_MSMAll.32k_fs_LR.surf.gii"),
+        paste0("S1200.L.", gsub(" ", "_", ciftiTools.getOption("surf")), "_MSMAll.32k_fs_LR.surf.gii"),
         package="ciftiTools"
       ),
       right = system.file(
         "extdata",
-        paste0("S1200.R.", ciftiTools.getOption("surf"), "_MSMAll.32k_fs_LR.surf.gii"),
+        paste0("S1200.R.", gsub(" ", "_", ciftiTools.getOption("surf")), "_MSMAll.32k_fs_LR.surf.gii"),
         package="ciftiTools"
       )
     ))

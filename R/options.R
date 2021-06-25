@@ -15,7 +15,12 @@ ciftiTools.listOptions <- function() {
     "Tolerance for equality between floating-point numbers.",
     "Suppress some messages and warnings that are less important or very frequent."
   )
-  Notes <- c("", "Currently only used to check that subcortical transformation matrices match that of the MNI template.", "")
+  Notes <- c(
+    "", 
+    "Data were provided [in part] by the Human Connectome Project, WU-Minn Consortium (Principal Investigators: David Van Essen and Kamil Ugurbil; 1U54MH091657) funded by the 16 NIH Institutes and Centers that support the NIH Blueprint for Neuroscience Research; and by the McDonnell Center for Systems Neuroscience at Washington University.", 
+    "Currently only used to check that subcortical transformation matrices match that of the MNI template.", 
+    ""
+  )
 
   data.frame(OptionName=OptionName, CurrentValue=CurrentValue, Description=Description, Notes=Notes)
 }
