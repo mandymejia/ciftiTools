@@ -98,6 +98,10 @@ to view the tutorial vignette.
 <img src="README_media/xifti_structure.png" style="width:70.0%" alt="“xifti” object structure" /><figcaption aria-hidden="true">“xifti” object structure</figcaption>
 </figure>
 
+<figure>
+<img src="README_media/surf_tour.gif" style="width:70.0%" alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README." /><figcaption aria-hidden="true">Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.</figcaption>
+</figure>
+
 ## FAQ
 
 #### Why is a CIFTI file that has been read in called a `"xifti"`?
@@ -129,3 +133,15 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 -   xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
 -   Interactive 3D rendering:
     [`rgl`](https://CRAN.R-project.org/package=rgl)
+
+## Data acknowledgement
+
+Acknowledgement statement according to the [Data Use
+Terms](https://www.humanconnectome.org/study/hcp-young-adult/document/wu-minn-hcp-consortium-open-access-data-use-terms)
+for the default surfaces included in `ciftiTools`:
+
+> Data were provided \[in part\] by the Human Connectome Project,
+> WU-Minn Consortium (Principal Investigators: David Van Essen and Kamil
+> Ugurbil; 1U54MH091657) funded by the 16 NIH Institutes and Centers
+> that support the NIH Blueprint for Neuroscience Research; and by the
+> McDonnell Center for Systems Neuroscience at Washington University.
