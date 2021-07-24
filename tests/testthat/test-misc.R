@@ -183,6 +183,12 @@ test_that("Miscellaneous functions are working", {
       testthat::expect_equal(smg1$data$normal, smg2$data$normal)
     }
 
+    # apply
+    testthat::expect_equal(
+      apply_xifti(xii, 2, quantile, c(.1, .2, .5)),
+      apply(as.matrix(xii), 2, quantile, c(.1, .2, .5))
+    )
+
     cii2$data$cortex_left <- as.vector(cii2$data$cortex_left)
     is.xifti(fix_xifti(cii2))
   }

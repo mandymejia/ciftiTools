@@ -386,6 +386,9 @@ xml_cifti <- function(cifti_fname){
 #'
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the "-nifti-information" Workbench command.
+#' 
 info_cifti <- function(cifti_fname){
 
   # Check if this CIFTI is supported.

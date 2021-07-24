@@ -14,13 +14,14 @@
 #'  \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
 #'  or \code{pmax}.
 #' @param xifti2 The second xifti, if applicable. Otherwise, \code{NULL} (default)
+#' @param ... Additional arguments to \code{FUN}
 #' @return A \code{xifti} storing the result of applying \code{FUN} to the input(s).
 #'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
 #' @export
 #' @importFrom utils capture.output
 #' 
-transform_xifti <- function(xifti, FUN, xifti2=NULL) {
+transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
   if (!is.xifti(xifti, messages=FALSE) && (!is.null(xifti2) && !is.xifti(xifti2, messages=FALSE))) {
     stop("Neither argument is a xifti.")
   }
@@ -41,11 +42,11 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL) {
     FUN <- newFUN
   }
 
-  try_apply <- function(x, x2=NULL, FUN) {
+  try_apply <- function(x, x2=NULL, FUN, ...) {
     if (is.null(x2)) {
-      out <- FUN(x)
+      out <- FUN(x, ...)
     } else {
-      out <- FUN(x, x2)
+      out <- FUN(x, x2, ...)
     }
     if (length(out) != max(length(x), length(x2))) {
       stop(
@@ -63,21 +64,21 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL) {
     if (!is.xifti(xifti)) { stop("`xifti` is invalid.") }
     for (bs in names(xifti$data)) {
       if (!is.null(xifti$data[[bs]])) {
-        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], FUN=FUN)
+        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], x2=NULL, FUN=FUN, ...)
       }
     }
   # xifti + unary
   } else if (is.numeric(xifti2) && length(xifti2)==1){
     for (bs in names(xifti$data)) {
       if (!is.null(xifti$data[[bs]])) {
-        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], xifti2, FUN=FUN)
+        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], x2=xifti2, FUN=FUN, ...)
       }
     }
   # unary + xifti
   } else if (is.numeric(xifti) && length(xifti)==1 && is.xifti(xifti2, messages=FALSE)) { 
     for (bs in names(xifti2$data)) {
       if (!is.null(xifti2$data[[bs]])) {
-        xifti2$data[[bs]][] <- try_apply(xifti, xifti2$data[[bs]], FUN=FUN)
+        xifti2$data[[bs]][] <- try_apply(xifti, x2=xifti2$data[[bs]], FUN=FUN, ...)
       }
     }
     xifti <- xifti2
@@ -109,7 +110,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL) {
         if (nrow(xifti$data[[bs]]) != nrow(xifti2$data[[bs]])) {
           stop("The xiftis have different number of vertices/voxels for the ", bs, " brainstructure.")
         }
-        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], xifti2$data[[bs]], FUN=FUN)
+        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], x2=xifti2$data[[bs]], FUN=FUN, ...)
       }
     }
   }

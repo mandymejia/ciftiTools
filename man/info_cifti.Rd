@@ -54,6 +54,11 @@ Additional metadata depends on the type of CIFTI file:
 }
 }
 }
+\section{Connectome Workbench}{
+
+This function interfaces with the "-nifti-information" Workbench command.
+}
+
 \section{Label Levels}{
 
 \code{xifti$meta$subcort$labels} is a factor with the following levels:

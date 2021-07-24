@@ -42,7 +42,7 @@ None
 ## Changes affecting users
 * Search for "wb_path" during `ciftiTools.setOption` call, and never afterward
 * Ignore Workbench warnings, for the most part
-* Remove arguments concering intermediate files in `resample_cifti` and `read_cifti`
+* Remove arguments concerning intermediate files in `resample_cifti` and `read_cifti`
 * Too many changes to document for `view_xifti_surface`!
 * `transform_xifti` improvements
 * Export `remove_xifti`

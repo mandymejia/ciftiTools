@@ -270,7 +270,7 @@ match_exactly <- function(
   return(TRUE)
 }
 
-#' Print Suppressable Message
+#' Print Suppressible Message
 #' 
 #' Print message only if ciftiTools Option "suppress_msgs" is TRUE
 #' 
@@ -286,7 +286,7 @@ ciftiTools_msg <- function(msg){
   invisible(NULL)
 }
 
-#' Print Suppressable Warning
+#' Print Suppressible Warning
 #' 
 #' Print warning only if ciftiTools Option "suppress_msgs" is TRUE
 #' 

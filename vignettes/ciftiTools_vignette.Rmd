@@ -199,7 +199,7 @@ The S3 method `plot(xii)` will display the cortical data if possible, and the su
 
 `ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k dtseries file to 6k vertices. We also provide the surfaces and resample them in conjunction.
 
-```{r, fig.cap="Resampled CIFTI", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r}
 resampled_xii_fname <- "my_new_resampled.dtseries.nii"
 resampled_surfL_fname <- "my_resampled_surfL.surf.gii"
 resampled_surfR_fname <- "my_resampled_surfR.surf.gii"
@@ -211,6 +211,7 @@ xii_6k <- resample_cifti(
   resampled_surfL_fname, resampled_surfR_fname,
   write_dir = out_dir
 )
+basename(xii_6k)
 ```
 
 Resampling can also be performed while reading a file into R. 
@@ -267,6 +268,25 @@ xii
 ```{r}
 xii <- select_xifti(xii, c(4,3,2,1)) # Reverse the order of the columns
 xii
+```
+
+`apply_xifti` works like the R `apply` function, applying a function to the rows or columns of a `"xifti"`.
+
+```{r}
+gmeans <- apply_xifti(xii, 1, mean) # Mean of each greyordinate
+gmeans
+```
+
+```{r}
+cquants <- apply_xifti(xii, 2, quantile, c(.1, .5)) # Quantiles of each column
+cquants
+```
+
+`convert_xifti` converts the intent of a `"xifti"`.
+
+```{r}
+xii <- convert_xifti(read_xifti(cifti_fnames["dtseries"]), "dscalar")
+xii$meta$cifti$intent
 ```
 
 S3 methods allow for univariate transformations of `"xifti"` objects as well as arithmetic operations of multiple `"xifti"` objects.
