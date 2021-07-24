@@ -185,8 +185,8 @@ test_that("Miscellaneous functions are working", {
 
     # apply
     testthat::expect_equal(
-      apply_xifti(xii, 2, quantile, c(.1, .2, .5)),
-      apply(as.matrix(xii), 2, quantile, c(.1, .2, .5))
+      c(apply_xifti(cii1, 2, quantile, c(.1, .2, .5))),
+      c(apply(cii1, 2, quantile, c(.1, .2, .5)))
     )
 
     cii2$data$cortex_left <- as.vector(cii2$data$cortex_left)
