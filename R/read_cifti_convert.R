@@ -11,6 +11,10 @@
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
+#' @inheritParams idx_Param
+#' @param mwall_values If the medial wall mask is not present in the CIFTI, 
+#'  infer it from these data values. Default: \code{c(NA, NaN)}. If \code{NULL}, 
+#'  do not attempt to infer the medial wall mask from the data values.
 #' @inheritParams verbose_Param_FALSE
 #' @param ... Additional arguments to \code{read_cifti_flat}.
 #'
@@ -21,7 +25,7 @@
 read_cifti_convert <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
+  brainstructures=c("left","right"), idx=NULL,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   # Check arguments.
@@ -53,8 +57,24 @@ read_cifti_convert <- function(
     brainstructures <- brainstructures[bs_present]
   }
 
+  # Select metadata columns if only some data columns will be read in.
+  if (!is.null(idx)) {
+    if (!is.null(xifti$meta$cifti$names)) {
+      if (!all(idx %in% seq(length(xifti$meta$cifti$names)))) {
+        stop(
+          "`idx` is invalid: must be positive integer(s) indicating column(s) of ",
+          "the `xifti`. There are ", length(xifti$meta$cifti$names), " columns."
+        )
+      }
+      xifti$meta$cifti$names <- xifti$meta$cifti$names[idx]
+    }
+    if (!is.null(xifti$meta$cifti$labels)) {
+      xifti$meta$cifti$labels <- xifti$meta$cifti$labels[idx]
+    }
+  }
+
   # Read the CIFTI data.
-  xifti_data <- read_cifti_flat(cifti_fname, ...)
+  xifti_data <- read_cifti_flat(cifti_fname, idx=idx, ...)
   if (get_cifti_extn(cifti_fname) == "dlabel.nii") {
     if (!all(round(xifti_data) == xifti_data)) {
       warning("The CIFTI file extension was \"dlabel.nii\" but the data values were not integers.")

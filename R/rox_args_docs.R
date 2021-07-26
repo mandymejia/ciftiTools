@@ -79,6 +79,15 @@ NULL
 #' @keywords internal
 NULL
 
+#' idx
+#' 
+#' @param idx Numeric vector indicating the data indices to read. If \code{NULL}
+#'  (default), read all the data. Must be a subset of the indices present in the
+#'  file, or an error will occur. 
+#' @name idx_Param
+#' @keywords internal
+NULL
+
 #' original_fnames: for resampling
 #'
 #' @param original_fnames The files to resample. This is a named list 

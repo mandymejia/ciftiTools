@@ -14,6 +14,7 @@
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR
+#' @inheritParams idx_Param
 #' @inheritParams resamp_res_Param_optional
 #' @param mwall_values If the medial wall locations are not indicated in the
 #'  CIFTI, use these values to infer the medial wall mask. Default: 
@@ -27,7 +28,7 @@
 #' 
 read_cifti_separate <- function(
   cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"),
+  brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
   # ----------------------------------------------------------------------------
@@ -150,11 +151,9 @@ read_cifti_separate <- function(
   # ----------------------------------------------------------------------------
   # make_xifti() ---------------------------------------------------------------
   # ----------------------------------------------------------------------------
-
-  to_read <- as.list(to_read)
   
   to_read["mwall_values"] <- list(mwall_values=mwall_values)
-  to_read$cifti_info$cifti <- cifti_info$cifti
+  to_read$cifti_info <- cifti_info
   # Erase misc metadata and replace with the name of the resampled file
   to_read$cifti_info$cifti$misc <- list(resampled_fname=cifti_fname)
 
@@ -168,10 +167,23 @@ read_cifti_separate <- function(
 
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
+
+  if (!is.null(idx)) {
+    to_read$idx <- idx
+    if (!is.null(to_read$cifti_info$cifti$names)) {
+      to_read$cifti_info$cifti$names <- to_read$cifti_info$cifti$names[idx]
+    }
+    if (!is.null(to_read$cifti_info$cifti$labels)) {
+      to_read$cifti_info$cifti$labels <- to_read$cifti_info$cifti$labels[idx]
+    }
+  }
   xifti <- do.call(make_xifti, to_read)
 
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
-    xifti$meta$cortex$resamp_res <- resamp_res
+    xifti$meta$cortex["resamp_res"] <- list(resamp_res)
+  }
+  if ("subcort" %in% brainstructures) {
+    xifti$meta$subcort[c("labels", "mask", "trans_mat")] <- to_read$cifti_info$subcort[c("labels", "mask", "trans_mat")]
   }
 
   if (verbose) {

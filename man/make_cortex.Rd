@@ -7,6 +7,7 @@
 make_cortex(
   cortex,
   mwall = NULL,
+  idx = NULL,
   cortex_is_masked = NULL,
   rm_blank_mwall = TRUE,
   rm_bad_mwall = TRUE,
@@ -28,6 +29,11 @@ exist in the GIFTI.}
 representing the medial wall mask. \code{FALSE} values should indicate
 vertices that make up the medial wall. If the medial wall is unknown, use
 \code{NULL} (default).}
+
+\item{idx}{Only applies if \code{cortex} is a metric GIFTI file path. This is
+a numeric vector indicating the data indices to read. If \code{NULL}
+(default), read all the data. Must be a subset of the indices present in the
+file, or an error will occur.}
 
 \item{cortex_is_masked}{Has the medial wall been masked from \code{cortex}
 yet? \code{NULL} (default) indicates whether it has been masked or not is

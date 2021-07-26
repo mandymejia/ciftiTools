@@ -105,6 +105,11 @@
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
 #'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
+#' @param idx For file paths provided to \code{cortexL}, \code{cortexR}, and 
+#'  \code{subcortVol}: a numeric matrix indicating the data indices to read. If\
+#'  \code{NULL} (default), read all the data. Must be a subset of the indices 
+#'  present in the file, or an error will occur. Note that if these arguments
+#'  are data matrices instead of file paths, they are unaffected.
 #' @param col_names Names of each measurement/column in the data. Overrides
 #'  names indicated in \code{cifti_info} or in the data components.
 #' @param HCP_32k_auto_mwall If left and/or right cortex data is provided, and
@@ -127,6 +132,7 @@ make_xifti <- function(
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   mwall_values=c(NA, NaN), cifti_info=NULL,
   surfL=NULL, surfR=NULL, 
+  idx=NULL,
   col_names=NULL, HCP_32k_auto_mwall=TRUE,
   read_dir=NULL, validate=TRUE) {
   
@@ -143,20 +149,21 @@ make_xifti <- function(
 
   # CIFTI metadata.
   if (!is.null(cifti_info)) { 
-    misc_meta <- c("intent", "brainstructures", "misc")
-    xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta]
-    if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3002) {
-      time_meta <- c("time_start", "time_step", "time_unit")
-      xifti$meta$cifti[time_meta] <- cifti_info$cifti[time_meta]
-    } else if (xifti$meta$cifti$intent %in% c(3006, 3007)) {
-      xifti$meta$cifti$names <- cifti_info$cifti$names
-    }
+    xifti$meta$cifti <- cifti_info$cifti
+    # misc_meta <- c("intent", "brainstructures", "misc")
+    # xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta]
+    # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3002) {
+    #   time_meta <- c("time_start", "time_step", "time_unit")
+    #   xifti$meta$cifti[time_meta] <- cifti_info$cifti[time_meta]
+    # } else if (xifti$meta$cifti$intent %in% c(3006, 3007)) {
+    #   xifti$meta$cifti$names <- cifti_info$cifti$names
+    # }
   }
 
   # Cortex data.
   if (!is.null(cortexL)) {
     x <- make_cortex(
-      cortexL, cortexL_mwall, mwall_values=mwall_values,
+      cortexL, cortexL_mwall, idx=idx, mwall_values=mwall_values,
       side="left", mwall_source="the input `cortexL_mwall`"
     )
     xifti$data$cortex_left <- x$data
@@ -188,7 +195,7 @@ make_xifti <- function(
   }
   if (!is.null(cortexR)) {
     x <- make_cortex(
-      cortexR, cortexR_mwall, mwall_values=mwall_values,
+      cortexR, cortexR_mwall, idx=idx, mwall_values=mwall_values,
       side="right", mwall_source="the input `cortexR_mwall`"
     )
     xifti$data$cortex_right <- x$data
@@ -251,7 +258,7 @@ make_xifti <- function(
     stop("subcortVol and subcortLabs must be provided together.")
   }
   if (!is.null(subcortVol)) {
-    x <- make_subcort(subcortVol, subcortLabs, subcortMask, validate_mask=FALSE)
+    x <- make_subcort(subcortVol, subcortLabs, subcortMask, idx=idx, validate_mask=FALSE)
     xifti$data$subcort <- x$data
     xifti$meta$subcort$labels <- x$labels
     xifti$meta$subcort$mask <- x$mask

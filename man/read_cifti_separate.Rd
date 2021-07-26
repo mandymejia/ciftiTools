@@ -9,6 +9,7 @@ read_cifti_separate(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  idx = NULL,
   resamp_res = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
@@ -31,6 +32,10 @@ Default: \code{c("left","right")} (cortical surface only).
 
 If a brain structure is indicated but does not exist, a warning will be
 raised and that brain structure will be skipped.}
+
+\item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
+(default), read all the data. Must be a subset of the indices present in the
+file, or an error will occur.}
 
 \item{resamp_res}{(Optional) Target resolution for resampling (number of
 cortical surface vertices per hemisphere). If \code{NULL} (default) or

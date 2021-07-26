@@ -18,6 +18,10 @@
 #'  representing the medial wall mask. \code{FALSE} values should indicate 
 #'  vertices that make up the medial wall. If the medial wall is unknown, use 
 #'  \code{NULL} (default).
+#' @param idx Only applies if \code{cortex} is a metric GIFTI file path. This is
+#'  a numeric vector indicating the data indices to read. If \code{NULL} 
+#'  (default), read all the data. Must be a subset of the indices present in the
+#'  file, or an error will occur. 
 #' @param cortex_is_masked Has the medial wall been masked from \code{cortex} 
 #'  yet? \code{NULL} (default) indicates whether it has been masked or not is 
 #'  unknown.
@@ -47,7 +51,7 @@
 #' @keywords internal
 #' 
 make_cortex <- function(
-  cortex, mwall=NULL,
+  cortex, mwall=NULL, idx=NULL,
   cortex_is_masked=NULL,
   rm_blank_mwall=TRUE,
   rm_bad_mwall=TRUE,
@@ -67,6 +71,27 @@ make_cortex <- function(
   # Cortex:
   #   File --> GIFTI.
   if (is.fname(cortex)) {
+
+    # Create new GIFTI with selected columns, if specified.
+    if (!is.null(idx)) {
+      stopifnot(all(idx > 0) && all(idx == round(idx)))
+      idx_is_seq <- (length(idx) > 2 && all(diff(idx) == 1))
+      if (idx_is_seq) {
+        idx_string <- paste("-column", idx[1], "-up-to", idx[length(idx)])
+      } else {
+        idx_string <- paste("-column", paste(idx, collapse=" -column "))
+      }
+      cortex_original <- cortex
+      cortex <- file.path(
+        tempdir(), 
+        gsub("\\.gii$", ".selected_idx\\.gii", basename(cortex_original))
+      )
+      
+      run_wb_cmd(paste(
+        "-metric-merge", cortex, "-metric", cortex_original, idx_string
+      ))
+    }
+
     cortex <- readgii(cortex)
   }
   #   GIFTI --> matrix.
@@ -269,6 +294,10 @@ make_trans_mat <- function(nii_fname) {
 #'  mask will be inferred from voxels with labels \code{0} or \code{NA} in 
 #'  \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
 #'  is not provided, the mask cannot be inferred so an error will occur.
+#' @param idx Only applies if \code{vol} is a NIFTI file path. This is a numeric
+#'  vector indicating the data indices to read. If \code{NULL} (default), read 
+#'  all the data. Must be a subset of the indices present in the file, or an 
+#'  error will occur. 
 #' @param validate_mask If \code{mask} is provided, set this to \code{TRUE} to 
 #'  check that the mask only removes voxels with \code{NA} and \code{0} values 
 #'  in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).
@@ -286,14 +315,14 @@ make_trans_mat <- function(nii_fname) {
 #' @keywords internal
 #' 
 make_subcort <- function(
-  vol, labs, mask=NULL, validate_mask=FALSE) {
+  vol, labs, mask=NULL, idx=NULL, validate_mask=FALSE) {
 
   vol_trans_mat <- labs_trans_mat <- mask_trans_mat <- NULL
 
   # Get vol.
   if (is.fname(vol)) { 
     vol_trans_mat <- try(make_trans_mat(vol), silent=TRUE)
-    vol <- readNifti(vol)
+    vol <- readNifti(vol, volumes=idx)
   }
   vol_ndims <- length(dim(vol))
   if (vol_ndims == 0) { stop("`vol` did not have any dimensions. Check that it is a matrix or array?") }
