@@ -273,6 +273,9 @@ make_xifti <- function(
   # Column names.
   if (!is.null(col_names)) { xifti$meta$cifti$names <- col_names }
 
+  # idx metadata.
+  if (!is.null(idx)) { xifti$meta$cifti$misc$idx <- idx }
+
   # Validate.
   if (validate) {
     if (!is.xifti(xifti)) { stop("Could not make a valid \"xifti\" object.") }

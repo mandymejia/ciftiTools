@@ -71,6 +71,8 @@ read_cifti_convert <- function(
     if (!is.null(xifti$meta$cifti$labels)) {
       xifti$meta$cifti$labels <- xifti$meta$cifti$labels[idx]
     }
+
+    xifti$meta$cifti$misc$idx <- idx
   }
 
   # Read the CIFTI data.

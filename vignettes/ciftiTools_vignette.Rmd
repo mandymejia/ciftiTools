@@ -90,11 +90,17 @@ xii2 <- read_xifti(cifti_fnames["dtseries"], surfL_fname=surfL_fname, surfR_fnam
 all.equal(xii, xii2) # same result
 ```
 
-To only read the CIFTI header, use `info_cifti`.
+To only read the CIFTI header, use `info_cifti`:
 
 ```{r}
 xii_info <- ciftiTools::info_cifti(cifti_fnames["dscalar"])
 str(xii_info) # shows header structure
+```
+
+To only read in certain columns, use the `idx` argument:
+
+```{r}
+read_xifti(cifti_fnames["dtseries"], idx=2) # second column only
 ```
 
 ### Writing
