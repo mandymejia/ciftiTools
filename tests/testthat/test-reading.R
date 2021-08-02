@@ -49,6 +49,6 @@ test_that("Reading CIFTI and GIFTI files is working", {
 
   load_parc()
   load_parc("Schaefer_400", "Yeo_17")
-  testthat::expect_error(load_parc("Schaefer_600"))
+  testthat::expect_error(load_parc("NotAValidParc"))
   testthat::expect_error(load_parc("Schaefer_1000", "Schaefer_100"))
 })
