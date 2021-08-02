@@ -35,16 +35,20 @@ test_that("Reading CIFTI and GIFTI files is working", {
     if (cii_fname == "dtseries") {
       # Reading surfaces (only test 32k dtseries)
       cii <- add_surf(fnames$cifti["dtseries"], surfL=fnames$surf["left"], surfR=fnames$surf["right"])
-      cii <- readcii(fnames$cifti["dtseries"], brainstructures=cii_info$cifti$brainstructures, 
+      cii <- readcii(fnames$cifti["dtseries"], brainstructures=cii_info$cifti$brainstructures,
         surfL_fname=fnames$surf["left"], surfR_fname=fnames$surf["right"], verbose=FALSE
       )
       testthat::expect_error(
         readcii(
-          fnames$cifti["dtseries"], brainstructures=cii_info$cifti$brainstructures, 
+          fnames$cifti["dtseries"], brainstructures=cii_info$cifti$brainstructures,
           surfL_fname=fnames$surf["right"], surfR_fname=fnames$surf["left"]
         )
       )
     }
   }
 
+  load_parc()
+  load_parc("Schaefer_400", "Yeo_17")
+  testthat::expect_error(load_parc("Schaefer_600"))
+  testthat::expect_error(load_parc("Schaefer_1000", "Schaefer_100"))
 })

@@ -136,12 +136,30 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 
 ## Data acknowledgement
 
-Acknowledgement statement according to the [Data Use
-Terms](https://www.humanconnectome.org/study/hcp-young-adult/document/wu-minn-hcp-consortium-open-access-data-use-terms)
-for the default surfaces included in `ciftiTools`:
+The following data are included in the package for convenience:
+
+Example CIFTI files provided by
+[NITRC](https://www.nitrc.org/projects/cifti/).
+
+Cortical surfaces provided by the HCP, according to the [Data Use
+Terms](https://www.humanconnectome.org/study/hcp-young-adult/document/wu-minn-hcp-consortium-open-access-data-use-terms):
 
 > Data were provided \[in part\] by the Human Connectome Project,
 > WU-Minn Consortium (Principal Investigators: David Van Essen and Kamil
 > Ugurbil; 1U54MH091657) funded by the 16 NIH Institutes and Centers
 > that support the NIH Blueprint for Neuroscience Research; and by the
 > McDonnell Center for Systems Neuroscience at Washington University.
+
+Several parcellations provided by [Thomas Yeo’s Computational Brain
+Imaging Group
+(CBIG)](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation):
+
+1.  Yeo, B. T. T. et al. The organization of the human cerebral cortex
+    estimated by intrinsic functional connectivity. J Neurophysiol 106,
+    1125–1165 (2011).
+2.  Schaefer, A. et al. Local-Global Parcellation of the Human Cerebral
+    Cortex from Intrinsic Functional Connectivity MRI. Cereb Cortex 28,
+    3095–3114 (2018).
+3.  Kong, R. et al. Individual-Specific Areal-Level Parcellations
+    Improve Functional Connectivity Prediction of Behavior. Cerebral
+    Cortex (2021) <doi:10.1093/cercor/bhab101>.
