@@ -9,8 +9,6 @@
 #'  included. No spatial information is included. This is the fastest way to 
 #'  read in CIFTI data. 
 #' 
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
-#' 
 #' @inheritParams cifti_fname_Param
 #' @param keep This function works by converting the CIFTI file to a GIFTI file 
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}

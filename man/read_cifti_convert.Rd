@@ -54,11 +54,4 @@ using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}),
 and obtaining the brainordinate mapping using
 \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}).
 }
-\section{Connectome Workbench Requirement}{
-
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
-}
-
 \keyword{internal}

@@ -126,11 +126,9 @@ the data values include 0, because 0-valued non-medial wall vertices and
 medial wall vertices cannot be distinguished from one another within
 \code{cortexL_fname} alone.
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-separate"} Workbench command.
 }
 
 \seealso{

@@ -5,8 +5,6 @@
 #'  and obtaining the brainordinate mapping using 
 #'  \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}). 
 #' 
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
-#' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param

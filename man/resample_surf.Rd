@@ -22,6 +22,11 @@ The new surface
 Resample a \code{"surf"} object by writing it to a GIFTI, using the Connectome
 Workbench to resample it, and then reading the new file.
 }
+\section{Connectome Workbench}{
+
+This function interfaces with the \code{"-surface-resample"} Workbench command.
+}
+
 \seealso{
 Other functions for working with GIFTI surface geometry data: 
 \code{\link{add_surf}()},

@@ -14,6 +14,9 @@
 #' @family surfing
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-surface-resample"} Workbench command.
+#' 
 resample_surf <- function(
   surf, resamp_res, hemisphere=c("left", "right")){
 

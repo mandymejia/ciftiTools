@@ -14,7 +14,6 @@
 #' 
 #' If \code{cifti_fname} is not provided, then only the surfaces are read in.
 #' 
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @inheritSection labels_Description Label Levels
 #' 
 #' @inheritParams cifti_fname_Param
@@ -56,6 +55,11 @@
 #' @family common
 #' @family reading
 #' @export
+#' 
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-cifti-convert"} Workbench command if
+#'  resampling is not needed, and the \code{"-cifti-separate"} Workbench command
+#'  if resampling is needed.
 #'
 read_cifti <- function(
   cifti_fname=NULL,

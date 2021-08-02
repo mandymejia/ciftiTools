@@ -133,11 +133,11 @@ for resampling.
 
 If \code{cifti_fname} is not provided, then only the surfaces are read in.
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-convert"} Workbench command if
+resampling is not needed, and the \code{"-cifti-separate"} Workbench command
+if resampling is needed.
 }
 
 \section{Label Levels}{

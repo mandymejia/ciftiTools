@@ -1,7 +1,6 @@
 #' Smooth a CIFTI 
 #'
-#' Smooth CIFTI data. This uses the \code{-cifti-smoothing} command 
-#'  from Connectome Workbench.
+#' Spatially smooth CIFTI data.
 #' 
 #' If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
 #'  to a ".dscalar" file because the values will no longer be integer indices.
@@ -13,8 +12,6 @@
 #'  Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
 #'  the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
 #'  option is "inflated" by default. It can be set to "very inflated" or "midthickness".
-#' 
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @param x The CIFTI file name or \code{"xifti"} object to smooth.
 #' @param cifti_target_fname File name for the smoothed CIFTI. If
@@ -37,6 +34,9 @@
 #' @family common
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-cifti-smoothing"} Workbench command.
+#' 
 smooth_cifti <- function(
   x, cifti_target_fname=NULL,
   surf_FWHM=5, vol_FWHM=5,

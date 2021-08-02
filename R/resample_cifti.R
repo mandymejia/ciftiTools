@@ -6,7 +6,6 @@
 #' 
 #'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 #'
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @param x The CIFTI file name or \code{"xifti"} object to resample. If
 #'  \code{NULL}, the result will be a \code{"xifti"} with resampled surfaces 
@@ -46,6 +45,10 @@
 #' @family common
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-metric-resample"}, \code{"-label-resample"},
+#'  and/or \code{"-surface-resample"} Workbench commands, depending on the input.
+#' 
 resample_cifti <- function(
   x=NULL, cifti_target_fname=NULL, 
   surfL_original_fname=NULL, surfR_original_fname=NULL,

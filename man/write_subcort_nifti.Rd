@@ -54,6 +54,12 @@ not provided, the volumetric mask will not be written. (It's redundant with
 the 0 values in \code{subcortLabs_fname} because valid labels have positive
 indexes.)
 }
+\section{Connectome Workbench}{
+
+This function interfaces with the \code{"-volume-label-import"} Workbench
+Command.
+}
+
 \seealso{
 Other functions for writing CIFTI or GIFTI metric data: 
 \code{\link{separate_cifti}()},

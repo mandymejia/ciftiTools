@@ -4,7 +4,7 @@
 \alias{resample_gifti}
 \alias{resampleGIfTI}
 \alias{resamplegii}
-\title{Resample a metric GIFTI file (with its ROI)}
+\title{Resample a GIFTI file (with its ROI)}
 \usage{
 resample_gifti(
   original_fname,
@@ -81,5 +81,12 @@ applicable if \code{ROIcortex_original_fname} is provided.}
 The resampled GIFTI file name, invisibly
 }
 \description{
-Performs spatial resampling of GIFTI data on the cortical surface.
+Perform spatial resampling of GIFTI data on the cortical surface (metric
+and label), or of GIFTI surface geometry data itself.
 }
+\section{Connectome Workbench}{
+
+This function interfaces with the \code{"-metric-resample"}, \code{"-label-resample"},
+and/or \code{"-surface-resample"} Workbench commands, depending on the input.
+}
+

@@ -8,7 +8,6 @@
 #' 
 #' The subcortical component (NIFTI) is not resampled.
 #'
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param

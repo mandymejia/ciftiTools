@@ -56,7 +56,7 @@ Additional metadata depends on the type of CIFTI file:
 }
 \section{Connectome Workbench}{
 
-This function interfaces with the "-nifti-information" Workbench command.
+This function interfaces with the \code{"-nifti-information"} Workbench command.
 }
 
 \section{Label Levels}{
@@ -89,13 +89,6 @@ This function interfaces with the "-nifti-information" Workbench command.
 
 These correspond to the same structures as given by
 \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
-}
-
-\section{Connectome Workbench Requirement}{
-
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
 \seealso{

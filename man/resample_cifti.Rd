@@ -112,11 +112,10 @@ putting them together. (The subcortex is not resampled.)
 \details{
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-metric-resample"}, \code{"-label-resample"},
+and/or \code{"-surface-resample"} Workbench commands, depending on the input.
 }
 
 \seealso{

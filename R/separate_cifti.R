@@ -19,7 +19,6 @@
 #'  medial wall vertices cannot be distinguished from one another within
 #'  \code{cortexL_fname} alone.
 #'
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams brainstructures_Param_LR
@@ -61,6 +60,9 @@
 #' @family writing
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-cifti-separate"} Workbench command.
+#' 
 separate_cifti <- function(cifti_fname, 
   brainstructures=c("left","right"), 
   cortexL_fname=NULL, cortexR_fname=NULL, 

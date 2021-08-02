@@ -86,8 +86,7 @@ Default: \code{FALSE}.}
 The \code{cifti_target_fname}, invisibly
 }
 \description{
-Smooth CIFTI data. This uses the \code{-cifti-smoothing} command
-from Connectome Workbench.
+Spatially smooth CIFTI data.
 }
 \details{
 If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
@@ -101,11 +100,9 @@ Surfaces are required for each hemisphere in the CIFTI. If they are not provided
 the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
 option is "inflated" by default. It can be set to "very inflated" or "midthickness".
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-smoothing"} Workbench command.
 }
 
 \seealso{

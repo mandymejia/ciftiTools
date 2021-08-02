@@ -1,7 +1,6 @@
 #' Smooth a metric GIFTI
 #'
-#' Smooths metric GIFTI data on the cortical surface. This uses the 
-#'  \code{-metric-smoothing} command from Connectome Workbench.
+#' Smooths metric GIFTI data on the cortical surface.
 #'
 #' @param original_fname The GIFTI file to smooth.
 #' @param target_fname Where to save the smoothed file.
@@ -21,6 +20,9 @@
 #'
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-metric-smoothing"} Workbench command.
+#' 
 smooth_gifti <- function(
   original_fname, target_fname, surf_fname=NULL, surf_FWHM=5, 
   hemisphere=c("left", "right"), ROI_fname=NULL, zeroes_as_NA=FALSE) {
