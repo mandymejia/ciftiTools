@@ -18,7 +18,9 @@
 #' @return A \code{xifti} storing the result of applying \code{FUN} to the input(s).
 #'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
+#' 
 #' @export
+#' @family manipulating
 #' @importFrom utils capture.output
 #' 
 transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {

@@ -154,6 +154,8 @@ write_cifti_components <- function(
 #'
 #' @return Named character vector of the written files
 #' 
+#' @family common
+#' @family writing
 #' @export
 #'
 write_cifti <- function(

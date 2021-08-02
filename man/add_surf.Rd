@@ -31,3 +31,13 @@ Add left or right cortical surface geometry to a \code{"xifti"} object.
 will be added to \code{xifti$surf$cortex_right}. Any existing surfaces will
 be overwritten.
 }
+\seealso{
+Other functions for working with GIFTI surface geometry data: 
+\code{\link{is.surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{surfing}

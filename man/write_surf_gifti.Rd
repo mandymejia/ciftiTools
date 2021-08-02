@@ -45,3 +45,20 @@ Whether the GIFTI was successfully written
 \description{
 Write the data for the left or right surface to a surface GIFTI file.
 }
+\seealso{
+Other functions for writing CIFTI or GIFTI metric data: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_subcort_nifti}()}
+
+Other functions for working with GIFTI surface geometry data: 
+\code{\link{add_surf}()},
+\code{\link{is.surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{view_surf}()}
+}
+\concept{surfing}
+\concept{writing}

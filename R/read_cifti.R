@@ -53,6 +53,8 @@
 #' @return If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G} 
 #'  matrix (\eqn{T} measurements, \eqn{G} greyordinates). 
 #' 
+#' @family common
+#' @family reading
 #' @export
 #'
 read_cifti <- function(

@@ -58,6 +58,7 @@
 #' @return A named character vector with the file paths to the written 
 #'  NIFTI and GIFTI files
 #' 
+#' @family writing
 #' @export
 #'
 separate_cifti <- function(cifti_fname, 

@@ -67,6 +67,7 @@
 #' 
 #' @return The \code{"xifti"} object containing all the data in the input giftis.
 #' 
+#' @family reading
 #' @export
 #' 
 read_xifti2 <- function(

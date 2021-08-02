@@ -69,3 +69,13 @@ These correspond to the same structures as given by
 \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+}
+\concept{common}

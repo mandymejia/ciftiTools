@@ -119,3 +119,13 @@ user must first download and install the Connectome Workbench, available
 from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+}
+\concept{common}

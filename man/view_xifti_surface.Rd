@@ -379,3 +379,13 @@ because it uses the defaults from RMarkdown/Knitr instead of what makes
 sense based on the dimensions of the Open GL window.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+}
+\concept{common}

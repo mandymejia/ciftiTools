@@ -11,6 +11,7 @@
 #' 
 #' @return The \code{"xifti"} with only the selected columns.
 #' 
+#' @family manipulating
 #' @export
 select_xifti <- function(xifti, idx, add_meta="select") {
   # Check input.

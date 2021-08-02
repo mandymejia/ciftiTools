@@ -44,3 +44,11 @@ When using these parcellations, please cite the corresponding paper(s):
 \item{Kong, R. et al. Individual-Specific Areal-Level Parcellations Improve Functional Connectivity Prediction of Behavior. Cerebral Cortex (2021) doi:10.1093/cercor/bhab101.}
 }
 }
+\seealso{
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{read_xifti2}()}
+}
+\concept{reading}

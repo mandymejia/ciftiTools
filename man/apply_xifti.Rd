@@ -28,3 +28,14 @@ is returned. (If the \code{"xifti"} had the dlabel intent, and values that
 are not labels are created, then it is converted to dscalar.) If applied
 column-wise, a numeric matrix with N rows is returned.
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}

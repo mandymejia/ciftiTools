@@ -15,6 +15,8 @@
 #' 
 #' @return A \code{xifti} if \code{margin == 1}, or a numeric matrix if 
 #'  \code{margin == 2}
+#' 
+#' @family manipulating
 #' @export
 #' 
 apply_xifti <- function(xifti, margin=c(1,2), FUN, ...) {

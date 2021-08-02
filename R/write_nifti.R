@@ -32,6 +32,7 @@
 #'  \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
 #' 
 #' @importFrom RNifti writeNifti sform<-
+#' @family writing
 #' @export
 write_subcort_nifti <- function(
   subcortVol, subcortLabs, subcortMask, trans_mat=NULL,

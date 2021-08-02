@@ -176,3 +176,11 @@ vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical
 voxels. \eqn{T}, the total number of measurements (columns of data), must be
 the same for each brainstructure.
 }
+\seealso{
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{read_cifti}()},
+\code{\link{read_xifti2}()}
+}
+\concept{reading}

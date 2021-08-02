@@ -172,3 +172,20 @@ These correspond to the same structures as given by
 \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{read_xifti2}()}
+}
+\concept{common}
+\concept{reading}

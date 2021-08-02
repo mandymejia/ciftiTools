@@ -84,3 +84,14 @@ If the \code{"xifti"} had the dlabel intent, and the transformation creates
 any value that is not a label value (e.g. a non-integer), then it is converted
 to a dscalar.
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()}
+}
+\concept{manipulating}

@@ -19,6 +19,7 @@
 #'
 #' @importFrom gifti readgii is.gifti
 #'
+#' @family surfing
 #' @export
 #' 
 read_surf <- function(surf, expected_hemisphere=NULL) {

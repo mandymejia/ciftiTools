@@ -43,6 +43,7 @@
 #'  potentially \code{"surfL"} (if \code{surfL_original_fname} was provided) 
 #'  and/or \code{"surfR"} (if \code{surfR_original_fname} was provided).
 #' 
+#' @family common
 #' @export
 #'
 resample_cifti <- function(

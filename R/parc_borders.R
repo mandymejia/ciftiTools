@@ -13,6 +13,7 @@
 #' 
 #' @return Logical vector the same length as \code{parc} indicating if the
 #'  vertex lies on a border.
+#' 
 #' @export
 parc_borders <- function(parc, surf=NULL, hemisphere=c("left", "right")) {
   stopifnot(is.vector(parc))

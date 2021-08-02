@@ -313,6 +313,7 @@ convert_to_dtseries <- function(
 #'  Otherwise, the \code{"xifti"} or the output CIFTI file name is directly 
 #'  returned.
 #' 
+#' @family manipulating
 #' @export
 convert_xifti <- function(x, to=c("dscalar", "dtseries", "dlabel"), 
   cifti_target_fname=NULL, ...){

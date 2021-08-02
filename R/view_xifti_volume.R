@@ -21,6 +21,7 @@
 #' @inheritParams verbose_Param_TRUE
 #' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
 #'
+#' @family common
 #' @export
 #' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(

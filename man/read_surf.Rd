@@ -30,3 +30,13 @@ Coerce a file path to a surface GIFTI, a \code{"gifti"} object, a list with
 entries "pointset" and "triangle", or a \code{"surf"} object to a
 \code{"surf"} object.
 }
+\seealso{
+Other functions for working with GIFTI surface geometry data: 
+\code{\link{add_surf}()},
+\code{\link{is.surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{surfing}

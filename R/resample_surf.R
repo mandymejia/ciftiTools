@@ -11,6 +11,7 @@
 #' 
 #' @return The new surface
 #' 
+#' @family surfing
 #' @export
 #'
 resample_surf <- function(

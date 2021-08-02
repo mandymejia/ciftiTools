@@ -29,6 +29,8 @@
 #'  the parcel boundaries.
 #'
 #' @return The parcellation as a dlabel \code{"xifti"} with one column
+#' 
+#' @family reading
 #' @export
 load_parc <- function(
   name=c("Schaefer_100", "Schaefer_400", "Schaefer_1000", "Yeo_7", "Yeo_17"),

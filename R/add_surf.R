@@ -12,6 +12,7 @@
 #' 
 #' @return the \code{"xifti"} object with added surface geometry components.
 #' 
+#' @family surfing
 #' @export
 #'
 add_surf <- function(xifti, surfL=NULL, surfR=NULL) {

@@ -133,3 +133,11 @@ user must first download and install the Connectome Workbench, available
 from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
+\seealso{
+Other functions for writing CIFTI or GIFTI metric data: 
+\code{\link{write_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{writing}

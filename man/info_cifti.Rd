@@ -98,3 +98,11 @@ user must first download and install the Connectome Workbench, available
 from https://www.humanconnectome.org/software/get-connectome-workbench .
 }
 
+\seealso{
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{load_parc}()},
+\code{\link{read_cifti}()},
+\code{\link{read_xifti2}()}
+}
+\concept{reading}

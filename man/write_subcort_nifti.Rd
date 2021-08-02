@@ -54,3 +54,11 @@ not provided, the volumetric mask will not be written. (It's redundant with
 the 0 values in \code{subcortLabs_fname} because valid labels have positive
 indexes.)
 }
+\seealso{
+Other functions for writing CIFTI or GIFTI metric data: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{writing}

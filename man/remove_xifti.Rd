@@ -21,3 +21,14 @@ The new \code{"xifti"} with the requested components removed
 \description{
 Remove a data or surface component from a \code{"xifti"}
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}

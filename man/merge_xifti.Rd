@@ -20,3 +20,14 @@ Concatenate \code{"xifti"} objects along the columns. They must have the same
 brainstructures. The first \code{"xifti"}'s metadata will be retained, including
 its intent.
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}

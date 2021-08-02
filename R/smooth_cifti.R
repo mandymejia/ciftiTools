@@ -34,6 +34,7 @@
 #'
 #' @return The \code{cifti_target_fname}, invisibly
 #' 
+#' @family common
 #' @export
 #'
 smooth_cifti <- function(

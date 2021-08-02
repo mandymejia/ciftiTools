@@ -681,6 +681,7 @@ view_xifti_surface.draw_mesh <- function(
 #' 
 #' @importFrom grDevices dev.list dev.off png rgb
 #' @importFrom stats quantile
+#' @family common
 #' @export
 view_xifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 

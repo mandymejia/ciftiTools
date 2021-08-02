@@ -384,6 +384,7 @@ xml_cifti <- function(cifti_fname){
 #'
 #' @return The metadata component of a \code{"xifti"} for the input CIFTI file
 #'
+#' @family reading
 #' @export
 #'
 #' @section Connectome Workbench:

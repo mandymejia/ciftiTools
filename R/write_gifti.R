@@ -41,6 +41,7 @@
 #' @return Whether the GIFTI was successfully written
 #'
 #' @importFrom gifti writegii
+#' @family writing
 #' @export
 write_metric_gifti <- function(
   x, gifti_fname, hemisphere=c("left", "right"),
@@ -167,6 +168,8 @@ write_metric_gifti <- function(
 #' @return Whether the GIFTI was successfully written
 #'
 #' @importFrom gifti writegii
+#' @family writing
+#' @family surfing
 #' @export
 write_surf_gifti <- function(
   x, gifti_fname, hemisphere=c("left", "right"),

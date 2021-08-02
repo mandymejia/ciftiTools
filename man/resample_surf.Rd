@@ -22,3 +22,13 @@ The new surface
 Resample a \code{"surf"} object by writing it to a GIFTI, using the Connectome
 Workbench to resample it, and then reading the new file.
 }
+\seealso{
+Other functions for working with GIFTI surface geometry data: 
+\code{\link{add_surf}()},
+\code{\link{is.surf}()},
+\code{\link{read_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{surfing}
