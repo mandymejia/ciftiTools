@@ -209,8 +209,7 @@ make_cortex <- function(
       new_mwall <- !apply(matrix(cortex %in% mwall_values, nrow=nrow(cortex)), 1, all)
       if (any(!new_mwall)) {
         msg <- paste0(
-          msg,"A new medial wall mask for the ",side," cortex was inferred from ",
-          "constant 0/NA columns."
+          msg,"A new medial wall mask for the ",side," cortex was inferred."
         )
         mwall <- new_mwall
       } else {
