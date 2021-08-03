@@ -64,7 +64,11 @@ apply_xifti <- function(xifti, margin=c(1,2), FUN, ...) {
 
   } else if (margin == 2) {
     out <- apply(as.matrix(xifti), margin, FUN, ...)
-    colnames(out) <- xifti$meta$cifti$names
+    if (is.vector(out)) {
+      names(out) <- xifti$meta$cifti$names
+    } else {
+      colnames(out) <- xifti$meta$cifti$names
+    }
 
   } else { stop() }
 

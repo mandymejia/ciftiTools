@@ -248,12 +248,19 @@ plot(
 
 # Manipulation & Math
 
-`combine_xifti` combines multiple `"xifti"`s with different brainstructures.
+`apply_xifti` applies a function along the rows or columns of a `"xifti"`. The `apply` function also works on `"xifti"` objects. The former will return a `"xifti"` whereas the latter will return a data matrix.
 
 ```{r}
 xiiL <- read_xifti(cifti_fnames["dscalar"], brainstructures="left")
+apply_xifti(xiiL, 2, mean)
+```
+
+`combine_xifti` combines multiple `"xifti"`s with different brainstructures.
+
+```{r}
 xiiR <- read_xifti(cifti_fnames["dscalar"], brainstructures="right")
 xii <- combine_xifti(xiiL, xiiR)
+xii
 ```
 
 `merge_xifti` concatenates metric data from multiple `"xifti"`s column-wise.
