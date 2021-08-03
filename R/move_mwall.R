@@ -122,7 +122,11 @@ move_from_mwall <- function(xifti, value=NA, name="Medial_Wall", RGBA=c(1,1,1,0)
   if (!updated) { ciftiTools_warn("No data locations moved."); return(xifti) }
 
   if (xifti$meta$cifti$intent == 3007) {
-    new_key <- lapply(xifti$meta$cifti$labels, function(x){ value %in% x$Key })
+    new_key <- vapply(
+      xifti$meta$cifti$labels, 
+      function(x){ !(value %in% x$Key) }, 
+      FALSE
+    )
     if (any(new_key)) {
       if (!all(new_key)) { 
         stop(
