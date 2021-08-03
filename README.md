@@ -134,6 +134,10 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 -   Interactive 3D rendering:
     [`rgl`](https://CRAN.R-project.org/package=rgl)
 
+## Citation
+
+You can cite our pre-print at <https://arxiv.org/abs/2106.11338>.
+
 ## Data acknowledgement
 
 The following data are included in the package for convenience:

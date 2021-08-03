@@ -10,6 +10,7 @@
 * Add `...` argument to `transform_xifti`
 * Add `write_surf`, an alias for `write_surf_gifti`
 * Export `fix_xifti`, which ensures `xifti$data` entries are matrices
+* Fix legend plot file placement in `view_xifti_surface`
 
 ## Notes for developers
 
