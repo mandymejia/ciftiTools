@@ -6,9 +6,9 @@
 ## R CMD check results
 
 > checking installed package size ... NOTE
-    installed size is  5.0Mb
+    installed size is 10.7Mb
     sub-directories of 1Mb or more:
-      extdata   4.3Mb
+      extdata   9.7Mb
 
 0 errors v | 0 warnings v | 1 note x
 
@@ -21,7 +21,3 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
-
-## Submission revision
-
-The previous submission errored because the DESCRIPTION contained this line: `LazyData: true`. However, no data directory exists. This line has been removed.

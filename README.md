@@ -166,4 +166,4 @@ Imaging Group
     3095–3114 (2018).
 3.  Kong, R. et al. Individual-Specific Areal-Level Parcellations
     Improve Functional Connectivity Prediction of Behavior. Cerebral
-    Cortex (2021) <doi:10.1093/cercor/bhab101>.
+    Cortex (2021).
