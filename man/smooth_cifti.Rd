@@ -72,7 +72,7 @@ for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}}
 
 \item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is
 present) Surface GIFTI files for the left and right cortical surfaces. If not
-provided, the default very inflated surfaces will be used.}
+provided, the default surfaces will be used.}
 
 \item{cerebellum_fname}{(Optional) Surface GIFTI file for the cerebellar surface}
 
@@ -86,8 +86,7 @@ Default: \code{FALSE}.}
 The \code{cifti_target_fname}, invisibly
 }
 \description{
-Smooth CIFTI data. This uses the \code{-cifti-smoothing} command
-from Connectome Workbench.
+Spatially smooth CIFTI data.
 }
 \details{
 If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
@@ -98,12 +97,21 @@ warning will be printed.
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
 Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
-the inflated surfaces included in \code{"ciftiTools"} will be used.
+the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
+option is "inflated" by default. It can be set to "very inflated" or "midthickness".
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-smoothing"} Workbench command.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+}
+\concept{common}

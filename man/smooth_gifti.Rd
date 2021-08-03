@@ -56,6 +56,10 @@ all the data is smoothed across the surface.}
 The smoothed GIFTI file name, invisibly
 }
 \description{
-Smooths metric GIFTI data on the cortical surface. This uses the
-\code{-metric-smoothing} command from Connectome Workbench.
+Smooths metric GIFTI data on the cortical surface.
 }
+\section{Connectome Workbench}{
+
+This function interfaces with the \code{"-metric-smoothing"} Workbench command.
+}
+

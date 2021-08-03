@@ -21,4 +21,3 @@ adjustment is reported.
 \details{
 Right now it only coerces the data to numeric matrices.
 }
-\keyword{internal}

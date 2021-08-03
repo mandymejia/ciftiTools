@@ -12,6 +12,7 @@ read_cifti(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  idx = NULL,
   resamp_res = NULL,
   flat = FALSE,
   mwall_values = c(NA, NaN),
@@ -24,6 +25,7 @@ readCIfTI(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  idx = NULL,
   resamp_res = NULL,
   flat = FALSE,
   mwall_values = c(NA, NaN),
@@ -36,6 +38,7 @@ readcii(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  idx = NULL,
   resamp_res = NULL,
   flat = FALSE,
   mwall_values = c(NA, NaN),
@@ -48,6 +51,7 @@ read_xifti(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  idx = NULL,
   resamp_res = NULL,
   flat = FALSE,
   mwall_values = c(NA, NaN),
@@ -72,6 +76,10 @@ Default: \code{c("left","right")} (cortical surface only).
 
 If a brain structure is indicated but does not exist, a warning will be
 raised and that brain structure will be skipped.}
+
+\item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
+(default), read all the data. Must be a subset of the indices present in the
+file, or an error will occur.}
 
 \item{resamp_res}{Resolution to resample the cortical data and surface to.
 Default: \code{NULL} (do not resample). If not \code{NULL}, the data will
@@ -125,11 +133,11 @@ for resampling.
 
 If \code{cifti_fname} is not provided, then only the surfaces are read in.
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-convert"} Workbench command if
+resampling is not needed, and the \code{"-cifti-separate"} Workbench command
+if resampling is needed.
 }
 
 \section{Label Levels}{
@@ -164,3 +172,20 @@ These correspond to the same structures as given by
 \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{read_xifti2}()}
+}
+\concept{common}
+\concept{reading}

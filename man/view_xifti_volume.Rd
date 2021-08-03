@@ -86,3 +86,13 @@ plot. Data values beyond this range will be truncated to the min/max. If
 \description{
 Visualize subcortex of a \code{"xifti"} object
 }
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{write_cifti}()}
+}
+\concept{common}

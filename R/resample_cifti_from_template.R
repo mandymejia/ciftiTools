@@ -1,9 +1,7 @@
 #' Resample a CIFTI from a template
 #'
-#' Resample a CIFTI from a template CIFTI using the \code{-cifti-resample} 
-#'  Connectome Workbench command.
-#' 
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
+#' Resample a CIFTI from a template, ensuring the new CIFTI's resolution matches
+#'  that of the template.
 #' 
 #' @param original_fname A CIFTI file to resample.
 #' @param template_fname A CIFTI file to use as the template.
@@ -13,6 +11,9 @@
 #' 
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-cifti-resample"} Workbench command.
+#' 
 resample_cifti_from_template <- function(
   original_fname, template_fname, target_fname){
   

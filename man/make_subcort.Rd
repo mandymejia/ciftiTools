@@ -4,7 +4,7 @@
 \alias{make_subcort}
 \title{Make \code{"xifti"} subcortical components}
 \usage{
-make_subcort(vol, labs, mask = NULL, validate_mask = FALSE)
+make_subcort(vol, labs, mask = NULL, idx = NULL, validate_mask = FALSE)
 }
 \arguments{
 \item{vol}{represents the data values of the subcortex. It is either a NIFTI
@@ -25,6 +25,11 @@ values indicate subcortical voxels (in-mask). If it is not provided, the
 mask will be inferred from voxels with labels \code{0} or \code{NA} in
 \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
 is not provided, the mask cannot be inferred so an error will occur.}
+
+\item{idx}{Only applies if \code{vol} is a NIFTI file path. This is a numeric
+vector indicating the data indices to read. If \code{NULL} (default), read
+all the data. Must be a subset of the indices present in the file, or an
+error will occur.}
 
 \item{validate_mask}{If \code{mask} is provided, set this to \code{TRUE} to
 check that the mask only removes voxels with \code{NA} and \code{0} values

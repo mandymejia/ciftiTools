@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
-Title: Tools for Reading and Visualizing CIFTI Brain Files
-Version: 0.3.1
+Title: Tools for Reading, Writing, Viewing and Manipulating CIFTI Files
+Version: 0.4.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -11,15 +11,24 @@ Authors@R: c(
            family = "Pham",
            email = "damondpham@gmail.com",
            role = c("aut"),
-           comment = c(ORCID = "0000-0001-7563-4727")))
+           comment = c(ORCID = "0000-0001-7563-4727")),
+    person(given = "John",
+           family = "Muschelli",
+           email = "muschellij2@gmail.com",
+           role = c("ctb"),
+           comment = c(ORCID = "0000-0001-6469-1750"))
+    )
 Maintainer: Amanda Mejia <mandy.mejia@gmail.com>
-Description: CIFTI files contain brain imaging data in "gray-ordinates", which 
+Description: CIFTI files contain brain imaging data in "grayordinates," which 
     represent the gray matter as cortical surface vertices (left and right) and
     subcortical voxels (cerebellum, basal ganglia, and other deep gray matter). 
-    'ciftiTools' uses the Connectome Workbench to read CIFTI files into R and
-    apply common pre-processing steps (e.g. smoothing, resampling). It also
-    provides tools for visualizing the cortical surface with GIFTI files, and
-    for visualizing the subcortical volume. 
+    'ciftiTools' provides a unified environment for reading, writing, 
+    visualizing and manipulating CIFTI-format data. It supports the "dscalar," 
+    "dlabel," and "dtseries" intents. Greyordinate data is read in as a "xifti" 
+    object, which is structured for convenient access to the data and metadata,
+    and includes support for surface geometry files to enable
+    spatially-dependent functionality such as static or interactive 
+    visualizations and smoothing.
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8

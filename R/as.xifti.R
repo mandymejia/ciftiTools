@@ -86,6 +86,7 @@
 #'  if the inputs were invalid.
 #' @return A \code{"xifti"} object
 #' 
+#' @family reading
 #' @export
 #'
 as.xifti <- function(

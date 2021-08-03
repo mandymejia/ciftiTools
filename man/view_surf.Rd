@@ -162,3 +162,13 @@ because it uses the defaults from RMarkdown/Knitr instead of what makes
 sense based on the dimensions of the Open GL window.
 }
 
+\seealso{
+Other functions for working with GIFTI surface geometry data: 
+\code{\link{add_surf}()},
+\code{\link{is.surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{surfing}

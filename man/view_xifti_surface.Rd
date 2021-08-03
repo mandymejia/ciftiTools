@@ -142,8 +142,12 @@ Each can be a file path for a GIFTI, a file read by gifti::readgii,
 or a list with components "vertices" and "faces". If provided, they will override
 \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if those exist.
 Leave as \code{NULL} (default) to use \code{xifti$surf$cortex_left} and
-\code{xifti$surf$cortex_right} if those exist, or the default inflated surfaces
-if those do not exist.}
+\code{xifti$surf$cortex_right} if those exist, or the default surfaces
+if those do not exist.
+
+The default surfaces are determined by (\code{ciftiTools.getOption("surf")}).
+They are "inflated" by default but can be set to "very inflated" or
+"midthickness".}
 
 \item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"},
 \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
@@ -375,3 +379,13 @@ because it uses the defaults from RMarkdown/Knitr instead of what makes
 sense based on the dimensions of the Open GL window.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{write_cifti}()}
+}
+\concept{common}

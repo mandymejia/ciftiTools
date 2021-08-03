@@ -8,7 +8,8 @@
 #' @param xifti The xifti
 #' @param verbose Report each adjustment? Default: \code{TRUE}
 #' @return The fixed \code{"xifti"}
-#' @keywords internal
+#' 
+#' @export
 #' 
 fix_xifti <- function(xifti, verbose=TRUE) {
   

@@ -97,3 +97,11 @@ The \code{"xifti"} object containing all the data in the input giftis.
 Read in gifti metric files as a \code{xifti} object. May also include
 surface geometry gifti files and perform resampling.
 }
+\seealso{
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{read_cifti}()}
+}
+\concept{reading}

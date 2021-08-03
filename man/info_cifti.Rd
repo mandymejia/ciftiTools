@@ -54,6 +54,11 @@ Additional metadata depends on the type of CIFTI file:
 }
 }
 }
+\section{Connectome Workbench}{
+
+This function interfaces with the \code{"-nifti-information"} Workbench command.
+}
+
 \section{Label Levels}{
 
 \code{xifti$meta$subcort$labels} is a factor with the following levels:
@@ -86,10 +91,11 @@ These correspond to the same structures as given by
 \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
 }
 
-\section{Connectome Workbench Requirement}{
-
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+\seealso{
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{load_parc}()},
+\code{\link{read_cifti}()},
+\code{\link{read_xifti2}()}
 }
-
+\concept{reading}

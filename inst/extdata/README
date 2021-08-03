@@ -1,17 +1,24 @@
 # `Conte69.*` and `ones.dscalar.nii` ------------------------------------
 
   Example CIFTI files.
-
   Source: https://www.nitrc.org/frs/download.php/8541/cifti-2_test_data-1.2.zip
+  Some have been resampled to reduce the package size.
 
-  All except dscalar have been resampled to reduce the package size.
 
 # `subcort_label_list` --------------------------------------------------
 
-  Subcortical color table `ciftiTools` uses for writing CIFTIs. 
-
+  Subcortical color table used for writing CIFTIs. 
   Source: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
+
 
 # `MNI152_T1_2mm.nii` ---------------------------------------------------
 
-  MNI Template `ciftiTools` uses for viewing the subcortical data.
+  MNI Template used for viewing the subcortical data.
+
+
+# `S1200.*` -------------------------------------------------------------
+
+  Surface geometry GIFTI files redistributed under the HCP Open Access Data Use Terms:
+  "Data were provided [in part] by the Human Connectome Project, WU-Minn Consortium (Principal Investigators: David Van Essen and Kamil Ugurbil; 1U54MH091657) funded by the 16 NIH Institutes and Centers that support the NIH Blueprint for Neuroscience Research; and by the McDonnell Center for Systems Neuroscience at Washington University."
+  Source: https://balsa.wustl.edu/reference/show/pkXDZ
+  Data Use Terms: https://www.humanconnectome.org/study/hcp-young-adult/document/wu-minn-hcp-consortium-open-access-data-use-terms

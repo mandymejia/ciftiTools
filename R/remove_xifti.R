@@ -10,6 +10,7 @@
 #' 
 #' @return The new \code{"xifti"} with the requested components removed
 #' 
+#' @family manipulating
 #' @export
 #' 
 remove_xifti <- function(xifti, remove=NULL){

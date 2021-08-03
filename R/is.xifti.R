@@ -111,6 +111,7 @@ is.xifti_data <- function(x) {
 #'
 #' @return Logical. Is \code{x} a valid surface?
 #' 
+#' @family surfing
 #' @export
 #' 
 is.surf <- function(x) {
@@ -616,6 +617,7 @@ is_xifti <- function(x, messages=TRUE){
 #' 
 #' @return Logical. Is \code{x} a valid \code{"xifti"} object?
 #' 
+#' @family common
 #' @export
 #' 
 is.cifti <- function(x, messages=TRUE){

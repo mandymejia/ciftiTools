@@ -8,6 +8,7 @@ read_cifti_flat(
   cifti_fname,
   keep = FALSE,
   gifti_fname = NULL,
+  idx = NULL,
   write_dir = NULL
 )
 }
@@ -20,6 +21,10 @@ and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 
 \item{gifti_fname}{File path of GIFTI-format data to save the CIFTI as.
 Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
+
+\item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
+(default), read all the data. Must be a subset of the indices present in the
+file, or an error will occur.}
 
 \item{write_dir}{The directory in which to save the GIFTI, if it is being
 kept. If \code{NULL} (default), use the current working directory.}
@@ -38,11 +43,4 @@ Medial wall vertices and voxels outside the subcortical mask will not be
 included. No spatial information is included. This is the fastest way to
 read in CIFTI data.
 }
-\section{Connectome Workbench Requirement}{
-
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
-}
-
 \keyword{internal}

@@ -67,3 +67,11 @@ Whether the GIFTI was successfully written
 \description{
 Write the data for the left or right cortex to a metric GIFTI file.
 }
+\seealso{
+Other functions for writing CIFTI or GIFTI metric data: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{writing}

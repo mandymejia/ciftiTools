@@ -1,3 +1,22 @@
+# 4.0 (August 8, 2021)
+
+## Changes affecting users
+
+* New surfaces! Check out `ciftiTools.setOption("surf", ...)` The default surface is still very inflated, but different.
+* Parcellations are now included in the package! Check out `load_parc`.
+* Add `apply_xifti`
+* Add `move_to_mwall` and `move_from_mwall`
+* Add `idx` argument to `read_xifti` and related functions
+* Add `...` argument to `transform_xifti`
+* Add `write_surf`, an alias for `write_surf_gifti`
+* Export `fix_xifti`, which ensures `xifti$data` entries are matrices
+* Fix legend plot file placement in `view_xifti_surface`
+
+## Notes for developers
+
+* Updated package documentation
+* `make_surf` is now an alias for `read_surf`, instead of the other way around
+
 # 3.1 (June 16, 2021)
 
 ## Changes affecting users
@@ -42,7 +61,7 @@ None
 ## Changes affecting users
 * Search for "wb_path" during `ciftiTools.setOption` call, and never afterward
 * Ignore Workbench warnings, for the most part
-* Remove arguments concering intermediate files in `resample_cifti` and `read_cifti`
+* Remove arguments concerning intermediate files in `resample_cifti` and `read_cifti`
 * Too many changes to document for `view_xifti_surface`!
 * `transform_xifti` improvements
 * Export `remove_xifti`

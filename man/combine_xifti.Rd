@@ -22,3 +22,14 @@ A \code{"xifti"} object
 Combine \code{"xifti"} objects with non-overlapping brainstructures into
 a single \code{"xifti"} object. The names and intent of the first will be used (if present).
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}

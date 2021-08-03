@@ -17,13 +17,11 @@ resample_cifti_from_template(original_fname, template_fname, target_fname)
 The \code{target_fname}, invisibly
 }
 \description{
-Resample a CIFTI from a template CIFTI using the \code{-cifti-resample}
-Connectome Workbench command.
+Resample a CIFTI from a template, ensuring the new CIFTI's resolution matches
+that of the template.
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-resample"} Workbench command.
 }
 

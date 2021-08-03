@@ -28,3 +28,13 @@ Thus, values in "faces" should be integers between 1 and the number of
 vertices. The last list entry, "hemisphere", should be "left", "right",
 or NULL indicating the brain hemisphere which the surface represents.
 }
+\seealso{
+Other functions for working with GIFTI surface geometry data: 
+\code{\link{add_surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{surfing}

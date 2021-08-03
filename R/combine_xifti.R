@@ -10,6 +10,7 @@
 #'  argument, or \code{"all"} to include the other metadata in a list.
 #' @return A \code{"xifti"} object
 #' 
+#' @family manipulating
 #' @export
 #' 
 combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {

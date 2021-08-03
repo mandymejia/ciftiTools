@@ -9,6 +9,7 @@ read_cifti_convert(
   surfL_fname = NULL,
   surfR_fname = NULL,
   brainstructures = c("left", "right"),
+  idx = NULL,
   mwall_values = c(NA, NaN),
   verbose = FALSE,
   ...
@@ -32,6 +33,14 @@ Default: \code{c("left","right")} (cortical surface only).
 If a brain structure is indicated but does not exist, a warning will be
 raised and that brain structure will be skipped.}
 
+\item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
+(default), read all the data. Must be a subset of the indices present in the
+file, or an error will occur.}
+
+\item{mwall_values}{If the medial wall mask is not present in the CIFTI,
+infer it from these data values. Default: \code{c(NA, NaN)}. If \code{NULL},
+do not attempt to infer the medial wall mask from the data values.}
+
 \item{verbose}{Should occasional updates be printed? Default: \code{FALSE}.}
 
 \item{...}{Additional arguments to \code{read_cifti_flat}.}
@@ -45,11 +54,4 @@ using \code{-cifti-convert -to-gifti-ext} (\code{\link{read_cifti_flat}}),
 and obtaining the brainordinate mapping using
 \code{-cifti-export-dense-mapping} (\code{\link{info_cifti}}).
 }
-\section{Connectome Workbench Requirement}{
-
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
-}
-
 \keyword{internal}

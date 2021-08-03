@@ -22,3 +22,14 @@ The \code{"xifti"} with only the selected columns.
 Select column indices to keep in a \code{"xifti"}. Can also be used to
 reorder the columns.
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}

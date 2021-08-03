@@ -294,8 +294,6 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' Wrapper for Connectome Workbench command
 #'  \code{-nifti-information [fname] -print-header}
 #'
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
-#'
 #' @inheritParams cifti_fname_Param
 #'
 #' @return The header, as a character vector
@@ -318,8 +316,6 @@ header_cifti <- function(cifti_fname){
 #'
 #' Wrapper for Connectome Workbench command
 #'  \code{-nifti-information [fname] -print-xml}
-#'
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #'
 #' @inheritParams cifti_fname_Param
 #'
@@ -378,14 +374,17 @@ xml_cifti <- function(cifti_fname){
 #'  }
 #'
 #' @inheritSection labels_Description Label Levels
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #'
 #' @inheritParams cifti_fname_Param
 #'
 #' @return The metadata component of a \code{"xifti"} for the input CIFTI file
 #'
+#' @family reading
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-nifti-information"} Workbench command.
+#' 
 info_cifti <- function(cifti_fname){
 
   # Check if this CIFTI is supported.

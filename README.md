@@ -13,15 +13,16 @@ status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools
 coverage](https://coveralls.io/repos/github/mandymejia/ciftiTools/badge.svg)](https://coveralls.io/github/mandymejia/ciftiTools)
 <!-- badges: end -->
 
-Tools for reading and visualizing CIFTI brain imaging files.
-
-CIFTI files contain brain imaging data in “gray-ordinates”, which
+CIFTI files contain brain imaging data in “grayordinates,” which
 represent the gray matter as cortical surface vertices (left and right)
 and subcortical voxels (cerebellum, basal ganglia, and other deep gray
-matter).`ciftiTools` uses the Connectome Workbench to read CIFTI files
-into R and apply common pre-processing steps (e.g. smoothing,
-resampling). It also provides tools for visualizing the cortical surface
-with GIFTI files, and for visualizing the subcortical volume.
+matter). `ciftiTools` provides a unified environment for reading,
+writing, visualizing and manipulating CIFTI-format data. It supports the
+“dscalar,” “dlabel,” and “dtseries” intents. Greyordinate data is read
+in as a `"xifti"` object, which is structured for convenient access to
+the data and metadata, and includes support for surface geometry files
+to enable spatially-dependent functionality such as static or
+interactive visualizations and smoothing.
 
 ## Installation
 
@@ -87,10 +88,18 @@ See [this
 link](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html)
 to view the tutorial vignette.
 
-## Graphical summary
+## Illustrations
 
 <figure>
-<img src="README_media/ciftiTools_summary.jpg" style="width:65.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
+<img src="README_media/ciftiTools_summary.png" style="width:70.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
+</figure>
+
+<figure>
+<img src="README_media/xifti_structure.png" style="width:70.0%" alt="“xifti” object structure" /><figcaption aria-hidden="true">“xifti” object structure</figcaption>
+</figure>
+
+<figure>
+<img src="README_media/surf_tour.gif" style="width:40.0%" alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README." /><figcaption aria-hidden="true">Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.</figcaption>
 </figure>
 
 ## FAQ
@@ -105,6 +114,9 @@ GIFTI:
 xii <- as.xifti(surfL=make_surf(demo_files()$surf["left"]))
 view_xifti_surface(xii)
 ```
+
+We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
+(or vice versa) using the `"xifti"` object as an intermediary.
 
 ## Related R extensions
 
@@ -121,3 +133,37 @@ view_xifti_surface(xii)
 -   xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
 -   Interactive 3D rendering:
     [`rgl`](https://CRAN.R-project.org/package=rgl)
+
+## Citation
+
+You can cite our pre-print at <https://arxiv.org/abs/2106.11338>.
+
+## Data acknowledgement
+
+The following data are included in the package for convenience:
+
+Example CIFTI files provided by
+[NITRC](https://www.nitrc.org/projects/cifti/).
+
+Cortical surfaces provided by the HCP, according to the [Data Use
+Terms](https://www.humanconnectome.org/study/hcp-young-adult/document/wu-minn-hcp-consortium-open-access-data-use-terms):
+
+> Data were provided \[in part\] by the Human Connectome Project,
+> WU-Minn Consortium (Principal Investigators: David Van Essen and Kamil
+> Ugurbil; 1U54MH091657) funded by the 16 NIH Institutes and Centers
+> that support the NIH Blueprint for Neuroscience Research; and by the
+> McDonnell Center for Systems Neuroscience at Washington University.
+
+Several parcellations provided by [Thomas Yeo’s Computational Brain
+Imaging Group
+(CBIG)](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation):
+
+1.  Yeo, B. T. T. et al. The organization of the human cerebral cortex
+    estimated by intrinsic functional connectivity. J Neurophysiol 106,
+    1125–1165 (2011).
+2.  Schaefer, A. et al. Local-Global Parcellation of the Human Cerebral
+    Cortex from Intrinsic Functional Connectivity MRI. Cereb Cortex 28,
+    3095–3114 (2018).
+3.  Kong, R. et al. Individual-Specific Areal-Level Parcellations
+    Improve Functional Connectivity Prediction of Behavior. Cerebral
+    Cortex (2021).

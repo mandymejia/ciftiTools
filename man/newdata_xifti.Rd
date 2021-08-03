@@ -27,3 +27,14 @@ Replace the data in a \code{"xifti"} with new data from a data matrix.
 If the \code{"xifti"} has \eqn{V} greyordinates and \code{T} timepoints
 in total, \code{newdata} should be a \eqn{V \times T} matrix.
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}

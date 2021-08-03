@@ -1,6 +1,7 @@
-#' Resample a metric GIFTI file (with its ROI)
+#' Resample a GIFTI file (with its ROI)
 #'
-#' Performs spatial resampling of GIFTI data on the cortical surface.
+#' Perform spatial resampling of GIFTI data on the cortical surface (metric
+#'  and label), or of GIFTI surface geometry data itself.
 #'
 #' @param original_fname The GIFTI file to resample.
 #' @param target_fname Where to save the resampled file.
@@ -29,6 +30,10 @@
 #'
 #' @export
 #'
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-metric-resample"}, \code{"-label-resample"},
+#'  and/or \code{"-surface-resample"} Workbench commands, depending on the input.
+#' 
 resample_gifti <- function(
   original_fname, target_fname, hemisphere=c("left", "right"),
   file_type=NULL, original_res=NULL, resamp_res,

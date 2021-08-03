@@ -33,17 +33,6 @@
 #' @keywords internal
 NULL
 
-#' Connectome_Workbench
-#' 
-#' @section Connectome Workbench Requirement:
-#'  This function uses a system wrapper for the 'wb_command' executable. The 
-#'  user must first download and install the Connectome Workbench, available 
-#'  from https://www.humanconnectome.org/software/get-connectome-workbench . 
-#'  
-#' @name Connectome_Workbench_Description
-#' @keywords internal
-NULL
-
 #' brainstructures
 #'
 #' @param brainstructures Character vector indicating which brain structure(s) 
@@ -76,6 +65,15 @@ NULL
 #'
 #' @param cifti_fname File path of CIFTI-format data (ending in ".d*.nii").
 #' @name cifti_fname_Param
+#' @keywords internal
+NULL
+
+#' idx
+#' 
+#' @param idx Numeric vector indicating the data indices to read. If \code{NULL}
+#'  (default), read all the data. Must be a subset of the indices present in the
+#'  file, or an error will occur. 
+#' @name idx_Param
 #' @keywords internal
 NULL
 

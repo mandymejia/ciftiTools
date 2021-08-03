@@ -14,13 +14,13 @@
 #' 
 #' If \code{cifti_fname} is not provided, then only the surfaces are read in.
 #' 
-#' @inheritSection Connectome_Workbench_Description Connectome Workbench Requirement
 #' @inheritSection labels_Description Label Levels
 #' 
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
 #' @inheritParams brainstructures_Param_LR 
+#' @inheritParams idx_Param
 #' @param resamp_res Resolution to resample the cortical data and surface to.
 #'  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 #'  have to be read in with \code{-cifti-separate}, which is slower than 
@@ -52,12 +52,19 @@
 #' @return If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G} 
 #'  matrix (\eqn{T} measurements, \eqn{G} greyordinates). 
 #' 
+#' @family common
+#' @family reading
 #' @export
+#' 
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-cifti-convert"} Workbench command if
+#'  resampling is not needed, and the \code{"-cifti-separate"} Workbench command
+#'  if resampling is needed.
 #'
 read_cifti <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
+  brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
@@ -91,7 +98,7 @@ read_cifti <- function(
         "Ignoring `resamp_res`.\n"
       ))
     }
-    return( read_cifti_flat(cifti_fname) )
+    return( read_cifti_flat(cifti_fname, idx=idx) )
   }
 
   # ----------------------------------------------------------------------------
@@ -116,7 +123,7 @@ read_cifti <- function(
     return(read_cifti_convert(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-      brainstructures=brainstructures, 
+      brainstructures=brainstructures, idx=idx,
       mwall_values=mwall_values, verbose=verbose,
       ...
     ))
@@ -125,7 +132,7 @@ read_cifti <- function(
     return(read_cifti_separate(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-      brainstructures=brainstructures, 
+      brainstructures=brainstructures, idx=idx,
       resamp_res=resamp_res, 
       mwall_values=mwall_values, verbose=verbose,
       ...
@@ -138,14 +145,14 @@ read_cifti <- function(
 readCIfTI <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
+  brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname=cifti_fname,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-    brainstructures=brainstructures, 
+    brainstructures=brainstructures, idx=idx,
     resamp_res=resamp_res, flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
@@ -156,14 +163,14 @@ readCIfTI <- function(
 readcii <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
+  brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname=cifti_fname,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-    brainstructures=brainstructures, 
+    brainstructures=brainstructures, idx=idx,
     resamp_res=resamp_res, flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
@@ -174,14 +181,14 @@ readcii <- function(
 read_xifti <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), 
+  brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname=cifti_fname,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-    brainstructures=brainstructures, 
+    brainstructures=brainstructures, idx=idx,
     resamp_res=resamp_res, flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )

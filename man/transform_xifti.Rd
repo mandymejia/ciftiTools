@@ -19,7 +19,7 @@
 \alias{log.xifti}
 \title{Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.}
 \usage{
-transform_xifti(xifti, FUN, xifti2 = NULL)
+transform_xifti(xifti, FUN, xifti2 = NULL, ...)
 
 \method{+}{xifti}(xifti, xifti2)
 
@@ -61,6 +61,8 @@ or \code{pmax}.}
 
 \item{xifti2}{The second xifti, if applicable. Otherwise, \code{NULL} (default)}
 
+\item{...}{Additional arguments to \code{FUN}}
+
 \item{x}{The \code{"xifti"}}
 
 \item{digits}{The number of digits to round by}
@@ -82,3 +84,14 @@ If the \code{"xifti"} had the dlabel intent, and the transformation creates
 any value that is not a label value (e.g. a non-integer), then it is converted
 to a dscalar.
 }
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()}
+}
+\concept{manipulating}

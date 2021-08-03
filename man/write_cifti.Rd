@@ -58,10 +58,27 @@ Named character vector of the written files
 Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI
 surface files.
 }
-\section{Connectome Workbench Requirement}{
+\section{Connectome Workbench}{
 
-This function uses a system wrapper for the 'wb_command' executable. The
-user must first download and install the Connectome Workbench, available
-from https://www.humanconnectome.org/software/get-connectome-workbench .
+This function interfaces with the \code{"-cifti-create-dense-timeseries"},
+\code{"-cifti-create-dense-scalar"}, or \code{"-cifti-create-label"} Workbench
+Command, depending on the input.
 }
 
+\seealso{
+Other commonly-used functions: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()}
+
+Other functions for writing CIFTI or GIFTI metric data: 
+\code{\link{separate_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{common}
+\concept{writing}

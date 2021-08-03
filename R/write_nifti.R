@@ -32,7 +32,13 @@
 #'  \code{"subcortLabs"}, and \code{"ROIsubcortVol"} file names (if written)
 #' 
 #' @importFrom RNifti writeNifti sform<-
+#' @family writing
 #' @export
+#' 
+#' @section Connectome Workbench:
+#' This function interfaces with the \code{"-volume-label-import"} Workbench
+#'  Command.
+#' 
 write_subcort_nifti <- function(
   subcortVol, subcortLabs, subcortMask, trans_mat=NULL,
   subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname=NULL,

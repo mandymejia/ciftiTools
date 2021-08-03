@@ -99,6 +99,17 @@ test_that("Miscellaneous functions are working", {
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
 
+    # move_*_mwall
+    if (grepl("label", cii_fname)) {
+      x <- cii$meta$cifti$labels[[1]][1,]
+      cii2 <- move_to_mwall(cii, 0, TRUE)
+      cii2 <- move_from_mwall(cii2, 0, rownames(x), x[,c("Red", "Green", "Blue", "Alpha")])
+      cii3 <- move_to_mwall(cii, 1)
+    } else {
+      cii2 <- move_to_mwall(move_from_mwall(cii, NA), NA)
+    }
+    testthat::expect_equal(cii, cii2)
+    
     # unmask_cortex
     if (!is.null(cii$data$cortex_left)) {
       cor2 <- unmask_cortex(
@@ -182,6 +193,15 @@ test_that("Miscellaneous functions are working", {
       )[3])
       testthat::expect_equal(smg1$data$normal, smg2$data$normal)
     }
+
+    # apply
+    testthat::expect_equal(
+      c(apply_xifti(cii1, 2, quantile, c(.1, .2, .5))),
+      c(apply(cii1, 2, quantile, c(.1, .2, .5)))
+    )
+
+    cii2$data$cortex_left <- as.vector(cii2$data$cortex_left)
+    is.xifti(fix_xifti(cii2))
   }
 
 

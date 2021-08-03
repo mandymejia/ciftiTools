@@ -596,8 +596,13 @@ view_xifti_surface.draw_mesh <- function(
 #'  or a list with components "vertices" and "faces". If provided, they will override
 #'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if those exist.
 #'  Leave as \code{NULL} (default) to use \code{xifti$surf$cortex_left} and 
-#'  \code{xifti$surf$cortex_right} if those exist, or the default inflated surfaces
+#'  \code{xifti$surf$cortex_right} if those exist, or the default surfaces
 #'  if those do not exist. 
+#' 
+#'  The default surfaces are determined by (\code{ciftiTools.getOption("surf")}).
+#'  They are "inflated" by default but can be set to "very inflated" or 
+#'  "midthickness".
+#' 
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
 #'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
 #'  qualitative color mode if the \code{"xifti"} object represents a .dlabel 
@@ -676,6 +681,7 @@ view_xifti_surface.draw_mesh <- function(
 #' 
 #' @importFrom grDevices dev.list dev.off png rgb
 #' @importFrom stats quantile
+#' @family common
 #' @export
 view_xifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
@@ -823,7 +829,7 @@ view_xifti_surface <- function(
       if (grepl("\\[fname\\]", legend_fname)) {
         legend_fname <- gsub(
           "\\[fname\\]", 
-          gsub("\\.png|\\.html", "", basename(fname[1])), 
+          gsub("\\.png|\\.html", "", fname[1]), 
           legend_fname
         )
       }

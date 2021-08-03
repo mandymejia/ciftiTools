@@ -96,4 +96,15 @@ CIFTI file or \code{"xifti"} object.
 \code{"xifti"} object.
 }}
 
+\seealso{
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating}
 \keyword{internal}
