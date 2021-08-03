@@ -75,11 +75,11 @@ See [this link](https://htmlpreview.github.io/?https://github.com/mandymejia/cif
 
 ## Illustrations
 
-![ciftiTools graphical summary](README_media/ciftiTools_summary.jpg){width=70%}
+![ciftiTools graphical summary](README_media/ciftiTools_summary.png){width=70%}
 
 !["xifti" object structure](README_media/xifti_structure.png){width=70%}
 
-![Surfaces comparison. The "very inflated", "inflated", and "midthickness" surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.](README_media/surf_tour.gif){width=70%}
+![Surfaces comparison. The "very inflated", "inflated", and "midthickness" surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.](README_media/surf_tour.gif){width=40%}
 
 
 ## FAQ

@@ -91,7 +91,7 @@ to view the tutorial vignette.
 ## Illustrations
 
 <figure>
-<img src="README_media/ciftiTools_summary.jpg" style="width:70.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
+<img src="README_media/ciftiTools_summary.png" style="width:70.0%" alt="ciftiTools graphical summary" /><figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
 </figure>
 
 <figure>
@@ -99,7 +99,7 @@ to view the tutorial vignette.
 </figure>
 
 <figure>
-<img src="README_media/surf_tour.gif" style="width:70.0%" alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README." /><figcaption aria-hidden="true">Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.</figcaption>
+<img src="README_media/surf_tour.gif" style="width:40.0%" alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README." /><figcaption aria-hidden="true">Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.</figcaption>
 </figure>
 
 ## FAQ

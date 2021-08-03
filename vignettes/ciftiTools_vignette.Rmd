@@ -248,11 +248,23 @@ plot(
 
 # Manipulation & Math
 
-`apply_xifti` applies a function along the rows or columns of a `"xifti"`. The `apply` function also works on `"xifti"` objects. The former will return a `"xifti"` whereas the latter will return a data matrix.
+You can treat the `"xifti"` as a data matrix with the base R functions `as.xifti`, `nrow` and `ncol`.
+
+```{r}
+dim(as.matrix(xii2))
+```
+
+`apply_xifti` applies a function along the rows or columns of a `"xifti"`. The base R `apply` function also works on `"xifti"` objects. The difference is that when applying a function along the rows, the former will return a `"xifti"` whereas the latter will return a data matrix.
 
 ```{r}
 xiiL <- read_xifti(cifti_fnames["dscalar"], brainstructures="left")
-apply_xifti(xiiL, 2, mean)
+gmeans <- apply_xifti(xiiL, 1, mean) # Mean of each greyordinate
+gmeans
+```
+
+```{r}
+cquants <- apply_xifti(xiiL, 2, quantile, c(.1, .5)) # Quantiles of each column
+cquants
 ```
 
 `combine_xifti` combines multiple `"xifti"`s with different brainstructures.
@@ -261,6 +273,13 @@ apply_xifti(xiiL, 2, mean)
 xiiR <- read_xifti(cifti_fnames["dscalar"], brainstructures="right")
 xii <- combine_xifti(xiiL, xiiR)
 xii
+```
+
+`convert_xifti` converts the intent of a `"xifti"`.
+
+```{r}
+xii <- convert_xifti(xii, "dtseries")
+xii$meta$cifti$intent
 ```
 
 `merge_xifti` concatenates metric data from multiple `"xifti"`s column-wise.
@@ -279,34 +298,16 @@ xii
 `select_xifti` subsets or re-orders the columns of the metric data of a `"xifti"`.
 
 ```{r}
-xii <- select_xifti(xii, c(4,3,2,1)) # Reverse the order of the columns
+xii <- select_xifti(xii, c(4,3,2)) # Reverse column order & drop the first.
 xii
-```
-
-`apply_xifti` works like the R `apply` function, applying a function to the rows or columns of a `"xifti"`.
-
-```{r}
-gmeans <- apply_xifti(xii, 1, mean) # Mean of each greyordinate
-gmeans
-```
-
-```{r}
-cquants <- apply_xifti(xii, 2, quantile, c(.1, .5)) # Quantiles of each column
-cquants
-```
-
-`convert_xifti` converts the intent of a `"xifti"`.
-
-```{r}
-xii <- convert_xifti(read_xifti(cifti_fnames["dtseries"]), "dscalar")
-xii$meta$cifti$intent
 ```
 
 S3 methods allow for univariate transformations of `"xifti"` objects as well as arithmetic operations of multiple `"xifti"` objects.
 
 ```{r}
+print(max(as.matrix(xii)))
 xii <- 1 + exp(xii) + (xii / 3)
-xii
+print(max(as.matrix(xii)))
 ```
 
 # Working with surfaces

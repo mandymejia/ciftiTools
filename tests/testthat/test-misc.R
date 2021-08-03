@@ -99,11 +99,12 @@ test_that("Miscellaneous functions are working", {
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
 
-    # move_mwall
+    # move_*_mwall
     if (grepl("label", cii_fname)) {
       x <- cii$meta$cifti$labels[[1]][1,]
       cii2 <- move_to_mwall(cii, 0, TRUE)
-      cii2 <- move_from_mwall(cii, 0, rownames(x), x[,c("Red", "Green", "Blue", "Alpha")])
+      cii2 <- move_from_mwall(cii2, 0, rownames(x), x[,c("Red", "Green", "Blue", "Alpha")])
+      cii3 <- move_to_mwall(cii, 1)
     } else {
       cii2 <- move_to_mwall(move_from_mwall(cii, NA), NA)
     }

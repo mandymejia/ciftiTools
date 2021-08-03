@@ -19,13 +19,13 @@ Key(s) in \code{values} from the label tables, for columns in which they no
 longer exist? Default: \code{FALSE}.}
 }
 \value{
-The \code{"xifti"} with re-organized data and medial wall
+The \code{"xifti"} with re-organized data and medial wall masks
 }
 \description{
 Move cortical data locations with a specific value(s) to the medial wall mask.
-For example, dlabel files often have a Key value for the medial wall and no
-medial wall mask. This function can move data locations with that key from
-the data matrix to the medial wall mask metadata.
+For example, dlabel CIFTIs often have medial wall vertices set to a specific
+Key value, rather than a medial wall mask. This function can move those data
+locations from the data matrix to the medial wall mask in the metadata.
 }
 \seealso{
 move_from_mwall

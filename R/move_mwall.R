@@ -1,9 +1,9 @@
 #' Move to medial wall
 #' 
 #' Move cortical data locations with a specific value(s) to the medial wall mask.
-#'  For example, dlabel files often have a Key value for the medial wall and no
-#'  medial wall mask. This function can move data locations with that key from
-#'  the data matrix to the medial wall mask metadata.
+#'  For example, dlabel CIFTIs often have medial wall vertices set to a specific
+#'  Key value, rather than a medial wall mask. This function can move those data
+#'  locations from the data matrix to the medial wall mask in the metadata.
 #' 
 #' @inheritParams xifti_Param
 #' @param values Medial wall values. Default: \code{NA} and \code{NaN}. Data
@@ -14,7 +14,7 @@
 #'  longer exist? Default: \code{FALSE}.
 #'  
 #' 
-#' @return The \code{"xifti"} with re-organized data and medial wall
+#' @return The \code{"xifti"} with re-organized data and medial wall masks
 #' 
 #' @export
 #' 
@@ -70,8 +70,8 @@ move_to_mwall <- function(xifti, values=c(NA, NaN), drop=FALSE){
 
 #' Move from medial wall
 #' 
-#' Move all medial wall locations into the cortical data by assigning them a
-#'  specific value (e.g. NA).
+#' Move all medial wall locations into the cortical data matrices by assigning 
+#'  them a specific value (e.g. NA).
 #' 
 #' @inheritParams xifti_Param
 #' @param value The value to assign the medial wall locations. Default: \code{NA}.
@@ -90,7 +90,7 @@ move_to_mwall <- function(xifti, values=c(NA, NaN), drop=FALSE){
 #'  Defaults: \code{"Medial_Wall"} for \code{"name"} and white with 0 alpha for
 #'  \code{RGBA}.
 #' 
-#' @return The \code{"xifti"} with re-organized data and medial wall
+#' @return The \code{"xifti"} with re-organized data and medial wall masks
 #' 
 #' @export
 #' 

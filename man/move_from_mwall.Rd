@@ -28,11 +28,11 @@ Defaults: \code{"Medial_Wall"} for \code{"name"} and white with 0 alpha for
 \code{RGBA}.}
 }
 \value{
-The \code{"xifti"} with re-organized data and medial wall
+The \code{"xifti"} with re-organized data and medial wall masks
 }
 \description{
-Move all medial wall locations into the cortical data by assigning them a
-specific value (e.g. NA).
+Move all medial wall locations into the cortical data matrices by assigning
+them a specific value (e.g. NA).
 }
 \seealso{
 move_to_mwall
