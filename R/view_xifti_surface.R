@@ -829,7 +829,7 @@ view_xifti_surface <- function(
       if (grepl("\\[fname\\]", legend_fname)) {
         legend_fname <- gsub(
           "\\[fname\\]", 
-          gsub("\\.png|\\.html", "", basename(fname[1])), 
+          gsub("\\.png|\\.html", "", fname[1]), 
           legend_fname
         )
       }

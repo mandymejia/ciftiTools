@@ -77,8 +77,8 @@ view_xifti_volume <- function(
   if (verbose) {
     cat(paste0(
       "Values to be plotted range from ",
-      min(xifti$data$subcort[,idx])," to ",
-      max(xifti$data$subcort[,idx]), ".\n"
+      min(xifti$data$subcort[,idx], na.rm=TRUE)," to ",
+      max(xifti$data$subcort[,idx], na.rm=TRUE), ".\n"
     ))
   }
 
