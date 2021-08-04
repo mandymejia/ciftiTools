@@ -70,15 +70,15 @@ view_xifti_volume <- function(
       )
       zlim <- rev(zlim)
     }
-    values[values < zlim[1]] <- zlim[1]
-    values[values > zlim[2]] <- zlim[2]
+    vol[vol < zlim[1]] <- zlim[1]
+    vol[vol > zlim[2]] <- zlim[2]
   }
 
   if (verbose) {
     cat(paste0(
       "Values to be plotted range from ",
-      min(xifti$data$subcort[,idx], na.rm=TRUE)," to ",
-      max(xifti$data$subcort[,idx], na.rm=TRUE), ".\n"
+      min(vol, na.rm=TRUE)," to ",
+      max(vol, na.rm=TRUE), ".\n"
     ))
   }
 
