@@ -28,7 +28,8 @@
 #'  }
 #' 
 #'  These correspond to the same structures as given by 
-#'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. 
+#'  \code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Note that
+#'  the first two levels (left and right cortex) are not used.
 #' @name labels_Description
 #' @keywords internal
 NULL
@@ -36,12 +37,11 @@ NULL
 #' brainstructures
 #'
 #' @param brainstructures Character vector indicating which brain structure(s) 
-#'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-#'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-#'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-#'  Default: \code{"all"}. 
+#'  to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+#'  and/or \code{"subcortical"} (subcortex and cerebellum). Can also be 
+#'  \code{"all"} (obtain all three brain structures). Default: \code{"all"}. 
 #' 
-#'  If a brain structure is indicated but does not exist, a warning will be
+#'  If a brain structure is indicated but is not included, a warning will be
 #'  raised and that brain structure will be skipped.
 #' @name brainstructures_Param_all
 #' @keywords internal
@@ -50,20 +50,20 @@ NULL
 #' brainstructures
 #'
 #' @param brainstructures Character vector indicating which brain structure(s) 
-#'  to obtain: \code{"left"} (left cortical surface), \code{"right"} (right 
-#'  cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-#'  gray matter). Can also be \code{"all"} (obtain all three brain structures). 
-#'  Default: \code{c("left","right")} (cortical surface only).
+#'  to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+#'  and/or \code{"subcortical"} (subcortex and cerebellum). Can also be 
+#'  \code{"all"} (obtain all three brain structures). Default: 
+#'  \code{c("left","right")} (cortex only).
 #' 
-#'  If a brain structure is indicated but does not exist, a warning will be
-#'  raised and that brain structure will be skipped.
+#'  If a brain structure is indicated but does not exist in the CIFTI file, a 
+#'  warning will occur and that brain structure will be skipped.
 #' @name brainstructures_Param_LR
 #' @keywords internal
 NULL
 
 #' cifti_fname
 #'
-#' @param cifti_fname File path of CIFTI-format data (ending in ".d*.nii").
+#' @param cifti_fname File path to a CIFTI file (ending in ".d*.nii").
 #' @name cifti_fname_Param
 #' @keywords internal
 NULL
@@ -123,8 +123,8 @@ NULL
 #'  obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should 
 #'  be a subset of the \code{brainstructures} argument. 
 #' 
-#' ROIs are typically the medial wall mask for the cortex and subcortical mask
-#'  for the subcortex.
+#' ROIs are typically the medial wall masks for the left and right cortex, and 
+#'  the subcortical mask for the subcortex.
 #' @name ROI_brainstructures_Param_LR
 #' @keywords internal
 NULL
@@ -151,7 +151,7 @@ NULL
 
 #' surfL_fname
 #'
-#' @param surfL_fname (Optional) File path of GIFTI surface geometry
+#' @param surfL_fname (Optional) File path to a GIFTI surface geometry
 #'  file representing the left cortex.
 #' @name surfL_fname_Param
 #' @keywords internal
@@ -159,7 +159,7 @@ NULL
 
 #' surfL_original_fname
 #'
-#' @param surfL_original_fname (Optional) File path of GIFTI surface geometry
+#' @param surfL_original_fname (Optional) File path to a GIFTI surface geometry
 #'  file representing the left cortex.
 #' @name surfL_original_fname_Param
 #' @keywords internal
@@ -167,15 +167,15 @@ NULL
 
 #' surfL_target_fname
 #'
-#' @param surfL_target_fname (Optional) File path to save the resampled GIFTI 
-#'  surface geometry file representing the left cortex at.
+#' @param surfL_target_fname (Optional) Where to save the resampled GIFTI 
+#'  surface geometry file representing the left cortex.
 #' @name surfL_target_fname_Param
 #' @keywords internal
 NULL
 
 #' surfR_fname
 #'
-#' @param surfR_fname (Optional) File path of GIFTI surface geometry
+#' @param surfR_fname (Optional) File path to a GIFTI surface geometry
 #'  file representing the right cortex.
 #' @name surfR_fname_Param
 #' @keywords internal
@@ -183,7 +183,7 @@ NULL
 
 #' surfR_original_fname
 #'
-#' @param surfR_original_fname (Optional) File path of GIFTI surface geometry
+#' @param surfR_original_fname (Optional) File path to a GIFTI surface geometry
 #'  file representing the right cortex.
 #' @name surfR_original_fname_Param
 #' @keywords internal
@@ -191,8 +191,8 @@ NULL
 
 #' surfR_target_fname
 #'
-#' @param surfR_target_fname (Optional) File path to save the resampled GIFTI 
-#'  surface geometry file representing the right cortex at.
+#' @param surfR_target_fname (Optional) Where to save the resampled GIFTI 
+#'  surface geometry file representing the right cortex.
 #' @name surfR_target_fname_Param
 #' @keywords internal
 NULL
@@ -213,9 +213,8 @@ NULL
 
 #' write_dir: generic
 #'  
-#' @param write_dir Where should the separated
-#'  files be placed? \code{NULL} (default) will write them to
-#'  the current working directory.
+#' @param write_dir Where should the separated files be placed? \code{NULL} 
+#'  (default) will write them to the current working directory.
 #' 
 #'  \code{write_dir} must already exist, or an error will occur.
 #' @name write_dir_Param_generic
@@ -224,16 +223,14 @@ NULL
 
 #' xifti
 #' 
-#' @param xifti Object of class "xifti". 
-#'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
+#' @param xifti A \code{"xifti"} object. 
 #' @name xifti_Param
 #' @keywords internal
 NULL
 
 #' x: xifti
 #' 
-#' @param x Object of class "xifti". 
-#'  See \code{\link{is.xifti}} and \code{\link{make_xifti}}.
+#' @param x A \code{"xifti"} object. 
 #' @name x_Param_xifti
 #' @keywords internal
 NULL
@@ -241,18 +238,23 @@ NULL
 #' Navigating and Embedding the Interactive Plots
 #' 
 #' @section Navigating and Embedding the Interactive Plots:
-#'  Here are instructions for using the interactive Open GL window and html widget:
 #' 
-#'  To navigate the plot, left click and drag the cursor to rotate. Use the 
-#'  scroll wheel or right click and drag to zoom. Press the scroll wheel and drag
-#'  to change the field-of-view. For Open GL windows, execute 
+#'  To navigate the interactive Open GL window and html widget, left click and 
+#'  drag the cursor to rotate the meshes. Use the scroll wheel or right click 
+#'  and drag to zoom. Press the scroll wheel and drag to change the field-of-view. 
+#'  For Open GL windows, execute 
 #'  \code{\link[rgl]{snapshot}} to save the current window as a .png file, 
 #'  \code{\link[rgl:rgl.open]{rgl.close}} to close the window, and 
 #'  \code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
 #'  perspective.
 #'  
-#'  See the vignette for examples on embedding snapshots of the Open GL window
-#'  or interactive html widgets in an R Markdown document.
+#'  To embed an interactive plot in an R Markdown document, first execute
+#'  \code{rgl::setupKnitr()} to prepare the document for embedding the widget.
+#'  Then execute the plot command as you normally would to create a widget (i.e. 
+#'  without specifying \code{fname}, and by requesting more than one \code{idx}
+#'  or by setting \code{widget} to \code{TRUE}). When the R Markdown document is 
+#'  knitted, the interactive widget should be displayed below the chunk in which 
+#'  the plot command was executed. See the vignette for an example.
 #' @name rgl_interactive_plots_Description
 #' @keywords internal
 NULL
@@ -260,26 +262,23 @@ NULL
 #' Embedding the Static Plots
 #' 
 #' @section Embedding the Static Plots:
-#'  If \code{save==TRUE}, the plot(s) is written to a .png file. (For 
-#'  \code{view_xifti_surface}, if \code{length(idx) > 1}, each \code{idx} will
-#'  be written to a separate image file.) You can use 
-#'  \code{\link[knitr]{include_graphics}} to embed an image file in an R
-#'  Markdown document. If \code{close_after_save==TRUE}, the return value of this
-#'  function call is the name(s) of the image file(s) that were written, so it
-#'  can be used directly to display the image.
 #' 
-#'  There's an additional way to embed an image of this plot without writing a
-#'  .png file: use \code{save==FALSE} and set the chunk options 
-#'  \code{rgl=TRUE, format="png"}. You will probably need to tweak the image
-#'  dimensions e.g. \code{fig.width=8, fig.height=5} in the chunk options, 
-#'  because it uses the defaults from RMarkdown/Knitr instead of what makes
-#'  sense based on the dimensions of the Open GL window.
+#'  To embed a static plot in an R Markdown document, first execute
+#'  \code{rgl::setupKnitr()} to prepare the document for embedding the snapshot
+#'  of the Open GL window. Then execute the plot command as you normally would
+#'  to create an Open GL window (i.e. without specifying \code{fname}, and by
+#'  requesting only one \code{idx}). In the options for the chunk in which the
+#'  plot command is executed, set \code{rgl=TRUE, format="png"}. You can also 
+#'  control the image dimensions here e.g. \code{fig.height=3.8, fig.width=5}.
+#'  When the R Markdown document is knitted, the static plots should be
+#'  displayed below the chunk in which the plot command was executed. See the
+#'  vignette for an example.
 #' 
 #' @name rgl_static_plots_Description
 #' @keywords internal
 NULL
 
-#' surface plot
+#' Surface plot
 #' 
 #' @param view Which view to display: \code{"lateral"}, \code{"medial"}, or 
 #'  \code{"both"}. If \code{NULL} (default), both views will be shown. Each view 

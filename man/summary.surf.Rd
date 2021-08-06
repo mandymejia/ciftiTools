@@ -4,7 +4,7 @@
 \alias{summary.surf}
 \alias{print.summary.surf}
 \alias{print.surf}
-\title{Summarize cifti objects}
+\title{Summarize a \code{"surf"} object}
 \usage{
 \method{summary}{surf}(object, ...)
 

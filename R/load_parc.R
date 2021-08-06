@@ -1,6 +1,6 @@
 #' Load parcellation
 #'
-#' Load one of the parcellations included in \code{ciftiTools}.
+#' Load a parcellation included in \code{ciftiTools}.
 #'
 #' When using these parcellations, please cite the corresponding paper(s):
 #'
@@ -12,17 +12,17 @@
 #'
 #' @param name The name of the parcellation to load:
 #'  \itemize{
-#'    \item{\code{"Schaefer_100"}: }{(2018) 100 parcels based on the "local-global" approach.}
-#'    \item{\code{"Schaefer_400"}: }{(2018) 400 parcels based on the "local-global" approach.}
-#'    \item{\code{"Schaefer_1000"}: }{(2018) 1000 parcels based on the "local-global" approach.}
-#'    \item{\code{"Yeo_7"}: }{(2011) 7 networks based on fcMRI clustering. Networks are further divided into 51 components.}
-#'    \item{\code{"Yeo_17"}: }{(2011) 17 networks based on fcMRI clustering. Networks are further divided into 114 components.}
+#'    \item{\code{"Schaefer_100"}:}{   (2018) 100 parcels based on the "local-global" approach.}
+#'    \item{\code{"Schaefer_400"}:}{   (2018) 400 parcels based on the "local-global" approach.}
+#'    \item{\code{"Schaefer_1000"}:}{   (2018) 1000 parcels based on the "local-global" approach.}
+#'    \item{\code{"Yeo_7"}:}{   (2011) 7 networks based on fcMRI clustering. Networks are further divided into 51 components.}
+#'    \item{\code{"Yeo_17"}:}{   (2011) 17 networks based on fcMRI clustering. Networks are further divided into 114 components.}
 #'  }
 #' @param map Schaefer parcels have been matched to networks from Yeo (2011) and
 #'  Kong (2022). Available choices depend on the parcellation:
 #'  \itemize{
-#'    \item{\code{"Schaefer_*"}: }{\code{"Yeo_7"}, \code{"Yeo_17",} or \code{"Kong_17"}}
-#'    \item{\code{"Yeo_*"}: }{None available (this argument must be \code{NULL})}
+#'    \item{\code{"Schaefer_*"}:}{   \code{"Yeo_7"}, \code{"Yeo_17",} or \code{"Kong_17"}}
+#'    \item{\code{"Yeo_*"}:}{   None available (this argument must be \code{NULL})}
 #'  }
 #'  \code{NULL} (default) will load the first choice, where applicable. This
 #'  argument will affect the indices, colors, and names of each parcel, but not

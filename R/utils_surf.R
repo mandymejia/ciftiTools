@@ -1,4 +1,4 @@
-#' Summarize cifti objects
+#' Summarize a \code{"surf"} object
 #'
 #' Summary method for class "surf"
 #'

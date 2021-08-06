@@ -80,7 +80,7 @@ uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
 }
 
-#' Convert coordinate list to volume.
+#' Convert coordinate list to volume
 #' 
 #' Converts a sparse coordinate list to its non-sparse volumetric representation.
 #' 

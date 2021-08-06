@@ -1,4 +1,4 @@
-#' Summarize cifti objects
+#' Summarize a \code{"xifti"} object
 #'
 #' Summary method for class \code{"xifti"}
 #'
@@ -164,7 +164,7 @@ unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
 #' Counts the number of data locations in the \code{"xifti"} data. Doesn't bother
 #'  to validate the input.
 #' 
-#' @param xifti The \code{"xifti"} object
+#' @inheritParams xifti_Param
 #' @return The number of rows in the \code{"xifti"} data.
 #' 
 #' @keywords internal
@@ -185,7 +185,7 @@ nrow_xifti <- function(xifti) {
 #' Counts the number of columns in the \code{"xifti"} data. Doesn't bother
 #'  to validate the input.
 #' 
-#' @param xifti The \code{"xifti"} object
+#' @inheritParams x_Param_xifti
 #' @return The number of columns in the \code{"xifti"} data.
 #' 
 #' @keywords internal
@@ -201,10 +201,10 @@ ncol_xifti <- function(xifti) {
 
 #' Dimensions of a \code{"xifti"}
 #' 
-#' Returns the number of rows and columns in the \code{"xifti"} data. Doesn't
-#'  bother to validate the input.
+#' Returns the number of rows (vertices + voxels) and columns (measurements) in 
+#'  the \code{"xifti"} data. 
 #' 
-#' @param x The \code{"xifti"} object
+#' @inheritParams x_Param_xifti
 #' @return The number of rows and columns in the \code{"xifti"} data.
 #' 
 #' @export 
@@ -215,9 +215,10 @@ dim.xifti <- function(x) {
 
 #' Convert a \code{"xifti"} to a matrix
 #' 
-#' Converts a \code{"xifti"} to a matrix. Surfaces and metadata are discarded.
+#' Converts a \code{"xifti"} to a matrix by concatenating the data from each
+#'  brainstructure along the rows. Surfaces and metadata are discarded.
 #' 
-#' @param x The \code{"xifti"} object
+#' @inheritParams x_Param_xifti
 #' @param ... Unused
 #' @return The input as a matrix. Each brainstructure's data is concatenated.
 #' 

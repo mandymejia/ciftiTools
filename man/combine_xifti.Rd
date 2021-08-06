@@ -2,28 +2,30 @@
 % Please edit documentation in R/combine_xifti.R
 \name{combine_xifti}
 \alias{combine_xifti}
-\title{Combine multiple \code{"xifti"} objects into one}
+\title{Combine \code{"xifti"}s with non-overlapping brain structures}
 \usage{
 combine_xifti(..., xii_list = NULL, meta = c("first", "all"))
 }
 \arguments{
 \item{...}{The \code{"xifti"} objects}
 
-\item{xii_list}{Alternatively, a list of \code{"xifti"} objects. Will ignore
-any other arguments from \code{...}}
+\item{xii_list}{Alternatively, a list of \code{"xifti"} objects. If specified,
+will ignore \code{...}}
 
 \item{meta}{\code{"first"} (default) to just use the metadata from the first
 argument, or \code{"all"} to include the other metadata in a list.}
 }
 \value{
-A \code{"xifti"} object
+A \code{"xifti"} with data from the inputs
 }
 \description{
-Combine \code{"xifti"} objects with non-overlapping brainstructures into
-a single \code{"xifti"} object. The names and intent of the first will be used (if present).
+Combine \code{"xifti"}s with non-overlapping brain structures into
+a single \code{"xifti"}. The names and intent of the first will be used (if
+present).
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{convert_to_dlabel}()},
 \code{\link{merge_xifti}()},

@@ -1,6 +1,6 @@
-#' Flatten a \code{"xifti"} object
+#' Flatten a \code{"xifti"}
 #'
-#' Concatenates the data in a \code{"xifti"} object into a single matrix. 
+#' Concatenates the data in a \code{"xifti"} object row-wise to form a single matrix. 
 #'
 #' If all brain structures are present, and if 
 #'  \code{is.null(medial_wall)} and \code{subcort_order=="alphabetical"}

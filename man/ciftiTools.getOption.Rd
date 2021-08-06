@@ -2,7 +2,7 @@
 % Please edit documentation in R/options.R
 \name{ciftiTools.getOption}
 \alias{ciftiTools.getOption}
-\title{Get \code{ciftiTools} option}
+\title{Get a \code{ciftiTools} option}
 \usage{
 ciftiTools.getOption(opt)
 }

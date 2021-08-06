@@ -1,4 +1,4 @@
-#' Add surface(s) to a \code{"xifti"} object
+#' Add surface(s) to a \code{"xifti"}
 #' 
 #' Add left or right cortical surface geometry to a \code{"xifti"} object.
 #' 
@@ -12,7 +12,7 @@
 #' 
 #' @return the \code{"xifti"} object with added surface geometry components.
 #' 
-#' @family surfing
+#' @family manipulating
 #' @export
 #'
 add_surf <- function(xifti, surfL=NULL, surfR=NULL) {

@@ -70,14 +70,14 @@ or \code{pmax}.}
 \item{base}{The log base}
 }
 \value{
-A \code{xifti} storing the result of applying \code{FUN} to the input(s).
+A \code{"xifti"} storing the result of applying \code{FUN} to the input(s).
 The data dimensions will be the same. The metadata of \code{xifti} will be retained,
 and the metadata of \code{xifti2} will be discarded (if provided).
 }
 \description{
 Apply a univariate transformation to each value in a \code{"xifti"} or pair of
-\code{"xifti"}s. If a pair, they must share the same brainstructures and
-data dimensions.
+\code{"xifti"}s. If a pair, they must share the same dimensions (brainstructures)
+and number of measurements.
 }
 \details{
 If the \code{"xifti"} had the dlabel intent, and the transformation creates
@@ -86,6 +86,7 @@ to a dscalar.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},

@@ -2,13 +2,12 @@
 % Please edit documentation in R/move_mwall.R
 \name{move_from_mwall}
 \alias{move_from_mwall}
-\title{Move from medial wall}
+\title{Move data locations from medial wall}
 \usage{
 move_from_mwall(xifti, value = NA, name = "Medial_Wall", RGBA = c(1, 1, 1, 0))
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{value}{The value to assign the medial wall locations. Default: \code{NA}.}
 

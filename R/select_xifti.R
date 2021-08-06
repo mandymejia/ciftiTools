@@ -1,9 +1,9 @@
-#' Select columns of a \code{"xifti"} object
+#' Select columns of a \code{"xifti"}
 #' 
 #' Select column indices to keep in a \code{"xifti"}. Can also be used to
 #'  reorder the columns.
 #' 
-#' @param xifti The \code{"xifti"} object.
+#' @inheritParams xifti_Param
 #' @param idx The column indices to keep, in order.
 #' @param add_meta Add \code{idx} to \code{xifti$meta$cifti$misc[[add_meta]]}
 #'  for reference. Default: \code{"select"}. If \code{NULL} or an empty string,

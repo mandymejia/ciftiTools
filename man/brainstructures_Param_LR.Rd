@@ -5,13 +5,13 @@
 \title{brainstructures}
 \arguments{
 \item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures).
-Default: \code{c("left","right")} (cortical surface only).
+to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
+\code{"all"} (obtain all three brain structures). Default:
+\code{c("left","right")} (cortex only).
 
-If a brain structure is indicated but does not exist, a warning will be
-raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist in the CIFTI file, a
+warning will occur and that brain structure will be skipped.}
 }
 \description{
 brainstructures

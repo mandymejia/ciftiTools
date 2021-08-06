@@ -1,14 +1,15 @@
-#' Combine multiple \code{"xifti"} objects into one
+#' Combine \code{"xifti"}s with non-overlapping brain structures
 #' 
-#' Combine \code{"xifti"} objects with non-overlapping brainstructures into
-#'  a single \code{"xifti"} object. The names and intent of the first will be used (if present).
+#' Combine \code{"xifti"}s with non-overlapping brain structures into
+#'  a single \code{"xifti"}. The names and intent of the first will be used (if 
+#'  present).
 #' 
 #' @param ... The \code{"xifti"} objects
-#' @param xii_list Alternatively, a list of \code{"xifti"} objects. Will ignore
-#'  any other arguments from \code{...}
+#' @param xii_list Alternatively, a list of \code{"xifti"} objects. If specified,
+#'  will ignore \code{...}
 #' @param meta \code{"first"} (default) to just use the metadata from the first
 #'  argument, or \code{"all"} to include the other metadata in a list.
-#' @return A \code{"xifti"} object
+#' @return A \code{"xifti"} with data from the inputs
 #' 
 #' @family manipulating
 #' @export
@@ -20,7 +21,7 @@ combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {
   # Check validity of inputs. --------------------------------------------------
   if (length(xiis) > 3) { 
     stop(
-      "Inputs must be `xifti` objects with non-overlapping brainstructures.", 
+      "Inputs must be `xifti` objects with non-overlapping brain structures.", 
       "So, there should be 3 or less inputs."
     )
   }
@@ -61,7 +62,7 @@ combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {
     bsidx_ii <- !vapply(xiis[[ii]]$data, is.null, FALSE)
     if (any(bsidx_out & bsidx_ii)) {
       bs_both <- c("left cortex", "right cortex", "subcortex")[bsidx_out & bsidx_ii]
-      stop("These brainstructures were present in more than one argument: ", paste(bs_both, collapse=", "), ".")
+      stop("These brain structures were present in more than one argument: ", paste(bs_both, collapse=", "), ".")
     }
 
     # Intent.

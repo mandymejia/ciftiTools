@@ -7,7 +7,7 @@
 nrow_xifti(xifti)
 }
 \arguments{
-\item{xifti}{The \code{"xifti"} object}
+\item{xifti}{A \code{"xifti"} object.}
 }
 \value{
 The number of rows in the \code{"xifti"} data.

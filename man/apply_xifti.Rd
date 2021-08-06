@@ -2,12 +2,12 @@
 % Please edit documentation in R/apply_xifti.R
 \name{apply_xifti}
 \alias{apply_xifti}
-\title{Applying a summary function along the rows or columns of a \code{"xifti"}}
+\title{Apply a function along the rows or columns of a \code{"xifti"}}
 \usage{
 apply_xifti(xifti, margin = c(1, 2), FUN, ...)
 }
 \arguments{
-\item{xifti}{The xifti}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{margin}{The dimension along which to apply \code{FUN}: 1 for rows (default)
 and 2 for columns.}
@@ -18,7 +18,7 @@ length-N numeric vector.}
 \item{...}{Additional arguments to \code{FUN}}
 }
 \value{
-A \code{xifti} if \code{margin == 1}, or a numeric matrix if
+A \code{"xifti"} if \code{margin == 1}, or a numeric matrix if
 \code{margin == 2}
 }
 \description{
@@ -27,9 +27,12 @@ Apply a many-to-N function (e.g. mean) to the rows or columns of a
 is returned. (If the \code{"xifti"} had the dlabel intent, and values that
 are not labels are created, then it is converted to dscalar.) If applied
 column-wise, a numeric matrix with N rows is returned.
+
+For univariate functions, use \code{\link{transform_xifti}} instead.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},
 \code{\link{merge_xifti}()},

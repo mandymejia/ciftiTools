@@ -13,7 +13,7 @@ read_cifti_flat(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
 \item{keep}{This function works by converting the CIFTI file to a GIFTI file
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}

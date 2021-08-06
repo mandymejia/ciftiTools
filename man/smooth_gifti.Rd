@@ -4,7 +4,7 @@
 \alias{smooth_gifti}
 \alias{smoothGIfTI}
 \alias{smoothgii}
-\title{Smooth a metric GIFTI}
+\title{Smooth a metric GIFTI file}
 \usage{
 smooth_gifti(
   original_fname,
@@ -56,7 +56,8 @@ all the data is smoothed across the surface.}
 The smoothed GIFTI file name, invisibly
 }
 \description{
-Smooths metric GIFTI data on the cortical surface.
+Smooths metric GIFTI data along the cortical surface. The results are written
+to a new GIFTI file.
 }
 \section{Connectome Workbench}{
 

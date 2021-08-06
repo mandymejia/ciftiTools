@@ -71,8 +71,6 @@ or \code{"dlabel"}}
 \item{...}{Only used if \code{x} is a \code{"xifti"} object. Additional
 options specific to the target type and intent, e.g. for
 \code{convert_to_dlabel}.}
-
-\item{xifti}{The \code{"xifti"}}
 }
 \value{
 If \code{x} is a CIFTI, the target is a \code{"dlabel"} and
@@ -87,7 +85,7 @@ Convert the intent of a CIFTI file or \code{"xifti"} object
 \section{Functions}{
 \itemize{
 \item \code{convert_to_dlabel}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
-\code{"xifti"} object. Will use the same label table for each data column.
+\code{"xifti"}. Will use the same label table for each data column.
 
 \item \code{convert_to_dscalar}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
 CIFTI file or \code{"xifti"} object.
@@ -98,6 +96,7 @@ CIFTI file or \code{"xifti"} object.
 
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{merge_xifti}()},

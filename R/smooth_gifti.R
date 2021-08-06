@@ -1,6 +1,7 @@
-#' Smooth a metric GIFTI
+#' Smooth a metric GIFTI file
 #'
-#' Smooths metric GIFTI data on the cortical surface.
+#' Smooths metric GIFTI data along the cortical surface. The results are written
+#'  to a new GIFTI file.
 #'
 #' @param original_fname The GIFTI file to smooth.
 #' @param target_fname Where to save the smoothed file.

@@ -1,10 +1,8 @@
-#' Assemble a \code{"xifti"} object from data
+#' Assemble a \code{"xifti"} from data
 #' 
 #' Assembles cortical data, subcortical data, and/or surface geometry to form a 
-#'  \code{"xifti"} object. The inputs must be data objects (vectors, matrices or 
-#'  arrays, depending on the argument). \code{as.xifti} can be used to combine 
-#'  the files written by \code{\link{separate_cifti}}, or read individual 
-#'  components independent of any CIFTI file. 
+#'  \code{"xifti"}. The inputs must be data objects (vectors, matrices or 
+#'  arrays, depending on the argument).
 #' 
 #' @inherit make_xifti details
 #' 
@@ -81,10 +79,10 @@
 #'  the number of vertices matches that of the HCP 32k mesh (29696 on left, and
 #'  29716 on right), should the medial wall masks be added to the \code{"xifti"}
 #'  if not provided? Default: \code{TRUE}.
-#' @param validate Validate that the result is a \code{"xifti"} object? Default:
+#' @param validate Validate that the result is a \code{"xifti"}? Default:
 #'  \code{TRUE}. If \code{FALSE}, the result may not be properly formatted
 #'  if the inputs were invalid.
-#' @return A \code{"xifti"} object
+#' @return A \code{"xifti"}
 #' 
 #' @family reading
 #' @export

@@ -7,7 +7,7 @@
 xml_cifti(cifti_fname)
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 }
 \value{
 The XML as a list

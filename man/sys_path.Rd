@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{sys_path}
 \alias{sys_path}
-\title{Format a path for \code{\link{system}}.}
+\title{Format a path for \code{\link{system}}}
 \usage{
 sys_path(R_path)
 }

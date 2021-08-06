@@ -8,8 +8,8 @@
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should
 be a subset of the \code{brainstructures} argument.
 
-ROIs are typically the medial wall mask for the cortex and subcortical mask
-for the subcortex.}
+ROIs are typically the medial wall masks for the left and right cortex, and
+the subcortical mask for the subcortex.}
 }
 \description{
 ROI_brainstructures

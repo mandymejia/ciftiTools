@@ -60,22 +60,22 @@ read_xifti(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
-\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfL_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the left cortex.}
 
-\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfR_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the right cortex.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures).
-Default: \code{c("left","right")} (cortical surface only).
+to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
+\code{"all"} (obtain all three brain structures). Default:
+\code{c("left","right")} (cortex only).
 
-If a brain structure is indicated but does not exist, a warning will be
-raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist in the CIFTI file, a
+warning will occur and that brain structure will be skipped.}
 
 \item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
 (default), read all the data. Must be a subset of the indices present in the
@@ -118,7 +118,7 @@ If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G}
 matrix (\eqn{T} measurements, \eqn{G} greyordinates).
 }
 \description{
-Read a CIFTI file as a \code{"xifti"} object.
+Read in a CIFTI file as a \code{"xifti"} object.
 }
 \details{
 First, metadata is obtained with \code{\link{info_cifti}}. Then, if no
@@ -169,7 +169,8 @@ if resampling is needed.
 }
 
 These correspond to the same structures as given by
-\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Note that
+the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
@@ -185,6 +186,7 @@ Other functions for reading in CIFTI or GIFTI metric data:
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
+\code{\link{read_surf}()},
 \code{\link{read_xifti2}()}
 }
 \concept{common}

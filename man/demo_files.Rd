@@ -2,7 +2,7 @@
 % Please edit documentation in R/demo_files.R
 \name{demo_files}
 \alias{demo_files}
-\title{Get example files}
+\title{Get demonstration files}
 \usage{
 demo_files()
 }

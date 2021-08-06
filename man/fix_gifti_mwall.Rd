@@ -13,13 +13,13 @@ fix_gifti_mwall(
 )
 }
 \arguments{
-\item{metric_fname}{The data GIFTI}
+\item{metric_fname}{File path to the data GIFTI}
 
-\item{fixed_metric_fname}{The revised data GIFTI}
+\item{fixed_metric_fname}{File path to the revised data GIFTI}
 
-\item{ROI_fname}{Th ROI GIFTI}
+\item{ROI_fname}{File path to the ROI GIFTI}
 
-\item{fixed_ROI_fname}{The revised ROI GIFTI}
+\item{fixed_ROI_fname}{File path to the revised ROI GIFTI}
 
 \item{mwall_values}{The values to use to infer the medial wall. Default:
 \code{c(NA, NaN)}.}
@@ -29,6 +29,7 @@ fix_gifti_mwall(
 }
 \description{
 Replace implicit medial wall values (not indicated in ROI, but are in
-\code{mwall_values}) with explicit medial wall values (indicated in ROI).
+\code{mwall_values}) with explicit medial wall values (indicated in ROI)
+in a metric GIFTI file.
 }
 \keyword{internal}

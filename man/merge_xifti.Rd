@@ -2,26 +2,27 @@
 % Please edit documentation in R/concat_xifti.R
 \name{merge_xifti}
 \alias{merge_xifti}
-\title{Concatenate \code{"xifti"} objects}
+\title{Concatenate \code{"xifti"}s}
 \usage{
 merge_xifti(..., xifti_list = NULL)
 }
 \arguments{
-\item{..., xifti_list}{Provide as arguments the \code{"xifti"} objects to
+\item{..., xifti_list}{Provide as arguments the \code{"xifti"}s to
 concatenate, OR the single argument \code{xifti_list} which should be a
-list of \code{"xifti"} objects. (If \code{xifti_list} is provided all other
+list of \code{"xifti"}s. (If \code{xifti_list} is provided all other
 inputs will be ignored.)}
 }
 \value{
-The concatenated \code{"xifti"} object.
+The concatenated \code{"xifti"}
 }
 \description{
 Concatenate \code{"xifti"} objects along the columns. They must have the same
-brainstructures. The first \code{"xifti"}'s metadata will be retained, including
-its intent.
+brainstructures and resolutions. The first \code{"xifti"}'s metadata will be
+retained, including its intent.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},

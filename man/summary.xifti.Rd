@@ -4,7 +4,7 @@
 \alias{summary.xifti}
 \alias{print.summary.xifti}
 \alias{print.xifti}
-\title{Summarize cifti objects}
+\title{Summarize a \code{"xifti"} object}
 \usage{
 \method{summary}{xifti}(object, ...)
 
@@ -17,8 +17,7 @@
 
 \item{...}{further arguments passed to or from other methods.}
 
-\item{x}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{x}{A \code{"xifti"} object.}
 }
 \description{
 Summary method for class \code{"xifti"}

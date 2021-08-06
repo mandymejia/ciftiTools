@@ -1,6 +1,6 @@
-#' View subcortex
+#' View subcortical data in a \code{"xifti"}
 #' 
-#' Visualize subcortex of a \code{"xifti"} object
+#' Visualize the subcortical data in a \code{"xifti"} using slices.
 #'
 #' @inheritParams xifti_Param
 #' @param structural_img The structural MRI image on which to overlay the

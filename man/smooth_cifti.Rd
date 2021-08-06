@@ -5,7 +5,7 @@
 \alias{smoothCIfTI}
 \alias{smoothcii}
 \alias{smooth_xifti}
-\title{Smooth a CIFTI}
+\title{Smooth CIFTI data}
 \usage{
 smooth_cifti(
   x,
@@ -86,7 +86,7 @@ Default: \code{FALSE}.}
 The \code{cifti_target_fname}, invisibly
 }
 \description{
-Spatially smooth CIFTI data.
+Spatially smooth the metric data of a CIFTI file or \code{"xifti"} object.
 }
 \details{
 If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted

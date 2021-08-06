@@ -1,4 +1,4 @@
-#' Write CIFTI component files from a \code{"xifti"} object.
+#' Write CIFTI component files from a \code{"xifti"} object
 #'
 #' Write metric GIFTIs for the cortical surface data and NIFTIs for the
 #'  subcortical labels and mask in a \code{"xifti"} object. Each present
@@ -138,7 +138,7 @@ write_cifti_components <- function(
   invisible(sep_fnames)
 }
 
-#' Write a CIFTI file from a \code{"xifti"} object.
+#' Write a CIFTI file from a \code{"xifti"} object
 #'
 #' Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI 
 #'  surface files. 

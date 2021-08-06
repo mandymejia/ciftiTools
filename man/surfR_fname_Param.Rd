@@ -4,7 +4,7 @@
 \alias{surfR_fname_Param}
 \title{surfR_fname}
 \arguments{
-\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfR_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the right cortex.}
 }
 \description{

@@ -1,4 +1,4 @@
-#' Applying a summary function along the rows or columns of a \code{"xifti"}
+#' Apply a function along the rows or columns of a \code{"xifti"}
 #' 
 #' Apply a many-to-N function (e.g. mean) to the rows or columns of a
 #'  \code{"xifti"}. If applied row-wise, a \code{"xifti"} with N data column(s)
@@ -6,14 +6,16 @@
 #'  are not labels are created, then it is converted to dscalar.) If applied 
 #'  column-wise, a numeric matrix with N rows is returned. 
 #'  
-#' @param xifti The xifti
+#' For univariate functions, use \code{\link{transform_xifti}} instead. 
+#' 
+#' @inheritParams xifti_Param
 #' @param margin The dimension along which to apply \code{FUN}: 1 for rows (default)
 #'  and 2 for columns.
 #' @param FUN The function. It should take in a numeric vector and return a
 #'  length-N numeric vector. 
 #' @param ... Additional arguments to \code{FUN}
 #' 
-#' @return A \code{xifti} if \code{margin == 1}, or a numeric matrix if 
+#' @return A \code{"xifti"} if \code{margin == 1}, or a numeric matrix if 
 #'  \code{margin == 2}
 #' 
 #' @family manipulating

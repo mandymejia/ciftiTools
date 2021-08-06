@@ -7,11 +7,11 @@
 supported_intents()
 }
 \value{
-A data.frame with each supported file type along the rows, and
+A \code{data.frame} with each supported file type along the rows, and
 column names "extension", "intent_code", "value", and "intent_name"
 }
 \description{
-Table of CIFTI file types (NIFTI intents) supported By \code{ciftiTools}.
+Table of CIFTI file types (NIFTI intents) supported by \code{ciftiTools}.
 }
 \details{
 See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955

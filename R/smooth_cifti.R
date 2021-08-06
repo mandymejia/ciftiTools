@@ -1,6 +1,6 @@
-#' Smooth a CIFTI 
+#' Smooth CIFTI data
 #'
-#' Spatially smooth CIFTI data.
+#' Spatially smooth the metric data of a CIFTI file or \code{"xifti"} object.
 #' 
 #' If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
 #'  to a ".dscalar" file because the values will no longer be integer indices.

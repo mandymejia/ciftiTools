@@ -1,9 +1,9 @@
-#' Rotate a \code{"surface"} object
+#' Rotate a \code{"surf"} object
 #' 
-#' Rotate a \code{"surface"}. Can be used to adjust the mesh orientation prior
+#' Rotate a \code{"surf"}. Can be used to adjust the mesh orientation prior
 #'  to \code{\link{view_xifti_surface}}.
 #' 
-#' @param surf The \code{"surface"} object: see \code{\link{is.surf}}.
+#' @param surf The \code{"surf"} object: see \code{\link{is.surf}}.
 #' @param r1,r2,r3 Angle to rotate along the first, second, and third column's
 #'  axis, in \code{units} (e.g. changing \code{r1} will change the vertex positions
 #'  in the second and third dimensions/columns, since the mesh is being rotated
@@ -14,7 +14,7 @@
 #'  roll, respectively. 
 #' @param units \code{"radians"} (default) or \code{"degrees"}.
 #' 
-#' @return The rotated \code{"surface"}.
+#' @return The rotated \code{"surf"}
 #' 
 #' @family surfing
 #' @export

@@ -1,19 +1,19 @@
-#' Make \code{"xifti"} cortical components
+#' Make the cortical components of a \code{"xifti"}
 #' 
-#' Coerce a path to a GIFTI file, metric "gifti" object, data matrix or vector to a 
+#' Coerce a path to a GIFTI file, metric \code{"gifti"} object, data matrix or vector to a 
 #'  data matrix representing cortical data (and optionally a corresponding mask). 
 #'  That is,  entries for \code{xifti$data$cortex_\[left/right\]} and 
 #'  \code{xifti$meta$cortex$medial_wall_mask$\[left/right\]}. If \code{cortex} is
-#'  a path to a GIFTI file or a metric "gifti" object, any column names or
+#'  a path to a GIFTI file or a metric \code{"gifti"}, any column names or
 #'  a non-empty label table will also be extracted.
 #' 
-#' @param cortex A path to a metric GIFTI file, metric \code{"gifti"} object, or
+#' @param cortex A path to a metric GIFTI file, metric \code{"gifti"}, or
 #'  numeric vector/matrix representing cortical data.
 #' 
-#'  If \code{cortex} is a path to a metric GIFTI file or metric \code{"gifti"} 
-#'  object, the column names and the label table will also be extracted if they
+#'  If \code{cortex} is a path to a metric GIFTI file or metric \code{"gifti"},
+#'  the column names and the label table will also be extracted if they
 #'  exist in the GIFTI. 
-#' @param mwall A path to a metric GIFTI file, metric \code{"gifti"} object, 
+#' @param mwall A path to a metric GIFTI file, metric \code{"gifti"}, 
 #'  \eqn{V_{[L/R]} x 1} logical matrix or length \eqn{V_{[L/R]}} logical vector
 #'  representing the medial wall mask. \code{FALSE} values should indicate 
 #'  vertices that make up the medial wall. If the medial wall is unknown, use 
@@ -266,7 +266,7 @@ make_trans_mat <- function(nii_fname) {
   rbind(labs_trans_mat, matrix(c(0,0,0,1), nrow=1))
 }
 
-#' Make \code{"xifti"} subcortical components
+#' Make the subcortical components of a \code{"xifti"}
 #' 
 #' Coerce subcortical data into valid entries for \code{xifti$data$subcort}
 #'  and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or

@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_subcort}
 \alias{make_subcort}
-\title{Make \code{"xifti"} subcortical components}
+\title{Make the subcortical components of a \code{"xifti"}}
 \usage{
 make_subcort(vol, labs, mask = NULL, idx = NULL, validate_mask = FALSE)
 }
@@ -82,7 +82,8 @@ To read in the labels as the primary data, use the labels NIFTI for both
 }
 
 These correspond to the same structures as given by
-\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Note that
+the first two levels (left and right cortex) are not used.
 }
 
 \keyword{internal}

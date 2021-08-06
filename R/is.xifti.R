@@ -91,7 +91,7 @@ is.xifti_data <- function(x) {
   TRUE
 }
 
-#' Validate a surface (vertices + faces)
+#' Validate a \code{"surf"} object (vertices + faces)
 #'
 #' Check if object is valid for \code{xifti$surf$cortex_left} or 
 #'  \code{xifti$surf$cortex_right}, where \code{xifti} is a \code{"xifti"}
@@ -99,7 +99,7 @@ is.xifti_data <- function(x) {
 #' 
 #'  This is a helper function for \code{\link{is.xifti}}.
 #' 
-#'  Requirements: the surface must be a list of three components: "vertices", 
+#'  Requirements: the \code{"surf"} must be a list of three components: "vertices", 
 #'  "faces", and "hemisphere". The first two should each be a numeric matrix 
 #'  with three columns. The values in "vertices" represent spatial coordinates 
 #'  whereas the values in "faces" represent vertex indices defining the face. 
@@ -107,9 +107,9 @@ is.xifti_data <- function(x) {
 #'  vertices. The last list entry, "hemisphere", should be "left", "right", 
 #'  or NULL indicating the brain hemisphere which the surface represents.
 #'
-#' @param x The putative surface.
+#' @param x The putative \code{"surf"}.
 #'
-#' @return Logical. Is \code{x} a valid surface?
+#' @return Logical. Is \code{x} a valid \code{"surf"}?
 #' 
 #' @family surfing
 #' @export
@@ -595,7 +595,7 @@ is_xifti <- function(x, messages=TRUE){
 
 #' Validate a \code{"xifti"} object
 #' 
-#' Check if object is valid for a \code{"xifti"} object. This alias for 
+#' Check if object is valid for a \code{"xifti"}. This alias for 
 #'  \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
 #'  the user. We recommend using \code{\link{is.xifti}} instead.
 #'
@@ -611,11 +611,11 @@ is_xifti <- function(x, messages=TRUE){
 #' 
 #' @inheritSection labels_Description Label Levels
 #' 
-#' @param x The putative \code{"xifti"} object.
-#' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
+#' @param x The putative \code{"xifti"}.
+#' @param messages If \code{x} is not a \code{"xifti"}, print messages 
 #'  explaining the problem? Default is \code{TRUE}.
 #' 
-#' @return Logical. Is \code{x} a valid \code{"xifti"} object?
+#' @return Logical. Is \code{x} a valid \code{"xifti"}?
 #' 
 #' @family common
 #' @export

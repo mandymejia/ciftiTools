@@ -5,7 +5,7 @@
 \alias{resampleCIfTI}
 \alias{resamplecii}
 \alias{resample_xifti}
-\title{Resample CIFTI Data}
+\title{Resample CIFTI data}
 \usage{
 resample_cifti(
   x = NULL,

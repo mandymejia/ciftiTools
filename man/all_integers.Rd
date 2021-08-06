@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{all_integers}
 \alias{all_integers}
-\title{All Integers?}
+\title{All integers?}
 \usage{
 all_integers(x)
 }

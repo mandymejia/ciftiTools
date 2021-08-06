@@ -1,8 +1,8 @@
-#' Move to medial wall
+#' Move data locations to the medial wall
 #' 
 #' Move cortical data locations with a specific value(s) to the medial wall mask.
 #'  For example, dlabel CIFTIs often have medial wall vertices set to a specific
-#'  Key value, rather than a medial wall mask. This function can move those data
+#'  key value, rather than a medial wall mask. This function can move those data
 #'  locations from the data matrix to the medial wall mask in the metadata.
 #' 
 #' @inheritParams xifti_Param
@@ -10,7 +10,7 @@
 #'  locations in the left and right cortex that are one of these values (across 
 #'  all columns) will be moved to the medial wall mask in the metadata.
 #' @param drop Only used if the \code{"xifti"} has the dlabel intent. Drop the
-#'  Key(s) in \code{values} from the label tables, for columns in which they no
+#'  key(s) in \code{values} from the label tables, for columns in which they no
 #'  longer exist? Default: \code{FALSE}.
 #'  
 #' 
@@ -68,7 +68,7 @@ move_to_mwall <- function(xifti, values=c(NA, NaN), drop=FALSE){
   xifti
 }
 
-#' Move from medial wall
+#' Move data locations from medial wall
 #' 
 #' Move all medial wall locations into the cortical data matrices by assigning 
 #'  them a specific value (e.g. NA).

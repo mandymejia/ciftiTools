@@ -581,7 +581,7 @@ view_xifti_surface.draw_mesh <- function(
   out[!vapply(out, is.null, FALSE)]
 }
 
-#' View cortical surface data
+#' View cortical surface data in a \code{"xifti"}
 #' 
 #' Visualize \code{"xifti"} cortical data using an interactive Open GL window
 #'  or htmlwidget made with \code{rgl}. The \code{rmarkdown} package is 

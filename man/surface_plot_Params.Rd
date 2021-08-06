@@ -2,7 +2,7 @@
 % Please edit documentation in R/rox_args_docs.R
 \name{surface_plot_Params}
 \alias{surface_plot_Params}
-\title{surface plot}
+\title{Surface plot}
 \arguments{
 \item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or
 \code{"both"}. If \code{NULL} (default), both views will be shown. Each view
@@ -80,6 +80,6 @@ be set to 0.6 or 160\\% for the Open GL window, and 0.67 or 167\\% for the
 widget.)}
 }
 \description{
-surface plot
+Surface plot
 }
 \keyword{internal}

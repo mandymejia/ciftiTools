@@ -2,12 +2,12 @@
 % Please edit documentation in R/rotate_surf.R
 \name{rotate_surf}
 \alias{rotate_surf}
-\title{Rotate a \code{"surface"} object}
+\title{Rotate a \code{"surf"} object}
 \usage{
 rotate_surf(surf, r1 = 0, r2 = 0, r3 = 0, units = c("radians", "degrees"))
 }
 \arguments{
-\item{surf}{The \code{"surface"} object: see \code{\link{is.surf}}.}
+\item{surf}{The \code{"surf"} object: see \code{\link{is.surf}}.}
 
 \item{r1, r2, r3}{Angle to rotate along the first, second, and third column's
 axis, in \code{units} (e.g. changing \code{r1} will change the vertex positions
@@ -21,15 +21,14 @@ roll, respectively.}
 \item{units}{\code{"radians"} (default) or \code{"degrees"}.}
 }
 \value{
-The rotated \code{"surface"}.
+The rotated \code{"surf"}
 }
 \description{
-Rotate a \code{"surface"}. Can be used to adjust the mesh orientation prior
+Rotate a \code{"surf"}. Can be used to adjust the mesh orientation prior
 to \code{\link{view_xifti_surface}}.
 }
 \seealso{
 Other functions for working with GIFTI surface geometry data: 
-\code{\link{add_surf}()},
 \code{\link{is.surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},

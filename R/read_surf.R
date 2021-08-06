@@ -1,10 +1,10 @@
-#' Convert input to a \code{"surf"} object
+#' Get a \code{"surf"} object
 #'
 #' Coerce a file path to a surface GIFTI, a \code{"gifti"} object, a list with
-#'  entries "pointset" and "triangle", or a \code{"surf"} object to a 
-#'  \code{"surf"} object. 
+#'  entries "pointset" and "triangle", or a \code{"surf"} to a 
+#'  \code{"surf"}. 
 #'
-#' @param surf Either a file path to a surface GIFTI; a "gifti" object
+#' @param surf Either a file path to a surface GIFTI; a \code{"gifti"}
 #'  read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and 
 #'  "triangle"; or, a \code{"surf"} object.
 #' @param expected_hemisphere The expected hemisphere (\code{"left"} or \code{"right"})
@@ -12,13 +12,14 @@
 #'  opposite, an error is raised. If \code{NULL} (default), use the GIFTI 
 #'  hemisphere.
 #' 
-#' @return The \code{"surf"} object: a list with components \code{"vertices"}
+#' @return The \code{"surf"}: a list with components \code{"vertices"}
 #'  (3D spatial locations), \code{"faces"} (defined by three vertices), and 
 #'  \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if 
 #'  unknown).
 #'
 #' @importFrom gifti readgii is.gifti
 #'
+#' @family reading
 #' @family surfing
 #' @export
 #' 

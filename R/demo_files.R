@@ -1,4 +1,4 @@
-#' Get example files
+#' Get demonstration files
 #' 
 #' Get the file paths of the example CIFTI and surface GIFTI files included
 #'  with \code{ciftiTools}.

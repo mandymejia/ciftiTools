@@ -29,6 +29,7 @@ in total, \code{newdata} should be a \eqn{V \times T} matrix.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},

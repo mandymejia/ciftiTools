@@ -57,7 +57,7 @@ ciftiTools.checkOption <- function(opt, val=NULL){
   val
 }
 
-#' Set \code{ciftiTools} option
+#' Set a \code{ciftiTools} option
 #' 
 #' Sets an R option (with prefix "ciftiTools_"). 
 #'  See \code{\link{ciftiTools.listOptions}}.
@@ -78,7 +78,7 @@ ciftiTools.setOption <- function(opt, val) {
   invisible(val)
 }
 
-#' Get \code{ciftiTools} option
+#' Get a \code{ciftiTools} option
 #' 
 #' Gets an R option (with prefix "ciftiTools_") value. 
 #'  See \code{\link{ciftiTools.listOptions}}.

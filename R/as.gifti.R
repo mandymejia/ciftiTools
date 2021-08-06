@@ -1,10 +1,10 @@
-#' Format metric data as a \code{"gifti"} object
+#' Format metric data as a \code{"gifti"}
 #'
 #' Format a \eqn{V x T} numeric matrix (V vertices, T measurements) or a length-T list 
-#'  of length-V numeric vectors as a \code{"gifti"} object using a template 
+#'  of length-V numeric vectors as a \code{"gifti"} using a template 
 #'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 #' 
-#'  If \code{data} is already a \code{"gifti"} object, \code{data$data} will be
+#'  If \code{data} is already a \code{"gifti"}, \code{data$data} will be
 #'  used and any metadata will be overwritten by the template or discarded.
 #'
 #' @param data \eqn{V x T} numeric matrix, or length \eqn{T} list of length
@@ -19,7 +19,7 @@
 #'  or \code{"NIFTI_TYPE_FLOAT32"}. Can also be \code{NULL} (default), in which
 #'  case the NIFTI type will be inferred from \code{data}.
 #' 
-#' @return The \code{"gifti"} object
+#' @return The \code{"gifti"}
 #'
 #' @keywords internal
 #' 
@@ -127,19 +127,19 @@ as.metric_gifti <- function(
   gii
 }
 
-#' Format surface data as a \code{"gifti"} object
+#' Format surface data as a \code{"gifti"}
 #'
-#' Format a \code{"surf"} object or a list with elements \code{"pointset"}
-#'  and \code{"triangle"} as a \code{"gifti"} object using a template 
+#' Format a \code{"surf"} or a list with elements \code{"pointset"}
+#'  and \code{"triangle"} as a \code{"gifti"} using a template 
 #'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 #'
-#' @param surf A \code{"surf"} object or a list with elements 
+#' @param surf A \code{"surf"} or a list with elements 
 #'  \code{"pointset"} and \code{"triangle"}
 #' @param hemisphere The side of the brain the surface represents: \code{"left"} 
 #'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"
 #'  metadata field. Only used if \code{surf$hemisphere} is \code{NULL}.
 #' 
-#' @return The \code{"gifti"} object
+#' @return The \code{"gifti"}
 #'
 #' @keywords internal
 #' 

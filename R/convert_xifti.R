@@ -1,9 +1,9 @@
 #' @describeIn convert_xifti
 #' 
 #' Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
-#'  \code{"xifti"} object. Will use the same label table for each data column.
+#'  \code{"xifti"}. Will use the same label table for each data column.
 #' 
-#' @param xifti The \code{"xifti"}
+#' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
@@ -314,6 +314,7 @@ convert_to_dtseries <- function(
 #'  returned.
 #' 
 #' @family manipulating
+#' 
 #' @export
 convert_xifti <- function(x, to=c("dscalar", "dtseries", "dlabel"), 
   cifti_target_fname=NULL, ...){

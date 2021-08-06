@@ -7,12 +7,12 @@
 \method{dim}{xifti}(x)
 }
 \arguments{
-\item{x}{The \code{"xifti"} object}
+\item{x}{A \code{"xifti"} object.}
 }
 \value{
 The number of rows and columns in the \code{"xifti"} data.
 }
 \description{
-Returns the number of rows and columns in the \code{"xifti"} data. Doesn't
-bother to validate the input.
+Returns the number of rows (vertices + voxels) and columns (measurements) in
+the \code{"xifti"} data.
 }

@@ -3,7 +3,7 @@
 \name{write_surf_gifti}
 \alias{write_surf_gifti}
 \alias{write_surf}
-\title{Write CIFTI surface data to GIFTI}
+\title{Write a \code{"surf"} to a GIFTI surface file}
 \usage{
 write_surf_gifti(
   x,
@@ -53,7 +53,6 @@ Other functions for writing CIFTI or GIFTI metric data:
 \code{\link{write_subcort_nifti}()}
 
 Other functions for working with GIFTI surface geometry data: 
-\code{\link{add_surf}()},
 \code{\link{is.surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},

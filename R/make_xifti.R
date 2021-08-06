@@ -4,9 +4,7 @@
 #'  \code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files 
 #'  which have been read in, or data objects (vectors, matrices or arrays, 
 #'  depending on the argument). See \code{as.xifti} for a user-function wrapper 
-#'  that only works with data objects. \code{make_xifti} can be used to combine 
-#'  the files written by \code{\link{separate_cifti}}, or read individual 
-#'  components independent of any CIFTI file. 
+#'  that only works with data objects.
 #' 
 #' Each data or surface component is optional. Metadata components
 #'  (\code{cortex[L/R]_mwall}, \code{subcortLabs}, and \code{subcortMask}) will 
