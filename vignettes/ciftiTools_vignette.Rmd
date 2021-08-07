@@ -357,3 +357,13 @@ plot(surf, vertex_size=3, vertex_color="blue")
 ```{r, rgl=TRUE, format="png", fig.height=3.8, fig.width=2.5}
 plot(surf, edge_color="black")
 ```
+
+# Citing `ciftiTools`
+
+A citation for the package itself can be printed with:
+
+```{r}
+citation("ciftiTools")
+```
+
+Refer to the README for citation information for the surfaces, parcellations, and other data included in `ciftiTools`.
