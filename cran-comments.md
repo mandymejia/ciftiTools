@@ -6,9 +6,10 @@
 ## R CMD check results
 
 > checking installed package size ... NOTE
-    installed size is 10.7Mb
+    installed size is  5.3Mb
     sub-directories of 1Mb or more:
-      extdata   9.7Mb
+      R         1.6Mb
+      extdata   3.3Mb
 
 0 errors v | 0 warnings v | 1 note x
 
@@ -21,3 +22,7 @@ None.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Submission revision
+
+The previous submission was rejected because the tarball was over 5 MB. It has been reduced to 3.24 MB.

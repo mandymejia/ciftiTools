@@ -12,7 +12,7 @@ newdata_xifti(xifti, newdata, newnames = NULL)
 \item{newdata}{The \eqn{V \ times T} matrix of data values to replace those
 in \code{xifti} with. The left cortex vertices should be at the top, right
 cortex vertices in the middle, and subcortex vertices at the bottom (when
-present).}
+present). Can also be a length-one vector to set all values equally.}
 
 \item{newnames}{Replace the names in the \code{xifti}. If \code{NULL}
 (default), keep the original names.}

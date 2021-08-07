@@ -38,7 +38,7 @@ smoothgii(
 \item{target_fname}{Where to save the smoothed file.}
 
 \item{surf_fname}{Surface GIFTI files cortical surface along which to smooth.
-If not provided, the default very inflated surfaces will be used.}
+If not provided, the default inflated surfaces will be used.}
 
 \item{surf_FWHM}{The full width at half maximum (FWHM) parameter
 for the gaussian surface smoothing kernel, in mm. Default: \code{5}}

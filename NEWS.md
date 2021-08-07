@@ -1,4 +1,19 @@
-# 4.0 (August 8, 2021)
+# 4.1 (In progress)
+
+## Changes affecting users
+
+* New interface for reading in data included in the package
+    * `ciftiTools.files` replaces `demo_files()`. This variable is created in the user's environment upon `library(ciftiTools)` with lazy loading
+    * `ciftiTools.files` will only contain the inflated surface. To import the other two surfaces, use `load_surf()`. Removed the `"surf"` option from `ciftiTools.setOption`.
+* Better handling of surfaces
+    * `add_surf` will automatically resample the surfaces if needed
+    * `read_surf` has the argument `resamp_res` to enable resampling upon reading in the surface, similar to `read_xifti`
+* `newdata_xifti` will accept a length-one vector, to create a constant-valued `"xifti"`
+## Notes for developers
+
+* `ciftiTools.data` contains the surfaces and parcellations building blocks, and the HCP 32k medial wall
+
+# 4.0 (August 4, 2021)
 
 ## Changes affecting users
 

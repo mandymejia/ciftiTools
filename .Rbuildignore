@@ -10,6 +10,11 @@
 ^inst/extdata/Conte69\.MyelinAndCorrThickness\.32k_fs_LR\.dscalar\.nii$
 ^inst/extdata/Conte69\.parcellations_VGD11b\.32k_fs_LR\.dlabel\.nii$
 ^inst/extdata/ones\.dscalar\.nii$
+^inst/extdata/S1200\.L\.very_inflated_MSMAll\.32k_fs_LR\.surf\.gii$
+^inst/extdata/S1200\.R\.very_inflated_MSMAll\.32k_fs_LR\.surf\.gii$
+^inst/extdata/S1200\.L\.midthickness_MSMAll\.32k_fs_LR\.surf\.gii$
+^inst/extdata/S1200\.R\.midthickness_MSMAll\.32k_fs_LR\.surf\.gii$
 ^CRAN-RELEASE$
 ^\.github$
 ^tests/run_ciftiTools_tests\.R$
+^inst/extdata/MNI152_T1_2mm\.nii\.gz$

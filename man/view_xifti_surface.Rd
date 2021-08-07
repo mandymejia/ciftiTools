@@ -136,17 +136,13 @@ viewcii_surface(
 \arguments{
 \item{xifti}{A \code{"xifti"} object.}
 
-\item{surfL, surfR}{(Optional) The brain surface model to use.
-Each can be a file path for a GIFTI, a file read by gifti::readgii,
-or a list with components "vertices" and "faces". If provided, they will override
-\code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if those exist.
-Leave as \code{NULL} (default) to use \code{xifti$surf$cortex_left} and
-\code{xifti$surf$cortex_right} if those exist, or the default surfaces
-if those do not exist.
-
-The default surfaces are determined by (\code{ciftiTools.getOption("surf")}).
-They are "inflated" by default but can be set to "very inflated" or
-"midthickness".}
+\item{surfL, surfR}{(Optional) The brain surface model to use. Each can be a
+\code{"surf"} object, any valid argument to \code{\link{read_surf}} , or one
+of \code{"very inflated"}, \code{"inflated"}, or \code{"midthickness"}. If
+provided, it will override \code{xifti$surf$cortex_left} or
+\code{xifti$surf$cortex_right} if it exists. Leave as \code{NULL} (default)
+to use \code{xifti$surf$cortex_left} or \code{xifti$surf$cortex_right} if it
+exists, or the default inflated surfaces if it does not exist.}
 
 \item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"},
 \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the

@@ -126,12 +126,8 @@ read_cifti_convert <- function(
   if (!is.null(surfL_fname) | !is.null(surfR_fname)) { 
     if(verbose) { cat("...and surface(s).\n") }
   }
-  if (!is.null(surfL_fname)) { 
-    xifti$surf$cortex_left <- make_surf(surfL_fname, "left") 
-  }
-  if (!is.null(surfR_fname)) { 
-    xifti$surf$cortex_right <- make_surf(surfR_fname, "right") 
-  }
+  if (!is.null(surfL_fname)) { add_surf(xifti, surfL=surfL_fname) }
+  if (!is.null(surfR_fname)) { add_surf(xifti, surfR=surfR_fname) }
 
   # Finish.
   if (!is.xifti(xifti)) { stop("The \"xifti\" object was invalid.") }

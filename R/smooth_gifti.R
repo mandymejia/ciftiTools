@@ -6,7 +6,7 @@
 #' @param original_fname The GIFTI file to smooth.
 #' @param target_fname Where to save the smoothed file.
 #' @param surf_fname Surface GIFTI files cortical surface along which to smooth. 
-#'  If not provided, the default very inflated surfaces will be used.
+#'  If not provided, the default inflated surfaces will be used.
 #' @param surf_FWHM The full width at half maximum (FWHM) parameter
 #'  for the gaussian surface smoothing kernel, in mm. Default: \code{5}
 #' @param hemisphere The cortex hemisphere: \code{"left"} or \code{"right"}.
@@ -46,7 +46,7 @@ smooth_gifti <- function(
     x_res <- nrow(readgii(original_fname)$data[[1]])
     surf_fname <- file.path(tempdir(), paste0(hemisphere, ".surf.gii"))
     surf_fname <- resample_gifti(
-      demo_files()$surf[hemisphere], 
+      ciftiTools.files$surf[hemisphere], 
       surf_fname, hemisphere=hemisphere, file_type="surface", resamp_res=x_res
     )
   }

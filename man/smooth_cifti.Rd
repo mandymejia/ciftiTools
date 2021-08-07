@@ -96,9 +96,8 @@ warning will be printed.
 
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
-Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
-the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
-option is "inflated" by default. It can be set to "very inflated" or "midthickness".
+Surfaces are required for each hemisphere in the CIFTI. If they are not
+provided, the default inflated surfaces will be used.
 }
 \section{Connectome Workbench}{
 

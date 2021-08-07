@@ -102,6 +102,7 @@ Other functions for reading in CIFTI or GIFTI metric data:
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
+\code{\link{load_surf}()},
 \code{\link{read_cifti}()},
 \code{\link{read_surf}()}
 }

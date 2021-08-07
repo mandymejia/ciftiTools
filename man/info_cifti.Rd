@@ -96,6 +96,7 @@ the first two levels (left and right cortex) are not used.
 Other functions for reading in CIFTI or GIFTI metric data: 
 \code{\link{as.xifti}()},
 \code{\link{load_parc}()},
+\code{\link{load_surf}()},
 \code{\link{read_cifti}()},
 \code{\link{read_surf}()},
 \code{\link{read_xifti2}()}

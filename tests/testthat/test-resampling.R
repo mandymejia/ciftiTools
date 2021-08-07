@@ -9,7 +9,7 @@ test_that("Resampling CIFTI and GIFTI files is working", {
 
   tdir <- tempdir()
 
-  fnames <- ciftiTools:::demo_files()
+  fnames <- ciftiTools.files
 
   for (cii_fname in fnames$cifti) {
     cat("\n\n"); cat(cii_fname); cat("\n\n")

@@ -9,7 +9,7 @@ test_that("Miscellaneous functions are working", {
 
   tdir <- tempdir()
 
-  fnames <- ciftiTools:::demo_files()
+  fnames <- ciftiTools.files
 
   surfL_6k_fname <- file.path(tdir, "L_6k.surf.gii")
   resample_gifti(
@@ -109,7 +109,7 @@ test_that("Miscellaneous functions are working", {
       cii2 <- move_to_mwall(move_from_mwall(cii, NA), NA)
     }
     testthat::expect_equal(cii, cii2)
-    
+
     # unmask_cortex
     if (!is.null(cii$data$cortex_left)) {
       cor2 <- unmask_cortex(
@@ -176,6 +176,9 @@ test_that("Miscellaneous functions are working", {
     # [TO DO]: test with different intents; test expected errors
 
     cii2 <- newdata_xifti(cii2, as.matrix(cii2))
+    stopifnot(max(abs(as.matrix(
+      newdata_xifti(cii2, 17) - newdata_xifti(cii2, 10) - newdata_xifti(cii2, 7)
+    ))) == 0)
 
     if (!grepl("dlabel", cii_fname)) {
       # Smooth metric GIFTI

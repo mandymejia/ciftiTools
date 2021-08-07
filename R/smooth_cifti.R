@@ -9,9 +9,8 @@
 #' 
 #'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 #' 
-#'  Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
-#'  the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
-#'  option is "inflated" by default. It can be set to "very inflated" or "midthickness".
+#'  Surfaces are required for each hemisphere in the CIFTI. If they are not 
+#'  provided, the default inflated surfaces will be used. 
 #' 
 #' @param x The CIFTI file name or \code{"xifti"} object to smooth.
 #' @param cifti_target_fname File name for the smoothed CIFTI. If
@@ -164,7 +163,7 @@ smooth_cifti <- function(
 
     surfL_fname <- file.path(tempdir(), "left.surf.gii")
     surfL_fname <- resample_gifti(
-      demo_files()$surf["left"], 
+      ciftiTools.files$surf["left"], 
       surfL_fname, hemisphere="left", file_type="surface", resamp_res=x_res
     )
   }
@@ -204,7 +203,7 @@ smooth_cifti <- function(
 
     surfR_fname <- file.path(tempdir(), "right.surf.gii")
     surfR_fname <- resample_gifti(
-      demo_files()$surf["right"], 
+      ciftiTools.files$surf["right"], 
       surfR_fname, hemisphere="right", file_type="surface", resamp_res=x_res
     )
   }

@@ -227,3 +227,42 @@ dim.xifti <- function(x) {
 as.matrix.xifti <- function(x, ...) {
   do.call(rbind, x$data)
 }
+
+#' Infer resolution from \code{"xifti"} and surfaces
+#' 
+#' @inheritParams xifti_Param
+#' @param surfL Left surface
+#' @param surfR Right surface
+#' 
+#' @keywords internal
+#' 
+#' @return The inferred resolution
+#' 
+infer_resolution <- function(xifti, surfL=NULL, surfR=NULL) {
+  res <- NULL
+  if (!is.null(xifti$meta$cortex$medial_wall_mask$left)) {
+    res <- length(xifti$meta$cortex$medial_wall_mask$left)
+  } else if (!is.null(xifti$meta$cortex$medial_wall_mask$right)) {
+    res <- length(xifti$meta$cortex$medial_wall_mask$right)
+  } else {
+    if (!is.null(xifti$data$cortex_left) && !is.null(xifti$data$cortex_right)) {
+      if (nrow(xifti$data$cortex_left) == nrow(xifti$data$cortex_right)) {
+        res <- nrow(xifti$data$cortex_left)
+      }
+    } else if (!is.null(xifti$data$cortex_left) && !is.null(surfL)) {
+      prop_mwall <- nrow(xifti$data$cortex_left) / nrow(surfL$vertices)
+      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfL$vertices) } else { res <- nrow(xifti$data$cortex_left) }
+    } else if (!is.null(xifti$data$cortex_right) && !is.null(surfR)) {
+      prop_mwall <- nrow(xifti$data$cortex_right) / nrow(surfR$vertices)
+      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfR$vertices) } else { res <- nrow(xifti$data$cortex_right) }
+    }
+    if (is.null(res)) {
+      nvL <- ifelse(is.null(surfL), Inf, nrow(surfL$vertices))
+      nvR <- ifelse(is.null(surfR), Inf, nrow(surfR$vertices))
+      res <- min(nvL, nvR)
+      if (is.infinite(res)) { res <- NULL }
+    }
+  }
+
+  res
+}

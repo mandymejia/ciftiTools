@@ -27,19 +27,19 @@ view_xifti_surface.surf_hemi <- function(
   for (this_h in c("left", "right")) {
     surf <- switch(this_h, left=surfL, right=surfR)
     surf2 <- switch(this_h, left=xifti$surf$cortex_left, right=xifti$surf$cortex_right)
-    surf3 <- demo_files()$surf[this_h]
+    surf3 <- ciftiTools.files$surf[this_h]
     dat <- switch(this_h, left=xifti$data$cortex_left, right=xifti$data$cortex_right)
 
     if (!is.null(surf)) {
-      surf <- make_surf(surf, this_h)
+      surf <- read_surf(surf, this_h)
     } else if (!is.null(surf2)) {
-      surf <- make_surf(surf2, this_h)
+      surf <- read_surf(surf2, this_h)
     } else if (this_h %in% hemisphere) {
-      surf <- make_surf(surf3, this_h)
+      surf <- read_surf(surf3, this_h)
       use_example_surf[this_h] <- TRUE
     } else if (is.null(hemisphere)) {
       if (!is.null(dat)) { 
-        surf <- make_surf(surf3, this_h) 
+        surf <- read_surf(surf3, this_h) 
         use_example_surf[this_h] <- TRUE
       }
     }
@@ -123,25 +123,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
   values <- list(left=NULL, right=NULL)
 
   # solve for cortical resolution. assume left and right have the same resolution
-  res <- NULL
-  if (!is.null(xifti$meta$cortex$medial_wall_mask$left)) {
-    res <- length(xifti$meta$cortex$medial_wall_mask$left)
-  } else if (!is.null(xifti$meta$cortex$medial_wall_mask$right)) {
-    res <- length(xifti$meta$cortex$medial_wall_mask$right)
-  } else {
-    if (!is.null(xifti$data$cortex_left) && !is.null(xifti$data$cortex_right)) {
-      if (nrow(xifti$data$cortex_left) == nrow(xifti$data$cortex_right)) {
-        res <- nrow(xifti$data$cortex_left)
-      }
-    } else if (!is.null(xifti$data$cortex_left)) {
-      prop_mwall <- nrow(xifti$data$cortex_left) / nrow(surfL$vertices)
-      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfL$vertices) } else { res <- nrow(xifti$data$cortex_left) }
-    } else if (!is.null(xifti$data$cortex_right)) {
-      prop_mwall <- nrow(xifti$data$cortex_right) / nrow(surfR$vertices)
-      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfR$vertices) } else { res <- nrow(xifti$data$cortex_right) }
-    }
-  }
-  if (is.null(res)) { res <- min(nrow(surfL$vertices), nrow(surfR$vertices)) }
+  res <- infer_resolution(xifti, surfL, surfR)
 
   # get the mesh and values for each hemisphere
   for (h in hemisphere) {
@@ -591,17 +573,13 @@ view_xifti_surface.draw_mesh <- function(
 #' @inheritSection rgl_static_plots_Description Embedding the Static Plots
 #' 
 #' @inheritParams xifti_Param
-#' @param surfL,surfR (Optional) The brain surface model to use.
-#'  Each can be a file path for a GIFTI, a file read by gifti::readgii,
-#'  or a list with components "vertices" and "faces". If provided, they will override
-#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if those exist.
-#'  Leave as \code{NULL} (default) to use \code{xifti$surf$cortex_left} and 
-#'  \code{xifti$surf$cortex_right} if those exist, or the default surfaces
-#'  if those do not exist. 
-#' 
-#'  The default surfaces are determined by (\code{ciftiTools.getOption("surf")}).
-#'  They are "inflated" by default but can be set to "very inflated" or 
-#'  "midthickness".
+#' @param surfL,surfR (Optional) The brain surface model to use. Each can be a
+#'  \code{"surf"} object, any valid argument to \code{\link{read_surf}} , or one
+#'  of \code{"very inflated"}, \code{"inflated"}, or \code{"midthickness"}. If 
+#'  provided, it will override \code{xifti$surf$cortex_left} or 
+#'  \code{xifti$surf$cortex_right} if it exists. Leave as \code{NULL} (default)
+#'  to use \code{xifti$surf$cortex_left} or \code{xifti$surf$cortex_right} if it
+#'  exists, or the default inflated surfaces if it does not exist. 
 #' 
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
 #'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
@@ -848,6 +826,12 @@ view_xifti_surface <- function(
   }
 
   # `xifti`, `surfL`, `surfR`
+  if (is.character(surfL) && length(surfL)==1 && surfL %in% c("inflated", "very inflated", "midthickness")) {
+    surfL <- load_surf("left", surfL)
+  }
+  if (is.character(surfR) && length(surfR)==1 && surfR %in% c("inflated", "very inflated", "midthickness")) {
+    surfR <- load_surf("right", surfR)
+  }
   if (is.null(xifti)) {
     if (is.null(surfL) && is.null(surfR)) {
       warning("Nothing to plot in `view_xifti_surface`.")

@@ -5,9 +5,9 @@
 \alias{make_surf}
 \title{Get a \code{"surf"} object}
 \usage{
-read_surf(surf, expected_hemisphere = NULL)
+read_surf(surf, expected_hemisphere = NULL, resamp_res = NULL)
 
-make_surf(surf, expected_hemisphere = NULL)
+make_surf(surf, expected_hemisphere = NULL, resamp_res = NULL)
 }
 \arguments{
 \item{surf}{Either a file path to a surface GIFTI; a \code{"gifti"}
@@ -18,6 +18,9 @@ read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and
 of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the
 opposite, an error is raised. If \code{NULL} (default), use the GIFTI
 hemisphere.}
+
+\item{resamp_res}{The resolution to resample the surfaces to. If \code{NULL}
+(default), do not resample.}
 }
 \value{
 The \code{"surf"}: a list with components \code{"vertices"}
@@ -35,6 +38,7 @@ Other functions for reading in CIFTI or GIFTI metric data:
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
+\code{\link{load_surf}()},
 \code{\link{read_cifti}()},
 \code{\link{read_xifti2}()}
 
