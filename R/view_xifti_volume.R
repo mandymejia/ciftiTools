@@ -41,6 +41,7 @@ view_xifti_volume <- function(
   }
 
   stopifnot(is.xifti(xifti))
+  stopifnot(!is.null(xifti$data$subcort))
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx]
