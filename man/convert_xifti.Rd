@@ -44,8 +44,8 @@ name as \code{x} but with the extension updated.}
 \item{values}{(Optional) A vector of the original data values. They should all
 be unique. They may not all occur in the \code{"xifti"} data, but every
 datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
-mapped to integers from $0$ to $N-1$, with $N$ being the length of
-\code{values}.}
+mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
+number of \code{values}.}
 
 \item{nsig}{Take this many significant digits for the data values. If
 \code{Inf} (default), do not round.}

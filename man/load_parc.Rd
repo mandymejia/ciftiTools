@@ -23,7 +23,8 @@ argument will affect the indices, colors, and names of each parcel, but not
 the parcel boundaries.}
 }
 \value{
-The parcellation as a dlabel \code{"xifti"} with one column
+The parcellation as a dlabel \code{"xifti"} with one column. Each key
+represents one unique parcel.
 }
 \description{
 Load a parcellation included in \code{ciftiTools}.

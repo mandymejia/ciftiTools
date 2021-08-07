@@ -31,7 +31,8 @@
 #'  argument will affect the indices, colors, and names of each parcel, but not
 #'  the parcel boundaries.
 #'
-#' @return The parcellation as a dlabel \code{"xifti"} with one column
+#' @return The parcellation as a dlabel \code{"xifti"} with one column. Each key
+#'  represents one unique parcel.
 #' 
 #' @family reading
 #' @export

@@ -94,7 +94,7 @@ test_that("Miscellaneous functions are working", {
     testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_s1))
     testthat::expect_equal(as.matrix(cii_t), as.matrix(cii_t1))
     testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_t))
-    # testthat::expect_equal(as.matrix(cii_l), as.matrix(cii_l1)) # [TO DO]: off by one due to l1 having `???` Key at 0
+    # testthat::expect_equal(as.matrix(cii_l), as.matrix(cii_l1)) # [TO DO]: off by one due to l1 having `???` key at 0
 
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))

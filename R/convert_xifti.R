@@ -10,8 +10,8 @@
 #' @param values (Optional) A vector of the original data values. They should all
 #'  be unique. They may not all occur in the \code{"xifti"} data, but every
 #'  datapoint in the \code{"xifti"} must occur in \code{values}. Data will be 
-#'  mapped to integers from $0$ to $N-1$, with $N$ being the length of 
-#'  \code{values}.
+#'  mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
+#'  number of \code{values}.
 #' @param nsig Take this many significant digits for the data values. If 
 #'  \code{Inf} (default), do not round.
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
@@ -69,7 +69,7 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
     if (any(duplicated(values))) { warning("Removing duplicate `values`.\n") }
     values <- sort(unique(values))
   }
-  if (length(values) > 100) { warning("Over 100 unique `values` in the `xifti`.\n") }
+  if (length(values) > 1000) { warning("Over 1000 unique `values` in the `xifti`.\n") }
   conversion_table <- data.frame(values=values, label=seq(length(values))-1)
 
   # Convert data to label values.
