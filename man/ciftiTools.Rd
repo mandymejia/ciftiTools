@@ -5,17 +5,19 @@
 \alias{ciftiTools}
 \title{ciftiTools: Tools for Reading and Visualizing CIFTI Brain Files}
 \description{
-Functions for reading in CIFTI or GIFTI metric data:
+Here are groups of commonly-used functions in \code{ciftiTools}:
 }
 \details{
+Functions for reading in CIFTI or GIFTI metric data:
+
 \itemize{
 \item{\code{read_xifti}:}{   Read in a CIFTI file as a \code{"xifti"}}
 \item{\code{read_xifti2}:}{   Read in GIFTI files as a \code{"xifti"}}
 \item{\code{as.xifti}:}{   Combine numeric data to form a \code{"xifti"}}
 \item{\code{read_surf}:}{   Read in a surface GIFTI file as a \code{"surf"}}
 \item{\code{info_cifti}:}{   Read the metadata in a CIFTI file}
+\item{\code{load_surf}:}{   Read in a surface geometry included in \code{ciftiTools}}
 \item{\code{load_parc}:}{   Read in a dlabel parcellation included in \code{ciftiTools}}
-\item{\code{load_parc}:}{   Read in a surface geometry included in \code{ciftiTools}}
 }
 
 Functions for writing CIFTI or GIFTI metric data:

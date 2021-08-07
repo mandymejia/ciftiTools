@@ -1,4 +1,6 @@
 #' ciftiTools: Tools for Reading and Visualizing CIFTI Brain Files
+#' 
+#' Here are groups of commonly-used functions in \code{ciftiTools}:
 #'
 #' Functions for reading in CIFTI or GIFTI metric data:
 #' 
