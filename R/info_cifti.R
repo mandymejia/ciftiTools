@@ -389,6 +389,10 @@ info_cifti <- function(cifti_fname){
 
   # Check if this CIFTI is supported.
   cifti_fname <- format_path(cifti_fname, mode=4)
+  if (!is.fname(cifti_fname)) { 
+    stop("`", cifti_fname, "` is not an existing file.") 
+  }
+
   extn <- get_cifti_extn(cifti_fname)
 
   # ----------------------------------------------------------------------------
