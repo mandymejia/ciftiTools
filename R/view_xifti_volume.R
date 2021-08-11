@@ -45,8 +45,8 @@ view_xifti_volume <- function(
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx]
-  vol <- unmask_vol(values, xifti$meta$subcort$mask, fill=NA)
-  labs <- unmask_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
+  vol <- unmask_subcortex(values, xifti$meta$subcort$mask, fill=NA)
+  labs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Pick slices with a lot of subcortical voxels.
   if (!interactive) {

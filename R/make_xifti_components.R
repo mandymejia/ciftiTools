@@ -306,8 +306,8 @@ make_trans_mat <- function(nii_fname) {
 #'  first two will be vectorized and ordered spatially.
 #' 
 #'  The volume can be recovered using: 
-#'    \code{vol <- unmask_vol(data, mask, fill=NA)}
-#'    \code{labs <- unmask_vol(labels, mask, fill=0)}
+#'    \code{vol <- unmask_subcortex(data, mask, fill=NA)}
+#'    \code{labs <- unmask_subcortex(labels, mask, fill=0)}
 #'
 #' @importFrom RNifti readNifti
 #' @importFrom oro.nifti nifti_header
