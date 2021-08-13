@@ -52,9 +52,9 @@ In this vignette, we will use example data included in the `ciftiTools` package.
 We will also use GIFTI files containing very inflated surface geometry.
 
 ```{r}
-cifti_fnames <- ciftiTools::ciftiTools.files$cifti
-surfL_fname <- ciftiTools::ciftiTools.files$surf["left"]
-surfR_fname <- ciftiTools::ciftiTools.files$surf["right"]
+cifti_fnames <- ciftiTools::ciftiTools.files()$cifti
+surfL_fname <- ciftiTools::ciftiTools.files()$surf["left"]
+surfR_fname <- ciftiTools::ciftiTools.files()$surf["right"]
 ```
 
 # Reading and Writing
@@ -317,7 +317,7 @@ print(max(as.matrix(xii)))
 ```{r}
 # Reading
 # ciftiTools.setOption("surf", "midthickness") # [TO DO] replace
-surf <- read_surf(ciftiTools.files$surf["left"])
+surf <- read_surf(ciftiTools.files()$surf["left"])
 surf
 ```
 
@@ -337,7 +337,7 @@ surf <- resample_surf(surf, 2000, "left")
 resample_gifti(surfL_fname, file.path(out_dir, "my.L.2k.surf.gii"), "left", resamp_res=2000)
 ```
 
-As shown above, the inflated surface is included as a GIFTI file and can be accessed with `ciftiTools.files`. But two more surfaces are available through the function `load_surf`:
+As shown above, the inflated surface is included as a GIFTI file and can be accessed with `ciftiTools.files()`. But two more surfaces are available through the function `load_surf`:
 
 ```{r, fig.cap="Two alternative surfaces", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
 xii <- as.xifti(

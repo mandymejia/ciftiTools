@@ -9,7 +9,7 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
   tdir <- tempdir()
 
-  fnames <- ciftiTools.files
+  fnames <- ciftiTools.files()
 
   for (cii_fname in fnames$cifti) {
     cat("\n\n"); cat(cii_fname); cat("\n\n")
@@ -76,7 +76,7 @@ test_that("Writing CIFTI and GIFTI files is working", {
     cii2 <- do.call(read_xifti2, cii_sep[1])
     cii2 <- do.call(read_xifti2, cii_sep)
     cii2 <- do.call(read_xifti2, c(cii_sep[1], list(resamp_res=1000)))
-    cii2 <- do.call(read_xifti2, c(cii_sep, list(resamp_res=1000, surfL=ciftiTools.files$surf["left"])))
+    cii2 <- do.call(read_xifti2, c(cii_sep, list(resamp_res=1000, surfL=ciftiTools.files()$surf["left"])))
   }
 
   # Writing surfaces

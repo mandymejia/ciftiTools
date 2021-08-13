@@ -7,7 +7,7 @@ check_wb <- function() {
 test_that("Reading CIFTI and GIFTI files is working", {
   check_wb()
 
-  fnames <- ciftiTools.files
+  fnames <- ciftiTools.files()
 
   for (cii_fname in fnames$cifti) {
     cat("\n\n"); cat(cii_fname); cat("\n\n")

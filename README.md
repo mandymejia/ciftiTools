@@ -45,9 +45,9 @@ library(ciftiTools)
 ciftiTools.setOption("wb_path", "path/to/workbench")
 
 # Read and visualize a CIFTI file -------------------------------
-cifti_fname <- ciftiTools::ciftiTools.files$cifti["dtseries"]
-surfL_fname <- ciftiTools.files$surf["left"]
-surfR_fname <- ciftiTools.files$surf["right"]
+cifti_fname <- ciftiTools::ciftiTools.files()$cifti["dtseries"]
+surfL_fname <- ciftiTools.files()$surf["left"]
+surfR_fname <- ciftiTools.files()$surf["right"]
 
 xii <- read_cifti(
   cifti_fname, brainstructures="all", 
@@ -111,7 +111,7 @@ but also GIFTI and NIFTI files. For example, we can plot a surface
 GIFTI:
 
 ``` r
-xii <- as.xifti(surfL=read_surf(ciftiTools.files$surf["left"]))
+xii <- as.xifti(surfL=read_surf(ciftiTools.files()$surf["left"]))
 plot(xii)
 ```
 

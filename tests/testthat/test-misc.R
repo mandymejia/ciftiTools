@@ -9,7 +9,7 @@ test_that("Miscellaneous functions are working", {
 
   tdir <- tempdir()
 
-  fnames <- ciftiTools.files
+  fnames <- ciftiTools.files()
 
   surfL_6k_fname <- file.path(tdir, "L_6k.surf.gii")
   resample_gifti(
@@ -81,13 +81,9 @@ test_that("Miscellaneous functions are working", {
 
     cii_s <- convert_xifti(cii, "dscalar")
     cii_t <- convert_xifti(cii, "dtseries")
-    if (grepl("label", cii_fname)) {
+    if (!grepl("ones", cii_fname)) {
       cii_l <- convert_xifti(cii, "dlabel", nsig=3)
       cii_l1 <- read_xifti(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3), brainstructures = brainstructures)
-      # [TO DO] error if subcort exists?
-    } else if (!grepl("ones", cii_fname)) {
-      cii_l <- testthat::expect_warning(convert_xifti(cii, "dlabel", nsig=3))
-      cii_l1 <- read_xifti(testthat::expect_warning(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3)), brainstructures = brainstructures)
     }
     cii_s1 <- read_xifti(convert_xifti(cii_fname, "dscalar", file.path(tdir, "cii.dscalar.nii")), brainstructures = brainstructures)
     cii_t1 <- read_xifti(convert_xifti(cii_fname, "dtseries", file.path(tdir, "cii.dtseries.nii")), brainstructures = brainstructures)

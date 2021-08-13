@@ -27,7 +27,7 @@ view_xifti_surface.surf_hemi <- function(
   for (this_h in c("left", "right")) {
     surf <- switch(this_h, left=surfL, right=surfR)
     surf2 <- switch(this_h, left=xifti$surf$cortex_left, right=xifti$surf$cortex_right)
-    surf3 <- ciftiTools.files$surf[this_h]
+    surf3 <- ciftiTools.files()$surf[this_h]
     dat <- switch(this_h, left=xifti$data$cortex_left, right=xifti$data$cortex_right)
 
     if (!is.null(surf)) {

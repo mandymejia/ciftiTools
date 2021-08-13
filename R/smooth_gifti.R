@@ -46,7 +46,7 @@ smooth_gifti <- function(
     x_res <- nrow(readgii(original_fname)$data[[1]])
     surf_fname <- file.path(tempdir(), paste0(hemisphere, ".surf.gii"))
     surf_fname <- resample_gifti(
-      ciftiTools.files$surf[hemisphere], 
+      ciftiTools.files()$surf[hemisphere], 
       surf_fname, hemisphere=hemisphere, file_type="surface", resamp_res=x_res
     )
   }

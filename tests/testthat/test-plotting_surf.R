@@ -10,7 +10,7 @@ test_that("plot_xifti_surface and related functions are working", {
 
   plot2 <- function(...){plot(...); rgl::rgl.close()}
 
-  fnames <- ciftiTools.files
+  fnames <- ciftiTools.files()
   for (cii_fname in fnames$cifti) {
     cii <- readcii(cii_fname)
     print(cii$meta$cifti$intent)
@@ -39,17 +39,17 @@ test_that("plot_xifti_surface and related functions are working", {
     plot2(cii, hemisphere="both")
     testthat::expect_warning(
       # warning printed, even though they do match
-      plot2(cii, surfR=ciftiTools.files$surf["right"], hemisphere="both")
+      plot2(cii, surfR=ciftiTools.files()$surf["right"], hemisphere="both")
     )
     testthat::expect_warning(
       plot2(cii, surfR="very inflated", hemisphere="both")
     )
   }
 
-  plot2(read_surf(ciftiTools.files$surf["left"]))
+  plot2(read_surf(ciftiTools.files()$surf["left"]))
   plot2(load_surf(name="midthickness"))
   testthat::expect_warning(
-    plot2(as.xifti(surfR=make_surf(ciftiTools.files$surf["right"])), hemisphere="both", title="My Awesome Surfs")
+    plot2(as.xifti(surfR=make_surf(ciftiTools.files()$surf["right"])), hemisphere="both", title="My Awesome Surfs")
   )
 
 })
