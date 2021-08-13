@@ -77,9 +77,13 @@ and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
 If a brain structure is indicated but does not exist in the CIFTI file, a
 warning will occur and that brain structure will be skipped.}
 
-\item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
-(default), read all the data. Must be a subset of the indices present in the
-file, or an error will occur.}
+\item{idx}{Numeric vector indicating the data indices (columns) to read. If
+\code{NULL} (default), read in all the data. Must be a subset of the indices
+present in the file, or an error will occur.
+
+For high-resolution CIFTI files, reading in only a subset of the data saves
+memory, but will be slower than reading in the entire file due to the
+required intermediate steps.}
 
 \item{resamp_res}{Resolution to resample the cortical data and surface to.
 Default: \code{NULL} (do not resample). If not \code{NULL}, the data will
