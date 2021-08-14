@@ -696,6 +696,15 @@ view_xifti_surface <- function(
     if (isFALSE(widget)) { 
       warning("`rgl.useNULL` is `TRUE`, and the null device cannot render the Open GL window. Using a widget instead.\n") 
     }
+    if (length(fname) > 1) {
+      warning("Using first entry of `fname`, since only one html file is being written.\n")
+      fname <- fname[1]
+    }
+    if (is.character(fname)) {
+      if (endsWith(fname, ".png")) {
+        warning("`rgl.useNULL` is `TRUE`, and the null device cannot render the Open GL window to create the pngs. Using an html file instead.\n")
+      }
+    }
     widget <- TRUE
   } else {
     if (isFALSE(fname)) {
@@ -711,15 +720,28 @@ view_xifti_surface <- function(
       }
       if (is.null(widget)) { widget <- length(idx) > 1 }
     } else {
-      fname_dirs <- unique(dirname(fname))
-      if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
-      if (any(grepl("html", fname))) {
-        if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
-        if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
-        fname <- fname[grepl("html", fname)][1]
-        if (isFALSE(widget)) { warning("Saving an .html file requires rendering a widget. Setting `widget=TRUE`.\n") }
-        widget <- TRUE
-      } else {
+      if (is.character(fname)) {
+        fname_dirs <- unique(dirname(fname))
+        if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
+        if (any(grepl("html", fname))) {
+          if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
+          if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
+          fname <- fname[grepl("html", fname)][1]
+          if (isFALSE(widget)) { warning("Saving an .html file requires rendering a widget. Setting `widget=TRUE`.\n") }
+          widget <- TRUE
+        } else {
+          if (isTRUE(widget)) { 
+            warning(
+              "`fname` is not `FALSE` but `widget` is `TRUE`. ", 
+              "`view_xifti_surface` assumes the user wants to save a .png file(s), but these can only be rendered using the Open GL window. ",
+              "Setting `widget` to `FALSE` in order to render .png file(s) using OpenGL. ",
+              "To save an html file instead, append `'.html'` to `fname`. ",
+              "Or, to view a widget rather than writing any files, set `fname` to `FALSE`.\n"
+            )
+          }
+          widget <- FALSE
+        }
+      } else if (isTRUE(fname)) {
         if (isTRUE(widget)) { 
           warning(
             "`fname` is not `FALSE` but `widget` is `TRUE`. ", 
@@ -762,34 +784,35 @@ view_xifti_surface <- function(
       )
     }
 
-    if (any(grepl("html", fname))) {
+    if (any(grepl("html$", fname))) {
       if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
         stop(
           "Package \"htmlwidgets\" will be needed by `view_xifti_surface` to ",
           "write the widget to an html file. Please install it.\n"
         )
       }
+      if (length(fname) > 1) {
+        warning("Using first entry of `fname`, since only one html file is being written.\n")
+        fname <- fname[1]
+      }
     } else {
       fname <- gsub(".png$", "", fname)
       if (!(length(fname) %in% c(1, length(idx)))) {
-        warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.")
+        warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
         fname <- fname[1]
-      }
-      if (length(fname) == 1 && length(idx) > 1) {
-        fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
-        if (fname_suffix == "names") {
-          if (is.null(xifti$meta$cifti$names)) {
-            fname <- paste0(fname, "_", as.character(idx))
-          } else {
-            fname <- paste0(fname, "_", xifti$meta$cifti$names)
-          }
-        } else {
-          fname <- paste0(fname, "_", as.character(idx)) 
-        }
       }
       if (rgl::rgl.useNULL()) {
         fname <- paste0(fname, ".html")[1]
       } else {
+        if (length(fname) == 1 && length(idx) > 1) {
+          # Add suffix for png files
+          fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
+          if (fname_suffix == "names" && !is.null(xifti$meta$cifti$names)) {
+            fname <- paste0(fname, "_", xifti$meta$cifti$names)
+          } else {
+            fname <- paste0(fname, "_", as.character(idx)) 
+          }
+        }
         fname <- paste0(fname, ".png")
       }
     }
@@ -805,7 +828,7 @@ view_xifti_surface <- function(
 
     if (!isFALSE(legend_fname)) {
       if (!(length(legend_fname) == 1)) {
-        warning("Using first entry of `legend_fname`.")
+        warning("Using first entry of `legend_fname`.\n")
         legend_fname <- legend_fname[1]
       }
       if (grepl("\\[fname\\]", legend_fname)) {
@@ -838,11 +861,11 @@ view_xifti_surface <- function(
   }
   if (is.null(xifti)) {
     if (is.null(surfL) && is.null(surfR)) {
-      warning("Nothing to plot in `view_xifti_surface`.")
+      warning("Nothing to plot in `view_xifti_surface`.\n")
       return(NULL)
     } else {
       if (!is.null(idx) && (length(idx)>1 || idx!=1)) {
-        warning("Ignoring `idx` argument, since there is no data to plot.")
+        warning("Ignoring `idx` argument, since there is no data to plot.\n")
       }
       return(
         view_xifti_surface(
@@ -920,7 +943,7 @@ view_xifti_surface <- function(
 
   # `borders`, `alpha`, `edge_color`, `vertex_color`, `vertex_size`
   if (!is.null(borders)) {
-    if (length(borders) > 1) { warning("Using first entry of `borders` only.") }
+    if (length(borders) > 1) { warning("Using first entry of `borders` only.\n") }
     borders <- borders[1]
     if (isFALSE(borders)) {
       borders <- NULL
