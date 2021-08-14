@@ -25,4 +25,4 @@ Passes all the tests in `tests/run_ciftiTools_tests.R`
 
 ## Submission revision
 
-The previous submission was rejected because the tarball was over 5 MB. It has been reduced to 3.24 MB.
+The previous submission was rejected because the tarball was over 5 MB. It has been reduced to 3.25 MB.

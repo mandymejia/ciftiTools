@@ -1,4 +1,14 @@
-# 4.1 (In progress)
+# 4.3 (August 14, 2021)
+
+* Fix bug in `read_cifti_convert` where surfaces are not included
+* Switch from `ciftiTools.files` back to a function, `ciftiTools.files()`, because the latter doesn't actually work
+* Better handling of bad argument inputs and of the case where `rgl.useNULL()` in `view_xifti_surface`
+
+# 4.2 (August 10, 2021)
+
+* Rename `unmask_vol` to `unmask_subcortex`
+
+# 4.1 (August 7, 2021)
 
 ## Changes affecting users
 
