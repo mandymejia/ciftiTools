@@ -318,8 +318,6 @@ NULL
 #'  index value (\code{"idx"}). Set this to a character vector with the same 
 #'  length as \code{idx} to name the files exactly. 
 #' 
-#'  If a separate color legend exists and \code{!isFALSE(fname)}, it will be 
-#'  saved to "\[first_surf_fname\]_legend.png".
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
 #'  will use \code{2} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles.

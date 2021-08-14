@@ -65,10 +65,7 @@ data column names (underscores will replace spaces). Set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
 index value (\code{"idx"}). Set this to a character vector with the same
-length as \code{idx} to name the files exactly.
-
-If a separate color legend exists and \code{!isFALSE(fname)}, it will be
-saved to "[first_surf_fname]_legend.png".}
+length as \code{idx} to name the files exactly.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller

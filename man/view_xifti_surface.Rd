@@ -226,10 +226,7 @@ data column names (underscores will replace spaces). Set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
 index value (\code{"idx"}). Set this to a character vector with the same
-length as \code{idx} to name the files exactly.
-
-If a separate color legend exists and \code{!isFALSE(fname)}, it will be
-saved to "[first_surf_fname]_legend.png".}
+length as \code{idx} to name the files exactly.}
 
 \item{fname_suffix}{Save the plot(s) (and color legend if applicable)?
 
@@ -244,10 +241,7 @@ data column names (underscores will replace spaces). Set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
 index value (\code{"idx"}). Set this to a character vector with the same
-length as \code{idx} to name the files exactly.
-
-If a separate color legend exists and \code{!isFALSE(fname)}, it will be
-saved to "[first_surf_fname]_legend.png".}
+length as \code{idx} to name the files exactly.}
 
 \item{legend_fname}{Save the color legend? Since the legend is the same
 for each \code{idx} only one legend is written even if \code{length(idx)>1}.

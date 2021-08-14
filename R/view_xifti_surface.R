@@ -787,7 +787,11 @@ view_xifti_surface <- function(
           fname <- paste0(fname, "_", as.character(idx)) 
         }
       }
-      fname <- paste0(fname, ".png")
+      if (rgl::rgl.useNULL()) {
+        fname <- paste0(fname, ".html")[1]
+      } else {
+        fname <- paste0(fname, ".png")
+      }
     }
 
     fname_dirs <- unique(dirname(fname))
