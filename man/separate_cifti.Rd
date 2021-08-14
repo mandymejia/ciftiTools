@@ -49,16 +49,16 @@ separatecii(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
 \item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures).
-Default: \code{c("left","right")} (cortical surface only).
+to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
+\code{"all"} (obtain all three brain structures). Default:
+\code{c("left","right")} (cortex only).
 
-If a brain structure is indicated but does not exist, a warning will be
-raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist in the CIFTI file, a
+warning will occur and that brain structure will be skipped.}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names
 (*.[func/label].gii) to save the [left/right] cortex data to. If not provided,
@@ -95,9 +95,8 @@ mask for the entire subcortical structure, with values of 1 for in-ROI
 (in subcortex) voxels and 0 for out-of-ROI (not in subcortex) voxels. Will
 be written in \code{write_dir}.}
 
-\item{write_dir}{Where should the separated
-files be placed? \code{NULL} (default) will write them to
-the current working directory.
+\item{write_dir}{Where should the separated files be placed? \code{NULL}
+(default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}
 }

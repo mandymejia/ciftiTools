@@ -161,9 +161,6 @@ read_cifti_separate <- function(
   names(to_read)[names(to_read) == "ROIcortexR"] <- "cortexR_mwall"
   names(to_read)[names(to_read) == "ROIsubcortVol"] <- "subcortMask"
 
-  if (!is.null(surfL_fname)) { to_read["surfL"] <- surfL_fname }
-  if (!is.null(surfR_fname)) { to_read["surfR"] <- surfR_fname }
-
   # Read the CIFTI file from the separated files.
   if (verbose) { cat("Reading GIFTI and NIFTI files to form the CIFTI.\n") }
 
@@ -177,6 +174,9 @@ read_cifti_separate <- function(
     }
   }
   xifti <- do.call(make_xifti, to_read)
+
+  if (!is.null(surfL_fname)) { add_surf(xifti, surfL=surfL_fname) }
+  if (!is.null(surfR_fname)) { add_surf(xifti, surfR=surfR_fname) }
 
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
     xifti$meta$cortex["resamp_res"] <- list(resamp_res)

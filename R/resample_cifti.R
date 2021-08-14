@@ -1,11 +1,10 @@
-#' Resample CIFTI Data
+#' Resample CIFTI data
 #'
 #' Performs spatial resampling of CIFTI data on the cortical surface
 #'  by separating it into GIFTI and NIFTI files, resampling the GIFTIs, and then 
 #'  putting them together. (The subcortex is not resampled.) 
 #' 
 #'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
-#'
 #' 
 #' @param x The CIFTI file name or \code{"xifti"} object to resample. If
 #'  \code{NULL}, the result will be a \code{"xifti"} with resampled surfaces 

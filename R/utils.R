@@ -56,7 +56,7 @@ format_path <- function(path, dir=NULL, mode=NA) {
   path
 }
 
-#' File name check
+#' Is this an existing file path?
 #'
 #' Simple check if something is an existing file.
 #'
@@ -71,7 +71,7 @@ is.fname <- function(x){
   file.exists(x) & !dir.exists(x)
 }
 
-#' Format a path for \code{\link{system}}. 
+#' Format a path for \code{\link{system}}
 #' 
 #' Right now, it escapes spaces and parentheses with \code{"\\\\"}.
 #'
@@ -270,7 +270,7 @@ match_exactly <- function(
   return(TRUE)
 }
 
-#' Print Suppressible Message
+#' Print suppressible message
 #' 
 #' Print message only if ciftiTools Option "suppress_msgs" is TRUE
 #' 
@@ -286,7 +286,7 @@ ciftiTools_msg <- function(msg){
   invisible(NULL)
 }
 
-#' Print Suppressible Warning
+#' Print suppressible warning
 #' 
 #' Print warning only if ciftiTools Option "suppress_msgs" is TRUE
 #' 
@@ -302,7 +302,7 @@ ciftiTools_warn <- function(warn){
   invisible(NULL)
 }
 
-#' All Integers?
+#' All integers?
 #'
 #' Check if a data vector or matrix is all integers.
 #'

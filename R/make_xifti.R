@@ -4,9 +4,7 @@
 #'  \code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files 
 #'  which have been read in, or data objects (vectors, matrices or arrays, 
 #'  depending on the argument). See \code{as.xifti} for a user-function wrapper 
-#'  that only works with data objects. \code{make_xifti} can be used to combine 
-#'  the files written by \code{\link{separate_cifti}}, or read individual 
-#'  components independent of any CIFTI file. 
+#'  that only works with data objects.
 #' 
 #' Each data or surface component is optional. Metadata components
 #'  (\code{cortex[L/R]_mwall}, \code{subcortLabs}, and \code{subcortMask}) will 
@@ -185,7 +183,7 @@ make_xifti <- function(
     if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_left) == 29696) {
       if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
         # from ciftiTools R/sysdata.rda
-        xifti$meta$cortex$medial_wall_mask$left <- HCP_32k_mwall_template[,1]
+        xifti$meta$cortex$medial_wall_mask$left <- ciftiTools.data$HCP_32k_mwall_template[,1]
       }
     }
   } else {
@@ -244,7 +242,7 @@ make_xifti <- function(
     if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_right) == 29716) {
       if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
         # from ciftiTools R/sysdata.rda
-        xifti$meta$cortex$medial_wall_mask$right <- HCP_32k_mwall_template[,2]
+        xifti$meta$cortex$medial_wall_mask$right <- ciftiTools.data$HCP_32k_mwall_template[,2]
       }
     }
   } else {

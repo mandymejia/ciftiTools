@@ -2,15 +2,15 @@
 % Please edit documentation in R/is.xifti.R
 \name{is.surf}
 \alias{is.surf}
-\title{Validate a surface (vertices + faces)}
+\title{Validate a \code{"surf"} object (vertices + faces)}
 \usage{
 is.surf(x)
 }
 \arguments{
-\item{x}{The putative surface.}
+\item{x}{The putative \code{"surf"}.}
 }
 \value{
-Logical. Is \code{x} a valid surface?
+Logical. Is \code{x} a valid \code{"surf"}?
 }
 \description{
 Check if object is valid for \code{xifti$surf$cortex_left} or
@@ -20,7 +20,7 @@ object.
 \details{
 This is a helper function for \code{\link{is.xifti}}.
 
-Requirements: the surface must be a list of three components: "vertices",
+Requirements: the \code{"surf"} must be a list of three components: "vertices",
 "faces", and "hemisphere". The first two should each be a numeric matrix
 with three columns. The values in "vertices" represent spatial coordinates
 whereas the values in "faces" represent vertex indices defining the face.
@@ -30,7 +30,6 @@ or NULL indicating the brain hemisphere which the surface represents.
 }
 \seealso{
 Other functions for working with GIFTI surface geometry data: 
-\code{\link{add_surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},
 \code{\link{rotate_surf}()},

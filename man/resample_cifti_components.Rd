@@ -47,17 +47,17 @@ of to save the resampled GIFTI ROI corresponding to
 If NULL (default) and \code{cortex[L/R]_original_fname} was provided, it
 will be named by \code{\link{cifti_component_suffix}}.}
 
-\item{surfL_original_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfL_original_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the left cortex.}
 
-\item{surfR_original_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfR_original_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the right cortex.}
 
-\item{surfL_target_fname}{(Optional) File path to save the resampled GIFTI
-surface geometry file representing the left cortex at.}
+\item{surfL_target_fname}{(Optional) Where to save the resampled GIFTI
+surface geometry file representing the left cortex.}
 
-\item{surfR_target_fname}{(Optional) File path to save the resampled GIFTI
-surface geometry file representing the right cortex at.}
+\item{surfR_target_fname}{(Optional) Where to save the resampled GIFTI
+surface geometry file representing the right cortex.}
 
 \item{read_dir}{Directory to append to the path of every file being read,
 e.g. \code{cortexL_original_fname}. If \code{NULL} (default), do not append
@@ -65,9 +65,8 @@ any directory to the path.
 
 \code{read_dir} must already exist, or an error will be raised.}
 
-\item{write_dir}{Where should the separated
-files be placed? \code{NULL} (default) will write them to
-the current working directory.
+\item{write_dir}{Where should the separated files be placed? \code{NULL}
+(default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}
 }

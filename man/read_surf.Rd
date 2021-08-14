@@ -3,14 +3,14 @@
 \name{read_surf}
 \alias{read_surf}
 \alias{make_surf}
-\title{Convert input to a \code{"surf"} object}
+\title{Get a \code{"surf"} object}
 \usage{
-read_surf(surf, expected_hemisphere = NULL)
+read_surf(surf, expected_hemisphere = NULL, resamp_res = NULL)
 
-make_surf(surf, expected_hemisphere = NULL)
+make_surf(surf, expected_hemisphere = NULL, resamp_res = NULL)
 }
 \arguments{
-\item{surf}{Either a file path to a surface GIFTI; a "gifti" object
+\item{surf}{Either a file path to a surface GIFTI; a \code{"gifti"}
 read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and
 "triangle"; or, a \code{"surf"} object.}
 
@@ -18,25 +18,36 @@ read by \code{\link[gifti]{readgii}}; a list with entries "pointset" and
 of \code{surf}. If the hemisphere indicated in the GIFTI metadata is the
 opposite, an error is raised. If \code{NULL} (default), use the GIFTI
 hemisphere.}
+
+\item{resamp_res}{The resolution to resample the surfaces to. If \code{NULL}
+(default), do not resample.}
 }
 \value{
-The \code{"surf"} object: a list with components \code{"vertices"}
+The \code{"surf"}: a list with components \code{"vertices"}
 (3D spatial locations), \code{"faces"} (defined by three vertices), and
 \code{"hemisphere"} (\code{"left"}, \code{"right"}, or \code{NULL} if
 unknown).
 }
 \description{
 Coerce a file path to a surface GIFTI, a \code{"gifti"} object, a list with
-entries "pointset" and "triangle", or a \code{"surf"} object to a
-\code{"surf"} object.
+entries "pointset" and "triangle", or a \code{"surf"} to a
+\code{"surf"}.
 }
 \seealso{
+Other functions for reading in CIFTI or GIFTI metric data: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{load_surf}()},
+\code{\link{read_cifti}()},
+\code{\link{read_xifti2}()}
+
 Other functions for working with GIFTI surface geometry data: 
-\code{\link{add_surf}()},
 \code{\link{is.surf}()},
 \code{\link{resample_surf}()},
 \code{\link{rotate_surf}()},
 \code{\link{view_surf}()},
 \code{\link{write_surf_gifti}()}
 }
+\concept{reading}
 \concept{surfing}

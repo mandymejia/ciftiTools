@@ -3,6 +3,7 @@
 #' Un-applies a mask to vectorized data to yield its volumetric representation.
 #'  The mask and data should have compatible dimensions: the number of rows in
 #'  \code{dat} should equal the number of locations within the \code{mask}.
+#'  This is used for the subcortical CIFTI data.
 #' 
 #' @param dat Data matrix with locations along the rows and measurements along 
 #'  the columns. If only one set of measurements were made, this may be a 
@@ -15,7 +16,7 @@
 #'
 #' @export
 #' 
-unmask_vol <- function(dat, mask, fill=NA) {
+unmask_subcortex <- function(dat, mask, fill=NA) {
 
   # Check that dat is a vector or matrix.
   if (is.vector(dat) || is.factor(dat)) { dat <- matrix(dat, ncol=1) }
@@ -49,7 +50,7 @@ unmask_vol <- function(dat, mask, fill=NA) {
 #' Pad a 3D array by a certain amount in each direction, along each dimension.
 #'  This effectively undoes a crop.
 #'
-#' @param x A 3D array, e.g. \code{unmask_vol(xifti$data$subcort, xifti$meta$subcort$mask)}.
+#' @param x A 3D array, e.g. \code{unmask_subcortex(xifti$data$subcort, xifti$meta$subcort$mask)}.
 #' @param padding A \eqn{d \times 2} matrix indicating the number of 
 #'  slices to add at the beginning and end of each of the d dimensions, e.g.
 #'  \code{xifti$meta$subcort$mask_padding}.
@@ -80,7 +81,7 @@ uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
 }
 
-#' Convert coordinate list to volume.
+#' Convert coordinate list to volume
 #' 
 #' Converts a sparse coordinate list to its non-sparse volumetric representation.
 #' 

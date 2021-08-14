@@ -2,7 +2,7 @@
 % Please edit documentation in R/as.gifti.R
 \name{as.metric_gifti}
 \alias{as.metric_gifti}
-\title{Format metric data as a \code{"gifti"} object}
+\title{Format metric data as a \code{"gifti"}}
 \usage{
 as.metric_gifti(
   data,
@@ -28,15 +28,15 @@ or \code{"NIFTI_TYPE_FLOAT32"}. Can also be \code{NULL} (default), in which
 case the NIFTI type will be inferred from \code{data}.}
 }
 \value{
-The \code{"gifti"} object
+The \code{"gifti"}
 }
 \description{
 Format a \eqn{V x T} numeric matrix (V vertices, T measurements) or a length-T list
-of length-V numeric vectors as a \code{"gifti"} object using a template
+of length-V numeric vectors as a \code{"gifti"} using a template
 \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 }
 \details{
-If \code{data} is already a \code{"gifti"} object, \code{data$data} will be
+If \code{data} is already a \code{"gifti"}, \code{data$data} will be
 used and any metadata will be overwritten by the template or discarded.
 }
 \keyword{internal}

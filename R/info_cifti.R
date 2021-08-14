@@ -1,11 +1,11 @@
 #' The NIFTI intents supported by \code{ciftiTools}
 #'
-#' Table of CIFTI file types (NIFTI intents) supported By \code{ciftiTools}.
+#' Table of CIFTI file types (NIFTI intents) supported by \code{ciftiTools}.
 #'
 #' See https://www.nitrc.org/forum/attachment.php?attachid=334&group_id=454&forum_id=1955
 #'  for information about the different NIFTI intents.
 #'
-#' @return A data.frame with each supported file type along the rows, and
+#' @return A \code{data.frame} with each supported file type along the rows, and
 #'  column names "extension", "intent_code", "value", and "intent_name"
 #'
 #' @export
@@ -355,20 +355,20 @@ xml_cifti <- function(cifti_fname){
 #'  \enumerate{
 #'    \item{"dtseries"}{
 #'      \enumerate{
-#'        \item{time_start}{   Start time}
-#'        \item{time_step}{   The TR}
-#'        \item{time_unit}{   Unit of time}
+#'        \item{time_start:}{   Start time}
+#'        \item{time_step:}{   The TR}
+#'        \item{time_unit:}{   Unit of time}
 #'      }
 #'    }
 #'    \item{"dscalar"}{
 #'      \enumerate{
-#'        \item{names}{   Name of each data column}
+#'        \item{names:}{   Name of each data column}
 #'      }
 #'    }
 #'    \item{"dlabels"}{
 #'      \enumerate{
-#'        \item{names}{(   Names of each data column.)}
-#'        \item{labels}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
+#'        \item{names:}{(   Names of each data column.)}
+#'        \item{labels:}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
 #'      }
 #'    }
 #'  }
@@ -389,6 +389,10 @@ info_cifti <- function(cifti_fname){
 
   # Check if this CIFTI is supported.
   cifti_fname <- format_path(cifti_fname, mode=4)
+  if (!is.fname(cifti_fname)) { 
+    stop("`", cifti_fname, "` is not an existing file.") 
+  }
+
   extn <- get_cifti_extn(cifti_fname)
 
   # ----------------------------------------------------------------------------

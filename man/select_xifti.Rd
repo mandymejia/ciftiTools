@@ -2,12 +2,12 @@
 % Please edit documentation in R/select_xifti.R
 \name{select_xifti}
 \alias{select_xifti}
-\title{Select columns of a \code{"xifti"} object}
+\title{Select columns of a \code{"xifti"}}
 \usage{
 select_xifti(xifti, idx, add_meta = "select")
 }
 \arguments{
-\item{xifti}{The \code{"xifti"} object.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{idx}{The column indices to keep, in order.}
 
@@ -24,6 +24,7 @@ reorder the columns.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},

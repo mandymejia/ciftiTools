@@ -50,7 +50,7 @@ write_subcort_nifti <- function(
   }
 
   # Data.
-  subcortVol <- unmask_vol(subcortVol, subcortMask, fill=fill)
+  subcortVol <- unmask_subcortex(subcortVol, subcortMask, fill=fill)
   ## https://github.com/jonclayden/RNifti/issues/5
   if (!is.null(trans_mat)) { 
     subcortVol <- RNifti::`sform<-`(subcortVol, trans_mat) 
@@ -60,7 +60,7 @@ write_subcort_nifti <- function(
   # Labels...
   stopifnot(is.subcort_labs(subcortLabs))
   subcortLabs <- as.numeric(subcortLabs) #- 2
-  subcortLabs <- unmask_vol(subcortLabs, subcortMask, fill=fill)
+  subcortLabs <- unmask_subcortex(subcortLabs, subcortMask, fill=fill)
   if (!is.null(trans_mat)) { 
     subcortLabs <- RNifti::`sform<-`(subcortLabs, trans_mat) 
   }

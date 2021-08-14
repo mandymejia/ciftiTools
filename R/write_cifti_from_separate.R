@@ -1,4 +1,4 @@
-#' Make CIFTI file
+#' Write a CIFTI file from NIFTI and GIFTI files
 #'
 #' Make a CIFTI file from component NIFTI/GIFTI files using the 
 #'  \code{-cifti-create-...} Connectome Workbench commands.

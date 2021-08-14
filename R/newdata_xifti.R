@@ -8,7 +8,7 @@
 #' @param newdata The \eqn{V \ times T} matrix of data values to replace those
 #'  in \code{xifti} with. The left cortex vertices should be at the top, right
 #'  cortex vertices in the middle, and subcortex vertices at the bottom (when
-#'  present).
+#'  present). Can also be a length-one vector to set all values equally.
 #' @param newnames Replace the names in the \code{xifti}. If \code{NULL}
 #'  (default), keep the original names.
 #' @return The new \code{"xifti"}
@@ -21,8 +21,12 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   xifti_dim <- dim(xifti)
 
   newdata_dim <- dim(newdata)
-  if (is.null(newdata_dim)) { 
-    newdata <- matrix(newdata, ncol=xifti_dim[2])
+  if (is.null(newdata_dim)) {
+    if (length(newdata) == 1) {
+      newdata <- matrix(newdata, nrow=xifti_dim[1], ncol=xifti_dim[2])
+    } else {
+      newdata <- matrix(newdata, ncol=xifti_dim[2])
+    }
     newdata_dim <- dim(newdata)
   }
   stopifnot(length(newdata_dim)==2)

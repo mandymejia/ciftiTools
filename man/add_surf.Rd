@@ -2,13 +2,12 @@
 % Please edit documentation in R/add_surf.R
 \name{add_surf}
 \alias{add_surf}
-\title{Add surface(s) to a \code{"xifti"} object}
+\title{Add surface(s) to a \code{"xifti"}}
 \usage{
 add_surf(xifti, surfL = NULL, surfR = NULL)
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{surfL}{(Optional) Left brain surface model. Can be a file
 path to a GIFTI surface geometry file (ends in "*.surf.gii"), a
@@ -32,12 +31,14 @@ will be added to \code{xifti$surf$cortex_right}. Any existing surfaces will
 be overwritten.
 }
 \seealso{
-Other functions for working with GIFTI surface geometry data: 
-\code{\link{is.surf}()},
-\code{\link{read_surf}()},
-\code{\link{resample_surf}()},
-\code{\link{rotate_surf}()},
-\code{\link{view_surf}()},
-\code{\link{write_surf_gifti}()}
+Other functions for manipulating `xifti` objects: 
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{transform_xifti}()}
 }
-\concept{surfing}
+\concept{manipulating}

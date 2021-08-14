@@ -2,7 +2,7 @@
 % Please edit documentation in R/rox_args_docs.R
 \name{surface_plot_Params}
 \alias{surface_plot_Params}
-\title{surface plot}
+\title{Surface plot}
 \arguments{
 \item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or
 \code{"both"}. If \code{NULL} (default), both views will be shown. Each view
@@ -39,10 +39,7 @@ data column names (underscores will replace spaces). Set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
 index value (\code{"idx"}). Set this to a character vector with the same
-length as \code{idx} to name the files exactly.
-
-If a separate color legend exists and \code{!isFALSE(fname)}, it will be
-saved to "[first_surf_fname]_legend.png".}
+length as \code{idx} to name the files exactly.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller
@@ -80,6 +77,6 @@ be set to 0.6 or 160\\% for the Open GL window, and 0.67 or 167\\% for the
 widget.)}
 }
 \description{
-surface plot
+Surface plot
 }
 \keyword{internal}

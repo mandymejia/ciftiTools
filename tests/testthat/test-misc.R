@@ -9,7 +9,7 @@ test_that("Miscellaneous functions are working", {
 
   tdir <- tempdir()
 
-  fnames <- ciftiTools:::demo_files()
+  fnames <- ciftiTools.files()
 
   surfL_6k_fname <- file.path(tdir, "L_6k.surf.gii")
   resample_gifti(
@@ -81,20 +81,16 @@ test_that("Miscellaneous functions are working", {
 
     cii_s <- convert_xifti(cii, "dscalar")
     cii_t <- convert_xifti(cii, "dtseries")
-    if (grepl("label", cii_fname)) {
+    if (!grepl("ones", cii_fname)) {
       cii_l <- convert_xifti(cii, "dlabel", nsig=3)
       cii_l1 <- read_xifti(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3), brainstructures = brainstructures)
-      # [TO DO] error if subcort exists?
-    } else if (!grepl("ones", cii_fname)) {
-      cii_l <- testthat::expect_warning(convert_xifti(cii, "dlabel", nsig=3))
-      cii_l1 <- read_xifti(testthat::expect_warning(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3)), brainstructures = brainstructures)
     }
     cii_s1 <- read_xifti(convert_xifti(cii_fname, "dscalar", file.path(tdir, "cii.dscalar.nii")), brainstructures = brainstructures)
     cii_t1 <- read_xifti(convert_xifti(cii_fname, "dtseries", file.path(tdir, "cii.dtseries.nii")), brainstructures = brainstructures)
     testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_s1))
     testthat::expect_equal(as.matrix(cii_t), as.matrix(cii_t1))
     testthat::expect_equal(as.matrix(cii_s), as.matrix(cii_t))
-    # testthat::expect_equal(as.matrix(cii_l), as.matrix(cii_l1)) # [TO DO]: off by one due to l1 having `???` Key at 0
+    # testthat::expect_equal(as.matrix(cii_l), as.matrix(cii_l1)) # [TO DO]: off by one due to l1 having `???` key at 0
 
     # remove_xifti (not exported)
     cii <- ciftiTools:::remove_xifti(cii, c("cortex_left", "sub", "surf_right"))
@@ -109,7 +105,7 @@ test_that("Miscellaneous functions are working", {
       cii2 <- move_to_mwall(move_from_mwall(cii, NA), NA)
     }
     testthat::expect_equal(cii, cii2)
-    
+
     # unmask_cortex
     if (!is.null(cii$data$cortex_left)) {
       cor2 <- unmask_cortex(
@@ -124,10 +120,10 @@ test_that("Miscellaneous functions are working", {
       )
     }
 
-    # unmask_vol
+    # unmask_subcortex
     if (!is.null(cii$data$subcort)) {
-      vol2 <- unmask_vol(cii$data$subcort, cii$meta$subcort$mask)
-      labs2 <- unmask_vol(
+      vol2 <- unmask_subcortex(cii$data$subcort, cii$meta$subcort$mask)
+      labs2 <- unmask_subcortex(
         as.numeric(cii$meta$subcort$labels),
         cii$meta$subcort$mask
       )
@@ -176,6 +172,9 @@ test_that("Miscellaneous functions are working", {
     # [TO DO]: test with different intents; test expected errors
 
     cii2 <- newdata_xifti(cii2, as.matrix(cii2))
+    stopifnot(max(abs(as.matrix(
+      newdata_xifti(cii2, 17) - newdata_xifti(cii2, 10) - newdata_xifti(cii2, 7)
+    ))) == 0)
 
     if (!grepl("dlabel", cii_fname)) {
       # Smooth metric GIFTI

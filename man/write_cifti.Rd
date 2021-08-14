@@ -5,7 +5,7 @@
 \alias{writeCIfTI}
 \alias{writecii}
 \alias{write_xifti}
-\title{Write a CIFTI file from a \code{"xifti"} object.}
+\title{Write a CIFTI file from a \code{"xifti"} object}
 \usage{
 write_cifti(
   xifti,
@@ -40,10 +40,9 @@ write_xifti(
 )
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
 \item{surfL_fname, surfR_fname}{If the [left/right] surface is present, it
 will be a written to a GIFTI file at this file path. If \code{NULL}

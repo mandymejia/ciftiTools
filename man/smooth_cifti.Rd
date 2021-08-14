@@ -5,7 +5,7 @@
 \alias{smoothCIfTI}
 \alias{smoothcii}
 \alias{smooth_xifti}
-\title{Smooth a CIFTI}
+\title{Smooth CIFTI data}
 \usage{
 smooth_cifti(
   x,
@@ -86,7 +86,7 @@ Default: \code{FALSE}.}
 The \code{cifti_target_fname}, invisibly
 }
 \description{
-Spatially smooth CIFTI data.
+Spatially smooth the metric data of a CIFTI file or \code{"xifti"} object.
 }
 \details{
 If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
@@ -96,9 +96,8 @@ warning will be printed.
 
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
-Surfaces are required for each hemisphere in the CIFTI. If they are not provided,
-the default surfaces (\code{ciftiTools.getOption("surf")}) will be used. This
-option is "inflated" by default. It can be set to "very inflated" or "midthickness".
+Surfaces are required for each hemisphere in the CIFTI. If they are not
+provided, the default inflated surfaces will be used.
 }
 \section{Connectome Workbench}{
 

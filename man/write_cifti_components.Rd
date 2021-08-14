@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_cifti.R
 \name{write_cifti_components}
 \alias{write_cifti_components}
-\title{Write CIFTI component files from a \code{"xifti"} object.}
+\title{Write CIFTI component files from a \code{"xifti"} object}
 \usage{
 write_cifti_components(
   xifti,
@@ -14,14 +14,12 @@ write_cifti_components(
 )
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{extn_cifti}{The CIFTI extension e.g. "dtseries.nii"}
 
-\item{write_dir}{Where should the separated
-files be placed? \code{NULL} (default) will write them to
-the current working directory.
+\item{write_dir}{Where should the separated files be placed? \code{NULL}
+(default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}
 

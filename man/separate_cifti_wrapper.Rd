@@ -13,23 +13,23 @@ separate_cifti_wrapper(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
 \item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortical surface), \code{"right"} (right
-cortical surface) and/or \code{"subcortical"} (subcortical and cerebellar
-gray matter). Can also be \code{"all"} (obtain all three brain structures).
-Default: \code{c("left","right")} (cortical surface only).
+to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
+\code{"all"} (obtain all three brain structures). Default:
+\code{c("left","right")} (cortex only).
 
-If a brain structure is indicated but does not exist, a warning will be
-raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist in the CIFTI file, a
+warning will occur and that brain structure will be skipped.}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should
 be a subset of the \code{brainstructures} argument.
 
-ROIs are typically the medial wall mask for the cortex and subcortical mask
-for the subcortex.}
+ROIs are typically the medial wall masks for the left and right cortex, and
+the subcortical mask for the subcortex.}
 
 \item{sep_fnames}{Where to write the separated files (override
 their default file names). This is a named list
@@ -51,9 +51,8 @@ ignored if specified.
 The \code{write_dir} argument can be used to place each separated file in
 the same directory.}
 
-\item{write_dir}{Where should the separated
-files be placed? \code{NULL} (default) will write them to
-the current working directory.
+\item{write_dir}{Where should the separated files be placed? \code{NULL}
+(default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}
 }

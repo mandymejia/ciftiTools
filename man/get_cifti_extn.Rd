@@ -7,7 +7,7 @@
 get_cifti_extn(cifti_fname)
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 }
 \value{
 Character file extension of CIFTI file, e.g. "dtseries.nii", "dscalar.nii"

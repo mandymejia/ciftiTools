@@ -65,10 +65,7 @@ data column names (underscores will replace spaces). Set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
 index value (\code{"idx"}). Set this to a character vector with the same
-length as \code{idx} to name the files exactly.
-
-If a separate color legend exists and \code{!isFALSE(fname)}, it will be
-saved to "[first_surf_fname]_legend.png".}
+length as \code{idx} to name the files exactly.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller
@@ -130,41 +127,42 @@ Finally, the default value for \code{param} is \code{"surf"}, not
 }
 \section{Navigating and Embedding the Interactive Plots}{
 
-Here are instructions for using the interactive Open GL window and html widget:
 
-To navigate the plot, left click and drag the cursor to rotate. Use the
-scroll wheel or right click and drag to zoom. Press the scroll wheel and drag
-to change the field-of-view. For Open GL windows, execute
+To navigate the interactive Open GL window and html widget, left click and
+drag the cursor to rotate the meshes. Use the scroll wheel or right click
+and drag to zoom. Press the scroll wheel and drag to change the field-of-view.
+For Open GL windows, execute
 \code{\link[rgl]{snapshot}} to save the current window as a .png file,
 \code{\link[rgl:rgl.open]{rgl.close}} to close the window, and
 \code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
 perspective.
 
-See the vignette for examples on embedding snapshots of the Open GL window
-or interactive html widgets in an R Markdown document.
+To embed an interactive plot in an R Markdown document, first execute
+\code{rgl::setupKnitr()} to prepare the document for embedding the widget.
+Then execute the plot command as you normally would to create a widget (i.e.
+without specifying \code{fname}, and by requesting more than one \code{idx}
+or by setting \code{widget} to \code{TRUE}). When the R Markdown document is
+knitted, the interactive widget should be displayed below the chunk in which
+the plot command was executed. See the vignette for an example.
 }
 
 \section{Embedding the Static Plots}{
 
-If \code{save==TRUE}, the plot(s) is written to a .png file. (For
-\code{view_xifti_surface}, if \code{length(idx) > 1}, each \code{idx} will
-be written to a separate image file.) You can use
-\code{\link[knitr]{include_graphics}} to embed an image file in an R
-Markdown document. If \code{close_after_save==TRUE}, the return value of this
-function call is the name(s) of the image file(s) that were written, so it
-can be used directly to display the image.
 
-There's an additional way to embed an image of this plot without writing a
-.png file: use \code{save==FALSE} and set the chunk options
-\code{rgl=TRUE, format="png"}. You will probably need to tweak the image
-dimensions e.g. \code{fig.width=8, fig.height=5} in the chunk options,
-because it uses the defaults from RMarkdown/Knitr instead of what makes
-sense based on the dimensions of the Open GL window.
+To embed a static plot in an R Markdown document, first execute
+\code{rgl::setupKnitr()} to prepare the document for embedding the snapshot
+of the Open GL window. Then execute the plot command as you normally would
+to create an Open GL window (i.e. without specifying \code{fname}, and by
+requesting only one \code{idx}). In the options for the chunk in which the
+plot command is executed, set \code{rgl=TRUE, format="png"}. You can also
+control the image dimensions here e.g. \code{fig.height=3.8, fig.width=5}.
+When the R Markdown document is knitted, the static plots should be
+displayed below the chunk in which the plot command was executed. See the
+vignette for an example.
 }
 
 \seealso{
 Other functions for working with GIFTI surface geometry data: 
-\code{\link{add_surf}()},
 \code{\link{is.surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},

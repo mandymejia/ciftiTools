@@ -13,16 +13,16 @@ is_cifti(x, messages = TRUE)
 isCIfTI(x, messages = TRUE)
 }
 \arguments{
-\item{x}{The putative \code{"xifti"} object.}
+\item{x}{The putative \code{"xifti"}.}
 
-\item{messages}{If \code{x} is not a \code{"xifti"} object, print messages
+\item{messages}{If \code{x} is not a \code{"xifti"}, print messages
 explaining the problem? Default is \code{TRUE}.}
 }
 \value{
-Logical. Is \code{x} a valid \code{"xifti"} object?
+Logical. Is \code{x} a valid \code{"xifti"}?
 }
 \description{
-Check if object is valid for a \code{"xifti"} object. This alias for
+Check if object is valid for a \code{"xifti"}. This alias for
 \code{\link{is.xifti}} is offered as a convenience, and a message will warn
 the user. We recommend using \code{\link{is.xifti}} instead.
 }
@@ -66,7 +66,8 @@ See the "Label Levels" section for the requirements of
 }
 
 These correspond to the same structures as given by
-\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Note that
+the first two levels (left and right cortex) are not used.
 }
 
 \seealso{

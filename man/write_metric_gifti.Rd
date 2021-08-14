@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_gifti.R
 \name{write_metric_gifti}
 \alias{write_metric_gifti}
-\title{Write CIFTI cortex data to GIFTI}
+\title{Write a data matrix to a GIFTI metric file}
 \usage{
 write_metric_gifti(
   x,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_cifti_from_separate.R
 \name{write_cifti_from_separate}
 \alias{write_cifti_from_separate}
-\title{Make CIFTI file}
+\title{Write a CIFTI file from NIFTI and GIFTI files}
 \usage{
 write_cifti_from_separate(
   cifti_fname,

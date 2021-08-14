@@ -1,12 +1,13 @@
 #' Fix GIFTI medial wall
 #' 
 #' Replace implicit medial wall values (not indicated in ROI, but are in 
-#'  \code{mwall_values}) with explicit medial wall values (indicated in ROI).
+#'  \code{mwall_values}) with explicit medial wall values (indicated in ROI)
+#'  in a metric GIFTI file.
 #' 
-#' @param metric_fname The data GIFTI
-#' @param fixed_metric_fname The revised data GIFTI
-#' @param ROI_fname Th ROI GIFTI
-#' @param fixed_ROI_fname The revised ROI GIFTI
+#' @param metric_fname File path to the data GIFTI
+#' @param fixed_metric_fname File path to the revised data GIFTI
+#' @param ROI_fname File path to the ROI GIFTI
+#' @param fixed_ROI_fname File path to the revised ROI GIFTI
 #' @param mwall_values The values to use to infer the medial wall. Default: 
 #'  \code{c(NA, NaN)}.
 #' 

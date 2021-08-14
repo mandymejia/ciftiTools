@@ -1,17 +1,17 @@
 #' @describeIn convert_xifti
 #' 
 #' Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
-#'  \code{"xifti"} object. Will use the same label table for each data column.
+#'  \code{"xifti"}. Will use the same label table for each data column.
 #' 
-#' @param xifti The \code{"xifti"}
+#' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
 #' @param values (Optional) A vector of the original data values. They should all
 #'  be unique. They may not all occur in the \code{"xifti"} data, but every
 #'  datapoint in the \code{"xifti"} must occur in \code{values}. Data will be 
-#'  mapped to integers from $0$ to $N-1$, with $N$ being the length of 
-#'  \code{values}.
+#'  mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
+#'  number of \code{values}.
 #' @param nsig Take this many significant digits for the data values. If 
 #'  \code{Inf} (default), do not round.
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
@@ -69,7 +69,7 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
     if (any(duplicated(values))) { warning("Removing duplicate `values`.\n") }
     values <- sort(unique(values))
   }
-  if (length(values) > 100) { warning("Over 100 unique `values` in the `xifti`.\n") }
+  if (length(values) > 1000) { warning("Over 1000 unique `values` in the `xifti`.\n") }
   conversion_table <- data.frame(values=values, label=seq(length(values))-1)
 
   # Convert data to label values.
@@ -314,6 +314,7 @@ convert_to_dtseries <- function(
 #'  returned.
 #' 
 #' @family manipulating
+#' 
 #' @export
 convert_xifti <- function(x, to=c("dscalar", "dtseries", "dlabel"), 
   cifti_target_fname=NULL, ...){

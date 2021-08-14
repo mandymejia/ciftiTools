@@ -1,6 +1,6 @@
-#' Remove \code{"xifti"} component
+#' Remove a component from a \code{"xifti"}
 #' 
-#' Remove a data or surface component from a \code{"xifti"}
+#' Remove a brain structure or surface from a \code{"xifti"}
 #' 
 #' @inheritParams xifti_Param
 #' @param remove A character vector containing one or more of the following:
@@ -8,7 +8,7 @@
 #'  \code{"surf_left"}, and \code{"surf_right"}. Each of these components will
 #'  be removed from the \code{"xifti"}
 #' 
-#' @return The new \code{"xifti"} with the requested components removed
+#' @return The new \code{"xifti"} with the requested component(s) removed
 #' 
 #' @family manipulating
 #' @export

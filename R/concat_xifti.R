@@ -1,15 +1,15 @@
-#' Concatenate \code{"xifti"} objects
+#' Concatenate \code{"xifti"}s 
 #' 
 #' Concatenate \code{"xifti"} objects along the columns. They must have the same
-#'  brainstructures. The first \code{"xifti"}'s metadata will be retained, including
-#'  its intent.
+#'  brainstructures and resolutions. The first \code{"xifti"}'s metadata will be 
+#'  retained, including its intent.
 #' 
-#' @param ...,xifti_list Provide as arguments the \code{"xifti"} objects to 
+#' @param ...,xifti_list Provide as arguments the \code{"xifti"}s to 
 #'  concatenate, OR the single argument \code{xifti_list} which should be a 
-#'  list of \code{"xifti"} objects. (If \code{xifti_list} is provided all other
+#'  list of \code{"xifti"}s. (If \code{xifti_list} is provided all other
 #'  inputs will be ignored.)
 #' 
-#' @return The concatenated \code{"xifti"} object. 
+#' @return The concatenated \code{"xifti"}
 #' 
 #' @family manipulating
 #' @export

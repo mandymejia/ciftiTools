@@ -4,7 +4,7 @@
 \alias{smooth_gifti}
 \alias{smoothGIfTI}
 \alias{smoothgii}
-\title{Smooth a metric GIFTI}
+\title{Smooth a metric GIFTI file}
 \usage{
 smooth_gifti(
   original_fname,
@@ -38,7 +38,7 @@ smoothgii(
 \item{target_fname}{Where to save the smoothed file.}
 
 \item{surf_fname}{Surface GIFTI files cortical surface along which to smooth.
-If not provided, the default very inflated surfaces will be used.}
+If not provided, the default inflated surfaces will be used.}
 
 \item{surf_FWHM}{The full width at half maximum (FWHM) parameter
 for the gaussian surface smoothing kernel, in mm. Default: \code{5}}
@@ -56,7 +56,8 @@ all the data is smoothed across the surface.}
 The smoothed GIFTI file name, invisibly
 }
 \description{
-Smooths metric GIFTI data on the cortical surface.
+Smooths metric GIFTI data along the cortical surface. The results are written
+to a new GIFTI file.
 }
 \section{Connectome Workbench}{
 

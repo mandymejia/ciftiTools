@@ -5,7 +5,7 @@
 \alias{as_xifti}
 \alias{as.cifti}
 \alias{as_cifti}
-\title{Assemble a \code{"xifti"} object from data}
+\title{Assemble a \code{"xifti"} from data}
 \usage{
 as.xifti(
   cortexL = NULL,
@@ -143,19 +143,17 @@ the number of vertices matches that of the HCP 32k mesh (29696 on left, and
 29716 on right), should the medial wall masks be added to the \code{"xifti"}
 if not provided? Default: \code{TRUE}.}
 
-\item{validate}{Validate that the result is a \code{"xifti"} object? Default:
+\item{validate}{Validate that the result is a \code{"xifti"}? Default:
 \code{TRUE}. If \code{FALSE}, the result may not be properly formatted
 if the inputs were invalid.}
 }
 \value{
-A \code{"xifti"} object
+A \code{"xifti"}
 }
 \description{
 Assembles cortical data, subcortical data, and/or surface geometry to form a
-\code{"xifti"} object. The inputs must be data objects (vectors, matrices or
-arrays, depending on the argument). \code{as.xifti} can be used to combine
-the files written by \code{\link{separate_cifti}}, or read individual
-components independent of any CIFTI file.
+\code{"xifti"}. The inputs must be data objects (vectors, matrices or
+arrays, depending on the argument).
 }
 \details{
 Each data or surface component is optional. Metadata components
@@ -180,7 +178,9 @@ the same for each brainstructure.
 Other functions for reading in CIFTI or GIFTI metric data: 
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
+\code{\link{load_surf}()},
 \code{\link{read_cifti}()},
+\code{\link{read_surf}()},
 \code{\link{read_xifti2}()}
 }
 \concept{reading}

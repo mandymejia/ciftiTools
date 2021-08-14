@@ -136,9 +136,7 @@ Assembles cortical data, subcortical data, and/or surface geometry to form a
 \code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files
 which have been read in, or data objects (vectors, matrices or arrays,
 depending on the argument). See \code{as.xifti} for a user-function wrapper
-that only works with data objects. \code{make_xifti} can be used to combine
-the files written by \code{\link{separate_cifti}}, or read individual
-components independent of any CIFTI file.
+that only works with data objects.
 }
 \details{
 Each data or surface component is optional. Metadata components
@@ -188,7 +186,8 @@ the same for each brainstructure.
 }
 
 These correspond to the same structures as given by
-\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Note that
+the first two levels (left and right cortex) are not used.
 }
 
 \keyword{internal}

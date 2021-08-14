@@ -16,8 +16,7 @@ viewCIfTI(xifti, what = NULL, ...)
 viewcii(xifti, what = NULL, ...)
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{what}{Either \code{"surface"} or \code{"volume"}. \code{NULL} will infer
 based on the contents of the \code{"xifti"}: if there is data, plot the

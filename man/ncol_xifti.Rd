@@ -6,9 +6,6 @@
 \usage{
 ncol_xifti(xifti)
 }
-\arguments{
-\item{xifti}{The \code{"xifti"} object}
-}
 \value{
 The number of columns in the \code{"xifti"} data.
 }

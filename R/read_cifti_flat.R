@@ -35,7 +35,10 @@ read_cifti_flat <- function(
   # ----------------------------------------------------------------------------
 
   cifti_fname <- format_path(cifti_fname)
-  if (!file.exists(cifti_fname)) stop('cifti_fname does not exist.')
+  if (!is.fname(cifti_fname)) { 
+    stop("`", cifti_fname, "` is not an existing file.") 
+  }
+  
   # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname)
   extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"

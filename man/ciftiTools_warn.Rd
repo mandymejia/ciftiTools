@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{ciftiTools_warn}
 \alias{ciftiTools_warn}
-\title{Print Suppressible Warning}
+\title{Print suppressible warning}
 \usage{
 ciftiTools_warn(warn)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_xifti2.R
 \name{read_xifti2}
 \alias{read_xifti2}
-\title{Read gifti file(s) as a \code{xifti} object}
+\title{Read in GIFTI files as a \code{"xifti"} object}
 \usage{
 read_xifti2(
   cortexL = NULL,
@@ -94,7 +94,7 @@ if the inputs were invalid.}
 The \code{"xifti"} object containing all the data in the input giftis.
 }
 \description{
-Read in gifti metric files as a \code{xifti} object. May also include
+Read in gifti metric files as a \code{"xifti"} object. May also include
 surface geometry gifti files and perform resampling.
 }
 \seealso{
@@ -102,6 +102,8 @@ Other functions for reading in CIFTI or GIFTI metric data:
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
-\code{\link{read_cifti}()}
+\code{\link{load_surf}()},
+\code{\link{read_cifti}()},
+\code{\link{read_surf}()}
 }
 \concept{reading}

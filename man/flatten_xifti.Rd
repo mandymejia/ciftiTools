@@ -2,13 +2,12 @@
 % Please edit documentation in R/flatten_xifti.R
 \name{flatten_xifti}
 \alias{flatten_xifti}
-\title{Flatten a \code{"xifti"} object}
+\title{Flatten a \code{"xifti"}}
 \usage{
 flatten_xifti(xifti, medial_wall = NULL, subcort_order = "alphabetical")
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{medial_wall}{Should vertices for the medial wall be included with the
 cortical data? If \code{NULL} (default), do not include them. If any other
@@ -22,7 +21,7 @@ already the ordering used in the \code{"xifti"}.}
 The flattened \code{"xifti"}, a data matrix
 }
 \description{
-Concatenates the data in a \code{"xifti"} object into a single matrix.
+Concatenates the data in a \code{"xifti"} object row-wise to form a single matrix.
 }
 \details{
 If all brain structures are present, and if

@@ -2,20 +2,20 @@
 % Please edit documentation in R/expect_equal_xifti.R
 \name{expect_equal_xifti}
 \alias{expect_equal_xifti}
-\title{Expect these CIFTIs to match}
+\title{Expect these \code{"xifti"}s to match}
 \usage{
-expect_equal_xifti(cii1, cii2)
+expect_equal_xifti(xii1, xii2)
 }
 \arguments{
-\item{cii1}{The first CIFTI}
+\item{xii1}{The first \code{"xifti"}}
 
-\item{cii2}{The second CIFTI}
+\item{xii2}{The second \code{"xifti"}}
 }
 \value{
 \code{TRUE}, invisibly
 }
 \description{
-Raise an error if the CIFTIs do not match.
+Raise an error if the \code{"xifti"}s do not match.
 }
 \details{
 \code{cifti$intent} and \code{cifti$brainstructures} are only compared if they

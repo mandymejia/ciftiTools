@@ -7,7 +7,7 @@
 \method{as.matrix}{xifti}(x, ...)
 }
 \arguments{
-\item{x}{The \code{"xifti"} object}
+\item{x}{A \code{"xifti"} object.}
 
 \item{...}{Unused}
 }
@@ -15,5 +15,6 @@
 The input as a matrix. Each brainstructure's data is concatenated.
 }
 \description{
-Converts a \code{"xifti"} to a matrix. Surfaces and metadata are discarded.
+Converts a \code{"xifti"} to a matrix by concatenating the data from each
+brainstructure along the rows. Surfaces and metadata are discarded.
 }

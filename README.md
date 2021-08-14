@@ -45,9 +45,9 @@ library(ciftiTools)
 ciftiTools.setOption("wb_path", "path/to/workbench")
 
 # Read and visualize a CIFTI file -------------------------------
-cifti_fname <- ciftiTools::demo_files()$cifti["dtseries"]
-surfL_fname <- demo_files()$surf["left"]
-surfR_fname <- demo_files()$surf["right"]
+cifti_fname <- ciftiTools::ciftiTools.files()$cifti["dtseries"]
+surfL_fname <- ciftiTools.files()$surf["left"]
+surfR_fname <- ciftiTools.files()$surf["right"]
 
 xii <- read_cifti(
   cifti_fname, brainstructures="all", 
@@ -55,7 +55,7 @@ xii <- read_cifti(
   resamp_res=4000
 )
 
-view_xifti_surface(xii)
+view_xifti_surface(xii) # or plot(xii)
 # view_xifti_volume(xii) if subcortex is present
 
 # Access CIFTI data ---------------------------------------------
@@ -69,7 +69,7 @@ cortexR_mwall <- xii$meta$medial_wall_mask$right
 surfL <- xii$surf$cortex_left
 surfR <- xii$surf$cortex_right
 
-# Write a CIFTI file --------------------------------------------
+# Create a `"xifti"` from data ----------------------------------
 xii2 <- as.xifti(
   cortexL=cortexL, cortexL_mwall=cortexL_mwall,
   cortexR=cortexR, cortexR_mwall=cortexR_mwall,
@@ -78,8 +78,8 @@ xii2 <- as.xifti(
   surfL=surfL, surfR=surfR
 )
 
-new_cifti_fname <- "my_cifti.dtseries.nii"
-write_cifti(xii2, new_cifti_fname)
+# Write a CIFTI file --------------------------------------------
+write_cifti(xii2, "my_cifti.dtseries.nii")
 ```
 
 ## Vignette
@@ -99,7 +99,7 @@ to view the tutorial vignette.
 </figure>
 
 <figure>
-<img src="README_media/surf_tour.gif" style="width:40.0%" alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README." /><figcaption aria-hidden="true">Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools. See the data acknowledgement section at the bottom of this README.</figcaption>
+<img src="README_media/surf_tour.gif" style="width:40.0%" alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools through the function load_surf. See the data acknowledgement section at the bottom of this README." /><figcaption aria-hidden="true">Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools through the function <code>load_surf</code>. See the data acknowledgement section at the bottom of this README.</figcaption>
 </figure>
 
 ## FAQ
@@ -111,8 +111,8 @@ but also GIFTI and NIFTI files. For example, we can plot a surface
 GIFTI:
 
 ``` r
-xii <- as.xifti(surfL=make_surf(demo_files()$surf["left"]))
-view_xifti_surface(xii)
+xii <- as.xifti(surfL=read_surf(ciftiTools.files()$surf["left"]))
+plot(xii)
 ```
 
 We can also convert metric GIFTI files and/or NIFTI files to CIFTI files

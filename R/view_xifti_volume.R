@@ -1,6 +1,6 @@
-#' View subcortex
+#' View subcortical data in a \code{"xifti"}
 #' 
-#' Visualize subcortex of a \code{"xifti"} object
+#' Visualize the subcortical data in a \code{"xifti"} using slices.
 #'
 #' @inheritParams xifti_Param
 #' @param structural_img The structural MRI image on which to overlay the
@@ -41,11 +41,12 @@ view_xifti_volume <- function(
   }
 
   stopifnot(is.xifti(xifti))
+  stopifnot(!is.null(xifti$data$subcort))
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx]
-  vol <- unmask_vol(values, xifti$meta$subcort$mask, fill=NA)
-  labs <- unmask_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
+  vol <- unmask_subcortex(values, xifti$meta$subcort$mask, fill=NA)
+  labs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Pick slices with a lot of subcortical voxels.
   if (!interactive) {
@@ -70,15 +71,15 @@ view_xifti_volume <- function(
       )
       zlim <- rev(zlim)
     }
-    values[values < zlim[1]] <- zlim[1]
-    values[values > zlim[2]] <- zlim[2]
+    vol[vol < zlim[1]] <- zlim[1]
+    vol[vol > zlim[2]] <- zlim[2]
   }
 
   if (verbose) {
     cat(paste0(
       "Values to be plotted range from ",
-      min(xifti$data$subcort[,idx], na.rm=TRUE)," to ",
-      max(xifti$data$subcort[,idx], na.rm=TRUE), ".\n"
+      min(vol, na.rm=TRUE)," to ",
+      max(vol, na.rm=TRUE), ".\n"
     ))
   }
 

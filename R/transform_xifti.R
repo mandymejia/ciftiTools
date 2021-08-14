@@ -1,8 +1,8 @@
 #' Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.
 #' 
 #' Apply a univariate transformation to each value in a \code{"xifti"} or pair of 
-#'  \code{"xifti"}s. If a pair, they must share the same brainstructures and 
-#'  data dimensions.
+#'  \code{"xifti"}s. If a pair, they must share the same dimensions (brainstructures)
+#'  and number of measurements.
 #' 
 #' If the \code{"xifti"} had the dlabel intent, and the transformation creates
 #'  any value that is not a label value (e.g. a non-integer), then it is converted
@@ -15,7 +15,7 @@
 #'  or \code{pmax}.
 #' @param xifti2 The second xifti, if applicable. Otherwise, \code{NULL} (default)
 #' @param ... Additional arguments to \code{FUN}
-#' @return A \code{xifti} storing the result of applying \code{FUN} to the input(s).
+#' @return A \code{"xifti"} storing the result of applying \code{FUN} to the input(s).
 #'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
 #' 

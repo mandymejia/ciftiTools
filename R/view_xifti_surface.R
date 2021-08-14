@@ -27,19 +27,19 @@ view_xifti_surface.surf_hemi <- function(
   for (this_h in c("left", "right")) {
     surf <- switch(this_h, left=surfL, right=surfR)
     surf2 <- switch(this_h, left=xifti$surf$cortex_left, right=xifti$surf$cortex_right)
-    surf3 <- demo_files()$surf[this_h]
+    surf3 <- ciftiTools.files()$surf[this_h]
     dat <- switch(this_h, left=xifti$data$cortex_left, right=xifti$data$cortex_right)
 
     if (!is.null(surf)) {
-      surf <- make_surf(surf, this_h)
+      surf <- read_surf(surf, this_h)
     } else if (!is.null(surf2)) {
-      surf <- make_surf(surf2, this_h)
+      surf <- read_surf(surf2, this_h)
     } else if (this_h %in% hemisphere) {
-      surf <- make_surf(surf3, this_h)
+      surf <- read_surf(surf3, this_h)
       use_example_surf[this_h] <- TRUE
     } else if (is.null(hemisphere)) {
       if (!is.null(dat)) { 
-        surf <- make_surf(surf3, this_h) 
+        surf <- read_surf(surf3, this_h) 
         use_example_surf[this_h] <- TRUE
       }
     }
@@ -123,25 +123,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
   values <- list(left=NULL, right=NULL)
 
   # solve for cortical resolution. assume left and right have the same resolution
-  res <- NULL
-  if (!is.null(xifti$meta$cortex$medial_wall_mask$left)) {
-    res <- length(xifti$meta$cortex$medial_wall_mask$left)
-  } else if (!is.null(xifti$meta$cortex$medial_wall_mask$right)) {
-    res <- length(xifti$meta$cortex$medial_wall_mask$right)
-  } else {
-    if (!is.null(xifti$data$cortex_left) && !is.null(xifti$data$cortex_right)) {
-      if (nrow(xifti$data$cortex_left) == nrow(xifti$data$cortex_right)) {
-        res <- nrow(xifti$data$cortex_left)
-      }
-    } else if (!is.null(xifti$data$cortex_left)) {
-      prop_mwall <- nrow(xifti$data$cortex_left) / nrow(surfL$vertices)
-      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfL$vertices) } else { res <- nrow(xifti$data$cortex_left) }
-    } else if (!is.null(xifti$data$cortex_right)) {
-      prop_mwall <- nrow(xifti$data$cortex_right) / nrow(surfR$vertices)
-      if (prop_mwall<=1 && prop_mwall >.85) { res <- nrow(surfR$vertices) } else { res <- nrow(xifti$data$cortex_right) }
-    }
-  }
-  if (is.null(res)) { res <- min(nrow(surfL$vertices), nrow(surfR$vertices)) }
+  res <- infer_resolution(xifti, surfL, surfR)
 
   # get the mesh and values for each hemisphere
   for (h in hemisphere) {
@@ -581,7 +563,7 @@ view_xifti_surface.draw_mesh <- function(
   out[!vapply(out, is.null, FALSE)]
 }
 
-#' View cortical surface data
+#' View cortical surface data in a \code{"xifti"}
 #' 
 #' Visualize \code{"xifti"} cortical data using an interactive Open GL window
 #'  or htmlwidget made with \code{rgl}. The \code{rmarkdown} package is 
@@ -591,17 +573,13 @@ view_xifti_surface.draw_mesh <- function(
 #' @inheritSection rgl_static_plots_Description Embedding the Static Plots
 #' 
 #' @inheritParams xifti_Param
-#' @param surfL,surfR (Optional) The brain surface model to use.
-#'  Each can be a file path for a GIFTI, a file read by gifti::readgii,
-#'  or a list with components "vertices" and "faces". If provided, they will override
-#'  \code{xifti$surf$cortex_left} and \code{xifti$surf$cortex_right} if those exist.
-#'  Leave as \code{NULL} (default) to use \code{xifti$surf$cortex_left} and 
-#'  \code{xifti$surf$cortex_right} if those exist, or the default surfaces
-#'  if those do not exist. 
-#' 
-#'  The default surfaces are determined by (\code{ciftiTools.getOption("surf")}).
-#'  They are "inflated" by default but can be set to "very inflated" or 
-#'  "midthickness".
+#' @param surfL,surfR (Optional) The brain surface model to use. Each can be a
+#'  \code{"surf"} object, any valid argument to \code{\link{read_surf}} , or one
+#'  of \code{"very inflated"}, \code{"inflated"}, or \code{"midthickness"}. If 
+#'  provided, it will override \code{xifti$surf$cortex_left} or 
+#'  \code{xifti$surf$cortex_right} if it exists. Leave as \code{NULL} (default)
+#'  to use \code{xifti$surf$cortex_left} or \code{xifti$surf$cortex_right} if it
+#'  exists, or the default inflated surfaces if it does not exist. 
 #' 
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
 #'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
@@ -718,6 +696,15 @@ view_xifti_surface <- function(
     if (isFALSE(widget)) { 
       warning("`rgl.useNULL` is `TRUE`, and the null device cannot render the Open GL window. Using a widget instead.\n") 
     }
+    if (length(fname) > 1) {
+      warning("Using first entry of `fname`, since only one html file is being written.\n")
+      fname <- fname[1]
+    }
+    if (is.character(fname)) {
+      if (endsWith(fname, ".png")) {
+        warning("`rgl.useNULL` is `TRUE`, and the null device cannot render the Open GL window to create the pngs. Using an html file instead.\n")
+      }
+    }
     widget <- TRUE
   } else {
     if (isFALSE(fname)) {
@@ -733,15 +720,28 @@ view_xifti_surface <- function(
       }
       if (is.null(widget)) { widget <- length(idx) > 1 }
     } else {
-      fname_dirs <- unique(dirname(fname))
-      if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
-      if (any(grepl("html", fname))) {
-        if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
-        if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
-        fname <- fname[grepl("html", fname)][1]
-        if (isFALSE(widget)) { warning("Saving an .html file requires rendering a widget. Setting `widget=TRUE`.\n") }
-        widget <- TRUE
-      } else {
+      if (is.character(fname)) {
+        fname_dirs <- unique(dirname(fname))
+        if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
+        if (any(grepl("html", fname))) {
+          if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
+          if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
+          fname <- fname[grepl("html", fname)][1]
+          if (isFALSE(widget)) { warning("Saving an .html file requires rendering a widget. Setting `widget=TRUE`.\n") }
+          widget <- TRUE
+        } else {
+          if (isTRUE(widget)) { 
+            warning(
+              "`fname` is not `FALSE` but `widget` is `TRUE`. ", 
+              "`view_xifti_surface` assumes the user wants to save a .png file(s), but these can only be rendered using the Open GL window. ",
+              "Setting `widget` to `FALSE` in order to render .png file(s) using OpenGL. ",
+              "To save an html file instead, append `'.html'` to `fname`. ",
+              "Or, to view a widget rather than writing any files, set `fname` to `FALSE`.\n"
+            )
+          }
+          widget <- FALSE
+        }
+      } else if (isTRUE(fname)) {
         if (isTRUE(widget)) { 
           warning(
             "`fname` is not `FALSE` but `widget` is `TRUE`. ", 
@@ -784,32 +784,37 @@ view_xifti_surface <- function(
       )
     }
 
-    if (any(grepl("html", fname))) {
+    if (any(grepl("html$", fname))) {
       if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
         stop(
           "Package \"htmlwidgets\" will be needed by `view_xifti_surface` to ",
           "write the widget to an html file. Please install it.\n"
         )
       }
+      if (length(fname) > 1) {
+        warning("Using first entry of `fname`, since only one html file is being written.\n")
+        fname <- fname[1]
+      }
     } else {
       fname <- gsub(".png$", "", fname)
       if (!(length(fname) %in% c(1, length(idx)))) {
-        warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.")
+        warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
         fname <- fname[1]
       }
-      if (length(fname) == 1 && length(idx) > 1) {
-        fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
-        if (fname_suffix == "names") {
-          if (is.null(xifti$meta$cifti$names)) {
-            fname <- paste0(fname, "_", as.character(idx))
-          } else {
+      if (rgl::rgl.useNULL()) {
+        fname <- paste0(fname, ".html")[1]
+      } else {
+        if (length(fname) == 1 && length(idx) > 1) {
+          # Add suffix for png files
+          fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
+          if (fname_suffix == "names" && !is.null(xifti$meta$cifti$names)) {
             fname <- paste0(fname, "_", xifti$meta$cifti$names)
+          } else {
+            fname <- paste0(fname, "_", as.character(idx)) 
           }
-        } else {
-          fname <- paste0(fname, "_", as.character(idx)) 
         }
+        fname <- paste0(fname, ".png")
       }
-      fname <- paste0(fname, ".png")
     }
 
     fname_dirs <- unique(dirname(fname))
@@ -823,7 +828,7 @@ view_xifti_surface <- function(
 
     if (!isFALSE(legend_fname)) {
       if (!(length(legend_fname) == 1)) {
-        warning("Using first entry of `legend_fname`.")
+        warning("Using first entry of `legend_fname`.\n")
         legend_fname <- legend_fname[1]
       }
       if (grepl("\\[fname\\]", legend_fname)) {
@@ -848,13 +853,19 @@ view_xifti_surface <- function(
   }
 
   # `xifti`, `surfL`, `surfR`
+  if (is.character(surfL) && length(surfL)==1 && surfL %in% c("inflated", "very inflated", "midthickness")) {
+    surfL <- load_surf("left", surfL)
+  }
+  if (is.character(surfR) && length(surfR)==1 && surfR %in% c("inflated", "very inflated", "midthickness")) {
+    surfR <- load_surf("right", surfR)
+  }
   if (is.null(xifti)) {
     if (is.null(surfL) && is.null(surfR)) {
-      warning("Nothing to plot in `view_xifti_surface`.")
+      warning("Nothing to plot in `view_xifti_surface`.\n")
       return(NULL)
     } else {
       if (!is.null(idx) && (length(idx)>1 || idx!=1)) {
-        warning("Ignoring `idx` argument, since there is no data to plot.")
+        warning("Ignoring `idx` argument, since there is no data to plot.\n")
       }
       return(
         view_xifti_surface(
@@ -932,7 +943,7 @@ view_xifti_surface <- function(
 
   # `borders`, `alpha`, `edge_color`, `vertex_color`, `vertex_size`
   if (!is.null(borders)) {
-    if (length(borders) > 1) { warning("Using first entry of `borders` only.") }
+    if (length(borders) > 1) { warning("Using first entry of `borders` only.\n") }
     borders <- borders[1]
     if (isFALSE(borders)) {
       borders <- NULL

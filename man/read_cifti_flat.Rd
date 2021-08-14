@@ -13,7 +13,7 @@ read_cifti_flat(
 )
 }
 \arguments{
-\item{cifti_fname}{File path of CIFTI-format data (ending in ".d*.nii").}
+\item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
 \item{keep}{This function works by converting the CIFTI file to a GIFTI file
 and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
@@ -22,9 +22,13 @@ and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 \item{gifti_fname}{File path of GIFTI-format data to save the CIFTI as.
 Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
 
-\item{idx}{Numeric vector indicating the data indices to read. If \code{NULL}
-(default), read all the data. Must be a subset of the indices present in the
-file, or an error will occur.}
+\item{idx}{Numeric vector indicating the data indices (columns) to read. If
+\code{NULL} (default), read in all the data. Must be a subset of the indices
+present in the file, or an error will occur.
+
+For high-resolution CIFTI files, reading in only a subset of the data saves
+memory, but will be slower than reading in the entire file due to the
+required intermediate steps.}
 
 \item{write_dir}{The directory in which to save the GIFTI, if it is being
 kept. If \code{NULL} (default), use the current working directory.}

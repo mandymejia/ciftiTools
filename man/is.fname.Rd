@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{is.fname}
 \alias{is.fname}
-\title{File name check}
+\title{Is this an existing file path?}
 \usage{
 is.fname(x)
 }

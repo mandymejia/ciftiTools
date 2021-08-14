@@ -1,4 +1,4 @@
-#' Add surface(s) to a \code{"xifti"} object
+#' Add surface(s) to a \code{"xifti"}
 #' 
 #' Add left or right cortical surface geometry to a \code{"xifti"} object.
 #' 
@@ -12,18 +12,26 @@
 #' 
 #' @return the \code{"xifti"} object with added surface geometry components.
 #' 
-#' @family surfing
+#' @family manipulating
 #' @export
 #'
 add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
   if (!is.xifti(xifti)) { stop("The input \"xifti\" object is invalid.") }
+
+  resamp_res <- infer_resolution(xifti)
 
   # Left.
   if (!is.null(surfL)) {
     if (!is.null(xifti$surf$cortex_left)) { 
       ciftiTools_msg("Overwriting existing geometry for left cortex.\n") 
     }
-    xifti$surf$cortex_left <- make_surf(surfL, "left")
+    if (is.character(surfL) && length(surfL)==1 && surfL %in% c("very inflated", "inflated", "midthickness")) {
+      xifti$surf$cortex_left <- load_surf("left", surfL, resamp_res)
+    } else {
+      z <- read_surf(surfL, "left")
+      if (nrow(z$vertices) != resamp_res) { z <- resample_surf(z, resamp_res, "left") }
+      xifti$surf$cortex_left <- z
+    }
   }
 
   # Right.
@@ -31,7 +39,13 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_right)) { 
       ciftiTools_msg("Overwriting existing geometry for right cortex.\n") 
     }
-    xifti$surf$cortex_right <- make_surf(surfR, "right")
+    if (is.character(surfR) && length(surfR)==1 && surfR %in% c("very inflated", "inflated", "midthickness")) {
+      xifti$surf$cortex_right <- load_surf("right", surfR, resamp_res=resamp_res)
+    } else {
+      z <- read_surf(surfR, "right")
+      if (nrow(z$vertices) != resamp_res) { z <- resample_surf(z, resamp_res, "right") }
+      xifti$surf$cortex_right <- z
+    }
   }
 
   # Check.

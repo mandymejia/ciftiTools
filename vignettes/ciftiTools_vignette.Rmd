@@ -52,9 +52,9 @@ In this vignette, we will use example data included in the `ciftiTools` package.
 We will also use GIFTI files containing very inflated surface geometry.
 
 ```{r}
-cifti_fnames <- ciftiTools::demo_files()$cifti
-surfL_fname <- ciftiTools::demo_files()$surf["left"]
-surfR_fname <- ciftiTools::demo_files()$surf["right"]
+cifti_fnames <- ciftiTools::ciftiTools.files()$cifti
+surfL_fname <- ciftiTools::ciftiTools.files()$surf["left"]
+surfR_fname <- ciftiTools::ciftiTools.files()$surf["right"]
 ```
 
 # Reading and Writing
@@ -152,7 +152,7 @@ Now let's take a look!
 * `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
 * `idx` controls which column(s) to display.
 * `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an Open GL window if the length of `idx` is one, and an embedded htmlwidget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image (png) files for each `idx` are created, unless `fname` ends in `.html` in which case a separate, interactive html file will be saved. Lastly, Open GL windows can be embedded in R Markdown documents for knitting; refer to the source code of this vignette to see how this works.
-* `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the "inflated" surfaces included in `ciftiTools` are used. The default surface can also be changed to "very inflated" or "midthickness" by e.g. `ciftiTools.setOption("surf", "very inflated")`.
+* `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the "inflated" surfaces included in `ciftiTools` are used.
 
 Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. We'll also make the second plot interactive by requesting display of two `idx`. Try clicking and dragging around the second plot to rotate, and scrolling to zoom in and out.
 
@@ -316,8 +316,8 @@ print(max(as.matrix(xii)))
 
 ```{r}
 # Reading
-ciftiTools.setOption("surf", "midthickness") # let's use a different surface here
-surf <- read_surf(demo_files()$surf["left"])
+# ciftiTools.setOption("surf", "midthickness") # [TO DO] replace
+surf <- read_surf(ciftiTools.files()$surf["left"])
 surf
 ```
 
@@ -337,6 +337,16 @@ surf <- resample_surf(surf, 2000, "left")
 resample_gifti(surfL_fname, file.path(out_dir, "my.L.2k.surf.gii"), "left", resamp_res=2000)
 ```
 
+As shown above, the inflated surface is included as a GIFTI file and can be accessed with `ciftiTools.files()`. But two more surfaces are available through the function `load_surf`:
+
+```{r, fig.cap="Two alternative surfaces", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+xii <- as.xifti(
+  surfL = load_surf("left", "very inflated"),
+  surfR = load_surf("right", "midthickness")
+)
+plot(xii, title = "Left very inflated surface | Right midthickness surface")
+```
+
 Lastly, let's demonstrate the ability to plot vertices and edges. (This can also be done when plotting `"xifti"` objects using the same arguments.)
 
 ```{r, rgl=TRUE, format="png", fig.height=3.8, fig.width=2.5}
@@ -347,3 +357,13 @@ plot(surf, vertex_size=3, vertex_color="blue")
 ```{r, rgl=TRUE, format="png", fig.height=3.8, fig.width=2.5}
 plot(surf, edge_color="black")
 ```
+
+# Citing `ciftiTools`
+
+A citation for the package itself can be printed with:
+
+```{r}
+citation("ciftiTools")
+```
+
+Refer to the README for citation information for the surfaces, parcellations, and other data included in `ciftiTools`.

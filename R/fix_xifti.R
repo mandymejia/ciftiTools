@@ -1,11 +1,11 @@
-#' Fix a \code{"xifti"} object
+#' Fix a \code{"xifti"}
 #' 
 #' Make adjustments to a putative \code{"xifti"} so that it is valid. Each
 #'  adjustment is reported.
 #' 
 #' Right now it only coerces the data to numeric matrices.
 #' 
-#' @param xifti The xifti
+#' @inheritParams xifti_Param
 #' @param verbose Report each adjustment? Default: \code{TRUE}
 #' @return The fixed \code{"xifti"}
 #' 

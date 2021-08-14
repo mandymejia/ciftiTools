@@ -49,10 +49,10 @@ the same directory.}
 \item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
 
-\item{surfL_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfL_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the left cortex.}
 
-\item{surfR_fname}{(Optional) File path of GIFTI surface geometry
+\item{surfR_fname}{(Optional) File path to a GIFTI surface geometry
 file representing the right cortex.}
 
 \item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
@@ -65,9 +65,8 @@ any directory to the path.
 
 \code{read_dir} must already exist, or an error will be raised.}
 
-\item{write_dir}{Where should the separated
-files be placed? \code{NULL} (default) will write them to
-the current working directory.
+\item{write_dir}{Where should the separated files be placed? \code{NULL}
+(default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}
 }

@@ -13,7 +13,6 @@
       packageStartupMessage(wb_path_request())
     }
   }
-  ciftiTools.setOption("surf", "inflated")
   ciftiTools.setOption("EPS", 1e-8)
   ciftiTools.setOption("suppress_msgs", TRUE)
 

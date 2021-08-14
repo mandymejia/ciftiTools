@@ -1,6 +1,6 @@
-#' Read gifti file(s) as a \code{xifti} object
+#' Read in GIFTI files as a \code{"xifti"} object
 #' 
-#' Read in gifti metric files as a \code{xifti} object. May also include
+#' Read in gifti metric files as a \code{"xifti"} object. May also include
 #'  surface geometry gifti files and perform resampling. 
 #' 
 #' @param cortexL,cortexL_mwall Left cortex data and ROI. Each must be a path to 

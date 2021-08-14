@@ -1,15 +1,15 @@
 #' Resample a \code{"surf"} object
 #'
-#' Resample a \code{"surf"} object by writing it to a GIFTI, using the Connectome
+#' Resample a \code{"surf"} by writing it to a GIFTI, using the Connectome
 #'  Workbench to resample it, and then reading the new file.
 #'
-#' @param surf A \code{"surf"} object
+#' @param surf A \code{"surf"}
 #' @param resamp_res The desired resolution
 #' @param hemisphere \code{"left"} or \code{"right"}. Only used if not indicated by 
 #'  \code{surf$hemisphere}. An error will be raised if it does not match the 
 #'  hemisphere indicated in the intermediate written GIFTI. 
 #' 
-#' @return The new surface
+#' @return The new \code{"surf"}
 #' 
 #' @family surfing
 #' @export

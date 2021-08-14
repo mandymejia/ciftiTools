@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_xifti_components.R
 \name{make_subcort}
 \alias{make_subcort}
-\title{Make \code{"xifti"} subcortical components}
+\title{Make the subcortical components of a \code{"xifti"}}
 \usage{
 make_subcort(vol, labs, mask = NULL, idx = NULL, validate_mask = FALSE)
 }
@@ -40,8 +40,8 @@ A list with components "data", "labels", "mask", and "trans_mat". The
 first two will be vectorized and ordered spatially.
 
 The volume can be recovered using:
-\code{vol <- unmask_vol(data, mask, fill=NA)}
-\code{labs <- unmask_vol(labels, mask, fill=0)}
+\code{vol <- unmask_subcortex(data, mask, fill=NA)}
+\code{labs <- unmask_subcortex(labels, mask, fill=0)}
 }
 \description{
 Coerce subcortical data into valid entries for \code{xifti$data$subcort}
@@ -82,7 +82,8 @@ To read in the labels as the primary data, use the labels NIFTI for both
 }
 
 These correspond to the same structures as given by
-\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox.
+\code{ft_read_cifti} in the \code{cifti-matlab} MATLAB toolbox. Note that
+the first two levels (left and right cortex) are not used.
 }
 
 \keyword{internal}

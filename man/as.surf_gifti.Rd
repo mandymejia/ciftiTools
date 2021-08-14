@@ -2,12 +2,12 @@
 % Please edit documentation in R/as.gifti.R
 \name{as.surf_gifti}
 \alias{as.surf_gifti}
-\title{Format surface data as a \code{"gifti"} object}
+\title{Format surface data as a \code{"gifti"}}
 \usage{
 as.surf_gifti(surf, hemisphere = c("left", "right"))
 }
 \arguments{
-\item{surf}{A \code{"surf"} object or a list with elements
+\item{surf}{A \code{"surf"} or a list with elements
 \code{"pointset"} and \code{"triangle"}}
 
 \item{hemisphere}{The side of the brain the surface represents: \code{"left"}
@@ -15,11 +15,11 @@ as.surf_gifti(surf, hemisphere = c("left", "right"))
 metadata field. Only used if \code{surf$hemisphere} is \code{NULL}.}
 }
 \value{
-The \code{"gifti"} object
+The \code{"gifti"}
 }
 \description{
-Format a \code{"surf"} object or a list with elements \code{"pointset"}
-and \code{"triangle"} as a \code{"gifti"} object using a template
+Format a \code{"surf"} or a list with elements \code{"pointset"}
+and \code{"triangle"} as a \code{"gifti"} using a template
 \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 }
 \keyword{internal}

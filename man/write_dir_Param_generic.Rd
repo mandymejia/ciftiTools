@@ -4,9 +4,8 @@
 \alias{write_dir_Param_generic}
 \title{write_dir: generic}
 \arguments{
-\item{write_dir}{Where should the separated
-files be placed? \code{NULL} (default) will write them to
-the current working directory.
+\item{write_dir}{Where should the separated files be placed? \code{NULL}
+(default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}
 }

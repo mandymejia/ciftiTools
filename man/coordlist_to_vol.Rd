@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_volume.R
 \name{coordlist_to_vol}
 \alias{coordlist_to_vol}
-\title{Convert coordinate list to volume.}
+\title{Convert coordinate list to volume}
 \usage{
 coordlist_to_vol(coords, fill = FALSE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/options.R
 \name{ciftiTools.setOption}
 \alias{ciftiTools.setOption}
-\title{Set \code{ciftiTools} option}
+\title{Set a \code{ciftiTools} option}
 \usage{
 ciftiTools.setOption(opt, val)
 }

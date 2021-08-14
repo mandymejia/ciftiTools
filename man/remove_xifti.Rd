@@ -2,13 +2,12 @@
 % Please edit documentation in R/remove_xifti.R
 \name{remove_xifti}
 \alias{remove_xifti}
-\title{Remove \code{"xifti"} component}
+\title{Remove a component from a \code{"xifti"}}
 \usage{
 remove_xifti(xifti, remove = NULL)
 }
 \arguments{
-\item{xifti}{Object of class "xifti".
-See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{remove}{A character vector containing one or more of the following:
 \code{"cortex_left"}, \code{"cortex_right"}, \code{"subcortical"},
@@ -16,13 +15,14 @@ See \code{\link{is.xifti}} and \code{\link{make_xifti}}.}
 be removed from the \code{"xifti"}}
 }
 \value{
-The new \code{"xifti"} with the requested components removed
+The new \code{"xifti"} with the requested component(s) removed
 }
 \description{
-Remove a data or surface component from a \code{"xifti"}
+Remove a brain structure or surface from a \code{"xifti"}
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
+\code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},
