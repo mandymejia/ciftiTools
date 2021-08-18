@@ -14,7 +14,8 @@
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 #'  (default), write it in a temporary directory regardless of \code{write_dir}.
 #' @param gifti_fname File path of GIFTI-format data to save the CIFTI as. 
-#'  Default: the CIFTI_fname but with the extension replaced with "flat.gii".
+#'  Should end with ".func.gii". Default: the CIFTI_fname but with the extension
+#'  replaced with ".func.gii".
 #' @inheritParams idx_Param
 #' @param write_dir The directory in which to save the GIFTI, if it is being 
 #'  kept. If \code{NULL} (default), use the current working directory.
@@ -41,12 +42,17 @@ read_cifti_flat <- function(
   
   # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname)
-  extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
+  extn_cifti <- get_cifti_extn(bname_cifti)
+  extn_cifti <- paste0(".", extn_cifti) # e.g. ".dtseries.nii"
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
   if (is.null(gifti_fname)) {
-    gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
+    if (endsWith(bname_cifti, extn_cifti)) {
+      gifti_fname <- gsub(extn_cifti, ".func.gii", bname_cifti, fixed=TRUE)
+    } else {
+      gifti_fname <- paste0(bname_cifti, ".func.gii")
+    }
   }
   if (!keep) { write_dir <- tempdir() }
   gifti_fname <- format_path(gifti_fname, write_dir, mode=2)
@@ -74,7 +80,7 @@ read_cifti_flat <- function(
     gifti_fname_original <- gifti_fname
     gifti_fname <- file.path(
       tempdir(), 
-      gsub("\\.gii$", ".selected_idx\\.gii", basename(gifti_fname_original))
+      gsub("func\\.gii$", "selected_idx\\.func\\.gii", basename(gifti_fname_original))
     )
 
     run_wb_cmd(paste(

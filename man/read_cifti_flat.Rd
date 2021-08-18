@@ -20,7 +20,8 @@ and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 (default), write it in a temporary directory regardless of \code{write_dir}.}
 
 \item{gifti_fname}{File path of GIFTI-format data to save the CIFTI as.
-Default: the CIFTI_fname but with the extension replaced with "flat.gii".}
+Should end with ".func.gii". Default: the CIFTI_fname but with the extension
+replaced with ".func.gii".}
 
 \item{idx}{Numeric vector indicating the data indices (columns) to read. If
 \code{NULL} (default), read in all the data. Must be a subset of the indices

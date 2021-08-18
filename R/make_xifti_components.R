@@ -85,7 +85,7 @@ make_cortex <- function(
       cortex <- file.path(
         tempdir(), 
         # [TO DO] more elegant naming?
-        gsub("\\.gii$", ".selected_idx\\.func\\.gii", basename(cortex_original))
+        gsub("\\.gii$", "\\.selected_idx\\.func\\.gii", basename(cortex_original))
       )
       
       run_wb_cmd(paste(
