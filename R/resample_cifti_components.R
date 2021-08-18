@@ -178,7 +178,7 @@ resample_cifti_components <- function(
           )
         )
       }
-      file_type <- ifelse(grepl(".label.gii", original_fnames[[lab]], fixed=TRUE), "label", "metric")
+      file_type <- ifelse(grepl(".label.gii", original_fnames[[lab]], fixed=TRUE), "label", "func")
       do.call(resample_gifti, c(resample_kwargs, list(file_type=file_type)))
     
     # Resample surfaces.
