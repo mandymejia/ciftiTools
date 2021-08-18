@@ -179,10 +179,10 @@ test_that("Miscellaneous functions are working", {
     if (!grepl("dlabel", cii_fname)) {
       # Smooth metric GIFTI
       fnames_sep <- separate_cifti(cii_fname, write_dir=tdir)
-      smooth_gifti(fnames_sep[1], file.path(tdir, "sm.metric.gii"), hemisphere="left")
+      smooth_gifti(fnames_sep[1], file.path(tdir, "sm.func.gii"), hemisphere="left")
       smg1 <- gifti::readgii(
         smooth_gifti(
-          fnames_sep[3], file.path(tdir, "sm.metric.gii"),
+          fnames_sep[3], file.path(tdir, "sm.func.gii"),
           ROI_fname=fnames_sep[4], hemisphere="right"
         )
       )

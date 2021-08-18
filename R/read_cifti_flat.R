@@ -42,16 +42,20 @@ read_cifti_flat <- function(
   
   # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname)
-  extn_cifti <- get_cifti_extn(bname_cifti)
-  extn_cifti <- paste0(".", extn_cifti) # e.g. ".dtseries.nii"
+  extn_cii <- get_cifti_extn(bname_cifti)
+  extn_cii <- paste0(".", extn_cii) # e.g. ".dtseries.nii"
+  is_label = extn_cii == ".dlabel.nii"
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
   if (is.null(gifti_fname)) {
-    if (endsWith(bname_cifti, extn_cifti)) {
-      gifti_fname <- gsub(extn_cifti, ".func.gii", bname_cifti, fixed=TRUE)
+    extn_gii <- ifelse(is_label, ".label.gii", ".func.gii")
+    extn_gii2 <- gsub(".", "\\.", extn_gii, fixed=TRUE)
+    extn_cii2 <- paste0(gsub(".", "\\.", extn_cii, fixed=TRUE), "$")
+    if (grepl(bname_cifti, extn_cii2)) {
+      gifti_fname <- gsub(extn_cii2, extn_gii2, bname_cifti)
     } else {
-      gifti_fname <- paste0(bname_cifti, ".func.gii")
+      gifti_fname <- paste0(bname_cifti, extn_gii)
     }
   }
   if (!keep) { write_dir <- tempdir() }
@@ -80,7 +84,10 @@ read_cifti_flat <- function(
     gifti_fname_original <- gifti_fname
     gifti_fname <- file.path(
       tempdir(), 
-      gsub("func\\.gii$", "selected_idx\\.func\\.gii", basename(gifti_fname_original))
+      gsub(
+        paste0(extn_gii2, "$"), paste0("\\.sel_idx", extn_gii2), 
+        basename(gifti_fname_original)
+      )
     )
 
     run_wb_cmd(paste(
