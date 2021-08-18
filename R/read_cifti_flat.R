@@ -44,7 +44,7 @@ read_cifti_flat <- function(
   bname_cifti <- basename(cifti_fname)
   extn_cii <- get_cifti_extn(bname_cifti)
   extn_cii <- paste0(".", extn_cii) # e.g. ".dtseries.nii"
-  is_label = extn_cii == ".dlabel.nii"
+  is_label = FALSE# extn_cii == ".dlabel.nii"
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
