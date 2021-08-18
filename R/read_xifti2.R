@@ -95,7 +95,10 @@ read_xifti2 <- function(
     if (!is.null(cortexL)) {
       x <- resample_gifti(
         cortexL, 
-        paste0("resamp", cifti_component_suffix("cortexL")),
+        paste0(
+          "resamp", 
+          cifti_component_suffix("cortexL", ifelse(grepl("label\\.gii$", cortexL), "label", "metric"))
+        ),
         hemisphere="left", resamp_res=resamp_res, 
         ROIcortex_original_fname=cortexL_mwall, 
         read_dir=read_dir, write_dir=tdir
@@ -107,7 +110,10 @@ read_xifti2 <- function(
     if (!is.null(cortexR)) {
       x <- resample_gifti(
         cortexR, 
-        paste0("resamp", cifti_component_suffix("cortexR")),
+        paste0(
+          "resamp", 
+          cifti_component_suffix("cortexR", ifelse(grepl("label\\.gii$", cortexR), "label", "metric"))
+        ),
         hemisphere="right", resamp_res=resamp_res, 
         ROIcortex_original_fname=cortexR_mwall, 
         read_dir=read_dir, write_dir=tdir
@@ -118,11 +124,7 @@ read_xifti2 <- function(
     ## Left surface.
     if (!is.null(surfL)) {
       surfL <- resample_gifti(
-        surfL, 
-        paste0(
-          "surf_resamp", 
-          gsub("func", "surf", cifti_component_suffix("cortexL"))
-        ),
+        surfL, paste0("resamp", cifti_component_suffix("cortexL", "surf")),
         hemisphere="left", file_type="surf", resamp_res=resamp_res,
         read_dir=read_dir, write_dir=tdir
       )
@@ -131,12 +133,8 @@ read_xifti2 <- function(
     ## Right surface.
     if (!is.null(surfR)) {
       surfR <- resample_gifti(
-        surfR, 
-        paste0(
-          "surf_resamp", 
-          gsub("func", "surf", cifti_component_suffix("cortexR"))
-        ),
-        hemisphere="left", file_type="surf", resamp_res=resamp_res,
+        surfR, paste0("resamp", cifti_component_suffix("cortexR", "surf")),
+        hemisphere="right", file_type="surf", resamp_res=resamp_res,
         read_dir=read_dir, write_dir=tdir
       )
     }
