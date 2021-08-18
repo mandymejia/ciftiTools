@@ -40,18 +40,18 @@ read_cifti_flat <- function(
     stop("`", cifti_fname, "` is not an existing file.") 
   }
   
-  # Get the components of the CIFTI file path.
+  # Get the components of the CIFTI and GIFTI file paths.
   bname_cifti <- basename(cifti_fname)
   extn_cii <- get_cifti_extn(bname_cifti)
   extn_cii <- paste0(".", extn_cii) # e.g. ".dtseries.nii"
   is_label = FALSE# extn_cii == ".dlabel.nii"
+  extn_gii <- ifelse(is_label, ".label.gii", ".func.gii")
+  extn_gii2 <- gsub(".", "\\.", extn_gii, fixed=TRUE)
+  extn_cii2 <- paste0(gsub(".", "\\.", extn_cii, fixed=TRUE), "$")
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
   if (is.null(gifti_fname)) {
-    extn_gii <- ifelse(is_label, ".label.gii", ".func.gii")
-    extn_gii2 <- gsub(".", "\\.", extn_gii, fixed=TRUE)
-    extn_cii2 <- paste0(gsub(".", "\\.", extn_cii, fixed=TRUE), "$")
     if (grepl(bname_cifti, extn_cii2)) {
       gifti_fname <- gsub(extn_cii2, extn_gii2, bname_cifti)
     } else {
