@@ -82,11 +82,25 @@ make_cortex <- function(
         idx_string <- paste("-column", paste(idx, collapse=" -column "))
       }
       cortex_original <- cortex
-      cortex <- file.path(
-        tempdir(), 
-        # [TO DO] more elegant naming?
-        gsub("\\.gii$", ".selected_idx\\.func\\.gii", basename(cortex_original))
-      )
+
+      # Name for new GIFTI file
+      if (endsWith(cortex, ".func.gii")) {
+        cortex <- file.path(
+          tempdir(), 
+          gsub("\\.func\\.gii$", "\\.sel_idx\\.func\\.gii", basename(cortex_original))
+        )
+      } else if (endsWith(cortex, ".label.gii")) {
+        cortex <- file.path(
+          tempdir(), 
+          gsub("\\.label\\.gii$", "\\.sel_idx\\.label\\.gii", basename(cortex_original))
+        )
+      } else {
+        # Guess func.
+        # [TO DO] warn user?
+        cortex <- file.path(
+          tempdir(), paste0(basename(cortex_original), ".func.gii")
+        ) 
+      }
       
       run_wb_cmd(paste(
         "-metric-merge", cortex, "-metric", cortex_original, idx_string

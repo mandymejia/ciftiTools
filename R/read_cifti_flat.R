@@ -14,7 +14,8 @@
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 #'  (default), write it in a temporary directory regardless of \code{write_dir}.
 #' @param gifti_fname File path of GIFTI-format data to save the CIFTI as. 
-#'  Default: the CIFTI_fname but with the extension replaced with "flat.gii".
+#'  Should end with ".func.gii". Default: the CIFTI_fname but with the extension
+#'  replaced with ".func.gii".
 #' @inheritParams idx_Param
 #' @param write_dir The directory in which to save the GIFTI, if it is being 
 #'  kept. If \code{NULL} (default), use the current working directory.
@@ -39,14 +40,23 @@ read_cifti_flat <- function(
     stop("`", cifti_fname, "` is not an existing file.") 
   }
   
-  # Get the components of the CIFTI file path.
+  # Get the components of the CIFTI and GIFTI file paths.
   bname_cifti <- basename(cifti_fname)
-  extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii" or "dscalar.nii"
+  extn_cii <- get_cifti_extn(bname_cifti)
+  extn_cii <- paste0(".", extn_cii) # e.g. ".dtseries.nii"
+  is_label = FALSE# extn_cii == ".dlabel.nii"
+  extn_gii <- ifelse(is_label, ".label.gii", ".func.gii")
+  extn_gii2 <- gsub(".", "\\.", extn_gii, fixed=TRUE)
+  extn_cii2 <- paste0(gsub(".", "\\.", extn_cii, fixed=TRUE), "$")
 
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
   if (is.null(gifti_fname)) {
-    gifti_fname <- gsub(extn_cifti, "flat.gii", bname_cifti, fixed=TRUE)
+    if (grepl(bname_cifti, extn_cii2)) {
+      gifti_fname <- gsub(extn_cii2, extn_gii2, bname_cifti)
+    } else {
+      gifti_fname <- paste0(bname_cifti, extn_gii)
+    }
   }
   if (!keep) { write_dir <- tempdir() }
   gifti_fname <- format_path(gifti_fname, write_dir, mode=2)
@@ -74,7 +84,10 @@ read_cifti_flat <- function(
     gifti_fname_original <- gifti_fname
     gifti_fname <- file.path(
       tempdir(), 
-      gsub("\\.gii$", ".selected_idx\\.gii", basename(gifti_fname_original))
+      gsub(
+        paste0(extn_gii2, "$"), paste0("\\.sel_idx", extn_gii2), 
+        basename(gifti_fname_original)
+      )
     )
 
     run_wb_cmd(paste(

@@ -36,7 +36,7 @@ library(ciftiTools)
 Next, we indicate where to find the Connectome Workbench. This can be the full path to the Connectome Workbench executable file, or the path to its containing folder, in which case `ciftiTools` will locate the full path. Here, we will use the latter:
 
 ```{r}
-# Replace '/Applications/workbench' with the actual path to 
+# Replace '../../workbench' with the actual path to 
 #   the Connectome Workbench folder on your computer.
 #   If successful, the full path to the Workbench executable will be printed.
 ciftiTools.setOption('wb_path', '../../workbench')
