@@ -35,8 +35,8 @@ Functions for manipulating \code{"xifti"}s:
 \itemize{
 \item{\code{apply_xifti}:}{   Apply a function along the rows or columns of a \code{"xifti"}}
 \item{\code{combine_xifti}:}{   Combine \code{"xifti"}s with non-overlapping brain structures}
-\item{\code{concat_xifti}:}{   Concatenate \code{"xifti"}s}
 \item{\code{convert_xifti}:}{   Convert the intent of a \code{"xifti"}}
+\item{\code{merge_xifti}:}{   Concatenate \code{"xifti"}s}
 \item{\code{newdata_xifti}:}{   Replace the data in a \code{"xifti"}}
 \item{\code{remove_xifti}:}{   Remove a component from a \code{"xifti"}}
 \item{\code{select_xifti}:}{   Select columns of a \code{"xifti"}}
