@@ -5,7 +5,7 @@
 \title{Resample a series of GIFTIs related to a CIFTI file}
 \usage{
 resample_cifti_components(
-  original_res,
+  original_res = NULL,
   resamp_res,
   cortexL_original_fname = NULL,
   cortexR_original_fname = NULL,

@@ -37,7 +37,7 @@
 #' @keywords internal
 #' 
 resample_cifti_components <- function(
-  original_res, resamp_res, 
+  original_res=NULL, resamp_res, 
   cortexL_original_fname=NULL, cortexR_original_fname=NULL, 
   cortexL_target_fname=NULL, cortexR_target_fname=NULL, 
   ROIcortexL_original_fname=NULL, ROIcortexR_original_fname=NULL, 
