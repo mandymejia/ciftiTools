@@ -17,4 +17,3 @@
 ^CRAN-RELEASE$
 ^\.github$
 ^tests/run_ciftiTools_tests\.R$
-^inst/extdata/MNI152_T1_2mm\.nii\.gz$
