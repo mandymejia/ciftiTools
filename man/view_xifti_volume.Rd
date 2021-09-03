@@ -10,48 +10,112 @@
 view_xifti_volume(
   xifti,
   structural_img = "MNI",
+  color_mode = "auto",
+  zlim = NULL,
+  colors = NULL,
+  structural_img_colors = gray(0:255/280),
+  title = NULL,
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
-  num.slices = 9,
-  interactive = FALSE,
-  zlim = NULL,
-  verbose = TRUE,
+  n_slices = 9,
+  slices = NULL,
+  widget = FALSE,
+  fname = FALSE,
+  fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
+  legend_ncol = NULL,
+  legend_alllevels = FALSE,
+  legend_embed = NULL,
+  digits = NULL,
+  cex.title = NULL,
+  text_color = "white",
+  bg = NULL,
+  width = NULL,
+  height = NULL,
   ...
 )
 
 view_cifti_volume(
   xifti,
   structural_img = "MNI",
+  color_mode = "auto",
+  zlim = NULL,
+  colors = NULL,
+  structural_img_colors = gray(0:255/280),
+  title = NULL,
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
-  num.slices = 9,
-  interactive = FALSE,
-  zlim = NULL,
-  verbose = TRUE,
+  n_slices = 9,
+  slices = NULL,
+  widget = FALSE,
+  fname = FALSE,
+  fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
+  legend_ncol = NULL,
+  legend_alllevels = FALSE,
+  legend_embed = NULL,
+  digits = NULL,
+  cex.title = NULL,
+  text_color = "white",
+  bg = NULL,
+  width = NULL,
+  height = NULL,
   ...
 )
 
 viewCIfTI_volume(
   xifti,
   structural_img = "MNI",
+  color_mode = "auto",
+  zlim = NULL,
+  colors = NULL,
+  structural_img_colors = gray(0:255/280),
+  title = NULL,
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
-  num.slices = 9,
-  interactive = FALSE,
-  zlim = NULL,
-  verbose = TRUE,
+  n_slices = 9,
+  slices = NULL,
+  widget = FALSE,
+  fname = FALSE,
+  fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
+  legend_ncol = NULL,
+  legend_alllevels = FALSE,
+  legend_embed = NULL,
+  digits = NULL,
+  cex.title = NULL,
+  text_color = "white",
+  bg = NULL,
+  width = NULL,
+  height = NULL,
   ...
 )
 
 viewcii_volume(
   xifti,
   structural_img = "MNI",
+  color_mode = "auto",
+  zlim = NULL,
+  colors = NULL,
+  structural_img_colors = gray(0:255/280),
+  title = NULL,
   idx = 1,
   plane = c("axial", "sagittal", "coronal"),
-  num.slices = 9,
-  interactive = FALSE,
-  zlim = NULL,
-  verbose = TRUE,
+  n_slices = 9,
+  slices = NULL,
+  widget = FALSE,
+  fname = FALSE,
+  fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
+  legend_ncol = NULL,
+  legend_alllevels = FALSE,
+  legend_embed = NULL,
+  digits = NULL,
+  cex.title = NULL,
+  text_color = "white",
+  bg = NULL,
+  width = NULL,
+  height = NULL,
   ...
 )
 }
@@ -59,31 +123,151 @@ viewcii_volume(
 \item{xifti}{A \code{"xifti"} object.}
 
 \item{structural_img}{The structural MRI image on which to overlay the
-subcortical values. Can be a file name, \code{"MNI"} (default) to use
-the MNI T1-weighted template, or \code{NULL} to use a blank image.}
+subcortical plot. Can be a file name, \code{"MNI"} (default) to use
+the MNI T1-weighted template included in \code{ciftiTools}, or \code{NULL}
+to use a blank image.}
 
-\item{idx}{The time/column index of the \code{"xifti"} data to plot. Must
-be a single index (length 1).}
+\item{color_mode}{(Optional) \code{"sequential"}, \code{"qualitative"},
+\code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
+qualitative color mode if the \code{"xifti"} object represents a .dlabel
+CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
+contains both positive and negative values, and the sequential mode if the
+data contains >90\\% positive or >90\\% negative values. See
+\code{\link{make_color_pal}} for more details.}
 
-\item{plane}{If interactive=FALSE, the plane to display.
-Default: \code{"axial"}. Other options are \code{"sagittal"} and
-\code{"coronal"}.}
+\item{zlim}{(Optional) Controls the mapping of values to each
+color in \code{colors}. If the length is longer than
+one, using -Inf will set the value to the data minimum, and Inf will set
+the value to the data maximum. See \code{\link{make_color_pal}}
+description for more details.}
 
-\item{num.slices}{If interactive=FALSE, the number of slices to display.
-Default: \code{9}.}
+\item{colors}{(Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
+the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
+and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+(default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
+\code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An
+exception to these defaults is if the \code{"xifti"} object represents a
+.dlabel CIFTI (intent 3007), in which case the colors in the label table
+will be used. See \code{\link{make_color_pal}} for more details.}
 
-\item{interactive}{interactive=TRUE will use papayar to allows for interactive visualization.}
+\item{structural_img_colors}{Colors to use for the background image. These
+will be assigned in order from lowest to highest value with equal spacing
+between the colors. (\code{color_mode}, \code{zlim} and \code{colors} have
+no bearing on the background image colors.) This argument is used as
+the \code{col.x} argument to \code{oro.nifti::overlay} directly. Default:
+\code{gray(0:255/280)}. To use the \code{oro.nifti::overlay} default instead
+set this argument to \code{gray(0:64/64)}.}
 
-\item{zlim}{A length-2 numeric vector giving the minimum and maximum values to
-plot. Data values beyond this range will be truncated to the min/max. If
-\code{NULL} (default), will use the min and max of the data.}
+\item{title}{Optional title(s) for the plot(s). It will be printed at the top.
 
-\item{verbose}{Should occasional updates be printed? Default: \code{TRUE}.}
+Default: \code{NULL} will not use any title if \code{length(idx)==1}.
+Otherwise, it will use the time index (".dtseries") or name
+(.dscalar or .dlabel) of each data column.
+
+To use a custom title(s), use a length 1 character vector (same title for
+each plot) or length \code{length(idx)} character vector (different title
+for each plot). Set to \code{NULL} or an empty character to omit the title.
+
+If the title is non-empty but does not appear, try lowering \code{cex.title}.}
+
+\item{idx}{The time/column index of the data to display. \code{NULL} (default)
+will display the first column.
+
+If \code{widget}, only one index at a time may be displayed.
+
+If \code{!widget} and the length of \code{idx} is greater than one, a new
+plot will be created for each \code{idx}. These can be toggled between using
+the arrows at the top of the display window if working interactively in
+\code{RStudio}; or, these will be written to separate files if
+\code{!isFALSE(fname)}.}
+
+\item{plane}{The plane to display for the slices:
+\code{"axial"} (default), \code{"sagittal"} or \code{"coronal"}.
+Ignored if \code{widget}.}
+
+\item{n_slices}{The number of slices to display. Default: \code{9}.
+The slices will be selected in a way that visualizes as much of the
+subcortex as possible. Ignored if \code{widget}.}
+
+\item{slices}{Which slices to display. If provided, this argument will
+override \code{n_slices}. Should be a numeric vector with integer values
+between one and the number of slices in \code{plane}. Ignored if \code{widget}.}
+
+\item{widget}{Create an interactive widget using \code{papayar}? Otherwise
+display static 2D slices. Default: \code{FALSE}.
+
+Note that the widget can only display one \code{idx} at a time.}
+
+\item{fname, fname_suffix}{Save the plot(s) (and color legend if applicable)?
+
+If \code{isFALSE(fname)} (default), no files will be written.
+
+If \code{widget}, these arguments are ignored.
+
+If neither of the cases above apply, a png image will be written for each
+\code{idx}. If \code{isTRUE(fname)} the files will be named by the
+data column names (underscores will replace spaces). Or, set \code{fname} to a
+length 1 character vector to name files by this suffix followed by the
+\code{fname_suffix}: either the data column names (\code{"names"}) or the
+index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
+length as \code{idx} to name the files exactly.}
+
+\item{legend_fname}{Save the color legend? Since the legend is the same
+for each \code{idx} only one legend is written even if \code{length(idx)>1}.
+This argument can be \code{NULL} to not save the legend, an exact file
+path, or a length-one character vector with "[fname]" in it, which will
+name the legend based on \code{fname\[1\]}. For example, if \code{fname\[1\]}
+is \code{"plots/my_cifti.png"} and \code{legend_fname} is \code{"\[fname\]_legend"}
+(default), then the legend plot will be saved to \code{"plots/my_cifti_legend.png"}.}
+
+\item{legend_ncol}{Number of columns in color legend. If
+\code{NULL} (default), use 10 entries per row. Only applies if the color
+legend is used (qualitative data).}
+
+\item{legend_alllevels}{Show all label levels in the color legend? If
+\code{FALSE} (default), just show the levels present in the data being
+viewed. Only applies if the color legend is used (qualitative data).}
+
+\item{legend_embed}{Should the colorbar be embedded in the plot?
+It will be positioned at the bottom. Default: \code{TRUE}.
+If \code{FALSE}, print/save it separately instead.
+
+Only applies if the color bar is used (sequential or diverging data).
+The color legend (qualitative data) cannot be embedded at the moment.}
+
+\item{digits}{The number of digits for the colorbar legend ticks.
+If \code{NULL} (default), let \code{\link{format}} decide.}
+
+\item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
+will use \code{1.2} for titles less than 20 characters long, and smaller
+sizes for increasingly longer titles.}
+
+\item{text_color}{Color for text in title and colorbar legend. Default:
+\code{"white"}. If \code{"white"}, will use black instead for the color
+legend and the color bar if printed separately (since those will have
+white backgrounds). To override this behaviour use \code{"#FFFFFF"} instead.}
+
+\item{bg}{Background color. \code{NULL} will use \code{"black"}. Does not affect
+the color legend or color bar if printed separately: those will always have
+white backgrounds.}
+
+\item{width, height}{The dimensions of the plot, in pixels. Affects}
 
 \item{...}{Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}}
 }
 \description{
-Visualize the subcortical data in a \code{"xifti"} using slices.
+Visualize the subcortical data in a \code{"xifti"} using a series of 2D
+slices (based on \code{\link[oro.nifti]{overlay}}) or an interactive widget
+(based on \code{\link[papayar]{papaya}}).
+}
+\details{
+Note that \code{color_mode}, \code{zlim}, and \code{colors} only affect the
+color scale of the data values whereas \code{structural_img_colors} only
+affects the color scale of the background image.
+
+Currently, the color-related arguments only affect the 2D slice view. The
+color limits and palette must be edited using the widget controls once it's
+rendered.
 }
 \seealso{
 Other commonly-used functions: 

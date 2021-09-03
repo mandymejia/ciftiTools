@@ -237,6 +237,7 @@ view_xifti_surface.color <- function(
 
     if (is.null(zlim)) {
       if (color_mode=="qualitative") {
+        if (!is.null(zlim)) { warning("`zlim` not supported for qualitative data. Ignoring.") }
         # Placeholder: the color limits will actually be 1 to the number of unique values.
         # This variable `zlim` won't be used.
         zlim <- c(0,1)
@@ -247,11 +248,14 @@ view_xifti_surface.color <- function(
         pctile_95_pos <- pctile_95 > 0
 
         if (!pctile_05_neg) {
+          if (pctile_95 == 0) { pctile_95 <- DATA_MAX }
           zlim <- c(0, pctile_95)
         } else if (!pctile_95_pos) {
+          if (pctile_05 == 0) { pctile_05 <- DATA_MAX }
           zlim <- c(pctile_05, 0)
         } else {
           pctile_max <- max(abs(c(pctile_05, pctile_95)))
+          if (pctile_max == 0) { pctile_max <- max(abs(c(DATA_MIN, DATA_MAX))) }
           if (color_mode=="diverging") {
             zlim <- c(-pctile_max, 0, pctile_max)
           } else {
@@ -455,45 +459,14 @@ view_xifti_surface.cleg <- function(pal_base, leg_ncol, text_color, scale=1){
 #' @keywords internal
 #' 
 view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title, text_color, indiv_panel_width){
-  if (is.null(title)) {
-    intent <- xifti_meta$cifti$intent
-
-    if (is.null(intent)) {
-      if (!is.null(xifti_meta$cifti$names) && length(xifti_meta$cifti$names)>=this_idx) {
-        title <- xifti_meta$cifti$names[this_idx]
-      } else {
-        title <- ""
-      }
-
-    } else if (intent == 3002) {
-      title <- paste("Index", this_idx)
-      if (!any(vapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null, FALSE))) {
-        title <- paste0(
-          title, " (", 
-          xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*this_idx, 
-          " ", xifti_meta$cifti$time_unit, "s)"
-        )
-      }
-
-    } else if (intent == 3006) {
-      if (!is.null(xifti_meta$cifti$names) && length(xifti_meta$cifti$names)>=this_idx) {
-        title <- xifti_meta$cifti$names[this_idx]
-      } else {
-        title <- ""
-      }
-      
-    } else if (intent == 3007) {
-      if (!is.null(xifti_meta$cifti$labels) && length(xifti_meta$cifti$labels)>=this_idx) {
-        title <- names(xifti_meta$cifti$labels)[this_idx]
-      } else {
-        title <- ""
-      }
-    }
-  }
   
+  if (is.null(title)) {
+    title <- view_xifti.title(xifti_meta, this_idx)
+  }
+
   if (is.null(cex.title)) {
     cex.title <- indiv_panel_width / 250
-    if (nchar(title) > 20) { cex.title <- cex.title * (20 / nchar(title)) }
+    if (nchar(title) > 20) { cex.title <- cex.title * sqrt(20 / nchar(title)) }
     cex.title <- round(cex.title*100)/100
   }
 
@@ -593,15 +566,16 @@ view_xifti_surface.draw_mesh <- function(
 #'  one, using -Inf will set the value to the data minimum, and Inf will set
 #'  the value to the data maximum. See \code{\link{make_color_pal}} 
 #'  description for more details.
-#' @param colors (Optional) "ROY_BIG_BL", vector of colors to use,
+#' @param colors (Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 #'  the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-#'  and colorbrewer2.org), or the name of a viridisLite palette. 
-#'  Defaults are \code{"ROY_BIG_BL"} (sequential),
-#'  \code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
-#'  to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
-#'  then the qualitative colors in the label table will be used.
-#'  See \code{\link{make_color_pal}} for more details.
-#' @param idx The time/column index of the data to display. 
+#'  and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+#'  (default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
+#'  \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An 
+#'  exception to these defaults is if the \code{"xifti"} object represents a 
+#'  .dlabel CIFTI (intent 3007), in which case the colors in the label table 
+#'  will be used. See \code{\link{make_color_pal}} for more details.
+#' @param idx The time/column index of the data to display. \code{NULL} (default)
+#'  will display the first column.
 #' 
 #'  If its length is greater than one, and \code{isFALSE(fname)}, 
 #'  a widget must be used since a single OpenGL window cannot show multiple
@@ -756,9 +730,9 @@ view_xifti_surface <- function(
     }
   } # `widget` should be `TRUE` or `FALSE` now.
 
-  save_fname <- !isFALSE(fname)
+  saving_file <- !isFALSE(fname)
 
-  if (save_fname) {
+  if (saving_file) {
     if (isTRUE(fname)) {
       if (!is.null(xifti$meta$cifti$names)) {
         fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
@@ -1158,7 +1132,7 @@ view_xifti_surface <- function(
     this_idx <- idx[jj]
 
     # Open a new window at the start, as well as with each new image.
-    if (jj == 1 || (save_fname && !widget)) {
+    if (jj == 1 || (saving_file && !widget)) {
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
@@ -1279,7 +1253,7 @@ view_xifti_surface <- function(
     if (any_colors) {
 
       if (legend_embed) {
-        if (jj == 1 || (save_fname && !widget)) {
+        if (jj == 1 || (saving_file && !widget)) {
           names(subscenes)[subscenes == rgl::subsceneInfo()$id] <- "legend"
           if (widget) {
             if (length(hemisphere)==1) {
@@ -1348,7 +1322,7 @@ view_xifti_surface <- function(
       }
     }
 
-    if (!widget && save_fname) {
+    if (!widget && saving_file) {
       rgl::rgl.snapshot(fname[jj])
       rgl::rgl.close()
     }
@@ -1402,7 +1376,7 @@ view_xifti_surface <- function(
     }
     rgl::rgl.close()
     
-    if (save_fname) {
+    if (saving_file) {
       if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
         stop(
           "Package \"htmlwidgets\" will be needed by `view_xifti_surface` to ",
@@ -1415,7 +1389,7 @@ view_xifti_surface <- function(
       return(out)
     }
 
-  } else if (save_fname) {
+  } else if (saving_file) {
     return(invisible(fname))
 
   } else {

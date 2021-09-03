@@ -9,11 +9,11 @@
 \usage{
 view_xifti(xifti, what = NULL, ...)
 
-view_cifti(xifti, what = NULL, ...)
+view_cifti(xifti, ...)
 
-viewCIfTI(xifti, what = NULL, ...)
+viewCIfTI(xifti, ...)
 
-viewcii(xifti, what = NULL, ...)
+viewcii(xifti, ...)
 }
 \arguments{
 \item{xifti}{A \code{"xifti"} object.}

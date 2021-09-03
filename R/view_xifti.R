@@ -1,3 +1,57 @@
+#' Get title for \code{view_xifti_surface} or \code{view_xifti_volume}
+#' 
+#' Determine the title(s) for the cortical surface or subcortical volume plot,
+#'  if it was not provided by the user.
+#' 
+#' @param title Title text or \code{NULL}
+#' @param xifti_meta \code{xifti$meta}
+#' @param this_idx The index
+#' @param cex.title,text_color See \code{\link{view_xifti_surface}}
+#' @param indiv_panel_width The width of the panel to write the title in
+#' 
+#' @return The RGL object ID for the title
+#' 
+#' @keywords internal
+#'  
+view_xifti.title <- function(xifti_meta, idx){
+
+  intent <- xifti_meta$cifti$intent
+
+  if (is.null(intent)) {
+    if (!is.null(xifti_meta$cifti$names) && length(xifti_meta$cifti$names)>=idx) {
+      title <- xifti_meta$cifti$names[idx]
+    } else {
+      title <- ""
+    }
+
+  } else if (intent == 3002) {
+    title <- paste("Index", idx)
+    if (!any(vapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null, FALSE))) {
+      title <- paste0(
+        title, " (", 
+        xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*idx, 
+        " ", xifti_meta$cifti$time_unit, "s)"
+      )
+    }
+
+  } else if (intent == 3006) {
+    if (!is.null(xifti_meta$cifti$names) && length(xifti_meta$cifti$names)>=idx) {
+      title <- xifti_meta$cifti$names[idx]
+    } else {
+      title <- ""
+    }
+    
+  } else if (intent == 3007) {
+    if (!is.null(xifti_meta$cifti$labels) && length(xifti_meta$cifti$labels)>=idx) {
+      title <- names(xifti_meta$cifti$labels)[idx]
+    } else {
+      title <- ""
+    }
+  }
+
+  title
+}
+
 #' View a \code{"xifti"} object
 #' 
 #' Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}
@@ -24,8 +78,12 @@ view_xifti <- function(xifti, what=NULL, ...) {
   has_surfL <- !is.null(xifti$surf$cortex_left)
   has_surfR <- !is.null(xifti$surf$cortex_right)
 
+  out <- list(surface = NULL, volume = NULL)
+
   if (is.null(what)) { 
-    if (has_left | has_right) { 
+    if ((has_left | has_right) & has_sub) {
+      what <- "both"
+    } else if (has_left | has_right) { 
       what <- "surface" 
     } else if (has_sub) {
       what <- "volume"
@@ -36,20 +94,142 @@ view_xifti <- function(xifti, what=NULL, ...) {
       return(NULL)
     }
   } else {
-    what <- match.arg(what, c("surface", "volume"))
-    if (what == "surface" && !any(c(has_left, has_right, has_surfL, has_surfR))) {
-      stop("No cortical data nor surface geometry are present in the `xifti`, so the surface cannot be plotted.")
+    what <- match.arg(what, c("surface", "volume", "both"))
+    if (what == "both" || what == "surface") {
+      if (!any(c(has_left, has_right, has_surfL, has_surfR))) {
+        stop("No cortical data nor surface geometry are present in the `xifti`, so the surface cannot be plotted.")
+      }
     }
-    if (what == "volume" && !has_sub) {
-      stop("No subcortical data are present in the `xifti`, so the volume cannnot be plotted.")
+    if (what == "both" || what == "volume") {
+      if (!has_sub) {
+        stop("No subcortical data are present in the `xifti`, so the volume cannnot be plotted.")
+      }
     }
   }
 
-  return(switch(
+  # If `both`, use the same zlim and color_mode
+  args <- list(...)
+  made_same <- FALSE
+  if (what == "both" && is.null(args$zlim)) {
+    if (is.null(args$idx)) { args$idx <- 1 }
+    args$idx <- as.numeric(args$idx)
+    if (length(args$idx) > 1) {
+      # warning?
+      what <- "surface"
+    }
+    stopifnot(all(args$idx > 0) && all(args$idx <= ncol(xifti)))
+
+    if (is.null(args$color_mode)) { args$color_mode <- "auto" }
+    if (args$color_mode == "auto") {
+      if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
+        args$color_mode <- "qualitative"
+      } 
+      # Otherwise, set after call to view_xifti_surface.mesh_val
+    } else {
+      args$color_mode <- match.arg(args$color_mode, c("sequential", "qualitative", "diverging"))
+    }
+
+    if (args$color_mode == "auto") {
+      values <- as.vector(as.matrix(xifti)[,args$idx])
+
+      if (!is.null(values)) {
+        if (length(args$zlim) == 3) { 
+          args$color_mode <- "diverging"
+        } else if (all(values %in% c(NA, NaN))) { 
+          args$color_mode <- "diverging"
+        } else {
+          pctile_05 <- quantile(values, .05, na.rm=TRUE)
+          pctile_95 <- quantile(values, .95, na.rm=TRUE)
+          pctile_05_neg <- pctile_05 < 0
+          pctile_95_pos <- pctile_95 > 0
+
+          if (!xor(pctile_05_neg, pctile_95_pos)) {
+            args$color_mode <- "diverging"
+            if (is.null(colors)) { colors <- "ROY_BIG_BL" }
+          } else if (pctile_95_pos) {
+            args$color_mode <- "sequential"
+            if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
+          } else if (pctile_05_neg) {
+            args$color_mode <- "sequential"
+            if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
+          } else { stop() }
+        }
+
+        # [TO DO]: show all values in color legend?
+        # Hide the cortex one?
+        if (! args$color_mode=="qualitative") {
+
+          # Use same iff not qualitative and some colors ---------------------------
+          made_same <- TRUE
+          
+          if (is.null(args$digits)) {
+            signif_digits <- 3
+          } else {
+            signif_digits <- args$digits
+          }
+          DATA_MIN <- round(min(values, na.rm=TRUE), signif_digits)
+          DATA_MAX <- round(max(values, na.rm=TRUE), signif_digits)
+
+          pctile_05 <- round(quantile(values, .05, na.rm=TRUE), signif_digits)
+          pctile_95 <- round(quantile(values, .95, na.rm=TRUE), signif_digits)
+          pctile_05_neg <- pctile_05 < 0
+          pctile_95_pos <- pctile_95 > 0
+
+          if (!pctile_05_neg) {
+            if (pctile_95 == 0) { pctile_95 <- DATA_MAX }
+            args$zlim <- c(0, pctile_95)
+          } else if (!pctile_95_pos) {
+            if (pctile_05 == 0) { pctile_05 <- DATA_MAX }
+            args$zlim <- c(pctile_05, 0)
+          } else {
+            pctile_max <- max(abs(c(pctile_05, pctile_95)))
+            if (pctile_max == 0) { pctile_max <- max(abs(c(DATA_MIN, DATA_MAX))) }
+            if (args$color_mode=="diverging") {
+              args$zlim <- c(-pctile_max, 0, pctile_max)
+            } else {
+              args$zlim <- c(-pctile_max, pctile_max)
+            }
+          }
+
+          message(
+            "`zlim` not provided: using color range ", 
+            as.character(min(args$zlim)), " - ", as.character(max(args$zlim)), " ",
+            "(data limits: ", as.character(min(DATA_MIN)), " - ", 
+            as.character(max(DATA_MAX)), ")."
+          )
+        }
+      }
+    }
+
+    if (what == "both" | what == "surface") {
+      vxs <- function(xifti, args, color_mode, zlim, ...) { 
+        view_xifti_surface(xifti, color_mode=args$color_mode, zlim=args$zlim, ...) 
+      }
+      out$surface <- vxs(xifti, args, ...)
+    }
+    if (what == "both" | what == "volume") {
+      vxv <- function(xifti, args, color_mode, zlim, ...) { 
+        view_xifti_volume(xifti, color_mode=args$color_mode, zlim=args$zlim, ...) 
+      }
+      out$volume <- vxv(xifti, args, ...)
+    }
+  }
+
+  if (!made_same) {
+    if (what == "both" | what == "surface") {
+      out$surface <- view_xifti_surface(xifti, ...)
+    }
+    if (what == "both" | what == "volume") {
+      out$volume <- view_xifti_volume(xifti, ...)
+    }
+  }
+
+  return(invisible(switch(
     what, 
-    surface = view_xifti_surface(xifti, ...),
-    volume = view_xifti_volume(xifti, ...)
-  ))
+    both = out,
+    surface = out$surface,
+    volume = out$volume
+  )))
 }
 
 #' S3 method: use \code{view_xifti} to plot a \code{"xifti"} object
@@ -63,23 +243,23 @@ view_xifti <- function(xifti, what=NULL, ...) {
 #' @export
 #' 
 plot.xifti <- function(x, ...){
-  view_xifti(x, what=NULL, ...)
+  view_xifti(x, ...)
 }
 
 #' @rdname view_xifti
 #' @export
-view_cifti <- function(xifti, what=NULL, ...){
-  view_xifti(xifti, what=what, ...)
+view_cifti <- function(xifti, ...){
+  view_xifti(xifti, ...)
 }
 
 #' @rdname view_xifti
 #' @export
-viewCIfTI <- function(xifti, what=NULL, ...){
-  view_xifti(xifti, what=what, ...)
+viewCIfTI <- function(xifti, ...){
+  view_xifti(xifti, ...)
 }
 
 #' @rdname view_xifti
 #' @export
-viewcii <- function(xifti, what=NULL, ...){
-  view_xifti(xifti, what=what, ...)
+viewcii <- function(xifti, ...){
+  view_xifti(xifti, ...)
 }
