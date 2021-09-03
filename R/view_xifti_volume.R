@@ -149,7 +149,7 @@
 #' @family common
 #' @export
 #' @importFrom graphics plot.new
-#' @importFrom grDevices dev.list dev.off png gray
+#' @importFrom grDevices dev.list dev.off png pdf gray
 #' @importFrom stats median quantile
 #' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
