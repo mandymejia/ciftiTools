@@ -22,12 +22,15 @@ view_xifti_volume(
   widget = FALSE,
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  fname_sub = FALSE,
   legend_fname = "[fname]_legend",
   legend_ncol = NULL,
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
+  ypos.title = 0,
+  xpos.title = 0,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -212,6 +215,10 @@ length 1 character vector to name files by this suffix followed by the
 index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
 length as \code{idx} to name the files exactly.}
 
+\item{fname_sub}{Add "_sub" to the end of the names of the files being saved?
+Default: \code{FALSE}. This is useful if cortical plots of the same data are being
+saved too.}
+
 \item{legend_fname}{Save the color legend? Since the legend is the same
 for each \code{idx} only one legend is written even if \code{length(idx)>1}.
 This argument can be \code{NULL} to not save the legend, an exact file
@@ -240,7 +247,13 @@ If \code{NULL} (default), let \code{\link{format}} decide.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{1.2} for titles less than 20 characters long, and smaller
-sizes for increasingly longer titles.}
+sizes for increasingly longer titles. If saving a PNG and PDF file, the default
+will also scale with \code{width} relative to the default value of \code{width}.}
+
+\item{ypos.title, xpos.title}{The positioning of the title can be finicky,
+especially when using an R Markdown document interactively in which case it
+appears too high in the plot. Use these arguments to nudge the title up
+or down (\code{ypos.title}) or left or right (\code{xpos.title}).}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
 \code{"white"}. If \code{"white"}, will use black instead for the color
@@ -251,9 +264,20 @@ white backgrounds). To override this behaviour use \code{"#FFFFFF"} instead.}
 the color legend or color bar if printed separately: those will always have
 white backgrounds.}
 
-\item{width, height}{The dimensions of the plot, in pixels. Affects}
+\item{width, height}{The dimensions of the plot, in pixels. Only affects saved
+images (if \code{!isFALSE(fname)}). If \code{NULL}, file dimensions will be
+400 x 600 pixels for PNGs and 4 x 6 in. for PDFs.
 
-\item{...}{Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}}
+Currently, there is no way to control the
+dimensions of the plot if working interactively in RStudio or creating a knitted
+R Markdown document. The default appears to be a wide aspect ratio.}
+
+\item{...}{Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}.
+Note that for \code{oro.nifti::overlay} the following additional arguments
+should not be provided since they are pre-determined inside this function
+or by the arguments listed above:
+\code{x}, \code{y}, \code{plane}, \code{col.y}, \code{col.x}, \code{zlim.y},
+\code{oma}, \code{plot.type}, \code{bg}.}
 }
 \description{
 Visualize the subcortical data in a \code{"xifti"} using a series of 2D

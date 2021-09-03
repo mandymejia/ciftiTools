@@ -107,16 +107,56 @@ view_xifti <- function(xifti, what=NULL, ...) {
     }
   }
 
-  # If `both`, use the same zlim and color_mode
   args <- list(...)
+
+  vxs <- function(
+    xifti, args, color_mode, zlim, 
+    fname, fname_sub,
+    structural_img, plane, n_slices, slices, ypos.title, xpos.title,
+    ...
+    ) { 
+    view_xifti_surface(xifti, color_mode=args$color_mode, zlim=args$zlim, fname=args[["fname"]], ...) 
+  }
+  vxv <- function(
+    xifti, args, color_mode, zlim, 
+    fname, fname_sub, 
+    hemisphere, view, slider_title, borders, alpha, 
+    edge_color, vertex_color, vertex_size, zoom,
+    ...
+    ) { 
+    view_xifti_volume(xifti, color_mode=args$color_mode, zlim=args$zlim, fname=args[["fname"]], fname_sub=args[["fname_sub"]], ...) 
+  }
+
+  # If `both`, show cortex only if making a widget, and do not write out overlapping
+  # file names. ----------------------------------------------------------------
+  args[["fname_sub"]] <- FALSE
+  if (what == "both") {
+    if (isTRUE(args$widget)) {
+      warning(
+        "Only one widget can be made at a time. ",
+        "Plotting the cortex only. ",
+        "Use a separate command to display the subcortex.\n"
+      )
+      what <- "surface"
+    } else if (length(args$idx) > 1 && (isFALSE(args[["fname"]]) || is.null(args[["fname"]]))) {
+      warning(
+        "A widget is needed to display more than one column for the cortex. ",
+        "But, only one widget can be made at a time. ",
+        "Plotting the cortex only. ",
+        "Use a separate command to display the subcortex.\n"
+      )
+      what <- "surface"
+    }
+    args[["fname_sub"]] <- TRUE
+  }
+  # [TO DO]: handle .pdf in file name (or .html ...)
+
+  # If `both`, use the same zlim and color_mode --------------------------------
   made_same <- FALSE
   if (what == "both" && is.null(args$zlim)) {
     if (is.null(args$idx)) { args$idx <- 1 }
     args$idx <- as.numeric(args$idx)
-    if (length(args$idx) > 1) {
-      # warning?
-      what <- "surface"
-    }
+
     stopifnot(all(args$idx > 0) && all(args$idx <= ncol(xifti)))
 
     if (is.null(args$color_mode)) { args$color_mode <- "auto" }
@@ -200,36 +240,27 @@ view_xifti <- function(xifti, what=NULL, ...) {
         }
       }
     }
+  }
+  # ----------------------------------------------------------------------------
 
-    if (what == "both" | what == "surface") {
-      vxs <- function(xifti, args, color_mode, zlim, ...) { 
-        view_xifti_surface(xifti, color_mode=args$color_mode, zlim=args$zlim, ...) 
-      }
-      out$surface <- vxs(xifti, args, ...)
-    }
-    if (what == "both" | what == "volume") {
-      vxv <- function(xifti, args, color_mode, zlim, ...) { 
-        view_xifti_volume(xifti, color_mode=args$color_mode, zlim=args$zlim, ...) 
-      }
-      out$volume <- vxv(xifti, args, ...)
-    }
+  if (what == "both" | what == "surface") {
+    out$surface <- vxs(xifti, args, ...)
+  }
+  if (what == "both" | what == "volume") {
+    out$volume <- vxv(xifti, args, ...)
   }
 
-  if (!made_same) {
-    if (what == "both" | what == "surface") {
-      out$surface <- view_xifti_surface(xifti, ...)
-    }
-    if (what == "both" | what == "volume") {
-      out$volume <- view_xifti_volume(xifti, ...)
-    }
-  }
-
-  return(invisible(switch(
-    what, 
+  out <- switch(what,
     both = out,
     surface = out$surface,
     volume = out$volume
-  )))
+  )
+
+  if (isTRUE(args$widget)) {
+    return(out)
+  } else {
+    return(invisible(out))
+  }
 }
 
 #' S3 method: use \code{view_xifti} to plot a \code{"xifti"} object

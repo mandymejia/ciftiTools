@@ -93,6 +93,9 @@
 #'  \code{fname_suffix}: either the data column names (\code{"names"}) or the 
 #'  index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same 
 #'  length as \code{idx} to name the files exactly. 
+#' @param fname_sub Add "_sub" to the end of the names of the files being saved?
+#'  Default: \code{FALSE}. This is useful if cortical plots of the same data are being
+#'  saved too.
 #' @param legend_fname Save the color legend? Since the legend is the same
 #'  for each \code{idx} only one legend is written even if \code{length(idx)>1}.
 #'  This argument can be \code{NULL} to not save the legend, an exact file
@@ -116,7 +119,12 @@
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
 #'  will use \code{1.2} for titles less than 20 characters long, and smaller
-#'  sizes for increasingly longer titles.
+#'  sizes for increasingly longer titles. If saving a PNG and PDF file, the default
+#'  will also scale with \code{width} relative to the default value of \code{width}.
+#' @param ypos.title,xpos.title The positioning of the title can be finicky, 
+#'  especially when using an R Markdown document interactively in which case it
+#'  appears too high in the plot. Use these arguments to nudge the title up
+#'  or down (\code{ypos.title}) or left or right (\code{xpos.title}).
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  \code{"white"}. If \code{"white"}, will use black instead for the color
 #'  legend and the color bar if printed separately (since those will have
@@ -124,10 +132,19 @@
 #' @param bg Background color. \code{NULL} will use \code{"black"}. Does not affect
 #'  the color legend or color bar if printed separately: those will always have
 #'  white backgrounds.
-#' @param width,height The dimensions of the plot, in pixels. Affects 
+#' @param width,height The dimensions of the plot, in pixels. Only affects saved
+#'  images (if \code{!isFALSE(fname)}). If \code{NULL}, file dimensions will be
+#'  400 x 600 pixels for PNGs and 4 x 6 in. for PDFs.
 #' 
-#' @inheritParams verbose_Param_TRUE
-#' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}
+#'  Currently, there is no way to control the
+#'  dimensions of the plot if working interactively in RStudio or creating a knitted
+#'  R Markdown document. The default appears to be a wide aspect ratio.
+#' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}.
+#'  Note that for \code{oro.nifti::overlay} the following additional arguments
+#'  should not be provided since they are pre-determined inside this function 
+#'  or by the arguments listed above:
+#'  \code{x}, \code{y}, \code{plane}, \code{col.y}, \code{col.x}, \code{zlim.y},
+#'  \code{oma}, \code{plot.type}, \code{bg}.
 #'
 #' @family common
 #' @export
@@ -142,14 +159,11 @@ view_xifti_volume <- function(
   idx=1, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
   widget=FALSE,
-  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
+  legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
-  cex.title=NULL, text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
-
-  # Try to avoid this error with colorbar:
-  #   Error in par(old.par) :
-  #   invalid value specified for graphical parameter "pin"
-  while (!is.null(grDevices::dev.list())) { grDevices::dev.off() }
+  cex.title=NULL, ypos.title=0, xpos.title=0,
+  text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   # ----------------------------------------------------------------------------
   # Check arguments ------------------------------------------------------------
@@ -174,6 +188,9 @@ view_xifti_volume <- function(
   idx <- as.numeric(idx)
 
   stopifnot(isTRUE(widget) | isFALSE(widget))
+  
+  makePDF <- FALSE
+
   if (!widget) {
     
     # `fname`, `fname_suffix`, `legend_fname`
@@ -207,24 +224,35 @@ view_xifti_volume <- function(
           "name(s) you want to use for each `idx`.\n"
         )
       }
-
-      # [TO DO] pdf?
-      fname <- gsub(".png$", "", fname)
-      if (!(length(fname) %in% c(1, length(idx)))) {
-        warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
-        fname <- fname[1]
-      }
-
-      if (length(fname) == 1 && length(idx) > 1) {
-        # Add suffix for png files
-        fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
-        if (fname_suffix == "names" && !is.null(xifti$meta$cifti$names)) {
-          fname <- paste0(fname, "_", xifti$meta$cifti$names)
-        } else {
-          fname <- paste0(fname, "_", as.character(idx)) 
+      if (any(grepl("\\.pdf$", fname))) {
+        makePDF <- TRUE
+        if (length(fname) > 1) {
+          warning("Using first entry of `fname`, since only one pdf file is being written.\n")
+          fname <- fname[1]
+          if (fname_sub) {
+            fname <- gsub("\\.pdf$", "_sub.pdf", fname)
+          }
         }
+      } else {
+        fname <- gsub(".html$", "", fname)
+        fname <- gsub(".png$", "", fname)
+        if (!(length(fname) %in% c(1, length(idx)))) {
+          warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
+          fname <- fname[1]
+        }
+
+        if (length(fname) == 1 && length(idx) > 1) {
+          # Add suffix for png files
+          fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
+          if (fname_suffix == "names" && !is.null(xifti$meta$cifti$names)) {
+            fname <- paste0(fname, "_", xifti$meta$cifti$names)
+          } else {
+            fname <- paste0(fname, "_", as.character(idx)) 
+          }
+        }
+        if (fname_sub) { fname <- paste0(fname, "_sub") }
+        fname <- paste0(fname, ".png")
       }
-      fname <- paste0(fname, ".png")
 
       fname_dirs <- unique(dirname(fname))
       if (!all(file.exists(fname_dirs))) {
@@ -243,14 +271,26 @@ view_xifti_volume <- function(
         if (grepl("\\[fname\\]", legend_fname)) {
           legend_fname <- gsub(
             "\\[fname\\]", 
-            gsub("\\.png|\\.html", "", fname[1]), 
+            gsub("\\.png|\\.pdf", "", fname[1]), 
             legend_fname
           )
         }
-        if (!endsWith(legend_fname, ".png")) { legend_fname <- paste0(legend_fname, ".png") }
+        if (!endsWith(legend_fname, ".png")) { 
+          legend_fname <- paste0(legend_fname, ifelse(fname_sub, "_sub.png", ".png"))
+        } else {
+          legend_fname <- gsub("\\.png$", "_sub.png", legend_fname)
+        }
       }
     } else {
       legend_fname <- FALSE
+    }
+
+    if (!isFALSE(fname) & !makePDF) {
+      # Try to avoid this error with colorbar:
+      #   Error in par(old.par) :
+      #   invalid value specified for graphical parameter "pin"
+      # Only do this if saving a png, because otherwise the plot won't show.
+      while (!is.null(grDevices::dev.list())) { grDevices::dev.off() }
     }
 
     # `color_mode`
@@ -306,7 +346,7 @@ view_xifti_volume <- function(
       stop("Only one `idx` at a time is supported for the interactive subcortical widget.")
     }
   }
-  saving_file <- !isFALSE(fname)
+  makePNG <- !isFALSE(fname) & !makePDF
 
   if (is.null(bg)) { bg <- "black" }
 
@@ -592,13 +632,15 @@ view_xifti_volume <- function(
     )
   }
 
-  if (is.null(width)) { width <- 480 }
-  if (is.null(height)) { height <- 480 }
+  if (is.null(width)) { width <- 200 * ifelse(makePDF, .02, 2) }
+  if (is.null(height)) { height <- 300 * ifelse(makePDF, .02, 2) }
+
+  if (makePDF) { pdf(fname, width=width, height=height) }
 
   for (jj in seq_len(length(idx))) {
     this_idx <- idx[jj]
 
-    if (saving_file) { png(fname[jj], width=width, height=height) }
+    if (makePNG) { png(fname[jj], width=width, height=height) }
 
     if (jj > 1) { img_overlay <- img_labels <- img*0 }
     img_overlay@.Data <- vol[,,,jj]
@@ -650,23 +692,31 @@ view_xifti_volume <- function(
       if (title_jj != "") {
 
         if (is.null(cex.title)) {
-          if (is.null(width) | isFALSE(fname)) { 
-            cex.title <- 1.2 # par("cex.main")
-          } else {
-            cex.title <- width / 350
+          cex.title <- 1.2
+          if (makePNG) {
+            cex.title <- cex.title * width / 400
+          } else if (makePDF) {
+            cex.title <- cex.title * width / 4
           }
-          if (nchar(title) > 20) { cex.title <- cex.title * sqrt(20 / nchar(title)) }
+          if (nchar(title_jj) > 20) { cex.title <- cex.title * sqrt(20 / nchar(title_jj)) }
           cex.title <- round(cex.title*100)/100
         }
 
         title(title_jj, col.main=text_color, cex.main=cex.title,
-          line=2, adj=.45 # Move up and left
+          line= 1.75 + ypos.title, # Move up 
+          adj=ifelse(!isFALSE(fname), ifelse(makePDF, .42, .45), .465) + xpos.title # Move up and left
         )
       }
     }
 
-    if (saving_file) { dev.off() }
+    if (makePDF) {
+      # plot.new()
+    } else if (makePNG) {
+      dev.off()
+    }
   }
+
+  if (makePDF) { dev.off() }
 
   if (use_cleg) {
     print(cleg)
@@ -700,7 +750,7 @@ view_xifti_volume <- function(
     }
   }
 
-  if (saving_file) {
+  if (makePNG | makePDF) {
     return(invisible(fname))
   } else {
     return(invisible(NULL))

@@ -758,7 +758,7 @@ view_xifti_surface <- function(
       )
     }
 
-    if (any(grepl("html$", fname))) {
+    if (any(grepl("\\.html$", fname))) {
       if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
         stop(
           "Package \"htmlwidgets\" will be needed by `view_xifti_surface` to ",
@@ -770,6 +770,7 @@ view_xifti_surface <- function(
         fname <- fname[1]
       }
     } else {
+      fname <- gsub(".pdf$", "", fname)
       fname <- gsub(".png$", "", fname)
       if (!(length(fname) %in% c(1, length(idx)))) {
         warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
@@ -782,7 +783,7 @@ view_xifti_surface <- function(
           # Add suffix for png files
           fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
           if (fname_suffix == "names" && !is.null(xifti$meta$cifti$names)) {
-            fname <- paste0(fname, "_", xifti$meta$cifti$names)
+            fname <- paste0(fname, "_", xifti$meta$cifti$names[idx])
           } else {
             fname <- paste0(fname, "_", as.character(idx)) 
           }
