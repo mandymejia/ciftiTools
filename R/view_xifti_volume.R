@@ -126,9 +126,10 @@
 #'  appears too high in the plot. Use these arguments to nudge the title up
 #'  or down (\code{ypos.title}) or left or right (\code{xpos.title}).
 #' @param text_color Color for text in title and colorbar legend. Default:
-#'  \code{"white"}. If \code{"white"}, will use black instead for the color
-#'  legend and the color bar if printed separately (since those will have
-#'  white backgrounds). To override this behaviour use \code{"#FFFFFF"} instead.
+#'  \code{"white"}. 
+#   If \code{"white"}, will use black instead for the color
+#   legend and the color bar if printed separately (since those will have
+#   white backgrounds). To override this behaviour use \code{"#FFFFFF"} instead.
 #' @param bg Background color. \code{NULL} will use \code{"black"}. Does not affect
 #'  the color legend or color bar if printed separately: those will always have
 #'  white backgrounds.
@@ -377,6 +378,7 @@ view_xifti_volume <- function(
         color_mode <- "diverging"
       } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
         color_mode <- "diverging"
+        if (is.null(colors)) { colors <- "ROY_BIG_BL" }
       } else if (length(zlim) == 2) {
         color_mode <- ifelse(prod(zlim) >= 0, "sequential", "diverging")
       } 
@@ -677,6 +679,8 @@ view_xifti_volume <- function(
 
   if (makePDF) { pdf(fname, width=width, height=height) }
 
+  zlim <- sort(zlim)[c(1, length(zlim))]
+
   for (jj in seq_len(length(idx))) {
     this_idx <- idx[jj]
 
@@ -698,12 +702,12 @@ view_xifti_volume <- function(
       img2 <- img[slices,,]
       img_overlay2 <- img_overlay[slices,,]
     }
-
+    
     oro.nifti::overlay(
       x=img2, y=img_overlay2, plane=plane, 
       col.y=pal_even$color,
       col.x=structural_img_colors,
-      zlim.y=zlim[c(1, length(zlim))], 
+      zlim.y=zlim, 
       oma=c(5,0,5,0),
       plot.type=ifelse(length(slices)==1, "single", "multiple"),
       bg=bg, ...
@@ -780,11 +784,11 @@ view_xifti_volume <- function(
       }
       if (!isFALSE(legend_fname)) { png(legend_fname) } else { plot.new() }
       colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
-      if (text_color=="white") { 
-        colorbar_kwargs$axis.args$col <- "black" 
-        colorbar_kwargs$axis.args$col.ticks <- "black" 
-        colorbar_kwargs$axis.args$col.axis <- "black"
-      }
+      # if (text_color=="white") { 
+      #   colorbar_kwargs$axis.args$col <- "black" 
+      #   colorbar_kwargs$axis.args$col.ticks <- "black" 
+      #   colorbar_kwargs$axis.args$col.axis <- "black"
+      # }
       try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
       if (!isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
     }

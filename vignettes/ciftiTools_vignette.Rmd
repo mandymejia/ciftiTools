@@ -197,7 +197,7 @@ view_xifti_volume(xii)
 view_xifti_volume(xii, interactive = TRUE)
 ```
 
-The S3 method `plot(xii)` will display the cortical data if possible, and the subcortical data otherwise. 
+The S3 method `plot(xii)` will display all the data present in the `xifti` using `view_xifti_surface`, `view_xifti_volume`, or both. If both plots are made, the color mode and range will be shared between the two plots. 
 
 # Resampling and smoothing
 

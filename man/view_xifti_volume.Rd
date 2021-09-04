@@ -256,9 +256,7 @@ appears too high in the plot. Use these arguments to nudge the title up
 or down (\code{ypos.title}) or left or right (\code{xpos.title}).}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
-\code{"white"}. If \code{"white"}, will use black instead for the color
-legend and the color bar if printed separately (since those will have
-white backgrounds). To override this behaviour use \code{"#FFFFFF"} instead.}
+\code{"white"}.}
 
 \item{bg}{Background color. \code{NULL} will use \code{"black"}. Does not affect
 the color legend or color bar if printed separately: those will always have

@@ -919,8 +919,9 @@ view_xifti_surface <- function(
     if (color_mode == "auto") {
       if (length(zlim) == 3) { 
         color_mode <- "diverging"
-      } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
+      } else if (is.null(values_vec) || all(values_vec %in% c(NA, NaN))) { 
         color_mode <- "diverging"
+        if (is.null(colors)) { colors <- "ROY_BIG_BL" }
       } else if (length(zlim) == 2) {
         color_mode <- ifelse(prod(zlim) >= 0, "sequential", "diverging")
       } 
