@@ -152,21 +152,27 @@ view_xifti <- function(xifti, what=NULL, ...) {
   args <- list(...)
 
   vxs <- function(
-    xifti, args, color_mode, zlim, 
+    xifti, args, color_mode, zlim, colors,
     fname, fname_sub,
     structural_img, plane, n_slices, slices, ypos.title, xpos.title,
     ...
     ) { 
-    view_xifti_surface(xifti, color_mode=args$color_mode, zlim=args$zlim, fname=args[["fname"]], ...) 
+    view_xifti_surface(
+      xifti, color_mode=args$color_mode, zlim=args$zlim, colors=args$colors, 
+      fname=args[["fname"]], ...
+    ) 
   }
   vxv <- function(
-    xifti, args, color_mode, zlim, 
+    xifti, args, color_mode, zlim, colors,
     fname, fname_sub, 
     hemisphere, view, slider_title, borders, alpha, 
     edge_color, vertex_color, vertex_size, zoom,
     ...
     ) { 
-    view_xifti_volume(xifti, color_mode=args$color_mode, zlim=args$zlim, fname=args[["fname"]], fname_sub=args[["fname_sub"]], ...) 
+    view_xifti_volume(
+      xifti, color_mode=args$color_mode, zlim=args$zlim, colors=args$colors, 
+      fname=args[["fname"]], fname_sub=args[["fname_sub"]], ...
+    ) 
   }
 
   if (length(args$widget) > 1) { 
@@ -202,9 +208,10 @@ view_xifti <- function(xifti, what=NULL, ...) {
     }
   }
 
-  # If `both`, use the same zlim and color_mode --------------------------------
+  # If `both`, use the same zlim, colors, and color_mode -----------------------
   made_same <- FALSE
-  if (what == "both" && is.null(args$zlim)) {
+  if (what == "both") {
+
     if (is.null(args$idx)) { args$idx <- 1 }
     args$idx <- as.numeric(args$idx)
 
@@ -220,44 +227,62 @@ view_xifti <- function(xifti, what=NULL, ...) {
       args$color_mode <- match.arg(args$color_mode, c("sequential", "qualitative", "diverging"))
     }
 
-    if (args$color_mode == "auto") {
-      values <- as.vector(as.matrix(xifti)[,args$idx])
+    values <- as.vector(as.matrix(xifti)[,args$idx])
 
-      if (!is.null(values)) {
-        if (length(args$zlim) == 3) { 
-          args$color_mode <- "diverging"
-        } else if (all(values %in% c(NA, NaN))) { 
-          args$color_mode <- "diverging"
-        } else {
+    if (!is.null(values)) {
+
+      # Determine `color_mode` and `colors`
+      if (args$color_mode == "sequential")
+      if (args$color_mode == "auto" || is.null(args$colors)) {
+        values <- as.vector(values)
+
+        if (args$color_mode == "auto") {
+          if (length(args$zlim) == 3) { 
+            args$color_mode <- "diverging"
+          } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
+            args$color_mode <- "diverging"
+          } else if (length(args$zlim) == 2) {
+            args$color_mode <- ifelse(prod(args$zlim) >= 0, "sequential", "diverging")
+          } 
+        }
+
+        if (args$color_mode == "auto" || (args$color_mode!="qualitative" && is.null(args$colors))) {
           pctile_05 <- quantile(values, .05, na.rm=TRUE)
           pctile_95 <- quantile(values, .95, na.rm=TRUE)
           pctile_05_neg <- pctile_05 < 0
           pctile_95_pos <- pctile_95 > 0
 
+          if (args$color_mode == "sequential") {
+            args$colors <- ifelse(pctile_05_neg, "ROY_BIG_BL_neg", "ROY_BIG_BL_pos")
+          }
+
           if (!xor(pctile_05_neg, pctile_95_pos)) {
-            args$color_mode <- "diverging"
-            if (is.null(colors)) { colors <- "ROY_BIG_BL" }
+            if (args$color_mode == "auto") { args$color_mode <- "diverging" }
+            if (is.null(args$colors)) { args$colors <- "ROY_BIG_BL" }
           } else if (pctile_95_pos) {
-            args$color_mode <- "sequential"
-            if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
+            if (args$color_mode == "auto") { args$color_mode <- "sequential" }
+            if (is.null(args$colors)) { args$colors <- "ROY_BIG_BL_pos" }
           } else if (pctile_05_neg) {
-            args$color_mode <- "sequential"
-            if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
+            if (args$color_mode == "auto") { args$color_mode <- "sequential" }
+            if (is.null(args$colors)) { args$colors <- "ROY_BIG_BL_neg" }
           } else { stop() }
         }
+      }
 
-        # [TO DO]: show all values in color legend?
-        # Hide the cortex one?
-        if (! args$color_mode=="qualitative") {
+      # Determine `zlim`
+      if (! args$color_mode=="qualitative") {
+        
+        # Use same iff not qualitative and some colors -------------------------
+        made_same <- TRUE
+        
+        if (is.null(args$zlim)) {
 
-          # Use same iff not qualitative and some colors ---------------------------
-          made_same <- TRUE
-          
           if (is.null(args$digits)) {
             signif_digits <- 3
           } else {
             signif_digits <- args$digits
           }
+
           DATA_MIN <- round(min(values, na.rm=TRUE), signif_digits)
           DATA_MAX <- round(max(values, na.rm=TRUE), signif_digits)
 

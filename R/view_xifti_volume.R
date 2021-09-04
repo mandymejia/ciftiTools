@@ -368,31 +368,43 @@ view_xifti_volume <- function(
   }
   labs_bs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
-  # Set `color_mode` if `"auto"`. Get colors.
-  values <- as.vector(values)
-  if (color_mode == "auto") {
-    if (length(zlim) == 3) { 
-      color_mode <- "diverging"
-    } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
-      color_mode <- "diverging"
-    } else {
+  # Set `color_mode` if `"auto"`; set `colors` if `NULL`
+  if (color_mode == "auto" || (color_mode!="qualitative" && is.null(colors))) {
+    values <- as.vector(values)
+
+    if (color_mode == "auto") {
+      if (length(zlim) == 3) { 
+        color_mode <- "diverging"
+      } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
+        color_mode <- "diverging"
+      } else if (length(zlim) == 2) {
+        color_mode <- ifelse(prod(zlim) >= 0, "sequential", "diverging")
+      } 
+    }
+
+    if (color_mode == "auto" || is.null(colors)) {
       pctile_05 <- quantile(values, .05, na.rm=TRUE)
       pctile_95 <- quantile(values, .95, na.rm=TRUE)
       pctile_05_neg <- pctile_05 < 0
       pctile_95_pos <- pctile_95 > 0
 
+      if (color_mode == "sequential") {
+        colors <- ifelse(pctile_05_neg, "ROY_BIG_BL_neg", "ROY_BIG_BL_pos")
+      }
+
       if (!xor(pctile_05_neg, pctile_95_pos)) {
-        color_mode <- "diverging"
+        if (color_mode == "auto") { color_mode <- "diverging" }
         if (is.null(colors)) { colors <- "ROY_BIG_BL" }
       } else if (pctile_95_pos) {
-        color_mode <- "sequential"
+        if (color_mode == "auto") { color_mode <- "sequential" }
         if (is.null(colors)) { colors <- "ROY_BIG_BL_pos" }
       } else if (pctile_05_neg) {
-        color_mode <- "sequential"
+        if (color_mode == "auto") { color_mode <- "sequential" }
         if (is.null(colors)) { colors <- "ROY_BIG_BL_neg" }
       } else { stop() }
     }
   }
+
   values[values == NaN] <- NA
   if (all(is.na(values))) { 
     values <- NULL
