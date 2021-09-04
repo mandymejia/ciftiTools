@@ -52,6 +52,48 @@ view_xifti.title <- function(xifti_meta, idx){
   title
 }
 
+#' Draw color legend for qualitative mode
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param pal_base Base palette + labels for each row
+#' @param leg_ncol Number of columns in legend. 
+#' @param text_color Color of text
+#' @param scale of text
+#' 
+#' @return A color legend from ggplot2
+#' 
+#' @keywords internal
+#' 
+view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=FALSE){
+
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package \"ggplot2\" needed to make the color legend. Please install it.", call. = FALSE)
+  }
+
+  if (!requireNamespace("ggpubr", quietly = TRUE)) {
+    stop("Package \"ggpubr\" needed to make the color legend. Please install it.", call. = FALSE)
+  }
+
+  point_size <- 5 * scale
+  legend_title_size <- 1.5 * scale
+  legend_text_size <- 1.2 * scale
+  if (is.null(leg_ncol)) { leg_ncol <- floor(sqrt(nrow(pal_base))) }
+
+  colors2 <- pal_base$color; names(colors2) <- pal_base$labels
+
+  value <- NULL
+  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, color=labels)) + 
+    ggplot2::geom_point(size=point_size, shape=15) + ggplot2::theme_bw() +
+    ggplot2::scale_color_manual(values=colors2, name=ifelse(title_sub, "Labels (subcortex)", "Labels")) +
+    ggplot2::guides(color=ggplot2::guide_legend(label.theme=ggplot2::element_text(color=text_color), ncol=leg_ncol)) +
+    ggplot2::theme(legend.title=ggplot2::element_text(
+      size=ggplot2::rel(legend_title_size)), 
+      legend.text=ggplot2::element_text(color=text_color, size=ggplot2::rel(legend_text_size))
+    )
+  leg <- ggpubr::as_ggplot(ggpubr::get_legend(plt))
+}
+
 #' View a \code{"xifti"} object
 #' 
 #' Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}
@@ -127,6 +169,10 @@ view_xifti <- function(xifti, what=NULL, ...) {
     view_xifti_volume(xifti, color_mode=args$color_mode, zlim=args$zlim, fname=args[["fname"]], fname_sub=args[["fname_sub"]], ...) 
   }
 
+  if (length(args$widget) > 1) { 
+    args$widget <- as.logical(args$widget[[1]])
+  }
+
   # If `both`, show cortex only if making a widget, and do not write out overlapping
   # file names. ----------------------------------------------------------------
   args[["fname_sub"]] <- FALSE
@@ -137,6 +183,7 @@ view_xifti <- function(xifti, what=NULL, ...) {
         "Plotting the cortex only. ",
         "Use a separate command to display the subcortex.\n"
       )
+      args$widget <- TRUE
       what <- "surface"
     } else if (length(args$idx) > 1 && (isFALSE(args[["fname"]]) || is.null(args[["fname"]]))) {
       warning(
@@ -145,11 +192,15 @@ view_xifti <- function(xifti, what=NULL, ...) {
         "Plotting the cortex only. ",
         "Use a separate command to display the subcortex.\n"
       )
+      args$widget <- TRUE
       what <- "surface"
     }
     args[["fname_sub"]] <- TRUE
+  } else if (what == "surface") {
+    if (length(args$idx) > 1 && (isFALSE(args[["fname"]]) || is.null(args[["fname"]]))) {
+      args$widget <- TRUE
+    }
   }
-  # [TO DO]: handle .pdf in file name (or .html ...)
 
   # If `both`, use the same zlim and color_mode --------------------------------
   made_same <- FALSE

@@ -402,48 +402,6 @@ view_xifti_surface.cbar <- function(pal_base, pal, color_mode, text_color, digit
   )
 }
 
-#' Draw color legend for qualitative mode
-#' 
-#' See \code{\link{view_xifti_surface}} for details.
-#' 
-#' @param pal_base Base palette + labels for each row
-#' @param leg_ncol Number of columns in legend. 
-#' @param text_color Color of text
-#' @param scale of text
-#' 
-#' @return A color legend from ggplot2
-#' 
-#' @keywords internal
-#' 
-view_xifti_surface.cleg <- function(pal_base, leg_ncol, text_color, scale=1){
-
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package \"ggplot2\" needed to make the color legend. Please install it.", call. = FALSE)
-  }
-
-  if (!requireNamespace("ggpubr", quietly = TRUE)) {
-    stop("Package \"ggpubr\" needed to make the color legend. Please install it.", call. = FALSE)
-  }
-
-  point_size <- 5 * scale
-  legend_title_size <- 1.5 * scale
-  legend_text_size <- 1.2 * scale
-  if (is.null(leg_ncol)) { leg_ncol <- floor(sqrt(nrow(pal_base))) }
-
-  colors2 <- pal_base$color; names(colors2) <- pal_base$labels
-
-  value <- NULL
-  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, color=labels)) + 
-    ggplot2::geom_point(size=point_size, shape=15) + ggplot2::theme_bw() +
-    ggplot2::scale_color_manual(values=colors2, name="Labels") +
-    ggplot2::guides(color=ggplot2::guide_legend(label.theme=ggplot2::element_text(color=text_color), ncol=leg_ncol)) +
-    ggplot2::theme(legend.title=ggplot2::element_text(
-      size=ggplot2::rel(legend_title_size)), 
-      legend.text=ggplot2::element_text(color=text_color, size=ggplot2::rel(legend_text_size))
-    )
-  leg <- ggpubr::as_ggplot(ggpubr::get_legend(plt))
-}
-
 #' Draw title in RGL
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
@@ -1061,7 +1019,7 @@ view_xifti_surface <- function(
               legend_ncol <- max(1, floor(.8 * sqrt(nrow(cleg))))
               colorlegend_nrow <- ceiling(nrow(cleg) / legend_ncol)
             }
-            cleg <- view_xifti_surface.cleg(cleg, legend_ncol, text_color)
+            cleg <- view_xifti.cleg(cleg, legend_ncol, text_color)
           }
         }
       }

@@ -187,7 +187,11 @@ view_xifti_volume <- function(
 
   idx <- as.numeric(idx)
 
-  stopifnot(isTRUE(widget) | isFALSE(widget))
+  widget <- as.logical(widget)
+  if (length(widget) > 1) { 
+    warning("Using the first entry of `widget`.")
+    widget <- widget[1]
+  }
   
   makePDF <- FALSE
 
@@ -464,6 +468,12 @@ view_xifti_volume <- function(
         )
       }
       pal <- pal_even <- pal_base
+
+      pal_even <- pal_even[c(
+        which(pal_even$value == min(values, na.rm=TRUE)),
+        which(pal_even$value == max(values, na.rm=TRUE))
+      ),]
+
     } else {
 
       vol[vol < min(zlim)] <- min(zlim)
@@ -525,7 +535,7 @@ view_xifti_volume <- function(
           cleg <- pal_base
           cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
           if (!legend_alllevels) { 
-            cleg <- cleg[cleg$value %in% values,] 
+            cleg <- cleg[cleg$value %in% pal_even$value,] 
           }
           if (nrow(cleg) < 1) {
             use_cleg <- FALSE
@@ -535,7 +545,10 @@ view_xifti_volume <- function(
               legend_ncol <- max(1, floor(.8 * sqrt(nrow(cleg))))
               colorlegend_nrow <- ceiling(nrow(cleg) / legend_ncol)
             }
-            cleg <- view_xifti_surface.cleg(cleg, legend_ncol, ifelse(text_color=="white", "black", text_color))
+            cleg <- view_xifti.cleg(
+              cleg, legend_ncol, ifelse(text_color=="white", "black", text_color),
+              title_sub=fname_sub
+            )
           }
         }
       }
@@ -562,12 +575,27 @@ view_xifti_volume <- function(
     plane <- match.arg(plane, c("axial", "sagittal", "coronal"))
     plane_dim <- switch(plane, axial=3, coronal=2, sagittal=1)
     if (is.null(slices)) {
+      if (is.null(n_slices)) { warning("Using 9 slices."); n_slices <- 9 }
+      n_slices <- as.numeric(n_slices)
+      if (length(n_slices) > 1) { warning("Using the first entry of `slice`."); n_slices <- n_slices[1] }
       # Pick slices that are spaced out, and with many voxels.
       mask_count <- apply(xifti$meta$subcort$mask, plane_dim, sum)
       ns_all <- length(mask_count)
       slices <- seq(ns_all)
-      if (n_slices < ns_all / 2) {
-        slices <- slices[mask_count > median(mask_count)]
+      # Remove slices with zero voxels.
+      slices <- slices[mask_count != 0]
+      mask_count <- mask_count[mask_count != 0]
+      ns_all <- length(mask_count)
+      if (n_slices > length(slices)) {
+        warning(
+          "`n_slices` is larger than the number of non-empty slices (", 
+          length(slices), "). Showing all non-empty slices."
+        )
+        n_slices <- length(slices)
+      }
+      # Remove slices with few voxels.
+      if (n_slices < (ns_all / 2)) {
+        slices <- slices[mask_count > quantile(mask_count, .33)]
       }
       slices <- slices[round(seq(1, length(slices), length.out=n_slices))]
     } else {
