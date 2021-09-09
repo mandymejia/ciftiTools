@@ -7,11 +7,11 @@
 #' @return The message (length 1 character vector)
 wb_path_request <- function() {
   paste(
-    "\n******************************************************************************************",
-    "ciftiTools requires the path to the Connectome Workbench folder, or directly to the", 
-    "`wb_command(.exe)`. Please execute `ciftiTools.setOption('wb_path', 'path/to/workbench')`.", 
-    "Or, provide the path to each function with the `wb_path` argument.",
-    "******************************************************************************************\n",
+    "\n*****************************************************************",
+    "ciftiTools requires the path to the Connectome Workbench folder, ",
+    "or directly to the `wb_command(.exe)`. Please execute the command", 
+    "     `ciftiTools.setOption('wb_path', 'path/to/workbench')`.     ", 
+    "*****************************************************************\n",
     sep='\n'
   )
 }

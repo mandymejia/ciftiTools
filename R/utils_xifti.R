@@ -7,28 +7,59 @@
 #' @export
 #' @method summary xifti
 summary.xifti <- function(object, ...) {
-  out <- list()
-  class(out) <- "summary.xifti"
-  out$includes <- c(
-    !is.null(object$data$cortex_left),
-    !is.null(object$data$cortex_right),
-    !is.null(object$data$subcort),
-    !is.null(object$surf$cortex_left),
-    !is.null(object$surf$cortex_right)
+
+  x <- list(
+    measurements = ncol(object),
+    brainstructure = !vapply(object$data, is.null, FALSE),
+    verts_per_bs = lapply(object$data, nrow),
+    surf = !vapply(object$surf, is.null, FALSE),
+    medial_wall_mask = lapply(object$meta$cortex$medial_wall_mask, table),
+    subcort_labels = table(object$meta$subcort$labels),
+    subcort_mask = dim(object$meta$subcort$mask),
+    intent = object$meta$cifti$intent
   )
-  names(out$includes) <- c("left cortex", "right cortex", "subcortex", "left surface", "right surface")
-  if (out$includes["left cortex"]) out$cortex_left <- dim(object$data$cortex_left)
-  if (out$includes["right cortex"]) out$cortex_right <- dim(object$data$cortex_right)
-  if (out$includes["left surface"]) out$surf_left <- TRUE
-  if (out$includes["right surface"]) out$surf_right <- TRUE
-  if (out$includes["subcortex"]){
-    out$subcort <- list()
-    out$subcort$dat <- dim(object$data$subcort)
-    out$subcort$labels <- table(object$meta$subcort$labels)
-    out$subcort$mask <- dim(object$meta$subcort$mask)
+
+  # Re-name the brainstructures
+  bs_nice <- c(
+    cortex_left = "left cortex", 
+    cortex_right = "right cortex", 
+    subcort = "subcortex"
+  )
+  names(x$brainstructure) <- bs_nice[names(x$brainstructure)]
+  names(x$verts_per_bs) <- bs_nice[names(x$verts_per_bs)]
+  bs_nice <- c(
+    cortex_left = "left", 
+    cortex_right = "right"
+  )
+  names(x$surf) <- bs_nice[names(x$surf)]
+  
+  # Handle NULL/0/etc.
+  x$verts_per_bs[vapply(x$vertx_per_bs, is.null, FALSE)] <- 0
+  x["verts_per_bs"] <- list(unlist(x$verts_per_bs))
+  x$medial_wall_mask[vapply(x$medial_wall_mask, dim, 0) < 1] <- NULL
+  if (all(vapply(x$medial_wall_mask, is.null, FALSE))) {
+    x["medial_wall_mask"] <- list(NULL)
   }
-  out$intent <- object$meta$cifti$intent
-  return(out)
+  if (dim(x$subcort_labels) < 1) {
+    x["subcort_labels"] <- list(NULL)
+  }
+
+  # Add intent-specific entries
+  if (!is.null(x$intent)) {
+    if (x$intent == 3002) {
+      x$time <- c(
+        start = object$meta$cifti$time_start,
+        step = object$meta$cifti$time_step,
+        unit = object$meta$cifti$time_unit
+      )
+    } else {
+      x$names <- object$meta$cifti$names
+    }
+  }
+
+  class(x) <- "summary.xifti"
+
+  return(x)
 }
 
 #' @rdname summary.xifti
@@ -37,38 +68,113 @@ summary.xifti <- function(object, ...) {
 #' @inheritParams x_Param_xifti
 #' @method print summary.xifti
 print.summary.xifti <- function(x, ...) {
-  cat("Brain Structures:", paste(names(x$includes[seq(3)])[x$includes[seq(3)]], collapse=", "), " \n")
 
-  # [TO DO]: mention medial wall count?
-
-  if (x$includes["left cortex"]) {
-    cat("\tleft cortex:", x$cortex_left[1], "surface vertices,", 
-      x$cortex_left[2], "measurements.\n")
-    if (x$includes["left surface"]) cat("\t\tleft surface model is present.\n")
-  }
-
-  if (x$includes["right cortex"]) {
-    cat("\tright cortex:", x$cortex_right[1], "surface vertices,", 
-      x$cortex_right[2], "measurements.\n")
-    if (x$includes["right surface"]) cat("\t\tright surface model is present.\n")
-  }
-
-  if (x$includes["subcortex"]) {
-    cat("\tsubcortex:", x$subcort$dat[[1]], "voxels,",
-      x$subcort$dat[[2]], "measurements.\n")
-    cat("\t\tsubcortical labels:\n")
-    print(x$subcort$labels)
-  }
+  cat("====CIFTI METADATA===================\n")
 
   if (!is.null(x$intent)) {
     cat(paste0(
-      "Intent: ", x$intent, " (", 
+      "Intent:           ", x$intent, " (", 
       c("dtseries", "dscalar", "dlabel")[match(x$intent, c(3002, 3006, 3007))], 
-      ").\n"
+      ")\n"
     ))
+
+    if (x$intent == 3002) {
+      cat(paste0(
+        "- time step       ", x$time["step"], " (", x$time["unit"], 
+        ifelse(x$time["unit"]=="hertz", "", "s"), ")\n"
+      ))
+      cat(paste0(
+        "- time start      ", x$time["start"], "\n"
+      ))
+    } else {
+      few_names <- x$names[seq(min(3, length(x$names)))]
+      cat(paste0(
+        "- names           \"", paste0(few_names, collapse="\", \""), 
+        ifelse(length(few_names) < length(names), "\", ... ", "\""), "\n"
+      ))
+    }
   }
 
-  cat("\n")
+  cat(paste0(
+    "Measurements:     ", x$measurements, 
+    " column", ifelse(x$measurements>1, "s", ""), "\n"
+  ))
+
+  cat("\n====BRAIN STRUCTURES=================\n")
+
+
+  blank <- "                  "
+
+  if (x$brainstructure["left cortex"] | x$surf["left"]) {
+    cat(paste0(
+      "- left cortex     ", x$verts_per_bs["left cortex"], " data vertices\n"
+    ))
+
+    if (!is.null(x$medial_wall_mask$left)) {
+      cat(paste0(
+        blank, x$medial_wall_mask$left["FALSE"], " medial wall vertices (",
+        sum(x$medial_wall_mask$left), " total)\n"
+      ))
+    }
+    if (x$surf["left"]) {
+      cat(paste0(blank, "left surface geometry is present\n"))
+    }
+    cat("\n")
+  }
+
+  if (x$brainstructure["right cortex"] | x$surf["right"]) {
+    cat(paste0(
+      "- right cortex    ", x$verts_per_bs["right cortex"], " data vertices\n"
+    ))
+
+    if (!is.null(x$medial_wall_mask$right)) {
+      cat(paste0(
+        blank, x$medial_wall_mask$right["FALSE"], " medial wall vertices (",
+        sum(x$medial_wall_mask$right), " total)\n"
+      ))
+    }
+    if (x$surf["right"]) {
+      cat(paste0(blank, "right surface geometry is present\n"))
+    }
+    cat("\n")
+  }
+
+  if (x$brainstructure["subcortex"]) {
+    cat(paste0(
+      "- subcortex       ", x$verts_per_bs["subcortex"], " data voxels\n"
+    ))
+
+    cat(paste0(blank, "subcortical structures and number of voxels in each:\n"))
+    labs2 <- unique(gsub("-.*", "", names(x$subcort_labels)))
+    for (ii in seq(length(labs2))) {
+      labs2_ii <- labs2[ii]
+      if (labs2_ii != "Brain Stem") { 
+        labs2_ii <- paste0(labs2_ii, c("-L", "-R")) 
+      }
+      cat(paste0(
+        blank, "  ", 
+        paste(labs2_ii, x$subcort_labels[labs2_ii], sep= " (", collapse="), "),
+        ")", ifelse(ii == length(labs2), ".", ",")
+      ))
+      cat("\n")
+    }
+
+    # n_labs <- length(x$subcort_labels)
+    # n_per_row <- 3
+    # q <- ceiling(n_labs / n_per_row)
+    # for (ii in seq(q)) {
+    #   labs_ii <- (ii - 1) * n_per_row + seq(n_per_row)
+    #   labs_ii <- pmin(labs_ii, n_labs)
+    #   labs_ii <- x$subcort_labels[labs_ii]
+    #   cat(paste0(
+    #     blank, paste(names(labs_ii), labs_ii, sep= " (", collapse="), "), 
+    #     ")", ifelse(ii == q, ".", ",")
+    #   ))
+    #   cat("\n")
+    # }
+
+    cat("\n")
+  }
 }
 
 #' @rdname summary.xifti

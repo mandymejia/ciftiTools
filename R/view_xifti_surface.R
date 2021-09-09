@@ -278,14 +278,19 @@ view_xifti_surface.color <- function(
     # Make base palette and full palette.
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
-      if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007) && is.null(colors)) {
+      if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007)) {
         if (length(idx) > 1) { message("Color labels from first requested column will be used.") }
         labs <- xifti_meta$cifti$labels[[idx[1]]]
-        N_VALUES <- length(labs$Key)
-        pal_base <- data.frame(
-          color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
-          value = labs$Key
-        )
+        if (is.null(colors)) {
+          pal_base <- data.frame(
+            color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
+            value = labs$Key
+          )
+        } else {
+          pal_base <- make_color_pal(
+            colors=colors, color_mode=color_mode, zlim=nrow(labs)
+          )
+        }
       # Otherwise, use the usual colors.
       } else {
         unique_vals <- sort(unique(as.vector(values[!is.na(values)])))
@@ -1011,10 +1016,7 @@ view_xifti_surface <- function(
         }
         cleg_labs <- as.character(cleg_labs)
         # Skip if there are too many legend labels.
-        if (length(cleg_labs) > 200) {
-          use_cleg <- FALSE
-          warning("Too many labels (> 200) for qualitative color legend. Not rendering it.\n")
-        } else if (!requireNamespace("ggpubr", quietly = TRUE)) {
+        if (!requireNamespace("ggpubr", quietly = TRUE)) {
           use_cleg <- FALSE
           warning("Package \"ggpubr\" needed to make the color legend. Please install it. Skipping the color legend for now.\n")
         } else {
@@ -1025,6 +1027,11 @@ view_xifti_surface <- function(
           }
           if (nrow(cleg) < 1) {
             use_cleg <- FALSE
+          } else if (nrow(cleg) > 200) {
+            use_cleg <- FALSE
+            if (isFALSE(fname) || !isFALSE(legend_fname)) {
+              warning("Too many labels (> 200) for qualitative color legend. Not rendering it.\n")
+            }
           } else {
             # Get the color legend list dimensions.
             if (is.null(legend_ncol)) {
