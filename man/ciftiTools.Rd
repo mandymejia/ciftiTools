@@ -33,7 +33,7 @@ Functions for writing CIFTI or GIFTI metric data:
 Functions for manipulating \code{"xifti"}s:
 
 \itemize{
-\item{\code{apply_xifti}:}{   Apply a function along the rows or columns of a \code{"xifti"}}
+\item{\code{apply_xifti}:}{   Apply a function along the rows or columns of the \code{"xifti"} data}
 \item{\code{combine_xifti}:}{   Combine \code{"xifti"}s with non-overlapping brain structures}
 \item{\code{convert_xifti}:}{   Convert the intent of a \code{"xifti"}}
 \item{\code{merge_xifti}:}{   Concatenate \code{"xifti"}s}
@@ -48,8 +48,11 @@ S3 methods for \code{"xifti"}s:
 
 \itemize{
 \item{\code{summary} and \code{print}:}{   Summarize the contents.}
-\item{\code{as.matrix}:}{   Convert to a locations by measurements numeric matrix.}
-\item{\code{plot}:}{   Visualize the cortical surface and/or subcortical volume data.}
+\item{\code{as.matrix}:}{   Convert data to a locations by measurements numeric matrix.}
+\item{\code{dim}:}{    Obtain number of locations and number of measurements.}
+\item{\code{plot}:}{   Visualize the cortical surface and/or subcortical data.}
+\item{\code{+}, \code{-}, \code{*}, \code{/}, \code{^}, \code{\%\%}, \code{\%/\%}:}{    Operation between a \code{"xifti"} and a scalar, or between two \code{"xifti"}s.}
+\item{\code{abs}, \code{ceiling}, \code{exp}, \code{floor}, \code{log}, \code{round}, \code{sign}, and \code{sqrt}:}{    Univariate transformation of \code{"xifti"} data.}
 }
 
 Functions for working with surfaces:

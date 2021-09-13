@@ -1,6 +1,6 @@
 #' Combine \code{"xifti"}s with non-overlapping brain structures
 #' 
-#' Combine \code{"xifti"}s with non-overlapping brain structures into
+#' Combine two to three \code{"xifti"}s with non-overlapping brain structures into
 #'  a single \code{"xifti"}. The names and intent of the first will be used (if 
 #'  present).
 #' 

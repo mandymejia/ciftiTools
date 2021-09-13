@@ -1,3 +1,15 @@
+# 6.0 (September 13, 2021)
+
+* Revamped subcortical visualization with `view_xifti_volume`! Added tests for it.
+* `plot` will now show both the cortex and subcortex, if both are present. The plots will share the color mode, color palette, and zlim.
+* Revamped `summary`/`print` for `"xifti"` objects
+* Faster border computation in `read_xifti_surface`
+
+# 5.0 (August 31, 2021)
+
+* Oops! The MNI image was removed in one of the recent versions. Added it back.
+* Minor fixes
+
 # 4.3 (August 14, 2021)
 
 * Fix bug in `read_cifti_convert` where surfaces are not included
