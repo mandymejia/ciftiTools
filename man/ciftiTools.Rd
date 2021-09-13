@@ -44,6 +44,14 @@ Functions for manipulating \code{"xifti"}s:
 \item{\code{add_surf}:}{   Add surfaces to a \code{"xifti"}}
 }
 
+S3 methods for \code{"xifti"}s:
+
+\itemize{
+\item{\code{summary} and \code{print}:}{   Summarize the contents.}
+\item{\code{as.matrix}:}{   Convert to a locations by measurements numeric matrix.}
+\item{\code{plot}:}{   Visualize the cortical surface and/or subcortical volume data.}
+}
+
 Functions for working with surfaces:
 
 \itemize{
