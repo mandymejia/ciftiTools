@@ -27,8 +27,8 @@ summary.surf <- function(object, ...) {
 #' @method print summary.surf
 #' 
 print.summary.surf <- function(x, ...) {
-  cat("Vertices: ", x$vertices, "\n")
-  cat("Faces: ", x$faces, "\n")
+  cat("Vertices:   ", x$vertices, "\n")
+  cat("Faces:      ", x$faces, "\n")
   if (!is.null(x$hemisphere)) { cat("Hemisphere: ", x$hemisphere, "\n") }
 }
 

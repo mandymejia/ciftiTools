@@ -158,16 +158,17 @@ one, using -Inf will set the value to the data minimum, and Inf will set
 the value to the data maximum. See \code{\link{make_color_pal}}
 description for more details.}
 
-\item{colors}{(Optional) "ROY_BIG_BL", vector of colors to use,
+\item{colors}{(Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-and colorbrewer2.org), or the name of a viridisLite palette.
-Defaults are \code{"ROY_BIG_BL"} (sequential),
-\code{"Set2"} (qualitative), and \code{"ROY_BIG_BL"} (diverging). An exception
-to these defaults is if the \code{"xifti"} object represents a .dlabel CIFTI (intent 3007),
-then the qualitative colors in the label table will be used.
-See \code{\link{make_color_pal}} for more details.}
+and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+(default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
+\code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An
+exception to these defaults is if the \code{"xifti"} object represents a
+.dlabel CIFTI (intent 3007), in which case the colors in the label table
+will be used. See \code{\link{make_color_pal}} for more details.}
 
-\item{idx}{The time/column index of the data to display.
+\item{idx}{The time/column index of the data to display. \code{NULL} (default)
+will display the first column.
 
 If its length is greater than one, and \code{isFALSE(fname)},
 a widget must be used since a single OpenGL window cannot show multiple
@@ -222,10 +223,10 @@ with an interactive widget will be written.
 
 If neither of the cases above apply, a png image will be written for each
 \code{idx}. If \code{isTRUE(fname)} the files will be named by the
-data column names (underscores will replace spaces). Set \code{fname} to a
+data column names (underscores will replace spaces). Or, set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
-index value (\code{"idx"}). Set this to a character vector with the same
+index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
 length as \code{idx} to name the files exactly.}
 
 \item{fname_suffix}{Save the plot(s) (and color legend if applicable)?
@@ -237,10 +238,10 @@ with an interactive widget will be written.
 
 If neither of the cases above apply, a png image will be written for each
 \code{idx}. If \code{isTRUE(fname)} the files will be named by the
-data column names (underscores will replace spaces). Set \code{fname} to a
+data column names (underscores will replace spaces). Or, set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
 \code{fname_suffix}: either the data column names (\code{"names"}) or the
-index value (\code{"idx"}). Set this to a character vector with the same
+index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
 length as \code{idx} to name the files exactly.}
 
 \item{legend_fname}{Save the color legend? Since the legend is the same
@@ -275,9 +276,11 @@ will use \code{2} for titles less than 20 characters long, and smaller
 sizes for increasingly longer titles.}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
-"black".}
+\code{"black"}.}
 
-\item{bg}{Background color. \code{NULL} will not color the background (white).}
+\item{bg}{Background color. \code{NULL} will use \code{"white"}. Does not affect
+the color legend or color bar if printed separately: those will always have
+white backgrounds.}
 
 \item{borders}{Only applicable if \code{color_mode} is \code{"qualitative"}.
 Border vertices will be identified (those that share a face with at least
@@ -305,7 +308,8 @@ and \code{slider_title}) and are chosen to be the largest plot within a
 1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
 a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
 will set the other to maintain this aspect ratio. Both can be specified to
-set the dimensions exactly. (These arguments do not affect the size of the
+set the dimensions exactly, but note that the dimensions cannot be larger
+than the screen resolution. (These arguments do not affect the size of the
 legend, which cannot be controlled.)}
 
 \item{height}{The dimensions of the RGL window, in pixels. If both are
@@ -315,7 +319,8 @@ and \code{slider_title}) and are chosen to be the largest plot within a
 1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
 a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
 will set the other to maintain this aspect ratio. Both can be specified to
-set the dimensions exactly. (These arguments do not affect the size of the
+set the dimensions exactly, but note that the dimensions cannot be larger
+than the screen resolution. (These arguments do not affect the size of the
 legend, which cannot be controlled.)}
 
 \item{zoom}{Adjust the sizes of the brain meshes. Default: \code{NULL} (will

@@ -312,18 +312,19 @@ NULL
 #' 
 #'  If neither of the cases above apply, a png image will be written for each
 #'  \code{idx}. If \code{isTRUE(fname)} the files will be named by the
-#'  data column names (underscores will replace spaces). Set \code{fname} to a 
+#'  data column names (underscores will replace spaces). Or, set \code{fname} to a 
 #'  length 1 character vector to name files by this suffix followed by the 
 #'  \code{fname_suffix}: either the data column names (\code{"names"}) or the 
-#'  index value (\code{"idx"}). Set this to a character vector with the same 
+#'  index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same 
 #'  length as \code{idx} to name the files exactly. 
-#' 
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
 #'  will use \code{2} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles.
 #' @param text_color Color for text in title and colorbar legend. Default:
-#'  "black".
-#' @param bg Background color. \code{NULL} will not color the background (white).
+#'  \code{"black"}.
+#' @param bg Background color. \code{NULL} will use \code{"white"}. Does not affect
+#'  the color legend or color bar if printed separately: those will always have
+#'  white backgrounds.
 #' @param alpha Transparency value for mesh coloring, between 0 and 1. Default:
 #'  \code{1.0} (no transparency).
 #' @param edge_color Outline each edge in this color. Default: \code{NULL} (do
@@ -339,7 +340,8 @@ NULL
 #'  1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
 #'  a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one 
 #'  will set the other to maintain this aspect ratio. Both can be specified to 
-#'  set the dimensions exactly. (These arguments do not affect the size of the 
+#'  set the dimensions exactly, but note that the dimensions cannot be larger
+#'  than the screen resolution. (These arguments do not affect the size of the 
 #'  legend, which cannot be controlled.)
 #' @param zoom Adjust the sizes of the brain meshes. Default: \code{NULL} (will
 #'  be set to 0.6 or 160\% for the Open GL window, and 0.67 or 167\% for the 

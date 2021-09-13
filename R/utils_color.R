@@ -216,7 +216,7 @@ make_color_pal <- function(
 
   if (is.null(zlim)) {
     zlim <- switch(color_mode,
-      sequential = c(0,1),
+      sequential = c(0, 1),
       qualitative = 10,
       diverging = c(0, 1)
     )

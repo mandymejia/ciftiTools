@@ -92,12 +92,34 @@ gifti_metric_template["transformations"] <- list(NULL)
 # names(g$data) <- rep("unknown", length(g$data))
 # g$data_info$Dim0 <- gifti_metric_template$data_info[rep(1, 5),]
 
+# Crop MNI image ---------------------------------------------------------------
+x <- RNifti::readNifti("../inst/extdata/MNI152_T1_2mm.nii.gz")
+cut <- quantile(x, .5)
+ok <- array(TRUE, dim=dim(x))
+ok[91 - c(seq(7,17), seq(74, 84)), 109 - seq(54, 64), 91 - seq(78, 86)] <- FALSE
+for (ii in seq(200)) {
+  y <- array(NA, dim=dim(x)+2)
+  y[seq(2, dim(x)[1]+1), seq(2, dim(x)[2]+1), seq(2, dim(x)[3]+1)] <- x
+  #y[seq(1, dim(x)[1]), seq(1, dim(x)[2]), seq(1, dim(x)[3])] +
+  y <-  y[seq(1, dim(x)[1]), seq(1, dim(x)[2]), 2+seq(1, dim(x)[3])] +
+    #y[seq(1, dim(x)[1]), 2+seq(1, dim(x)[2]), seq(1, dim(x)[3])] +
+    y[seq(1, dim(x)[1]), 2+seq(1, dim(x)[2]), 2+seq(1, dim(x)[3])] +
+    #y[2+seq(1, dim(x)[1]), seq(1, dim(x)[2]), seq(1, dim(x)[3])] +
+    y[2+seq(1, dim(x)[1]), seq(1, dim(x)[2]), 2+seq(1, dim(x)[3])] +
+    #y[2+seq(1, dim(x)[1]), 2+seq(1, dim(x)[2]), seq(1, dim(x)[3])] +
+    y[2+seq(1, dim(x)[1]), 2+seq(1, dim(x)[2]), 2+seq(1, dim(x)[3])]
+  x[is.na(y) & x < cut & ok] <- NA
+}
+x[91-seq(86,91), 109-seq(51,57), 91-seq(6,25)] <- NA
+x[91-seq(1,5), 109-seq(56), 91-seq(15,25)] <- NA
+RNifti::writeNifti(x, "../inst/extdata/MNI152_T1_2mm_crop.nii.gz")
+
 # Code not included: resampling 32k NIRC files to 6k ---------------------------
 
 # Save to sysdata --------------------------------------------------------------
 
 save(
-  ciftiTools.data, 
+  ciftiTools.data,
   gifti_surf_template, gifti_metric_template,
   file="../R/sysdata.rda", compress='xz'
 )

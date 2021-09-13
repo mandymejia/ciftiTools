@@ -9,18 +9,18 @@
 \usage{
 view_xifti(xifti, what = NULL, ...)
 
-view_cifti(xifti, what = NULL, ...)
+view_cifti(xifti, ...)
 
-viewCIfTI(xifti, what = NULL, ...)
+viewCIfTI(xifti, ...)
 
-viewcii(xifti, what = NULL, ...)
+viewcii(xifti, ...)
 }
 \arguments{
 \item{xifti}{A \code{"xifti"} object.}
 
-\item{what}{Either \code{"surface"} or \code{"volume"}. \code{NULL} will infer
-based on the contents of the \code{"xifti"}: if there is data, plot the
-surface cortex data if present, and the volumetric subcortical data
+\item{what}{\code{"surface"}, \code{"volume"}, or \code{"both"}. \code{NULL}
+will infer based on the contents of the \code{"xifti"}: if there is data,
+plot the surface cortex data if present, and the volumetric subcortical data
 otherwise. If there is no data, plot the surface geometry if present, and
 do nothing otherwise.}
 
@@ -31,5 +31,10 @@ The return value of \code{view_xifti_surface} or
 \code{view_xifti_volume}.
 }
 \description{
-Switch for \code{\link{view_xifti_surface}} or \code{\link{view_xifti_volume}}
+Displays the data in a \code{"xifti"} object using \code{\link{view_xifti_surface}}
+and/or \code{\link{view_xifti_volume}}. Compared to calling these two
+functions separately on the same data, this function may be more convenient
+since the automatic choice of color mode and limits is determined across
+the entire data and shared between the two plots. Also, if writing files
+the subcortical plots will not overwrite the cortical plots.
 }

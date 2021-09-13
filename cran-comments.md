@@ -6,10 +6,10 @@
 ## R CMD check results
 
 > checking installed package size ... NOTE
-    installed size is  5.3Mb
+    installed size is  6.4Mb
     sub-directories of 1Mb or more:
       R         1.6Mb
-      extdata   3.3Mb
+      extdata   4.3Mb
 
 0 errors v | 0 warnings v | 1 note x
 
@@ -23,10 +23,6 @@ None.
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
 
-## Submission revision
+## Time since last submission
 
-The previous submission was rejected because the tarball was over 5 MB. It has been reduced to 3.25 MB.
-
-## Submission revision 2
-
-The previous submission (0.4.1) was cancelled manually.
+The package was last updated on CRAN on August 19, which is a bit less than the 1-2 months suggested by CRAN policy. However, this new update fixes a major component of the package (subcortex visualization) which is completely broken on the current version on CRAN. We also expect to submit a paper about this package within the week, and would like to have a working and up-to-date version on CRAN. We do not expect needing to submit with such a short turnover again. Thanks!
