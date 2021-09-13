@@ -32,11 +32,10 @@ parc_borders <- function(parc, surf=NULL, hemisphere=c("left", "right")) {
     }
   }
 
-  isBorder <- vector("logical", nrow(surf$vertices))
-  for (v in seq_len(nrow(surf$vertices))) {
-    # wrap below line in unique()?
-    v_and_neighbors <- as.vector(surf$faces[which(surf$faces == v, arr.ind=TRUE)[,1],])
-    isBorder[v] <- length(unique(parc[v_and_neighbors])) > 1
-  }
+  x <- matrix(parc[as.vector(surf$faces)], ncol=ncol(surf$faces))
+  x <- (x[,1] != x[,2]) | (x[,2] != x[,3])
+  x <- unique(as.vector(surf$faces[x,]))
+  isBorder <- rep(FALSE, length(parc))
+  isBorder[x] <- TRUE
   isBorder
 }
