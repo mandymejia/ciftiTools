@@ -1069,7 +1069,7 @@ view_xifti_surface <- function(
   all_panels_nrow <- brain_panels_nrow + 1*use_title + 1*legend_embed + 1*use_slider_title
   all_panels_ncol <- brain_panels_ncol
 
-  if (is.null(width) | is.null(height)) {
+  if (is.null(width) || is.null(height)) {
     DEF_ASPECT_PER_BRAIN_PANEL <- c(10, 7) # aspect ratio
     def_aspect <- DEF_ASPECT_PER_BRAIN_PANEL * c(brain_panels_ncol, brain_panels_nrow)
     if (widget) { DEF_MAX_SIZE <- c(600, 700) } else { DEF_MAX_SIZE <- c(1500, 700) }

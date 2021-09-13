@@ -308,7 +308,8 @@ and \code{slider_title}) and are chosen to be the largest plot within a
 1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
 a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
 will set the other to maintain this aspect ratio. Both can be specified to
-set the dimensions exactly. (These arguments do not affect the size of the
+set the dimensions exactly, but note that the dimensions cannot be larger
+than the screen resolution. (These arguments do not affect the size of the
 legend, which cannot be controlled.)}
 
 \item{height}{The dimensions of the RGL window, in pixels. If both are
@@ -318,7 +319,8 @@ and \code{slider_title}) and are chosen to be the largest plot within a
 1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
 a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
 will set the other to maintain this aspect ratio. Both can be specified to
-set the dimensions exactly. (These arguments do not affect the size of the
+set the dimensions exactly, but note that the dimensions cannot be larger
+than the screen resolution. (These arguments do not affect the size of the
 legend, which cannot be controlled.)}
 
 \item{zoom}{Adjust the sizes of the brain meshes. Default: \code{NULL} (will

@@ -340,7 +340,8 @@ NULL
 #'  1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
 #'  a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one 
 #'  will set the other to maintain this aspect ratio. Both can be specified to 
-#'  set the dimensions exactly. (These arguments do not affect the size of the 
+#'  set the dimensions exactly, but note that the dimensions cannot be larger
+#'  than the screen resolution. (These arguments do not affect the size of the 
 #'  legend, which cannot be controlled.)
 #' @param zoom Adjust the sizes of the brain meshes. Default: \code{NULL} (will
 #'  be set to 0.6 or 160\% for the Open GL window, and 0.67 or 167\% for the 
