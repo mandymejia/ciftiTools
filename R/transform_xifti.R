@@ -99,8 +99,8 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
     T2 <- ncol(xifti2$data[[bs2[1]]])
     if (T1 != T2) {
       stop(
-        "The first xifti had ", T1, " timepoints.\n",
-        "But, the second xifti had ", T2, " timepoints.\n"
+        "The first xifti had ", T1, " measurements.\n",
+        "But, the second xifti had ", T2, " measurements.\n"
       )
     }
     if (!identical(xifti$meta$cifti$names, xifti2$meta$cifti$names)) {
