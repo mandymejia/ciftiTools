@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.com/mandymejia/ciftiTools.svg?branch=master)](https://travis-ci.com/mandymejia/ciftiTools)
+status](https://www.travis-ci.com/mandymejia/ciftiTools.svg?branch=master)](https://www.travis-ci.com/mandymejia/ciftiTools)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
 [![Coveralls test
