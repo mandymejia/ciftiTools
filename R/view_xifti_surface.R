@@ -648,9 +648,9 @@ view_xifti_surface <- function(
       if (isFALSE(widget) && (length(idx) > 1)) {
         warning(
           "`widget` is `FALSE` but `length(idx) > 1`. ",
-          "This is not permissible since the OpenGL window can only show one timepoint at a time. ",
+          "This is not permissible since the OpenGL window can only show one measurement at a time. ",
           "Setting `widget` to `TRUE`. ",
-          "To view multiple timepoints without a widget, set `fname` to save .png files or an .html file. ",
+          "To view multiple measurements without a widget, set `fname` to save .png files or an .html file. ",
           "Or, select a single `idx` to view in the OpenGL window.\n"
         )
         widget <- TRUE

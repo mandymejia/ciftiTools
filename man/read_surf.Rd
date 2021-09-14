@@ -34,7 +34,7 @@ entries "pointset" and "triangle", or a \code{"surf"} to a
 \code{"surf"}.
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI metric data: 
+Other functions for reading in CIFTI or GIFTI data: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},

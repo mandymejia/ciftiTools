@@ -27,7 +27,7 @@ is.nummat <- function(x) {
 #'
 #'  Requirements: a list with entries "cortex_left", "cortex_right", and
 #'  "subcort". Each must be either \code{NULL} or a numeric matrix with
-#'  greyordinates along the rows and measurements along the columns.
+#'  grayordinates along the rows and measurements along the columns.
 #'  The cortical matrices should have the same number of rows (vertices), and
 #'  all should have the same number of columns (measurements). At least one data
 #'  entry should be present.

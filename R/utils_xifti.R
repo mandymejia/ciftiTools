@@ -87,10 +87,10 @@ print.summary.xifti <- function(x, ...) {
         "- time start      ", x$time["start"], "\n"
       ))
     } else {
-      few_names <- x$names[seq(min(3, length(x$names)))]
+      few_names <- x$names[seq(min(5, length(x$names)))]
       cat(paste0(
         "- names           \"", paste0(few_names, collapse="\", \""), 
-        ifelse(length(few_names) < length(names), "\", ... ", "\""), "\n"
+        ifelse(length(few_names) < length(x$names), "\", ... ", "\""), "\n"
       ))
     }
   }

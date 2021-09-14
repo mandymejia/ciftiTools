@@ -1,6 +1,6 @@
 ## Test environments
 
-* Windows 10 x64, R 4.0.4
+* Windows 10 x64, R 4.1.1
 * Mac x64, R 4.0.3
 
 ## R CMD check results
@@ -25,4 +25,4 @@ Passes all the tests in `tests/run_ciftiTools_tests.R`
 
 ## Time since last submission
 
-The package was last updated on CRAN on August 19, which is a bit less than the 1-2 months suggested by CRAN policy. However, this new update fixes a major component of the package (subcortex visualization) which is completely broken on the current version on CRAN. We also expect to submit a paper about this package within the week, and would like to have a working and up-to-date version on CRAN. We do not expect needing to submit with such a short turnover again. Thanks!
+The package was last updated on CRAN on August 19, which is just below the 1-2 months suggested by CRAN policy. However, this new update fixes a major component of the package (subcortex visualization) which is completely broken on the current version on CRAN. We also expect to submit a paper about this package within the week, and would like to have a working and up-to-date version on CRAN. We do not expect needing to submit with such a short turnover again. Thanks!

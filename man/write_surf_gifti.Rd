@@ -46,7 +46,7 @@ Whether the GIFTI was successfully written
 Write the data for the left or right surface to a surface GIFTI file.
 }
 \seealso{
-Other functions for writing CIFTI or GIFTI metric data: 
+Other functions for writing CIFTI or GIFTI data: 
 \code{\link{separate_cifti}()},
 \code{\link{write_cifti}()},
 \code{\link{write_metric_gifti}()},

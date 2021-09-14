@@ -95,13 +95,13 @@ have to be read in with \code{-cifti-separate}, which is slower than
 If \code{FALSE} (default), the result will be a \code{"xifti"} object.
 
 If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T}
-measurements, \eqn{G} greyordinates not including the medial wall if it's
+measurements, \eqn{G} grayordinates not including the medial wall if it's
 excluded from the ROI). All below arguments will be ignored because the
 brain structures cannot be identified. Surfaces will not be appended.
 Resampling is also not possible. \code{flat==TRUE} is the fastest way to
 read in just the CIFTI data.
 
-If \code{TRUE}, the greyordinates will be ordered by left cortex, right
+If \code{TRUE}, the grayordinates will be ordered by left cortex, right
 cortex, and then subcortex. Subcortical voxels will be ordered by alphabetical
 label. However, where each brainstructure (and subcortical structure) begins
 and ends cannot be determined. The medial wall locations and subcortical
@@ -119,7 +119,7 @@ CIFTI, use these values to infer the medial wall mask. Default:
 }
 \value{
 If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G}
-matrix (\eqn{T} measurements, \eqn{G} greyordinates).
+matrix (\eqn{T} measurements, \eqn{G} grayordinates).
 }
 \description{
 Read in a CIFTI file as a \code{"xifti"} object.
@@ -127,8 +127,8 @@ Read in a CIFTI file as a \code{"xifti"} object.
 \details{
 First, metadata is obtained with \code{\link{info_cifti}}. Then, if no
 resampling is requested, the \code{-cifti-convert -to-gifti-ext} Workbench
-Command is used to "flatten" the data and save it as a metric GIFTI file,
-which is read in and separated by brainstructure according to the metadata
+Command is used to "flatten" the data and save it as a metric or label GIFTI
+file, which is read in and separated by brainstructure according to the metadata
 (\code{\link{read_cifti_convert}}). Otherwise, if sampling is requested,
 then the CIFTI is separated into its GIFTI and NIFTI components, resampled,
 and then re-assembled (\code{\link{read_cifti_separate}}). The former is
@@ -186,7 +186,7 @@ Other commonly-used functions:
 \code{\link{view_xifti_volume}()},
 \code{\link{write_cifti}()}
 
-Other functions for reading in CIFTI or GIFTI metric data: 
+Other functions for reading in CIFTI or GIFTI data: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},

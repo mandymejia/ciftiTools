@@ -3,7 +3,7 @@
 #' Reads the CIFTI data matrix by converting it to a GIFTI using the 
 #'  \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
 #'  will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
-#'  greyordinates). All brainstructures in the CIFTI will be obtained, with no 
+#'  grayordinates). All brainstructures in the CIFTI will be obtained, with no 
 #'  indication for which brainstructure each brainordinate corresponds to.    
 #'  Medial wall vertices and voxels outside the subcortical mask will not be 
 #'  included. No spatial information is included. This is the fastest way to 
@@ -14,8 +14,9 @@
 #'  and then reading it in. Should the GIFTI file be kept? If \code{FALSE}
 #'  (default), write it in a temporary directory regardless of \code{write_dir}.
 #' @param gifti_fname File path of GIFTI-format data to save the CIFTI as. 
-#'  Should end with ".func.gii". Default: the CIFTI_fname but with the extension
-#'  replaced with ".func.gii".
+#'  Should end with ".func.gii" for dscalar and dtseries CIFTI, and ".label.gii"
+#'  for dlabel CIFTI. Default: the CIFTI_fname but with the CIFTI extension
+#'  replaced with the appropriate GIFTI extension.
 #' @inheritParams idx_Param
 #' @param write_dir The directory in which to save the GIFTI, if it is being 
 #'  kept. If \code{NULL} (default), use the current working directory.
@@ -23,7 +24,7 @@
 #' @importFrom gifti readgii
 #'
 #' @return A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
-#'  and \eqn{G} is the number of greyordinates in the CIFTI file.
+#'  and \eqn{G} is the number of grayordinates in the CIFTI file.
 #' 
 #' @keywords internal
 #'

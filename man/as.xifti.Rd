@@ -168,14 +168,14 @@ inferred from data rows that are constantly a value in \code{mwall_values}.
 But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
 wall will be made and the medial wall metadata entry will be \code{NULL}.
 
-The total number of greyordinates will be
+The total number of grayordinates will be
 \eqn{G = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
 vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical
 voxels. \eqn{T}, the total number of measurements (columns of data), must be
 the same for each brainstructure.
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI metric data: 
+Other functions for reading in CIFTI or GIFTI data: 
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
 \code{\link{load_surf}()},

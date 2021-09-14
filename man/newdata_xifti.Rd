@@ -24,7 +24,7 @@ The new \code{"xifti"}
 Replace the data in a \code{"xifti"} with new data from a data matrix.
 }
 \details{
-If the \code{"xifti"} has \eqn{V} greyordinates and \code{T} timepoints
+If the \code{"xifti"} has \eqn{V} grayordinates and \code{T} measurements
 in total, \code{newdata} should be a \eqn{V \times T} matrix.
 }
 \seealso{

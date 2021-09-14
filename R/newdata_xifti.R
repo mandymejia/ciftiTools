@@ -2,7 +2,7 @@
 #' 
 #' Replace the data in a \code{"xifti"} with new data from a data matrix.
 #' 
-#' If the \code{"xifti"} has \eqn{V} greyordinates and \code{T} timepoints
+#' If the \code{"xifti"} has \eqn{V} grayordinates and \code{T} measurements
 #'  in total, \code{newdata} should be a \eqn{V \times T} matrix.
 #' @param xifti The \code{"xifti"}
 #' @param newdata The \eqn{V \ times T} matrix of data values to replace those
@@ -39,7 +39,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
     } else {
       stop(
         "`xifti` and `newdata` do not have the same dimensions.\n",
-        "The `xifti` has ", xifti_dim[1], " greyordinates and ", xifti_dim[2], " timepoints.\n",
+        "The `xifti` has ", xifti_dim[1], " grayordinates and ", xifti_dim[2], " measurements.\n",
         "Meanwhile, `newdata` is ", newdata_dim[1], " by ", newdata_dim[2], "."
       )
     }
