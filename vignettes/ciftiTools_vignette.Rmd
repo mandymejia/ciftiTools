@@ -13,16 +13,15 @@ library(knitr)
 knitr::opts_chunk$set(autodep = TRUE, cache = FALSE)
 ```
 
-`ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. Used in conjunction with GIFTI surface geometry files, CIFTI files enable surface-based analysis of grey matter data, which has several advantages over traditional volumetric/voxel-based analysis. Because of this, the CIFTI-2 format is used by recent neuroimaging studies including the Human Connectome Project (HCP). `ciftiTools` supports reading, writing, visualizing, resampling, and other operations for CIFTI files with the `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"` intents. Several of these operations are made possible by the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). 
+`ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. Used in conjunction with GIFTI surface geometry files, CIFTI files enable surface-based analysis of gray matter data, which has several advantages over traditional volumetric/voxel-based analysis. Because of this, the CIFTI-2 format is used by recent neuroimaging studies including the Human Connectome Project (HCP). `ciftiTools` supports reading, writing, visualizing, resampling, and other operations for CIFTI files with the `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"` intents. Several of these operations are made possible by the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). 
 
 To get started, the first time you use `ciftiTools`, install it from either CRAN with `install.packages()` or Github with `devtools::install_github()`. Here, we will use the CRAN version.
 
 ```{r}
 # Check if package installed. If not, install it.
-if(!require('ciftiTools')){
+if(!require('ciftiTools', quietly=TRUE)){
   install.packages('ciftiTools')
-  # library(devtools)
-  # install_github('mandymejia/ciftiTools') # development version
+  # devtools::install_github('mandymejia/ciftiTools') # development version
 }
 ```
 
@@ -44,12 +43,11 @@ ciftiTools.setOption('wb_path', '../../workbench')
 In this vignette, we will use example data included in the `ciftiTools` package. The files are originally from [NITRC](https://www.nitrc.org/frs/?group_id=454):
 
 * The "MyelinAndCorrThickness" dtseries and dscalar files contain the same data: "MyelinMap_BC_decurv" and "corrThickness". (A dtseries file usually contains fMRI BOLD timeseries data, but that would be too large to include in the package.)
-)
 * The dlabel file contains three cortical parcellations
 * The "ones" dscalar file is the only file to include subcortical voxels. All its data values are 1. 
 * To reduce the size of `ciftiTools`, the dscalar and dlabel CIFTIs were resampled to 6k and the "ones" dscalar was resampled to 1k.
 
-We will also use GIFTI files containing very inflated surface geometry.
+We will also use GIFTI files containing inflated surface geometry.
 
 ```{r}
 cifti_fnames <- ciftiTools.files()$cifti
@@ -61,7 +59,7 @@ surfR_fname <- ciftiTools.files()$surf["right"]
 
 ### Reading
 
-CIFTI files organize the gray matter of the brain into "greyordinates": vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) a NIFTI XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a matrix representing all the greyordinate data. These components are read in together with `read_cifti`:
+CIFTI files organize the gray matter of the brain into "grayordinates": vertices representing the left and right cortical surfaces, and voxels representing the subcortical gray matter structures and the cerebellum. A CIFTI file consists of two parts: (1) an XML header which contains all the metadata including medial wall locations, subcortical structure labels, and the subcortical volumetric mask; and (2) a NIFTI format matrix representing all the grayordinate data. These components are read in together with `read_cifti`:
 
 ```{r}
 basename(cifti_fnames["dtseries"])
@@ -76,7 +74,7 @@ xii # same as `summary(xii)`
 
 By default, `read_cifti` only reads in the left and right cortex data. The subcortical data can be included by using the argument `brainstructures="all"`. Other brainstructure combinations can be specified too, e.g. `brainstructures=c("left", "subcortical")`. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`, or `"all"` for all three.
 
-`"xifti"` objects are lists with entries `data` (the greyordinate data matrix, separated by brainstructure), `surf` (surface geometry), and `meta` (metadata, most of which is from the NIFTI XML header). `surf` distinguishes a `"xifti"` from a CIFTI file: the left and right cortical surface geometries are not included in CIFTI files, so they must be read from separate surface GIFTI files (ending in `surf.gii`). The surface must be compatible: the number of vertices must be the same, and each vertex in the CIFTI data must correspond to the vertex location in the corresponding GIFTI surface file. In this way, a `"xifti"` represents a combination of a CIFTI file with compatible GIFTI files for the cortical mesh.
+`"xifti"` objects are lists with entries `data` (the grayordinate data matrix, separated by brainstructure), `surf` (surface geometry), and `meta` (metadata, most of which is from the NIFTI XML header). `surf` distinguishes a `"xifti"` from a CIFTI file: the left and right cortical surface geometries are not included in CIFTI files, so they must be read from separate surface GIFTI files (ending in `surf.gii`). The surface must be compatible: the number of vertices must be the same, and each vertex in the CIFTI data must correspond to the vertex location in the corresponding GIFTI surface file. In this way, a `"xifti"` represents a combination of a CIFTI file with compatible GIFTI files for the cortical mesh.
 
 We can add GIFTI surface geometries with `add_surf`:
 
@@ -119,7 +117,7 @@ write_xifti(
 )
 ```
 
-With `separate_cifti`, a CIFTI can be separated and written into its component parts: the cortical data can be written to GIFTI metric files, and the subcortical data can be written to a NIFTI file. In addition, any ROIs or labels will also be written to files. The files are automatically named unless a new file name is provided.
+With `separate_cifti`, a CIFTI can be separated and written into its component parts: the cortical data can be written to GIFTI metric or label files, and the subcortical data can be written to a NIFTI file. In addition, any ROIs or labels will also be written to files. The files are automatically named unless a new file name is provided.
 
 ```{r}
 # Use default names for everything except left cortex
@@ -135,13 +133,13 @@ Separated files can be read into R with the `oro.nifti`, `RNifti`, and `gifti` p
 
 # Visualization
 
-`ciftiTools` graphics are made possible by the `rgl` package. To prepare the R Markdown document for knitting we need to do the following: 
+The cortical plots in `ciftiTools` are made possible by the `rgl` package. To prepare the R Markdown document for knitting we need to do the following: 
 
 ```{r}
 library(rgl)
 rgl::setupKnitr()
 
-# Sometimes the first RGL window does not render properly.
+# Sometimes the first OpenGL window does not render properly.
 rgl::rgl.open(); rgl::rgl.close()
 ```
 
@@ -154,10 +152,10 @@ Now let's take a look!
 * `color_mode` specifies the nature of the data values: `"sequential"`, `"qualitative"` and `"diverging"`. If it is not provided, a default mode that makes sense for the data will be used.
 * `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
 * `idx` controls which column(s) to display.
-* `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an Open GL window if the length of `idx` is one, and an embedded htmlwidget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image files (png) for each `idx` are created, unless `fname` ends in `.html` in which case an interactive html file will be saved. Lastly, Open GL windows can be embedded in R Markdown documents for knitting; refer to the source code of this vignette to see how this works.
+* `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an OpenGL window if the length of `idx` is one, and an embedded HTML widget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image files (png) for each `idx` are created, unless `fname` ends in `.html` in which case an interactive html file will be saved. Lastly, both OpenGL windows and HTML widgets can be embedded in R Markdown documents for knitting; refer to the source code of this vignette to see how this works.
 * `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the surfaces in the `"xifti"` object is used. But if those are also unavailable, the "inflated" surfaces included in `ciftiTools` are used.
 
-Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. We'll also make the second plot interactive by requesting display of two `idx`. Try clicking and dragging around the second plot to rotate, and scrolling to zoom in and out.
+Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. (In our case, the included surfaces _are_ the default surfaces.) We'll also make the second plot interactive by requesting display of two `idx`. Try clicking and dragging around the second plot to rotate, and scrolling to zoom in and out. Note that the first and third plots are OpenGL window snapshots, and that the second plot is an embedded HTML widget.
 
 ```{r, fig.cap="dtseries file; first column; sequential palette", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
 # Normally `cex.title` doesn't need to be set, as it defaults to a good choice.
@@ -185,7 +183,7 @@ view_xifti_surface(
 
 ### Volume visualization
 
-`view_xifti_volume(xii)` displays the subcortical data in slices. To view interactively in a web browser, set `interactive=TRUE`. By default, a series of slices is displayed overlaid on the MNI template.  The orientation and numbers of slices can be adjusted. A png or pdf file can be written with `fname`. The same color arguments from `view_xifti_surface` work too: `colors`, `color_mode` and `zlim`.
+`view_xifti_volume(xii)` displays the subcortical data in slices. To view interactively in an interactive session, set `interactive=TRUE`. By default, a series of slices is displayed overlaid on the MNI template. The orientation and numbers of slices can be adjusted. A .png or .pdf file can be written with `fname`. The same color arguments from `view_xifti_surface` work too: `colors`, `color_mode` and `zlim`.
 
 ```{r, fig.cap="Subcortical data (all ones)", fig.height=6, fig.width=4}
 # cifti_fnames["dscalar_ones"] is the only file with subcortical data
@@ -194,7 +192,7 @@ view_xifti_volume(xii)
 ```
 
 ```{r eval=FALSE}
-# For information only, since papaya viewer cannot be opened during knitting
+# For information only, since papaya viewer cannot be embedded in knitted file
 view_xifti_volume(xii, interactive = TRUE)
 ```
 
@@ -204,24 +202,24 @@ The S3 method `plot(xii)` will display all the data present in the `xifti` using
 
 ### Resampling
 
-`ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k dtseries file to 6k vertices. We also provide the surfaces and resample them in conjunction.
+`ciftiTools` can resample CIFTI files to a lower resolution. Here, we resample the 32k dtseries file to 2k. (The number refers to the count of vertices on a single hemisphere.) We also provide the surfaces and resample them in conjunction.
 
 ```{r}
 resampled_xii_fname <- "my_new_resampled.dtseries.nii"
 resampled_surfL_fname <- "my_resampled_surfL.surf.gii"
 resampled_surfR_fname <- "my_resampled_surfR.surf.gii"
   
-xii_6k <- resample_cifti(
+xii_2k <- resample_cifti(
   cifti_fnames["dtseries"], resampled_xii_fname,
   resamp_res = 2000,
   surfL_fname, surfR_fname,
   resampled_surfL_fname, resampled_surfR_fname,
   write_dir = out_dir
 )
-basename(xii_6k)
+basename(xii_2k)
 ```
 
-Resampling can also be performed while reading a file into R. 
+Resampling can also be performed while reading a CIFTI file into R. 
 
 ```{r}
 read_cifti(cifti_fnames["dscalar"], resamp_res=2000)
@@ -229,7 +227,7 @@ read_cifti(cifti_fnames["dscalar"], resamp_res=2000)
 
 ### Smoothing
 
-Use `smooth_cifti` to perform smoothing. This function works for both CIFTI files and `"xifti"` objects.
+Use `smooth_cifti` to perform smoothing. Like resampling, this function works on both CIFTI files and `"xifti"` objects.
 
 ```{r, fig.cap="Smoothed CIFTI", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
 smoothed_xii_fname <- "my_smoothed_cifti.dtseries.nii"
@@ -253,19 +251,21 @@ plot(
 
 # Manipulation & Math
 
-You can treat the `"xifti"` as a data matrix with the base R functions `as.xifti`, `nrow` and `ncol`.
-
-```{r}
-dim(as.matrix(xii2))
-```
-
-`apply_xifti` applies a function along the rows or columns of a `"xifti"`. The base R `apply` function also works on `"xifti"` objects. The difference is that when applying a function along the rows, the former will return a `"xifti"` whereas the latter will return a data matrix.
+You can treat the `"xifti"` as a data matrix with the base R functions `as.matrix`, `nrow`, and `ncol`.
 
 ```{r}
 xiiL <- read_xifti(cifti_fnames["dscalar"], brainstructures="left")
-gmeans <- apply_xifti(xiiL, 1, mean) # Mean of each greyordinate
+dim(as.matrix(xiiL))
+```
+
+`apply_xifti` applies a function along the rows or columns of a `"xifti"`. The base R `apply` function also works on `"xifti"` objects. The difference is that when applying a function along the rows, the former will return a `"xifti"` whereas the latter will return a data matrix. For example, we can compute the mean at each data location like so:
+
+```{r}
+gmeans <- apply_xifti(xiiL, 1, mean)
 gmeans
 ```
+
+And we can compute quantiles of each measurement like so:
 
 ```{r}
 cquants <- apply_xifti(xiiL, 2, quantile, c(.1, .5)) # Quantiles of each column
@@ -283,11 +283,10 @@ xii
 `convert_xifti` converts the intent of a `"xifti"`.
 
 ```{r}
-xii <- convert_xifti(xii, "dtseries")
-xii$meta$cifti$intent
+convert_xifti(xii, "dtseries") # Convert from dscalar to dtseries (don't use it)
 ```
 
-`merge_xifti` concatenates metric data from multiple `"xifti"`s column-wise.
+`merge_xifti` concatenates data matrices from multiple `"xifti"`s column-wise.
 
 ```{r}
 xii <- merge_xifti(xii, xii) # Columns are repeated twice now.
@@ -300,9 +299,10 @@ xii <- remove_xifti(xii, "cortex_left") # Now only the right cortex data is incl
 xii
 ```
 
-`select_xifti` subsets or re-orders the columns of the metric data of a `"xifti"`.
+`select_xifti` subsets or re-orders the columns of the data matrix of a `"xifti"`.
 
 ```{r}
+xii$meta$cifti$names <- paste("Column", seq(4))
 xii <- select_xifti(xii, c(4,3,2)) # Reverse column order & drop the first.
 xii
 ```
@@ -311,18 +311,17 @@ S3 methods allow for univariate transformations of `"xifti"` objects as well as 
 
 ```{r}
 max(as.matrix(xii))
-xii <- 1 + exp(xii) + (xii / 3)
+xii <- 1 - exp(xii) / (xii * 2 + 3)
 max(as.matrix(xii))
 ```
 
 # Working with surfaces
 
-`ciftiTools` also includes functionality for working with surface geometry GIFTI files separately from any metric data. Surfaces that are read in are `"surf"` objects:
+`ciftiTools` also includes functionality for working with surface geometry GIFTI files separately from any data. Surfaces that are read in are `"surf"` objects:
 
 ```{r}
 # Reading
-# ciftiTools.setOption("surf", "midthickness") # [TO DO] replace
-surf <- read_surf(ciftiTools.files()$surf["left"])
+surf <- read_surf(surfL_fname)
 surf
 ```
 
@@ -351,10 +350,10 @@ xii <- as.xifti(
   surfL = load_surf("left", "very inflated"),
   surfR = load_surf("right", "midthickness")
 )
-plot(xii, title = "Left very inflated surface | Right midthickness surface")
+plot(xii, title = "Left very inflated | Right midthickness")
 ```
 
-Lastly, let's demonstrate the ability to plot vertices and edges. (This can also be done when plotting `"xifti"` objects with metric data, using the same arguments.)
+Lastly, let's demonstrate the ability to plot vertices and edges. (This can also be done when plotting `"xifti"` objects with data, using the same arguments.)
 
 ```{r, rgl=TRUE, fig.cap="Surface with vertices drawn in blue", format="png", fig.height=3.8, fig.width=2.5}
 # Recall that surf was resampled to 2k
@@ -373,4 +372,4 @@ A citation for the package itself can be printed with:
 citation("ciftiTools")
 ```
 
-Refer to the README for citation information for the surfaces, parcellations, and other data included in `ciftiTools`.
+Refer to the README for citation information for the surfaces, parcellations, and other data included in `ciftiTools`, as well as the Connectome Workbench. Also check the DESCRIPTION file to get a list of R packages used, including `rgl` and `papayar`. 

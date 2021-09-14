@@ -18,7 +18,7 @@
 #'  But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
 #'  wall will be made and the medial wall metadata entry will be \code{NULL}.
 #'  
-#'  The total number of greyordinates will be 
+#'  The total number of grayordinates will be 
 #'  \eqn{G = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
 #'  vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical 
 #'  voxels. \eqn{T}, the total number of measurements (columns of data), must be
@@ -27,7 +27,8 @@
 #' @inheritSection labels_Description Label Levels
 #' 
 #' @param cortexL,cortexL_mwall Left cortex data and ROI. Each must be a path to 
-#'  a GIFTI file, metric \code{"gifti"} object, data matrix or vector.
+#'  a GIFTI file, \code{"gifti"} object, data matrix or vector. (GIFTI data
+#'  should be metric or label, not surface.)
 #' 
 #'  If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
 #'  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
@@ -46,7 +47,8 @@
 #'  Since the unmasked cortices must have the same number of vertices,
 #'  \code{V_L} should match \code{V_R}.
 #' @param cortexR,cortexR_mwall Right cortex data and ROI. Each must be a path to 
-#'  a GIFTI file, metric \code{"gifti"} object, data matrix or vector.
+#'  a GIFTI file, \code{"gifti"} object, data matrix or vector. (GIFTI data
+#'  should be metric or label, not surface.)
 #' 
 #'  If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
 #'  all vertices on the right cortical surface (\eqn{V_R x T} data mre 

@@ -35,7 +35,7 @@ Default: \code{0}.}
 List of written files
 }
 \description{
-Write metric GIFTIs for the cortical surface data and NIFTIs for the
+Write metric or label GIFTIs for the cortical surface data and NIFTIs for the
 subcortical labels and mask in a \code{"xifti"} object. Each present
 brainstructure will be written; if a brainstructure is absent the
 corresponding file is not written.

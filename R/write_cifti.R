@@ -1,6 +1,6 @@
 #' Write CIFTI component files from a \code{"xifti"} object
 #'
-#' Write metric GIFTIs for the cortical surface data and NIFTIs for the
+#' Write metric or label GIFTIs for the cortical surface data and NIFTIs for the
 #'  subcortical labels and mask in a \code{"xifti"} object. Each present
 #'  brainstructure will be written; if a brainstructure is absent the 
 #'  corresponding file is not written.

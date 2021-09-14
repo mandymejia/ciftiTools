@@ -1,10 +1,10 @@
 #' Read in GIFTI files as a \code{"xifti"} object
 #' 
-#' Read in gifti metric files as a \code{"xifti"} object. May also include
-#'  surface geometry gifti files and perform resampling. 
+#' Read in GIFTI metric or label files as a \code{"xifti"} object. May also include
+#'  surface geometry GIFTI files and perform resampling. 
 #' 
 #' @param cortexL,cortexL_mwall Left cortex data and ROI. Each must be a path to 
-#'  a GIFTI file.
+#'  a metric or label GIFTI file.
 #' 
 #'  If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
 #'  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
@@ -23,7 +23,7 @@
 #'  Since the unmasked cortices must have the same number of vertices,
 #'  \code{V_L} should match \code{V_R}, or \code{resamp_res} must be set.
 #' @param cortexR,cortexR_mwall Right cortex data and ROI. Each must be a path to 
-#'  a GIFTI file.
+#'  a metric or label GIFTI file.
 #' 
 #'  If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
 #'  all vertices on the right cortical surface (\eqn{V_R x T} data mre 

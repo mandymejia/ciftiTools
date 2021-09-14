@@ -73,7 +73,7 @@ Other commonly-used functions:
 \code{\link{view_xifti_surface}()},
 \code{\link{view_xifti_volume}()}
 
-Other functions for writing CIFTI or GIFTI metric data: 
+Other functions for writing CIFTI or GIFTI data: 
 \code{\link{separate_cifti}()},
 \code{\link{write_metric_gifti}()},
 \code{\link{write_subcort_nifti}()},
