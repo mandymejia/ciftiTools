@@ -14,6 +14,7 @@
 # `MNI152_T1_2mm.nii` ---------------------------------------------------
 
   MNI Template used for viewing the subcortical data.
+  Publication: https://www.sciencedirect.com/science/article/abs/pii/S1053811912000419
 
 
 # `S1200.*` -------------------------------------------------------------

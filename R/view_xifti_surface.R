@@ -232,8 +232,8 @@ view_xifti_surface.color <- function(
     } else {
       signif_digits <- digits
     }
-    DATA_MIN <- round(min(values, na.rm=TRUE), signif_digits)
-    DATA_MAX <- round(max(values, na.rm=TRUE), signif_digits)
+    DATA_MIN <- signif(min(values, na.rm=TRUE), signif_digits)
+    DATA_MAX <- signif(max(values, na.rm=TRUE), signif_digits)
 
     if (is.null(zlim)) {
       if (color_mode=="qualitative") {
@@ -242,8 +242,8 @@ view_xifti_surface.color <- function(
         # This variable `zlim` won't be used.
         zlim <- c(0,1)
       } else {
-        pctile_05 <- round(quantile(values, .05, na.rm=TRUE), signif_digits)
-        pctile_95 <- round(quantile(values, .95, na.rm=TRUE), signif_digits)
+        pctile_05 <- signif(quantile(values, .05, na.rm=TRUE), signif_digits)
+        pctile_95 <- signif(quantile(values, .95, na.rm=TRUE), signif_digits)
         pctile_05_neg <- pctile_05 < 0
         pctile_95_pos <- pctile_95 > 0
 
