@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://app.travis-ci.com:443/mandymejia/ciftiTools.svg?branch=master)](https://app.travis-ci.com:443/github/mandymejia/ciftiTools)
+[![R-CMD-check](https://github.com/mandymejia/ciftiTools/workflows/R-CMD-check/badge.svg)](https://github.com/mandymejia/ciftiTools/actions)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
 [![Coveralls test
