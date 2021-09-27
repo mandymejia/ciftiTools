@@ -1,7 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
-^\.travis\.yml$
+^\.github$
 ^appveyor\.yml$
 ^data-raw$
 ^README_media$
