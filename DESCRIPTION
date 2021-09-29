@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading, Writing, Viewing and Manipulating CIFTI Files
-Version: 0.6.1
+Version: 0.7.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -50,7 +50,7 @@ Suggests:
     knitr,
     rmarkdown,
     papayar,
-    testthat (>= 2.1.0)
+    testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 URL: https://github.com/mandymejia/ciftiTools

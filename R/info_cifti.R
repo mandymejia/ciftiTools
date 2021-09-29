@@ -160,11 +160,17 @@ get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
 get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
   stopifnot(is.list(xml))
   if (intent == 3002) {
+    if ("SeriesStart" %in% attributes(xml)) {
+      tnames <- c("SeriesStart", "SeriesStep", "SeriesUnit")
+    } else {
+      tnames <- c("TimeStart", "TimeStep", "TimeStepUnits")
+    }
     meta <- list(
-      time_start=as.numeric(attributes(xml)$SeriesStart),
-      time_step=as.numeric(attributes(xml)$SeriesStep),
-      time_unit=tolower(attributes(xml)$SeriesUnit)
+      time_start=as.numeric(attributes(xml)[[tnames[1]]]),
+      time_step=as.numeric(attributes(xml)[[tnames[2]]]),
+      time_unit=tolower(attributes(xml)[[tnames[3]]])
     )
+    if (meta$time_unit == "nifti_units_sec") { meta$time_unit <- "second" }
   } else if (intent == 3006) {
     meta <- list(
       names=as.character(
@@ -205,6 +211,7 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
 #' @keywords internal
 #'
 get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
+
   stopifnot(is.list(xml))
 
   bs_names <- as.character(lapply(xml, function(x){attr(x, "BrainStructure")}))
@@ -223,18 +230,23 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
   if ("CORTEX_LEFT" %in% bs_names) {
     meta$brainstructures <- c(meta$brainstructures, "left")
     c_idx <- xml[[which(bs_names=="CORTEX_LEFT")]]
-    v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
+    # MSC data uses "NodeIndices" instead of the standard "VertexIndices"
+    ind <- ifelse("VertexIndices" %in% names(c_idx), "VertexIndices", "NodeIndices")
+    snum <- paste0("SurfaceNumberOf", ifelse(ind=="VertexIndices", "Vertices", "Nodes"))
+    v <- strsplit(gsub("\n", "", c_idx[[ind]][[1]]), " ")[[1]]
     v <- 1 + as.numeric(v[v != ""])
-    meta$cortex_left_mwall <- seq_len(attr(c_idx, "SurfaceNumberOfVertices")) %in% v
+    meta$cortex_left_mwall <- seq_len(attr(c_idx, snum)) %in% v
   }
 
   # Right Cortex
   if ("CORTEX_RIGHT" %in% bs_names) {
     meta$brainstructures <- c(meta$brainstructures, "right")
     c_idx <- xml[[which(bs_names=="CORTEX_RIGHT")]]
-    v <- strsplit(gsub("\n", "", c_idx$VertexIndices[[1]]), " ")[[1]]
+    ind <- ifelse("VertexIndices" %in% names(c_idx), "VertexIndices", "NodeIndices")
+    snum <- paste0("SurfaceNumberOf", ifelse(ind=="VertexIndices", "Vertices", "Nodes"))
+    v <- strsplit(gsub("\n", "", c_idx[[ind]][[1]]), " ")[[1]]
     v <- 1 + as.numeric(v[v != ""])
-    meta$cortex_right_mwall <- seq_len(attr(c_idx, "SurfaceNumberOfVertices")) %in% v
+    meta$cortex_right_mwall <- seq_len(attr(c_idx, snum)) %in% v
   }
 
   # Subcortical Transformation Matrix
@@ -418,7 +430,7 @@ info_cifti <- function(cifti_fname){
   # XML
   Matrix_xml <- names(cif_xml$CIFTI$Matrix)
   ## General CIFTI / Misc. metadata
-  if ("MetaData" %in% names(cif_xml$CIFTI$Matrix)) {
+  if ("MetaData" %in% Matrix_xml) {
     misc <- get_misc_meta_from_cifti_xml(cif_xml$CIFTI$Matrix$MetaData, intent)
   } else {
     misc <- NULL
@@ -428,6 +440,10 @@ info_cifti <- function(cifti_fname){
   intn <- get_intn_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[ii]], intent)
   ## Data
   ii <- which(Matrix_xml == "MatrixIndicesMap")[2]
+  ### For MSC data
+  if ("Volume" %in% Matrix_xml) {
+    cif_xml$CIFTI$Matrix[[ii]] <- c(cif_xml$CIFTI$Matrix["Volume"], cif_xml$CIFTI$Matrix[[ii]])
+  }
   data <- get_data_meta_from_cifti_xml(cif_xml$CIFTI$Matrix[[ii]], intent)
 
 

@@ -630,7 +630,8 @@ view_xifti_volume <- function(
     img[is.na(img)] <- 0
 
     # Check data dimensions.
-    if (!all.equal(dim(img), dim(vol)[seq(3)])) {
+    print(dim(img)); print(dim(vol))
+    if (!isTRUE(all.equal(dim(img), dim(vol)[seq(3)]))) {
       stop(paste0(
         "The subcortical data in the CIFTI and the `structural_img` are of ",
         "different dimensions: (", paste(dim(img), collapse=", "), ") and (",
