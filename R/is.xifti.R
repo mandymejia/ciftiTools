@@ -142,7 +142,7 @@ is.surf <- function(x) {
     message("x$vertices must be numeric.\n"); return(FALSE)
   }
 
-  if (!all.equal(x$faces, round(x$faces), is.attributes=FALSE)) {
+  if (!isTRUE(all.equal(x$faces, round(x$faces), is.attributes=FALSE))) {
     message("x$faces must be only integers.\n"); return(FALSE)
   }
 

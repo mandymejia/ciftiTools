@@ -275,7 +275,7 @@ make_cortex <- function(
 make_trans_mat <- function(nii_fname) {
   head <- oro.nifti::nifti_header(nii_fname)
   labs_trans_mat <- rbind(head@srow_x, head@srow_y, head@srow_z)
-  if (!all.equal(dim(labs_trans_mat), c(3, 4))) {
+  if (!isTRUE(all.equal(dim(labs_trans_mat), c(3, 4)))) {
     stop("trans_mat had unexpected dimensions.")
   }
   rbind(labs_trans_mat, matrix(c(0,0,0,1), nrow=1))
@@ -379,7 +379,7 @@ make_subcort <- function(
       mask <- labs > 0 & (!is.na(labs) & !is.nan(labs))
       if (validate_mask) {
         mask_vol <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
-        if(!(all.equal(mask, mask_vol))) { 
+        if(!isTRUE(all.equal(mask, mask_vol))) { 
           stop("The mask inferred from the labels did not match the mask inferred from the volume (NA/0 values).")
         }
       }
@@ -400,13 +400,13 @@ make_subcort <- function(
       stop_msg <- ""
       if (!labs_is_vectorized) {
         mask_labs <- labs > 0 | !is.na(labs)
-        if(!(all.equal(mask, mask_labs))) { 
+        if(!isTRUE(all.equal(mask, mask_labs))) { 
           stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the labels (NA/0 values). ")
         }
       }
       if (!vol_is_vectorized) {
         mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
-        if(!(all.equal(mask, mask_vol))) { 
+        if(!isTRUE(all.equal(mask, mask_vol))) { 
           stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the volume (NA/0 values). ")
         }
       }
