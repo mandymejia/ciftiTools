@@ -98,6 +98,8 @@ Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
 Surfaces are required for each hemisphere in the CIFTI. If they are not
 provided, the default inflated surfaces will be used.
+
+Conversion for sigma: \eqn{\sigma * 2 * sqrt(2*log(2)) = FWHM}
 }
 \section{Connectome Workbench}{
 

@@ -26,6 +26,8 @@
 convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   values=NULL, nsig=Inf, colors="Set2", add_white=TRUE, return_conversion_table=FALSE) {
 
+  # [TO DO] use names(values) as rownames of label table
+
   # If the input is a CIFTI file name, we need to read it into R.
   input_is_xifti <- is.xifti(x, messages=FALSE)
   if (!input_is_xifti) { 

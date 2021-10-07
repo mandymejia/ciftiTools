@@ -472,16 +472,18 @@ view_xifti_volume <- function(
             color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
             value = labs$Key
           )
-          zlim <- seq(nrow(pal_base))
+          zlim <- c(min(pal_base$value), max(pal_base$value))
         } else {
+          unique_vals <- sort(unique(as.vector(vol[!is.na(vol)])))
+          vol[,] <- as.numeric(factor(vol, levels=unique_vals))
           pal_base <- make_color_pal(
             colors=colors, color_mode=color_mode, zlim=nrow(labs)
           )
         }
       # Otherwise, use the usual colors.
       } else {
-        unique_vals <- sort(unique(as.vector(values[!is.na(values)])))
-        values[,] <- as.numeric(factor(values, levels=unique_vals))
+        unique_vals <- sort(unique(as.vector(vol[!is.na(vol)])))
+        vol[,] <- as.numeric(factor(vol, levels=unique_vals))
         pal_base <- make_color_pal(
           colors=colors, color_mode=color_mode, zlim=length(unique_vals)
         )
@@ -489,8 +491,8 @@ view_xifti_volume <- function(
       pal <- pal_even <- pal_base
 
       pal_even <- pal_even[c(
-        which(pal_even$value == min(values, na.rm=TRUE)),
-        which(pal_even$value == max(values, na.rm=TRUE))
+        which(pal_even$value == min(vol, na.rm=TRUE)),
+        which(pal_even$value == max(vol, na.rm=TRUE))
       ),]
 
     } else {
@@ -630,7 +632,6 @@ view_xifti_volume <- function(
     img[is.na(img)] <- 0
 
     # Check data dimensions.
-    print(dim(img)); print(dim(vol))
     if (!isTRUE(all.equal(dim(img), dim(vol)[seq(3)]))) {
       stop(paste0(
         "The subcortical data in the CIFTI and the `structural_img` are of ",

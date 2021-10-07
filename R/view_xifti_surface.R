@@ -287,6 +287,8 @@ view_xifti_surface.color <- function(
             value = labs$Key
           )
         } else {
+          unique_vals <- sort(unique(as.vector(values[!is.na(values)])))
+          values[,] <- as.numeric(factor(values, levels=unique_vals))
           pal_base <- make_color_pal(
             colors=colors, color_mode=color_mode, zlim=nrow(labs)
           )
@@ -1022,7 +1024,7 @@ view_xifti_surface <- function(
         } else {
           cleg <- pal_base
           cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
-          if (!legend_alllevels) { 
+          if ((!legend_alllevels) && (is.null(unique_vals))) { 
             cleg <- cleg[cleg$value %in% as.vector(do.call(cbind, values)),] 
           }
           if (nrow(cleg) < 1) {
