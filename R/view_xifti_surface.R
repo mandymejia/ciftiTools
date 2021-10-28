@@ -1017,23 +1017,23 @@ view_xifti_surface <- function(
           cleg_labs <- rownames(xifti$meta$cifti$labels[[idx[1]]])
         }
         cleg_labs <- as.character(cleg_labs)
-        # Skip if there are too many legend labels.
-        if (!requireNamespace("ggpubr", quietly = TRUE)) {
+        cleg <- pal_base
+        cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
+        if ((!legend_alllevels) && (is.null(unique_vals))) { 
+          cleg <- cleg[cleg$value %in% as.vector(do.call(cbind, values)),] 
+        }
+        # Skip if there are too many legend labels, or only one label.
+        if (nrow(cleg) < 1) {
           use_cleg <- FALSE
-          warning("Package \"ggpubr\" needed to make the color legend. Please install it. Skipping the color legend for now.\n")
-        } else {
-          cleg <- pal_base
-          cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
-          if ((!legend_alllevels) && (is.null(unique_vals))) { 
-            cleg <- cleg[cleg$value %in% as.vector(do.call(cbind, values)),] 
+        } else if (nrow(cleg) > 200) {
+          use_cleg <- FALSE
+          if (isFALSE(fname) || !isFALSE(legend_fname)) {
+            warning("Too many labels (> 200) for qualitative color legend. Not rendering it.\n")
           }
-          if (nrow(cleg) < 1) {
+        } else {
+          if (!requireNamespace("ggpubr", quietly = TRUE)) {
             use_cleg <- FALSE
-          } else if (nrow(cleg) > 200) {
-            use_cleg <- FALSE
-            if (isFALSE(fname) || !isFALSE(legend_fname)) {
-              warning("Too many labels (> 200) for qualitative color legend. Not rendering it.\n")
-            }
+            warning("Package \"ggpubr\" needed to make the color legend. Please install it. Skipping the color legend for now.\n")
           } else {
             # Get the color legend list dimensions.
             if (is.null(legend_ncol)) {
