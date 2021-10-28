@@ -160,7 +160,7 @@ get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
 get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
   stopifnot(is.list(xml))
   if (intent == 3002) {
-    if ("SeriesStart" %in% attributes(xml)) {
+    if ("SeriesStart" %in% names(attributes(xml))) {
       tnames <- c("SeriesStart", "SeriesStep", "SeriesUnit")
     } else {
       tnames <- c("TimeStart", "TimeStep", "TimeStepUnits")
