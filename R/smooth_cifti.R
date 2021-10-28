@@ -21,6 +21,7 @@
 #'  \code{x} was a \code{"xifti"} object.
 #' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) parameter
 #'  for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
+#'  for cortex (surface) and \code{3} for subcortex (volume).
 #' @param surfL_fname,surfR_fname (Required if the corresponding cortex is 
 #'  present) Surface GIFTI files for the left and right cortical surfaces. If not
 #'  provided, the default surfaces will be used.
@@ -40,7 +41,7 @@
 #' 
 smooth_cifti <- function(
   x, cifti_target_fname=NULL,
-  surf_FWHM=5, vol_FWHM=5,
+  surf_FWHM=5, vol_FWHM=3,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
