@@ -80,9 +80,7 @@ resample_cifti <- function(
   }
 
   # Args check -----------------------------------------------------------------
-  if (is.null(write_dir)) { 
-    write_dir <- ifelse(input_is_xifti, tempdir(), getwd())
-  }
+  if (is.null(write_dir) & input_is_xifti) { write_dir <- tempdir() }
   stopifnot(resamp_res > 0)
   surfL_return <- surfR_return <- FALSE
 
