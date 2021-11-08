@@ -24,6 +24,7 @@ Functions for writing CIFTI or GIFTI data:
 
 \itemize{
 \item{\code{write_cifti}:}{   Write a \code{"xifti"} to a CIFTI file}
+\item{\code{write_xifti2}:}{   Write a \code{"xifti"} to GIFTI and NIFTI files}
 \item{\code{write_metric_gifti}:}{   Write a numeric data matrix to a metric GIFTI file}
 \item{\code{write_surf_gifti}:}{   Write a \code{"surf"} to a surface GIFTI file}
 \item{\code{write_subcort_nifti}:}{   Write subcortical data to NIFTI files}
