@@ -475,7 +475,7 @@ view_xifti_volume <- function(
           zlim <- c(min(pal_base$value), max(pal_base$value))
         } else {
           unique_vals <- sort(unique(as.vector(vol[!is.na(vol)])))
-          vol[,] <- as.numeric(factor(vol, levels=unique_vals))
+          vol[,,,] <- as.numeric(factor(vol, levels=unique_vals))
           pal_base <- make_color_pal(
             colors=colors, color_mode=color_mode, zlim=nrow(labs)
           )
@@ -483,7 +483,7 @@ view_xifti_volume <- function(
       # Otherwise, use the usual colors.
       } else {
         unique_vals <- sort(unique(as.vector(vol[!is.na(vol)])))
-        vol[,] <- as.numeric(factor(vol, levels=unique_vals))
+        vol[,,,] <- as.numeric(factor(vol, levels=unique_vals))
         pal_base <- make_color_pal(
           colors=colors, color_mode=color_mode, zlim=length(unique_vals)
         )
