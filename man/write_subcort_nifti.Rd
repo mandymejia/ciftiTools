@@ -9,6 +9,7 @@ write_subcort_nifti(
   subcortLabs,
   subcortMask,
   trans_mat = NULL,
+  trans_units = NULL,
   subcortVol_fname,
   subcortLabs_fname,
   ROIsubcortVol_fname = NULL,
@@ -28,6 +29,8 @@ voxels (not subcortical), and values of 1 represent in-mask voxels
 \item{trans_mat}{The TransformationMatrixIJKtoXYZ, or equivalently the desired
 sform matrix (srow_x, srow_y and srow_z) to write. If \code{NULL}, do not
 write it (all zeroes).}
+
+\item{trans_units}{The units of \code{trans_mat}. Currently not used.}
 
 \item{subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname}{File path to
 a NIFTI to save the corresponding data. \code{ROIsubcortVol_fname} is

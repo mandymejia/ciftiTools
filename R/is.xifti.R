@@ -305,6 +305,13 @@ is.xifti_meta <- function(x) {
   if (!is.null(x$subcort$trans_mat) && !is.nummat(x$subcort$trans_mat)) {
     message("Subcortical transformation matrix is invalid.\n"); return(FALSE)
   }
+  if (!is.null(x$subcort$trans_units)) {
+    if (!is.character(x$subcort$trans_units)) {
+      message("Subcortical trans. matrix units are invalid.\n"); return(FALSE)
+    } else if (!endsWith(x$subcort$trans_units, "m")) {
+      message("Subcortical trans. matrix units are invalid.\n"); return(FALSE)
+    }
+  }
 
   # cifti
   if (!is.null(x$cifti)) {

@@ -222,6 +222,7 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     cortex_left_mwall=NULL,
     cortex_right_mwall=NULL,
     subcort_trans_mat=NULL,
+    subcort_trans_units=NULL,
     subcort_labs=NULL,
     subcort_dims=NULL
   )
@@ -249,15 +250,33 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     meta$cortex_right_mwall <- seq_len(attr(c_idx, snum)) %in% v
   }
 
-  # Subcortical Transformation Matrix
+  # Subcortex metadata
   if ("Volume" %in% names(xml)) {
     meta$brainstructures <- c(meta$brainstructures, "subcortical")
-    vol_tmat <- strsplit(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ[[1]], "\n")[[1]]
+
+    vol_tmat <- strsplit(
+      xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ[[1]], "\n"
+    )[[1]]
     vol_tmat <- vol_tmat[vol_tmat != ""]
     vol_tmat <- do.call(rbind, lapply(vol_tmat, function(x){as.numeric(strsplit(x, " ")[[1]])}))
     meta$subcort_trans_mat <- vol_tmat
 
-    meta$subcort_dims <- as.numeric(strsplit(attr(xml$Volume, "VolumeDimensions"), ",")[[1]])
+    meta$subcort_trans_units <- as.numeric(
+      attr(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ, "MeterExponent")
+    )
+    if (meta$subcort_trans_units == -3) {
+      meta$subcort_trans_units <- "mm"
+    } else if (meta$subcort_trans_units == -2) {
+      meta$subcort_trans_units <- "cm"
+    } else if (meta$subcort_trans_units == 0) {
+      meta$subcort_trans_units <- "m"
+    } else {
+      meta$subcort_trans_units <- paste0("10^(", meta$subcort_trans_units, ") m")
+    }
+
+    meta$subcort_dims <- as.numeric(
+      strsplit(attr(xml$Volume, "VolumeDimensions"), ",")[[1]]
+    )
   }
 
   # Subcortical
@@ -468,7 +487,8 @@ info_cifti <- function(cifti_fname){
         labels=substructure_table()$ciftiTools_Name
       ),
       mask = pad_vol(meta$subcort$mask, mask_pad, fill=FALSE),
-      trans_mat = data$subcort_trans_mat
+      trans_mat = data$subcort_trans_mat,
+      trans_units = data$subcort_trans_units
     )
   }
 

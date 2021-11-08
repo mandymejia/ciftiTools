@@ -57,7 +57,8 @@ template_xifti <- function(){
       subcort = list(
         labels = NULL,
         mask = NULL,
-        trans_mat = NULL
+        trans_mat = NULL,
+        trans_units = NULL
       ),
       cifti = list(
         intent = NULL,
