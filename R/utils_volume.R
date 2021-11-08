@@ -163,3 +163,20 @@ crop_vol <- function(x) {
 
   return(list(data=x, padding=padding))
 }
+
+#' Get spatial locations of each voxel
+#' 
+#' Use subcortical metadata (mask, transformation matrix and units) to get
+#'  voxel locations in 3D space.
+#' 
+#' @param mask,trans_mat,trans_units The subcortical metadata
+#' @return A list: \code{coords} and \code{units}
+#' 
+#' @keywords internal
+#' 
+vox_locations <- function(mask, trans_mat, trans_units=NULL){
+  list(
+    coords = (cbind(which(mask, arr.ind=TRUE), 1) %*% trans_mat)[,seq(3)],
+    trans_units = NULL
+  )
+}
