@@ -31,6 +31,9 @@ test_that("Writing CIFTI and GIFTI files is working", {
 
     write_cifti(cii, file.path(tdir, "temp")) # intent is not provided in name
 
+    write_xifti2(cii, write_dir = tdir)
+    write_xifti2(cii, brainstructures="l", write_dir = tdir, verbose=TRUE)
+
     # Write separate components
     cii_sep <- separate_cifti(cii_fname, write_dir=tdir, brainstructures=brainstructures)
     parts <- list()

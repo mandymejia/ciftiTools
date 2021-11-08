@@ -1,143 +1,3 @@
-#' Write CIFTI component files from a \code{"xifti"} object
-#'
-#' Write metric or label GIFTIs for the cortical surface data and NIFTIs for the
-#'  subcortical labels and mask in a \code{"xifti"} object. Each present
-#'  brainstructure will be written; if a brainstructure is absent the 
-#'  corresponding file is not written.
-#' 
-#' @inheritParams xifti_Param
-#' @param extn_cifti The CIFTI extension e.g. "dtseries.nii"
-#' @inheritParams write_dir_Param_generic
-#' @param mwall_fill Value to use for the medial wall in the cortex GIFTIs. 
-#'  Default: \code{NA}.
-#' @param subcort_fill Value to use for out-of-mask voxels in the subcortex. 
-#'  Default: \code{0}.
-#' @inheritParams verbose_Param_FALSE
-#'
-#' @return List of written files
-#' @importFrom RNifti writeNifti
-#'
-#' @keywords internal
-#' 
-write_cifti_components <- function(
-  xifti, extn_cifti, write_dir=NULL, 
-  mwall_fill=NA, subcort_fill=0,
-  verbose=FALSE) {
-
-  # [TO DO] write label GIFTI from dlabel CIFTI?
-
-  # Check arguments.
-  stopifnot(is.xifti(xifti))
-  stopifnot(length(mwall_fill)==1)
-
-  # Get intermediate file names.
-  if (is.null(write_dir)) { write_dir <- getwd() }
-  sep_names <- c(
-    "cortexL", "ROIcortexL",
-    "cortexR", "ROIcortexR", 
-    "subcortVol", "subcortLabs" #"ROIsubcortVol"
-  )
-  sep_fnames <- vapply(sep_names, cifti_component_suffix, "")
-  sep_fnames["cortexL"] <- gsub("func", "label", sep_fnames["cortexL"])
-  sep_fnames["cortexR"] <- gsub("func", "label", sep_fnames["cortexR"])
-  sep_fnames <- vapply(
-    sep_fnames, 
-    function(x){format_path(paste0("sep.", x), write_dir, mode=2)},
-    ""
-  )
-  names(sep_fnames) <- sep_names
-
-  if (extn_cifti == "dlabel.nii") {
-    intent <- "label"
-    data_type <- "INT32"
-    label_table <- xifti$meta$cifti$labels
-    if (length(label_table) > 1) {
-      if (length(unique(label_table)) > 1) {
-        warning(paste(
-          "CIFTI files support a different label table for each column,",
-          "but GIFTI files only support a single label table. Writing the",
-          "`xifti` requires exporting the cortical data to GIFTI files.",
-          "Using the label table for the first column."
-        ))
-      }
-    }
-    label_table <- label_table[[1]]
-    col_names <- names(xifti$meta$cifti$labels)
-  } else if (extn_cifti == "dscalar.nii") {
-    col_names <- xifti$meta$cifti$names
-    intent <- data_type <- label_table <- NULL
-  } else {
-    intent <- data_type <- label_table <- col_names <- NULL
-  }
-
-  # Left cortex
-  if (!is.null(xifti$data$cortex_left)){
-    if (verbose) {cat("Writing left cortex.\n")}
-    # Add back medial wall.
-    if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
-      mwall <- rep(TRUE, nrow(xifti$data$cortex_left))
-    } else {
-      mwall <- xifti$meta$cortex$medial_wall_mask$left
-    }
-    cdat <- unmask_cortex(xifti$data$cortex_left, mwall)
-
-    # Write data and ROI.
-    write_metric_gifti(
-      cdat, sep_fnames["cortexL"], "left", data_type = data_type,
-      intent=intent, label_table = label_table, col_names = col_names
-    )
-    write_metric_gifti(
-      as.numeric(mwall), sep_fnames["ROIcortexL"], 
-      "left", data_type = "FLOAT32"
-    )
-  } else {
-    sep_fnames <- sep_fnames[!grepl("cortexL", names(sep_fnames))]
-  }
-
-  ## Right cortex: add back medial wall.
-  if (!is.null(xifti$data$cortex_right)){
-    if (verbose) {cat("Writing right cortex.\n")}
-    # Add back medial wall.
-    if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
-      mwall <- rep(TRUE, nrow(xifti$data$cortex_right))
-    } else {
-      mwall <- xifti$meta$cortex$medial_wall_mask$right
-    }
-    cdat <- unmask_cortex(xifti$data$cortex_right, mwall)
-
-    # Write data and ROI.
-    write_metric_gifti(
-      cdat, sep_fnames["cortexR"], "right", data_type = data_type,
-      intent=intent, label_table = label_table, col_names = col_names
-    )
-    write_metric_gifti(
-      as.numeric(mwall), sep_fnames["ROIcortexR"], 
-      "right", data_type = "FLOAT32"
-    )
-  } else {
-    sep_fnames <- sep_fnames[!grepl("cortexR", names(sep_fnames))]
-  }
-
-  ## Subcortex: unmask to get volumetric array.
-  if (!is.null(xifti$data$subcort)) {
-    if (verbose) {cat("Writing subcortical data and labels.\n")}
-    write_subcort_nifti(
-      xifti$data$subcort, 
-      xifti$meta$subcort$labels, 
-      xifti$meta$subcort$mask, 
-      xifti$meta$subcort$trans_mat,
-      sep_fnames["subcortVol"], 
-      sep_fnames["subcortLabs"], 
-      #sep_fnames["ROIsubcortVol"],
-      fill=0
-    )
-  } else {
-    sep_fnames <- sep_fnames[!grepl("subcort", names(sep_fnames))]
-  }
-
-  invisible(sep_fnames)
-}
-
 #' Write a CIFTI file from a \code{"xifti"} object
 #'
 #' Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI 
@@ -165,27 +25,27 @@ write_cifti <- function(
   xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   verbose=TRUE) {
 
+  # Infer extension from name, and add it to `xifti`.
   extn_cifti <- get_cifti_extn(cifti_fname)
-  # If the intent isn't included in the output file name,
-  if (!(extn_cifti %in% c("dtseries.nii", "dlabel.nii", "dscalar.nii"))) {
-    ## First try to use the intent in the metadata.
+  if (extn_cifti %in% c("dtseries.nii", "dlabel.nii", "dscalar.nii")) {
+    intent_cifti <- supported_intents()$value[
+      match(extn_cifti, supported_intents()$extension)
+    ]
+
     if (!is.null(xifti$meta$cifti$intent)) {
-      extn_cifti <- supported_intents()$extension[
-        xifti$meta$cifti$intent == supported_intents()$value
-      ]
-    ## If that's not available, use a dscalar.
+      if (intent_cifti != xifti$meta$cifti$intent) {
+        ciftiTools_warn(paste0(
+          "The `xifti` intent is ", xifti$meta$cifti$intent, ", but writing a ", 
+          gsub(".nii", "", extn_cifti), " (", intent_cifti, 
+          ") instead to match the output file name.\n"
+        ))
+      }
     } else {
-      ciftiTools_warn("Writing a dscalar since no intent indicated.\n")
-      extn_cifti <- "dscalar.nii"
+      xifti$meta$cifti$intent <- intent_cifti
     }
-    cifti_fname <- paste0(cifti_fname, ".", extn_cifti)
   }
 
-  sep_fnames <- write_cifti_components(
-    xifti=xifti, extn_cifti=extn_cifti,
-    write_dir=tempdir(), 
-    verbose=verbose
-  )
+  sep_fnames <- write_xifti2(xifti=xifti, write_dir=tempdir(), verbose=verbose)
 
   if (verbose) { cat("Creating CIFTI file from separated components.\n") }
   wcfs_kwargs <- list(
