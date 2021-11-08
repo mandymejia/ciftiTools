@@ -1,26 +1,8 @@
-#' Separate a CIFTI file
-#'
-#' Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files 
-#'  for the subcortical data and labels. ROIs can also be written to indicate 
-#'  the medial wall mask (cortex) and volume mask (subcortex). This uses the
-#'  Connectome Workbench command \code{-cifti-separate}.
+#' Separate CIFTI: file names
 #' 
-#' Time unit, start, and step (dtseries files) will not be written to the GIFTI/NIFTIs. 
-#'  Column names (dscalar files) will not be written to the GIFTIs, as well as label 
-#'  names and colors (dlabel files). (Haven't checked the NIFTIs yet.)
+#' File paths for writing GIFTI and NIFTI files from a CIFTI or \code{"xifti"}
 #' 
-#'  ROI/medial wall behavior: If there are 32k vertices in the left cortex with
-#'  3k representing the medial wall, then both \code{cortexL_fname} and 
-#'  \code{ROIcortexL_fname} will have 32k entries, 3k of which having a value of
-#'  0 indicating the medial wall. The non-medial wall entries will have the 
-#'  data values in \code{cortexL_fname} and a value of 1 in 
-#'  \code{ROIcortexL_fname}. Thus, exporting \code{ROIcortexL_fname} is vital if 
-#'  the data values include 0, because 0-valued non-medial wall vertices and
-#'  medial wall vertices cannot be distinguished from one another within
-#'  \code{cortexL_fname} alone.
-#'
-#' 
-#' @inheritParams cifti_fname_Param
+#' @param intent 3002 (default), 3006, or 3007
 #' @inheritParams brainstructures_Param_LR
 #' @param ROI_brainstructures Which ROIs should be obtained? \code{"all"} 
 #'  (default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL} 
@@ -53,6 +35,129 @@
 #'  (in subcortex) voxels and 0 for out-of-ROI (not in subcortex) voxels. Will 
 #'  be written in \code{write_dir}.
 #' @inheritParams write_dir_Param_generic
+#' 
+#' @return List of three: \code{do}, \code{ROI_do}, and \code{sep_fnames}
+#' 
+#' @keywords internal
+separate_cifti_files <- function(
+  intent=3006,
+  brainstructures=c("left","right"), 
+  cortexL_fname=NULL, cortexR_fname=NULL, 
+  subcortVol_fname=NULL, subcortLabs_fname=NULL, 
+  ROI_brainstructures="all", 
+  ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, 
+  ROIsubcortVol_fname=NULL, 
+  write_dir=NULL){
+
+  # Get the brainstructures. 
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical","all"),
+    user_value_label="brainstructures"
+  )
+  if ("all" %in% brainstructures) { 
+    brainstructures <- c("left","right","subcortical")
+  }
+  do <- c("left","right","subcortical") %in% brainstructures
+  names(do) <- c("left", "right", "sub")
+
+  # Get the ROI brainstructures.
+  if (!is.null(ROI_brainstructures)) {
+    ROI_brainstructures <- match_input(ROI_brainstructures, c(brainstructures, "all"), user_value_label="ROI_brainstructures")
+    if ("all" %in% ROI_brainstructures) { 
+      ROI_brainstructures <- brainstructures
+    }
+    stopifnot(length(unique(ROI_brainstructures)) == length(ROI_brainstructures))
+  }
+  ROI_do <- c("left","right","subcortical") %in% ROI_brainstructures
+  names(ROI_do) <- c("left", "right", "sub")
+
+  default_fname <- function(x){ paste0("sep.", cifti_component_suffix(x)) }
+
+  if (do['left']) {
+    # Left cortex
+    if (is.null(cortexL_fname)) { cortexL_fname <- default_fname("cortexL") }
+    cortexL_fname <- format_path(cortexL_fname, write_dir, mode=2)
+    if (intent == 3007) { cortexL_fname <- gsub(".func.gii", ".label.gii", cortexL_fname, fixed=TRUE) }
+    if (ROI_do['left']) {
+      if (is.null(ROIcortexL_fname)) { ROIcortexL_fname <- default_fname("ROIcortexL") }
+      ROIcortexL_fname <- format_path(ROIcortexL_fname, write_dir, mode=2)
+    } else { ROIcortexL_fname <- NULL }
+  } else { cortexL_fname <- ROIcortexL_fname <- NULL }
+
+  if (do['right']) {
+    # Right cortex
+    if (is.null(cortexR_fname)) { cortexR_fname <- default_fname("cortexR") }
+    cortexR_fname <- format_path(cortexR_fname, write_dir, mode=2)
+    if (intent == 3007) { cortexR_fname <- gsub(".func.gii", ".label.gii", cortexR_fname, fixed=TRUE) }
+    if (ROI_do['right']) {
+      if (is.null(ROIcortexR_fname)) { ROIcortexR_fname <- default_fname("ROIcortexR") }
+      ROIcortexR_fname <- format_path(ROIcortexR_fname, write_dir, mode=2)
+    } else { ROIcortexR_fname <- NULL }
+  } else { cortexR_fname <- ROIcortexR_fname <- NULL }
+
+  if (do['sub']) {
+    # Subcortex
+    if (is.null(subcortVol_fname)) { subcortVol_fname <- default_fname("subcortVol") }
+    subcortVol_fname <- format_path(subcortVol_fname, write_dir, mode=2)
+    if (is.null(subcortLabs_fname)) { subcortLabs_fname <- default_fname("subcortLabs") }
+    subcortLabs_fname <- format_path(subcortLabs_fname, write_dir, mode=2)
+    if (ROI_do['sub']) {
+      if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort") }
+      ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
+    } else { ROIsubcortVol_fname <- NULL }
+  } else { 
+    subcortVol_fname <- subcortLabs_fname <- ROIsubcortVol_fname <- NULL 
+  }
+
+  sep_fnames <- unlist(list(
+    cortexL = cortexL_fname,
+    ROIcortexL = ROIcortexL_fname,
+    cortexR = cortexR_fname,
+    ROIcortexR = ROIcortexR_fname,
+    subcortVol = subcortVol_fname,
+    subcortLabs = subcortLabs_fname,
+    ROIsubcortVol = ROIsubcortVol_fname
+  ))
+
+  # Stop if any file paths are identical.
+  if (length(unique(sep_fnames)) != length(sep_fnames)) {
+    print(sep_fnames)
+    stop(paste0(
+      "The file paths for the separated xifti/CIFTI components are above. ",
+      "Some file paths were identical, but ",
+      "the same path cannot be used to write out different components. ",
+      "Check if identical file names were specified, or if any provided ",
+      "file name overlapped with a default file name.\n\n"
+    ))
+  }
+
+  list(do=do, ROI_do=ROI_do, sep_fnames=sep_fnames)
+}
+
+#' Separate a CIFTI file
+#'
+#' Separate a CIFTI file into GIFTI files for the cortical data and NIFTI files 
+#'  for the subcortical data and labels. ROIs can also be written to indicate 
+#'  the medial wall mask (cortex) and volume mask (subcortex). This uses the
+#'  Connectome Workbench command \code{-cifti-separate}.
+#' 
+#' Time unit, start, and step (dtseries files) will not be written to the GIFTI/NIFTIs. 
+#'  Column names (dscalar files) will not be written to the GIFTIs, as well as label 
+#'  names and colors (dlabel files). (Haven't checked the NIFTIs yet.)
+#' 
+#'  ROI/medial wall behavior: If there are 32k vertices in the left cortex with
+#'  3k representing the medial wall, then both \code{cortexL_fname} and 
+#'  \code{ROIcortexL_fname} will have 32k entries, 3k of which having a value of
+#'  0 indicating the medial wall. The non-medial wall entries will have the 
+#'  data values in \code{cortexL_fname} and a value of 1 in 
+#'  \code{ROIcortexL_fname}. Thus, exporting \code{ROIcortexL_fname} is vital if 
+#'  the data values include 0, because 0-valued non-medial wall vertices and
+#'  medial wall vertices cannot be distinguished from one another within
+#'  \code{cortexL_fname} alone.
+#'
+#' 
+#' @inheritParams cifti_fname_Param
+#' @inheritParams separate_cifti_files
 #'
 #' @return A named character vector with the file paths to the written 
 #'  NIFTI and GIFTI files
@@ -72,25 +177,49 @@ separate_cifti <- function(cifti_fname,
   ROIsubcortVol_fname=NULL, 
   write_dir=NULL) {
 
+  # Check if CIFTI exists.
   cifti_fname <- format_path(cifti_fname)
   if (!file.exists(cifti_fname)) {
     stop(paste("The `cifti_fname` \"", cifti_fname, "\" does not exist."))
   }
 
+  # Read metadata.
+  cifti_info <- info_cifti(cifti_fname)
+
   # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname) 
-  extn_cifti <- get_cifti_extn(bname_cifti)  # "dtseries.nii", "dscalar.nii", or "dlabel.nii"
-
-  # Get the brainstructures.
-  brainstructures <- match_input(
-    brainstructures, c("left","right","subcortical","all"),
-    user_value_label="brainstructures"
-  )
-  if ("all" %in% brainstructures) { 
-    brainstructures <- c("left","right","subcortical")
-  }
-  cifti_info <- info_cifti(cifti_fname)
+  extn_cifti <- get_cifti_extn(bname_cifti)
+  
+  # Convert extension to numerical intent
   check_cifti_type(cifti_info$cifti$intent, extn_cifti)
+  if (extn_cifti %in% c("dtseries.nii", "dscalar.nii", "dlabel.nii")) {
+    intent_cifti <- supported_intents()$value[
+      match(extn_cifti, supported_intents()$extension)
+    ]
+  } else {
+    intent_cifti <- 3006
+  }
+
+  # Get output files: which ones to write, and their names
+  x <- separate_cifti_files(
+    intent = intent_cifti,
+    brainstructures=brainstructures,
+    cortexL_fname=cortexL_fname, cortexR_fname=cortexR_fname,
+    subcortVol_fname=subcortVol_fname, subcortLabs_fname=subcortLabs_fname,
+    ROI_brainstructures=ROI_brainstructures,
+    ROIcortexL_fname=ROIcortexL_fname, ROIcortexR_fname=ROIcortexR_fname,
+    ROIsubcortVol_fname=ROIsubcortVol_fname, write_dir=write_dir
+  )
+  do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
+
+  # Modify output file names
+  fix_sep_fname <- function(x){ file.path(
+    dirname(x),
+    gsub(extn_cifti, basename(x), bname_cifti, fixed=TRUE)
+  ) }
+  sep_fnames <- vapply(sep_fnames, fix_sep_fname, "")
+
+  # Check brainstructures
   bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
   if (!all(bs_present)) {
     warning(paste0(
@@ -102,97 +231,23 @@ separate_cifti <- function(cifti_fname,
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")
 
-  # Get the ROI brainstructures.
-  if (!is.null(ROI_brainstructures)) {
-    ROI_brainstructures <- match_input(ROI_brainstructures, c(brainstructures, "all"), user_value_label="ROI_brainstructures")
-    if ("all" %in% ROI_brainstructures) { 
-      ROI_brainstructures <- brainstructures
-    }
-    stopifnot(length(unique(ROI_brainstructures)) == length(ROI_brainstructures))
-  }
-  ROI_do <- c("left","right","subcortical") %in% ROI_brainstructures
-  names(ROI_do) <- c("left", "right", "sub")
-
-  # Use default file names if not provided. All paths will be placed in write_dir.
-  default_fname <- function(label, extn_cifti, bname_cifti) { 
-    gsub(extn_cifti, cifti_component_suffix(label), bname_cifti, fixed=TRUE)
-  }
-  if (do['left']) {
-    # Left cortex
-    if (is.null(cortexL_fname)) { cortexL_fname <- default_fname("cortexL", extn_cifti, bname_cifti) }
-    cortexL_fname <- format_path(cortexL_fname, write_dir, mode=2)
-    if (extn_cifti == "dlabel.nii") { cortexL_fname <- gsub(".func.gii", ".label.gii", cortexL_fname, fixed=TRUE) }
-    if (ROI_do['left']) {
-      if (is.null(ROIcortexL_fname)) { ROIcortexL_fname <- default_fname("ROIcortexL", extn_cifti, bname_cifti) }
-      ROIcortexL_fname <- format_path(ROIcortexL_fname, write_dir, mode=2)
-    } else { ROIcortexL_fname <- NULL }
-  } else { cortexL_fname <- ROIcortexL_fname <- NULL }
-
-  if (do['right']) {
-    # Right cortex
-    if (is.null(cortexR_fname)) { cortexR_fname <- default_fname("cortexR", extn_cifti, bname_cifti) }
-    cortexR_fname <- format_path(cortexR_fname, write_dir, mode=2)
-    if (extn_cifti == "dlabel.nii") { cortexR_fname <- gsub(".func.gii", ".label.gii", cortexR_fname, fixed=TRUE) }
-    if (ROI_do['right']) {
-      if (is.null(ROIcortexR_fname)) { ROIcortexR_fname <- default_fname("ROIcortexR", extn_cifti, bname_cifti) }
-      ROIcortexR_fname <- format_path(ROIcortexR_fname, write_dir, mode=2)
-    } else { ROIcortexR_fname <- NULL }
-  } else { cortexR_fname <- ROIcortexR_fname <- NULL }
-
-  if (do['sub']) {
-    # Subcortex
-    if (is.null(subcortVol_fname)) { subcortVol_fname <- default_fname("subcortVol", extn_cifti, bname_cifti) }
-    subcortVol_fname <- format_path(subcortVol_fname, write_dir, mode=2)
-    if (is.null(subcortLabs_fname)) { subcortLabs_fname <- default_fname("subcortLabs", extn_cifti, bname_cifti) }
-    subcortLabs_fname <- format_path(subcortLabs_fname, write_dir, mode=2)
-    if (ROI_do['sub']) {
-      if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort", extn_cifti, bname_cifti) }
-      ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
-    } else { ROIsubcortVol_fname <- NULL }
-  } else { 
-    subcortVol_fname <- subcortLabs_fname <- ROIsubcortVol_fname <- NULL 
-  }
-
-  # Collect the paths to each file to write in a data.frame. 
-  sep_fnames <- unlist(list(
-    cortexL = cortexL_fname,
-    ROIcortexL = ROIcortexL_fname,
-    cortexR = cortexR_fname,
-    ROIcortexR = ROIcortexR_fname,
-    subcortVol = subcortVol_fname,
-    subcortLabs = subcortLabs_fname,
-    ROIsubcortVol = ROIsubcortVol_fname
-  ))
-
-  # Stop if any file paths are identical.
-  if (length(unique(sep_fnames)) != length(sep_fnames)) {
-    print(sep_fnames)
-    stop(paste0(
-      "The file paths for the separated components are printed above. ",
-      "Some file paths were identical, but ",
-      "the same path cannot be used to write out different components. ",
-      "Check if identical file names were specified, or if any provided ",
-      "file name overlapped with a default file name.\n\n"
-    ))
-  }
-
   # Build the Connectome Workbench command. 
   what <- switch(as.character(cifti_info$cifti$intent),
     `3002` = "metric", `3006` = "metric", `3007` = "label", "metric"
   )
   cmd <- paste("-cifti-separate", sys_path(cifti_fname), "COLUMN")
   if (do['left']) {
-    cmd <- paste(cmd, paste0('-',what,' CORTEX_LEFT'), sys_path(cortexL_fname))
-    if (ROI_do['left']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexL_fname)) }
+    cmd <- paste(cmd, paste0('-',what,' CORTEX_LEFT'), sys_path(sep_fnames["cortexL"]))
+    if (ROI_do['left']) { cmd <- paste(cmd, '-roi', sys_path(sep_fnames["ROIcortexL"])) }
   }
   if (do['right']) {
-    cmd <- paste(cmd, paste0('-',what,' CORTEX_RIGHT'), sys_path(cortexR_fname))
-    if (ROI_do['right']) { cmd <- paste(cmd, '-roi', sys_path(ROIcortexR_fname)) }
+    cmd <- paste(cmd, paste0('-',what,' CORTEX_RIGHT'), sys_path(sep_fnames["cortexR"]))
+    if (ROI_do['right']) { cmd <- paste(cmd, '-roi', sys_path(sep_fnames["ROIcortexR"])) }
   }
   if (do['sub']) {
-    cmd <- paste(cmd, '-volume-all', sys_path(subcortVol_fname))
-    if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(ROIsubcortVol_fname)) }
-    cmd <- paste(cmd, '-label', sys_path(subcortLabs_fname))
+    cmd <- paste(cmd, '-volume-all', sys_path(sep_fnames["subcortVol"]))
+    if (ROI_do['sub']) { cmd <- paste(cmd, '-roi', sys_path(sep_fnames["ROIsubcortVol"])) }
+    cmd <- paste(cmd, '-label', sys_path(sep_fnames["subcortLabs"]))
   }
 
   # Run it.
