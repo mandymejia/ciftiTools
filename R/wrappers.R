@@ -121,16 +121,17 @@ resample_cifti_wrapper <- function(
   # Get expected file names.
   expected_labs <- get_kwargs(resample_cifti_components)
   expected_labs <- expected_labs[grepl("fname", expected_labs, fixed=TRUE)]
+  expected_labs <- unique(gsub("_.*", "", expected_labs))
 
   # Check and add original file names to the kwargs.
   if (!is.null(original_fnames)) {
-    match_input(names(original_fnames), gsub("_.*", "", expected_labs), 
+    match_input(names(original_fnames), expected_labs, 
       user_value_label="original_fnames")
     resamp_kwargs[paste0(names(original_fnames), "_original_fname")] <- original_fnames
   }
   # Check and add resampled/target file names to the kwargs.
   if (!is.null(resamp_fnames)) {
-    match_input(names(resamp_fnames), gsub("_.*", "", expected_labs), 
+    match_input(names(resamp_fnames), expected_labs, 
       user_value_label="resamp_fnames")
     resamp_kwargs[paste0(names(resamp_fnames), "_target_fname")] <- resamp_fnames
   }

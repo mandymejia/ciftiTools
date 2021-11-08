@@ -33,6 +33,10 @@ write_cifti_from_separate <- function(
   # Determine what kind of CIFTI is being written.
   # Must be one of the following after the check in `cifti_info`
   cifti_extn <- get_cifti_extn(cifti_fname)
+  if (!(cifti_extn %in% c("dtseries.nii", "dscalar.nii", "dlabel.nii"))) {
+    ciftiTools_warn("`cifti_fname` does not end in a CIFTI extension (*.nii). Writing a dscalar.\n")
+    cifti_extn <- "dscalar.nii"
+  }
 
   create_cmd <- switch(cifti_extn,
     "dtseries.nii" = "-cifti-create-dense-timeseries",
@@ -45,11 +49,6 @@ write_cifti_from_separate <- function(
     "dscalar.nii" = "metric",
     "dlabel.nii" = "label"
   )
-  if (is.null(create_cmd)) {
-    stop(paste(
-      "CIFTI extension", cifti_extn, "is not yet supported by ciftiTools."
-    ))
-  }
 
   # TO-DO: adjust GIFTI/NIFTI written files accordingly?
 

@@ -23,7 +23,8 @@ test_that("Resampling CIFTI and GIFTI files is working", {
     )
     cii <- resample_cifti(cii, resamp_res=1000)
 
-    if (cii_fname == "dtseries") {
+    if (grepl("dtseries", cii_fname)) {
+
       # read_cifti with resampling, with surfaces
       cii <- readcii(
         cii_fname, brainstructures=brainstructures,
@@ -33,6 +34,8 @@ test_that("Resampling CIFTI and GIFTI files is working", {
 
       # resample_surf
       surf <- resample_surf(cii$surf$cortex_left, hemisphere="left", resamp_res=3000)
+
+      tdir <- tempdir()
 
       # resample_cifti
       cii2_fnames <- resample_cifti(

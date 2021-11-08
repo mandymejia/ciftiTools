@@ -124,7 +124,7 @@ resample_cifti <- function(
     brainstructures <- vector("character")
     if (!is.null(x$data$cortex_left)) { brainstructures <- c(brainstructures, "left") }
     if (!is.null(x$data$cortex_right)) { brainstructures <- c(brainstructures, "right") }
-    if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcort") }
+    if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcortical") }
     ROI_brainstructures <- brainstructures
 
   } else {

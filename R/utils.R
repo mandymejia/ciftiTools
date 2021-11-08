@@ -98,7 +98,7 @@ sys_path <- function(R_path) {
 #' 
 get_kwargs <- function(fun) {
   kwargs <- names(as.list(args(fun)))
-  kwargs <- kwargs[1:(length(kwargs)-1)] # last is empty
+  kwargs <- kwargs[seq(length(kwargs)-1)] # last is empty
   kwargs
 }
 

@@ -184,7 +184,7 @@ read_cifti_separate <- function(
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
     xifti$meta$cortex["resamp_res"] <- list(resamp_res)
   }
-  if ("subcort" %in% brainstructures) {
+  if ("subcortical" %in% brainstructures) {
     xifti$meta$subcort[c("labels", "mask", "trans_mat")] <- to_read$cifti_info$subcort[c("labels", "mask", "trans_mat")]
   }
 
