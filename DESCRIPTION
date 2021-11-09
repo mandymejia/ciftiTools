@@ -46,10 +46,13 @@ Suggests:
     covr,
     ggplot2,
     ggpubr,
+    grid,
+    gridExtra,
     htmlwidgets,
     knitr,
     rmarkdown,
     papayar,
+    png,
     testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
