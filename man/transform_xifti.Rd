@@ -6,6 +6,12 @@
 \alias{-.xifti}
 \alias{*.xifti}
 \alias{^.xifti}
+\alias{>.xifti}
+\alias{>=.xifti}
+\alias{<.xifti}
+\alias{<=.xifti}
+\alias{==.xifti}
+\alias{!=.xifti}
 \alias{\%\%.xifti}
 \alias{\%/\%.xifti}
 \alias{/.xifti}
@@ -26,6 +32,20 @@ transform_xifti(xifti, FUN, xifti2 = NULL, ...)
 \method{-}{xifti}(xifti, xifti2)
 
 \method{*}{xifti}(xifti, xifti2)
+
+\method{^}{xifti}(xifti, xifti2)
+
+\method{>}{xifti}(xifti, xifti2)
+
+\method{>=}{xifti}(xifti, xifti2)
+
+\method{<}{xifti}(xifti, xifti2)
+
+\method{<=}{xifti}(xifti, xifti2)
+
+\method{==}{xifti}(xifti, xifti2)
+
+\method{!=}{xifti}(xifti, xifti2)
 
 \method{^}{xifti}(xifti, xifti2)
 

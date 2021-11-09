@@ -168,6 +168,55 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
 #' @rdname transform_xifti
 #' 
 #' @export
+`>.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`>`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
+`>=.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`>=`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
+`<.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`<`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
+`<=.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`<=`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
+`==.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`==`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
+`!=.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`!=`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
+`^.xifti` <- function(xifti,xifti2) {
+  transform_xifti(xifti, xifti2, FUN=`^`)
+}
+
+#' @rdname transform_xifti
+#' 
+#' @export
 `%%.xifti` <- function(xifti,xifti2) {
   transform_xifti(xifti, xifti2, FUN=`%%`)
 }
