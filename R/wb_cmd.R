@@ -9,8 +9,11 @@ wb_path_request <- function() {
   paste(
     "\n*****************************************************************",
     "ciftiTools requires the path to the Connectome Workbench folder, ",
-    "or directly to the `wb_command(.exe)`. Please execute the command", 
-    "     `ciftiTools.setOption('wb_path', 'path/to/workbench')`.     ", 
+    "  or directly to `wb_command(.exe)`. Please execute the command  ", 
+    "      `ciftiTools.setOption('wb_path', 'path/to/workbench')`     ", 
+    "                                                                 ", 
+    "  If you do not have the Connectome Workbench, install it here:  ", 
+    "      humanconnectome.org/software/get-connectome-workbench      ",
     "*****************************************************************\n",
     sep='\n'
   )
@@ -30,6 +33,12 @@ wb_path_request <- function() {
 #' @export
 #'
 get_wb_cmd_path <- function(wb_path) {
+
+  # Remove double slashes (except at very beginning)
+  add_back <- startsWith(wb_path, "//")
+  wb_path <- gsub("(/)+", "/", wb_path)
+  if (add_back) { wb_path <- paste0("/", wb_path) }
+  wb_path <- gsub("/$", "", wb_path) # Remove slash at end (will become double)
 
   # If `wb_path` doesn't exist, raise a warning but still use it.
   # (Sometimes the file does exist, even if `file.exists` fails?)
