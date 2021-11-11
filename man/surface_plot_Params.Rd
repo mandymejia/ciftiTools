@@ -73,7 +73,14 @@ a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
 will set the other to maintain this aspect ratio. Both can be specified to
 set the dimensions exactly, but note that the dimensions cannot be larger
 than the screen resolution. (These arguments do not affect the size of the
-legend, which cannot be controlled.)}
+legend, which cannot be controlled.)
+
+The plot will be taller than \code{height} to accommodate a title or color
+bar.
+
+If multiple \code{idx} are being composited with \code{together}, these
+arguments refer to a single \code{idx} within the composited plot, and not
+the composited plot itself.}
 
 \item{zoom}{Adjust the sizes of the brain meshes. Default: \code{NULL} (will
 be set to 0.6 or 160\\% for the Open GL window, and 0.67 or 167\\% for the
