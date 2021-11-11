@@ -591,10 +591,10 @@ view_xifti_surface.draw_mesh <- function(
 #'  color to use that instead. If \code{FALSE} or \code{NULL} (default), do
 #'  not draw borders.
 #' @return If a png or html file(s) were written, the names of the files for
-#'  each index will be returned. Otherwise, the widget itself is returned
-#'  if a widget was used, and the rgl object IDs are returned if an Open GL
-#'  window was used. The rgl object IDs are useful for further programmatic 
-#'  manipulation of the Open GL window.
+#'  each index (and color legend if applicable) will be returned. Otherwise, 
+#'  the widget itself is returned if a widget was used, and the rgl object IDs 
+#'  are returned if an Open GL window was used. The rgl object IDs are useful 
+#'  for further programmatic manipulation of the Open GL window.
 #' 
 #' @importFrom grDevices dev.list dev.off png rgb
 #' @importFrom stats quantile
@@ -1263,9 +1263,9 @@ view_xifti_surface <- function(
           if (use_cleg) {
             print(cleg)
             if (!isFALSE(fname)) {
-              cleg_h_per_row <- 1/3 #inches
-              cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
               if (!isFALSE(legend_fname)) {
+                cleg_h_per_row <- 1/3 #inches
+                cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
                 ggplot2::ggsave(
                   filename = legend_fname,
                   height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
@@ -1307,6 +1307,11 @@ view_xifti_surface <- function(
   }
 
   names(subscenes)[is.na(names(subscenes))] <- "Empty"
+
+  fname_all <- fname
+  if (!isFALSE(legend_fname) && !legend_embed) {
+    if (use_cleg || any_colors){ fname_all <- c(fname, legend_fname) }
+  }
 
   if (widget) {
 
@@ -1368,7 +1373,7 @@ view_xifti_surface <- function(
     }
 
   } else if (saving_file) {
-    return(invisible(fname))
+    return(invisible(fname_all))
 
   } else {
     return(invisible(rglIDs))

@@ -126,8 +126,7 @@
 #'  appears too high in the plot. Use these arguments to nudge the title up
 #'  or down (\code{ypos.title}) or left or right (\code{xpos.title}).
 #' @param text_color Color for text in title and colorbar legend. Default:
-#'  \code{"white"}. 
-#   If \code{"white"}, will use black instead for the color
+#'  \code{"white"}. If \code{"white"}, will use black instead for the color
 #   legend and the color bar if printed separately (since those will have
 #   white backgrounds). To override this behaviour use \code{"#FFFFFF"} instead.
 #' @param bg Background color. \code{NULL} will use \code{"black"}. Does not affect
@@ -146,6 +145,9 @@
 #'  or by the arguments listed above:
 #'  \code{x}, \code{y}, \code{plane}, \code{col.y}, \code{col.x}, \code{zlim.y},
 #'  \code{oma}, \code{plot.type}, \code{bg}.
+#' @return If a png or pdf file(s) were written, the names of the files for
+#'  each index (and color legend if applicable) will be returned. Otherwise, 
+#'  \code{NULL} is invisibly returned.
 #'
 #' @family common
 #' @export
@@ -578,7 +580,11 @@ view_xifti_volume <- function(
       colorbar_kwargs <- NULL
     } else {
       if (is.null(legend_embed)) { legend_embed <- TRUE }
-      colorbar_kwargs <- view_xifti_surface.cbar(pal_base, pal, color_mode, text_color, digits)
+      colorbar_kwargs <- view_xifti_surface.cbar(
+        pal_base, pal, color_mode, 
+        ifelse(legend_embed, text_color, ifelse(text_color=="white", "black", text_color)), 
+        digits
+      )
     }
   } else {
     if (isTRUE(legend_embed)) {
@@ -774,9 +780,9 @@ view_xifti_volume <- function(
   if (use_cleg) {
     print(cleg)
     if (!isFALSE(fname)) {
-      cleg_h_per_row <- 1/3 #inches
-      cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
       if (!isFALSE(legend_fname)) {
+        cleg_h_per_row <- 1/3 #inches
+        cleg_w_factor <- mean(nchar(cleg_labs)*1/4) + 3
         ggplot2::ggsave(
           filename = legend_fname,
           height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
@@ -803,8 +809,15 @@ view_xifti_volume <- function(
     }
   }
 
+  fname_all <- fname
+  if (!isFALSE(legend_fname) && !legend_embed) {
+    if (use_cleg || any_colors){
+      fname_all <- c(fname, legend_fname)
+    }
+  }
+
   if (makePNG | makePDF) {
-    return(invisible(fname))
+    return(invisible(fname_all))
   } else {
     return(invisible(NULL))
   }

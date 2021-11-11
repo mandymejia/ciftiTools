@@ -343,10 +343,10 @@ widget.)}
 }
 \value{
 If a png or html file(s) were written, the names of the files for
-each index will be returned. Otherwise, the widget itself is returned
-if a widget was used, and the rgl object IDs are returned if an Open GL
-window was used. The rgl object IDs are useful for further programmatic
-manipulation of the Open GL window.
+each index (and color legend if applicable) will be returned. Otherwise,
+the widget itself is returned if a widget was used, and the rgl object IDs
+are returned if an Open GL window was used. The rgl object IDs are useful
+for further programmatic manipulation of the Open GL window.
 }
 \description{
 Visualize \code{"xifti"} cortical data using an interactive Open GL window

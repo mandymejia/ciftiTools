@@ -256,7 +256,7 @@ appears too high in the plot. Use these arguments to nudge the title up
 or down (\code{ypos.title}) or left or right (\code{xpos.title}).}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
-\code{"white"}.}
+\code{"white"}. If \code{"white"}, will use black instead for the color}
 
 \item{bg}{Background color. \code{NULL} will use \code{"black"}. Does not affect
 the color legend or color bar if printed separately: those will always have
@@ -276,6 +276,11 @@ should not be provided since they are pre-determined inside this function
 or by the arguments listed above:
 \code{x}, \code{y}, \code{plane}, \code{col.y}, \code{col.x}, \code{zlim.y},
 \code{oma}, \code{plot.type}, \code{bg}.}
+}
+\value{
+If a png or pdf file(s) were written, the names of the files for
+each index (and color legend if applicable) will be returned. Otherwise,
+\code{NULL} is invisibly returned.
 }
 \description{
 Visualize the subcortical data in a \code{"xifti"} using a series of 2D
