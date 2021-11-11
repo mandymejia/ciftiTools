@@ -16,6 +16,8 @@ view_xifti_surface(
   colors = NULL,
   idx = NULL,
   hemisphere = NULL,
+  together = NULL,
+  together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
   title = NULL,
@@ -188,6 +190,29 @@ cortex with data (i.e. if \code{xifti$data$cortex_left} and/or
 
 Surfaces without data will be colored white.}
 
+\item{together}{Only applies if saving image files (\code{!isFALSE(fname)}).
+Use this argument to create and save a composite image which combines
+multiple plots. \code{NULL} (default) will not combine any plots. Otherwise,
+this argument should be a character vector with one or more of the
+following entries:
+
+\code{"leg"} to combine the color legend with each \code{"xifti"} data plot.
+Overrides/ignores \code{legend_embed}.
+
+\code{"idx"} to place all the plots for the different \code{"idx"} in a grid.
+If the data is not qualitative, a shared color bar will be added to the bottom
+of the composite. If the data is qualitative, a shared color legend will be
+added to the bottom only if \code{"leg"} is in \code{together}.
+
+\code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
+side-by-side.
+
+For greater control see \code{view_comp} or \code{grid::arrangeGrob}.}
+
+\item{together_title}{If a composite image is made based on \code{together},
+use this argument to add a grand title to the composite image. Should be
+a length-one character vector or \code{NULL} to not add a grand title.}
+
 \item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or
 \code{"both"}. If \code{NULL} (default), both views will be shown. Each view
 will be plotted in a separate panel row.}
@@ -265,8 +290,9 @@ It will be positioned in the bottom-left corner, in a separate subplot
 with 1/4 the height of the brain cortex subplots. Default: \code{TRUE}.
 If \code{FALSE}, print/save it separately instead.
 
-Only applies if the color bar is used (sequential or diverging data).
-The color legend (qualitative data) cannot be embedded at the moment.}
+Only applies if the color bar is used (sequential or diverging data)
+or if \code{"leg" \%in\% together}. Otherwise the color legend
+(qualitative data) cannot be embedded at the moment.}
 
 \item{digits}{The number of digits for the colorbar legend ticks.
 If \code{NULL} (default), let \code{\link{format}} decide.}

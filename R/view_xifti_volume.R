@@ -65,6 +65,27 @@
 #' @param slices Which slices to display. If provided, this argument will
 #'  override \code{n_slices}. Should be a numeric vector with integer values
 #'  between one and the number of slices in \code{plane}. Ignored if \code{widget}.
+#' @param together Only applies if saving image files (\code{!isFALSE(fname)}). 
+#'  Use this argument to create and save a composite image which combines
+#'  multiple plots. \code{NULL} (default) will not combine any plots. Otherwise, 
+#'  this argument should be a character vector with one or more of the 
+#'  following entries:
+#'  
+#'  \code{"leg"} to combine the color legend with each \code{"xifti"} data plot.
+#'  Overrides/ignores \code{legend_embed}.
+#' 
+#'  \code{"idx"} to place all the plots for the different \code{"idx"} in a grid.
+#'  If the data is not qualitative, a shared color bar will be added to the bottom
+#'  of the composite. If the data is qualitative, a shared color legend will be
+#'  added to the bottom only if \code{"leg"} is in \code{together}.
+#' 
+#'  \code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
+#'  side-by-side.
+#' 
+#'  For greater control see \code{view_comp} or \code{grid::arrangeGrob}.
+#' @param together_title If a composite image is made based on \code{together},
+#'  use this argument to add a grand title to the composite image. Should be
+#'  a length-one character vector or \code{NULL} to not add a grand title.
 #' @param widget Create an interactive widget using \code{papayar}? Otherwise
 #'  display static 2D slices. Default: \code{FALSE}.
 #' 
@@ -159,8 +180,9 @@ view_xifti_volume <- function(
   xifti, structural_img="MNI", 
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=1, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
+  together=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -188,111 +210,169 @@ view_xifti_volume <- function(
     }
   }
 
+  if (is.null(idx)) { idx <- 1 }
+  if (is.null(fname)) { fname <- FALSE }
+  if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
   idx <- as.numeric(idx)
-
-  widget <- as.logical(widget)
   if (length(widget) > 1) { 
     warning("Using the first entry of `widget`.")
-    widget <- widget[1]
+    widget <- as.logical(widget[[1]])
   }
   
-  makePDF <- FALSE
+  usePDF <- FALSE
+
+  # File saving: `together`
+  if (!is.null(together)) {
+
+    if (widget) { stop(
+      "Composite images are not compatible with widget. ", 
+      "Set `together=NULL` or `widget=FALSE`."
+    ) }
+
+    # check `together`
+    together <- match.arg(together, c("leg", "idx"), several.ok=TRUE)
+    together_leg <- "leg" %in% together
+    together_idx <- "idx" %in% together
+    together <- TRUE
+
+    # check `together_title`
+    if (!is.null(together_title)) {
+      together_title <- as.character(together_title)
+      if (length(together_title) > 1) {
+        warning("Using the first entry of `together_title`.\n")
+        together_title <- together_title[1]
+      }
+    }
+  } else {
+    together <- together_leg <- together_idx <- FALSE
+  }
 
   if (!widget) {
     
     # `fname`, `fname_suffix`, `legend_fname`
-    if (is.null(fname)) { fname <- FALSE }
-    if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
-    if (is.character(fname)) {
-      fname_dirs <- unique(dirname(fname))
-      if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
-    } else if (isTRUE(fname)) {
-      if (!is.null(xifti$meta$cifti$names)) {
-        fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
-        if (length(fname) != length(unique(fname))) {
-          warning(
-            "Non-unique names in the `xifti` ",
-            "(note spaces were replaced with underscores)... proceeding anyway. ",
-            "If this is not intended, set `fname` to the exact unique file ",
-            "name(s) you want to use for each `idx`.\n"
-          )
-        }
-      } else {
-        fname <- "xifti_subcort"
-      }
-    }
+    saving_file <- !isFALSE(fname)
+    if (saving_file) {
 
-    if (!isFALSE(fname)) {
-      fname <- as.character(fname)
-      if (length(fname) != length(unique(fname))) {
-        warning(
-          "Non-unique file names... proceeding anyway. ",
-          "If this is not intended, set `fname` to the exact unique file ",
-          "name(s) you want to use for each `idx`.\n"
-        )
-      }
-      if (any(grepl("\\.pdf$", fname))) {
-        makePDF <- TRUE
-        if (length(fname) > 1) {
-          warning("Using first entry of `fname`, since only one pdf file is being written.\n")
-          fname <- fname[1]
-          if (fname_sub) {
-            fname <- gsub("\\.pdf$", "_sub.pdf", fname)
+      fname_use_names <- !together_idx && !is.null(xifti$meta$cifti$names)
+
+      # Use default file name(s) if `fname==TRUE`.
+      if (isTRUE(fname)) {
+        if (fname_use_names) {
+          fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
+          if (length(fname) != length(unique(fname))) {
+            warning(
+              "Non-unique names in the `xifti` ",
+              "(note spaces were replaced with underscores)... proceeding anyway. ",
+              "If this is not intended, set `fname` to the exact unique file ",
+              "name(s) you want to use for each `idx`.\n"
+            )
           }
-        }
-      } else {
-        fname <- gsub(".html$", "", fname)
-        fname <- gsub(".png$", "", fname)
-        if (!(length(fname) %in% c(1, length(idx)))) {
-          warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
-          fname <- fname[1]
-        }
-
-        if (length(fname) == 1 && length(idx) > 1) {
-          # Add suffix for png files
-          fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
-          if (fname_suffix == "names" && !is.null(xifti$meta$cifti$names)) {
-            fname <- paste0(fname, "_", xifti$meta$cifti$names)
-          } else {
-            fname <- paste0(fname, "_", as.character(idx)) 
-          }
-        }
-        if (fname_sub) { fname <- paste0(fname, "_sub") }
-        fname <- paste0(fname, ".png")
-      }
-
-      fname_dirs <- unique(dirname(fname))
-      if (!all(file.exists(fname_dirs))) {
-        stop(
-          "These directories do not exist: ", 
-          paste0(fname_dirs[!dir.exists(fname_dirs)], 
-          collapse=" ")
-        )
-      }
-
-      if (!isFALSE(legend_fname)) {
-        if (!(length(legend_fname) == 1)) {
-          warning("Using first entry of `legend_fname`.\n")
-          legend_fname <- legend_fname[1]
-        }
-        if (grepl("\\[fname\\]", legend_fname)) {
-          legend_fname <- gsub(
-            "\\[fname\\]", 
-            gsub("\\.png|\\.pdf", "", fname[1]), 
-            legend_fname
-          )
-        }
-        if (!endsWith(legend_fname, ".png")) { 
-          legend_fname <- paste0(legend_fname, ifelse(fname_sub, "_sub.png", ".png"))
         } else {
-          legend_fname <- gsub("\\.png$", "_sub.png", legend_fname)
+          fname <- "xifti_subcort"
         }
+      } else {
+        fname <- as.character(fname)
       }
-    } else {
-      legend_fname <- FALSE
     }
 
-    if (!isFALSE(fname) & !makePDF) {
+    # Strip file extension.
+    fname <- gsub(".html$", "", fname)
+    fname <- gsub(".png$", "", fname)
+    # Check length.
+    if (!(length(fname) %in% c(1, length(idx)))) {
+      warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
+      fname <- fname[1]
+    }
+    # Save `fname` to use for composite.
+    if (together_idx) {
+      comp_fname <- fname
+      if (length(comp_fname) > 1) { 
+        warning("Using the first entry of `comp_fname`.\n")
+        comp_fname <- comp_fname[1]
+      }
+    }
+
+    # Modify `fname`
+    if (together_leg || together_idx) {
+      legend_embed <- FALSE
+    }
+    if (any(grepl("\\.pdf$", fname))) {
+      usePDF <- TRUE
+      if (length(fname) > 1) {
+        warning("Using first entry of `fname`, since only one pdf file is being written.\n")
+        fname <- fname[1]
+        if (fname_sub) {
+          fname <- gsub("\\.pdf$", "_sub.pdf", fname)
+        }
+      }
+    }
+    if (together_idx) {
+      fname <- paste0(tempfile(as.character(seq(length(idx)))), ".png")
+      comp_fname <- paste0(comp_fname, ifelse(usePDF, ".pdf", ".png"))
+    } else {
+      # Add suffix if multiple `idx`.
+      if (length(fname) == 1 && length(idx) > 1) {
+        fname_suffix <- match.arg(fname_suffix, c("names", "idx"))
+        if (fname_suffix == "names" && fname_use_names) {
+          fname <- paste0(fname, "_", xifti$meta$cifti$names[idx])
+        } else {
+          fname <- paste0(fname, "_", as.character(idx)) 
+        }
+      }
+      # Add png file extension.
+      fname <- paste0(fname, ifelse(usePDF, ".pdf", ".png"))
+    }
+
+    # Check that `fname` are unique.
+    if (length(fname) != length(unique(fname))) {
+      warning(
+        "Non-unique file names... proceeding anyway. ",
+        "If this is not intended, set `fname` to the exact unique file ",
+        "name(s) you want to use for each `idx`.\n"
+      )
+    }
+
+    # Check that `fname` directories exist.
+    fname_dirs <- unique(dirname(fname))
+    if (!all(file.exists(fname_dirs))) {
+      stop(
+        "These directories for `fname` do not exist: ", 
+        paste0(fname_dirs[!dir.exists(fname_dirs)], 
+        collapse=" ")
+      )
+    }
+
+    # `legend_fname`
+    if (together_leg) {
+      legend_fname <- paste0(tempfile(), ".png")
+    } else if (!isFALSE(legend_fname)) {
+      if (!(length(legend_fname) == 1)) {
+        warning("Using first entry of `legend_fname`.\n")
+        legend_fname <- legend_fname[1]
+      }
+      if (grepl("\\[fname\\]", legend_fname)) {
+        legend_fname <- gsub(
+          "\\[fname\\]", 
+          gsub("\\.png|\\.pdf|\\.html", "", fname[1]), 
+          legend_fname
+        )
+      }
+      if (!endsWith(legend_fname, ".png")) { 
+        legend_fname <- paste0(legend_fname, ifelse(fname_sub, "_sub.png", ".png"))
+      }
+    }
+
+    # Check that `legend_fname` directory exists.
+    if (!isFALSE(legend_fname)) {
+      if (!dir.exists(dirname(legend_fname))) {
+        stop(
+          "The directory for `legend_fname` does not exist: ",
+          dirname(legend_fname)
+        )
+      }
+    }
+
+    if (!isFALSE(fname) & !usePDF) {
       # Try to avoid this error with colorbar:
       #   Error in par(old.par) :
       #   invalid value specified for graphical parameter "pin"
@@ -353,7 +433,7 @@ view_xifti_volume <- function(
       stop("Only one `idx` at a time is supported for the interactive subcortical widget.")
     }
   }
-  makePNG <- !isFALSE(fname) & !makePDF
+  makePNG <- !isFALSE(fname) & !usePDF
 
   if (is.null(bg)) { bg <- "black" }
 
@@ -527,13 +607,14 @@ view_xifti_volume <- function(
   if (any_colors) {
     # Color legend
     if (color_mode == "qualitative") {
-      if (isTRUE(legend_embed)) {
+      if (isTRUE(legend_embed) && !together_leg) {
         warning(
           "`legend_embed` is `TRUE` and `color_mode` is `'qualitative'`. ",
           "However, the color legend for qualitative data cannot be embedded. ",
           "Embedding a color bar that shows the colors in order, instead of the color legend. ",
           "To view the color legend separately (as recommended) set `legend_embed` to `FALSE`.\n"
         )
+        colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits) # added?
       } else {
         legend_embed <- FALSE; use_cleg <- TRUE
         # Get the labels for the color legend list.
@@ -578,22 +659,27 @@ view_xifti_volume <- function(
         }
       }
       colorbar_kwargs <- NULL
+
+    # Color bar
     } else {
       if (is.null(legend_embed)) { legend_embed <- TRUE }
-      colorbar_kwargs <- view_xifti_surface.cbar(
-        pal_base, pal, color_mode, 
-        ifelse(legend_embed, text_color, ifelse(text_color=="white", "black", text_color)), 
-        digits
-      )
+      if (together_leg) { legend_embed <- FALSE }
+      colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits)
     }
+
   } else {
     if (isTRUE(legend_embed)) {
-      warning(paste(
+      warning(
         "`legend_embed` is `TRUE`, but there is no data. Setting to `FALSE`.\n"
-      ))
+      )
+    }
+    if (isTRUE(together_leg)) {
+      warning(
+        "`together_leg` is `TRUE`, but there is no data. Setting to `FALSE`.\n"
+      )
     }
     colorbar_kwargs <- NULL
-    legend_embed <- FALSE
+    legend_embed <- together_leg <- FALSE
   }
 
   # ----------------------------------------------------------------------------
@@ -689,10 +775,12 @@ view_xifti_volume <- function(
     )
   }
 
-  if (is.null(width)) { width <- 200 * ifelse(makePDF, .02, 2) }
-  if (is.null(height)) { height <- 300 * ifelse(makePDF, .02, 2) }
+  if (is.null(width)) { width <- 200 * ifelse(usePDF, .02, 2) }
+  if (is.null(height)) { height <- 300 * ifelse(usePDF, .02, 2) }
 
-  if (makePDF) { pdf(fname, width=width, height=height) }
+  together_scale <- width/200
+
+  if (usePDF) { pdf(fname, width=width, height=height) }
 
   zlim <- sort(zlim)[c(1, length(zlim))]
 
@@ -754,7 +842,7 @@ view_xifti_volume <- function(
           cex.title <- 1.2
           if (makePNG) {
             cex.title <- cex.title * width / 400
-          } else if (makePDF) {
+          } else if (usePDF) {
             cex.title <- cex.title * width / 4
           }
           if (nchar(title_jj) > 20) { cex.title <- cex.title * sqrt(20 / nchar(title_jj)) }
@@ -763,19 +851,19 @@ view_xifti_volume <- function(
 
         title(title_jj, col.main=text_color, cex.main=cex.title,
           line= 1.75 + ypos.title, # Move up 
-          adj=ifelse(!isFALSE(fname), ifelse(makePDF, .42, .45), .465) + xpos.title # Move up and left
+          adj=ifelse(!isFALSE(fname), ifelse(usePDF, .42, .45), .465) + xpos.title # Move up and left
         )
       }
     }
 
-    if (makePDF) {
+    if (usePDF) {
       # plot.new()
     } else if (makePNG) {
       dev.off()
     }
   }
 
-  if (makePDF) { dev.off() }
+  if (usePDF) { dev.off() }
 
   if (use_cleg) {
     print(cleg)
@@ -797,13 +885,17 @@ view_xifti_volume <- function(
       if (!requireNamespace("fields", quietly = TRUE)) {
         stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
       }
-      if (!isFALSE(legend_fname)) { png(legend_fname) } else { plot.new() }
+      if (!isFALSE(legend_fname)) { 
+        lfac <- ifelse(usePDF, 2/.02, 1) * width
+        png(legend_fname, width=lfac, height=ceiling(lfac*.4))
+      } else {
+        plot.new()
+      }
       colorbar_kwargs$smallplot <- c(.15, .85, .45, .6) # x1 x2 y1 y2
-      # if (text_color=="white") { 
-      #   colorbar_kwargs$axis.args$col <- "black" 
-      #   colorbar_kwargs$axis.args$col.ticks <- "black" 
-      #   colorbar_kwargs$axis.args$col.axis <- "black"
-      # }
+      # Make labels smaller (cex.axis) and lower to compensate (mgp)
+      colorbar_kwargs$axis.args$cex.axis <- colorbar_kwargs$axis.args$cex.axis * together_scale * .85
+      colorbar_kwargs$axis.args$mgp <- c(3,.5+together_scale,0)
+      
       try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
       if (!isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
     }
@@ -816,7 +908,45 @@ view_xifti_volume <- function(
     }
   }
 
-  if (makePNG | makePDF) {
+  # Compositing `together`
+  if (together_idx) {
+    together_ncol <- ceiling(sqrt(length(idx)))
+    together_nrow <- ceiling(length(idx)/together_ncol)
+    comp_width <- width * together_ncol
+    comp_height <- height * together_nrow
+    title_height <- .2/together_nrow
+    leg_height <- .3/together_nrow
+    comp_height_mult <- 1
+    if (together_leg) { comp_height_mult <- comp_height_mult + leg_height }
+    if (!is.null(together_title)) { comp_height_mult <- comp_height_mult + title_height }
+    png(comp_fname, width=comp_width, height=comp_height * comp_height_mult)
+    fname_all <- comp_fname
+    if (!together_leg) {
+      if (use_cleg) { 
+        fname_all <- c(fname_all, legend_fname)
+        legend_fname <- NULL
+      }
+    }
+    view_comp(
+      fname, ncol=together_ncol, 
+      legend=legend_fname, legend_height=leg_height,
+      title=together_title, title_height=title_height,
+      title_fsize=1.5 * together_scale
+    )
+    dev.off()
+    # comp_fname <- crop_image(comp_fname)
+  } else if (together_leg) {
+    for (ff in seq(length(fname))) {
+      tfile <- tempfile()
+      png(tfile, width=width, height=floor(height*1.3))
+      view_comp(fname[ff], legend=legend_fname)
+      dev.off()
+      file.rename(tfile, fname[ff])
+    }
+    fname_all <- fname
+  }
+
+  if (makePNG | usePDF) {
     return(invisible(fname_all))
   } else {
     return(invisible(NULL))

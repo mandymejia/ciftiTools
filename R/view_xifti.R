@@ -52,6 +52,79 @@ view_xifti.title <- function(xifti_meta, idx){
   title
 }
 
+#' Make the colorbar for \code{view_xifti_surface}
+#' 
+#' See \code{\link{view_xifti_surface}} for details.
+#' 
+#' @param pal_base Base palette
+#' @param pal Full palette
+#' @param color_mode See \code{\link{view_xifti_surface}}
+#' @param text_color Color of text
+#' @param digits See \code{\link{view_xifti_surface}}
+#' 
+#' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
+#' 
+#' @keywords internal
+#' 
+view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits) {
+
+  colorbar_breaks <- c(
+    pal_base$value[1],
+    pal$value[1:(length(pal$value)-1)] + diff(pal$value)/2,
+    pal$value[length(pal$value)]
+  )
+  colorbar_breaks <- unique(colorbar_breaks)
+
+  colorbar_labs <- switch(color_mode,
+    sequential=c(
+      pal_base$value[1],
+      pal_base$value[nrow(pal_base)]
+    ),
+    qualitative=seq_len(nrow(pal_base)),
+    diverging=c(
+      pal_base$value[1],
+      pal_base$value[as.integer(ceiling(nrow(pal_base)/2))],
+      pal_base$value[nrow(pal_base)]
+    )
+  )
+
+  if (length(colorbar_breaks) == 1) {
+    colorbar_kwargs <- list(
+      legend.only=TRUE, 
+      zlim=c(1,2), 
+      col=rep(pal$color[1], 2), 
+      breaks=c(0, 1, 2), 
+      axis.args=list(at=1, labels=colorbar_breaks)
+    )
+  } else {
+    colorbar_kwargs <- list(
+      legend.only = TRUE, 
+      zlim = range(pal$value), 
+      col = as.character(pal$color),
+      breaks=colorbar_breaks, 
+      #legend.lab=colorbar_label,
+      axis.args=list(
+        cex.axis=1.7, # size of labels (numeric limits)
+        at=colorbar_labs,
+        col=text_color, col.ticks=text_color, col.axis=text_color,
+        labels=format(colorbar_labs, digits=digits)
+      )
+    )
+  }
+
+  colorbar_kwargs <- c(colorbar_kwargs,
+    list(
+      horizontal=TRUE, # horizontal legend
+      legend.cex=2, # not sure what this does?
+      #legend.shrink=.5, # half the width of the legend #override by smallplot
+      #legend.width=1.67, # height of colorbar #override by smallplot
+      legend.line=5, # height of lines between labels and colorbar
+      #legend.mar=4, # legend margin #override by smallplot
+      smallplot=c(.15, .5, .65, 1) # x1 x2 y1 y2
+    )
+  )
+}
+
 #' Draw color legend for qualitative mode
 #' 
 #' See \code{\link{view_xifti_surface}} for details.
