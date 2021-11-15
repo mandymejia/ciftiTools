@@ -681,13 +681,16 @@ view_xifti_surface <- function(
   }
 
   # File saving: `fname`
+  comp_fname <- NULL
   if (saving_file) {
 
     fname_use_names <- !together_idx && !is.null(xifti$meta$cifti$names)
 
     # Use default file name(s) if `fname==TRUE`.
     if (isTRUE(fname)) {
-      if (fname_use_names) {
+      if (together_idx) { 
+        comp_fname <- fname
+      } else if (fname_use_names) {
         fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
         if (length(fname) != length(unique(fname))) {
           warning(
@@ -731,10 +734,10 @@ view_xifti_surface <- function(
         fname <- fname[1]
       }
       # Save `fname` to use for composite.
-      if (together_idx) {
+      if (together_idx && is.null(comp_fname)) {
         comp_fname <- fname
         if (length(comp_fname) > 1) { 
-          warning("Using the first entry of `comp_fname`.\n")
+          warning("Using the first entry of `fname` (since compositing, there's only one file to save).\n")
           comp_fname <- comp_fname[1]
         }
       }
@@ -791,7 +794,7 @@ view_xifti_surface <- function(
       if (grepl("\\[fname\\]", legend_fname)) {
         legend_fname <- gsub(
           "\\[fname\\]", 
-          gsub("\\.png|\\.html", "", fname[1]), 
+          gsub("\\.png|\\.html", "", ifelse(together_idx, comp_fname, fname[1])), 
           legend_fname
         )
       }
@@ -807,7 +810,6 @@ view_xifti_surface <- function(
         )
       }
     }
-
   } else {
     legend_fname <- FALSE
   }
@@ -1420,11 +1422,9 @@ view_xifti_surface <- function(
     if (!is.null(together_title)) { comp_height_mult <- comp_height_mult + title_height }
     png(comp_fname, width=comp_width, height=comp_height * comp_height_mult)
     fname_all <- comp_fname
-    if (!together_leg) {
-      if (use_cleg) { 
-        fname_all <- c(fname_all, legend_fname)
-        legend_fname <- NULL
-      }
+    if ((!legend_embed) || (!together_leg && use_cleg)) {
+      fname_all <- c(fname_all, legend_fname)
+      legend_fname <- NULL
     }
     view_comp(
       fname, ncol=together_ncol, 
