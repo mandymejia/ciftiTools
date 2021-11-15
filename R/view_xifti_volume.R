@@ -253,6 +253,7 @@ view_xifti_volume <- function(
   }
 
   comp_fname <- NULL
+  legend_embed2 <- FALSE
   if (!widget) {
     
     # `fname`, `fname_suffix`, `legend_fname`
@@ -305,6 +306,7 @@ view_xifti_volume <- function(
 
       # Modify `fname`
       if (together_leg || together_idx) {
+        legend_embed2 <- !isFALSE(legend_embed)
         legend_embed <- FALSE
         fname <- paste0(
           tempfile(as.character(seq(length(idx)))), 
@@ -356,7 +358,7 @@ view_xifti_volume <- function(
       }
 
       # `legend_fname`
-      if (together_leg) {
+    if (together_leg || (together_idx && legend_embed2)) {
         legend_fname <- paste0(tempfile(), ".png")
       } else if (!isFALSE(legend_fname)) {
         if (!(length(legend_fname) == 1)) {
@@ -366,13 +368,14 @@ view_xifti_volume <- function(
         if (grepl("\\[fname\\]", legend_fname)) {
           legend_fname <- gsub(
             "\\[fname\\]", 
-            gsub("\\.png|\\.pdf|\\.html", "", ifelse(together_idx, comp_fname, fname[1])), 
-            legend_fname
+            gsub("\\.png|\\.html", "", ifelse(together_idx, basename(comp_fname), basename(fname[1]))), 
+            basename(legend_fname)
+          )
+          legend_fname <- file.path(
+            ifelse(together_idx, dirname(comp_fname), dirname(fname[1])), legend_fname
           )
         }
-        if (!endsWith(legend_fname, ".png")) { 
-          legend_fname <- paste0(legend_fname, ifelse(fname_sub, "_sub.png", ".png"))
-        }
+        if (!endsWith(legend_fname, ".png")) { legend_fname <- paste0(legend_fname, ".png") }
       }
 
       # Check that `legend_fname` directory exists.
@@ -925,6 +928,8 @@ view_xifti_volume <- function(
     }
   }
 
+  # Does this ever happen?
+  if (!file.exists(legend_fname)) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
     together_ncol <- ceiling(sqrt(length(idx)))
@@ -940,7 +945,7 @@ view_xifti_volume <- function(
       png(comp_fname, width=comp_width, height=comp_height * comp_height_mult)
     }
     fname_all <- comp_fname
-    if ((!legend_embed) || (!together_leg && use_cleg)) {
+    if ((!legend_embed2) || (!together_leg && use_cleg)) {
       fname_all <- c(fname_all, legend_fname)
       legend_fname <- NULL
     }

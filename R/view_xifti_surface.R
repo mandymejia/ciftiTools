@@ -652,6 +652,8 @@ view_xifti_surface <- function(
   # File saving: `together`
   if (!is.null(together)) {
 
+    # TO DO: allow display of static composites?
+
     if (widget) { stop(
       "Composite images are not compatible with widget. ", 
       "Set `together=NULL` or `widget=FALSE`."
@@ -682,6 +684,7 @@ view_xifti_surface <- function(
 
   # File saving: `fname`
   comp_fname <- NULL
+  legend_embed2 <- FALSE
   if (saving_file) {
 
     fname_use_names <- !together_idx && !is.null(xifti$meta$cifti$names)
@@ -741,9 +744,10 @@ view_xifti_surface <- function(
           comp_fname <- comp_fname[1]
         }
       }
-
+      
       # Modify `fname`
       if (together_leg || together_idx) {
+        legend_embed2 <- !isFALSE(legend_embed)
         legend_embed <- FALSE
       }
       if (together_idx) {
@@ -784,7 +788,7 @@ view_xifti_surface <- function(
     }
 
     # `legend_fname`
-    if (together_leg) {
+    if (together_leg || (together_idx && legend_embed2)) {
       legend_fname <- paste0(tempfile(), ".png")
     } else if (!isFALSE(legend_fname)) {
       if (!(length(legend_fname) == 1)) {
@@ -794,8 +798,11 @@ view_xifti_surface <- function(
       if (grepl("\\[fname\\]", legend_fname)) {
         legend_fname <- gsub(
           "\\[fname\\]", 
-          gsub("\\.png|\\.html", "", ifelse(together_idx, comp_fname, fname[1])), 
-          legend_fname
+          gsub("\\.png|\\.html", "", ifelse(together_idx, basename(comp_fname), basename(fname[1]))), 
+          basename(legend_fname)
+        )
+        legend_fname <- file.path(
+          ifelse(together_idx, dirname(comp_fname), dirname(fname[1])), legend_fname
         )
       }
       if (!endsWith(legend_fname, ".png")) { legend_fname <- paste0(legend_fname, ".png") }
@@ -1409,6 +1416,8 @@ view_xifti_surface <- function(
     rgl::rgl.close()
   }
 
+  # Does this ever happen?
+  if (!file.exists(legend_fname)) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
     together_ncol <- ceiling(sqrt(length(idx)))
@@ -1422,7 +1431,7 @@ view_xifti_surface <- function(
     if (!is.null(together_title)) { comp_height_mult <- comp_height_mult + title_height }
     png(comp_fname, width=comp_width, height=comp_height * comp_height_mult)
     fname_all <- comp_fname
-    if ((!legend_embed) || (!together_leg && use_cleg)) {
+    if ((!legend_embed2) || (!together_leg && use_cleg)) {
       fname_all <- c(fname_all, legend_fname)
       legend_fname <- NULL
     }

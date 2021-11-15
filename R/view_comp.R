@@ -20,6 +20,7 @@ crop_image <- function(x, dims=seq(2)){
 
   # Crop
   y <- rowSums(x[,,seq(3)], dims=2) != 3
+  if (!any(y)) { return(x) }
   if (1 %in% dims) {
     y1 <- which(apply(y, 1, any))
   } else {
