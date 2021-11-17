@@ -1,3 +1,16 @@
+# 7.0 (November 16, 2021)
+
+* Add `view_comp`, and the argument `together` to `view_xifti_surface` and `view_xifti_volume`
+* Fixes to `view_xifti_surface` and `view_xifti_volume`
+* Add limited support for v1 CIFTI
+* Fix some file paths of written files
+* Lower default surface smoothing from sigma = 5 to sigma = 3
+* Add `trans_units` to subcortex metadata
+* Rename `write_cifti_components` as `write_xifti2` and export
+* Add (in)equalities between `"xifti"` objects
+* Add workbench download URL to start message.
+* Add internal functions `vox_locations` and `edit_mask_surf`
+
 # 6.0 (September 13, 2021)
 
 * Revamped subcortical visualization with `view_xifti_volume`! Added tests for it.
