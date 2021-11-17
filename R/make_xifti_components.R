@@ -133,7 +133,7 @@ make_cortex <- function(
     }
 
     ## Extract labels if present.
-    if (nrow(cortex$label) > 1) {
+    if (!is.null(nrow(cortex$label)) && nrow(cortex$label) > 1) {
       label_table <- as.data.frame(cortex$label)
       label_table[,] <- apply(label_table, 2, as.numeric)
     } 
