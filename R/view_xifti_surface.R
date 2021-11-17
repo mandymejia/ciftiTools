@@ -692,6 +692,7 @@ view_xifti_surface <- function(
     # Use default file name(s) if `fname==TRUE`.
     if (isTRUE(fname)) {
       if (together_idx) { 
+        fname <- "xifti_surf"
         comp_fname <- fname
       } else if (fname_use_names) {
         fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
@@ -746,7 +747,7 @@ view_xifti_surface <- function(
       }
       
       # Modify `fname`
-      if (together_leg || together_idx) {
+      if (together) {
         legend_embed2 <- !isFALSE(legend_embed)
         legend_embed <- FALSE
       }
@@ -788,7 +789,7 @@ view_xifti_surface <- function(
     }
 
     # `legend_fname`
-    if (together_leg || (together_idx && legend_embed2)) {
+    if (together_leg) {
       legend_fname <- paste0(tempfile(), ".png")
     } else if (!isFALSE(legend_fname)) {
       if (!(length(legend_fname) == 1)) {
@@ -1329,7 +1330,7 @@ view_xifti_surface <- function(
             }
             if (!isFALSE(legend_fname)) { 
               png(
-                legend_fname,
+                legend_fname, bg=bg,
                 width=brain_panels_dims[1], height=ceiling(brain_panels_dims[1]*.4)
               )
             }
@@ -1417,7 +1418,7 @@ view_xifti_surface <- function(
   }
 
   # Does this ever happen?
-  if (!file.exists(legend_fname)) { legend_fname <- NULL }
+  if (!file.exists(as.character(legend_fname))) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
     together_ncol <- ceiling(sqrt(length(idx)))
@@ -1427,9 +1428,9 @@ view_xifti_surface <- function(
     title_height <- .2/together_nrow
     leg_height <- .3/together_nrow
     comp_height_mult <- 1
-    if (together_leg) { comp_height_mult <- comp_height_mult + leg_height }
+    if (together_leg || !use_cleg) { comp_height_mult <- comp_height_mult + leg_height }
     if (!is.null(together_title)) { comp_height_mult <- comp_height_mult + title_height }
-    png(comp_fname, width=comp_width, height=comp_height * comp_height_mult)
+    png(comp_fname, bg=bg, width=comp_width, height=comp_height * comp_height_mult)
     fname_all <- comp_fname
     if ((!legend_embed2) || (!together_leg && use_cleg)) {
       fname_all <- c(fname_all, legend_fname)
@@ -1442,11 +1443,17 @@ view_xifti_surface <- function(
       title_fsize=1.5 * together_scale
     )
     dev.off()
+    if (!together_leg && !use_cleg && legend_embed2 && (!is.null(legend_fname))) {
+      file.rename(legend_fname, paste0(tempfile(), ".png"))
+    }
+    if (!together_leg && use_cleg && !legend_embed && (!is.null(legend_fname))) {
+      file.rename(legend_fname, paste0(tempfile(), ".png"))
+    }
     # comp_fname <- crop_image(comp_fname)
   } else if (together_leg) {
     for (ff in seq(length(fname))) {
       tfile <- tempfile()
-      png(tfile, width=all_panels_width, height=floor(all_panels_height*1.3))
+      png(tfile, bg=bg, width=all_panels_width, height=floor(all_panels_height*1.3))
       view_comp(fname[ff], legend=legend_fname)
       dev.off()
       file.rename(tfile, fname[ff])

@@ -120,9 +120,9 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
   # Convert from dlabel to dscalar if non-label values were introduced by
   #   the transformation function.
   if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
-    v <- unique(as.matrix(xifti))
-    for (T_ in seq(ncol(v))) {
-      if (!all(v[,T_] %in% xifti$meta$cifti$labels[[T_]]$Key)) {
+    v <- as.matrix(xifti)
+    for (T_ in seq(ncol(xifti))) {
+      if (!all(unique(v[,T_]) %in% xifti$meta$cifti$labels[[T_]]$Key)) {
         warning(
           "New data values outside the label table for column ", T_, 
           " were introduced. Changing the xifti intent from dlabel to dscalar."

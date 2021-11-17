@@ -247,6 +247,8 @@ view_xifti_volume <- function(
     if (isFALSE(fname)) {
       makePNG <- TRUE
       comp_dummy <- TRUE
+    } else {
+      comp_dummy <- FALSE
     }
   } else {
     together <- together_leg <- together_idx <- comp_dummy <- FALSE
@@ -259,13 +261,12 @@ view_xifti_volume <- function(
     # `fname`, `fname_suffix`, `legend_fname`
     if (!isFALSE(fname) || together) {
 
-      makePNG <- !makePDF
-
       fname_use_names <- !together_idx && !is.null(xifti$meta$cifti$names)
 
       # Use default file name(s) if `fname==TRUE`.
       if (isTRUE(fname) || comp_dummy) {
         if (together_idx) { 
+          if (isTRUE(fname)) {fname <- "xifti_subcort" }
           comp_fname <- fname
         } else if (fname_use_names && !comp_dummy) {
           fname <- gsub(" ", "_", xifti$meta$cifti$names[idx], fixed=TRUE)
@@ -287,13 +288,16 @@ view_xifti_volume <- function(
       # Strip file extension.
       fname <- gsub(".html$", "", fname)
       fname <- gsub(".png$", "", fname)
+      makePDF <- any(grepl("\\.pdf$", fname))
+      makePNG <- !makePDF
       # Check length.
       if (!(length(fname) %in% c(1, length(idx)))) {
         warning("Using first entry of `fname` since its length is not 1, or the length of `idx`.\n")
         fname <- fname[1]
       }
       # Save `fname` to use for composite.
-      if (together_idx && is.null(comp_fname)) {
+      if (together && makePDF) { fname <- gsub(".pdf$", "", fname) }
+      if ((together_idx || (makePDF && together_leg)) && is.null(comp_fname)) {
         comp_fname <- fname
         if (length(comp_fname) > 1) { 
           warning("Using the first entry of `fname` (since compositing, there's only one file to save).\n")
@@ -301,19 +305,15 @@ view_xifti_volume <- function(
         }
       }
 
-      makePDF <- any(grepl("\\.pdf$", fname))
-      makePNG <- !makePDF
+      sufPNG <- ifelse(fname_sub, "_sub.png", ".png")
+      sufPDF <- ifelse(fname_sub, "_sub.pdf", ".pdf")
 
       # Modify `fname`
-      if (together_leg || together_idx) {
+      if (together) {
         legend_embed2 <- !isFALSE(legend_embed)
         legend_embed <- FALSE
-        fname <- paste0(
-          tempfile(as.character(seq(length(idx)))), 
-          ifelse(makePDF, ".pdf", ".png")
-        )
       }
-      if (makePDF) {
+      if (!together && makePDF) {
         if (length(fname) > 1) {
           warning("Using first entry of `fname`, since only one pdf file is being written.\n")
           fname <- fname[1]
@@ -322,8 +322,9 @@ view_xifti_volume <- function(
           fname <- gsub("\\.pdf$", "_sub.pdf", fname)
         }
       }
-      if (together_idx) {
-        comp_fname <- paste0(comp_fname, ifelse(makePDF, ".pdf", ".png"))
+      if (together_idx || (makePDF && together_leg) || (together_leg && comp_dummy)) {
+        fname <- paste0(tempfile(as.character(seq(length(idx)))), ".png")
+        comp_fname <- paste0(comp_fname, ifelse(makePDF, sufPDF, sufPNG))
       } else {
         # Add suffix if multiple `idx`.
         if (length(fname) == 1 && length(idx) > 1) {
@@ -335,7 +336,7 @@ view_xifti_volume <- function(
           }
         }
         # Add png file extension.
-        if (makePNG) { fname <- paste0(fname, ifelse(fname_sub, "_sub.png", ".png")) }
+        if (makePNG) { fname <- paste0(fname, sufPNG) }
       }
 
       # Check that `fname` are unique.
@@ -358,8 +359,8 @@ view_xifti_volume <- function(
       }
 
       # `legend_fname`
-    if (together_leg || (together_idx && legend_embed2)) {
-        legend_fname <- paste0(tempfile(), ".png")
+      if (together_leg) {
+          legend_fname <- paste0(tempfile(), ".png")
       } else if (!isFALSE(legend_fname)) {
         if (!(length(legend_fname) == 1)) {
           warning("Using first entry of `legend_fname`.\n")
@@ -507,6 +508,7 @@ view_xifti_volume <- function(
   }
 
   values[values == NaN] <- NA
+  unique_vals <- NULL
   if (all(is.na(values))) { 
     values <- NULL
     pal <- pal_base <- pal_even <- NULL
@@ -572,7 +574,6 @@ view_xifti_volume <- function(
             color = grDevices::rgb(labs$Red, labs$Green, labs$Blue, labs$Alpha),
             value = labs$Key
           )
-          zlim <- c(min(pal_base$value), max(pal_base$value))
         } else {
           unique_vals <- sort(unique(as.vector(vol[!is.na(vol)])))
           vol[,,,] <- as.numeric(factor(vol, levels=unique_vals))
@@ -590,10 +591,11 @@ view_xifti_volume <- function(
       }
       pal <- pal_even <- pal_base
 
-      pal_even <- pal_even[c(
+      pal_even <- pal_even[seq(
         which(pal_even$value == min(vol, na.rm=TRUE)),
         which(pal_even$value == max(vol, na.rm=TRUE))
       ),]
+      zlim <- c(min(pal_even$value), max(pal_even$value))
 
     } else {
 
@@ -648,8 +650,8 @@ view_xifti_volume <- function(
         cleg_labs <- as.character(cleg_labs)
         cleg <- pal_base
         cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
-        if (!legend_alllevels) { 
-          cleg <- cleg[cleg$value %in% pal_even$value,] 
+        if (!legend_alllevels && is.null(unique_vals)) { 
+          cleg <- cleg[cleg$value %in% as.vector(vol),] 
         }
         # Skip if there are too many legend labels, or only one label.
         if (nrow(cleg) < 1) {
@@ -680,11 +682,12 @@ view_xifti_volume <- function(
 
     # Color bar
     } else {
+
       if (is.null(legend_embed)) { legend_embed <- TRUE }
       if (together_leg) { legend_embed <- FALSE }
       colorbar_kwargs <- view_xifti.cbar(
         pal_base, pal, color_mode, 
-        ifelse(legend_embed, text_color, text_color2), digits
+        ifelse(legend_embed || (!use_cleg && together && !comp_dummy), text_color, text_color2), digits
       )
     }
 
@@ -796,19 +799,19 @@ view_xifti_volume <- function(
     )
   }
 
-  if (is.null(width)) { width <- 200 * ifelse(makePDF, .02, 2) }
-  if (is.null(height)) { height <- 300 * ifelse(makePDF, .02, 2) }
+  if (is.null(width)) { width <- 200 * ifelse(!together && makePDF, .02, 2) }
+  if (is.null(height)) { height <- 300 * ifelse(!together && makePDF, .02, 2) }
 
   together_scale <- width/200
 
-  if (makePDF) { pdf(fname, width=width, height=height) }
+  if (!together && makePDF) { pdf(fname, width=width, height=height) }
 
   zlim <- sort(zlim)[c(1, length(zlim))]
 
   for (jj in seq(length(idx))) {
     this_idx <- idx[jj]
 
-    if (makePNG) { png(fname[jj], width=width, height=height) }
+    if (together || makePNG) { png(fname[jj], bg=bg, width=width, height=height) }
 
     if (jj > 1) { img_overlay <- img_labels <- img*0 }
     img_overlay@.Data <- vol[,,,jj]
@@ -826,7 +829,7 @@ view_xifti_volume <- function(
       img2 <- img[slices,,]
       img_overlay2 <- img_overlay[slices,,]
     } else { stop() }
-    
+
     oro.nifti::overlay(
       x=img2, y=img_overlay2, plane=plane, 
       col.y=pal_even$color,
@@ -863,7 +866,7 @@ view_xifti_volume <- function(
           cex.title <- 1.2
           if (makePNG) {
             cex.title <- cex.title * width / 400
-          } else if (makePDF) {
+          } else if (!together && makePDF) {
             cex.title <- cex.title * width / 4
           }
           if (nchar(title_jj) > 20) { cex.title <- cex.title * sqrt(20 / nchar(title_jj)) }
@@ -872,21 +875,22 @@ view_xifti_volume <- function(
 
         title(title_jj, col.main=text_color, cex.main=cex.title,
           line= 1.75 + ypos.title, # Move up 
-          adj=ifelse(!isFALSE(fname), ifelse(makePDF, .42, .45), .465) + xpos.title # Move up and left
+          adj=ifelse(!isFALSE(fname), ifelse(!together && makePDF, .42, .45), .465) + xpos.title # Move up and left
         )
       }
     }
 
-    if (makePDF) {
+    if (!together && makePDF) {
       # plot.new()
-    } else if (makePNG) {
+      NULL
+    } else if (together || makePNG) {
       dev.off()
     }
   }
 
-  if (makePDF) { dev.off() }
+  if (!together && makePDF) { dev.off() }
 
-  if (use_cleg && !(comp_dummy && !together_leg)) {
+  if (use_cleg && ((together && !comp_dummy) || together_leg)) {
     if (!isFALSE(fname)) {
       if (!isFALSE(legend_fname)) {
         cleg_h_per_row <- 1/3 #inches
@@ -899,15 +903,17 @@ view_xifti_volume <- function(
       }
       if (close_after_save) { dev.off() }
     }
-  } else {
+  } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) { 
+    print(cleg)
+  } else if (!use_cleg) {
     # Make (and save) the colorbar (if applicable).
     if (any_colors && !legend_embed) {
       if (!requireNamespace("fields", quietly = TRUE)) {
         stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
       }
       if (!isFALSE(legend_fname)) { 
-        lfac <- ifelse(makePDF, 2/.02, 1) * width
-        png(legend_fname, width=lfac, height=ceiling(lfac*.4))
+        lfac <- ifelse(!together && makePDF, 2/.02, 1) * width
+        png(legend_fname, bg=ifelse(comp_dummy, "white", bg), width=lfac, height=ceiling(lfac*.4))
       } else {
         plot.new()
       }
@@ -929,7 +935,7 @@ view_xifti_volume <- function(
   }
 
   # Does this ever happen?
-  if (!file.exists(legend_fname)) { legend_fname <- NULL }
+  if (!file.exists(as.character(legend_fname))) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
     together_ncol <- ceiling(sqrt(length(idx)))
@@ -939,10 +945,14 @@ view_xifti_volume <- function(
     title_height <- .2/together_nrow
     leg_height <- .3/together_nrow
     comp_height_mult <- 1
-    if (together_leg) { comp_height_mult <- comp_height_mult + leg_height }
+    if (together_leg || !use_cleg) { comp_height_mult <- comp_height_mult + leg_height }
     if (!is.null(together_title)) { comp_height_mult <- comp_height_mult + title_height }
     if (!comp_dummy) {
-      png(comp_fname, width=comp_width, height=comp_height * comp_height_mult)
+      if (makePDF) {
+        pdf(comp_fname, bg=bg, width=comp_width * .01, height=comp_height * comp_height_mult * .01)
+      } else {
+        png(comp_fname, bg=bg, width=comp_width, height=comp_height * comp_height_mult)
+      }
     }
     fname_all <- comp_fname
     if ((!legend_embed2) || (!together_leg && use_cleg)) {
@@ -955,6 +965,12 @@ view_xifti_volume <- function(
       title=together_title, title_height=title_height,
       title_fsize=1.5 * together_scale
     )
+    if (!together_leg && !use_cleg && legend_embed2 && (!is.null(legend_fname))) {
+      file.rename(legend_fname, paste0(tempfile(), ".png"))
+    }
+    if (!together_leg && use_cleg && !legend_embed && (!is.null(legend_fname))) {
+      file.rename(legend_fname, paste0(tempfile(), ".png"))
+    }
     if (!together_leg) {
       if (use_cleg) { 
         if (!comp_dummy) {
@@ -966,11 +982,12 @@ view_xifti_volume <- function(
     }
     if (!comp_dummy) { dev.off() }
     # comp_fname <- crop_image(comp_fname)
+
   } else if (together_leg) {
     for (ff in seq(length(fname))) {
       if (!comp_dummy) {
         tfile <- tempfile()
-        png(tfile, width=width, height=floor(height*1.3))
+        png(tfile, bg=bg, width=width, height=floor(height*1.3))
       }
       view_comp(fname[ff], legend=legend_fname)
       if (!comp_dummy) {
@@ -979,6 +996,17 @@ view_xifti_volume <- function(
       }
     }
     fname_all <- fname
+
+    if (makePDF) {
+      pdf(tfile, bg=bg, width=width*.01, height=floor(height*.013))
+      for (ff in seq(length(fname))) {
+        grid::grid.raster(png::readPNG(fname[ff]))
+        if (ff < length(fname)) { plot.new() }
+      }
+      dev.off()
+      file.rename(tfile, comp_fname)
+      fname_all <- comp_fname
+    }
   }
 
   if ((makePNG || makePDF) && !comp_dummy) {
