@@ -48,19 +48,24 @@ view_cifti_volume(
   colors = NULL,
   structural_img_colors = gray(0:255/280),
   title = NULL,
-  idx = 1,
+  idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
   n_slices = 9,
   slices = NULL,
+  together = NULL,
+  together_title = NULL,
   widget = FALSE,
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  fname_sub = FALSE,
   legend_fname = "[fname]_legend",
   legend_ncol = NULL,
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
+  ypos.title = 0,
+  xpos.title = 0,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -76,19 +81,24 @@ viewCIfTI_volume(
   colors = NULL,
   structural_img_colors = gray(0:255/280),
   title = NULL,
-  idx = 1,
+  idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
   n_slices = 9,
   slices = NULL,
+  together = NULL,
+  together_title = NULL,
   widget = FALSE,
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  fname_sub = FALSE,
   legend_fname = "[fname]_legend",
   legend_ncol = NULL,
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
+  ypos.title = 0,
+  xpos.title = 0,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -104,19 +114,24 @@ viewcii_volume(
   colors = NULL,
   structural_img_colors = gray(0:255/280),
   title = NULL,
-  idx = 1,
+  idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
   n_slices = 9,
   slices = NULL,
+  together = NULL,
+  together_title = NULL,
   widget = FALSE,
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  fname_sub = FALSE,
   legend_fname = "[fname]_legend",
   legend_ncol = NULL,
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
+  ypos.title = 0,
+  xpos.title = 0,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -211,15 +226,11 @@ Overrides/ignores \code{legend_embed}.
 If the data is not qualitative, a shared color bar will be added to the bottom
 of the composite. If the data is qualitative, a shared color legend will be
 added to the bottom only if \code{"leg"} is in \code{together}.
-
-\code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
-side-by-side.
-
 For greater control see \code{view_comp} or \code{grid::arrangeGrob}.}
 
 \item{together_title}{If a composite image is made based on \code{together},
 use this argument to add a grand title to the composite image. Should be
-a length-one character vector or \code{NULL} to not add a grand title.}
+a length-one character vector or \code{NULL} (default) to not add a grand title.}
 
 \item{widget}{Create an interactive widget using \code{papayar}? Otherwise
 display static 2D slices. Default: \code{FALSE}.

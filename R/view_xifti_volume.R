@@ -78,14 +78,14 @@
 #'  If the data is not qualitative, a shared color bar will be added to the bottom
 #'  of the composite. If the data is qualitative, a shared color legend will be
 #'  added to the bottom only if \code{"leg"} is in \code{together}.
-#' 
-#'  \code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
-#'  side-by-side.
-#' 
+# 
+#  \code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
+#  side-by-side.
+# 
 #'  For greater control see \code{view_comp} or \code{grid::arrangeGrob}.
 #' @param together_title If a composite image is made based on \code{together},
 #'  use this argument to add a grand title to the composite image. Should be
-#'  a length-one character vector or \code{NULL} to not add a grand title.
+#'  a length-one character vector or \code{NULL} (default) to not add a grand title.
 #' @param widget Create an interactive widget using \code{papayar}? Otherwise
 #'  display static 2D slices. Default: \code{FALSE}.
 #' 
@@ -228,6 +228,15 @@ view_xifti_volume <- function(
       "Composite images are not compatible with widget. ", 
       "Set `together=NULL` or `widget=FALSE`."
     ) }
+
+    # Check packages
+    pkg <- vapply(c("png", "grid", "gridExtra"), requireNamespace, quietly=TRUE, FALSE)
+    if (any(!pkg)) {
+      stop(
+        "These packages need to be installed to use `view_comp`: ", 
+        paste(names(pkg)[!pkg], collapse=", "), call.=FALSE
+      )
+    }
 
     # check `together`
     together <- match.arg(together, c("leg", "idx"), several.ok=TRUE)
@@ -911,7 +920,7 @@ view_xifti_volume <- function(
       if (!requireNamespace("fields", quietly = TRUE)) {
         stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
       }
-      if (!isFALSE(legend_fname)) { 
+      if (!isFALSE(fname) && !isFALSE(legend_fname)) { 
         lfac <- ifelse(!together && makePDF, 2/.02, 1) * width
         png(legend_fname, bg=ifelse(comp_dummy, "white", bg), width=lfac, height=ceiling(lfac*.4))
       } else {
@@ -923,7 +932,7 @@ view_xifti_volume <- function(
       colorbar_kwargs$axis.args$mgp <- c(3,.5+together_scale,0)
       
       try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
-      if (!isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
+      if (!isFALSE(fname) && !isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
     }
   }
 
@@ -1022,26 +1031,29 @@ view_cifti_volume <- function(
   xifti, structural_img="MNI", 
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=1, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
+  together=NULL, together_title=NULL,
   widget=FALSE,
-  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
+  legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
-  cex.title=NULL, text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
+  cex.title=NULL, ypos.title=0, xpos.title=0,
+  text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
-    xifti=xifti,
-    structural_img=structural_img,
+    xifti=xifti, structural_img=structural_img,
     color_mode=color_mode, zlim=zlim, colors=colors,
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
+    together=together, together_title=together_title,
     widget=widget,
-    fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, 
-    legend_embed=legend_embed, digits=digits,
-    cex.title=cex.title, text_color=text_color, 
-    bg=bg, width=width, height=height, ...
+    fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
+    legend_fname=legend_fname,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    cex.title=cex.title, ypos.title=ypos.title, xpos.title=xpos.title,
+    text_color=text_color, bg=bg, width=width, height=height, ...
   )
 }
 
@@ -1051,26 +1063,29 @@ viewCIfTI_volume <- function(
   xifti, structural_img="MNI", 
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=1, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
+  together=NULL, together_title=NULL,
   widget=FALSE,
-  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
+  legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
-  cex.title=NULL, text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
+  cex.title=NULL, ypos.title=0, xpos.title=0,
+  text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
-    xifti=xifti,
-    structural_img=structural_img,
+    xifti=xifti, structural_img=structural_img,
     color_mode=color_mode, zlim=zlim, colors=colors,
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
+    together=together, together_title=together_title,
     widget=widget,
-    fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, 
-    legend_embed=legend_embed, digits=digits,
-    cex.title=cex.title, text_color=text_color, 
-    bg=bg, width=width, height=height, ...
+    fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
+    legend_fname=legend_fname,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    cex.title=cex.title, ypos.title=ypos.title, xpos.title=xpos.title,
+    text_color=text_color, bg=bg, width=width, height=height, ...
   )
 }
 
@@ -1080,25 +1095,28 @@ viewcii_volume <- function(
   xifti, structural_img="MNI", 
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=1, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
+  together=NULL, together_title=NULL,
   widget=FALSE,
-  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
+  legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
-  cex.title=NULL, text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
+  cex.title=NULL, ypos.title=0, xpos.title=0,
+  text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
-    xifti=xifti,
-    structural_img=structural_img,
+    xifti=xifti, structural_img=structural_img,
     color_mode=color_mode, zlim=zlim, colors=colors,
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
+    together=together, together_title=together_title,
     widget=widget,
-    fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, 
-    legend_embed=legend_embed, digits=digits,
-    cex.title=cex.title, text_color=text_color, 
-    bg=bg, width=width, height=height, ...
+    fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
+    legend_fname=legend_fname,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    cex.title=cex.title, ypos.title=ypos.title, xpos.title=xpos.title,
+    text_color=text_color, bg=bg, width=width, height=height, ...
   )
 }

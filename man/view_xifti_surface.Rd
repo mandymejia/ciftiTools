@@ -51,13 +51,17 @@ view_cifti_surface(
   colors = NULL,
   idx = NULL,
   hemisphere = NULL,
+  together = NULL,
+  together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
   legend_ncol = NULL,
+  legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
@@ -82,13 +86,17 @@ viewCIfTI_surface(
   colors = NULL,
   idx = NULL,
   hemisphere = NULL,
+  together = NULL,
+  together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
   legend_ncol = NULL,
+  legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
@@ -113,13 +121,17 @@ viewcii_surface(
   colors = NULL,
   idx = NULL,
   hemisphere = NULL,
+  together = NULL,
+  together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
   title = NULL,
   slider_title = "Index",
   fname = FALSE,
   fname_suffix = c("names", "idx"),
+  legend_fname = "[fname]_legend",
   legend_ncol = NULL,
+  legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
   cex.title = NULL,
@@ -203,15 +215,11 @@ Overrides/ignores \code{legend_embed}.
 If the data is not qualitative, a shared color bar will be added to the bottom
 of the composite. If the data is qualitative, a shared color legend will be
 added to the bottom only if \code{"leg"} is in \code{together}.
-
-\code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
-side-by-side.
-
 For greater control see \code{view_comp} or \code{grid::arrangeGrob}.}
 
 \item{together_title}{If a composite image is made based on \code{together},
 use this argument to add a grand title to the composite image. Should be
-a length-one character vector or \code{NULL} to not add a grand title.}
+a length-one character vector or \code{NULL} (default) to not add a grand title.}
 
 \item{view}{Which view to display: \code{"lateral"}, \code{"medial"}, or
 \code{"both"}. If \code{NULL} (default), both views will be shown. Each view

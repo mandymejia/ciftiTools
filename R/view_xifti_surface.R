@@ -499,14 +499,14 @@ view_xifti_surface.draw_mesh <- function(
 #'  If the data is not qualitative, a shared color bar will be added to the bottom
 #'  of the composite. If the data is qualitative, a shared color legend will be
 #'  added to the bottom only if \code{"leg"} is in \code{together}.
-#' 
-#'  \code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
-#'  side-by-side.
-#' 
+# 
+#  \code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
+#  side-by-side.
+# 
 #'  For greater control see \code{view_comp} or \code{grid::arrangeGrob}.
 #' @param together_title If a composite image is made based on \code{together},
 #'  use this argument to add a grand title to the composite image. Should be
-#'  a length-one character vector or \code{NULL} to not add a grand title.
+#'  a length-one character vector or \code{NULL} (default) to not add a grand title.
 #' @inheritParams surface_plot_Params
 #' @param slider_title Text at bottom of plot that will be added if a slider
 #'  is used, to provide a title for it. Default: \code{"Index"}.
@@ -663,6 +663,15 @@ view_xifti_surface <- function(
       "Composite images are not compatible with OpenGL window. ", 
       "Set `together=NULL` or file path(s) for `fname`."
     ) }
+
+    # Check packages
+    pkg <- vapply(c("png", "grid", "gridExtra"), requireNamespace, quietly=TRUE, FALSE)
+    if (any(!pkg)) {
+      stop(
+        "These packages need to be installed to use `view_comp`: ", 
+        paste(names(pkg)[!pkg], collapse=", "), call.=FALSE
+      )
+    }
 
     # check `together`
     together <- match.arg(together, c("leg", "idx"), several.ok=TRUE)
@@ -1328,7 +1337,7 @@ view_xifti_surface <- function(
             if (!requireNamespace("fields", quietly = TRUE)) {
               stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
             }
-            if (!isFALSE(legend_fname)) { 
+            if (!isFALSE(fname) && !isFALSE(legend_fname)) { 
               png(
                 legend_fname, bg=bg,
                 width=brain_panels_dims[1], height=ceiling(brain_panels_dims[1]*.4)
@@ -1340,7 +1349,7 @@ view_xifti_surface <- function(
             colorbar_kwargs$axis.args$mgp <- c(3,.5+together_scale,0)
 
             try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
-            if (!isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
+            if (!isFALSE(fname) && !isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
           }
         }
       }
@@ -1482,9 +1491,12 @@ view_xifti_surface <- function(
 view_cifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=NULL,
-  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
-  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  idx=NULL, hemisphere=NULL, 
+  together=NULL, together_title=NULL,
+  view=c("both", "lateral", "medial"), widget=NULL,
+  title=NULL, slider_title="Index", 
+  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL){
@@ -1492,9 +1504,12 @@ view_cifti_surface <- function(
   view_xifti_surface(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
-    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
-    title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
-    legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
+    idx=idx, hemisphere=hemisphere, 
+    together=together, together_title=together_title,
+    view=view, widget=widget,
+    title=title, slider_title=slider_title, 
+    fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
     cex.title=cex.title, text_color=text_color, bg=bg,
     borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom
@@ -1506,9 +1521,12 @@ view_cifti_surface <- function(
 viewCIfTI_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=NULL,
-  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
-  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  idx=NULL, hemisphere=NULL, 
+  together=NULL, together_title=NULL,
+  view=c("both", "lateral", "medial"), widget=NULL,
+  title=NULL, slider_title="Index", 
+  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL){
@@ -1516,9 +1534,12 @@ viewCIfTI_surface <- function(
   view_xifti_surface(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
-    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
-    title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
-    legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
+    idx=idx, hemisphere=hemisphere, 
+    together=together, together_title=together_title,
+    view=view, widget=widget,
+    title=title, slider_title=slider_title, 
+    fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
     cex.title=cex.title, text_color=text_color, bg=bg,
     borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom
@@ -1530,9 +1551,12 @@ viewCIfTI_surface <- function(
 viewcii_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
-  idx=NULL, hemisphere=NULL, view=c("both", "lateral", "medial"), widget=NULL,
-  title=NULL, slider_title="Index", fname=FALSE, fname_suffix=c("names", "idx"),
-  legend_ncol=NULL, legend_embed=NULL, digits=NULL,
+  idx=NULL, hemisphere=NULL, 
+  together=NULL, together_title=NULL,
+  view=c("both", "lateral", "medial"), widget=NULL,
+  title=NULL, slider_title="Index", 
+  fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL){
@@ -1540,9 +1564,12 @@ viewcii_surface <- function(
   view_xifti_surface(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
-    idx=idx, hemisphere=hemisphere, view=view, widget=widget,
-    title=title, slider_title=slider_title, fname=fname, fname_suffix=fname_suffix,
-    legend_ncol=legend_ncol, legend_embed=legend_embed, digits=digits,
+    idx=idx, hemisphere=hemisphere, 
+    together=together, together_title=together_title,
+    view=view, widget=widget,
+    title=title, slider_title=slider_title, 
+    fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
     cex.title=cex.title, text_color=text_color, bg=bg,
     borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom
