@@ -264,14 +264,18 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     meta$subcort_trans_units <- as.numeric(
       attr(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ, "MeterExponent")
     )
-    if (meta$subcort_trans_units == -3) {
-      meta$subcort_trans_units <- "mm"
-    } else if (meta$subcort_trans_units == -2) {
-      meta$subcort_trans_units <- "cm"
-    } else if (meta$subcort_trans_units == 0) {
-      meta$subcort_trans_units <- "m"
+    if (length(meta$subcort_trans_units) > 0) {
+      if (meta$subcort_trans_units == -3) {
+        meta$subcort_trans_units <- "mm"
+      } else if (meta$subcort_trans_units == -2) {
+        meta$subcort_trans_units <- "cm"
+      } else if (meta$subcort_trans_units == 0) {
+        meta$subcort_trans_units <- "m"
+      } else {
+        meta$subcort_trans_units <- paste0("10^(", meta$subcort_trans_units, ") m")
+      }
     } else {
-      meta$subcort_trans_units <- paste0("10^(", meta$subcort_trans_units, ") m")
+      meta["subcort_trans_units"] <- list(NULL)
     }
 
     meta$subcort_dims <- as.numeric(
