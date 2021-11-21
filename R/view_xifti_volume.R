@@ -841,7 +841,7 @@ view_xifti_volume <- function(
 
     oro.nifti::overlay(
       x=img2, y=img_overlay2, plane=plane, 
-      col.y=pal_even$color,
+      col.y=as.character(pal_even$color),
       col.x=structural_img_colors,
       zlim.y=zlim, 
       oma=c(5,0,5,0),
