@@ -287,8 +287,11 @@ is.xifti_meta <- function(x) {
   }
 
   # Subcortical.
-  if (!match_exactly(names(x$subcort), names(y$subcort))) { 
-    message("Subcortical sublist names are not correct.\n"); return(FALSE) 
+  if (!match_exactly(names(x$subcort), names(y$subcort), fail_action="nothing")) { 
+    ny2 <- names(y$subcort)[names(y$subcort) != "trans_units"]
+    if (!match_exactly(names(x$subcort), ny2, fail_action="message")) { 
+      message("Subcortical sublist names are not correct.\n"); return(FALSE) 
+    }
   }
   if (!is.null(x$subcort$labels) && !is.subcort_labs(x$subcort$labels)) {
     message("Subcortical labels are invalid.\n"); return(FALSE)
