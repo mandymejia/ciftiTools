@@ -340,7 +340,7 @@ as.matrix.xifti <- function(x, ...) {
 #' @param surfL Left surface
 #' @param surfR Right surface
 #' 
-#' @keywords internal
+#' @export
 #' 
 #' @return The inferred resolution
 #' 
