@@ -84,7 +84,8 @@ the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.}
 Default: \code{FALSE}.}
 }
 \value{
-The \code{cifti_target_fname}, invisibly
+The \code{cifti_target_fname}, invisibly, if \code{x} was a CIFTI
+file name. A \code{"xifti"} object if \code{x} was a \code{"xifti"} object.
 }
 \description{
 Spatially smooth the metric data of a CIFTI file or \code{"xifti"} object.
