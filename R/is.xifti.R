@@ -321,10 +321,13 @@ is.xifti_meta <- function(x) {
     if (!all(x$cifti$brainstructures %in% c("left", "right", "subcortical"))) {
       message(paste(
         "CIFTI brainstructures must be one or several of the following:",
-        "left, righ, subcortical.\n"
+        "left, right, subcortical.\n"
       ))
       return(FALSE)
     }
+    bs_expected <- names(x$data)[!vapply(x$data, is.null, FALSE)]
+    # [TO DO]: check `bs_expected`
+    # I forget if `brainstructures` are those originally in the `xifti`, or just those present now?
 
     if (!is.null(x$cifti$intent)) {
       intent <- x$cifti$intent

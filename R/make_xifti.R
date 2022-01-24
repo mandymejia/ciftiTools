@@ -273,6 +273,11 @@ make_xifti <- function(
   # Column names.
   if (!is.null(col_names)) { xifti$meta$cifti$names <- col_names }
 
+  # Brainstructures.
+  bs_names <- names(xifti$data)[!vapply(xifti$data, is.null, FALSE)]
+  bs_names <- c(cortex_left="left", cortex_right="right", subcort="subcortical")[bs_names]
+  xifti$meta$cifti$brainstructures <- bs_names
+
   # idx metadata.
   if (!is.null(idx)) { xifti$meta$cifti$misc$idx <- idx }
 
