@@ -29,7 +29,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
       xifti$surf$cortex_left <- load_surf("left", surfL, resamp_res)
     } else {
       z <- read_surf(surfL, "left")
-      if (nrow(z$vertices) != resamp_res) { z <- resample_surf(z, resamp_res, "left") }
+      if (!is.null(resamp_res) && nrow(z$vertices) != resamp_res) { z <- resample_surf(z, resamp_res, "left") }
       xifti$surf$cortex_left <- z
     }
   }
@@ -43,7 +43,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
       xifti$surf$cortex_right <- load_surf("right", surfR, resamp_res=resamp_res)
     } else {
       z <- read_surf(surfR, "right")
-      if (nrow(z$vertices) != resamp_res) { z <- resample_surf(z, resamp_res, "right") }
+      if (!is.null(resamp_res) && nrow(z$vertices) != resamp_res) { z <- resample_surf(z, resamp_res, "right") }
       xifti$surf$cortex_right <- z
     }
   }
