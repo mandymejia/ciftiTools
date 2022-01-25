@@ -204,6 +204,7 @@ test_that("Miscellaneous functions are working", {
   }
 
   scale_xifti(cii1, scale=FALSE)
+  newdata_xifti(cii1, as.matrix(cii1)[,rep(seq(ncol(cii1), 2))])
 
 
   # [TO DO]: Test concatenating xiftis of different types
