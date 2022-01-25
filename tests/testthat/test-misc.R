@@ -203,6 +203,8 @@ test_that("Miscellaneous functions are working", {
     is.xifti(fix_xifti(cii2))
   }
 
+  scale_xifti(cii1, scale=FALSE)
+
 
   # [TO DO]: Test concatenating xiftis of different types
 
