@@ -4,9 +4,11 @@
 \alias{scale_xifti}
 \title{Scale CIFTI}
 \usage{
-scale_xifti(x, center = TRUE, scale = TRUE)
+scale_xifti(xifti, center = TRUE, scale = TRUE)
 }
 \arguments{
+\item{xifti}{A \code{"xifti"} object.}
+
 \item{center, scale}{Arguments to \code{\link[base]{scale}}.}
 }
 \value{
