@@ -17,4 +17,3 @@ The input \code{"xifti"} with scaled columns.
 \description{
 Scale CIFTI data. Similar to \code{\link[base]{scale}}.
 }
-\keyword{export}

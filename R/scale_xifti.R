@@ -7,7 +7,7 @@
 #' 
 #' @return The input \code{"xifti"} with scaled columns.
 #' 
-#' @keywords export
+#' @export
 scale_xifti <- function(xifti, center=TRUE, scale=TRUE){
   stopifnot(is.xifti(xifti))
 
