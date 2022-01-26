@@ -43,6 +43,12 @@ summary.xifti <- function(object, ...) {
   if (dim(x$subcort_labels) < 1) {
     x["subcort_labels"] <- list(NULL)
   }
+  if (!is.null(x$medial_wall_mask$left)) {
+    x$medial_wall_mask$left[is.na(x$medial_wall_mask$left)] <- 0
+  }
+  if (!is.null(x$medial_wall_mask$right)) {
+    x$medial_wall_mask$right[is.na(x$medial_wall_mask$right)] <- 0
+  }
 
   # Add intent-specific entries
   if (!is.null(x$intent)) {
