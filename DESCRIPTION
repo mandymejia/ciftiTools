@@ -49,6 +49,7 @@ Suggests:
     grid,
     gridExtra,
     htmlwidgets,
+    manipulateWidget,
     knitr,
     rmarkdown,
     papayar,
