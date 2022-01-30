@@ -10,7 +10,7 @@ ciftiTools_citations <- c(
 			as.person("Amanda F Mejia")
 		),
 		year				 = "2021",
-		url     		 = "https://arxiv.org/abs/2106.11338",
+		url     		 = "https://doi.org/10.1016/j.neuroimage.2022.118877",
 		key          = "pham2021ciftitools"
 	)
 )
