@@ -4,7 +4,7 @@
 \alias{remove_xifti}
 \title{Remove a component from a \code{"xifti"}}
 \usage{
-remove_xifti(xifti, remove = NULL)
+remove_xifti(xifti, remove = NULL, remove_sub = NULL)
 }
 \arguments{
 \item{xifti}{A \code{"xifti"} object.}
@@ -12,13 +12,18 @@ remove_xifti(xifti, remove = NULL)
 \item{remove}{A character vector containing one or more of the following:
 \code{"cortex_left"}, \code{"cortex_right"}, \code{"subcortical"},
 \code{"surf_left"}, and \code{"surf_right"}. Each of these components will
-be removed from the \code{"xifti"}}
+be removed from \code{xifti}.}
+
+\item{remove_sub}{A vector containing subcortical structures to be removed
+from \code{xifti}. Can be specified with names, or with numeric factor
+values: see \code{\link{substructure_table}}.}
 }
 \value{
 The new \code{"xifti"} with the requested component(s) removed
 }
 \description{
-Remove a brain structure or surface from a \code{"xifti"}
+Remove a brain structure, surface, or subcortical structure from a
+\code{"xifti"}.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 

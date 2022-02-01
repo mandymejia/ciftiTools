@@ -34,11 +34,16 @@ wb_path_request <- function() {
 #'
 get_wb_cmd_path <- function(wb_path) {
 
+  stopifnot(length(wb_path)==1)
+
   # Remove double slashes (except at very beginning)
   add_back <- startsWith(wb_path, "//")
   wb_path <- gsub("(/)+", "/", wb_path)
   if (add_back) { wb_path <- paste0("/", wb_path) }
   wb_path <- gsub("/$", "", wb_path) # Remove slash at end (will become double)
+
+  # Expand tilde: can vary between R and system() command
+  wb_path <- path.expand(wb_path)
 
   # If `wb_path` doesn't exist, raise a warning but still use it.
   # (Sometimes the file does exist, even if `file.exists` fails?)

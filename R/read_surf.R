@@ -118,5 +118,5 @@ read_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL) {
 #' @rdname read_surf
 #' @export
 make_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL){
-  read_surf(surf=surf, expected_hemisphere=expected_hemisphere, resamp_res=NULL)
+  read_surf(surf=surf, expected_hemisphere=expected_hemisphere, resamp_res=resamp_res)
 }

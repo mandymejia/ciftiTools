@@ -2,8 +2,8 @@
 #' 
 #' Raise an error if the \code{"xifti"}s do not match. 
 #' 
-#' \code{cifti$intent} and \code{cifti$brainstructures} are only compared if they
-#'  exist for both files. \code{cifti$misc} is never compared. 
+#' \code{cifti$intent} is only compared if it
+#'  exists for both files. \code{cifti$brainstructures} and \code{cifti$misc} are not compared. 
 #' 
 #' @param xii1 The first \code{"xifti"}
 #' @param xii2 The second \code{"xifti"}
@@ -30,7 +30,8 @@ expect_equal_xifti <- function(xii1, xii2) {
     testthat::expect_equal(xii1$meta$cifti$intent, xii2$meta$cifti$intent)
   }
 
-  if (!is.null(xii1$meta$cifti$brainstructure) && !is.null(xii2$meta$cifti$brainstructure)) {
-    testthat::expect_equal(xii1$meta$cifti$brainstructure, xii2$meta$cifti$brainstructure)
-  }
+  # [TO DO]: Define this?
+  # if (!is.null(xii1$meta$cifti$brainstructure) && !is.null(xii2$meta$cifti$brainstructure)) {
+  #   testthat::expect_equal(xii1$meta$cifti$brainstructure, xii2$meta$cifti$brainstructure)
+  # }
 }

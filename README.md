@@ -135,7 +135,7 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 
 ## Citation
 
-You can cite our pre-print at <https://arxiv.org/abs/2106.11338>.
+You can cite our paper at <https://doi.org/10.1016/j.neuroimage.2022.118877>.
 
 ## Data acknowledgement
 

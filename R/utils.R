@@ -73,17 +73,20 @@ is.fname <- function(x){
 
 #' Format a path for \code{\link{system}}
 #' 
-#' Right now, it escapes spaces and parentheses with \code{"\\\\"}.
+#' Right now, it uses \code{shQuote}
 #'
 #' @param R_path The name of the file. It should be properly formatted: if it
 #'  exists, \code{file.exists(R_path)} should be \code{TRUE}.
 #'
 #' @return The name of the file
 #'
+#' @keywords internal
+#' 
 sys_path <- function(R_path) {
-  R_path <- gsub("(", "\\(", R_path, fixed=TRUE)
-  R_path <- gsub(")", "\\)", R_path, fixed=TRUE)
-  gsub(" ", "\\ ", R_path, fixed=TRUE)
+  shQuote(R_path)
+  # R_path <- gsub("(", "\\(", R_path, fixed=TRUE)
+  # R_path <- gsub(")", "\\)", R_path, fixed=TRUE)
+  # gsub(" ", "\\ ", R_path, fixed=TRUE)
 }
 
 #' Get kwargs

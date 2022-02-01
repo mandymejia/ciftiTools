@@ -14,5 +14,6 @@ exists, \code{file.exists(R_path)} should be \code{TRUE}.}
 The name of the file
 }
 \description{
-Right now, it escapes spaces and parentheses with \code{"\\\\"}.
+Right now, it uses \code{shQuote}
 }
+\keyword{internal}

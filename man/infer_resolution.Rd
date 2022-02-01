@@ -19,4 +19,3 @@ The inferred resolution
 \description{
 Infer resolution from \code{"xifti"} and surfaces
 }
-\keyword{internal}

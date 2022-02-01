@@ -38,6 +38,8 @@ resample_surf <- function(
     gii_pre, gii_post, hemisphere=hemisphere,
     original_res = original_res, resamp_res=resamp_res
   )
+  # [TO DO]: stop if above command failed.
+  # Otherwise, `gii_post` might exist but not be the result of resampling here.
 
   # Read new file.
   make_surf(gii_post, hemisphere)

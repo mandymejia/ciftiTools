@@ -28,8 +28,9 @@ write_xifti2 <- function(
   
   # Check arguments.
   stopifnot(is.xifti(xifti))
+  bs_present <- c("left", "right", "subcortical")[!vapply(xifti$data, is.null, FALSE)]
   if (is.null(brainstructures)) { 
-    brainstructures <- c("left", "right", "subcortical")[!vapply(xifti$data, is.null, FALSE)]
+    brainstructures <- bs_present
   }
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical","all"),
@@ -55,13 +56,12 @@ write_xifti2 <- function(
   do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
 
   # Check brainstructures
-  bs_present <- brainstructures %in% xifti$meta$cifti$brainstructures
-  if (!all(bs_present)) {
+  if (!all(brainstructures %in% bs_present)) {
     warning(paste0(
       "Only the following brainstructures are present in the CIFTI file: ",
-      paste(xifti$meta$cifti$brainstructures, collapse=", "), "\n"
+      paste(bs_present, collapse=", "), "\n"
     ))
-    brainstructures <- brainstructures[bs_present]
+    brainstructures <- bs_present
   }
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")

@@ -18,7 +18,7 @@ expect_equal_xifti(xii1, xii2)
 Raise an error if the \code{"xifti"}s do not match.
 }
 \details{
-\code{cifti$intent} and \code{cifti$brainstructures} are only compared if they
-exist for both files. \code{cifti$misc} is never compared.
+\code{cifti$intent} is only compared if it
+exists for both files. \code{cifti$brainstructures} and \code{cifti$misc} are not compared.
 }
 \keyword{internal}

@@ -9,13 +9,21 @@ newdata_xifti(xifti, newdata, newnames = NULL)
 \arguments{
 \item{xifti}{The \code{"xifti"}}
 
-\item{newdata}{The \eqn{V \ times T} matrix of data values to replace those
+\item{newdata}{The \eqn{V \times T} matrix of data values to replace those
 in \code{xifti} with. The left cortex vertices should be at the top, right
 cortex vertices in the middle, and subcortex vertices at the bottom (when
-present). Can also be a length-one vector to set all values equally.}
+present).
 
-\item{newnames}{Replace the names in the \code{xifti}. If \code{NULL}
-(default), keep the original names.}
+If \code{newdata} is instead a \eqn{V \times Q} matrix where \eqn{Q} is not
+\eqn{T}, then any column names or label tables will be removed.
+(A "dlabel" will be converted to a "dscalar".)
+
+Can also be a length-one vector to set all values equally.}
+
+\item{newnames}{Replaces the names in the \code{xifti}. If \code{NULL}
+(default), keep the original names, except if the number of columns
+in \code{newdata} doesn't match that of \code{xifti}, in which case
+no names will be used.}
 }
 \value{
 The new \code{"xifti"}
@@ -24,8 +32,10 @@ The new \code{"xifti"}
 Replace the data in a \code{"xifti"} with new data from a data matrix.
 }
 \details{
-If the \code{"xifti"} has \eqn{V} grayordinates and \code{T} measurements
-in total, \code{newdata} should be a \eqn{V \times T} matrix.
+If the \code{"xifti"} has \eqn{V} grayordinates and \eqn{T} measurements\,
+\code{newdata} should be a \eqn{V \times Q} matrix. If \eqn{Q}
+is not equal to \eqn{T}, then any column names or label tables will be
+removed. (A "dlabel" will be converted to a "dscalar".)
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 

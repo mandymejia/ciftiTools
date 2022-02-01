@@ -31,7 +31,8 @@
 #' @param subcortical_merged Smooth across subcortical structure boundaries?
 #'  Default: \code{FALSE}.
 #'
-#' @return The \code{cifti_target_fname}, invisibly
+#' @return The \code{cifti_target_fname}, invisibly, if \code{x} was a CIFTI
+#'  file name. A \code{"xifti"} object if \code{x} was a \code{"xifti"} object.
 #' 
 #' @family common
 #' @export

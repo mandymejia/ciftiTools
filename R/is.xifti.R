@@ -287,8 +287,11 @@ is.xifti_meta <- function(x) {
   }
 
   # Subcortical.
-  if (!match_exactly(names(x$subcort), names(y$subcort))) { 
-    message("Subcortical sublist names are not correct.\n"); return(FALSE) 
+  if (!match_exactly(names(x$subcort), names(y$subcort), fail_action="nothing")) { 
+    ny2 <- names(y$subcort)[names(y$subcort) != "trans_units"]
+    if (!match_exactly(names(x$subcort), ny2, fail_action="message")) { 
+      message("Subcortical sublist names are not correct.\n"); return(FALSE) 
+    }
   }
   if (!is.null(x$subcort$labels) && !is.subcort_labs(x$subcort$labels)) {
     message("Subcortical labels are invalid.\n"); return(FALSE)
@@ -315,12 +318,28 @@ is.xifti_meta <- function(x) {
 
   # cifti
   if (!is.null(x$cifti)) {
-    if (!all(x$cifti$brainstructures %in% c("left", "right", "subcortical"))) {
-      message(paste(
-        "CIFTI brainstructures must be one or several of the following:",
-        "left, righ, subcortical.\n"
-      ))
-      return(FALSE)
+    if (!is.null(x$cifti$brainstructures)) {
+      # All entries must be valid.
+      if (!all(x$cifti$brainstructures %in% c("left", "right", "subcortical"))) {
+        message(paste(
+          "CIFTI brainstructures must be one or several of the following:",
+          "left, right, subcortical.\n"
+        ))
+        return(FALSE)
+      }
+      # All brainstructures with data must be included.
+      bs_expected <- names(x$data)[!vapply(x$data, is.null, FALSE)]
+      bs_missing <- setdiff(bs_expected, x$cifti$brainstructures)
+      if (length(bs_missing) > 0) {
+        message(paste(
+          "These brainstructures with data are not in $meta$cifti$brainstructures:",
+          paste(bs_missing, collapse=", "), 
+          ". Add them or set this metadata entry to `NULL`.\n"
+        ))
+        return(FALSE)
+      }
+      # [TO DO]: check `bs_expected`
+      # I forget if `brainstructures` are those originally in the `xifti`, or just those present now?
     }
 
     if (!is.null(x$cifti$intent)) {

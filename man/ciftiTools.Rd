@@ -43,6 +43,8 @@ Functions for manipulating \code{"xifti"}s:
 \item{\code{select_xifti}:}{   Select data matrix columns of a \code{"xifti"}}
 \item{\code{transform_xifti}:}{   Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s}
 \item{\code{add_surf}:}{   Add surfaces to a \code{"xifti"}}
+\item{\code{move_from_mwall}:}{   Move medial wall vertices back into the \code{"xifti"} data matrix}
+\item{\code{move_to_mwall}:}{   Move rows with a certain value into the \code{"xifti"} medial wall mask}
 }
 
 S3 methods for \code{"xifti"}s:

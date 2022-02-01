@@ -43,6 +43,12 @@ summary.xifti <- function(object, ...) {
   if (dim(x$subcort_labels) < 1) {
     x["subcort_labels"] <- list(NULL)
   }
+  if (!is.null(x$medial_wall_mask$left)) {
+    x$medial_wall_mask$left[is.na(x$medial_wall_mask$left)] <- 0
+  }
+  if (!is.null(x$medial_wall_mask$right)) {
+    x$medial_wall_mask$right[is.na(x$medial_wall_mask$right)] <- 0
+  }
 
   # Add intent-specific entries
   if (!is.null(x$intent)) {
@@ -340,7 +346,7 @@ as.matrix.xifti <- function(x, ...) {
 #' @param surfL Left surface
 #' @param surfR Right surface
 #' 
-#' @keywords internal
+#' @export
 #' 
 #' @return The inferred resolution
 #' 
@@ -368,6 +374,7 @@ infer_resolution <- function(xifti, surfL=NULL, surfR=NULL) {
       res <- min(nvL, nvR)
       if (is.infinite(res)) { res <- NULL }
     }
+    # [TO DO]: if no medial wall mask exists, but a cortex has data?
   }
 
   res

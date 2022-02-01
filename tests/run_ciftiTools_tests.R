@@ -13,3 +13,5 @@ source(file.path(tests_dir, "test-plotting_surf.R"))
 source(file.path(tests_dir, "test-plotting_sub.R"))
 source(file.path(tests_dir, "test-plotting_together.R"))
 source(file.path(tests_dir, "test-misc.R"))
+# Other recommended tests
+#       Read a v1 CIFTI

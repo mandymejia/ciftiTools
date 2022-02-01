@@ -85,15 +85,15 @@ check_cifti_type <- function(intent, extn){
         "This CIFTI file has intent code", intent, "and extension", extn,
         "neither of which is supported by ciftiTools (yet).",
         "Only the following types are:\n\t",
-        paste(supported_intents()$value, collapse="\t "),
+        paste(supported_intents()$value, collapse="\n\t "),
         "\nRespectively, they correspond to these file extensions:\n\t",
-        paste(supported_intents()$extension, collapse="\t ")
+        paste(supported_intents()$extension, collapse="\n\t ")
       ))
     } else {
       warning(paste(
         "This CIFTI file has extension", extn, "which is not yet supported by ciftiTools.",
         "Only the following types are:\t",
-        paste(supported_intents()$extension, collapse="\t "),
+        paste(supported_intents()$extension, collapse="\n\t "),
         "\nThe intent code", intent, "is supported but does not match the extension.",
         "Was the file named incorrectly?",
         "Continuing anyway with the intent code", intent, "and correct extension",
@@ -264,14 +264,18 @@ get_data_meta_from_cifti_xml <- function(xml, intent=3000) {
     meta$subcort_trans_units <- as.numeric(
       attr(xml$Volume$TransformationMatrixVoxelIndicesIJKtoXYZ, "MeterExponent")
     )
-    if (meta$subcort_trans_units == -3) {
-      meta$subcort_trans_units <- "mm"
-    } else if (meta$subcort_trans_units == -2) {
-      meta$subcort_trans_units <- "cm"
-    } else if (meta$subcort_trans_units == 0) {
-      meta$subcort_trans_units <- "m"
+    if (length(meta$subcort_trans_units) > 0) {
+      if (meta$subcort_trans_units == -3) {
+        meta$subcort_trans_units <- "mm"
+      } else if (meta$subcort_trans_units == -2) {
+        meta$subcort_trans_units <- "cm"
+      } else if (meta$subcort_trans_units == 0) {
+        meta$subcort_trans_units <- "m"
+      } else {
+        meta$subcort_trans_units <- paste0("10^(", meta$subcort_trans_units, ") m")
+      }
     } else {
-      meta$subcort_trans_units <- paste0("10^(", meta$subcort_trans_units, ") m")
+      meta["subcort_trans_units"] <- list(NULL)
     }
 
     meta$subcort_dims <- as.numeric(
