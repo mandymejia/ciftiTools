@@ -753,6 +753,8 @@ view_xifti_volume <- function(
   }
 
   if (!is.null(structural_img)) {
+    # Need to use `oro.nifti` here instead of `RNifti` because 
+    #   we modify @.Data to work with `oro.nifti::overlay`.
     img <- readNIfTI(structural_img, reorient=FALSE)
     img[is.na(img)] <- 0
 
