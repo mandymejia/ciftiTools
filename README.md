@@ -8,8 +8,8 @@
 [![R-CMD-check](https://github.com/mandymejia/ciftiTools/workflows/R-CMD-check/badge.svg)](https://github.com/mandymejia/ciftiTools/actions)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
-[![Coveralls test
-coverage](https://coveralls.io/repos/github/mandymejia/ciftiTools/badge.svg)](https://coveralls.io/github/mandymejia/ciftiTools)
+[![Codecov test
+coverage](https://codecov.io/gh/mandymejia/ciftiTools/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mandymejia/ciftiTools?branch=master)
 <!-- badges: end -->
 
 CIFTI files contain brain imaging data in “grayordinates,” which

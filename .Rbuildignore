@@ -18,3 +18,4 @@
 ^inst/extdata/MNI152_T1_2mm\.nii\.gz$
 ^README_media$
 ^tests/run_ciftiTools_tests\.R$
+^codecov\.yml$
