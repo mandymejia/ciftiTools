@@ -65,6 +65,12 @@
 #' @param slices Which slices to display. If provided, this argument will
 #'  override \code{n_slices}. Should be a numeric vector with integer values
 #'  between one and the number of slices in \code{plane}. Ignored if \code{widget}.
+#' @param convention \code{"neurological"} (default) or \code{"radiological"}.
+#'  Neurological convention will display the left side of the brain on the left
+#'  side of axial and coronal images, and in the first few slices of a series of
+#'  sagittal images. Radiological convention will display the right side of the
+#'  brain on the left side of axial and coronal images, and in the first few
+#'  slices of a series of sagittal images.
 #' @param together Only applies if saving image files (\code{!isFALSE(fname)}). 
 #'  Use this argument to create and save a composite image which combines
 #'  multiple plots. \code{NULL} (default) will not combine any plots. Otherwise, 
@@ -181,6 +187,7 @@ view_xifti_volume <- function(
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
   idx=NULL, plane=c("axial", "sagittal", "coronal"), 
+  convention=c("neurological", "radiological"),
   n_slices=9, slices=NULL,
   together=NULL, together_title=NULL,
   widget=FALSE,
@@ -209,6 +216,8 @@ view_xifti_volume <- function(
       ))
     }
   }
+
+  convention <- match.arg(convention, c("neurological", "radiological"))
 
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
@@ -719,6 +728,14 @@ view_xifti_volume <- function(
   # Set up the display window. -------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  flip <- (convention=="radiological" && widget) || (convention=="neurological" && !widget)
+  if (flip) {
+    # cat("Flipping NIFTI image.")
+    vol <- vol[rev(seq(dim(vol)[1])),,,,drop=FALSE]
+    xifti$meta$subcort$mask <- xifti$meta$subcort$mask[rev(seq(dim(vol)[1])),,,drop=FALSE]
+    labs_bs <- labs_bs[rev(seq(dim(vol)[1])),,,drop=FALSE]
+  }
+
   if (!widget) {
     plane <- match.arg(plane, c("axial", "sagittal", "coronal"))
     plane_dim <- switch(plane, axial=3, coronal=2, sagittal=1)
@@ -805,6 +822,7 @@ view_xifti_volume <- function(
     img_overlay@.Data[labs_bs==0] <- NA
     img_labels@.Data <- labs_bs
     img_labels@.Data[labs_bs==0] <- NA
+
     return(
       papayar::papaya(list(img, img_labels, img_overlay), ...)
     )

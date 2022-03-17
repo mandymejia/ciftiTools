@@ -17,6 +17,7 @@ view_xifti_volume(
   title = NULL,
   idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
+  convention = c("neurological", "radiological"),
   n_slices = 9,
   slices = NULL,
   together = NULL,
@@ -204,6 +205,13 @@ the arrows at the top of the display window if working interactively in
 \item{plane}{The plane to display for the slices:
 \code{"axial"} (default), \code{"sagittal"} or \code{"coronal"}.
 Ignored if \code{widget}.}
+
+\item{convention}{\code{"neurological"} (default) or \code{"radiological"}.
+Neurological convention will display the left side of the brain on the left
+side of axial and coronal images, and in the first few slices of a series of
+sagittal images. Radiological convention will display the right side of the
+brain on the left side of axial and coronal images, and in the first few
+slices of a series of sagittal images.}
 
 \item{n_slices}{The number of slices to display. Default: \code{9}.
 The slices will be selected in a way that visualizes as much of the
