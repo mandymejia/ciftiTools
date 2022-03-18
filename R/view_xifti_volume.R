@@ -12,6 +12,20 @@
 #'  color limits and palette must be edited using the widget controls once it's 
 #'  rendered.
 #' 
+#' Arguments concerning anatomical orientation assume that the subcortical data
+#'  is stored in the following way: first dimension is normal to the sagittal
+#'  plane, going left to right; second dimension is normal to the coronal plane,
+#'  going from the front of the head (anterior) to the back (posterior); third 
+#'  dimension is normal to the axial plane, going from the top of the head 
+#'  (superior) to the neck (inferior). 
+#' 
+#' For non-interactive plots, if \code{n_slices > 1} and \code{convention="neurological"}, 
+#'  axial slices are ordered from the neck (inferior) to the top of the head 
+#'  (superior), sagittal slices are ordered left to right, and coronal slices
+#'  are ordered back (posterior) to front (anterior). If
+#'  \code{convention="radiological"}, sagittal slices are instead ordered right
+#'  to left.
+#' 
 #' @inheritParams xifti_Param
 #' @param structural_img The structural MRI image on which to overlay the
 #'  subcortical plot. Can be a file name, \code{"MNI"} (default) to use
@@ -152,6 +166,11 @@
 #'  especially when using an R Markdown document interactively in which case it
 #'  appears too high in the plot. Use these arguments to nudge the title up
 #'  or down (\code{ypos.title}) or left or right (\code{xpos.title}).
+#' @param orientation_labels Show orientation labels at the top left and top
+#'  right of the plot? These will indicate the directions along the left-right
+#'  axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}. 
+#'  The vertical positioning is controlled by \code{ypos.title}, and the font 
+#'  size is controlled by \code{cex.title}.
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  \code{"white"}. If \code{"white"}, will use black instead for the color
 #   legend and the color bar if printed separately (since those will have
@@ -194,7 +213,7 @@ view_xifti_volume <- function(
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
-  cex.title=NULL, ypos.title=0, xpos.title=0,
+  cex.title=NULL, ypos.title=0, xpos.title=0, orientation_labels=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   # ----------------------------------------------------------------------------
@@ -902,11 +921,31 @@ view_xifti_volume <- function(
           cex.title <- round(cex.title*100)/100
         }
 
-        title(title_jj, col.main=text_color, cex.main=cex.title,
+        title(
+          title_jj, col.main=text_color, cex.main=cex.title,
           line= 1.75 + ypos.title, # Move up 
           adj=ifelse(!isFALSE(fname), ifelse(!together && makePDF, .42, .45), .465) + xpos.title # Move up and left
         )
       }
+    }
+
+    if (orientation_labels) {
+      olabs <- switch(plane,
+        axial = c("L", "R"),
+        coronal = c("L", "R"),
+        sagittal = c("P", "A")
+      )
+      if (convention=="radiological" && plane!="sagittal") { olabs <- c("R", "L") }
+      title(
+        olabs[1], col.main=text_color, cex.main=cex.title,
+        line = 1.75 + ypos.title,
+        adj = 0
+      )
+      title(
+        olabs[2], col.main=text_color, cex.main=cex.title,
+        line = 1.75 + ypos.title,
+        adj = 1
+      )
     }
 
     if (!together && makePDF) {

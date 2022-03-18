@@ -34,6 +34,7 @@ view_xifti_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
+  orientation_labels = FALSE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -299,6 +300,12 @@ especially when using an R Markdown document interactively in which case it
 appears too high in the plot. Use these arguments to nudge the title up
 or down (\code{ypos.title}) or left or right (\code{xpos.title}).}
 
+\item{orientation_labels}{Show orientation labels at the top left and top
+right of the plot? These will indicate the directions along the left-right
+axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}.
+The vertical positioning is controlled by \code{ypos.title}, and the font
+size is controlled by \code{cex.title}.}
+
 \item{text_color}{Color for text in title and colorbar legend. Default:
 \code{"white"}. If \code{"white"}, will use black instead for the color}
 
@@ -339,6 +346,20 @@ affects the color scale of the background image.
 Currently, the color-related arguments only affect the 2D slice view. The
 color limits and palette must be edited using the widget controls once it's
 rendered.
+
+Arguments concerning anatomical orientation assume that the subcortical data
+is stored in the following way: first dimension is normal to the sagittal
+plane, going left to right; second dimension is normal to the coronal plane,
+going from the front of the head (anterior) to the back (posterior); third
+dimension is normal to the axial plane, going from the top of the head
+(superior) to the neck (inferior).
+
+For non-interactive plots, if \code{n_slices > 1} and \code{convention="neurological"},
+axial slices are ordered from the neck (inferior) to the top of the head
+(superior), sagittal slices are ordered left to right, and coronal slices
+are ordered back (posterior) to front (anterior). If
+\code{convention="radiological"}, sagittal slices are instead ordered right
+to left.
 }
 \seealso{
 Other commonly-used functions: 
