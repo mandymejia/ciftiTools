@@ -188,6 +188,7 @@ write_spheres <- function(
   sphereL_fname <- format_path(sphereL_fname, write_dir, mode=2)
   sphereR_fname <- format_path(sphereR_fname, write_dir, mode=2)
 
+  resamp_res <- format(resamp_res, scientific=FALSE)
   run_wb_cmd(
     paste("-surface-create-sphere", resamp_res, sys_path(sphereL_fname)), 
   )
