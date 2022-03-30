@@ -103,6 +103,10 @@
 #  side-by-side.
 # 
 #'  For greater control see \code{view_comp} or \code{grid::arrangeGrob}.
+#' @param together_ncol If \code{"idx" \%in\% together}, this determines the number
+#'  of columns to use in the array of subplots for different indices.
+#'  By default, the number of columns and rows will be determined such that they
+#'  are about equal.
 #' @param together_title If a composite image is made based on \code{together},
 #'  use this argument to add a grand title to the composite image. Should be
 #'  a length-one character vector or \code{NULL} (default) to not add a grand title.
@@ -208,7 +212,7 @@ view_xifti_volume <- function(
   idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   convention=c("neurological", "radiological"),
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1006,7 +1010,9 @@ view_xifti_volume <- function(
   if (!file.exists(as.character(legend_fname))) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
-    together_ncol <- ceiling(sqrt(length(idx)))
+    if (is.null(together_ncol)) {
+      together_ncol <- ceiling(sqrt(length(idx)))
+    }
     together_nrow <- ceiling(length(idx)/together_ncol)
     comp_width <- width * together_ncol
     comp_height <- height * together_nrow
@@ -1092,7 +1098,7 @@ view_cifti_volume <- function(
   structural_img_colors=gray(0:255/280), title=NULL,
   idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1106,7 +1112,7 @@ view_cifti_volume <- function(
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
@@ -1124,7 +1130,7 @@ viewCIfTI_volume <- function(
   structural_img_colors=gray(0:255/280), title=NULL,
   idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1138,7 +1144,7 @@ viewCIfTI_volume <- function(
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
@@ -1156,7 +1162,7 @@ viewcii_volume <- function(
   structural_img_colors=gray(0:255/280), title=NULL,
   idx=NULL, plane=c("axial", "sagittal", "coronal"), 
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1170,7 +1176,7 @@ viewcii_volume <- function(
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,

@@ -17,6 +17,7 @@ view_xifti_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -52,6 +53,7 @@ view_cifti_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -87,6 +89,7 @@ viewCIfTI_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = together_ncol,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -122,6 +125,7 @@ viewcii_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = together_ncol,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -216,6 +220,11 @@ If the data is not qualitative, a shared color bar will be added to the bottom
 of the composite. If the data is qualitative, a shared color legend will be
 added to the bottom only if \code{"leg"} is in \code{together}.
 For greater control see \code{view_comp} or \code{grid::arrangeGrob}.}
+
+\item{together_ncol}{If \code{"idx" \%in\% together}, this determines the number
+of columns to use in the array of subplots for different indices.
+By default, the number of columns and rows will be determined such that they
+are about equal.}
 
 \item{together_title}{If a composite image is made based on \code{together},
 use this argument to add a grand title to the composite image. Should be
