@@ -502,7 +502,7 @@ view_xifti_volume <- function(
   values <- xifti$data$subcort[,idx,drop=FALSE]
   vol <- unmask_subcortex(values, xifti$meta$subcort$mask, fill=NA)
   if (length(dim(vol)) == 3) {
-    vol <- array(vol, dim=c(dim(vol), 1))
+    dim(vol) <- c(dim(vol), 1)
   }
   labs_bs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
