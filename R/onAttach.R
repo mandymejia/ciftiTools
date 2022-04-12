@@ -28,9 +28,8 @@
 welcome_msg <- function() {
   paste0(
     "\n*****************************************************************\n",
-    "*     Welcome to ciftiTools! Thanks for using our package.      *\n",
-    "*              Please cite our paper in your work:              *\n", 
-    "*           doi.org/10.1016/j.neuroimage.2022.118877            *",
+    "*   Welcome to ciftiTools! Please cite our paper in your work:  *\n", 
+    "*                   > citation('ciftiTools')                    *",
     wb_path_request()
   )
 }
