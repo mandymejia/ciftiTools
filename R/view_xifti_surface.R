@@ -511,6 +511,10 @@ view_xifti_surface.draw_mesh <- function(
 #  side-by-side.
 # 
 #'  For greater control see \code{view_comp} or \code{grid::arrangeGrob}.
+#' @param together_ncol If \code{"idx" \%in\% together}, this determines the number
+#'  of columns to use in the array of subplots for different indices.
+#'  By default, the number of columns and rows will be determined such that they
+#'  are about equal.
 #' @param together_title If a composite image is made based on \code{together},
 #'  use this argument to add a grand title to the composite image. Should be
 #'  a length-one character vector or \code{NULL} (default) to not add a grand title.
@@ -561,7 +565,7 @@ view_xifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, 
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index", 
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
@@ -1437,7 +1441,9 @@ view_xifti_surface <- function(
   if (!file.exists(as.character(legend_fname))) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
-    together_ncol <- ceiling(sqrt(length(idx)))
+    if (is.null(together_ncol)) {
+      together_ncol <- ceiling(sqrt(length(idx)))
+    }
     together_nrow <- ceiling(length(idx)/together_ncol)
     comp_width <- all_panels_width * together_ncol
     comp_height <- all_panels_height * together_nrow
@@ -1499,7 +1505,7 @@ view_cifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, 
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index", 
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
@@ -1512,7 +1518,7 @@ view_cifti_surface <- function(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
     idx=idx, hemisphere=hemisphere, 
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     view=view, widget=widget,
     title=title, slider_title=slider_title, 
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
@@ -1529,7 +1535,7 @@ viewCIfTI_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, 
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=together_ncol, together_title=NULL,
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index", 
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
@@ -1542,7 +1548,7 @@ viewCIfTI_surface <- function(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
     idx=idx, hemisphere=hemisphere, 
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     view=view, widget=widget,
     title=title, slider_title=slider_title, 
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
@@ -1559,7 +1565,7 @@ viewcii_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL, 
   color_mode="auto", zlim=NULL, colors=NULL, 
   idx=NULL, hemisphere=NULL, 
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=together_ncol, together_title=NULL,
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index", 
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
@@ -1572,7 +1578,7 @@ viewcii_surface <- function(
     xifti=xifti, surfL=surfL, surfR=surfR, 
     color_mode=color_mode, zlim=zlim, colors=colors,
     idx=idx, hemisphere=hemisphere, 
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     view=view, widget=widget,
     title=title, slider_title=slider_title, 
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
