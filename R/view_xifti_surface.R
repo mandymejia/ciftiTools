@@ -303,7 +303,12 @@ view_xifti_surface.color <- function(
       }
       pal <- pal_base
     } else {
-      pal_base <- make_color_pal(colors=colors,color_mode=color_mode, zlim=zlim)
+      if (is.data.frame(colors)) {
+        stopifnot(ncol(colors)==2 && colnames(colors)==c("color", "value"))
+        pal_base <- colors
+      } else {
+        pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim)
+      }
       pal <- expand_color_pal(pal_base)
     }
 
@@ -461,7 +466,9 @@ view_xifti_surface.draw_mesh <- function(
 #'  description for more details.
 #' @param colors (Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 #'  the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-#'  and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+#'  and colorbrewer2.org), the name of a viridisLite palette, or a data.frame
+#'  with columns \code{"color"} and \code{"value"} (will override \code{zlim}). 
+#'  If \code{NULL}
 #'  (default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
 #'  \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An 
 #'  exception to these defaults is if the \code{"xifti"} object represents a 
