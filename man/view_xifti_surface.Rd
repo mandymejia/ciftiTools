@@ -179,7 +179,8 @@ description for more details.}
 \item{colors}{(Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
 and colorbrewer2.org), the name of a viridisLite palette, or a data.frame
-with columns \code{"color"} and \code{"value"}. If \code{NULL}
+with columns \code{"color"} and \code{"value"} (will override \code{zlim}).
+If \code{NULL}
 (default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
 \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An
 exception to these defaults is if the \code{"xifti"} object represents a

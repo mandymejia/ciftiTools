@@ -212,6 +212,9 @@ separate_cifti <- function(cifti_fname,
   )
   do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
 
+  brainstructures <- names(do)[do]
+  brainstructures[brainstructures=="sub"] <- "subcortical"
+
   # Modify output file names
   fix_sep_fname <- function(x){ file.path(
     dirname(x),
