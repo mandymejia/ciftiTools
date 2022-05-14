@@ -9,7 +9,7 @@
 #'  Step 2: Use -metric-resample to resample surface/cortex files 
 #'  Step 3: Use -surface-resample to resample gifti files
 #' 
-#' @param original_res The original resolution of the CIFTI cortical surface(s).
+#' @param original_res The original resolution(s) of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
 #' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of 
 #'  GIFTI data for \[left/right\] cortex to resample.
@@ -150,7 +150,7 @@ resample_cifti_components <- function(
   #   cortex, ROI, and surface files into target resolution.
 
   resample_gifti_kwargs_common <- list(
-    original_res=original_res, resamp_res=resamp_res,
+    resamp_res=resamp_res,
     #   Since we already appended read/write/sphere_target directories,
     #     set them to NULL.
     read_dir=NULL, write_dir=NULL
@@ -163,7 +163,8 @@ resample_cifti_components <- function(
     is_left <- substr(lab, nchar(lab), nchar(lab)) == "L" # last char: L or R.
     resample_kwargs <- c(resample_gifti_kwargs_common, list(
       original_fname=original_fnames[[lab]], target_fname=target_fnames[[lab]],
-      hemisphere=ifelse(is_left, "left", "right")
+      hemisphere=ifelse(is_left, "left", "right"), 
+      original_res=ifelse(is_left, original_res[1], original_res[2])
     ))
     
     # Resample cortical data.

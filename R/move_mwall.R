@@ -53,7 +53,7 @@ move_to_mwall <- function(xifti, values=c(NA, NaN), drop=FALSE){
   if (!updated) { ciftiTools_warn("No data locations moved."); return(xifti) }
 
   if (drop) {
-    if (xifti$meta$cifti$intent == "3007") {
+    if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == "3007") {
       for (ii in seq(ncol(xifti))) {
         if (any(as.matrix(xifti)[,ii] %in% values)) { next }
         labtab <- xifti$meta$cifti$labels[[ii]]
@@ -121,7 +121,7 @@ move_from_mwall <- function(xifti, value=NA, name="Medial_Wall", RGBA=c(1,1,1,0)
 
   if (!updated) { ciftiTools_warn("No data locations moved."); return(xifti) }
 
-  if (xifti$meta$cifti$intent == 3007) {
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
     new_key <- vapply(
       xifti$meta$cifti$labels, 
       function(x){ !(value %in% x$Key) }, 

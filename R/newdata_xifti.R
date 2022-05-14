@@ -1,8 +1,8 @@
 #' Replace the data in a \code{"xifti"}
-#' 
+#'
 #' Replace the data in a \code{"xifti"} with new data from a data matrix.
-#' 
-#' If the \code{"xifti"} has \eqn{V} grayordinates and \eqn{T} measurements\, 
+#'
+#' If the \code{"xifti"} has \eqn{V} grayordinates and \eqn{T} measurements\,
 #'  \code{newdata} should be a \eqn{V \times Q} matrix. If \eqn{Q}
 #'  is not equal to \eqn{T}, then any column names or label tables will be
 #'  removed. (A "dlabel" will be converted to a "dscalar".)
@@ -11,18 +11,18 @@
 #'  in \code{xifti} with. The left cortex vertices should be at the top, right
 #'  cortex vertices in the middle, and subcortex vertices at the bottom (when
 #'  present).
-#' 
+#'
 #'  If \code{newdata} is instead a \eqn{V \times Q} matrix where \eqn{Q} is not
-#'  \eqn{T}, then any column names or label tables will be removed. 
+#'  \eqn{T}, then any column names or label tables will be removed.
 #'  (A "dlabel" will be converted to a "dscalar".)
-#' 
+#'
 #'  Can also be a length-one vector to set all values equally.
 #' @param newnames Replaces the names in the \code{xifti}. If \code{NULL}
 #'  (default), keep the original names, except if the number of columns
 #'  in \code{newdata} doesn't match that of \code{xifti}, in which case
 #'  no names will be used.
 #' @return The new \code{"xifti"}
-#' 
+#'
 #' @family manipulating
 #' @export
 newdata_xifti <- function(xifti, newdata, newnames=NULL) {
@@ -39,6 +39,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
     }
     newdata_dim <- dim(newdata)
   }
+  if (ncol(newdata) == 0) { stop("Empty `newdata`.") }
   stopifnot(length(newdata_dim)==2)
 
   xifti_dim <- dim(xifti)

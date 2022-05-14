@@ -24,7 +24,7 @@ resample_cifti_components(
 )
 }
 \arguments{
-\item{original_res}{The original resolution of the CIFTI cortical surface(s).}
+\item{original_res}{The original resolution(s) of the CIFTI cortical surface(s).}
 
 \item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}

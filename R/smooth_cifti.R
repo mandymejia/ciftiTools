@@ -63,6 +63,13 @@ smooth_cifti <- function(
       x_extn <- "dscalar.nii"
     }
 
+    res <- infer_resolution(x)
+    if (any(res %in% c(NA, NaN))) {
+      stop("Cannot smooth because the resolution could not be inferred.")
+    } else if (res[1] != res[2]) {
+      stop("Cannot smooth because the left and right cortex have unequal inferred resolutions: ", res[1], " and ", res[2], ".")
+    }
+
     # Write out the CIFTI.
     cifti_original_fname <- file.path(tempdir(), paste0("to_smooth.", x_extn))
     write_cifti(x, cifti_original_fname, verbose=FALSE)

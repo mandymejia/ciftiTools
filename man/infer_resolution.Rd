@@ -17,5 +17,6 @@ infer_resolution(xifti, surfL = NULL, surfR = NULL)
 The inferred resolution
 }
 \description{
-Infer resolution from \code{"xifti"} and surfaces
+Infer the numbers of vertices on each cortex of a \code{"xifti"} object.
+Also supports the result of \code{\link{info_cifti}}.
 }

@@ -65,15 +65,10 @@ read_cifti_separate <- function(
   }
 
   # Determine the original cortical resolution.
-  if (!("left" %in% brainstructures)) {
-    original_res <- length(cifti_info$cortex$medial_wall_mask$left)
-  } else {
-    original_res <- length(cifti_info$cortex$medial_wall_mask$right)
-  }
-  ## If the medial wall mask is not present, we can't know the original resolution.
-  if (original_res == 0) { original_res <- NULL }
-  if (!is.null(original_res) && original_res < 2) {
-    warning("The CIFTI resolution is already too low (< 2 vertices). Skipping resampling")
+  original_res <- infer_resolution(cifti_info)
+  if (!is.null(original_res) && any(original_res < 2 & original_res > 0)) {
+    warning("The CIFTI resolution is already too low (< 2 vertices). Skipping resampling.")
+    do_resamp <- FALSE
   }
 
   # ----------------------------------------------------------------------------

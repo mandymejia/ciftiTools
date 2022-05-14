@@ -66,7 +66,7 @@ write_xifti2 <- function(
   do <- c("left","right","subcortical") %in% brainstructures
   names(do) <- c("left", "right", "sub")
 
-  if (xifti$meta$cifti$intent == 3007) {
+  if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
     intent <- "label"
     data_type <- "INT32"
     label_table <- xifti$meta$cifti$labels
@@ -82,7 +82,7 @@ write_xifti2 <- function(
     }
     label_table <- label_table[[1]]
     col_names <- names(xifti$meta$cifti$labels)
-  } else if (xifti$meta$cifti$intent == 3006) {
+  } else if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3006) {
     col_names <- xifti$meta$cifti$names
     intent <- data_type <- label_table <- NULL
   } else {
