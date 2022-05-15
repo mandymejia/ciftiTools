@@ -129,7 +129,6 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   # Add components to xifti
   T_ <- ncol_xifti(x)
   if (is.null(x$meta$cifti$names)) {
-    # [TO DO]: Double check this is correct default name?
     x$meta$cifti$names <- paste("Column", seq(T_))
   }
   x$meta$cifti$labels <- rep(list(col_table), T_)
@@ -198,7 +197,6 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
       }
       x$meta$cifti$names <- as.character(names)
     } else {
-      # [TO DO]: Double check this is correct default name?
       x$meta$cifti$names <- paste("Column", seq(T_))
     }
 
