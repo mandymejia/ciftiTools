@@ -197,8 +197,7 @@ Math.xifti <- function(x, ...) {
 #' Ops methods for \code{"xifti"} objects.
 #' 
 #' Uses \code{\link{transform_xifti}}.
-#' @param x The \code{"xifti"}
-#' @param ... Additional arguments to the function
+#' @param e1,e2 The arguments to the operation. \code{"xifti"} objects will be converted to matrices temporarily
 #' @name S3_Ops
 #' @method Ops xifti
 #' @export

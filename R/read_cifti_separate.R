@@ -126,7 +126,7 @@ read_cifti_separate <- function(
     resamp_result <- resample_cifti_wrapper(
       original_res=original_res, resamp_res=resamp_res, 
       original_fnames=to_resample, resamp_fnames=NULL,
-      surfL_fname=NULL, surfR_fname=NULL,
+      surfL_original_fname=NULL, surfR_original_fname=NULL,
       read_dir=NULL, write_dir=write_dir_resamp
     )
 

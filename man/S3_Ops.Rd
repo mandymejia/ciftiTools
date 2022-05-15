@@ -8,9 +8,7 @@
 \method{Ops}{xifti}(e1, e2 = NULL)
 }
 \arguments{
-\item{x}{The \code{"xifti"}}
-
-\item{...}{Additional arguments to the function}
+\item{e1, e2}{The arguments to the operation. \code{"xifti"} objects will be converted to matrices temporarily}
 }
 \description{
 Ops methods for \code{"xifti"} objects.
