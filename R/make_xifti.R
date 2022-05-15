@@ -102,6 +102,9 @@
 #'  This argument is probably not necessary for end users: reading a CIFTI
 #'  should be done by providing \code{cifti_fname}, and for reading separate
 #'  GIFTI/NIFTI components \code{cifti_info} is not applicable.
+#' 
+#'  Column names from \code{cortexL} and \code{cortexR} take precedence over column
+#'  names from \code{cifti_info}.
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
 #'  Can be a surface GIFTI file path or \code{"surf"} object; see 
 #'  \code{\link{make_surf}} for a full description of valid inputs.
@@ -171,7 +174,6 @@ make_xifti <- function(
 
     ## Column names and label table, if intent is not dtseries.
     if (is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent != 3002) {
-      # [TO DO]: Explain that the names are being overwritten?
       xifti$meta$cifti$names <- x$col_names
       if (!is.null(x$label_table)) {
         xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
