@@ -34,13 +34,13 @@ resample_surf <- function(
 
   # Resample.
   gii_post <- format_path("to_read.surf.gii", tdir, 2)
+  # Delete because if the following command fails, the pre-existing file would be used.
+  if (file.exists(gii_post)) { file.remove(gii_post) }
   resample_gifti(
     gii_pre, gii_post, hemisphere=hemisphere,
     original_res = original_res, resamp_res=resamp_res
   )
-  # [TO DO]: stop if above command failed.
-  # Otherwise, `gii_post` might exist but not be the result of resampling here.
-
+  
   # Read new file.
   make_surf(gii_post, hemisphere)
 }

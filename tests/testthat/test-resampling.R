@@ -63,7 +63,7 @@ test_that("Resampling CIFTI and GIFTI files is working", {
 
   # resample_cifti_from_template, unequal res
   x <- read_cifti(fnames$cifti[1], resamp_res=2000, brainstructures="left")
-  y <- read_cifti(fnames$cifti[1], resamp_res=4000, brainstructures="right")
+  y <- read_cifti(fnames$cifti[2], resamp_res=4000, brainstructures="right")
   z <- combine_xifti(x,y)
   q <- write_cifti(z, paste0(tempfile(), ".dtseries.nii"))
   x <- resample_cifti(z, resamp_res=8000); x <- remove_xifti(x, "cortex_left")
