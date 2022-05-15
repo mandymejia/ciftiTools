@@ -473,10 +473,10 @@ view_xifti_volume <- function(
 
   } else {
 
-    if (!requireNamespace("papayar", quietly = TRUE)) {
-      stop("Package \"papayar\" needed for this function to work. Please install it.",
-           call. = FALSE)
-    }
+    # if (!requireNamespace("papayar", quietly = TRUE)) {
+    #   stop("Package \"papayar\" needed for this function to work. Please install it.",
+    #        call. = FALSE)
+    # }
 
     # `fname`, `legend_fname`
     if (!isFALSE(fname)) {
