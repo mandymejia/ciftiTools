@@ -97,7 +97,6 @@ make_cortex <- function(
         )
       } else {
         # Guess func.
-        # [TO DO] warn user?
         cortex <- file.path(
           tempdir(), paste0(basename(cortex_original), ".func.gii")
         ) 
