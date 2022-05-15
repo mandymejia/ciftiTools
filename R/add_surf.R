@@ -19,7 +19,7 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
   if (!is.xifti(xifti)) { stop("The input \"xifti\" object is invalid.") }
 
   resamp_res <- infer_resolution(xifti)
-  if (all(resamp_res %in% c(0, NA, NaN))) { 
+  if (all(resamp_res %in% c(NA, NaN))) { 
     resamp_res <- NULL
   }
 
@@ -28,43 +28,47 @@ add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
     if (!is.null(xifti$surf$cortex_left)) { 
       ciftiTools_msg("Overwriting existing geometry for left cortex.\n") 
     }
-    if (is.null(resamp_res) || resamp_res[1] %in% c(0, NA, NaN)) {
+    rr1 <- resamp_res[1]
+    if (is.null(resamp_res) || rr1 %in% c(NA, NaN)) {
       warning("Could not infer left cortex resolution, so the left surface cannot be added.")
     } else {
+      if (rr1==0) { rr1 <- NULL }
       if (is.character(surfL) && length(surfL)==1 && surfL %in% c("very inflated", "inflated", "midthickness")) {
-        xifti$surf$cortex_left <- load_surf("left", surfL, resamp_res[1])
+        xifti$surf$cortex_left <- load_surf("left", surfL, rr1)
       } else {
         z <- read_surf(surfL, "left")
-        if (nrow(z$vertices) != resamp_res[1]) { 
-          z <- resample_surf(z, resamp_res[1], "left") 
-          if ((nrow(z$vertices) != resamp_res[1])) {
-            warning("The left surface was resampled, but still might not match the data resolution.")
-          }
+        if (!is.null(rr1) && (nrow(z$vertices) != rr1)) { 
+          z <- resample_surf(z, rr1, "left") 
         }
         xifti$surf$cortex_left <- z
+      }
+      if (!is.null(rr1) && (nrow(z$vertices) != rr1)) { 
+        warning("The left surface might not match the data resolution, even after any resampling.")
       }
     }
   }
 
-  # Right.
+  # right.
   if (!is.null(surfR)) {
     if (!is.null(xifti$surf$cortex_right)) { 
       ciftiTools_msg("Overwriting existing geometry for right cortex.\n") 
     }
-    if (is.null(resamp_res) || resamp_res[1] %in% c(0, NA, NaN)) {
+    rr2 <- resamp_res[2]
+    if (is.null(resamp_res) || rr2 %in% c(NA, NaN)) {
       warning("Could not infer right cortex resolution, so the right surface cannot be added.")
     } else {
+      if (rr2==0) { rr2 <- NULL }
       if (is.character(surfR) && length(surfR)==1 && surfR %in% c("very inflated", "inflated", "midthickness")) {
-        xifti$surf$cortex_right <- load_surf("right", surfR, resamp_res[1])
+        xifti$surf$cortex_right <- load_surf("right", surfR, rr2)
       } else {
         z <- read_surf(surfR, "right")
-        if (nrow(z$vertices) != resamp_res[1]) { 
-          z <- resample_surf(z, resamp_res[1], "right") 
-          if ((nrow(z$vertices) != resamp_res[1])) {
-            warning("The right surface was resampled, but still might not match the data resolution.")
-          }
+        if (!is.null(rr2) && (nrow(z$vertices) != rr2)) { 
+          z <- resample_surf(z, rr2, "right") 
         }
         xifti$surf$cortex_right <- z
+      }
+      if (!is.null(rr2) && (nrow(z$vertices) != rr2)) { 
+        warning("The right surface might not match the data resolution, even after any resampling.")
       }
     }
   }

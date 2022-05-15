@@ -126,15 +126,15 @@ read_cifti_separate <- function(
     resamp_result <- resample_cifti_wrapper(
       original_res=original_res, resamp_res=resamp_res, 
       original_fnames=to_resample, resamp_fnames=NULL,
-      surfL_fname=surfL_fname, surfR_fname=surfR_fname,
+      surfL_fname=NULL, surfR_fname=NULL,
       read_dir=NULL, write_dir=write_dir_resamp
     )
 
     # Replace resampled files.
     to_read[names(to_read) %in% names(resamp_result)] <- resamp_result[names(to_read)[names(to_read) %in% names(resamp_result)]]
 
-    if (!is.null(surfL_fname)) { surfL_fname <- resamp_result["surfL"] }
-    if (!is.null(surfR_fname)) { surfR_fname <- resamp_result["surfR"] }
+    #if (!is.null(surfL_fname)) { surfL_fname <- resamp_result["surfL"] }
+    #if (!is.null(surfR_fname)) { surfR_fname <- resamp_result["surfR"] }
 
     if (verbose) {
       print(Sys.time() - exec_time)
