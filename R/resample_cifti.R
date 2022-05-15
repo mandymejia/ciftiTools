@@ -280,8 +280,6 @@ resample_cifti <- function(
   to_resample <- to_cif[!grepl("subcort", names(to_cif))]
   if (verbose) { cat("Resampling CIFTI file.\n") }
 
-  print(original_res)
-
   # Do resample_cifti_components.
   resamp_result <- resample_cifti_wrapper(
     original_res=original_res, resamp_res=resamp_res,

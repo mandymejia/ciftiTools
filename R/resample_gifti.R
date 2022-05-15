@@ -189,12 +189,28 @@ write_spheres <- function(
   sphereR_fname <- format_path(sphereR_fname, write_dir, mode=2)
 
   resamp_res <- format(resamp_res, scientific=FALSE)
+
+  # Make left
   run_wb_cmd(
-    paste("-surface-create-sphere", resamp_res, sys_path(sphereL_fname)), 
+    paste("-surface-create-sphere", resamp_res[1], sys_path(sphereL_fname)), 
   )
-  run_wb_cmd(
-    paste("-surface-flip-lr", sys_path(sphereL_fname), sys_path(sphereR_fname)), 
-  )
+
+  # Make right
+  if (length(resamp_res)==1 || length(unique(resamp_res))==1) {
+    run_wb_cmd(
+      paste("-surface-flip-lr", sys_path(sphereL_fname), sys_path(sphereR_fname)), 
+    )
+  } else {
+    sphereR_temp <- paste0(tempfile(), ".surf.gii")
+    run_wb_cmd(
+      paste("-surface-create-sphere", resamp_res[2], sphereR_temp), 
+    )
+    run_wb_cmd(
+      paste("-surface-flip-lr", sphereR_temp, sys_path(sphereR_fname)), 
+    )
+  }
+
+  # Set structure
   run_wb_cmd(
     paste("-set-structure", sys_path(sphereL_fname), "CORTEX_LEFT"), 
   )
