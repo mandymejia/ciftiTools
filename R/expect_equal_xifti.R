@@ -29,9 +29,4 @@ expect_equal_xifti <- function(xii1, xii2) {
   if (!is.null(xii1$meta$cifti$intent) && !is.null(xii2$meta$cifti$intent)) {
     testthat::expect_equal(xii1$meta$cifti$intent, xii2$meta$cifti$intent)
   }
-
-  # [TO DO]: Define this?
-  # if (!is.null(xii1$meta$cifti$brainstructure) && !is.null(xii2$meta$cifti$brainstructure)) {
-  #   testthat::expect_equal(xii1$meta$cifti$brainstructure, xii2$meta$cifti$brainstructure)
-  # }
 }
