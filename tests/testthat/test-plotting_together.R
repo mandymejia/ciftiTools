@@ -22,7 +22,7 @@ test_that("plot_xifti `together` argument is working", {
   view_comp(c(q, q), nrow=1, title_height=.05, title="Hello")
   view_comp(c(q, q, q), title="Goodbye", ncol=1, fname=paste0(tempfile(), ".png"))
   q <- plot(x, idx=c(3,2,2,1), together="idx", together_title="hi", fname=file.path(tdir, "abc.png"))
-  q <- plot(x, idx=c(3,2,2,1), together="idx", together_title="hi", fname=file.path(tdir, "abc.pdf"))
+  q <- plot(x, idx=c(3,2,2,1), together="idx", together_title="hi", together_ncol=1, fname=file.path(tdir, "abc.pdf"))
   q <- plot(x, idx=c(3,1), together="idx", legend_embed=FALSE, colors="Spectral", fname=file.path(tdir, "abc"))
   q <- plot(x, idx=c(3,1), together="leg", color_mode="seq", fname=file.path(tdir, "abc"))
   q <- plot(x, idx=c(3,1), together="leg", color_mode="seq", fname=file.path(tdir, "abc.pdf"))
