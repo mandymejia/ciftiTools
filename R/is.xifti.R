@@ -337,8 +337,6 @@ is.xifti_meta <- function(x) {
         ))
         return(FALSE)
       }
-      # [TO DO]: check `bs_expected`
-      # I forget if `brainstructures` are those originally in the `xifti`, or just those present now?
     }
 
     if (!is.null(x$cifti$intent)) {
