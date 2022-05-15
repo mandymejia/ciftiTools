@@ -255,7 +255,11 @@ a length-one character vector or \code{NULL} (default) to not add a grand title.
 \item{widget}{Create an interactive widget using \code{papayar}? Otherwise
 display static 2D slices. Default: \code{FALSE}.
 
-Note that the widget can only display one \code{idx} at a time.}
+Note that the widget can only display one \code{idx} at a time.
+
+Note: \code{papayar} has been removed
+from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+the widget will be made available again.}
 
 \item{fname, fname_suffix}{Save the plot(s) (and color legend if applicable)?
 
@@ -347,7 +351,9 @@ each index (and color legend if applicable) will be returned. Otherwise,
 \description{
 Visualize the subcortical data in a \code{"xifti"} using a series of 2D
 slices (based on \code{\link[oro.nifti]{overlay}}) or an interactive widget
-(based on \code{\link[papayar]{papaya}}).
+(based on \code{papayar::papaya}). Note: \code{papayar} has been removed
+from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+the widget will be made available again.
 }
 \details{
 Note that \code{color_mode}, \code{zlim}, and \code{colors} only affect the

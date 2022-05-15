@@ -2,7 +2,9 @@
 #'
 #' Visualize the subcortical data in a \code{"xifti"} using a series of 2D
 #'  slices (based on \code{\link[oro.nifti]{overlay}}) or an interactive widget
-#'  (based on \code{\link[papayar]{papaya}}).
+#'  (based on \code{papayar::papaya}). Note: \code{papayar} has been removed
+#'  from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+#'  the widget will be made available again.
 #'
 #' Note that \code{color_mode}, \code{zlim}, and \code{colors} only affect the
 #'  color scale of the data values whereas \code{structural_img_colors} only
@@ -116,6 +118,10 @@
 #'  display static 2D slices. Default: \code{FALSE}.
 #'
 #'  Note that the widget can only display one \code{idx} at a time.
+#' 
+#'  Note: \code{papayar} has been removed
+#'  from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+#'  the widget will be made available again.
 #' @param title Optional title(s) for the plot(s). It will be printed at the top.
 #'
 #'  Default: \code{NULL} will not use any title if \code{length(idx)==1}.
@@ -252,6 +258,7 @@ view_xifti_volume <- function(
     warning("Using the first entry of `widget`.")
     widget <- as.logical(widget[[1]])
   }
+  if (widget) { stop("The widget is not currently available due to a dependency being removed from CRAN. Please set `widget=FALSE`.") }
 
   makePNG <- makePDF <- FALSE
 
