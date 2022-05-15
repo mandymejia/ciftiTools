@@ -60,4 +60,16 @@ test_that("Resampling CIFTI and GIFTI files is working", {
       try(testthat::expect_equal(cii2$data, cii3$data))
     }
   }
+
+  # resample_cifti_from_template, unequal res
+  x <- read_cifti(fnames$cifti[1], resamp_res=2000, brainstructures="left")
+  y <- read_cifti(fnames$cifti[2], resamp_res=4000, brainstructures="right")
+  z <- combine_xifti(x,y)
+  q <- write_cifti(z, paste0(tempfile(), ".dtseries.nii"))
+  x <- resample_cifti(z, resamp_res=8000); x <- remove_xifti(x, "cortex_left")
+  y <- resample_cifti(z, resamp_res=3000); y <- remove_xifti(y, "cortex_right")
+  z <- combine_xifti(x,y)
+  q2 <- write_cifti(z, paste0(tempfile(), ".dtseries.nii"))
+  q3 <- resample_cifti_from_template(q, q2, paste0(tempfile(), ".dtseries.nii"))
+  z <- read_cifti(q3)
 })

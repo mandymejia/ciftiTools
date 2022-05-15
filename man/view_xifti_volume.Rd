@@ -17,9 +17,11 @@ view_xifti_volume(
   title = NULL,
   idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
+  convention = c("neurological", "radiological"),
   n_slices = 9,
   slices = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   widget = FALSE,
   fname = FALSE,
@@ -33,6 +35,7 @@ view_xifti_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
+  orientation_labels = FALSE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -53,6 +56,7 @@ view_cifti_volume(
   n_slices = 9,
   slices = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   widget = FALSE,
   fname = FALSE,
@@ -86,6 +90,7 @@ viewCIfTI_volume(
   n_slices = 9,
   slices = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   widget = FALSE,
   fname = FALSE,
@@ -119,6 +124,7 @@ viewcii_volume(
   n_slices = 9,
   slices = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   widget = FALSE,
   fname = FALSE,
@@ -163,7 +169,9 @@ description for more details.}
 
 \item{colors}{(Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+and colorbrewer2.org), the name of a viridisLite palette, or a data.frame
+with columns \code{"color"} and \code{"value"} (will override \code{zlim}).
+If \code{NULL}
 (default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
 \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An
 exception to these defaults is if the \code{"xifti"} object represents a
@@ -205,6 +213,13 @@ the arrows at the top of the display window if working interactively in
 \code{"axial"} (default), \code{"sagittal"} or \code{"coronal"}.
 Ignored if \code{widget}.}
 
+\item{convention}{\code{"neurological"} (default) or \code{"radiological"}.
+Neurological convention will display the left side of the brain on the left
+side of axial and coronal images, and in the first few slices of a series of
+sagittal images. Radiological convention will display the right side of the
+brain on the left side of axial and coronal images, and in the first few
+slices of a series of sagittal images.}
+
 \item{n_slices}{The number of slices to display. Default: \code{9}.
 The slices will be selected in a way that visualizes as much of the
 subcortex as possible. Ignored if \code{widget}.}
@@ -228,6 +243,11 @@ of the composite. If the data is qualitative, a shared color legend will be
 added to the bottom only if \code{"leg"} is in \code{together}.
 For greater control see \code{view_comp} or \code{grid::arrangeGrob}.}
 
+\item{together_ncol}{If \code{"idx" \%in\% together}, this determines the number
+of columns to use in the array of subplots for different indices.
+By default, the number of columns and rows will be determined such that they
+are about equal.}
+
 \item{together_title}{If a composite image is made based on \code{together},
 use this argument to add a grand title to the composite image. Should be
 a length-one character vector or \code{NULL} (default) to not add a grand title.}
@@ -235,7 +255,11 @@ a length-one character vector or \code{NULL} (default) to not add a grand title.
 \item{widget}{Create an interactive widget using \code{papayar}? Otherwise
 display static 2D slices. Default: \code{FALSE}.
 
-Note that the widget can only display one \code{idx} at a time.}
+Note that the widget can only display one \code{idx} at a time.
+
+Note: \code{papayar} has been removed
+from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+the widget will be made available again.}
 
 \item{fname, fname_suffix}{Save the plot(s) (and color legend if applicable)?
 
@@ -291,6 +315,12 @@ especially when using an R Markdown document interactively in which case it
 appears too high in the plot. Use these arguments to nudge the title up
 or down (\code{ypos.title}) or left or right (\code{xpos.title}).}
 
+\item{orientation_labels}{Show orientation labels at the top left and top
+right of the plot? These will indicate the directions along the left-right
+axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}.
+The vertical positioning is controlled by \code{ypos.title}, and the font
+size is controlled by \code{cex.title}.}
+
 \item{text_color}{Color for text in title and colorbar legend. Default:
 \code{"white"}. If \code{"white"}, will use black instead for the color}
 
@@ -321,7 +351,9 @@ each index (and color legend if applicable) will be returned. Otherwise,
 \description{
 Visualize the subcortical data in a \code{"xifti"} using a series of 2D
 slices (based on \code{\link[oro.nifti]{overlay}}) or an interactive widget
-(based on \code{\link[papayar]{papaya}}).
+(based on \code{papayar::papaya}). Note: \code{papayar} has been removed
+from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+the widget will be made available again.
 }
 \details{
 Note that \code{color_mode}, \code{zlim}, and \code{colors} only affect the
@@ -331,6 +363,20 @@ affects the color scale of the background image.
 Currently, the color-related arguments only affect the 2D slice view. The
 color limits and palette must be edited using the widget controls once it's
 rendered.
+
+Arguments concerning anatomical orientation assume that the subcortical data
+is stored in the following way: first dimension is normal to the sagittal
+plane, going left to right; second dimension is normal to the coronal plane,
+going from the front of the head (anterior) to the back (posterior); third
+dimension is normal to the axial plane, going from the top of the head
+(superior) to the neck (inferior).
+
+For non-interactive plots, if \code{n_slices > 1} and \code{convention="neurological"},
+axial slices are ordered from the neck (inferior) to the top of the head
+(superior), sagittal slices are ordered left to right, and coronal slices
+are ordered back (posterior) to front (anterior). If
+\code{convention="radiological"}, sagittal slices are instead ordered right
+to left.
 }
 \seealso{
 Other commonly-used functions: 

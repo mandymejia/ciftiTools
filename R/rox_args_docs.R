@@ -333,6 +333,10 @@ NULL
 #'  \code{"black"}. Vertices are only drawn if \code{vertex_size > 0}
 #' @param vertex_size Draw each vertex with this size. Default: \code{0} 
 #'  (do not draw the vertices).
+#' @param material A list of materials from \code{\link[rgl]{rgl.material}}
+#'  to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
+#'  from the color scale, rather than adding geometric shading and interpolating 
+#'  vertex colors. If \code{NULL}, use defaults.
 #' @param width,height The dimensions of the RGL window, in pixels. If both are
 #'  \code{NULL} (default), these dimensions depend on type of output (Open GL
 #'  window or widget) and subplots (\code{hemisphere}, \code{view}, \code{title},

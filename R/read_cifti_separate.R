@@ -65,15 +65,10 @@ read_cifti_separate <- function(
   }
 
   # Determine the original cortical resolution.
-  if (!("left" %in% brainstructures)) {
-    original_res <- length(cifti_info$cortex$medial_wall_mask$left)
-  } else {
-    original_res <- length(cifti_info$cortex$medial_wall_mask$right)
-  }
-  ## If the medial wall mask is not present, we can't know the original resolution.
-  if (original_res == 0) { original_res <- NULL }
-  if (!is.null(original_res) && original_res < 2) {
-    warning("The CIFTI resolution is already too low (< 2 vertices). Skipping resampling")
+  original_res <- infer_resolution(cifti_info)
+  if (!is.null(original_res) && any(original_res < 2 & original_res > 0)) {
+    warning("The CIFTI resolution is already too low (< 2 vertices). Skipping resampling.")
+    do_resamp <- FALSE
   }
 
   # ----------------------------------------------------------------------------
@@ -131,15 +126,15 @@ read_cifti_separate <- function(
     resamp_result <- resample_cifti_wrapper(
       original_res=original_res, resamp_res=resamp_res, 
       original_fnames=to_resample, resamp_fnames=NULL,
-      surfL_fname=surfL_fname, surfR_fname=surfR_fname,
+      surfL_original_fname=NULL, surfR_original_fname=NULL,
       read_dir=NULL, write_dir=write_dir_resamp
     )
 
     # Replace resampled files.
     to_read[names(to_read) %in% names(resamp_result)] <- resamp_result[names(to_read)[names(to_read) %in% names(resamp_result)]]
 
-    if (!is.null(surfL_fname)) { surfL_fname <- resamp_result["surfL"] }
-    if (!is.null(surfR_fname)) { surfR_fname <- resamp_result["surfR"] }
+    #if (!is.null(surfL_fname)) { surfL_fname <- resamp_result["surfL"] }
+    #if (!is.null(surfR_fname)) { surfR_fname <- resamp_result["surfR"] }
 
     if (verbose) {
       print(Sys.time() - exec_time)

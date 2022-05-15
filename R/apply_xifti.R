@@ -48,10 +48,9 @@ apply_xifti <- function(xifti, margin=c(1,2), FUN, ...) {
     }
 
     # Convert to dscalar. 
-    # [TO DO]: consider keeping dlabel if all values are labels?
     out <- xifti
-    if (xifti$meta$cifti$intent != 3006) {
-      out <- convert_to_dscalar(out)
+    if (is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent != 3006) {
+      out <- convert_xifti(out, "dscalar")
     }
 
     # Use names from applied function (e.g. quantiles) if consistent

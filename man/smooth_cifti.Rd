@@ -72,8 +72,9 @@ for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
 for cortex (surface) and \code{3} for subcortex (volume).}
 
 \item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is
-present) Surface GIFTI files for the left and right cortical surfaces. If not
-provided, the default surfaces will be used.}
+present) Surface GIFTI files for the left and right cortical surfaces. If
+not provided, the surfaces in \code{x} are used, but if those are also not
+present, the default surfaces will be used.}
 
 \item{cerebellum_fname}{(Optional) Surface GIFTI file for the cerebellar surface}
 

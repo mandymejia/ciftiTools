@@ -20,8 +20,8 @@ A \code{"xifti"} with data from the inputs
 }
 \description{
 Combine two to three \code{"xifti"}s with non-overlapping brain structures into
-a single \code{"xifti"}. The names and intent of the first will be used (if
-present).
+a single \code{"xifti"}. The names, intent, and surfaces of the first will be used,
+if present. To add more surfaces to the result, use \code{\link{add_surf}}.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 

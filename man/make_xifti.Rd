@@ -103,7 +103,10 @@ original file, and miscellaneous metadata.
 
 This argument is probably not necessary for end users: reading a CIFTI
 should be done by providing \code{cifti_fname}, and for reading separate
-GIFTI/NIFTI components \code{cifti_info} is not applicable.}
+GIFTI/NIFTI components \code{cifti_info} is not applicable.
+
+Column names from \code{cortexL} and \code{cortexR} take precedence over column
+names from \code{cifti_info}.}
 
 \item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex.
 Can be a surface GIFTI file path or \code{"surf"} object; see

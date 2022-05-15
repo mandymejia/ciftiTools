@@ -1,40 +1,51 @@
 #' Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.
-#' 
-#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of 
+#'
+#' Apply a univariate transformation to each value in a \code{"xifti"} or pair of
 #'  \code{"xifti"}s. If a pair, they must share the same dimensions (brainstructures)
 #'  and number of measurements.
-#' 
+#'
 #' If the \code{"xifti"} had the dlabel intent, and the transformation creates
 #'  any value that is not a label value (e.g. a non-integer), then it is converted
 #'  to a dscalar.
-#' 
+#'
+#' Technically, the function does not have to be univariate: it only has to return the
+#'  same number of values as the input. The function will be applied to the matrix
+#'  for each brain structure separately. For example, the function
+#'  \code{function(q){(q - mean(q)) / sd(q)}} will scale each brainstructure, while
+#'  \code{scale} will scale each column of each brainstructure.
+#'
 #' @param xifti The xifti
 #' @param FUN The function. If \code{xifti2} is not provided, it should be
-#'  a univariate function like \code{log} or \code{sqrt}. If 
+#'  a univariate function like \code{log} or \code{sqrt}. If
 #'  \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
 #'  or \code{pmax}.
 #' @param xifti2 The second xifti, if applicable. Otherwise, \code{NULL} (default)
+#' @param idx The column indices for which to apply the transformation.
+#'  If \code{NULL} (default), apply to all columns. If two \code{"xifti"} objects,
+#'  were provided, the values in the first (\code{xifti}) will be retained for columns
+#'  that are not transformed.
 #' @param ... Additional arguments to \code{FUN}
 #' @return A \code{"xifti"} storing the result of applying \code{FUN} to the input(s).
-#'  The data dimensions will be the same. The metadata of \code{xifti} will be retained, 
+#'  The data dimensions will be the same. The metadata of \code{xifti} will be retained,
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
-#' 
+#'
 #' @export
 #' @family manipulating
 #' @importFrom utils capture.output
-#' 
-transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
+#'
+transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {
   if (!is.xifti(xifti, messages=FALSE) && (!is.null(xifti2) && !is.xifti(xifti2, messages=FALSE))) {
     stop("Neither argument is a xifti.")
   }
-  
+
+  # Check function.
   if (!is.function(FUN)) {stop("`FUN` is not a function.")}
   badFUNs <- c("sum", "min", "max")
   FUN_char <- paste(as.character(substitute(FUN)), collapse="")
   if (FUN_char %in% badFUNs) {
     newFUN <- switch(FUN_char, sum=`+`, min=pmin, max=pmax)
     warning(
-      "Replacing ", FUN_char, " with: ", 
+      "Replacing ", FUN_char, " with: ",
       capture.output(print(substitute(newFUN)))
     )
     # Not working...
@@ -61,26 +72,46 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
     out
   }
 
+  tapp_wrap <- function(x, x2, FUN, idx, ...) {
+    if (is.null(idx)) {
+      return(try_apply(x, x2=x2, FUN=FUN, ...))
+    } else {
+      x_ <- if (is.matrix(x)) { x[,idx,drop=FALSE] } else { x }
+      x2_ <- if (is.matrix(x2)) { x2[,idx,drop=FALSE] } else { x2 }
+      if (is.matrix(x)) {
+        x[,idx] <- try_apply(x_, x2=x2_, FUN=FUN, ...)
+        return(x)
+      } else {
+        x2[,idx] <- try_apply(x_, x2=x2_, FUN=FUN, ...)
+        return(x2)
+      }
+    }
+  }
+
   # Unary
   if (is.null(xifti2)) {
+
     if (!is.xifti(xifti)) { stop("`xifti` is invalid.") }
+
+    if (!is.null(idx)) { stopifnot(all(idx %in% seq(ncol(xifti)))) }
+
     for (bs in names(xifti$data)) {
       if (!is.null(xifti$data[[bs]])) {
-        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], x2=NULL, FUN=FUN, ...)
+        xifti$data[[bs]][] <- tapp_wrap(xifti$data[[bs]], x2=NULL, FUN=FUN, idx=idx, ...)
       }
     }
   # xifti + unary
   } else if (is.numeric(xifti2) && length(xifti2)==1){
     for (bs in names(xifti$data)) {
       if (!is.null(xifti$data[[bs]])) {
-        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], x2=xifti2, FUN=FUN, ...)
+        xifti$data[[bs]][] <- tapp_wrap(xifti$data[[bs]], x2=xifti2, FUN=FUN, idx=idx, ...)
       }
     }
   # unary + xifti
-  } else if (is.numeric(xifti) && length(xifti)==1 && is.xifti(xifti2, messages=FALSE)) { 
+  } else if (is.numeric(xifti) && length(xifti)==1 && is.xifti(xifti2, messages=FALSE)) {
     for (bs in names(xifti2$data)) {
       if (!is.null(xifti2$data[[bs]])) {
-        xifti2$data[[bs]][] <- try_apply(xifti, x2=xifti2$data[[bs]], FUN=FUN, ...)
+        xifti2$data[[bs]][] <- tapp_wrap(xifti, x2=xifti2$data[[bs]], FUN=FUN, idx=idx, ...)
       }
     }
     xifti <- xifti2
@@ -122,7 +153,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
             stop("The xiftis have different number of vertices/voxels for the ", bs, " brainstructure.")
           }
         }
-        xifti$data[[bs]][] <- try_apply(xifti$data[[bs]], x2=xifti2$data[[bs]], FUN=FUN, ...)
+        xifti$data[[bs]][] <- tapp_wrap(xifti$data[[bs]], x2=xifti2$data[[bs]], FUN=FUN, idx=idx, ...)
       }
     }
   }
@@ -134,7 +165,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
     for (T_ in seq(ncol(xifti))) {
       if (!all(unique(v[,T_]) %in% xifti$meta$cifti$labels[[T_]]$Key)) {
         warning(
-          "New data values outside the label table for column ", T_, 
+          "New data values outside the label table for column ", T_,
           " were introduced. Changing the xifti intent from dlabel to dscalar."
         )
         xifti$meta$cifti$intent <- 3006
@@ -147,174 +178,43 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, ...) {
   xifti
 }
 
-#' @rdname transform_xifti
+#' \code{"xifti"} S3 Math methods
 #' 
-#' @export
-`+.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`+`)
-}
-
-#' @rdname transform_xifti
+#' Math methods for \code{"xifti"} objects.
 #' 
-#' @export
-`-.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`-`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`*.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`*`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`^.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`^`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`>.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`>`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`>=.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`>=`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`<.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`<`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`<=.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`<=`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`==.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`==`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`!=.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`!=`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`^.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`^`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`%%.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`%%`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`%/%.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`%/%`)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @export
-`/.xifti` <- function(xifti,xifti2) {
-  transform_xifti(xifti, xifti2, FUN=`/`)
-}
-
-#' @rdname transform_xifti
-#' 
+#' Uses \code{\link{transform_xifti}}.
 #' @param x The \code{"xifti"}
+#' @param ... Additional arguments to the function
+#' @name S3_Math
+#' @method Math xifti
 #' @export
-#' @method abs xifti
-abs.xifti <- function(x) {
-  transform_xifti(x, FUN=abs)
+Math.xifti <- function(x, ...) {
+  transform_xifti(x, function(q){do.call(.Generic, c(list(q), ...))})
 }
 
-#' @rdname transform_xifti
+#' \code{"xifti"} S3 Ops methods
 #' 
-#' @param x The \code{"xifti"}
+#' Ops methods for \code{"xifti"} objects.
+#' 
+#' Uses \code{\link{transform_xifti}}.
+#' @param e1,e2 The arguments to the operation. \code{"xifti"} objects will be converted to matrices temporarily
+#' @name S3_Ops
+#' @method Ops xifti
 #' @export
-#' @method sign xifti
-sign.xifti <- function(x) {
-  transform_xifti(x, FUN=sign)
+Ops.xifti <- function(e1, e2=NULL) {
+  transform_xifti(e1, function(q1, q2){do.call(.Generic, list(q1, q2))}, e2)
 }
 
-#' @rdname transform_xifti
+#' \code{"xifti"} S3 Summary methods
 #' 
-#' @param x The \code{"xifti"}
+#' Summary methods for \code{"xifti"} objects.
+#' @param ... The \code{"xifti"} and additional numeric arguments will be converted to matrices
+#' @param na.rm Remove \code{NA} values? Default: \code{FALSE}.
+#' @name S3_Summary
+#' @method Summary xifti
 #' @export
-#' @method sqrt xifti
-sqrt.xifti <- function(x) {
-  transform_xifti(x, FUN=sqrt)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @param x The \code{"xifti"}
-#' @export
-#' @method floor xifti
-floor.xifti <- function(x) {
-  transform_xifti(x, FUN=floor)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @param x The \code{"xifti"}
-#' @export
-#' @method ceiling xifti
-ceiling.xifti <- function(x) {
-  transform_xifti(x, FUN=ceiling)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @param x The \code{"xifti"}
-#' @param digits The number of digits to round by
-#' @export
-#' @method round xifti
-round.xifti <- function(x, digits=0) {
-  transform_xifti(x, FUN=function(y){round(y,digits=digits)})
-}
-
-#' @rdname transform_xifti
-#' 
-#' @param x The \code{"xifti"}
-#' @export
-#' @method exp xifti
-exp.xifti <- function(x) {
-  transform_xifti(x, FUN=exp)
-}
-
-#' @rdname transform_xifti
-#' 
-#' @param x The \code{"xifti"}
-#' @param base The log base
-#' @export
-#' @method log xifti
-log.xifti <- function(x, base=exp(1)) {
-  transform_xifti(x, FUN=function(y){log(y,base=base)})
+Summary.xifti <- function(..., na.rm=FALSE) {
+  args <- list(...)
+  args <- lapply(args, as.matrix)
+  do.call(.Generic, c(args, na.rm=na.rm))
 }

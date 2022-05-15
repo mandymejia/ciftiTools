@@ -1,3 +1,64 @@
+#' \code{separate_cifti} wrapper
+#'
+#' Calls \code{separate_cifti} using the file names listed in the
+#'  argument \code{sep_fnames}. 
+#'
+#' Currently used by \code{read_cifti} and \code{resample_cifti}.
+#' 
+#' @inheritParams cifti_fname_Param
+#' @inheritParams brainstructures_Param_LR
+#' @inheritParams ROI_brainstructures_Param_LR
+#' @param sep_fnames  Where to write the separated files (override
+#'  their default file names). This is a named list 
+#'  where each entry's name is a file type label, and each entry's value
+#'  is a file name indicating where to write the corresponding separated file. 
+#'  The recognized file type labels are: "cortexL", "cortexR", 
+#'  "ROIcortexL", "ROIcortexR", "subcortVol", and "subcortLabs".
+#'  
+#'  Entry values can be \code{NULL}, in which case a default file name will be 
+#'  used: see \code{\link{cifti_component_suffix}}. Default file names
+#'  will also be used for files that need to be separated/written but without a
+#'  corresponding entry in \code{sep_fnames}.
+#'  
+#'  Entries in \code{sep_fnames} will be ignored if they are not needed
+#'  based on \code{[ROI_]brainstructures}. For example, if
+#'  \code{brainstructures="left"}, then \code{sep_fnames$cortexR} will be 
+#'  ignored if specified. 
+#'
+#'  The \code{write_dir} argument can be used to place each separated file in
+#'  the same directory. 
+#' @inheritParams write_dir_Param_generic
+#'
+#' @return The return value of the \code{separate_cifti} call
+#'
+#' @keywords internal
+#' 
+separate_cifti_wrapper <- function(
+  cifti_fname, brainstructures=NULL, ROI_brainstructures=NULL,
+  sep_fnames=NULL, write_dir=NULL) {
+
+  # Get kwargs.
+  sep_kwargs <- list(
+    cifti_fname=cifti_fname,
+    brainstructures=brainstructures, ROI_brainstructures=ROI_brainstructures,
+    write_dir=write_dir
+  )
+
+  # Get expected file names.
+  expected_labs <- get_kwargs(ciftiTools::separate_cifti)
+  expected_labs <- expected_labs[grepl("fname", expected_labs, fixed=TRUE)]
+  expected_labs <- expected_labs[expected_labs != "cifti_fname"]
+  # Check file names.
+  if (!is.null(sep_fnames)) {
+    match_input(names(sep_fnames), gsub("_.*", "", expected_labs), 
+      user_value_label="sep_fnames")
+    sep_kwargs[names(sep_fnames)] <- sep_fnames
+  }
+  # Do separate_cifti.
+  sep_kwargs[vapply(sep_kwargs, is.null, FALSE)] <- NULL
+  do.call(separate_cifti, sep_kwargs)
+}
+
 #' Separate CIFTI: file names
 #' 
 #' File paths for writing GIFTI and NIFTI files from a CIFTI or \code{"xifti"}
@@ -211,6 +272,9 @@ separate_cifti <- function(cifti_fname,
     ROIsubcortVol_fname=ROIsubcortVol_fname, write_dir=write_dir
   )
   do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
+
+  brainstructures <- names(do)[do]
+  brainstructures[brainstructures=="sub"] <- "subcortical"
 
   # Modify output file names
   fix_sep_fname <- function(x){ file.path(

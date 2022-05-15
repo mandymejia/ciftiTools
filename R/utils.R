@@ -83,10 +83,7 @@ is.fname <- function(x){
 #' @keywords internal
 #' 
 sys_path <- function(R_path) {
-  shQuote(R_path)
-  # R_path <- gsub("(", "\\(", R_path, fixed=TRUE)
-  # R_path <- gsub(")", "\\)", R_path, fixed=TRUE)
-  # gsub(" ", "\\ ", R_path, fixed=TRUE)
+  shQuote(path.expand(R_path))
 }
 
 #' Get kwargs

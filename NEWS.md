@@ -1,3 +1,23 @@
+# 9.0 (TBD)
+
+* Replace coveralls with codecov
+* Add `convention` and `orientation_labels` to `view_xifti_volume` (default: neurological, instead of radiological)
+* Add `together_ncol` to `view_xifti_*`
+* Add citation to welcome message
+* Better file path management for system commands
+* Allow `"xifti"` objects to have different resolutions in the left and right cortex
+* Better use of S3 group methods for Math, Ops, Summary functions
+* Add `fname` to `view_comp`
+* Misc. patches
+
+# 8.0 (February 1, 2022)
+
+* Add more support for reading in v1 CIFTI files
+* Better handling of file paths
+* Better handling of optional `"xifti"` metadata
+* `remove_xifti` can delete individual subcortical structures now
+* Add `scale_xifti` which works like `scale`
+
 # 7.0 (November 16, 2021)
 
 * Add `view_comp`, and the argument `together` to `view_xifti_surface` and `view_xifti_volume`

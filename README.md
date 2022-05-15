@@ -8,8 +8,8 @@
 [![R-CMD-check](https://github.com/mandymejia/ciftiTools/workflows/R-CMD-check/badge.svg)](https://github.com/mandymejia/ciftiTools/actions)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
-[![Coveralls test
-coverage](https://coveralls.io/repos/github/mandymejia/ciftiTools/badge.svg)](https://coveralls.io/github/mandymejia/ciftiTools)
+[![Codecov test
+coverage](https://codecov.io/gh/mandymejia/ciftiTools/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mandymejia/ciftiTools?branch=master)
 <!-- badges: end -->
 
 CIFTI files contain brain imaging data in “grayordinates,” which
@@ -135,7 +135,8 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 
 ## Citation
 
-You can cite our paper at <https://doi.org/10.1016/j.neuroimage.2022.118877>.
+You can cite our paper at
+<https://doi.org/10.1016/j.neuroimage.2022.118877>.
 
 ## Data acknowledgement
 

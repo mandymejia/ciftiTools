@@ -278,11 +278,10 @@ is.xifti_meta <- function(x) {
   }
   if ((!is.null(x$cortex$medial_wall_mask$left)) && !is.null(x$cortex$medial_wall_mask$right)) {
     if (length(x$cortex$medial_wall_mask$left) != length(x$cortex$medial_wall_mask$right)) {
-      message(paste(
-        "The medial wall masks must be the same lengths, because the cortices",
-        "must have the same number of vertices."
-      ))
-      return(FALSE)
+      # warning(
+      #   'Support for `"xifti"` objects in which the cortices do not have the same number of vertices is limited.'
+      # )
+      #return(FALSE)
     }
   }
 
@@ -338,8 +337,6 @@ is.xifti_meta <- function(x) {
         ))
         return(FALSE)
       }
-      # [TO DO]: check `bs_expected`
-      # I forget if `brainstructures` are those originally in the `xifti`, or just those present now?
     }
 
     if (!is.null(x$cifti$intent)) {

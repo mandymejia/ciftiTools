@@ -45,34 +45,33 @@ resample_cifti_from_template <- function(
 
   # Cortical spheres.
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
-    if (!("left" %in% brainstructures)) {
-      original_res <- length(original_info$cortex$medial_wall_mask$left)
-    } else {
-      original_res <- length(original_info$cortex$medial_wall_mask$right)
-    }
-    # [TO DO]: Handle this case i.e. dlabels
-    if (original_res == 0) { 
+    original_res <- infer_resolution(original_info)
+    if (any(original_res %in% c(NA, NaN))) { 
       stop("Could not infer original CIFTI's resolution from its metadata.")
     }
 
-    if (!("left" %in% template_brainstructures)) {
-      resamp_res <- length(template_info$cortex$medial_wall_mask$left)
-    } else {
-      resamp_res <- length(template_info$cortex$medial_wall_mask$right)
-    }
-    # [TO DO]: Handle this case i.e. dlabels
-    if (original_res == 0) { 
+    resamp_res <- infer_resolution(template_info)
+    if (any(resamp_res %in% c(NA, NaN))) { 
       stop("Could not infer template CIFTI's resolution from its metadata.")
+    }
+    
+    if ("left" %in% brainstructures) {
+      if (original_res[1]==0) { stop("No left cortex data in original CIFTI.") }
+      if (resamp_res[1]==0) { stop("No left cortex data in template CIFTI.") }
+    }
+    if ("right" %in% brainstructures) {
+      if (original_res[2]==0) { stop("No left cortex data in original CIFTI.") }
+      if (resamp_res[2]==0) { stop("No left cortex data in template CIFTI.") }
     }
 
     tdir <- tempdir()
     # Create original sphere.
-    sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
-    sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
+    sphereL_original_fname <- format_path(paste0("sphereL_", original_res[1], ".surf.gii"), tdir, mode=2)
+    sphereR_original_fname <- format_path(paste0("sphereR_", original_res[2], ".surf.gii"), tdir, mode=2)
     write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
     # Create target sphere.
-    sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res, ".surf.gii"), tdir, mode=2)
-    sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res, ".surf.gii"), tdir, mode=2)
+    sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res[1], ".surf.gii"), tdir, mode=2)
+    sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res[2], ".surf.gii"), tdir, mode=2)
     write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
 
     if ("left" %in% brainstructures) {

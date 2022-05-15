@@ -1,7 +1,7 @@
 Package: ciftiTools
 Type: Package
 Title: Tools for Reading, Writing, Viewing and Manipulating CIFTI Files
-Version: 0.8.1
+Version: 0.9.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -52,7 +52,6 @@ Suggests:
     manipulateWidget,
     knitr,
     rmarkdown,
-    papayar,
     png,
     testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)

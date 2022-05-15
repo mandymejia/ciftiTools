@@ -10,7 +10,7 @@ wb_path_request <- function() {
     "\n*****************************************************************",
     "ciftiTools requires the path to the Connectome Workbench folder, ",
     "  or directly to `wb_command(.exe)`. Please execute the command  ", 
-    "      `ciftiTools.setOption('wb_path', 'path/to/workbench')`     ", 
+    "      > ciftiTools.setOption('wb_path', 'path/to/workbench')     ", 
     "                                                                 ", 
     "  If you do not have the Connectome Workbench, install it here:  ", 
     "      humanconnectome.org/software/get-connectome-workbench      ",

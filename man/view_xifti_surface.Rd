@@ -17,6 +17,7 @@ view_xifti_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -37,6 +38,7 @@ view_xifti_surface(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  material = NULL,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -52,6 +54,7 @@ view_cifti_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = NULL,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -87,6 +90,7 @@ viewCIfTI_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = together_ncol,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -122,6 +126,7 @@ viewcii_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
+  together_ncol = together_ncol,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -174,7 +179,9 @@ description for more details.}
 
 \item{colors}{(Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+and colorbrewer2.org), the name of a viridisLite palette, or a data.frame
+with columns \code{"color"} and \code{"value"} (will override \code{zlim}).
+If \code{NULL}
 (default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
 \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An
 exception to these defaults is if the \code{"xifti"} object represents a
@@ -216,6 +223,11 @@ If the data is not qualitative, a shared color bar will be added to the bottom
 of the composite. If the data is qualitative, a shared color legend will be
 added to the bottom only if \code{"leg"} is in \code{together}.
 For greater control see \code{view_comp} or \code{grid::arrangeGrob}.}
+
+\item{together_ncol}{If \code{"idx" \%in\% together}, this determines the number
+of columns to use in the array of subplots for different indices.
+By default, the number of columns and rows will be determined such that they
+are about equal.}
 
 \item{together_title}{If a composite image is made based on \code{together},
 use this argument to add a grand title to the composite image. Should be
@@ -334,6 +346,11 @@ not outline the edges).}
 
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0}
 (do not draw the vertices).}
+
+\item{material}{A list of materials from \code{\link[rgl]{rgl.material}}
+to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
+from the color scale, rather than adding geometric shading and interpolating
+vertex colors. If \code{NULL}, use defaults.}
 
 \item{width}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), these dimensions depend on type of output (Open GL

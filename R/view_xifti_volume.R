@@ -1,42 +1,60 @@
 #' View subcortical data in a \code{"xifti"}
-#' 
+#'
 #' Visualize the subcortical data in a \code{"xifti"} using a series of 2D
 #'  slices (based on \code{\link[oro.nifti]{overlay}}) or an interactive widget
-#'  (based on \code{\link[papayar]{papaya}}).
-#' 
-#' Note that \code{color_mode}, \code{zlim}, and \code{colors} only affect the 
-#'  color scale of the data values whereas \code{structural_img_colors} only 
-#'  affects the color scale of the background image. 
-#' 
+#'  (based on \code{papayar::papaya}). Note: \code{papayar} has been removed
+#'  from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+#'  the widget will be made available again.
+#'
+#' Note that \code{color_mode}, \code{zlim}, and \code{colors} only affect the
+#'  color scale of the data values whereas \code{structural_img_colors} only
+#'  affects the color scale of the background image.
+#'
 #' Currently, the color-related arguments only affect the 2D slice view. The
-#'  color limits and palette must be edited using the widget controls once it's 
+#'  color limits and palette must be edited using the widget controls once it's
 #'  rendered.
-#' 
+#'
+#' Arguments concerning anatomical orientation assume that the subcortical data
+#'  is stored in the following way: first dimension is normal to the sagittal
+#'  plane, going left to right; second dimension is normal to the coronal plane,
+#'  going from the front of the head (anterior) to the back (posterior); third
+#'  dimension is normal to the axial plane, going from the top of the head
+#'  (superior) to the neck (inferior).
+#'
+#' For non-interactive plots, if \code{n_slices > 1} and \code{convention="neurological"},
+#'  axial slices are ordered from the neck (inferior) to the top of the head
+#'  (superior), sagittal slices are ordered left to right, and coronal slices
+#'  are ordered back (posterior) to front (anterior). If
+#'  \code{convention="radiological"}, sagittal slices are instead ordered right
+#'  to left.
+#'
 #' @inheritParams xifti_Param
 #' @param structural_img The structural MRI image on which to overlay the
 #'  subcortical plot. Can be a file name, \code{"MNI"} (default) to use
-#'  the MNI T1-weighted template included in \code{ciftiTools}, or \code{NULL} 
+#'  the MNI T1-weighted template included in \code{ciftiTools}, or \code{NULL}
 #'  to use a blank image.
 #  Note that the colors are not identical.
 #' @param color_mode (Optional) \code{"sequential"}, \code{"qualitative"},
 #'  \code{"diverging"}, or \code{"auto"} (default). Auto mode will use the
-#'  qualitative color mode if the \code{"xifti"} object represents a .dlabel 
+#'  qualitative color mode if the \code{"xifti"} object represents a .dlabel
 #'  CIFTI (intent 3007). Otherwise, it will use the diverging mode if the data
 #'  contains both positive and negative values, and the sequential mode if the
-#'  data contains >90\% positive or >90\% negative values. See 
+#'  data contains >90\% positive or >90\% negative values. See
 #'  \code{\link{make_color_pal}} for more details.
 #' @param zlim (Optional) Controls the mapping of values to each
 #'  color in \code{colors}. If the length is longer than
 #'  one, using -Inf will set the value to the data minimum, and Inf will set
-#'  the value to the data maximum. See \code{\link{make_color_pal}} 
+#'  the value to the data maximum. See \code{\link{make_color_pal}}
 #'  description for more details.
 #' @param colors (Optional) \code{"ROY_BIG_BL"}, vector of colors to use,
 #'  the name of a ColorBrewer palette (see \code{RColorBrewer::brewer.pal.info}
-#'  and colorbrewer2.org), or the name of a viridisLite palette. If \code{NULL}
+#'  and colorbrewer2.org), the name of a viridisLite palette, or a data.frame
+#'  with columns \code{"color"} and \code{"value"} (will override \code{zlim}).
+#'  If \code{NULL}
 #'  (default), will use the positive half of \code{"ROY_BIG_BL"} (sequential),
-#'  \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An 
-#'  exception to these defaults is if the \code{"xifti"} object represents a 
-#'  .dlabel CIFTI (intent 3007), in which case the colors in the label table 
+#'  \code{"Set2"} (qualitative), or the full \code{"ROY_BIG_BL"} (diverging). An
+#'  exception to these defaults is if the \code{"xifti"} object represents a
+#'  .dlabel CIFTI (intent 3007), in which case the colors in the label table
 #'  will be used. See \code{\link{make_color_pal}} for more details.
 #' @param structural_img_colors Colors to use for the background image. These
 #'  will be assigned in order from lowest to highest value with equal spacing
@@ -45,75 +63,89 @@
 #'  the \code{col.x} argument to \code{oro.nifti::overlay} directly. Default:
 #'  \code{gray(0:255/280)}. To use the \code{oro.nifti::overlay} default instead
 #'  set this argument to \code{gray(0:64/64)}.
-#' 
+#'
 #' @param idx The time/column index of the data to display. \code{NULL} (default)
 #'  will display the first column.
-#' 
-#'  If \code{widget}, only one index at a time may be displayed. 
-#' 
+#'
+#'  If \code{widget}, only one index at a time may be displayed.
+#'
 #'  If \code{!widget} and the length of \code{idx} is greater than one, a new
 #'  plot will be created for each \code{idx}. These can be toggled between using
 #'  the arrows at the top of the display window if working interactively in
-#'  \code{RStudio}; or, these will be written to separate files if 
+#'  \code{RStudio}; or, these will be written to separate files if
 #'  \code{!isFALSE(fname)}.
 #' @param plane The plane to display for the slices:
 #'  \code{"axial"} (default), \code{"sagittal"} or \code{"coronal"}.
 #'  Ignored if \code{widget}.
-#' @param n_slices The number of slices to display. Default: \code{9}. 
-#'  The slices will be selected in a way that visualizes as much of the 
+#' @param n_slices The number of slices to display. Default: \code{9}.
+#'  The slices will be selected in a way that visualizes as much of the
 #'  subcortex as possible. Ignored if \code{widget}.
 #' @param slices Which slices to display. If provided, this argument will
 #'  override \code{n_slices}. Should be a numeric vector with integer values
 #'  between one and the number of slices in \code{plane}. Ignored if \code{widget}.
-#' @param together Only applies if saving image files (\code{!isFALSE(fname)}). 
+#' @param convention \code{"neurological"} (default) or \code{"radiological"}.
+#'  Neurological convention will display the left side of the brain on the left
+#'  side of axial and coronal images, and in the first few slices of a series of
+#'  sagittal images. Radiological convention will display the right side of the
+#'  brain on the left side of axial and coronal images, and in the first few
+#'  slices of a series of sagittal images.
+#' @param together Only applies if saving image files (\code{!isFALSE(fname)}).
 #'  Use this argument to create and save a composite image which combines
-#'  multiple plots. \code{NULL} (default) will not combine any plots. Otherwise, 
-#'  this argument should be a character vector with one or more of the 
+#'  multiple plots. \code{NULL} (default) will not combine any plots. Otherwise,
+#'  this argument should be a character vector with one or more of the
 #'  following entries:
-#'  
+#'
 #'  \code{"leg"} to combine the color legend with each \code{"xifti"} data plot.
 #'  Overrides/ignores \code{legend_embed}.
-#' 
+#'
 #'  \code{"idx"} to place all the plots for the different \code{"idx"} in a grid.
 #'  If the data is not qualitative, a shared color bar will be added to the bottom
 #'  of the composite. If the data is qualitative, a shared color legend will be
 #'  added to the bottom only if \code{"leg"} is in \code{together}.
-# 
+#
 #  \code{"bs"} (\code{view_xifti} only) to place the cortical and subcortical plots
 #  side-by-side.
-# 
+#
 #'  For greater control see \code{view_comp} or \code{grid::arrangeGrob}.
+#' @param together_ncol If \code{"idx" \%in\% together}, this determines the number
+#'  of columns to use in the array of subplots for different indices.
+#'  By default, the number of columns and rows will be determined such that they
+#'  are about equal.
 #' @param together_title If a composite image is made based on \code{together},
 #'  use this argument to add a grand title to the composite image. Should be
 #'  a length-one character vector or \code{NULL} (default) to not add a grand title.
 #' @param widget Create an interactive widget using \code{papayar}? Otherwise
 #'  display static 2D slices. Default: \code{FALSE}.
+#'
+#'  Note that the widget can only display one \code{idx} at a time.
 #' 
-#'  Note that the widget can only display one \code{idx} at a time. 
+#'  Note: \code{papayar} has been removed
+#'  from CRAN so the widget is not available. If \code{papayar} returns to CRAN
+#'  the widget will be made available again.
 #' @param title Optional title(s) for the plot(s). It will be printed at the top.
-#'  
+#'
 #'  Default: \code{NULL} will not use any title if \code{length(idx)==1}.
 #'  Otherwise, it will use the time index (".dtseries") or name
 #'  (.dscalar or .dlabel) of each data column.
-#' 
+#'
 #'  To use a custom title(s), use a length 1 character vector (same title for
 #'  each plot) or length \code{length(idx)} character vector (different title
-#'  for each plot). Set to \code{NULL} or an empty character to omit the title. 
-#' 
+#'  for each plot). Set to \code{NULL} or an empty character to omit the title.
+#'
 #'  If the title is non-empty but does not appear, try lowering \code{cex.title}.
 #' @param fname,fname_suffix Save the plot(s) (and color legend if applicable)?
-#'  
+#'
 #'  If \code{isFALSE(fname)} (default), no files will be written.
-#' 
+#'
 #'  If \code{widget}, these arguments are ignored.
-#' 
+#'
 #'  If neither of the cases above apply, a png image will be written for each
 #'  \code{idx}. If \code{isTRUE(fname)} the files will be named by the
-#'  data column names (underscores will replace spaces). Or, set \code{fname} to a 
-#'  length 1 character vector to name files by this suffix followed by the 
-#'  \code{fname_suffix}: either the data column names (\code{"names"}) or the 
-#'  index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same 
-#'  length as \code{idx} to name the files exactly. 
+#'  data column names (underscores will replace spaces). Or, set \code{fname} to a
+#'  length 1 character vector to name files by this suffix followed by the
+#'  \code{fname_suffix}: either the data column names (\code{"names"}) or the
+#'  index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
+#'  length as \code{idx} to name the files exactly.
 #' @param fname_sub Add "_sub" to the end of the names of the files being saved?
 #'  Default: \code{FALSE}. This is useful if cortical plots of the same data are being
 #'  saved too.
@@ -127,13 +159,13 @@
 #' @param legend_ncol Number of columns in color legend. If
 #'  \code{NULL} (default), use 10 entries per row. Only applies if the color
 #'  legend is used (qualitative data).
-#' @param legend_alllevels Show all label levels in the color legend? If 
+#' @param legend_alllevels Show all label levels in the color legend? If
 #'  \code{FALSE} (default), just show the levels present in the data being
 #'  viewed. Only applies if the color legend is used (qualitative data).
 #' @param legend_embed Should the colorbar be embedded in the plot?
 #'  It will be positioned at the bottom. Default: \code{TRUE}.
-#'  If \code{FALSE}, print/save it separately instead. 
-#' 
+#'  If \code{FALSE}, print/save it separately instead.
+#'
 #'  Only applies if the color bar is used (sequential or diverging data).
 #'  The color legend (qualitative data) cannot be embedded at the moment.
 #' @param digits The number of digits for the colorbar legend ticks.
@@ -142,10 +174,15 @@
 #'  will use \code{1.2} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles. If saving a PNG and PDF file, the default
 #'  will also scale with \code{width} relative to the default value of \code{width}.
-#' @param ypos.title,xpos.title The positioning of the title can be finicky, 
+#' @param ypos.title,xpos.title The positioning of the title can be finicky,
 #'  especially when using an R Markdown document interactively in which case it
 #'  appears too high in the plot. Use these arguments to nudge the title up
 #'  or down (\code{ypos.title}) or left or right (\code{xpos.title}).
+#' @param orientation_labels Show orientation labels at the top left and top
+#'  right of the plot? These will indicate the directions along the left-right
+#'  axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}.
+#'  The vertical positioning is controlled by \code{ypos.title}, and the font
+#'  size is controlled by \code{cex.title}.
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  \code{"white"}. If \code{"white"}, will use black instead for the color
 #   legend and the color bar if printed separately (since those will have
@@ -156,18 +193,18 @@
 #' @param width,height The dimensions of the plot, in pixels. Only affects saved
 #'  images (if \code{!isFALSE(fname)}). If \code{NULL}, file dimensions will be
 #'  400 x 600 pixels for PNGs and 4 x 6 in. for PDFs.
-#' 
+#'
 #'  Currently, there is no way to control the
 #'  dimensions of the plot if working interactively in RStudio or creating a knitted
 #'  R Markdown document. The default appears to be a wide aspect ratio.
 #' @param ... Additional arguments to pass to \code{papayar::papaya} or \code{oro.nifti::overlay}.
 #'  Note that for \code{oro.nifti::overlay} the following additional arguments
-#'  should not be provided since they are pre-determined inside this function 
+#'  should not be provided since they are pre-determined inside this function
 #'  or by the arguments listed above:
 #'  \code{x}, \code{y}, \code{plane}, \code{col.y}, \code{col.x}, \code{zlim.y},
 #'  \code{oma}, \code{plot.type}, \code{bg}.
 #' @return If a png or pdf file(s) were written, the names of the files for
-#'  each index (and color legend if applicable) will be returned. Otherwise, 
+#'  each index (and color legend if applicable) will be returned. Otherwise,
 #'  \code{NULL} is invisibly returned.
 #'
 #' @family common
@@ -177,17 +214,18 @@
 #' @importFrom stats median quantile
 #' @importFrom oro.nifti overlay readNIfTI as.nifti
 view_xifti_volume <- function(
-  xifti, structural_img="MNI", 
+  xifti, structural_img="MNI",
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"),
+  convention=c("neurological", "radiological"),
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
-  cex.title=NULL, ypos.title=0, xpos.title=0,
+  cex.title=NULL, ypos.title=0, xpos.title=0, orientation_labels=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   # ----------------------------------------------------------------------------
@@ -210,22 +248,25 @@ view_xifti_volume <- function(
     }
   }
 
+  convention <- match.arg(convention, c("neurological", "radiological"))
+
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
   if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
   idx <- as.numeric(idx)
-  if (length(widget) > 1) { 
+  if (length(widget) > 1) {
     warning("Using the first entry of `widget`.")
     widget <- as.logical(widget[[1]])
   }
-  
+  if (widget) { stop("The widget is not currently available due to a dependency being removed from CRAN. Please set `widget=FALSE`.") }
+
   makePNG <- makePDF <- FALSE
 
   # File saving: `together`
   if (!is.null(together)) {
 
     if (widget) { stop(
-      "Composite images are not compatible with widget. ", 
+      "Composite images are not compatible with widget. ",
       "Set `together=NULL` or `widget=FALSE`."
     ) }
 
@@ -233,7 +274,7 @@ view_xifti_volume <- function(
     pkg <- vapply(c("png", "grid", "gridExtra"), requireNamespace, quietly=TRUE, FALSE)
     if (any(!pkg)) {
       stop(
-        "These packages need to be installed to use `view_comp`: ", 
+        "These packages need to be installed to use `view_comp`: ",
         paste(names(pkg)[!pkg], collapse=", "), call.=FALSE
       )
     }
@@ -266,7 +307,7 @@ view_xifti_volume <- function(
   comp_fname <- NULL
   legend_embed2 <- FALSE
   if (!widget) {
-    
+
     # `fname`, `fname_suffix`, `legend_fname`
     if (!isFALSE(fname) || together) {
 
@@ -274,7 +315,7 @@ view_xifti_volume <- function(
 
       # Use default file name(s) if `fname==TRUE`.
       if (isTRUE(fname) || comp_dummy) {
-        if (together_idx) { 
+        if (together_idx) {
           if (isTRUE(fname)) {fname <- "xifti_subcort" }
           comp_fname <- fname
         } else if (fname_use_names && !comp_dummy) {
@@ -308,7 +349,7 @@ view_xifti_volume <- function(
       if (together && makePDF) { fname <- gsub(".pdf$", "", fname) }
       if ((together_idx || (makePDF && together_leg)) && is.null(comp_fname)) {
         comp_fname <- fname
-        if (length(comp_fname) > 1) { 
+        if (length(comp_fname) > 1) {
           warning("Using the first entry of `fname` (since compositing, there's only one file to save).\n")
           comp_fname <- comp_fname[1]
         }
@@ -341,7 +382,7 @@ view_xifti_volume <- function(
           if (fname_suffix == "names" && fname_use_names) {
             fname <- paste0(fname, "_", xifti$meta$cifti$names[idx])
           } else {
-            fname <- paste0(fname, "_", as.character(idx)) 
+            fname <- paste0(fname, "_", as.character(idx))
           }
         }
         # Add png file extension.
@@ -361,8 +402,8 @@ view_xifti_volume <- function(
       fname_dirs <- unique(dirname(fname))
       if (!all(file.exists(fname_dirs))) {
         stop(
-          "These directories for `fname` do not exist: ", 
-          paste0(fname_dirs[!dir.exists(fname_dirs)], 
+          "These directories for `fname` do not exist: ",
+          paste0(fname_dirs[!dir.exists(fname_dirs)],
           collapse=" ")
         )
       }
@@ -377,8 +418,8 @@ view_xifti_volume <- function(
         }
         if (grepl("\\[fname\\]", legend_fname)) {
           legend_fname <- gsub(
-            "\\[fname\\]", 
-            gsub("\\.png|\\.html", "", ifelse(together_idx, basename(comp_fname), basename(fname[1]))), 
+            "\\[fname\\]",
+            gsub("\\.png|\\.html", "", ifelse(together_idx, basename(comp_fname), basename(fname[1]))),
             basename(legend_fname)
           )
           legend_fname <- file.path(
@@ -412,8 +453,8 @@ view_xifti_volume <- function(
     if (!is.null(title)) {
       if (length(title) == 1){
         title <- rep(title, length(idx))
-      } else if (length(title) != length(idx)) { 
-        stop("Length of `title` must be 1 or the same as the length of `idx`.") 
+      } else if (length(title) != length(idx)) {
+        stop("Length of `title` must be 1 or the same as the length of `idx`.")
       }
       if (all(title == "")) { use_title <- FALSE }
     } else {
@@ -432,10 +473,10 @@ view_xifti_volume <- function(
 
   } else {
 
-    if (!requireNamespace("papayar", quietly = TRUE)) {
-      stop("Package \"papayar\" needed for this function to work. Please install it.",
-           call. = FALSE)
-    }
+    # if (!requireNamespace("papayar", quietly = TRUE)) {
+    #   stop("Package \"papayar\" needed for this function to work. Please install it.",
+    #        call. = FALSE)
+    # }
 
     # `fname`, `legend_fname`
     if (!isFALSE(fname)) {
@@ -454,7 +495,7 @@ view_xifti_volume <- function(
   if (color_mode == "auto") {
     if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
       color_mode <- "qualitative"
-    } 
+    }
     # Otherwise, set after call to view_xifti_surface.mesh_val
   } else {
     color_mode <- match.arg(color_mode, c("sequential", "qualitative", "diverging"))
@@ -474,7 +515,7 @@ view_xifti_volume <- function(
   values <- xifti$data$subcort[,idx,drop=FALSE]
   vol <- unmask_subcortex(values, xifti$meta$subcort$mask, fill=NA)
   if (length(dim(vol)) == 3) {
-    vol <- array(vol, dim=c(dim(vol), 1))
+    dim(vol) <- c(dim(vol), 1)
   }
   labs_bs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
@@ -483,14 +524,14 @@ view_xifti_volume <- function(
     values <- as.vector(values)
 
     if (color_mode == "auto") {
-      if (length(zlim) == 3) { 
+      if (length(zlim) == 3) {
         color_mode <- "diverging"
-      } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
+      } else if (is.null(values) || all(values %in% c(NA, NaN))) {
         color_mode <- "diverging"
         if (is.null(colors)) { colors <- "ROY_BIG_BL" }
       } else if (length(zlim) == 2) {
         color_mode <- ifelse(prod(zlim) >= 0, "sequential", "diverging")
-      } 
+      }
     }
 
     if (color_mode == "auto" || is.null(colors)) {
@@ -518,7 +559,7 @@ view_xifti_volume <- function(
 
   values[values == NaN] <- NA
   unique_vals <- NULL
-  if (all(is.na(values))) { 
+  if (all(is.na(values))) {
     values <- NULL
     pal <- pal_base <- pal_even <- NULL
   } else {
@@ -561,9 +602,9 @@ view_xifti_volume <- function(
         }
 
         message(
-          "`zlim` not provided: using color range ", 
+          "`zlim` not provided: using color range ",
           as.character(min(zlim)), " - ", as.character(max(zlim)), " ",
-          "(data limits: ", as.character(min(DATA_MIN)), " - ", 
+          "(data limits: ", as.character(min(DATA_MIN)), " - ",
           as.character(max(DATA_MAX)), ")."
         )
       }
@@ -611,7 +652,12 @@ view_xifti_volume <- function(
       vol[vol < min(zlim)] <- min(zlim)
       vol[vol > max(zlim)] <- max(zlim)
 
-      pal_base <- make_color_pal(colors=colors,color_mode=color_mode, zlim=zlim)
+      if (is.data.frame(colors)) {
+        stopifnot(ncol(colors)==2 && colnames(colors)==c("color", "value"))
+        pal_base <- colors
+      } else {
+        pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim)
+      }
       pal <- expand_color_pal(pal_base)
       if (length(unique(diff(pal$value))) > 1) {
         np <- nrow(pal)
@@ -659,8 +705,8 @@ view_xifti_volume <- function(
         cleg_labs <- as.character(cleg_labs)
         cleg <- pal_base
         cleg$labels <- factor(cleg_labs, levels=unique(cleg_labs))
-        if (!legend_alllevels && is.null(unique_vals)) { 
-          cleg <- cleg[cleg$value %in% as.vector(vol),] 
+        if (!legend_alllevels && is.null(unique_vals)) {
+          cleg <- cleg[cleg$value %in% as.vector(vol),]
         }
         # Skip if there are too many legend labels, or only one label.
         if (nrow(cleg) < 1) {
@@ -695,7 +741,7 @@ view_xifti_volume <- function(
       if (is.null(legend_embed)) { legend_embed <- TRUE }
       if (together_leg) { legend_embed <- FALSE }
       colorbar_kwargs <- view_xifti.cbar(
-        pal_base, pal, color_mode, 
+        pal_base, pal, color_mode,
         ifelse(legend_embed || (!use_cleg && together && !comp_dummy), text_color, text_color2), digits
       )
     }
@@ -719,6 +765,14 @@ view_xifti_volume <- function(
   # Set up the display window. -------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  flip <- (convention=="radiological" && widget) || (convention=="neurological" && !widget)
+  if (flip) {
+    # cat("Flipping NIFTI image.")
+    vol <- vol[rev(seq(dim(vol)[1])),,,,drop=FALSE]
+    xifti$meta$subcort$mask <- xifti$meta$subcort$mask[rev(seq(dim(vol)[1])),,,drop=FALSE]
+    labs_bs <- labs_bs[rev(seq(dim(vol)[1])),,,drop=FALSE]
+  }
+
   if (!widget) {
     plane <- match.arg(plane, c("axial", "sagittal", "coronal"))
     plane_dim <- switch(plane, axial=3, coronal=2, sagittal=1)
@@ -736,7 +790,7 @@ view_xifti_volume <- function(
       ns_all <- length(mask_count)
       if (n_slices > length(slices)) {
         warning(
-          "`n_slices` is larger than the number of non-empty slices (", 
+          "`n_slices` is larger than the number of non-empty slices (",
           length(slices), "). Showing all non-empty slices."
         )
         n_slices <- length(slices)
@@ -753,8 +807,14 @@ view_xifti_volume <- function(
   }
 
   if (!is.null(structural_img)) {
-    img <- readNIfTI(structural_img, reorient=FALSE)
+    # Need to use `oro.nifti` here instead of `RNifti` because
+    #   we modify @.Data to work with `oro.nifti::overlay`.
+    # `img` is +LAS (+RAS convention, but sform mult is negative for x.)
+    img <- readNIfTI(structural_img)
     img[is.na(img)] <- 0
+    if (flip) {
+      img[] <- img[rev(seq(dim(img)[1])),,,drop=FALSE]
+    }
 
     # Check data dimensions.
     if (!isTRUE(all.equal(dim(img), dim(vol)[seq(3)]))) {
@@ -768,9 +828,9 @@ view_xifti_volume <- function(
     # Check data orientation alignment.
     # This uses the sform method (srow_x, srow_y, and srow_z), not qform
     #   or ANALYZE-based methods.
-    # This is because the Connectome Workbench seems to export the 
+    # This is because the Connectome Workbench seems to export the
     #   TransformationMatrixIJKtoXYZ as the sform transformation matrix
-    #   in -cifti-separate. 
+    #   in -cifti-separate.
     img_trans_mat <- make_trans_mat(structural_img)
     xii_trans_mat <- xifti$meta$subcort$trans_mat
     if (!is.null(xii_trans_mat)) {
@@ -803,9 +863,11 @@ view_xifti_volume <- function(
     img_overlay@.Data[labs_bs==0] <- NA
     img_labels@.Data <- labs_bs
     img_labels@.Data[labs_bs==0] <- NA
-    return(
-      papayar::papaya(list(img, img_labels, img_overlay), ...)
-    )
+
+    # return(
+    #   papayar::papaya(list(img, img_labels, img_overlay), ...)
+    # )
+    return(NULL)
   }
 
   if (is.null(width)) { width <- 200 * ifelse(!together && makePDF, .02, 2) }
@@ -840,10 +902,10 @@ view_xifti_volume <- function(
     } else { stop() }
 
     oro.nifti::overlay(
-      x=img2, y=img_overlay2, plane=plane, 
+      x=img2, y=img_overlay2, plane=plane,
       col.y=as.character(pal_even$color),
       col.x=structural_img_colors,
-      zlim.y=zlim, 
+      zlim.y=zlim,
       oma=c(5,0,5,0),
       plot.type=ifelse(length(slices)==1, "single", "multiple"),
       bg=bg, ...
@@ -882,11 +944,31 @@ view_xifti_volume <- function(
           cex.title <- round(cex.title*100)/100
         }
 
-        title(title_jj, col.main=text_color, cex.main=cex.title,
-          line= 1.75 + ypos.title, # Move up 
+        title(
+          title_jj, col.main=text_color, cex.main=cex.title,
+          line= 1.75 + ypos.title, # Move up
           adj=ifelse(!isFALSE(fname), ifelse(!together && makePDF, .42, .45), .465) + xpos.title # Move up and left
         )
       }
+    }
+
+    if (orientation_labels) {
+      olabs <- switch(plane,
+        axial = c("L", "R"),
+        coronal = c("L", "R"),
+        sagittal = c("P", "A")
+      )
+      if (convention=="radiological" && plane!="sagittal") { olabs <- c("R", "L") }
+      title(
+        olabs[1], col.main=text_color, cex.main=cex.title,
+        line = 1.75 + ypos.title,
+        adj = 0
+      )
+      title(
+        olabs[2], col.main=text_color, cex.main=cex.title,
+        line = 1.75 + ypos.title,
+        adj = 1
+      )
     }
 
     if (!together && makePDF) {
@@ -912,7 +994,7 @@ view_xifti_volume <- function(
       }
       if (close_after_save) { dev.off() }
     }
-  } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) { 
+  } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) {
     print(cleg)
   } else if (!use_cleg) {
     # Make (and save) the colorbar (if applicable).
@@ -920,7 +1002,7 @@ view_xifti_volume <- function(
       if (!requireNamespace("fields", quietly = TRUE)) {
         stop("Package \"fields\" needed to render the color bar for `view_xifti_surface`. Please install it.", call. = FALSE)
       }
-      if (!isFALSE(fname) && !isFALSE(legend_fname)) { 
+      if (!isFALSE(fname) && !isFALSE(legend_fname)) {
         lfac <- ifelse(!together && makePDF, 2/.02, 1) * width
         png(legend_fname, bg=ifelse(comp_dummy, "white", bg), width=lfac, height=ceiling(lfac*.4))
       } else {
@@ -930,7 +1012,7 @@ view_xifti_volume <- function(
       # Make labels smaller (cex.axis) and lower to compensate (mgp)
       colorbar_kwargs$axis.args$cex.axis <- colorbar_kwargs$axis.args$cex.axis * together_scale * .85
       colorbar_kwargs$axis.args$mgp <- c(3,.5+together_scale,0)
-      
+
       try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE)
       if (!isFALSE(fname) && !isFALSE(legend_fname)) { if (close_after_save) { dev.off() } }
     }
@@ -947,7 +1029,9 @@ view_xifti_volume <- function(
   if (!file.exists(as.character(legend_fname))) { legend_fname <- NULL }
   # Compositing `together`
   if (together_idx) {
-    together_ncol <- ceiling(sqrt(length(idx)))
+    if (is.null(together_ncol)) {
+      together_ncol <- ceiling(sqrt(length(idx)))
+    }
     together_nrow <- ceiling(length(idx)/together_ncol)
     comp_width <- width * together_ncol
     comp_height <- height * together_nrow
@@ -969,7 +1053,7 @@ view_xifti_volume <- function(
       legend_fname <- NULL
     }
     view_comp(
-      fname, ncol=together_ncol, 
+      fname, ncol=together_ncol,
       legend=legend_fname, legend_height=leg_height,
       title=together_title, title_height=title_height,
       title_fsize=1.5 * together_scale
@@ -981,7 +1065,7 @@ view_xifti_volume <- function(
       file.rename(legend_fname, paste0(tempfile(), ".png"))
     }
     if (!together_leg) {
-      if (use_cleg) { 
+      if (use_cleg) {
         if (!comp_dummy) {
           fname_all <- c(fname_all, legend_fname)
         } else {
@@ -1028,12 +1112,12 @@ view_xifti_volume <- function(
 #' @rdname view_xifti_volume
 #' @export
 view_cifti_volume <- function(
-  xifti, structural_img="MNI", 
+  xifti, structural_img="MNI",
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"),
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1047,7 +1131,7 @@ view_cifti_volume <- function(
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
@@ -1060,12 +1144,12 @@ view_cifti_volume <- function(
 #' @rdname view_xifti_volume
 #' @export
 viewCIfTI_volume <- function(
-  xifti, structural_img="MNI", 
+  xifti, structural_img="MNI",
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"),
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1079,7 +1163,7 @@ viewCIfTI_volume <- function(
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
@@ -1092,12 +1176,12 @@ viewCIfTI_volume <- function(
 #' @rdname view_xifti_volume
 #' @export
 viewcii_volume <- function(
-  xifti, structural_img="MNI", 
+  xifti, structural_img="MNI",
   color_mode="auto", zlim=NULL, colors=NULL,
   structural_img_colors=gray(0:255/280), title=NULL,
-  idx=NULL, plane=c("axial", "sagittal", "coronal"), 
+  idx=NULL, plane=c("axial", "sagittal", "coronal"),
   n_slices=9, slices=NULL,
-  together=NULL, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
@@ -1111,7 +1195,7 @@ viewcii_volume <- function(
     structural_img_colors=structural_img_colors, title=title,
     idx=idx, plane=plane,
     n_slices=n_slices, slices=slices,
-    together=together, together_title=together_title,
+    together=together, together_ncol=together_ncol, together_title=together_title,
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,

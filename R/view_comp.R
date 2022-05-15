@@ -58,9 +58,8 @@ crop_image <- function(x, dims=seq(2)){
 #' 
 #' @param img Character vector of paths to images to include. They will be
 #'  arranged by row.  
-#' @param layout \code{"array"} (default) which is suitable for displaying
-#'  multiple cortex plots or multiple subcortex plots, or \code{"pair"} which is
-#'  suitable for displaying one cortex plot and one subcortex plot side-by-side.
+#' @param ncol,nrow Control the layout of the composite image. \code{NULL} (default) 
+#'  will use approximately same numbers of rows and columns.
 #' @param legend File path to a legend image to add, or \code{NULL} (default)
 #'  to not add a legend.
 #' @param title A length-one character vector to use as the title, or \code{NULL}
@@ -69,24 +68,25 @@ crop_image <- function(x, dims=seq(2)){
 #'  applicable. Specified relative to all the plots, so \code{.1} would
 #'  mean the height is a tenth of the height of all the plots. Default:
 #'  \code{.1} for the title and \code{.3} for the legend.
-#' @param title_fsize Multiplier for font size. Default: \code{1.5}
-#' @param newpage Call \code{grid::grid.newpage} at the start? Default: \code{TRUE}.
+#' @param title_fsize Multiplier for font size. Default: \code{5}
+#' @param newpage Call \code{grid::grid.newpage} before rendering? 
+#'  Default: \code{is.null(fname)}.
+#' @param fname If \code{NULL} (default), print the result. Otherwise, save to
+#'  a PNG file at this location. Will override \code{newpage} to \code{FALSE}.
 #' @param ... Additional arguments to \code{gridExtra::arrangeGrob}. The
-#'  arguments \code{grobs}, \code{layout_matrix}, \code{nrow}, and \code{ncol}
-#'  should be avoided because they are determined based on \code{img} and
-#'  \code{layout}. If the \code{layout} is \code{"pair"} or \code{"pairL"},
-#'  adjusting \code{widths} may be useful, e.g. to make the subcortex subplot
-#'  be less wide than the cortex subplot.
+#'  arguments \code{grobs} and \code{layout_matrix} should be avoided because 
+#'  they are determined based on \code{img}. adjusting \code{widths} may be useful, 
+#'  e.g. to make the subcortex subplot be less wide than the cortex subplot.
 #'  
 #' 
 #' @export
 #' 
 #' @return The composite plot
 view_comp <- function(
-  img, layout=c("array", "pair"), 
+  img, ncol=NULL, nrow=NULL, 
   legend=NULL, title=NULL, 
-  legend_height=.3, title_height=.1, title_fsize=1.5,
-  newpage=TRUE, ...) {
+  legend_height=.3, title_height=.1, title_fsize=5,
+  newpage=is.null(fname), fname=NULL, ...) {
 
   # Check packages
   pkg <- vapply(c("png", "grid", "gridExtra"), requireNamespace, quietly=TRUE, FALSE)
@@ -97,15 +97,36 @@ view_comp <- function(
     )
   }
 
-  if (newpage) { grid::grid.newpage() }
+  write_comp <- !is.null(fname)
 
   # Load images as grobs
   img <- as.character(img)
   img <- lapply(img, png::readPNG)
   img <- lapply(img, grid::rasterGrob)
 
-  # Check for legend. If present, separate it out from the plot images
-  layout <- match.arg(layout, c("array", "pair"))
+  # Arrange the plots
+  comp <- gridExtra::arrangeGrob(grobs=img, ncol=ncol, nrow=nrow, ...)
+  
+  if (write_comp) {
+    comp_dim <- dim(comp)
+    dtable <- expand.grid(lapply(rev(comp_dim), seq))[seq(length(img)),]
+    dtable$height <- vapply(img, function(x){dim(x$raster)[1]}, 0)
+    dtable$width <- vapply(img, function(x){dim(x$raster)[2]}, 0)
+    row_heights <- vapply(seq(comp_dim[1]), function(x){
+      max(dtable[dtable$Var2==x,"height"])}, 0
+    )
+    col_widths <- vapply(seq(comp_dim[2]), function(x){
+      max(dtable[dtable$Var1==x,"width"])}, 0
+    )
+    # `img_dim`: height by width
+    # `img_dim2`: is the composited images plus title and legend
+    img_dim <- img_dim2 <- c(sum(row_heights), sum(col_widths))
+  }
+
+  # comp_dims <- list(
+  #   height=vapply(img, function(x){dim(x)[1]}, 0),
+  #   width=vapply(img, function(x){dim(x)[2]}, 0)
+  # )
 
   # Check legend
   use_legend <- !is.null(legend)
@@ -114,6 +135,7 @@ view_comp <- function(
     stopifnot(is.numeric(legend_height) && length(legend_height)==1)
     stopifnot(legend_height>0)
     legend <- grid::rasterGrob(crop_image(png::readPNG(legend), 2))
+    if (write_comp) { img_dim2[1] <- img_dim2[1] + img_dim2[1]*legend_height }
   } else {
     legend_height <- NULL
   }
@@ -127,17 +149,9 @@ view_comp <- function(
     )
     title_size <- grid::get.gpar("fontsize")$fontsize * title_fsize
     title <- grid::textGrob(title, gp=grid::gpar(fontsize=title_size))
+    if (write_comp) { img_dim2[1] <- img_dim2[1] + img_dim2[1]*title_height }
   } else {
     title_height <- NULL
-  }
-
-  # Arrange the plots
-  if (layout == "array") {
-    comp <- gridExtra::arrangeGrob(grobs=img, ...)
-  } else if (layout == "pair") {
-    comp <- gridExtra::arrangeGrob(grobs=img, ncol=2, ...)
-  } else {
-    stop()
   }
 
   # Add title and legend, if applicable
@@ -149,6 +163,23 @@ view_comp <- function(
     )
   }
 
+  if (write_comp) {
+    if (newpage) { warning("Ignoring `newpage`.") }
+    if (endsWith(fname, "png")) { 
+      png(fname, height=img_dim2[1], width=img_dim2[2])
+    } else if (endsWith(fname, "pdf")) {
+      pdf(fname, height=img_dim2[1], width=img_dim2[2])
+    } else {
+      stop("`fname` should end with 'png' or 'pdf'.")
+    }
+  } else {
+    if (newpage) { grid::grid.newpage() }
+  }
   grid::grid.draw(comp)
-  invisible(comp)
+  if (write_comp) { 
+    dev.off()
+    return(fname)
+  } else {
+    return(invisible(comp))
+  }
 }

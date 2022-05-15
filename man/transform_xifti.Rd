@@ -2,74 +2,9 @@
 % Please edit documentation in R/transform_xifti.R
 \name{transform_xifti}
 \alias{transform_xifti}
-\alias{+.xifti}
-\alias{-.xifti}
-\alias{*.xifti}
-\alias{^.xifti}
-\alias{>.xifti}
-\alias{>=.xifti}
-\alias{<.xifti}
-\alias{<=.xifti}
-\alias{==.xifti}
-\alias{!=.xifti}
-\alias{\%\%.xifti}
-\alias{\%/\%.xifti}
-\alias{/.xifti}
-\alias{abs.xifti}
-\alias{sign.xifti}
-\alias{sqrt.xifti}
-\alias{floor.xifti}
-\alias{ceiling.xifti}
-\alias{round.xifti}
-\alias{exp.xifti}
-\alias{log.xifti}
 \title{Apply a univariate transformation to a \code{"xifti"} or pair of \code{"xifti"}s.}
 \usage{
-transform_xifti(xifti, FUN, xifti2 = NULL, ...)
-
-\method{+}{xifti}(xifti, xifti2)
-
-\method{-}{xifti}(xifti, xifti2)
-
-\method{*}{xifti}(xifti, xifti2)
-
-\method{^}{xifti}(xifti, xifti2)
-
-\method{>}{xifti}(xifti, xifti2)
-
-\method{>=}{xifti}(xifti, xifti2)
-
-\method{<}{xifti}(xifti, xifti2)
-
-\method{<=}{xifti}(xifti, xifti2)
-
-\method{==}{xifti}(xifti, xifti2)
-
-\method{!=}{xifti}(xifti, xifti2)
-
-\method{^}{xifti}(xifti, xifti2)
-
-\method{\%\%}{xifti}(xifti, xifti2)
-
-\method{\%/\%}{xifti}(xifti, xifti2)
-
-\method{/}{xifti}(xifti, xifti2)
-
-\method{abs}{xifti}(x)
-
-\method{sign}{xifti}(x)
-
-\method{sqrt}{xifti}(x)
-
-\method{floor}{xifti}(x)
-
-\method{ceiling}{xifti}(x)
-
-\method{round}{xifti}(x, digits = 0)
-
-\method{exp}{xifti}(x)
-
-\method{log}{xifti}(x, base = exp(1))
+transform_xifti(xifti, FUN, xifti2 = NULL, idx = NULL, ...)
 }
 \arguments{
 \item{xifti}{The xifti}
@@ -81,13 +16,12 @@ or \code{pmax}.}
 
 \item{xifti2}{The second xifti, if applicable. Otherwise, \code{NULL} (default)}
 
+\item{idx}{The column indices for which to apply the transformation.
+If \code{NULL} (default), apply to all columns. If two \code{"xifti"} objects,
+were provided, the values in the first (\code{xifti}) will be retained for columns
+that are not transformed.}
+
 \item{...}{Additional arguments to \code{FUN}}
-
-\item{x}{The \code{"xifti"}}
-
-\item{digits}{The number of digits to round by}
-
-\item{base}{The log base}
 }
 \value{
 A \code{"xifti"} storing the result of applying \code{FUN} to the input(s).
@@ -103,6 +37,12 @@ and number of measurements.
 If the \code{"xifti"} had the dlabel intent, and the transformation creates
 any value that is not a label value (e.g. a non-integer), then it is converted
 to a dscalar.
+
+Technically, the function does not have to be univariate: it only has to return the
+same number of values as the input. The function will be applied to the matrix
+for each brain structure separately. For example, the function
+\code{function(q){(q - mean(q)) / sd(q)}} will scale each brainstructure, while
+\code{scale} will scale each column of each brainstructure.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
