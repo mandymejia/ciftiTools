@@ -864,9 +864,10 @@ view_xifti_volume <- function(
     img_labels@.Data <- labs_bs
     img_labels@.Data[labs_bs==0] <- NA
 
-    return(
-      papayar::papaya(list(img, img_labels, img_overlay), ...)
-    )
+    # return(
+    #   papayar::papaya(list(img, img_labels, img_overlay), ...)
+    # )
+    return(NULL)
   }
 
   if (is.null(width)) { width <- 200 * ifelse(!together && makePDF, .02, 2) }
