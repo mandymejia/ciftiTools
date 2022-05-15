@@ -6,13 +6,15 @@
 \usage{
 view_comp(
   img,
-  layout = c("array", "pair"),
+  ncol = NULL,
+  nrow = NULL,
   legend = NULL,
   title = NULL,
   legend_height = 0.3,
   title_height = 0.1,
-  title_fsize = 1.5,
-  newpage = TRUE,
+  title_fsize = 5,
+  newpage = is.null(fname),
+  fname = NULL,
   ...
 )
 }
@@ -20,9 +22,8 @@ view_comp(
 \item{img}{Character vector of paths to images to include. They will be
 arranged by row.}
 
-\item{layout}{\code{"array"} (default) which is suitable for displaying
-multiple cortex plots or multiple subcortex plots, or \code{"pair"} which is
-suitable for displaying one cortex plot and one subcortex plot side-by-side.}
+\item{ncol, nrow}{Control the layout of the composite image. \code{NULL} (default)
+will use approximately same numbers of rows and columns.}
 
 \item{legend}{File path to a legend image to add, or \code{NULL} (default)
 to not add a legend.}
@@ -35,16 +36,18 @@ applicable. Specified relative to all the plots, so \code{.1} would
 mean the height is a tenth of the height of all the plots. Default:
 \code{.1} for the title and \code{.3} for the legend.}
 
-\item{title_fsize}{Multiplier for font size. Default: \code{1.5}}
+\item{title_fsize}{Multiplier for font size. Default: \code{5}}
 
-\item{newpage}{Call \code{grid::grid.newpage} at the start? Default: \code{TRUE}.}
+\item{newpage}{Call \code{grid::grid.newpage} before rendering?
+Default: \code{is.null(fname)}.}
+
+\item{fname}{If \code{NULL} (default), print the result. Otherwise, save to
+a PNG file at this location. Will override \code{newpage} to \code{FALSE}.}
 
 \item{...}{Additional arguments to \code{gridExtra::arrangeGrob}. The
-arguments \code{grobs}, \code{layout_matrix}, \code{nrow}, and \code{ncol}
-should be avoided because they are determined based on \code{img} and
-\code{layout}. If the \code{layout} is \code{"pair"} or \code{"pairL"},
-adjusting \code{widths} may be useful, e.g. to make the subcortex subplot
-be less wide than the cortex subplot.}
+arguments \code{grobs} and \code{layout_matrix} should be avoided because
+they are determined based on \code{img}. adjusting \code{widths} may be useful,
+e.g. to make the subcortex subplot be less wide than the cortex subplot.}
 }
 \value{
 The composite plot
