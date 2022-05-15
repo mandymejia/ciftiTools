@@ -207,6 +207,7 @@ test_that("Miscellaneous functions are working", {
   newdata_xifti(cii1, as.matrix(cii1)[,rep(seq(ncol(cii1)), 2)])
 
 
-  # [TO DO]: Test concatenating xiftis of different types
-
+  x <- read_cifti(fnames$cifti[1], surfL_fname=fnames$surf["left"], brainstructures="left")
+  y <- read_cifti(fnames$cifti[2], surfR_fname=fnames$surf["right"], brainstructures="right")
+  z <- combine_xifti(x,y)
 })
