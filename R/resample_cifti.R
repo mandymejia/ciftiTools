@@ -42,16 +42,15 @@
 resample_cifti_wrapper <- function(
   original_fnames, resamp_fnames=NULL,
   original_res, resamp_res,
-  surfL_fname=NULL, surfR_fname=NULL,
+  surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   read_dir=NULL, write_dir=NULL) {
-
-  # [TO DO]: surfL_fname --> surfL_original_fname? (and same for right?)
 
   # Get kwargs.
   resamp_kwargs <- list(
     original_res=original_res, resamp_res=resamp_res,
-    surfL_original_fname=surfL_fname, surfR_original_fname=surfR_fname,
+    surfL_original_fname=surfL_original_fname, 
+    surfR_original_fname=surfR_original_fname,
     surfL_target_fname=surfL_target_fname,
     surfR_target_fname=surfR_target_fname,
     read_dir=read_dir, write_dir=write_dir
@@ -287,7 +286,8 @@ resample_cifti <- function(
   resamp_result <- resample_cifti_wrapper(
     original_res=original_res, resamp_res=resamp_res,
     original_fnames=to_resample, resamp_fnames=NULL,
-    surfL_fname=surfL_original_fname, surfR_fname=surfR_original_fname,
+    surfL_original_fname=surfL_original_fname, 
+    surfR_original_fname=surfR_original_fname,
     surfL_target_fname=surfL_target_fname,
     surfR_target_fname=surfR_target_fname,
     read_dir=NULL, write_dir=tempdir()
