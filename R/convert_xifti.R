@@ -11,7 +11,11 @@
 #'  be unique. They may not all occur in the \code{"xifti"} data, but every
 #'  datapoint in the \code{"xifti"} must occur in \code{values}. Data will be 
 #'  mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
-#'  number of \code{values}.
+#'  number of \code{values}. They will be sorted.
+#' 
+#'  If \code{values} is a named vector, the rownames of the label table in the resulting
+#'  \code{"xifti"} will be those names. Otherwise, the rownames will be the values
+#'  themselves.  
 #' @param nsig Take this many significant digits for the data values. If 
 #'  \code{Inf} (default), do not round.
 #' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
@@ -25,8 +29,6 @@
 #' @keywords internal
 convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   values=NULL, nsig=Inf, colors="Set2", add_white=TRUE, return_conversion_table=FALSE) {
-
-  # [TO DO] use names(values) as rownames of label table
 
   # If the input is a CIFTI file name, we need to read it into R.
   input_is_xifti <- is.xifti(x, messages=FALSE)
@@ -68,8 +70,8 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
     }
   } else {
     # Check the new values.
-    if (any(duplicated(values))) { warning("Removing duplicate `values`.\n") }
-    values <- sort(unique(values))
+    if (any(duplicated(values))) { warning("Removing duplicate `values`.\n"); values <- unique(values) }
+    values <- sort(values)
   }
   if (length(values) > 1000) { warning("Over 1000 unique `values` in the `xifti`.\n") }
   conversion_table <- data.frame(values=values, label=seq(length(values))-1)
@@ -122,7 +124,7 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   col_table <- rbind(seq(N_)-1, col_table)
   rownames(col_table) <- c("Key", "Red", "Green", "Blue", "Alpha")
   col_table <- as.data.frame(t(col_table))
-  rownames(col_table) <- values
+  rownames(col_table) <- if (!is.null(names(values))) { names(values) } else { values }
 
   # Add components to xifti
   T_ <- ncol_xifti(x)

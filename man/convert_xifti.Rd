@@ -45,7 +45,11 @@ name as \code{x} but with the extension updated.}
 be unique. They may not all occur in the \code{"xifti"} data, but every
 datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
 mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
-number of \code{values}.}
+number of \code{values}. They will be sorted.
+
+If \code{values} is a named vector, the rownames of the label table in the resulting
+\code{"xifti"} will be those names. Otherwise, the rownames will be the values
+themselves.}
 
 \item{nsig}{Take this many significant digits for the data values. If
 \code{Inf} (default), do not round.}
