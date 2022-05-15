@@ -9,8 +9,8 @@ resample_cifti_wrapper(
   resamp_fnames = NULL,
   original_res,
   resamp_res,
-  surfL_fname = NULL,
-  surfR_fname = NULL,
+  surfL_original_fname = NULL,
+  surfR_original_fname = NULL,
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   read_dir = NULL,
@@ -48,12 +48,6 @@ the same directory.}
 
 \item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
-
-\item{surfL_fname}{(Optional) File path to a GIFTI surface geometry
-file representing the left cortex.}
-
-\item{surfR_fname}{(Optional) File path to a GIFTI surface geometry
-file representing the right cortex.}
 
 \item{surfL_target_fname, surfR_target_fname}{(Optional) File path for
 the resampled GIFTI surface geometry file representing the left/right
