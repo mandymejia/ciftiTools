@@ -232,7 +232,8 @@ view_xifti <- function(xifti, what=NULL, ...) {
   vxs <- function(
     xifti, args, color_mode, zlim, colors,
     fname, fname_sub,
-    structural_img, plane, n_slices, slices, ypos.title, xpos.title,
+    structural_img, plane, convention, n_slices, slices, 
+    ypos.title, xpos.title, orientation_labels,
     ...
     ) { 
     view_xifti_surface(
@@ -244,7 +245,7 @@ view_xifti <- function(xifti, what=NULL, ...) {
     xifti, args, color_mode, zlim, colors,
     fname, fname_sub, 
     hemisphere, view, slider_title, borders, alpha, 
-    edge_color, vertex_color, vertex_size, zoom,
+    edge_color, vertex_color, vertex_size, material, zoom,
     ...
     ) { 
     view_xifti_volume(
@@ -400,7 +401,12 @@ view_xifti <- function(xifti, what=NULL, ...) {
     out$surface <- vxs(xifti, args, ...)
   }
   if (what == "both" | what == "volume") {
-    out$volume <- vxv(xifti, args, ...)
+    args2 <- args
+    if (what == "both" && args$color_mode != "qualitative" && "legend_embed" %in% names(args) && args$legend_embed=="FALSE") {
+      out$volume <- vxv(xifti, args2, legend_fname=tempfile(), ...)
+    } else {
+       out$volume <- vxv(xifti, args2, ...)
+    }
   }
 
   out <- switch(what,

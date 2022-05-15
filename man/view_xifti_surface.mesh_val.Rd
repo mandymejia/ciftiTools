@@ -4,7 +4,14 @@
 \alias{view_xifti_surface.mesh_val}
 \title{Get the mesh(es) and data values for \code{view_xifti_surface}}
 \usage{
-view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
+view_xifti_surface.mesh_val(
+  xifti,
+  surfL,
+  surfR,
+  hemisphere,
+  idx,
+  material = NULL
+)
 }
 \arguments{
 \item{xifti}{The \code{"xifti"}}
@@ -16,6 +23,8 @@ view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
 \item{hemisphere}{Hemisphere}
 
 \item{idx}{Index}
+
+\item{material}{\code{rgl} material properties}
 }
 \value{
 A list with entries "mesh" and "values"

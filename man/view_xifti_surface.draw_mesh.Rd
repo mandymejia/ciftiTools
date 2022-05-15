@@ -10,7 +10,8 @@ view_xifti_surface.draw_mesh(
   alpha,
   vertex_color,
   vertex_size,
-  edge_color
+  edge_color,
+  material
 )
 }
 \arguments{

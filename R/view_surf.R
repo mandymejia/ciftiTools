@@ -28,7 +28,7 @@
 view_surf <- function(
   ..., view=c("both", "lateral", "medial"), widget=NULL, title=NULL,
   fname=FALSE, cex.title=NULL, text_color="black", bg=NULL,
-  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, 
+  alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0, material=NULL,
   width=NULL, height=NULL, zoom=NULL){
   
   surf <- list(...)

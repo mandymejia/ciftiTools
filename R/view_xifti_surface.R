@@ -108,12 +108,13 @@ view_xifti_surface.surf_hemi <- function(
 #' @param surfR Right surface
 #' @param hemisphere Hemisphere
 #' @param idx Index
+#' @param material \code{rgl} material properties
 #'
 #' @return A list with entries "mesh" and "values"
 #'
 #' @keywords internal
 #'
-view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
+view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx, material=NULL) {
 
   # ----------------------------------------------------------------------------
   # Get the data values. -------------------------------------------------------
@@ -195,8 +196,10 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx) {
       rep(1, nrow(surf_h$vertices))
     ))
     faces_h <- t(surf_h$faces)
-    mesh[[h]] <- rgl::tmesh3d(vertices_h, faces_h, meshColor = "vertices")
-
+    mesh[[h]] <- rgl::tmesh3d(
+      vertices_h, faces_h, meshColor = "vertices", 
+      material=material
+    )
     ## Add normals for smooth coloring.
     mesh[[h]] <- rgl::addNormals(mesh[[h]])
   }
@@ -404,13 +407,18 @@ view_xifti_surface.draw_title <- function(title, xifti_meta, this_idx, cex.title
 #'
 view_xifti_surface.draw_mesh <- function(
   mesh, mesh_color, alpha,
-  vertex_color, vertex_size, edge_color){
+  vertex_color, vertex_size, edge_color, material){
+
+  specular <- "black"
+  if (!is.null(material) && "specular" %in% names(material)) {
+    specular <- material[["specular"]]
+  }
 
   # Draw the mesh.
   mesh_col <- rgl::shade3d(
     mesh,
     color=mesh_color,
-    specular="black",
+    specular=specular,
     alpha=alpha,
     legend=TRUE
   )
@@ -420,7 +428,7 @@ view_xifti_surface.draw_mesh <- function(
     mesh_vert <- rgl::shade3d(
       mesh,
       color=vertex_color, size=vertex_size,
-      specular="black",
+      specular=specular,
       front="points", back="points",
       legend=FALSE
     )
@@ -433,7 +441,7 @@ view_xifti_surface.draw_mesh <- function(
     mesh_edge <- rgl::shade3d(
       mesh,
       color=edge_color,
-      specular="black",
+      specular=specular,
       front="lines", back="lines",
       legend=FALSE
     )
@@ -583,6 +591,7 @@ view_xifti_surface <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  material=NULL,
   width=NULL, height=NULL, zoom=NULL
   ) {
 
@@ -985,7 +994,7 @@ view_xifti_surface <- function(
   # Get the data values and surface models, and construct the mesh. ------------
   # ----------------------------------------------------------------------------
 
-  x <- view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx)
+  x <- view_xifti_surface.mesh_val(xifti, surfL, surfR, hemisphere, idx, material)
   mesh <- x$mesh; values <- x$values
 
   # Set `color_mode` if `"auto"`; set `colors` if `NULL`
@@ -1299,7 +1308,7 @@ view_xifti_surface <- function(
         # Draw the mesh.
         rglIDs[[jj]][[p]] <- view_xifti_surface.draw_mesh(
           mesh[[h]], mesh_color,
-          alpha, vertex_color, vertex_size, edge_color
+          alpha, vertex_color, vertex_size, edge_color, material
         )
       }
 

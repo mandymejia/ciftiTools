@@ -17,6 +17,7 @@ view_surf(
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  material = NULL,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -89,6 +90,11 @@ not outline the edges).}
 
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0}
 (do not draw the vertices).}
+
+\item{material}{A list of materials from \code{\link[rgl]{rgl.material}}
+to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
+from the color scale, rather than adding geometric shading and interpolating
+vertex colors. If \code{NULL}, use defaults.}
 
 \item{width}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), these dimensions depend on type of output (Open GL
