@@ -683,7 +683,7 @@ view_xifti_surface <- function(
   # File saving: `together`
   if (!is.null(together)) {
 
-    # TO DO: allow display of static composites?
+    # TO DO: allow display of static composites in the widget?
 
     if (widget) { stop(
       "Composite images are not compatible with widget. ",
