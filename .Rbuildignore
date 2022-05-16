@@ -19,3 +19,4 @@
 ^README_media$
 ^tests/run_ciftiTools_tests\.R$
 ^codecov\.yml$
+^CRAN-SUBMISSION$

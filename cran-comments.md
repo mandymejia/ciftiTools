@@ -17,7 +17,8 @@ These files are necessary and have already been reduced in size.
 
 ## Downstream dependencies
 
-There is one downstream dependency, `fMRIscrub`. It continues to pass all checks.
+No downstream dependencies on CRAN.
+
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
