@@ -1,14 +1,17 @@
-# 9.0 (TBD)
+# 9.0 (May 16, 2022)
 
-* Replace coveralls with codecov
-* Add `convention` and `orientation_labels` to `view_xifti_volume` (default: neurological, instead of radiological)
-* Add `together_ncol` to `view_xifti_*`
-* Add citation to welcome message
-* Better file path management for system commands
-* Allow `"xifti"` objects to have different resolutions in the left and right cortex
-* Better use of S3 group methods for Math, Ops, Summary functions
-* Add `fname` to `view_comp`
-* Misc. patches
+New features
+Add convention and orientation_labels to view_xifti_volume (default: neurological, instead of radiological as it's been previously)
+Add together_ncol to view_xifti_* to control compositing layout
+Add fname argument to view_comp to save the result to a PNG file
+Allow "xifti" objects to have different resolutions in the left and right cortex
+Add citation to welcome message
+
+Behind-the-scenes improvements
+Better file path management for system commands
+Better use of S3 group methods for Math, Ops, Summary functions
+Replace coveralls with codecov 
+Misc. patches
 
 # 8.0 (February 1, 2022)
 
