@@ -892,13 +892,13 @@ view_xifti_volume <- function(
 
     if (plane=="axial") {
       img2 <- img[,,slices]
-      img_overlay2 <- img_overlay[,,slices]
+      img_overlay2 <- img_overlay[,,slices,drop=FALSE]
     } else if (plane=="coronal") {
       img2 <- img[,slices,]
-      img_overlay2 <- img_overlay[,slices,]
+      img_overlay2 <- img_overlay[,slices,,drop=FALSE]
     } else if (plane=="sagittal") {
       img2 <- img[slices,,]
-      img_overlay2 <- img_overlay[slices,,]
+      img_overlay2 <- img_overlay[slices,,,drop=FALSE]
     } else { stop() }
 
     oro.nifti::overlay(
