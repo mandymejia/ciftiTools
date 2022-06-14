@@ -259,7 +259,7 @@ If the title is non-empty but does not appear, try lowering \code{cex.title}.}
 is used, to provide a title for it. Default: \code{"Index"}.
 If \code{NULL} or an empty character, no title will be added.}
 
-\item{fname, fname_suffix}{Save the plot(s) (and color legend if applicable)?
+\item{fname}{Save the plot(s) (and color legend if applicable)?
 
 If \code{isFALSE(fname)} (default), no files will be written.
 
@@ -270,9 +270,11 @@ If neither of the cases above apply, a png image will be written for each
 \code{idx}. If \code{isTRUE(fname)} the files will be named by the
 data column names (underscores will replace spaces). Or, set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
-\code{fname_suffix}: either the data column names (\code{"names"}) or the
-index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
+\code{fname_suffix}. Or, set \code{fname} to a character vector with the same
 length as \code{idx} to name the files exactly.}
+
+\item{fname_suffix}{Either the data column names (\code{"names"}) or the
+index value (\code{"idx"}).}
 
 \item{legend_fname}{Save the color legend? Since the legend is the same
 for each \code{idx} only one legend is written even if \code{length(idx)>1}.
