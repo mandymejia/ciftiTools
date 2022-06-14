@@ -1059,10 +1059,14 @@ view_xifti_volume <- function(
       title_fsize=1.5 * together_scale
     )
     if (!together_leg && !use_cleg && legend_embed2 && (!is.null(legend_fname))) {
-      file.rename(legend_fname, paste0(tempfile(), ".png"))
+      tfile <- paste0(tempfile(), ".png")
+      file.copy(legend_fname, tfile, overwrite=TRUE)
+      file.remove(legend_fname)
     }
     if (!together_leg && use_cleg && !legend_embed && (!is.null(legend_fname))) {
-      file.rename(legend_fname, paste0(tempfile(), ".png"))
+      tfile <- paste0(tempfile(), ".png")
+      file.copy(legend_fname, tfile, overwrite=TRUE)
+      file.remove(legend_fname)
     }
     if (!together_leg) {
       if (use_cleg) {
@@ -1085,7 +1089,8 @@ view_xifti_volume <- function(
       view_comp(fname[ff], legend=legend_fname)
       if (!comp_dummy) {
         dev.off()
-        file.rename(tfile, fname[ff])
+        file.copy(tfile, fname[ff], overwrite=TRUE)
+        file.remove(tfile)
       }
     }
     fname_all <- fname
@@ -1097,7 +1102,8 @@ view_xifti_volume <- function(
         if (ff < length(fname)) { plot.new() }
       }
       dev.off()
-      file.rename(tfile, comp_fname)
+      file.copy(tfile, comp_fname, overwrite=TRUE)
+      file.remove(tfile)
       fname_all <- comp_fname
     }
   }
