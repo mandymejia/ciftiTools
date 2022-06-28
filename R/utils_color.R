@@ -302,6 +302,11 @@ make_color_pal <- function(
  
   # RColor Brewer --> Individual colors
   was_viridis <- FALSE
+  viridis_cols <- c(
+    "viridis", "magma", "plasma",
+    "inferno", "cividis", "mako",
+    "rocket", "turbo"
+  )
   if ((N_COLORS_PRE == 1) && (colors %in% row.names(brewer.pal.info))) {
     colors_info <- brewer.pal.info[row.names(brewer.pal.info) == colors,]
     brewer_mode <- match.arg(
@@ -316,11 +321,6 @@ make_color_pal <- function(
     }
     colors <- brewer.pal(as.numeric(colors_info$maxcolors), colors)
   # viridis --> Individual colors
-  viridis_cols <- c(
-    "viridis", "magma", "plasma",
-    "inferno", "cividis", "mako",
-    "rocket", "turbo"
-  )
   } else if ((N_COLORS_PRE == 1) && (colors %in% viridis_cols)) {
     was_viridis <- TRUE
     vir_opt <- switch(colors, 
