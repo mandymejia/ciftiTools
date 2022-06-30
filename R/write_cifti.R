@@ -43,6 +43,13 @@ write_cifti <- function(
     } else {
       xifti$meta$cifti$intent <- intent_cifti
     }
+
+  } else if (!is.null(xifti$meta$cifti$intent)) {
+    # Add correct file extension.
+    extn_cifti <- supported_intents()$extension[
+      match(xifti$meta$cifti$intent, supported_intents()$value)
+    ]
+    cifti_fname <- paste0(cifti_fname, ".", extn_cifti)
   }
 
   sep_fnames <- write_xifti2(xifti=xifti, write_dir=tempdir(), verbose=verbose)

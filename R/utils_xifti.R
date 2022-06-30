@@ -201,7 +201,11 @@ print.xifti <- function(x, ...) {
 #'
 get_cifti_extn <- function(cifti_fname) {
   fname_parts <- unlist(strsplit(basename(cifti_fname), split=".", fixed = TRUE)) #split by "."
-  extn <- paste(rev(fname_parts)[c(2,1)], collapse=".") #'dtseries.nii", "dscalar.nii", etc.
+  if (length(fname_parts) < 2) {
+    extn <- "[no-extension]"
+  } else {
+    extn <- paste(rev(fname_parts)[c(2,1)], collapse=".") #'dtseries.nii", "dscalar.nii", etc.
+  }
   extn
 }
 
