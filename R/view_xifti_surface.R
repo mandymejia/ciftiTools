@@ -1486,10 +1486,14 @@ view_xifti_surface <- function(
     )
     dev.off()
     if (!together_leg && !use_cleg && legend_embed2 && (!is.null(legend_fname))) {
-      file.rename(legend_fname, paste0(tempfile(), ".png"))
+      tfile <- paste0(tempfile(), ".png")
+      file.copy(legend_fname, tfile, overwrite=TRUE)
+      file.remove(legend_fname)
     }
     if (!together_leg && use_cleg && !legend_embed && (!is.null(legend_fname))) {
-      file.rename(legend_fname, paste0(tempfile(), ".png"))
+      tfile <- paste0(tempfile(), ".png")
+      file.copy(legend_fname, tfile, overwrite=TRUE)
+      file.remove(legend_fname)
     }
     # comp_fname <- crop_image(comp_fname)
   } else if (together_leg) {
@@ -1498,7 +1502,8 @@ view_xifti_surface <- function(
       png(tfile, bg=bg, width=all_panels_width, height=floor(all_panels_height*1.3))
       view_comp(fname[ff], legend=legend_fname)
       dev.off()
-      file.rename(tfile, fname[ff])
+      file.copy(tfile, fname[ff], overwrite=TRUE)
+      file.remove(tfile)
     }
     fname_all <- fname
   }

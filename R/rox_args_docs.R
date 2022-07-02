@@ -303,7 +303,7 @@ NULL
 #'  for each plot). Set to \code{NULL} or an empty character to omit the title. 
 #' 
 #'  If the title is non-empty but does not appear, try lowering \code{cex.title}.
-#' @param fname,fname_suffix Save the plot(s) (and color legend if applicable)?
+#' @param fname Save the plot(s) (and color legend if applicable)?
 #'  
 #'  If \code{isFALSE(fname)} (default), no files will be written.
 #' 
@@ -314,9 +314,10 @@ NULL
 #'  \code{idx}. If \code{isTRUE(fname)} the files will be named by the
 #'  data column names (underscores will replace spaces). Or, set \code{fname} to a 
 #'  length 1 character vector to name files by this suffix followed by the 
-#'  \code{fname_suffix}: either the data column names (\code{"names"}) or the 
-#'  index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same 
+#'  \code{fname_suffix}. Or, set \code{fname} to a character vector with the same 
 #'  length as \code{idx} to name the files exactly. 
+#' @param fname_suffix Either the data column names (\code{"names"}) or the 
+#'  index value (\code{"idx"}).
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
 #'  will use \code{2} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles.

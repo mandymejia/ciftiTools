@@ -64,8 +64,7 @@ If neither of the cases above apply, a png image will be written for each
 \code{idx}. If \code{isTRUE(fname)} the files will be named by the
 data column names (underscores will replace spaces). Or, set \code{fname} to a
 length 1 character vector to name files by this suffix followed by the
-\code{fname_suffix}: either the data column names (\code{"names"}) or the
-index value (\code{"idx"}). Or, set \code{fname} to a character vector with the same
+\code{fname_suffix}. Or, set \code{fname} to a character vector with the same
 length as \code{idx} to name the files exactly.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
@@ -96,25 +95,7 @@ to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
 from the color scale, rather than adding geometric shading and interpolating
 vertex colors. If \code{NULL}, use defaults.}
 
-\item{width}{The dimensions of the RGL window, in pixels. If both are
-\code{NULL} (default), these dimensions depend on type of output (Open GL
-window or widget) and subplots (\code{hemisphere}, \code{view}, \code{title},
-and \code{slider_title}) and are chosen to be the largest plot within a
-1500 x 700 area (Open GL window) or 600 x 700 area (widget) that maintains
-a brain hemisphere subplot dimensions ratio of 10 x 7. Specifying only one
-will set the other to maintain this aspect ratio. Both can be specified to
-set the dimensions exactly, but note that the dimensions cannot be larger
-than the screen resolution. (These arguments do not affect the size of the
-legend, which cannot be controlled.)
-
-The plot will be taller than \code{height} to accommodate a title or color
-bar.
-
-If multiple \code{idx} are being composited with \code{together}, these
-arguments refer to a single \code{idx} within the composited plot, and not
-the composited plot itself.}
-
-\item{height}{The dimensions of the RGL window, in pixels. If both are
+\item{width, height}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), these dimensions depend on type of output (Open GL
 window or widget) and subplots (\code{hemisphere}, \code{view}, \code{title},
 and \code{slider_title}) and are chosen to be the largest plot within a

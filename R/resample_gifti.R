@@ -10,13 +10,33 @@
 #' @param file_type \code{"metric"}, \code{"label"}, \code{"surf"}, or \code{NULL} 
 #'  (default) to infer from \code{original_fname}.
 #' @param original_res The resolution of the original file. If \code{NULL}
-#'  (default), infer from the file.
-#' @inheritParams resamp_res_Param_required
+#'  (default), infer from the file. Alternatively, provide
+#'  \code{sphere_original_fname} which will override \code{original_res}.
+#' 
+#'  In general, \code{original_res} should be used when the original file is
+#'  in registration with the spheres created by the Workbench command
+#'  \code{-surface-create-sphere}, and \code{sphere_original_fname} should be
+#'  used when it is not compatible. 
+#' @param resamp_res Target resolution for resampling (number of 
+#'  cortical surface vertices per hemisphere). Alternatively, provide
+#'  \code{sphere_target_fname} which will override \code{resamp_res}.
+#' 
+#'  In general, \code{resamp_res} should be used when the target file will be
+#'  in registration with the spheres created by the Workbench command
+#'  \code{-surface-create-sphere}, and \code{sphere_target_fname} should be
+#'  used when it is not compatible. 
 #' @param ROIcortex_original_fname The name of the ROI file corresponding to 
 #'  \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
 #'  or shouldn't be resampled.
 #' @param ROIcortex_target_fname The name of the resampled ROI file. Only 
 #'  applicable if \code{ROIcortex_original_fname} is provided.
+#' @param sphere_original_fname,sphere_target_fname File paths to the sphere
+#'  surfaces in the original and target resolutions. If possible, the simpler
+#'  arguments \code{original_res} and \code{resamp_res} can be used instead. But
+#'  those depend on the surface being compatible with that created by 
+#'  \code{-surface-create-sphere}, which isn't always true. Therefore 
+#'  \code{sphere_original_fname} and \code{sphere_target_fname} can be used if
+#'  needed.
 #' @param read_dir Directory to append to the path of every file name in
 #'  \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL} 
 #'  (default), do not append any directory to the path. 
@@ -36,8 +56,9 @@
 #' 
 resample_gifti <- function(
   original_fname, target_fname, hemisphere=c("left", "right"),
-  file_type=NULL, original_res=NULL, resamp_res,
+  file_type=NULL, original_res=NULL, resamp_res=NULL,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
+  sphere_original_fname=NULL, sphere_target_fname=NULL,
   read_dir=NULL, write_dir=NULL) {
 
   # ----------------------------------------------------------------------------
@@ -90,19 +111,6 @@ resample_gifti <- function(
     )
   }
 
-  # Resolution
-  if (is.null(original_res)) {
-    gii <- readgii(original_fname)
-    original_res <- switch(file_type,
-      metric = nrow(gii$data[[1]]),
-      label = nrow(gii$data[[1]]),
-      surface = nrow(gii$data$pointset)
-    )
-  } else {
-    stopifnot(is.numeric(original_res) && original_res > 0)
-  }
-  stopifnot(is.numeric(resamp_res) && resamp_res > 0)
-
   # Compatible args
   if (do_ROI & file_type=="surface") { 
     stop("do_ROI AND file_type=='surface', but surface files do not use ROI.") 
@@ -111,24 +119,59 @@ resample_gifti <- function(
   # ----------------------------------------------------------------------------
   # Spheres. -------------------------------------------------------------------
   # ----------------------------------------------------------------------------
-  tdir <- tempdir()
+  
+  if (is.null(sphere_original_fname)) {
 
-  sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
-  sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
-  write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
+    # Check `original_res`
+    if (is.null(original_res)) {
+      gii <- readgii(original_fname)
+      original_res <- switch(file_type,
+        metric = nrow(gii$data[[1]]),
+        label = nrow(gii$data[[1]]),
+        surface = nrow(gii$data$pointset)
+      )
+    }
+    stopifnot(is.numeric(original_res) && original_res > 0)
 
-  sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res, ".surf.gii"), tdir, mode=2)
-  sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res, ".surf.gii"), tdir, mode=2)
-  write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
+    tdir <- tempdir()
+    sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
+    sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
+    write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)
 
-  sphere_original_fname <- switch(hemisphere,
-    left = sphereL_original_fname,
-    right = sphereR_original_fname
-  )
-  sphere_target_fname <- switch(hemisphere,
-    left = sphereL_target_fname, 
-    right = sphereR_target_fname
-  )
+    sphere_original_fname <- switch(hemisphere,
+      left = sphereL_original_fname,
+      right = sphereR_original_fname
+    )
+
+    # Check that the sphere is of compatible resolution.
+    sphere_original_res <- nrow(readgii(sphere_original_fname)$data$pointset)
+    if (sphere_original_res != original_res) {
+      stop(paste(
+        "Unable to create sphere with matching resolution to input GIFTI.",
+        "Please provide `sphere_original_fname` (and `sphere_target_fname`)",
+        "instead of `original_res` (and `resamp_res`)."
+      ))
+    }
+  }
+
+  if (is.null(sphere_target_fname)) {
+
+    # Check `resamp_res`.
+    if (is.null(resamp_res)) { 
+      stop("Provide either `sphere_target_fname` or `resamp_res`.") 
+    }
+    stopifnot(is.numeric(resamp_res) && resamp_res > 0)
+
+    sphereL_target_fname <- format_path(paste0("sphereL_", resamp_res, ".surf.gii"), tdir, mode=2)
+    sphereR_target_fname <- format_path(paste0("sphereR_", resamp_res, ".surf.gii"), tdir, mode=2)
+    write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
+
+    sphere_target_fname <- switch(hemisphere,
+      left = sphereL_target_fname, 
+      right = sphereR_target_fname
+    )
+  }
+
   # ----------------------------------------------------------------------------
   # Make and run command. ------------------------------------------------------
   # ----------------------------------------------------------------------------

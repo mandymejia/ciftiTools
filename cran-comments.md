@@ -1,14 +1,14 @@
 ## Test environments
 
-* Windows 10 x64, R 4.1.1
-* Mac x64, R 4.0.3
+* Linux x86_64-pc-linux-gnu, R 4.0.4
+* Mac x86_64-apple-darwin17.0, R 4.1.1
 
 ## R CMD check results
 
 > checking installed package size ... NOTE
-    installed size is  6.4Mb
+    installed size is  7.3Mb
     sub-directories of 1Mb or more:
-      R         1.7Mb
+      R         2.5Mb
       extdata   4.3Mb
 
 0 errors v | 0 warnings v | 1 note x

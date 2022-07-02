@@ -12,9 +12,11 @@ resample_gifti(
   hemisphere = c("left", "right"),
   file_type = NULL,
   original_res = NULL,
-  resamp_res,
+  resamp_res = NULL,
   ROIcortex_original_fname = NULL,
   ROIcortex_target_fname = NULL,
+  sphere_original_fname = NULL,
+  sphere_target_fname = NULL,
   read_dir = NULL,
   write_dir = NULL
 )
@@ -57,10 +59,22 @@ occur if the hemisphere indicated in the GIFTI metadata does not match.}
 (default) to infer from \code{original_fname}.}
 
 \item{original_res}{The resolution of the original file. If \code{NULL}
-(default), infer from the file.}
+(default), infer from the file. Alternatively, provide
+\code{sphere_original_fname} which will override \code{original_res}.
+
+In general, \code{original_res} should be used when the original file is
+in registration with the spheres created by the Workbench command
+\code{-surface-create-sphere}, and \code{sphere_original_fname} should be
+used when it is not compatible.}
 
 \item{resamp_res}{Target resolution for resampling (number of
-cortical surface vertices per hemisphere).}
+cortical surface vertices per hemisphere). Alternatively, provide
+\code{sphere_target_fname} which will override \code{resamp_res}.
+
+In general, \code{resamp_res} should be used when the target file will be
+in registration with the spheres created by the Workbench command
+\code{-surface-create-sphere}, and \code{sphere_target_fname} should be
+used when it is not compatible.}
 
 \item{ROIcortex_original_fname}{The name of the ROI file corresponding to
 \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
@@ -68,6 +82,14 @@ or shouldn't be resampled.}
 
 \item{ROIcortex_target_fname}{The name of the resampled ROI file. Only
 applicable if \code{ROIcortex_original_fname} is provided.}
+
+\item{sphere_original_fname, sphere_target_fname}{File paths to the sphere
+surfaces in the original and target resolutions. If possible, the simpler
+arguments \code{original_res} and \code{resamp_res} can be used instead. But
+those depend on the surface being compatible with that created by
+\code{-surface-create-sphere}, which isn't always true. Therefore
+\code{sphere_original_fname} and \code{sphere_target_fname} can be used if
+needed.}
 
 \item{read_dir}{Directory to append to the path of every file name in
 \code{original_fname} and \code{ROIcortex_original_fname}. If \code{NULL}

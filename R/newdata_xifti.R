@@ -41,6 +41,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   }
   if (ncol(newdata) == 0) { stop("Empty `newdata`.") }
   stopifnot(length(newdata_dim)==2)
+  class(newdata) <- "numeric"
 
   xifti_dim <- dim(xifti)
   same_columns <- TRUE
