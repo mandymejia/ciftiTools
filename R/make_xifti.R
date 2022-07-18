@@ -1,90 +1,90 @@
 #' Assemble a \code{"xifti"} object
 #'
-#' Assembles cortical data, subcortical data, and/or surface geometry to form a 
-#'  \code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files 
-#'  which have been read in, or data objects (vectors, matrices or arrays, 
-#'  depending on the argument). See \code{as.xifti} for a user-function wrapper 
+#' Assembles cortical data, subcortical data, and/or surface geometry to form a
+#'  \code{"xifti"} object. The inputs can be file paths, GIFTI or NIFTI files
+#'  which have been read in, or data objects (vectors, matrices or arrays,
+#'  depending on the argument). See \code{as.xifti} for a user-function wrapper
 #'  that only works with data objects.
-#' 
+#'
 #' Each data or surface component is optional. Metadata components
-#'  (\code{cortex[L/R]_mwall}, \code{subcortLabs}, and \code{subcortMask}) will 
+#'  (\code{cortex[L/R]_mwall}, \code{subcortLabs}, and \code{subcortMask}) will
 #'  be ignored if its corresponding data component is not provided. If no data or
-#'  surface components are provided, then the \code{\link{template_xifti}} will 
-#'  be returned. 
-#' 
+#'  surface components are provided, then the \code{\link{template_xifti}} will
+#'  be returned.
+#'
 #'  If cortical data are provided without a corresponding medial wall mask, or
 #'  if the provided mask is invalid or empty, then the medial wall will be
-#'  inferred from data rows that are constantly a value in \code{mwall_values}. 
+#'  inferred from data rows that are constantly a value in \code{mwall_values}.
 #'  But if \code{mwall_values} is \code{NULL}, no attempt to infer the medial
 #'  wall will be made and the medial wall metadata entry will be \code{NULL}.
-#'  
-#'  The total number of grayordinates will be 
+#'
+#'  The total number of grayordinates will be
 #'  \eqn{G = (V_L - mwall_L) + (V_R - mwall_R) + V_S}: \eqn{V_L - mwall_L} left
-#'  vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical 
+#'  vertices, \eqn{V_R - mwall_R} right vertices and \eqn{V_S} subcortical
 #'  voxels. \eqn{T}, the total number of measurements (columns of data), must be
 #'  the same for each brainstructure.
-#' 
+#'
 #' @inheritSection labels_Description Label Levels
-#' 
-#' @param cortexL,cortexL_mwall Left cortex data and ROI. Each must be a path to 
+#'
+#' @param cortexL,cortexL_mwall Left cortex data and ROI. Each must be a path to
 #'  a GIFTI file, \code{"gifti"} object, data matrix or vector. (GIFTI data
 #'  should be metric or label, not surface.)
-#' 
+#'
 #'  If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
-#'  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
-#'  will not be a mask for the medial wall. Not providing the medial wall mask 
-#'  is appropriate for ".dlabels.nii" files where the medial wall may have its 
+#'  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There
+#'  will not be a mask for the medial wall. Not providing the medial wall mask
+#'  is appropriate for ".dlabels.nii" files where the medial wall may have its
 #'  own label and therefore should not be treated as missing data.
-#' 
+#'
 #'  If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
 #'  for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
-#'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data 
+#'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data
 #'  only for non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix).
-#'  The medial wall mask will be the \code{0} values in \code{cortexL_mwall}. 
+#'  The medial wall mask will be the \code{0} values in \code{cortexL_mwall}.
 #'  The medial wall mask should be provided whenever the medial wall should be
-#'  treated as missing data. 
-#' 
+#'  treated as missing data.
+#'
 #'  Since the unmasked cortices must have the same number of vertices,
 #'  \code{V_L} should match \code{V_R}.
-#' @param cortexR,cortexR_mwall Right cortex data and ROI. Each must be a path to 
+#' @param cortexR,cortexR_mwall Right cortex data and ROI. Each must be a path to
 #'  a GIFTI file, \code{"gifti"} object, data matrix or vector. (GIFTI data
 #'  should be metric or label, not surface.)
-#' 
+#'
 #'  If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
-#'  all vertices on the right cortical surface (\eqn{V_R x T} data mre 
-#'  will not be a mask for the medial wall. Not providing the medial wall mask 
-#'  is appropriate for ".dlabels.nii" files where the medial wall may have its 
+#'  all vertices on the right cortical surface (\eqn{V_R x T} data mre
+#'  will not be a mask for the medial wall. Not providing the medial wall mask
+#'  is appropriate for ".dlabels.nii" files where the medial wall may have its
 #'  own label and therefore should not be treated as missing data.
-#' 
+#'
 #'  If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
 #'  for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
-#'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data 
+#'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data
 #'  only for non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix).
-#'  The medial wall mask will be the \code{0} values in \code{cortexR_mwall}. 
+#'  The medial wall mask will be the \code{0} values in \code{cortexR_mwall}.
 #'  The medial wall mask should be provided whenever the medial wall should be
-#'  treated as missing data. 
-#' 
+#'  treated as missing data.
+#'
 #'  Since the unmasked cortices must have the same number of vertices,
 #'  \code{V_L} should match \code{V_R}.
 #' @param subcortVol,subcortLabs,subcortMask \code{subcortVol} represents the
 #'  data values of the subcortex. It is either a NIFTI file path, 3D/4D data array
-#'  (\eqn{i x j x k x T}), or a vectorized data matrix (\eqn{V_S} voxels by \eqn{T} 
-#'  measurements). If it's vectorized, the voxels should be in spatial order 
+#'  (\eqn{i x j x k x T}), or a vectorized data matrix (\eqn{V_S} voxels by \eqn{T}
+#'  measurements). If it's vectorized, the voxels should be in spatial order
 #'  (\eqn{i} index increasing fastest, then \eqn{j}, then \eqn{k}).
-#' 
+#'
 #'  \code{subcortLabs} represents the brainstructure labels of each voxel: see
-#'  \code{\link{substructure_table}}. It is either a NIFTI file path, 3D data array 
+#'  \code{\link{substructure_table}}. It is either a NIFTI file path, 3D data array
 #'  (\eqn{i x j x k}) of integer brainstructure indices, or a \eqn{V_S} length
 #'  vector in spatial order with brainstructure names as factors or integer
 #'  indices. The indices should be 3-21 (1 and 2 correspond to left and right
 #'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
 #'  out-of-mask voxels.
-#'  
-#'  \code{subcortMask} is NIFTI file path or logical 3D data array (\eqn{i x j x k}) 
-#'  where \code{TRUE} values indicate subcortical voxels (in-mask). If it is not 
-#'  provided, the mask will be inferred from voxels with labels \code{0}, 
-#'  \code{NA}, or \code{NaN} in \code{subcortLabs}. If \code{subcortLabs} are 
-#'  vectorized and \code{subcortMask} is not provided, the mask cannot be 
+#'
+#'  \code{subcortMask} is NIFTI file path or logical 3D data array (\eqn{i x j x k})
+#'  where \code{TRUE} values indicate subcortical voxels (in-mask). If it is not
+#'  provided, the mask will be inferred from voxels with labels \code{0},
+#'  \code{NA}, or \code{NaN} in \code{subcortLabs}. If \code{subcortLabs} are
+#'  vectorized and \code{subcortMask} is not provided, the mask cannot be
 #'  inferred so an error will occur.
 #' @param mwall_values If \code{cortex[L/R]_mwall} was not provided, or if it
 #'  was invalid (i.e. bad length or all \code{TRUE}), the medial wall mask will
@@ -93,24 +93,24 @@
 #'  the medial wall from the data values. \code{NULL} should be used if \code{NA}
 #'  or \code{NaN} are legitimate values that non-medial wall vertices might
 #'  take on.
-#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If 
-#'  GIFTI and/or NIFTI components from a CIFTI are being provided, 
+#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If
+#'  GIFTI and/or NIFTI components from a CIFTI are being provided,
 #'  providing \code{cifti_info} gives metadata information that would otherwise
 #'  have to be inferred: the NIFTI intent, brainstructures present in the
 #'  original file, and miscellaneous metadata.
-#' 
+#'
 #'  This argument is probably not necessary for end users: reading a CIFTI
 #'  should be done by providing \code{cifti_fname}, and for reading separate
 #'  GIFTI/NIFTI components \code{cifti_info} is not applicable.
-#' 
+#'
 #'  Column names from \code{cortexL} and \code{cortexR} take precedence over column
 #'  names from \code{cifti_info}.
-#' @param surfL,surfR (Optional) Surface geometries for the left or right cortex. 
-#'  Can be a surface GIFTI file path or \code{"surf"} object; see 
+#' @param surfL,surfR (Optional) Surface geometries for the left or right cortex.
+#'  Can be a surface GIFTI file path or \code{"surf"} object; see
 #'  \code{\link{make_surf}} for a full description of valid inputs.
-#' @param idx For file paths provided to \code{cortexL}, \code{cortexR}, and 
+#' @param idx For file paths provided to \code{cortexL}, \code{cortexR}, and
 #'  \code{subcortVol}: a numeric matrix indicating the data indices to read. If\
-#'  \code{NULL} (default), read all the data. Must be a subset of the indices 
+#'  \code{NULL} (default), read all the data. Must be a subset of the indices
 #'  present in the file, or an error will occur. Note that if these arguments
 #'  are data matrices instead of file paths, they are unaffected.
 #' @param col_names Names of each measurement/column in the data. Overrides
@@ -124,9 +124,9 @@
 #' @param validate Validate that the result is a \code{"xifti"} object? Default:
 #'  \code{TRUE}. If \code{FALSE}, the result may not be properly formatted
 #'  if the inputs were invalid.
-#' 
+#'
 #' @return A \code{"xifti"} object; see \code{\link{template_xifti}}
-#' 
+#'
 #' @keywords internal
 #'
 make_xifti <- function(
@@ -134,11 +134,11 @@ make_xifti <- function(
   cortexR=NULL, cortexR_mwall=NULL,
   subcortVol=NULL, subcortLabs=NULL, subcortMask=NULL,
   mwall_values=c(NA, NaN), cifti_info=NULL,
-  surfL=NULL, surfR=NULL, 
+  surfL=NULL, surfR=NULL,
   idx=NULL,
   col_names=NULL, HCP_32k_auto_mwall=TRUE,
   read_dir=NULL, validate=TRUE) {
-  
+
   # Add `read_dir` and check file paths.
   if (is.fname(cortexL)) { cortexL <- format_path(cortexL, read_dir, mode=4) }
   if (is.fname(cortexR)) { cortexR <- format_path(cortexR, read_dir, mode=4) }
@@ -151,7 +151,7 @@ make_xifti <- function(
   xifti <- template_xifti()
 
   # CIFTI metadata.
-  if (!is.null(cifti_info)) { 
+  if (!is.null(cifti_info)) {
     xifti$meta$cifti <- cifti_info$cifti
     # misc_meta <- c("intent", "brainstructures", "misc")
     # xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta]
@@ -184,7 +184,7 @@ make_xifti <- function(
     }
 
     ## HCP 32k medial wall
-    if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_left) == 29696) {
+    if ((HCP_32k_auto_mwall & is.null(cortexL_mwall)) & nrow(xifti$data$cortex_left) == 29696) {
       if (is.null(xifti$meta$cortex$medial_wall_mask$left)) {
         # from ciftiTools R/sysdata.rda
         xifti$meta$cortex$medial_wall_mask$left <- ciftiTools.data$HCP_32k_mwall_template[,1]
@@ -240,10 +240,10 @@ make_xifti <- function(
           }
         }
       }
-    } 
+    }
 
     ## HCP 32k medial wall
-    if (HCP_32k_auto_mwall & nrow(xifti$data$cortex_right) == 29716) {
+    if ((HCP_32k_auto_mwall & is.null(cortexR_mwall)) & nrow(xifti$data$cortex_right) == 29716) {
       if (is.null(xifti$meta$cortex$medial_wall_mask$right)) {
         # from ciftiTools R/sysdata.rda
         xifti$meta$cortex$medial_wall_mask$right <- ciftiTools.data$HCP_32k_mwall_template[,2]
@@ -255,7 +255,7 @@ make_xifti <- function(
     }
   }
 
-  # Subcortical data. 
+  # Subcortical data.
   if (xor(is.null(subcortVol), is.null(subcortLabs))) {
     stop("subcortVol and subcortLabs must be provided together.")
   }
