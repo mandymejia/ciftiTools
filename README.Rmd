@@ -14,6 +14,14 @@ output: github_document
 
 CIFTI files contain brain imaging data in "grayordinates," which represent the gray matter as cortical surface vertices (left and right) and subcortical voxels (cerebellum, basal ganglia, and other deep gray matter). `ciftiTools` provides a unified environment for reading, writing, visualizing and manipulating CIFTI-format data. It supports the "dscalar," "dlabel," and "dtseries" intents. Greyordinate data is read in as a `"xifti"` object, which is structured for convenient access to the data and metadata, and includes support for surface geometry files to enable spatially-dependent functionality such as static or interactive visualizations and smoothing.
 
+## Citation
+
+If you use `ciftiTools`, please cite our [paper](https://doi.org/10.1016/j.neuroimage.2022.118877). You can also obtain citation information from within R like so:
+
+``` {r}
+citation("ciftiTools")
+```
+
 ## Installation
 
 You can install `ciftiTools` from [CRAN](https://cran.r-project.org/) with:
@@ -110,10 +118,6 @@ The 3D shading may make certain plots more difficult to interpret, if the color 
 * Other structural neuroimaging files: [`fsbrain`](https://CRAN.R-project.org/package=fsbrain)
 * xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
 * Interactive 3D rendering: [`rgl`](https://CRAN.R-project.org/package=rgl) 
-
-## Citation
-
-You can cite our paper at [https://doi.org/10.1016/j.neuroimage.2022.118877](https://doi.org/10.1016/j.neuroimage.2022.118877). 
 
 ## Data acknowledgement
 

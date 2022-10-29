@@ -23,6 +23,32 @@ the data and metadata, and includes support for surface geometry files
 to enable spatially-dependent functionality such as static or
 interactive visualizations and smoothing.
 
+## Citation
+
+If you use `ciftiTools`, please cite our
+[paper](https://doi.org/10.1016/j.neuroimage.2022.118877). You can also
+obtain citation information from within R like so:
+
+``` r
+citation("ciftiTools")
+```
+
+    ## 
+    ## To cite {ciftiTools} in publications use:
+    ## 
+    ## Pham DD, Muschelli J, Mejia AF (2021). "ciftiTools: A package for
+    ## reading, writing, visualizing and manipulating CIFTI files in R." <URL:
+    ## https://doi.org/10.1016/j.neuroimage.2022.118877>.
+    ## 
+    ## A BibTeX entry for LaTeX users is
+    ## 
+    ##   @Misc{pham2021ciftitools,
+    ##     title = {ciftiTools: A package for reading, writing, visualizing and manipulating CIFTI files in R},
+    ##     author = {Damon D Pham and John Muschelli and Amanda F Mejia},
+    ##     year = {2021},
+    ##     url = {https://doi.org/10.1016/j.neuroimage.2022.118877},
+    ##   }
+
 ## Installation
 
 You can install `ciftiTools` from [CRAN](https://cran.r-project.org/)
@@ -153,11 +179,6 @@ alt="Unlit surface plot" />
 -   xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
 -   Interactive 3D rendering:
     [`rgl`](https://CRAN.R-project.org/package=rgl)
-
-## Citation
-
-You can cite our paper at
-<https://doi.org/10.1016/j.neuroimage.2022.118877>.
 
 ## Data acknowledgement
 
