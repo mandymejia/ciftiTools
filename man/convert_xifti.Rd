@@ -88,16 +88,16 @@ Convert the intent of a CIFTI file or \code{"xifti"} object
 }
 \section{Functions}{
 \itemize{
-\item \code{convert_to_dlabel}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
+\item \code{convert_to_dlabel()}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
 \code{"xifti"}. Will use the same label table for each data column.
 
-\item \code{convert_to_dscalar}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
+\item \code{convert_to_dscalar()}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
 CIFTI file or \code{"xifti"} object.
 
-\item \code{convert_to_dtseries}: Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
+\item \code{convert_to_dtseries()}: Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
 \code{"xifti"} object.
-}}
 
+}}
 \seealso{
 Other functions for manipulating `xifti` objects: 
 \code{\link{add_surf}()},

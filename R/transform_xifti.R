@@ -115,8 +115,26 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {
       }
     }
     xifti <- xifti2
+  # xifti + matrix
+  } else if (is.numeric(xifti2) && length(dim(xifti2))==2 && all(dim(xifti) == dim(xifti2))){
+    xifti2 <- newdata_xifti(xifti, xifti2)
+    for (bs in names(xifti$data)) {
+      if (!is.null(xifti$data[[bs]])) {
+        xifti$data[[bs]][] <- tapp_wrap(xifti$data[[bs]], x2=xifti2$data[[bs]], FUN=FUN, idx=idx, ...)
+      }
+    }
+  # matrix + xifti
+  } else if (is.numeric(xifti) && length(dim(xifti))==2 && is.xifti(xifti2, messages=FALSE && all(dim(xifti) == dim(xifti2)))) {
+    xifti <- newdata_xifti(xifti2, xifti)
+    for (bs in names(xifti2$data)) {
+      if (!is.null(xifti2$data[[bs]])) {
+        xifti2$data[[bs]][] <- tapp_wrap(xifti$data[[bs]], x2=xifti2$data[[bs]], FUN=FUN, idx=idx, ...)
+      }
+    }
+    xifti <- xifti2
   # xifti + xifti
   } else {
+    if (!is.xifti(xifti2, messages=FALSE)) { stop('`xifti2` is not a `"xifti"` object, single number, or of same dimensions as "xifti".') }
     # Checks
     bs1 <- names(xifti$data)[!vapply(xifti$data, is.null, FALSE)]
     bs2 <- names(xifti2$data)[!vapply(xifti2$data, is.null, FALSE)]
