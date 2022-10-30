@@ -66,7 +66,7 @@ view_xifti.title <- function(xifti_meta, idx){
 #' 
 #' @keywords internal
 #' 
-view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits) {
+view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits, scientific=NA) {
 
   colorbar_breaks <- c(
     pal_base$value[1],
@@ -107,7 +107,7 @@ view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits) {
         cex.axis=1.7, # size of labels (numeric limits)
         at=colorbar_labs,
         col=text_color, col.ticks=text_color, col.axis=text_color,
-        labels=format(colorbar_labs, digits=digits)
+        labels=format(colorbar_labs, digits=digits, scientific=scientific)
       )
     )
   }

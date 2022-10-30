@@ -564,6 +564,8 @@ view_xifti_surface.draw_mesh <- function(
 #'  (qualitative data) cannot be embedded at the moment.
 #' @param digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
+#' @param scientific Use scientific notation? If \code{NA} (default), let
+#'  \code{\link{format}} decide.
 #' @param borders Only applicable if \code{color_mode} is \code{"qualitative"}.
 #'  Border vertices will be identified (those that share a face with at least
 #'  one vertex of a different value) and colored over. If this argument is
@@ -588,7 +590,8 @@ view_xifti_surface <- function(
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   material=NULL,
@@ -1082,7 +1085,7 @@ view_xifti_surface <- function(
           "Embedding a color bar that shows the colors in order, instead of the color legend. ",
           "To view the color legend separately (as recommended) set `legend_embed` to `FALSE`.\n"
         )
-        colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits) # added?
+        colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits, scientific=scientific) # added?
       } else {
         legend_embed <- FALSE; use_cleg <- TRUE
         # Get the labels for the color legend list.
@@ -1129,7 +1132,7 @@ view_xifti_surface <- function(
     } else {
       if (is.null(legend_embed)) { legend_embed <- TRUE }
       if (together_leg) { legend_embed <- FALSE }
-      colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits)
+      colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits, scientific=scientific)
     }
 
   } else {
@@ -1534,7 +1537,8 @@ view_cifti_surface <- function(
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL){
@@ -1547,7 +1551,8 @@ view_cifti_surface <- function(
     view=view, widget=widget,
     title=title, slider_title=slider_title,
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    digits=digits, scientific=scientific,
     cex.title=cex.title, text_color=text_color, bg=bg,
     borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom
@@ -1564,7 +1569,8 @@ viewCIfTI_surface <- function(
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL){
@@ -1577,7 +1583,8 @@ viewCIfTI_surface <- function(
     view=view, widget=widget,
     title=title, slider_title=slider_title,
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    digits=digits, scientific=scientific,
     cex.title=cex.title, text_color=text_color, bg=bg,
     borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom
@@ -1594,7 +1601,8 @@ viewcii_surface <- function(
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
   borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
   width=NULL, height=NULL, zoom=NULL){
@@ -1607,7 +1615,8 @@ viewcii_surface <- function(
     view=view, widget=widget,
     title=title, slider_title=slider_title,
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    digits=digits, scientific=scientific,
     cex.title=cex.title, text_color=text_color, bg=bg,
     borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
     width=width, height=height, zoom=zoom

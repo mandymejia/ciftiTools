@@ -170,6 +170,8 @@
 #'  The color legend (qualitative data) cannot be embedded at the moment.
 #' @param digits The number of digits for the colorbar legend ticks.
 #'  If \code{NULL} (default), let \code{\link{format}} decide.
+#' @param scientific Use scientific notation? If \code{NA} (default), let
+#'  \code{\link{format}} decide.
 #' @param cex.title Font size multiplier for the title. \code{NULL} (default)
 #'  will use \code{1.2} for titles less than 20 characters long, and smaller
 #'  sizes for increasingly longer titles. If saving a PNG and PDF file, the default
@@ -224,7 +226,8 @@ view_xifti_volume <- function(
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, orientation_labels=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -689,7 +692,7 @@ view_xifti_volume <- function(
           "Embedding a color bar that shows the colors in order, instead of the color legend. ",
           "To view the color legend separately (as recommended) set `legend_embed` to `FALSE`.\n"
         )
-        colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits) # added?
+        colorbar_kwargs <- view_xifti.cbar(pal_base, pal, color_mode, text_color, digits, scientific=scientific) # added?
       } else {
         legend_embed <- FALSE; use_cleg <- TRUE
         # Get the labels for the color legend list.
@@ -742,7 +745,8 @@ view_xifti_volume <- function(
       if (together_leg) { legend_embed <- FALSE }
       colorbar_kwargs <- view_xifti.cbar(
         pal_base, pal, color_mode,
-        ifelse(legend_embed || (!use_cleg && together && !comp_dummy), text_color, text_color2), digits
+        ifelse(legend_embed || (!use_cleg && together && !comp_dummy), text_color, text_color2), 
+        digits, scientific=scientific
       )
     }
 
@@ -1127,7 +1131,8 @@ view_cifti_volume <- function(
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -1141,7 +1146,8 @@ view_cifti_volume <- function(
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    digits=digits, scientific=scientific,
     cex.title=cex.title, ypos.title=ypos.title, xpos.title=xpos.title,
     text_color=text_color, bg=bg, width=width, height=height, ...
   )
@@ -1159,7 +1165,8 @@ viewCIfTI_volume <- function(
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -1173,7 +1180,8 @@ viewCIfTI_volume <- function(
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    digits=digits, scientific=scientific,
     cex.title=cex.title, ypos.title=ypos.title, xpos.title=xpos.title,
     text_color=text_color, bg=bg, width=width, height=height, ...
   )
@@ -1191,7 +1199,8 @@ viewcii_volume <- function(
   widget=FALSE,
   fname=FALSE, fname_suffix=c("names", "idx"), fname_sub=FALSE,
   legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, digits=NULL,
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -1205,7 +1214,8 @@ viewcii_volume <- function(
     widget=widget,
     fname=fname, fname_suffix=fname_suffix, fname_sub=fname_sub,
     legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, digits=digits,
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    digits=digits, scientific=scientific,
     cex.title=cex.title, ypos.title=ypos.title, xpos.title=xpos.title,
     text_color=text_color, bg=bg, width=width, height=height, ...
   )

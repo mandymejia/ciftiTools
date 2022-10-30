@@ -30,6 +30,7 @@ view_xifti_surface(
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
+  scientific = NA,
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
@@ -67,6 +68,7 @@ view_cifti_surface(
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
+  scientific = NA,
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
@@ -103,6 +105,7 @@ viewCIfTI_surface(
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
+  scientific = NA,
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
@@ -139,6 +142,7 @@ viewcii_surface(
   legend_alllevels = FALSE,
   legend_embed = NULL,
   digits = NULL,
+  scientific = NA,
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
@@ -303,6 +307,9 @@ or if \code{"leg" \%in\% together}. Otherwise the color legend
 
 \item{digits}{The number of digits for the colorbar legend ticks.
 If \code{NULL} (default), let \code{\link{format}} decide.}
+
+\item{scientific}{Use scientific notation? If \code{NA} (default), let
+\code{\link{format}} decide.}
 
 \item{cex.title}{Font size multiplier for the title. \code{NULL} (default)
 will use \code{2} for titles less than 20 characters long, and smaller

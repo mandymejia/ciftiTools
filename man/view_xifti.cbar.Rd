@@ -4,7 +4,7 @@
 \alias{view_xifti.cbar}
 \title{Make the colorbar for \code{view_xifti_surface}}
 \usage{
-view_xifti.cbar(pal_base, pal, color_mode, text_color, digits)
+view_xifti.cbar(pal_base, pal, color_mode, text_color, digits, scientific = NA)
 }
 \arguments{
 \item{pal_base}{Base palette}
