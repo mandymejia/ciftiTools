@@ -2,7 +2,7 @@ citHeader("To cite {ciftiTools} in publications use:")
 
 ciftiTools_citations <- c(
 	bibentry(
-		bibtype      = "Misc",
+		bibtype      = "Article",
 		title        = "ciftiTools: A package for reading, writing, visualizing and manipulating CIFTI files in R",
 		author       = personList(
 			as.person("Damon D Pham"),

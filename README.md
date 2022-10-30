@@ -26,28 +26,17 @@ interactive visualizations and smoothing.
 ## Citation
 
 If you use `ciftiTools`, please cite our
-[paper](https://doi.org/10.1016/j.neuroimage.2022.118877). You can also
-obtain citation information from within R like so:
+[paper](https://doi.org/10.1016/j.neuroimage.2022.118877):
+
+> Pham, D. D., Muschelli, J., & Mejia, A. F. (2022). ciftiTools: A
+> package for reading, writing, visualizing, and manipulating CIFTI
+> files in R. NeuroImage, 250, 118877.
+
+You can also obtain citation information from within R like so:
 
 ``` r
 citation("ciftiTools")
 ```
-
-    ## 
-    ## To cite {ciftiTools} in publications use:
-    ## 
-    ## Pham DD, Muschelli J, Mejia AF (2021). "ciftiTools: A package for
-    ## reading, writing, visualizing and manipulating CIFTI files in R." <URL:
-    ## https://doi.org/10.1016/j.neuroimage.2022.118877>.
-    ## 
-    ## A BibTeX entry for LaTeX users is
-    ## 
-    ##   @Misc{pham2021ciftitools,
-    ##     title = {ciftiTools: A package for reading, writing, visualizing and manipulating CIFTI files in R},
-    ##     author = {Damon D Pham and John Muschelli and Amanda F Mejia},
-    ##     year = {2021},
-    ##     url = {https://doi.org/10.1016/j.neuroimage.2022.118877},
-    ##   }
 
 ## Installation
 
@@ -159,9 +148,9 @@ the color scale varies from light to dark: darker regions might be in a
 shadow, or their values might be higher. To skip shading, use the
 argument `material=list(lit=FALSE)` to `view_xifti_surface`.
 
-<img src="README_media/vxs_lit.png" style="width:20.0%"
+<img src="README_media/vxs_lit.png" style="width:15.0%"
 alt="Lit surface plot" />
-<img src="README_media/vxs_unlit.png" style="width:20.0%"
+<img src="README_media/vxs_unlit.png" style="width:15.0%"
 alt="Unlit surface plot" />
 
 ## Related R extensions
