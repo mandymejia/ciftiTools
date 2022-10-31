@@ -361,3 +361,29 @@ NULL
 #' @name surface_plot_Params
 #' @keywords internal
 NULL
+
+#'  faces
+#'
+#' @param faces An \eqn{F x 3} matrix, where each row contains the vertex
+#'  indices for a given triangular face in the mesh. \eqn{F} is the number of
+#'  faces in the mesh.
+#'
+#' @name faces_Param
+NULL
+
+#'  vertices
+#'
+#' @param vertices A \eqn{V x 3} matrix, where each row contains the Euclidean
+#'  coordinates at which a given vertex in the mesh is located. \eqn{V} is the
+#'  number of vertices in the mesh
+#'
+#' @name vertices_Param
+NULL
+
+#' mask: vertices
+#'
+#' @param mask  A length \eqn{V} logical vector indicating if each vertex is
+#'  within the input mask.
+#'
+#' @name mask_Param_vertices
+NULL
