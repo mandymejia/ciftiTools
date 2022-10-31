@@ -2,9 +2,9 @@
 #'
 #' Write metric or label GIFTIs for the cortical surface data and NIFTIs for the
 #'  subcortical labels and mask in a \code{"xifti"} object. Each present
-#'  brainstructure will be written; if a brainstructure is absent the 
+#'  brainstructure will be written; if a brainstructure is absent the
 #'  corresponding file is not written.
-#' 
+#'
 #' @inheritParams xifti_Param
 #' @inheritParams separate_cifti_files
 #' @inheritParams verbose_Param_FALSE
@@ -13,30 +13,30 @@
 #' @importFrom RNifti writeNifti
 #'
 #' @export
-#' 
+#'
 write_xifti2 <- function(
   xifti,
-  brainstructures=NULL, 
-  cortexL_fname=NULL, cortexR_fname=NULL, 
-  subcortVol_fname=NULL, subcortLabs_fname=NULL, 
-  ROI_brainstructures="all", 
-  ROIcortexL_fname=NULL, ROIcortexR_fname=NULL, 
+  brainstructures=NULL,
+  cortexL_fname=NULL, cortexR_fname=NULL,
+  subcortVol_fname=NULL, subcortLabs_fname=NULL,
+  ROI_brainstructures="all",
+  ROIcortexL_fname=NULL, ROIcortexR_fname=NULL,
   ROIsubcortVol_fname=NULL, write_dir=NULL,
   verbose=FALSE) {
 
   # [TO DO] write label GIFTI from dlabel CIFTI?
-  
+
   # Check arguments.
   stopifnot(is.xifti(xifti))
   bs_present <- c("left", "right", "subcortical")[!vapply(xifti$data, is.null, FALSE)]
-  if (is.null(brainstructures)) { 
+  if (is.null(brainstructures)) {
     brainstructures <- bs_present
   }
   brainstructures <- match_input(
     brainstructures, c("left","right","subcortical","all"),
     user_value_label="brainstructures"
   )
-  if ("all" %in% brainstructures) { 
+  if ("all" %in% brainstructures) {
     brainstructures <- c("left","right","subcortical")
   }
 
@@ -99,7 +99,10 @@ write_xifti2 <- function(
       mwall <- xifti$meta$cortex$medial_wall_mask$left
     }
     cdat <- unmask_cortex(xifti$data$cortex_left, mwall)
-
+    # `NA` values create another variable level without a Key--bad!
+    if (!is.null(intent) && intent=="label" && ROI_do["left"]) {
+      cdat[!mwall] <- cdat[mwall][1]
+    }
     # Write data and ROI.
     write_metric_gifti(
       cdat, sep_fnames["cortexL"], "left", data_type = data_type,
@@ -107,7 +110,7 @@ write_xifti2 <- function(
     )
     if (ROI_do["left"]) {
       write_metric_gifti(
-        as.numeric(mwall), sep_fnames["ROIcortexL"], 
+        as.numeric(mwall), sep_fnames["ROIcortexL"],
         "left", data_type = "FLOAT32"
       )
     }
@@ -125,6 +128,10 @@ write_xifti2 <- function(
       mwall <- xifti$meta$cortex$medial_wall_mask$right
     }
     cdat <- unmask_cortex(xifti$data$cortex_right, mwall)
+    # `NA` values create another variable level without a Key--bad!
+    if (!is.null(intent) && intent=="label" && ROI_do["right"]) {
+      cdat[!mwall] <- cdat[mwall][1]
+    }
 
     # Write data and ROI.
     write_metric_gifti(
@@ -133,7 +140,7 @@ write_xifti2 <- function(
     )
     if (ROI_do["right"]) {
       write_metric_gifti(
-        as.numeric(mwall), sep_fnames["ROIcortexR"], 
+        as.numeric(mwall), sep_fnames["ROIcortexR"],
         "right", data_type = "FLOAT32"
       )
     }
@@ -145,13 +152,13 @@ write_xifti2 <- function(
   if (do["sub"]) {
     if (verbose) {cat("Writing subcortical data and labels.\n")}
     write_subcort_nifti(
-      xifti$data$subcort, 
-      xifti$meta$subcort$labels, 
-      xifti$meta$subcort$mask, 
+      xifti$data$subcort,
+      xifti$meta$subcort$labels,
+      xifti$meta$subcort$mask,
       xifti$meta$subcort$trans_mat,
       xifti$meta$subcort$trans_units,
-      sep_fnames["subcortVol"], 
-      sep_fnames["subcortLabs"], 
+      sep_fnames["subcortVol"],
+      sep_fnames["subcortLabs"],
       sep_fnames["ROIsubcortVol"],
       fill=0
     )

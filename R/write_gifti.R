@@ -1,43 +1,43 @@
 #' Write a data matrix to a GIFTI metric file
-#' 
+#'
 #' Write the data for the left or right cortex to a metric GIFTI file.
 #'
-#' @param x A \eqn{V x T} data matrix (V vertices, T measurements). This can also 
-#'  be an object from \code{gifti::readgii}, or a length \eqn{T} list of length 
-#'  \eqn{V} vectors. 
+#' @param x A \eqn{V x T} data matrix (V vertices, T measurements). This can also
+#'  be an object from \code{gifti::readgii}, or a length \eqn{T} list of length
+#'  \eqn{V} vectors.
 #' @param gifti_fname Where to write the GIFTI file.
-#' @param hemisphere \code{"left"} (default) or \code{"right"}. Ignored if 
+#' @param hemisphere \code{"left"} (default) or \code{"right"}. Ignored if
 #'  \code{data} is already a \code{"gifti"} object.
 #' @param intent "NIFTI_INTENT_*". \code{NULL} (default) will use
-#'  metadata if \code{data} is a \code{"gifti"} object, or "NONE" if it cannot be 
+#'  metadata if \code{data} is a \code{"gifti"} object, or "NONE" if it cannot be
 #'  inferred. If not \code{NULL} and \code{data} is a \code{"gifti"} object, it will
-#'  overwrite the existing intent. See 
+#'  overwrite the existing intent. See
 #'  https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html/document_view .
 #' @param data_type the type of \code{data}:
-#'  "NIFTI_TYPE_*" where * is "INT32" or "FLOAT32". If \code{NULL} (default), the 
-#'  data type will be inferred. If not \code{NULL} and \code{data} is a 
+#'  "NIFTI_TYPE_*" where * is "INT32" or "FLOAT32". If \code{NULL} (default), the
+#'  data type will be inferred. If not \code{NULL} and \code{data} is a
 #'  \code{"gifti"} object, it will overwrite the existing data type.
-#' @param encoding One of "ASCII", "Base64Binary", or "GZipBase64Binary". If 
+#' @param encoding One of "ASCII", "Base64Binary", or "GZipBase64Binary". If
 #'  \code{NULL} (default), will use the metadata if \code{data} is a GIFTI object,
 #'  or "ASCII" if the \code{data_type} is "NIFTI_TYPE_INT32" and
-#'  "GZipBase64Binary" if the \code{data_type} is "NIFTI_TYPE_FLOAT32". If not 
-#'  \code{NULL} and \code{data} is a \code{"gifti"} object, it will overwrite the 
+#'  "GZipBase64Binary" if the \code{data_type} is "NIFTI_TYPE_FLOAT32". If not
+#'  \code{NULL} and \code{data} is a \code{"gifti"} object, it will overwrite the
 #'  existing data type.
-#' @param endian "LittleEndian" (default) or "BigEndian". If \code{data} is a 
+#' @param endian "LittleEndian" (default) or "BigEndian". If \code{data} is a
 #'  \code{"gifti"} object, it will overwrite the existing endian.
-#' @param col_names The names of each data column in \code{gii} (or entries in 
+#' @param col_names The names of each data column in \code{gii} (or entries in
 #'  \code{gii$data}).
 #' @param label_table A data.frame with labels along rows. The row names should
-#'  be the label names. The column names should be among: "Key", "Red", "Green", 
-#'  "Blue", and "Alpha". The "Key" column is required whereas the others are 
-#'  optional (but very often included). Values in the "Key" column should be 
+#'  be the label names. The column names should be among: "Key", "Red", "Green",
+#'  "Blue", and "Alpha". The "Key" column is required whereas the others are
+#'  optional (but very often included). Values in the "Key" column should be
 #'  non-negative integers, typically beginning with 0. The other columns should
 #'  be floating-point numbers between 0 and 1.
-#' 
+#'
 #'  Although CIFTI files support a different label table for each data column,
 #'  GIFTI files only support a single label table. So this label table should be
 #'  applicable to each data column.
-#' 
+#'
 #' @return Whether the GIFTI was successfully written
 #'
 #' @importFrom gifti writegii
@@ -53,9 +53,9 @@ write_metric_gifti <- function(
   endian <- match.arg(endian, c("LittleEndian", "BigEndian"))
 
   # If gii is a "gifti", use its metadata to determine unspecified options.
-  if (is.gifti(x)) { 
+  if (is.gifti(x)) {
     if (is.null(intent)) { intent <- x$data_info$Intent }
-    if (is.null(data_type)) { data_type <- x$data_info$DataType } 
+    if (is.null(data_type)) { data_type <- x$data_info$DataType }
     if (is.null(encoding)) { encoding <- x$data_info$Encoding }
 
   # If x is not a "gifti", convert it to a GIFTI and use default options
@@ -63,23 +63,23 @@ write_metric_gifti <- function(
   } else {
 
     if (is.null(intent)) { intent <- "NONE" }
-    
+
     x <- as.metric_gifti(x, intent=intent)
 
-    if (is.null(data_type)) { 
+    if (is.null(data_type)) {
       data_type <- ifelse(all_integers(do.call(cbind, x$data)), "INT32", "FLOAT32")
     }
-    if (is.null(encoding)) { 
-      encoding <- ifelse(grepl("INT", data_type), "ASCII", "GZipBase64Binary") 
+    if (is.null(encoding)) {
+      encoding <- ifelse(grepl("INT", data_type), "ASCII", "GZipBase64Binary")
     }
   }
 
   T_ <- length(x$data)
 
   if (data_type=="INT32") {
-    for (ii in 1:T_) { mode(x$data[[ii]]) <- "integer" }
+    for (ii in seq(T_)) { mode(x$data[[ii]]) <- "integer" }
   }
-  
+
   # Format options
   x$data_info$Intent <- paste0("NIFTI_INTENT_", gsub("NIFTI_INTENT_", "", toupper(intent)))
   x$data_info$DataType <- paste0("NIFTI_TYPE_", gsub("NIFTI_TYPE_", "", toupper(data_type)))
@@ -95,7 +95,7 @@ write_metric_gifti <- function(
       stop("The length of the data `col_names` must be the same length as the data (number of columns).")
     }
 
-    for (ii in 1:T_) {
+    for (ii in seq(T_)) {
       if (length(x$data_meta) < T_) {break}
       stopifnot(is.matrix(x$data_meta[[ii]]))
       if (ncol(x$data_meta[[ii]]) == 2 && all(sort(colnames(x$data_meta[[ii]])) == sort(c("names", "vals")))) {
@@ -149,17 +149,17 @@ write_metric_gifti <- function(
 }
 
 #' Write a \code{"surf"} to a GIFTI surface file
-#' 
+#'
 #' Write the data for the left or right surface to a surface GIFTI file.
 #'
-#' @param x A \code{"surf"} object, an object from \code{gifti::readgii}, or a 
+#' @param x A \code{"surf"} object, an object from \code{gifti::readgii}, or a
 #'  list with elements "pointset" and "triangle".
 #' @param gifti_fname Where to write the GIFTI file.
 #' @param hemisphere "left" (default) or "right". Ignored if \code{data} is already
 #'  a "gifti" object, or if it is a \code{"surf"} object with the hemisphere metadata
 #'  already specified.
-#' @param encoding A length-2 vector with elements chosen among "ASCII", 
-#'  "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use 
+#' @param encoding A length-2 vector with elements chosen among "ASCII",
+#'  "Base64Binary", and "GZipBase64Binary". If \code{NULL} (default), will use
 #'  the metadata if \code{data} is a "gifti" object, or "GZipBase64Binary" for the
 #'  "pointset" and "ASCII" for the "triangles" if \code{data} is not already
 #'  a GIFTI.
@@ -180,14 +180,14 @@ write_surf_gifti <- function(
   endian <- match.arg(endian, c("LittleEndian", "BigEndian"))
 
   # If gii is a "gifti", use its metadata to determine unspecified options.
-  if (is.gifti(x)) { 
+  if (is.gifti(x)) {
     if (is.null(encoding)) { encoding <- x$data_info$Encoding }
 
   # If gii is not a "gifti", convert it to a GIFTI and use default options
   #   where unspecified.
   } else {
     x <- as.surf_gifti(x, hemisphere=hemisphere)
-    if (is.null(encoding)) { 
+    if (is.null(encoding)) {
       encoding <- as.character(list(pointset="GZipBase64Binary", triangle="ASCII")[names(x$data)])
     }
   }
@@ -200,7 +200,7 @@ write_surf_gifti <- function(
   tri_enc <- x$data_info$Encoding[names(x$data) == "triangle"]
   if (tri_enc != "ASCII") {
     ciftiTools_warn(paste(
-      "The encoding for the triangle component was", tri_enc, 
+      "The encoding for the triangle component was", tri_enc,
       "but only ASCII is supported for integer data types.",
       "Overwriting.\n"
     ))

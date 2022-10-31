@@ -1,11 +1,11 @@
 #' Write a CIFTI file from NIFTI and GIFTI files
 #'
-#' Make a CIFTI file from component NIFTI/GIFTI files using the 
+#' Make a CIFTI file from component NIFTI/GIFTI files using the
 #'  \code{-cifti-create-...} Connectome Workbench commands.
-#' 
+#'
 #' Every provided component will be included. The ROIs are only used if the
 #'  corresponding cortex is provided. Either both or none of the subcortical
-#'  NIFTIs should be provided. 
+#'  NIFTIs should be provided.
 #'
 #' @param cifti_fname Path to the CIFTI to write.
 #' @param cortexL_fname The left cortex file.
@@ -18,13 +18,13 @@
 #'  this is the time between measurements. If \code{NULL}, use the Connectome
 #'  Workbench default (1.0).
 #' @param timestart If a dense time series ("dtseries.nii") file is being written,
-#'  this is starting time. If \code{NULL}, use the Connectome Workbench default 
+#'  this is starting time. If \code{NULL}, use the Connectome Workbench default
 #'  (0.0).
 #'
 #' @keywords internal
-#' 
+#'
 write_cifti_from_separate <- function(
-  cifti_fname, 
+  cifti_fname,
   cortexL_fname=NULL, ROIcortexL_fname=NULL,
   cortexR_fname=NULL, ROIcortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
@@ -86,7 +86,7 @@ write_cifti_from_separate <- function(
   # Warning for dlabel:
   #   WARNING: label file '[the file]' contains data array with data type other than int32
   #   --> all values are 0 ???
-
+  #   WARNING about conflicting key values from activations xifti. ignore?
   run_wb_cmd(cmd, ignore.stderr=TRUE)
 
   invisible(cifti_fname)
