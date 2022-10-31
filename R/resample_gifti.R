@@ -176,6 +176,10 @@ resample_gifti <- function(
   # Make and run command. ------------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  if (file_type=="surface" && resamp_res>original_res) {
+    ciftiTools_warn("Upsampling a surface is not recommended, if avoidable.")
+  }
+
   cmd_name <- switch(file_type,
     metric="-metric-resample",
     label="-label-resample",
