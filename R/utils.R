@@ -272,7 +272,7 @@ match_exactly <- function(
 
 #' Print suppressible message
 #' 
-#' Print message only if ciftiTools Option "suppress_msgs" is TRUE
+#' Print message only if ciftiTools Option "suppress_msgs" is \code{FALSE}.
 #' 
 #' @param msg The message
 #' @keywords internal
@@ -288,7 +288,7 @@ ciftiTools_msg <- function(msg){
 
 #' Print suppressible warning
 #' 
-#' Print warning only if ciftiTools Option "suppress_msgs" is TRUE
+#' Print warning only if ciftiTools Option "suppress_msgs" is \code{FALSE}.
 #' 
 #' @param msg The warning message
 #' @keywords internal

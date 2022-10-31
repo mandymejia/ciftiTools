@@ -13,6 +13,6 @@ ciftiTools_warn(warn)
 \code{NULL}, invisibly
 }
 \description{
-Print warning only if ciftiTools Option "suppress_msgs" is TRUE
+Print warning only if ciftiTools Option "suppress_msgs" is \code{FALSE}.
 }
 \keyword{internal}
