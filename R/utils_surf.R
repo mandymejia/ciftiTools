@@ -44,7 +44,8 @@ print.surf <- function(x, ...) {
 #' Distance from mask on surface
 #'
 #' Identify the vertices within \code{boundary_width} edges of a vertex in the 
-#'  input mask on a triangular mesh.
+#'  input mask on a triangular mesh. Returns the number of edges a vertex is
+#'  away from the closest mask vertex. 
 #' 
 #' @inheritParams faces_Param
 #' @inheritParams mask_Param_vertices
@@ -97,6 +98,33 @@ surf_dist_from_mask <- function(faces, mask, boundary_width=10){
   }
 
   b_layers
+}
+
+#' Boundary region of a mask
+#' 
+#' Identify the vertices within \code{boundary_width} edges of a vertex in the 
+#'  input mask on a triangular mesh. Returns a logical indicating if a vertex
+#'  is within \code{boundary_width} edges of the mask. 
+#' 
+#' @inheritParams faces_Param
+#' @inheritParams mask_Param_vertices
+#' @param boundary_width A positive integer representing the width of the 
+#'  boundary to compute. The furthest vertices from the input mask will be this
+#'  number of edges away from the closest vertex in the input mask. Default: 
+#'  \code{10}.
+#' 
+#' @return A length-V logical vector. Each entry corresponds to the vertex
+#'  with the same index. The value is true if a vertex is within 
+#'  \code{boundary_width} edges of a vertex in the mesh, but is not within the
+#'  mesh itself. 
+#'
+#' @export
+boundary_mask <- function(faces, mask, boundary_width=10){
+  b_layers <- surf_dist_from_mask(
+    faces=faces, mask=mask, boundary_width=boundary_width
+  )
+
+  b_layers > 0
 }
 
 #' Vertex Adjacency Matrix
