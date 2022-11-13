@@ -267,9 +267,11 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
 #' @param mwall_fill The fill value to use for medial wall vertices.
 #' @return The unmasked cortex data
 #'
-#' @export
+#' @keywords internal
 #'
 unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
+  # [TO DO] This function is internal because `fMRItools::unmask_mat` should be
+  #   imported instead.
   cdat <- matrix(mwall_fill, nrow=length(mwall),  ncol=ncol(cortex))
   cdat[mwall,] <- cortex
   cdat
