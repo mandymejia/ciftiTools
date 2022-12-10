@@ -37,6 +37,7 @@ view_xifti_volume(
   ypos.title = 0,
   xpos.title = 0,
   orientation_labels = FALSE,
+  crop = FALSE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -54,6 +55,7 @@ view_cifti_volume(
   title = NULL,
   idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
+  convention = c("neurological", "radiological"),
   n_slices = 9,
   slices = NULL,
   together = NULL,
@@ -72,6 +74,8 @@ view_cifti_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
+  orientation_labels = FALSE,
+  crop = FALSE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -89,6 +93,7 @@ viewCIfTI_volume(
   title = NULL,
   idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
+  convention = c("neurological", "radiological"),
   n_slices = 9,
   slices = NULL,
   together = NULL,
@@ -107,6 +112,8 @@ viewCIfTI_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
+  orientation_labels = FALSE,
+  crop = FALSE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -124,6 +131,7 @@ viewcii_volume(
   title = NULL,
   idx = NULL,
   plane = c("axial", "sagittal", "coronal"),
+  convention = c("neurological", "radiological"),
   n_slices = 9,
   slices = NULL,
   together = NULL,
@@ -142,6 +150,8 @@ viewcii_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
+  orientation_labels = FALSE,
+  crop = FALSE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -327,6 +337,10 @@ right of the plot? These will indicate the directions along the left-right
 axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}.
 The vertical positioning is controlled by \code{ypos.title}, and the font
 size is controlled by \code{cex.title}.}
+
+\item{crop}{Crop the slice subplots to the subcortical structures, instead of
+showing the full anatomical image? Default: \code{FALSE}.
+Ignored if \code{widget}.}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
 \code{"white"}. If \code{"white"}, will use black instead for the color}
