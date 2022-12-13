@@ -186,7 +186,7 @@
 #'  The vertical positioning is controlled by \code{ypos.title}, and the font
 #'  size is controlled by \code{cex.title}.
 #' @param crop Crop the slice subplots to the subcortical structures, instead of
-#'  showing the full anatomical image? Default: \code{FALSE}. 
+#'  showing the full anatomical image? Default: \code{TRUE}. 
 #'  Ignored if \code{widget}.
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  \code{"white"}. If \code{"white"}, will use black instead for the color
@@ -232,7 +232,7 @@ view_xifti_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=TRUE, crop=FALSE,
+  orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   # ----------------------------------------------------------------------------
@@ -1152,7 +1152,7 @@ view_cifti_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=TRUE, crop=FALSE,
+  orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
@@ -1190,7 +1190,7 @@ viewCIfTI_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=TRUE, crop=FALSE,
+  orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
@@ -1228,7 +1228,7 @@ viewcii_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=TRUE, crop=FALSE,
+  orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(

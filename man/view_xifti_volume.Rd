@@ -37,7 +37,7 @@ view_xifti_volume(
   ypos.title = 0,
   xpos.title = 0,
   orientation_labels = TRUE,
-  crop = FALSE,
+  crop = TRUE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -75,7 +75,7 @@ view_cifti_volume(
   ypos.title = 0,
   xpos.title = 0,
   orientation_labels = TRUE,
-  crop = FALSE,
+  crop = TRUE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -113,7 +113,7 @@ viewCIfTI_volume(
   ypos.title = 0,
   xpos.title = 0,
   orientation_labels = TRUE,
-  crop = FALSE,
+  crop = TRUE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -151,7 +151,7 @@ viewcii_volume(
   ypos.title = 0,
   xpos.title = 0,
   orientation_labels = TRUE,
-  crop = FALSE,
+  crop = TRUE,
   text_color = "white",
   bg = NULL,
   width = NULL,
@@ -339,7 +339,7 @@ The vertical positioning is controlled by \code{ypos.title}, and the font
 size is controlled by \code{cex.title}.}
 
 \item{crop}{Crop the slice subplots to the subcortical structures, instead of
-showing the full anatomical image? Default: \code{FALSE}.
+showing the full anatomical image? Default: \code{TRUE}.
 Ignored if \code{widget}.}
 
 \item{text_color}{Color for text in title and colorbar legend. Default:
