@@ -36,7 +36,7 @@ view_xifti_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
-  orientation_labels = FALSE,
+  orientation_labels = TRUE,
   crop = FALSE,
   text_color = "white",
   bg = NULL,
@@ -74,7 +74,7 @@ view_cifti_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
-  orientation_labels = FALSE,
+  orientation_labels = TRUE,
   crop = FALSE,
   text_color = "white",
   bg = NULL,
@@ -112,7 +112,7 @@ viewCIfTI_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
-  orientation_labels = FALSE,
+  orientation_labels = TRUE,
   crop = FALSE,
   text_color = "white",
   bg = NULL,
@@ -150,7 +150,7 @@ viewcii_volume(
   cex.title = NULL,
   ypos.title = 0,
   xpos.title = 0,
-  orientation_labels = FALSE,
+  orientation_labels = TRUE,
   crop = FALSE,
   text_color = "white",
   bg = NULL,
@@ -334,7 +334,7 @@ or down (\code{ypos.title}) or left or right (\code{xpos.title}).}
 
 \item{orientation_labels}{Show orientation labels at the top left and top
 right of the plot? These will indicate the directions along the left-right
-axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}.
+axis for each slice image. Default: \code{TRUE}. Ignored if \code{widget}.
 The vertical positioning is controlled by \code{ypos.title}, and the font
 size is controlled by \code{cex.title}.}
 

@@ -182,7 +182,7 @@
 #'  or down (\code{ypos.title}) or left or right (\code{xpos.title}).
 #' @param orientation_labels Show orientation labels at the top left and top
 #'  right of the plot? These will indicate the directions along the left-right
-#'  axis for each slice image. Default: \code{FALSE}. Ignored if \code{widget}.
+#'  axis for each slice image. Default: \code{TRUE}. Ignored if \code{widget}.
 #'  The vertical positioning is controlled by \code{ypos.title}, and the font
 #'  size is controlled by \code{cex.title}.
 #' @param crop Crop the slice subplots to the subcortical structures, instead of
@@ -232,7 +232,7 @@ view_xifti_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=FALSE, crop=FALSE,
+  orientation_labels=TRUE, crop=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   # ----------------------------------------------------------------------------
@@ -1152,7 +1152,7 @@ view_cifti_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=FALSE, crop=FALSE,
+  orientation_labels=TRUE, crop=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
@@ -1190,7 +1190,7 @@ viewCIfTI_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=FALSE, crop=FALSE,
+  orientation_labels=TRUE, crop=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
@@ -1228,7 +1228,7 @@ viewcii_volume <- function(
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, ypos.title=0, xpos.title=0, 
-  orientation_labels=FALSE, crop=FALSE,
+  orientation_labels=TRUE, crop=FALSE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
   view_xifti_volume(
