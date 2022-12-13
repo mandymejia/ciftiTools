@@ -49,7 +49,10 @@ number of \code{values}. They will be sorted.
 
 If \code{values} is a named vector, the rownames of the label table in the resulting
 \code{"xifti"} will be those names. Otherwise, the rownames will be the values
-themselves.}
+themselves.
+
+Since \code{NA} datapoints will be replaced by \code{NaN}, \code{NA} in
+\code{values} will be replaced by \code{NaN}.}
 
 \item{nsig}{Take this many significant digits for the data values. If
 \code{Inf} (default), do not round.}
@@ -90,6 +93,8 @@ Convert the intent of a CIFTI file or \code{"xifti"} object
 \itemize{
 \item \code{convert_to_dlabel()}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
 \code{"xifti"}. Will use the same label table for each data column.
+
+Note that \code{NA} values will be replaced with \code{NaN}.
 
 \item \code{convert_to_dscalar()}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
 CIFTI file or \code{"xifti"} object.

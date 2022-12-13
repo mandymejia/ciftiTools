@@ -550,8 +550,8 @@ is.xifti <- function(x, messages=TRUE) {
       if (!is.null(x$data$cortex_left)) {
         for (ii in seq_len(ncol(x$data$cortex_left))) {
           all_labels <- unique(data_mat[,ii])
-          valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
-          if (!all(valid_label)) {
+          valid_label <- all_labels %in% c(NaN, NA, x$meta$cifti$labels[[ii]]$Key)
+          if (!all(valid_label, na.rm=TRUE)) {
             vl_show <- which(!valid_label)
             vl_trnc <- length(vl_show) > vl_show_max
             if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
@@ -569,8 +569,8 @@ is.xifti <- function(x, messages=TRUE) {
       if (!is.null(x$data$cortex_right)) {
         for (ii in seq_len(ncol(x$data$cortex_right))) {
           all_labels <- unique(data_mat[,ii])
-          valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
-          if (!all(valid_label)) {
+          valid_label <- all_labels %in% c(NaN, NA, x$meta$cifti$labels[[ii]]$Key)
+          if (!all(valid_label, na.rm=TRUE)) {
             vl_show <- which(!valid_label)
             vl_trnc <- length(vl_show) > vl_show_max
             if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
@@ -588,8 +588,8 @@ is.xifti <- function(x, messages=TRUE) {
       if (!is.null(x$data$subcort)) {
         for (ii in seq_len(ncol(x$data$subcort))) {
           all_labels <- unique(data_mat[,ii])
-          valid_label <- all_labels %in% x$meta$cifti$labels[[ii]]$Key
-          if (!all(valid_label)) {
+          valid_label <- all_labels %in% c(NaN, NA, x$meta$cifti$labels[[ii]]$Key)
+          if (!all(valid_label, na.rm=TRUE)) {
             vl_show <- which(!valid_label)
             vl_trnc <- length(vl_show) > vl_show_max
             if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }

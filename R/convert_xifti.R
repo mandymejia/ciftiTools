@@ -1,45 +1,51 @@
 #' @describeIn convert_xifti
-#' 
+#'
 #' Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
 #'  \code{"xifti"}. Will use the same label table for each data column.
-#' 
+#'
+#'  Note that \code{NA} values will be replaced with \code{NaN}.
 #' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
 #' @param values (Optional) A vector of the original data values. They should all
 #'  be unique. They may not all occur in the \code{"xifti"} data, but every
-#'  datapoint in the \code{"xifti"} must occur in \code{values}. Data will be 
+#'  datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
 #'  mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
 #'  number of \code{values}. They will be sorted.
-#' 
+#'
 #'  If \code{values} is a named vector, the rownames of the label table in the resulting
 #'  \code{"xifti"} will be those names. Otherwise, the rownames will be the values
-#'  themselves.  
-#' @param nsig Take this many significant digits for the data values. If 
+#'  themselves.
+#'
+#'  Since \code{NA} datapoints will be replaced by \code{NaN}, \code{NA} in
+#'  \code{values} will be replaced by \code{NaN}.
+#'
+#' @param nsig Take this many significant digits for the data values. If
 #'  \code{Inf} (default), do not round.
-#' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette 
+#' @param colors (Optional) "ROY_BIG_BL", the name of a ColorBrewer palette
 #'  (see \code{RColorBrewer::brewer.pal.info} and colorbrewer2.org), the name of
-#'  a viridisLite palette, or a character vector of colors. Default: 
+#'  a viridisLite palette, or a character vector of colors. Default:
 #'  \code{"Set2"}.
 #' @param add_white Append white to the beginning of the colors? Default: \code{TRUE}.
-#' @param return_conversion_table Return the conversion table along with the 
+#' @param return_conversion_table Return the conversion table along with the
 #'  converted \code{"xifti"}? Default: \code{FALSE}
-#' 
+#'
 #' @keywords internal
 convert_to_dlabel <- function(x, cifti_target_fname=NULL,
-  values=NULL, nsig=Inf, colors="Set2", add_white=TRUE, return_conversion_table=FALSE) {
+  values=NULL, nsig=Inf, colors="Set2", add_white=TRUE,
+  return_conversion_table=FALSE) {
 
   # If the input is a CIFTI file name, we need to read it into R.
   input_is_xifti <- is.xifti(x, messages=FALSE)
-  if (!input_is_xifti) { 
+  if (!input_is_xifti) {
     x_original <- x
     if (is.null(cifti_target_fname)) {
       cifti_target_fname <- basename(gsub(
         get_cifti_extn(x), "dlabel.nii", x, fixed=TRUE
       ))
     }
-    x <- read_xifti(x, brainstructures=info_cifti(x)$cifti$brainstructures) 
+    x <- read_xifti(x, brainstructures=info_cifti(x)$cifti$brainstructures)
   }
 
   stopifnot(is.xifti(x))
@@ -55,25 +61,28 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   }
 
   # Get the label values.
-  convert_NA <- FALSE
   if (is.null(values)) {
     # Infer the new values.
-    values <- sort(unique(signif(as.vector(as.matrix(x)), nsig)))
-    if (any(is.na(as.vector(as.matrix(x))))) {
-      if (!any(is.nan(as.vector(as.matrix(x))))) {
-        convert_NA <- TRUE
-        values <- c(NaN, values[!is.na(values)])
-      } else {
-        # [TO DO]: Workaround
-        stop("Not implemented: handling presence of both NA and NaN values in data. Change one of them to a new data value.\n")
-      }
-    }
+    values <- unique(signif(as.vector(as.matrix(x)), nsig))
+    # Sort.
+    values <- sort(values, na.last=FALSE)
   } else {
     # Check the new values.
-    if (any(duplicated(values))) { warning("Removing duplicate `values`.\n"); values <- unique(values) }
-    values <- sort(values)
+    if (any(duplicated(values))) {
+      warning("Removing duplicate `values`.\n")
+      values <- unique(values)
+    }
   }
+  values_hasNA <- any(is.na(values) & !is.nan(values))
+  values_hasNaN <- any(is.nan(values))
+  valfac_exclude <- list(
+    NULL,
+    c(NA),
+    c(NaN),
+    c(NA, NaN)
+  )[[1 + values_hasNA*1 + values_hasNaN*2]]
   if (length(values) > 1000) { warning("Over 1000 unique `values` in the `xifti`.\n") }
+  values <- values[!is.na(values)]
   conversion_table <- data.frame(values=values, label=seq(length(values))-1)
 
   # Convert data to label values.
@@ -81,16 +90,22 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
     if (is.null(x$data[[bs]])) { next }
 
     x$data[[bs]][] <- signif(x$data[[bs]][], nsig)
+    valmask_NaN <- if (values_hasNaN) { is.nan(x$data[[bs]][]) } else { NULL }
 
-    if (convert_NA) {
+    if (values_hasNaN) {
       x$data[[bs]][] <- ifelse(
-        is.na(as.vector(x$data[[bs]])), 
+        is.na(as.vector(x$data[[bs]])) | is.nan(as.vector(x$data[[bs]])),
         NaN, as.vector(x$data[[bs]])
       )
     }
-
-    stopifnot(all(x$data[[bs]][] %in% values))
-    x$data[[bs]][] <- as.numeric(factor(x$data[[bs]][], levels=values)) - 1
+    stopifnot(all(x$data[[bs]][] %in% c(NA, NaN, values)))
+    x$data[[bs]][] <- as.numeric(factor(
+      x$data[[bs]][],
+      levels=values,
+      exclude=valfac_exclude
+    )) - 1
+    # NaN get converted to NA, so here we convert them back to NaN
+    if (values_hasNaN) { x$data[[bs]][][valmask_NaN] <- NaN }
   }
 
   # Make color table.
@@ -124,7 +139,11 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   col_table <- rbind(seq(N_)-1, col_table)
   rownames(col_table) <- c("Key", "Red", "Green", "Blue", "Alpha")
   col_table <- as.data.frame(t(col_table))
-  rownames(col_table) <- if (!is.null(names(values))) { names(values) } else { values }
+  rownames(col_table) <- if (!is.null(names(values))) {
+    names(values)
+  } else {
+    ifelse(is.na(values)&(!is.nan(values)), "NA", as.character(values))
+  }
 
   # Add components to xifti
   T_ <- ncol_xifti(x)
@@ -154,22 +173,22 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
 }
 
 #' @describeIn convert_xifti
-#' 
+#'
 #' Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
-#'  CIFTI file or \code{"xifti"} object. 
-#' 
+#'  CIFTI file or \code{"xifti"} object.
+#'
 #' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
 #' @param names The column names. If \code{NULL} (default), will be set to
 #'  "Column 1", "Column 2", ... .
-#' 
+#'
 #' @keywords internal
 convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
-  
+
   input_is_xifti <- is.xifti(x, messages=FALSE)
-  if (!input_is_xifti) { 
+  if (!input_is_xifti) {
     if (is.null(cifti_target_fname)) {
       cifti_target_fname <- basename(gsub(
         get_cifti_extn(x), "dscalar.nii", x, fixed=TRUE
@@ -192,8 +211,8 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
     x$meta$cifti$intent <- 3006
     x$meta$cifti[c("time_start", "time_step", "time_unit", "labels")] <- NULL
     if (!is.null(names)) {
-      if (length(names) != T_) { 
-        stop("The data has ", T_, " columns but `names` is length ", length(names), ".") 
+      if (length(names) != T_) {
+        stop("The data has ", T_, " columns but `names` is length ", length(names), ".")
       }
       x$meta$cifti$names <- as.character(names)
     } else {
@@ -215,7 +234,7 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
     }
 
     cmd <- paste(
-      "-cifti-change-mapping", x, 
+      "-cifti-change-mapping", x,
       "ROW", cifti_target_fname, "-scalar"
     )
 
@@ -229,27 +248,27 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
 }
 
 #' @describeIn convert_xifti
-#' 
+#'
 #' Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
-#'  \code{"xifti"} object. 
-#' 
+#'  \code{"xifti"} object.
+#'
 #' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
 #' @param time_start,time_step,time_unit (Optional) metadata for the new dtseries
-#' 
+#'
 #' @keywords internal
 convert_to_dtseries <- function(
   x, cifti_target_fname=NULL,
   time_start=0, time_step=1, time_unit=c("second", "hertz", "meter", "radian")) {
-  
+
   time_start <- as.numeric(time_start[1])
   time_step <- as.numeric(time_step[1])
   time_unit <- match.arg(tolower(time_unit), c("second", "hertz", "meter", "radian"))
 
   input_is_xifti <- is.xifti(x, messages=FALSE)
-  if (!input_is_xifti) { 
+  if (!input_is_xifti) {
     if (is.null(cifti_target_fname)) {
       cifti_target_fname <- basename(gsub(
         get_cifti_extn(x), "dtseries.nii", x, fixed=TRUE
@@ -286,7 +305,7 @@ convert_to_dtseries <- function(
     stopifnot(file.exists(x))
 
     cmd <- paste(
-      "-cifti-change-mapping", x, 
+      "-cifti-change-mapping", x,
       "ROW", cifti_target_fname, "-series",
       time_step, time_start, "-unit", toupper(time_unit)
     )
@@ -298,27 +317,27 @@ convert_to_dtseries <- function(
 }
 
 #' Convert the intent of a CIFTI file or \code{"xifti"} object
-#' 
+#'
 #' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param to The desired intent: \code{"dscalar"} (default), \code{"dtseries"},
 #'  or \code{"dlabel"}
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
-#' @param ... Only used if \code{x} is a \code{"xifti"} object. Additional 
+#' @param ... Only used if \code{x} is a \code{"xifti"} object. Additional
 #'  options specific to the target type and intent, e.g. for
 #'  \code{convert_to_dlabel}.
-#' 
-#' @return If \code{x} is a CIFTI, the target is a \code{"dlabel"} and 
-#'  \code{return_conversion_table}, a length-2 list with the first entry being 
-#'  the ".dlabel" \code{"xifti"} and the second being the conversion table. 
-#'  Otherwise, the \code{"xifti"} or the output CIFTI file name is directly 
+#'
+#' @return If \code{x} is a CIFTI, the target is a \code{"dlabel"} and
+#'  \code{return_conversion_table}, a length-2 list with the first entry being
+#'  the ".dlabel" \code{"xifti"} and the second being the conversion table.
+#'  Otherwise, the \code{"xifti"} or the output CIFTI file name is directly
 #'  returned.
-#' 
+#'
 #' @family manipulating
-#' 
+#'
 #' @export
-convert_xifti <- function(x, to=c("dscalar", "dtseries", "dlabel"), 
+convert_xifti <- function(x, to=c("dscalar", "dtseries", "dlabel"),
   cifti_target_fname=NULL, ...){
 
   to <- match.arg(to, c("dscalar", "dtseries", "dlabel"))
