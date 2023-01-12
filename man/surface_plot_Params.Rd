@@ -66,7 +66,7 @@ not outline the edges).}
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0}
 (do not draw the vertices).}
 
-\item{material}{A list of materials from \code{\link[rgl]{rgl.material}}
+\item{material}{A list of materials from \code{\link[rgl]{material3d}}
 to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
 from the color scale, rather than adding geometric shading and interpolating
 vertex colors. If \code{NULL}, use defaults.}

@@ -14,8 +14,8 @@ drag the cursor to rotate the meshes. Use the scroll wheel or right click
 and drag to zoom. Press the scroll wheel and drag to change the field-of-view.
 For Open GL windows, execute
 \code{\link[rgl]{snapshot}} to save the current window as a .png file,
-\code{\link[rgl:rgl.open]{rgl.close}} to close the window, and
-\code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
+\code{\link[rgl:open3d]{close3d}} to close the window, and
+\code{\link[rgl:viewpoint]{view3d}} to programmatically control the
 perspective.
 
 To embed an interactive plot in an R Markdown document, first execute
