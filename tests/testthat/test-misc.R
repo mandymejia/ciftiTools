@@ -108,13 +108,13 @@ test_that("Miscellaneous functions are working", {
 
     # unmask_cortex
     if (!is.null(cii$data$cortex_left)) {
-      cor2 <- unmask_cortex(
+      cor2 <- fMRItools:::unmask_mat(
         cii$data$cortex_left,
         cii$meta$cortex$medial_wall_mask$left
       )
     }
     if (!is.null(cii$data$cortex_right)) {
-      cor2 <- unmask_cortex(
+      cor2 <- fMRItools:::unmask_mat(
         cii$data$cortex_right,
         cii$meta$cortex$medial_wall_mask$right
       )
