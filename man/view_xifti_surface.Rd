@@ -341,7 +341,7 @@ not outline the edges).}
 \item{vertex_size}{Draw each vertex with this size. Default: \code{0}
 (do not draw the vertices).}
 
-\item{material}{A list of materials from \code{\link[rgl]{rgl.material}}
+\item{material}{A list of materials from \code{\link[rgl]{material3d}}
 to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
 from the color scale, rather than adding geometric shading and interpolating
 vertex colors. If \code{NULL}, use defaults.}
@@ -388,8 +388,8 @@ drag the cursor to rotate the meshes. Use the scroll wheel or right click
 and drag to zoom. Press the scroll wheel and drag to change the field-of-view.
 For Open GL windows, execute
 \code{\link[rgl]{snapshot}} to save the current window as a .png file,
-\code{\link[rgl:rgl.open]{rgl.close}} to close the window, and
-\code{\link[rgl:viewpoint]{rgl.viewpoint}} to programmatically control the
+\code{\link[rgl:open3d]{close3d}} to close the window, and
+\code{\link[rgl:viewpoint]{view3d}} to programmatically control the
 perspective.
 
 To embed an interactive plot in an R Markdown document, first execute

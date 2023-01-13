@@ -8,7 +8,7 @@ test_that("plot_xifti_surface and related functions are working", {
 
   check_wb()
 
-  plot2 <- function(...){plot(...); rgl::rgl.close()}
+  plot2 <- function(...){plot(...); rgl::close3d()}
 
   fnames <- ciftiTools.files()
   for (cii_fname in fnames$cifti) {

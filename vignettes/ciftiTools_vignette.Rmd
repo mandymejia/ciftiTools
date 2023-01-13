@@ -140,7 +140,7 @@ library(rgl)
 rgl::setupKnitr()
 
 # Sometimes the first OpenGL window does not render properly.
-rgl::rgl.open(); rgl::rgl.close()
+rgl::open3d(); rgl::close3d()
 ```
 
 Now let's take a look! 
