@@ -197,7 +197,7 @@ view_xifti_surface.mesh_val <- function(xifti, surfL, surfR, hemisphere, idx, ma
     ))
     faces_h <- t(surf_h$faces)
     mesh[[h]] <- rgl::tmesh3d(
-      vertices_h, faces_h, meshColor = "vertices", 
+      vertices_h, faces_h, meshColor = "vertices",
       material=material
     )
     ## Add normals for smooth coloring.
@@ -1312,7 +1312,7 @@ view_xifti_surface <- function(
         )
       }
 
-      rgl::rgl.viewpoint(userMatrix=rot, fov=0, zoom=zoom)
+      rgl::view3d(userMatrix=rot, fov=0, zoom=zoom)
       rgl::next3d(current = NA, clear = FALSE, reuse = FALSE)
     }
 
@@ -1400,7 +1400,7 @@ view_xifti_surface <- function(
 
     if (!widget && saving_file) {
       rgl::rgl.snapshot(fname[jj])
-      rgl::rgl.close()
+      rgl::close3d()
     }
   }
 
@@ -1454,7 +1454,7 @@ view_xifti_surface <- function(
         components="Slider", controls
       )
     }
-    rgl::rgl.close()
+    rgl::close3d()
   }
 
   # Does this ever happen?
