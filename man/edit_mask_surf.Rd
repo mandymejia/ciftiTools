@@ -2,6 +2,8 @@
 % Please edit documentation in R/edit_mask.R
 \name{edit_mask_surf}
 \alias{edit_mask_surf}
+\alias{erode_mask_surf}
+\alias{dilate_mask_surf}
 \title{Edit mask on surface}
 \usage{
 edit_mask_surf(
@@ -10,6 +12,22 @@ edit_mask_surf(
   surf = NULL,
   hemisphere = c("left", "right"),
   do = c("erode", "dilate", "borders"),
+  depth = 1
+)
+
+erode_mask_surf(
+  x,
+  mwall = NULL,
+  surf = NULL,
+  hemisphere = c("left", "right"),
+  depth = 1
+)
+
+dilate_mask_surf(
+  x,
+  mwall = NULL,
+  surf = NULL,
+  hemisphere = c("left", "right"),
   depth = 1
 )
 }
@@ -54,4 +72,3 @@ The depth of the edit is determined by the number of edges between the
 vertices. To erode or dilate based on spatial distance (mm), see
 \code{-cifti-dilate} and \code{-cifti-erode}.
 }
-\keyword{internal}
