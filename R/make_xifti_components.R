@@ -127,7 +127,7 @@ make_cortex <- function(
       }
     }
     col_names <- as.character(vapply(cortex$data_meta, get_col_name, ""))
-    if (length(unique(col_names)) == 1 && col_names=="") {
+    if (length(unique(col_names)) == 1 && unique(col_names)=="") {
       col_names <- NULL
     }
 
