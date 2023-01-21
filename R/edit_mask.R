@@ -34,7 +34,7 @@
 #' 
 #' @return \code{x} after erosion or dilation.
 #' 
-#' @keywords internal
+#' @export
 #' 
 edit_mask_surf <- function(
   x, mwall=NULL, surf=NULL, hemisphere=c("left", "right"), 
@@ -98,4 +98,26 @@ edit_mask_surf <- function(
   if (!is.null(mwall)) { x <- x[mwall] }
 
   x
+}
+
+#' @rdname edit_mask_surf
+#' @export
+erode_mask_surf <- function(
+  x, mwall=NULL, surf=NULL, hemisphere=c("left", "right"), depth=1){
+
+  edit_mask_surf(
+    x, mwall=mwall, surf=surf, hemisphere=hemisphere, 
+    do="erode", depth=depth
+  )
+}
+
+#' @rdname edit_mask_surf
+#' @export
+dilate_mask_surf <- function(
+  x, mwall=NULL, surf=NULL, hemisphere=c("left", "right"), depth=1){
+
+  edit_mask_surf(
+    x, mwall=mwall, surf=surf, hemisphere=hemisphere, 
+    do="dilate", depth=depth
+  )
 }
