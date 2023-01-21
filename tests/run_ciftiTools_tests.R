@@ -1,6 +1,6 @@
 # Build --> Install and Restart
 # [Edit this] path to the Workbench for your computer.
-my_wb <- "~/Desktop/workbench"
+my_wb <- "~/../Desktop/fMRI/workbench"
 
 library(testthat)
 library(ciftiTools)

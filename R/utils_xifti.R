@@ -270,8 +270,8 @@ resample_cifti_default_fname <- function(original_fname, resamp_res) {
 #' @keywords internal
 #'
 unmask_cortex <- function(cortex, mwall, mwall_fill=NA) {
-  # [TO DO] This function is internal because `fMRItools::unmask_mat` should be
-  #   imported instead.
+  # This function is internal because people should import 
+  #   `fMRItools::unmask_mat` instead of this.
   cdat <- matrix(mwall_fill, nrow=length(mwall),  ncol=ncol(cortex))
   cdat[mwall,] <- cortex
   cdat

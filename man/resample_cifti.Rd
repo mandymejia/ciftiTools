@@ -15,6 +15,7 @@ resample_cifti(
   surfL_target_fname = NULL,
   surfR_target_fname = NULL,
   resamp_res,
+  resamp_method = c("barycentric", "adaptive"),
   write_dir = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
@@ -83,6 +84,14 @@ If \code{NULL} (default), will use default names created by
 
 \item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
+
+\item{resamp_method}{\code{"barycentric"} (default), \code{"adaptive"}, or
+\code{"recommended"}. The former two correspond to the Workbench command
+options \code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"} respectively. If
+\code{"recommended"}, will use barycentric resampling for the data and
+adaptive sampling for the surface geometry.
+
+If adaptive sampling is used, then the arguments ... must also be provided.}
 
 \item{write_dir}{Where to write the resampled CIFTI (and surfaces if present.)
 If \code{NULL} (default), will use the current working directory if \code{x}
