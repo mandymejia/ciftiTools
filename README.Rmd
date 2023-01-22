@@ -91,7 +91,7 @@ See [this link](https://htmlpreview.github.io/?https://github.com/mandymejia/cif
 
 !["xifti" object structure](README_media/xifti_structure.png){width=70%}
 
-![Surfaces comparison. The "very inflated", "inflated", and "midthickness" surfaces are included in ciftiTools through the function `load_surf`. See the data acknowledgement section at the bottom of this README.](README_media/surf_tour.gif){width=40%}
+![Surfaces comparison. The "very inflated", "inflated", and "midthickness" surfaces are included in ciftiTools through the function `load_surf`. See the data acknowledgement section at the bottom of this README.](README_media/surf_tour.gif){width=25%}
 
 
 ## FAQ

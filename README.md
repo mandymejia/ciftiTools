@@ -117,7 +117,7 @@ alt="“xifti” object structure" />
 </figure>
 
 <figure>
-<img src="README_media/surf_tour.gif" style="width:40.0%"
+<img src="README_media/surf_tour.gif" style="width:25.0%"
 alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools through the function load_surf. See the data acknowledgement section at the bottom of this README." />
 <figcaption aria-hidden="true">Surfaces comparison. The “very inflated”,
 “inflated”, and “midthickness” surfaces are included in ciftiTools

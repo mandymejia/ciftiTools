@@ -21,5 +21,5 @@ test_that("plot_xifti_volume and related functions are working", {
   plot(cii, plane="sag", color_mode="qualitative"); rgl::close3d()
 
   cii <- read_cifti(fnames$cifti["dscalar_ones"], brainstructures="sub")
-  plot(cii, convention="rad", orientation_labels=FALSE)
+  plot(cii, convention="rad", orientation_labels=FALSE, crop=FALSE)
 })
