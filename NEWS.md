@@ -1,17 +1,45 @@
+# 11.0 (Jan 23, 2023)
+
+Changes to default behaviors
+* Add `crop` to `view_xifti_volume`; the default is `TRUE`. Previously the subcortical images were cropped to the anatomical image; now the default is to crop them to the data. 
+* Change default of `orientation_labels` in `view_xifti_volume` to `TRUE`.
+* Allow `NA` and `NaN` values in `"xifti"` objects with label data. Leave these values alone rather than making them into factor levels.
+* Add warning if surface data are being upsampled
+* Delete helper file surfaces written by `smooth_cifti` rather than returning their file paths.
+
+New features
+* Add adaptive resampling for surface data. The default remains barycentric. 
+* Add surface manipulation functions from `BayesfMRI`.
+* Allow `xii + mat` (and other operations)
+* Add `scientific` argument to `view_xifti`. By default, scientific notation is determined automatically (as before).
+* Misc. patches
+
+Documentation
+* Add lit vs unlit comparison to README
+* Improved citations
+
+# 10.0 (July 5, 2022)
+
+* Fix error during resampling when only one hemisphere is present
+* Better file I/O on mounted Google Drive
+* Add new viridis color palettes
+* Coerce new data input to newdata_xifti to numeric
+* Add file extension to file name in write_xifti automatically, if not provided
+
 # 9.0 (May 16, 2022)
 
 New features
-Add convention and orientation_labels to view_xifti_volume (default: neurological, instead of radiological as it's been previously)
-Add together_ncol to view_xifti_* to control compositing layout
-Add fname argument to view_comp to save the result to a PNG file
-Allow "xifti" objects to have different resolutions in the left and right cortex
-Add citation to welcome message
+* Add convention and orientation_labels to view_xifti_volume (default: neurological, instead of radiological as it's been previously)
+* Add together_ncol to view_xifti_* to control compositing layout
+* Add fname argument to view_comp to save the result to a PNG file
+* Allow "xifti" objects to have different resolutions in the left and right cortex
+* Add citation to welcome message
 
 Behind-the-scenes improvements
-Better file path management for system commands
-Better use of S3 group methods for Math, Ops, Summary functions
-Replace coveralls with codecov 
-Misc. patches
+* Better file path management for system commands
+* Better use of S3 group methods for Math, Ops, Summary functions
+* Replace coveralls with codecov 
+* Misc. patches
 
 # 8.0 (February 1, 2022)
 
