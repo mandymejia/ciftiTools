@@ -4,7 +4,7 @@
 \alias{vertices_Param}
 \title{vertices}
 \arguments{
-\item{vertices}{A \eqn{V x 3} matrix, where each row contains the Euclidean
+\item{vertices}{A \eqn{V \times 3} matrix, where each row contains the Euclidean
 coordinates at which a given vertex in the mesh is located. \eqn{V} is the
 number of vertices in the mesh}
 }

@@ -7,7 +7,7 @@
 vert_adjacency(faces, v1, v2 = NULL)
 }
 \arguments{
-\item{faces}{An \eqn{F x 3} matrix, where each row contains the vertex
+\item{faces}{An \eqn{F \times 3} matrix, where each row contains the vertex
 indices for a given triangular face in the mesh. \eqn{F} is the number of
 faces in the mesh.}
 
@@ -20,6 +20,6 @@ alternatively be a vector if integers corresponding to vertex indices.}
 Adjacency matrix
 }
 \description{
-Make adjacency matrix between two sets of vertices.
+Make adjacency matrix between two sets of vertices on the same mesh.
 }
 \keyword{internal}

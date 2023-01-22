@@ -4,7 +4,7 @@
 \alias{faces_Param}
 \title{faces}
 \arguments{
-\item{faces}{An \eqn{F x 3} matrix, where each row contains the vertex
+\item{faces}{An \eqn{F \times 3} matrix, where each row contains the vertex
 indices for a given triangular face in the mesh. \eqn{F} is the number of
 faces in the mesh.}
 }
