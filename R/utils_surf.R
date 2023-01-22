@@ -62,10 +62,10 @@ print.surf <- function(x, ...) {
 #'  have value -1.
 #'
 #' @keywords internal 
-surf_dist_from_mask <- function(faces, mask, boundary_width=10){
+dist_from_mask_surf <- function(faces, mask, boundary_width=10){
   s <- ncol(faces)
   v <- max(faces)
-  # For quads, surf_dist_from_mask() would count opposite vertices on a face as
+  # For quads, dist_from_mask_surf() would count opposite vertices on a face as
   #   adjacent--that's probably not desired.
   stopifnot(s == 3)
 
@@ -119,8 +119,8 @@ surf_dist_from_mask <- function(faces, mask, boundary_width=10){
 #'  mesh itself. 
 #'
 #' @export
-boundary_mask <- function(faces, mask, boundary_width=10){
-  b_layers <- surf_dist_from_mask(
+boundary_mask_surf <- function(faces, mask, boundary_width=10){
+  b_layers <- dist_from_mask_surf(
     faces=faces, mask=mask, boundary_width=boundary_width
   )
 
@@ -129,7 +129,7 @@ boundary_mask <- function(faces, mask, boundary_width=10){
 
 #' Vertex Adjacency Matrix
 #'
-#' Make adjacency matrix between two sets of vertices.
+#' Make adjacency matrix between two sets of vertices on the same mesh.
 #'
 #' @inheritParams faces_Param
 #' @param v1,v2 The first and second set of vertices. These are logical vectors
@@ -192,7 +192,7 @@ vert_adjacency <- function(faces, v1, v2=NULL){
 #' 
 #' @importFrom stats cmdscale dist
 #' @keywords internal 
-radial_order <- function(vertices){
+radial_order_surf <- function(vertices){
   # Use CMDS to project onto 2-dimensional subspace. Scale each dimension.
   x <- scale(cmdscale(dist(vertices)))
   # Remove zero-values to stay in the domain of the trig functions.
@@ -238,7 +238,8 @@ radial_order <- function(vertices){
 #' @importFrom stats quantile
 #'
 #' @keywords internal 
-mask_with_boundary <- function(vertices, faces, mask, width1=4, k1=2, width2=6, k2=3){
+mask_with_boundary_surf <- function(
+  vertices, faces, mask, width1=4, k1=2, width2=6, k2=3){
 
   # ----------------------------------------------------------------------------
   # Check arguments ------------------------------------------------------------
@@ -257,7 +258,7 @@ mask_with_boundary <- function(vertices, faces, mask, width1=4, k1=2, width2=6, 
   # ----------------------------------------------------------------------------
   # Pre-compute layers and vertex adjacency matrix between neighbor layers. ----
   # ----------------------------------------------------------------------------
-  b_layers <- surf_dist_from_mask(faces, mask, width)
+  b_layers <- dist_from_mask_surf(faces, mask, width)
   b_adjies <- vector("list", width)
   for (ii in 1:length(b_adjies)){
     b_adjies[[ii]] <- vert_adjacency(
@@ -285,7 +286,7 @@ mask_with_boundary <- function(vertices, faces, mask, width1=4, k1=2, width2=6, 
     ## Faces whose vertices are entirely in the layer
     lay$faces_complete <- apply(matrix(faces %in% lay$verts, ncol=s), 1, all)
     ## The radial ordering of the vertices in the layer
-    lay$rad_order <- radial_order(vertices[lay$verts,])
+    lay$rad_order <- radial_order_surf(vertices[lay$verts,])
     ## The vertices in radial order
     lay$verts_rad <- vertices[lay$verts[order(lay$rad_order)],]
     if (!is.null(verts_pre)) {
@@ -403,20 +404,22 @@ mask_with_boundary <- function(vertices, faces, mask, width1=4, k1=2, width2=6, 
   list(vertices=vertices[verts_remaining,], faces=faces2$new)
 }
 
-#' Apply Mask to Vertices and Faces
+#' Apply Mask to Surface Geometry
 #'
-#' Apply a binary mask to a set of vertices and faces.  Vertices not in the mask are removed,
-#' and faces (triangles) with any vertices outside of the mask are removed.  Finally,
-#' vertex numbering in the masked faces matrix is corrected.
+#' Apply a binary mask indicating the subset of vertices on a surface to keep.
+#'  Vertices not in the mask are deleted, and faces with at least one removed 
+#'  vertex are deleted. Vertices in the faces matrix are re-numbered to correct
+#'  for the new indices after deletion.
 #'
 #' @inheritParams vertices_Param
 #' @inheritParams faces_Param
 #' @inheritParams mask_Param_vertices
 #'
-#' @return List containing masked vertices and faces matrices
+#' @return The masked surface geometry: a list containing the new vertices and
+#'  the new faces.
 #' 
 #' @export
-mask_vertices_faces <- function(vertices, faces, mask){
+mask_surf <- function(vertices, faces, mask){
 
   # Number of vertices
   V <- nrow(vertices)
@@ -455,56 +458,4 @@ mask_vertices_faces <- function(vertices, faces, mask){
   # Return updated vertices and faces
   result <- list(vertices=vertices_new, faces=faces_new)
   return(result)
-}
-
-#' Create a mask based on vertices that are invalid
-#'
-#' @param data A list of sessions, where each session is a list with elements
-#'  BOLD, design and nuisance. See \code{?create.session} and \code{?is.session}
-#'  for more details.
-#' @param meanTol,varTol Tolerance for mean and variance of each data location. Locations which
-#'  do not meet these thresholds are masked out of the analysis. Defaults: \code{1e-6}.
-#' @param verbose Print messages counting how many locations are removed?
-#'
-#' @return A logical vector indicating valid vertices
-#'
-#' @importFrom stats var
-#' 
-#' @export
-make_mask <- function(data, meanTol=1e-6, varTol=1e-6, verbose=TRUE){
-
-  # For each BOLD data matrix,
-  mask_na <- mask_mean <- mask_var <- rep(TRUE, ncol(data[[1]]$BOLD))
-  for (ss in seq(length(data))) {
-    dss <- data[[ss]]$BOLD
-    # Mark columns with any NA or NaN values for removal.
-    dss_na <- is.na(dss) | is.nan(dss)
-    mask_na[apply(dss_na, 2, any)] <- FALSE
-    # Calculate means and variances of columns, except those with any NA or NaN.
-    # Mark columns with mean/var falling under the thresholds for removal.
-    mask_mean[mask_na][colMeans(dss[,mask_na,drop=FALSE]) < meanTol] <- FALSE
-    mask_var[mask_na][apply(dss[,mask_na,drop=FALSE], 2, var) < varTol] <- FALSE
-  }
-
-  # Print counts of locations removed, for each reason.
-  if (verbose) {
-    warn_part1 <- if (any(!mask_na)) { "additional locations" } else { "locations" }
-    warn_part2 <- if (length(data) > 1) { " in at least one scan.\n" } else { ".\n" }
-    if (any(!mask_na)) {
-      cat("\t", sum(!mask_na), paste0("locations removed due to NA or NaN values", warn_part2))
-    }
-    # Do not include NA locations in count.
-    mask_mean2 <- mask_mean | (!mask_na)
-    if (any(!mask_mean2)) {
-      cat("\t", sum(!mask_mean2), warn_part1, paste0("removed due to low mean", warn_part2))
-    }
-    # Do not include NA or low-mean locations in count.
-    mask_var2 <- mask_var | (!mask_mean) | (!mask_na)
-    if (any(!mask_var2)) {
-      cat("\t", sum(!mask_var2), warn_part1, paste0("removed due to low variance", warn_part2))
-    }
-  }
-
-  # Return composite mask.
-  mask_na & mask_mean & mask_var
 }
