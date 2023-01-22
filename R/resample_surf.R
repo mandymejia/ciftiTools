@@ -1,7 +1,9 @@
 #' Resample a \code{"surf"} object
 #'
 #' Resample a \code{"surf"} by writing it to a GIFTI, using the Connectome
-#'  Workbench to resample it, and then reading the new file.
+#'  Workbench to resample it, and then reading the new file. The barycentric 
+#'  resampling method, which is recommended for anatomical surfaces, will be 
+#'  used. 
 #'
 #' @param surf A \code{"surf"}
 #' @param resamp_res The desired resolution
@@ -38,7 +40,8 @@ resample_surf <- function(
   if (file.exists(gii_post)) { file.remove(gii_post) }
   resample_gifti(
     gii_pre, gii_post, hemisphere=hemisphere,
-    original_res = original_res, resamp_res=resamp_res
+    original_res = original_res, 
+    resamp_res=resamp_res, resamp_method="barycentric"
   )
   
   # Read new file.

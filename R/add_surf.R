@@ -6,6 +6,10 @@
 #'  will be added to \code{xifti$surf$cortex_right}. Any existing surfaces will
 #'  be overwritten.
 #' 
+#' If the resolutions of the data and surfaces do not match, the surfaces will
+#'  be resampled to match the resolution of the data. The barycentric resampling
+#'  method, which is recommended for anatomical surfaces, will be used. 
+#'
 #' @inheritParams xifti_Param
 #' @inheritParams surfL_Param_optional
 #' @inheritParams surfR_Param_optional

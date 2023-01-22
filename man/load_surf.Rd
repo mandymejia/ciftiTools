@@ -17,14 +17,15 @@ load_surf(
 (default), \code{"very inflated"}, and \code{"midthickness"}.}
 
 \item{resamp_res}{The resolution to resample the surfaces to. If \code{NULL}
-(default) or 32492, do not resample.}
+(default) or 32492, do not resample. Note that the barycentric resampling
+method, which is recommended for anatomical surfaces, will be used.}
 }
 \value{
 The \code{"surf"} object
 }
 \description{
-Load a \code{"surf"} object from one of the three 32k surface geometries included
-in \code{ciftiTools}.
+Load a \code{"surf"} object from one of the three 32k anatomical surfaces
+included in \code{ciftiTools}.
 }
 \details{
 The surfaces are from the HCP and are included according to these data use

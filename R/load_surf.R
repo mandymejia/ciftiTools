@@ -1,7 +1,7 @@
 #' Load a \code{"surf"} included in \code{ciftiTools}
 #'
-#' Load a \code{"surf"} object from one of the three 32k surface geometries included
-#'  in \code{ciftiTools}.
+#' Load a \code{"surf"} object from one of the three 32k anatomical surfaces 
+#'  included in \code{ciftiTools}.
 #'
 #' The surfaces are from the HCP and are included according to these data use
 #'  terms: Data were provided \[in part\] by the Human Connectome Project,
@@ -14,7 +14,8 @@
 #' @param name The name of the surface geometry to load: \code{"inflated"}
 #'  (default), \code{"very inflated"}, and \code{"midthickness"}.
 #' @param resamp_res The resolution to resample the surfaces to. If \code{NULL}
-#'  (default) or 32492, do not resample.
+#'  (default) or 32492, do not resample. Note that the barycentric resampling
+#'  method, which is recommended for anatomical surfaces, will be used. 
 #'
 #' @return The \code{"surf"} object
 #' 

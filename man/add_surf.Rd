@@ -29,6 +29,10 @@ Add left or right cortical surface geometry to a \code{"xifti"} object.
 \code{surfL} will be added to \code{xifti$surf$cortex_left} and \code{surfR}
 will be added to \code{xifti$surf$cortex_right}. Any existing surfaces will
 be overwritten.
+
+If the resolutions of the data and surfaces do not match, the surfaces will
+be resampled to match the resolution of the data. The barycentric resampling
+method, which is recommended for anatomical surfaces, will be used.
 }
 \seealso{
 Other functions for manipulating `xifti` objects: 
