@@ -121,6 +121,39 @@ NULL
 #' @keywords internal
 NULL
 
+#' resamp_method
+#' 
+#' @param resamp_method \code{"barycentric"} (default) or \code{"adaptive"}
+#'  resampling for the metric or label data. These options correspond to the
+#'  Workbench command options \code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, 
+#'  respectively. 
+#' 
+#'  While adaptive resampling is recommended for metric or label
+#'  data, it requires that \code{area[L/R]_original_fname} be provided.
+#' 
+#'  Note that surfaces will resampled using barycentric resampling regardless of
+#'  \code{resamp_method}, because barycentric resampling rather than adaptive
+#'  resampling is recommended for surface data. 
+#' @name resamp_method_Param
+#' @keywords internal
+NULL
+
+#' resamp_area_Param
+#' 
+#' @param areaL_original_fname,areaR_original_fname File paths to the surfaces 
+#'  to use for vertex area correction during adaptive resampling. (Only used if
+#'  resampling with the adaptive method.) \code{area[L/R]_original_fname} should
+#'  match the current resolution of the data.
+#' 
+#'  The Workbench command for adaptive resampling requires the target surfaces
+#'  for area correction too, but to make the workflow easier \code{ciftiTools}
+#'  will resample \code{area[L/R]_original_fname} with the barycentric method 
+#'  and use that for the target surface. 
+#' 
+#' @name resamp_area_Param
+#' @keywords internal
+NULL
+
 #' ROI_brainstructures
 #'
 #' @param ROI_brainstructures Character vector indicating which ROIs should be

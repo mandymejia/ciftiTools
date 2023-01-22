@@ -32,6 +32,23 @@ test_that("Resampling CIFTI and GIFTI files is working", {
       )
       cii <- resample_cifti(cii, resamp_res=1000)
 
+      # same as above, with adaptive
+      cii <- readcii(
+        cii_fname, brainstructures=brainstructures,
+        resamp_res=10000, resamp_method="adaptive",
+        areaL_original_fname=ciftiTools.files()$surf["left"],
+        areaR_original_fname=ciftiTools.files()$surf["right"],
+        surfL=fnames$surf["left"], surfR=fnames$surf["right"]
+      )
+      cii <- remove_xifti(cii, c("cortex_right", "surf_right"))
+      surfL_10k_fname <- paste0(tempfile(), "_L.surf.gii")
+      write_surf(cii$surf$cortex_left, surfL_10k_fname)
+      cii2 <- resample_cifti(cii, resamp_res=2000, surfL_original_fname = surfL_10k_fname)
+      cii_10k_fname <- paste0(tempfile(), ".dtseries.nii")
+      write_cifti(cii, cii_10k_fname)
+      cii_2k_fname <- paste0(tempfile(), ".2k.dtseries.nii")
+      resample_cifti(cii_10k_fname, cii_2k_fname, resamp_res=2000)
+
       # resample_surf
       surf <- resample_surf(cii$surf$cortex_left, hemisphere="left", resamp_res=3000)
 

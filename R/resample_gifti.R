@@ -25,6 +25,19 @@
 #'  in registration with the spheres created by the Workbench command
 #'  \code{-surface-create-sphere}, and \code{sphere_target_fname} should be
 #'  used when it is not compatible. 
+#' @param resamp_method \code{"barycentric"} (default) or \code{"adaptive"}
+#'  resampling. These options correspond to the Workbench command options 
+#'  \code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, respectively. 
+#' 
+#'  While adaptive resampling is recommended for metric or label
+#'  data, it requires that \code{area_original_fname} be provided.
+#' @param area_original_fname,area_target_fname File paths to the surfaces to 
+#'  use for vertex area correction during adaptive resampling. (Ignored if
+#'  resampling with the barycentric method.) \code{area_original_fname} should 
+#'  match the current resolution of the data, and \code{area_target_fname} 
+#'  should match \code{resamp_res}. If \code{area_target_fname} is not provided,
+#'  \code{area_original_fname} will be resampled with the barycentric method,
+#'  and the result will be used as \code{area_target_fname}.
 #' @param ROIcortex_original_fname The name of the ROI file corresponding to 
 #'  \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist
 #'  or shouldn't be resampled.
@@ -56,7 +69,9 @@
 #' 
 resample_gifti <- function(
   original_fname, target_fname, hemisphere=c("left", "right"),
-  file_type=NULL, original_res=NULL, resamp_res=NULL,
+  file_type=NULL, original_res=NULL, 
+  resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
+  area_original_fname=NULL, area_target_fname=NULL,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   sphere_original_fname=NULL, sphere_target_fname=NULL,
   read_dir=NULL, write_dir=NULL) {
@@ -111,15 +126,25 @@ resample_gifti <- function(
     )
   }
 
+  # Check resamp_method and area files
+  resamp_method <- match.arg(resamp_method, c("barycentric", "adaptive"))
+  if (resamp_method == "adaptive") {
+    if (is.null(area_original_fname)) {
+      stop("Adaptive sampling requires `area_original_fname`.")
+    }
+  }
+
   # Compatible args
   if (do_ROI & file_type=="surface") { 
     stop("do_ROI AND file_type=='surface', but surface files do not use ROI.") 
   }
 
   # ----------------------------------------------------------------------------
-  # Spheres. -------------------------------------------------------------------
+  # Spheres & Area surface. ----------------------------------------------------
   # ----------------------------------------------------------------------------
   
+  # Spheres
+
   if (is.null(sphere_original_fname)) {
 
     # Check `original_res`
@@ -172,9 +197,33 @@ resample_gifti <- function(
     )
   }
 
+  # Area surface for adaptive resampling
+  if (resamp_method == "adaptive") {
+    if (is.null(area_target_fname)) {
+      area_target_fname <- paste0(
+        tempfile(), "_area_target_", hemisphere, ".surf.gii"
+      )
+      resample_gifti(
+        original_fname=area_original_fname,
+        target_fname=area_target_fname,
+        hemisphere=hemisphere,
+        file_type="surf",
+        original_res=original_res,
+        resamp_res=resamp_res,
+        sphere_original_fname=sphere_original_fname,
+        sphere_target_fname=sphere_target_fname
+      )
+    }
+  }
+
   # ----------------------------------------------------------------------------
   # Make and run command. ------------------------------------------------------
   # ----------------------------------------------------------------------------
+
+  resamp_method_wb <- switch(resamp_method,
+    adaptive="ADAP_BARY_AREA",
+    barycentric="BARYCENTRIC"
+  )
 
   if (file_type=="surface" && resamp_res>original_res) {
     ciftiTools_warn("Upsampling a surface is not recommended, if avoidable.")
@@ -189,8 +238,16 @@ resample_gifti <- function(
   cmd <- paste(
     cmd_name, 
     sys_path(original_fname), sys_path(sphere_original_fname), 
-    sys_path(sphere_target_fname), "BARYCENTRIC", sys_path(target_fname)
+    sys_path(sphere_target_fname), resamp_method_wb, sys_path(target_fname)
   )
+  if (resamp_method_wb=="ADAP_BARY_AREA") {
+    cmd <- paste(
+      cmd, 
+      "-area-surfs", 
+      sys_path(area_original_fname),
+      sys_path(area_target_fname)
+    )
+  }
   if (do_ROI) {
     cmd <- paste(
       cmd, 

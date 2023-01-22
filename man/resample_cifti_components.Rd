@@ -6,7 +6,12 @@
 \usage{
 resample_cifti_components(
   original_res = NULL,
-  resamp_res,
+  resamp_res = NULL,
+  resamp_method = NULL,
+  areaL_original_fname = NULL,
+  areaR_original_fname = NULL,
+  ROIcortex_original_fname = NULL,
+  ROIcortex_target_fname = NULL,
   cortexL_original_fname = NULL,
   cortexR_original_fname = NULL,
   cortexL_target_fname = NULL,
@@ -28,6 +33,28 @@ resample_cifti_components(
 
 \item{resamp_res}{Target resolution for resampling (number of
 cortical surface vertices per hemisphere).}
+
+\item{resamp_method}{\code{"barycentric"} (default) or \code{"adaptive"}
+resampling for the metric or label data. These options correspond to the
+Workbench command options \code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"},
+respectively.
+
+While adaptive resampling is recommended for metric or label
+data, it requires that \code{area[L/R]_original_fname} be provided.
+
+Note that surfaces will resampled using barycentric resampling regardless of
+\code{resamp_method}, because barycentric resampling rather than adaptive
+resampling is recommended for surface data.}
+
+\item{areaL_original_fname, areaR_original_fname}{File paths to the surfaces
+to use for vertex area correction during adaptive resampling. (Only used if
+resampling with the adaptive method.) \code{area[L/R]_original_fname} should
+match the current resolution of the data.
+
+The Workbench command for adaptive resampling requires the target surfaces
+for area correction too, but to make the workflow easier \code{ciftiTools}
+will resample \code{area[L/R]_original_fname} with the barycentric method
+and use that for the target surface.}
 
 \item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of
 GIFTI data for [left/right] cortex to resample.}

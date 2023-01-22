@@ -25,6 +25,8 @@
 #'  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
 #'  have to be read in with \code{-cifti-separate}, which is slower than 
 #'  \code{-cifti-convert -to-gifti-ext}.
+#' @inheritParams resamp_method_Param
+#' @inheritParams resamp_area_Param
 #' @param flat Should the result be flattened into a single matrix?
 #' 
 #'  If \code{FALSE} (default), the result will be a \code{"xifti"} object.
@@ -65,7 +67,9 @@ read_cifti <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
-  resamp_res=NULL, flat=FALSE,
+  resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
+  flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   if (is.null(cifti_fname)) {
@@ -133,7 +137,9 @@ read_cifti <- function(
       cifti_fname,
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, idx=idx,
-      resamp_res=resamp_res, 
+      resamp_res=resamp_res, resamp_method=resamp_method,
+      areaL_original_fname=areaL_original_fname, 
+      areaR_original_fname=areaR_original_fname,
       mwall_values=mwall_values, verbose=verbose,
       ...
     ))
@@ -146,14 +152,19 @@ readCIfTI <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
-  resamp_res=NULL, flat=FALSE,
+  resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
+  flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname=cifti_fname,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     brainstructures=brainstructures, idx=idx,
-    resamp_res=resamp_res, flat=flat, 
+    resamp_res=resamp_res, resamp_method=resamp_method,
+    areaL_original_fname=areaL_original_fname, 
+    areaR_original_fname=areaR_original_fname,
+    flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
 }
@@ -164,14 +175,19 @@ readcii <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
-  resamp_res=NULL, flat=FALSE,
+  resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
+  flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname=cifti_fname,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     brainstructures=brainstructures, idx=idx,
-    resamp_res=resamp_res, flat=flat, 
+    resamp_res=resamp_res, resamp_method=resamp_method,
+    areaL_original_fname=areaL_original_fname, 
+    areaR_original_fname=areaR_original_fname,
+    flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
 }
@@ -182,14 +198,19 @@ read_xifti <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
-  resamp_res=NULL, flat=FALSE,
+  resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
+  flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   read_cifti(
     cifti_fname=cifti_fname,
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     brainstructures=brainstructures, idx=idx,
-    resamp_res=resamp_res, flat=flat, 
+    resamp_res=resamp_res, resamp_method=resamp_method,
+    areaL_original_fname=areaL_original_fname, 
+    areaR_original_fname=areaR_original_fname,
+    flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
 }

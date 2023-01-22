@@ -13,6 +13,9 @@ resample_gifti(
   file_type = NULL,
   original_res = NULL,
   resamp_res = NULL,
+  resamp_method = c("barycentric", "adaptive"),
+  area_original_fname = NULL,
+  area_target_fname = NULL,
   ROIcortex_original_fname = NULL,
   ROIcortex_target_fname = NULL,
   sphere_original_fname = NULL,
@@ -75,6 +78,21 @@ In general, \code{resamp_res} should be used when the target file will be
 in registration with the spheres created by the Workbench command
 \code{-surface-create-sphere}, and \code{sphere_target_fname} should be
 used when it is not compatible.}
+
+\item{resamp_method}{\code{"barycentric"} (default) or \code{"adaptive"}
+resampling. These options correspond to the Workbench command options
+\code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, respectively.
+
+While adaptive resampling is recommended for metric or label
+data, it requires that \code{area_original_fname} be provided.}
+
+\item{area_original_fname, area_target_fname}{File paths to the surfaces to
+use for vertex area correction during adaptive resampling. (Ignored if
+resampling with the barycentric method.) \code{area_original_fname} should
+match the current resolution of the data, and \code{area_target_fname}
+should match \code{resamp_res}. If \code{area_target_fname} is not provided,
+\code{area_original_fname} will be resampled with the barycentric method,
+and the result will be used as \code{area_target_fname}.}
 
 \item{ROIcortex_original_fname}{The name of the ROI file corresponding to
 \code{original_fname}. Leave as \code{NULL} (default) if this doesn't exist

@@ -15,6 +15,8 @@
 #' @inheritParams brainstructures_Param_LR
 #' @inheritParams idx_Param
 #' @inheritParams resamp_res_Param_optional
+#' @inheritParams resamp_method_Param
+#' @inheritParams resamp_area_Param
 #' @param mwall_values If the medial wall locations are not indicated in the
 #'  CIFTI, use these values to infer the medial wall mask. Default: 
 #'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
@@ -28,11 +30,11 @@
 read_cifti_separate <- function(
   cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
-  resamp_res=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
+  resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
+  mwall_values=c(NA, NaN), verbose=TRUE) {
 
-  # ----------------------------------------------------------------------------
   # Setup ----------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
 
   # Write separated and resampled intermediate/helper files to a temp. dir.
   write_dir_sep <- write_dir_resamp <- tempdir()
@@ -50,9 +52,7 @@ read_cifti_separate <- function(
 
   if (verbose) { exec_time <- Sys.time() }
 
-  # ----------------------------------------------------------------------------
-  # info_cifti() ---------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  # info_cifti() ---------------------------------------------------------------  
   
   cifti_info <- info_cifti(cifti_fname)
   bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
@@ -71,9 +71,7 @@ read_cifti_separate <- function(
     do_resamp <- FALSE
   }
 
-  # ----------------------------------------------------------------------------
   # separate_cifti() -----------------------------------------------------------
-  # ----------------------------------------------------------------------------
 
   if (verbose) { cat("Separating CIFTI file.\n") }
 
@@ -88,9 +86,7 @@ read_cifti_separate <- function(
     exec_time <- Sys.time()
   }
 
-  # ----------------------------------------------------------------------------
   # Handle medial wall values --------------------------------------------------
-  # ----------------------------------------------------------------------------
 
   if (!is.null(mwall_values)) {
     if ("left" %in% brainstructures) {
@@ -109,9 +105,7 @@ read_cifti_separate <- function(
     }
   }
 
-  # ----------------------------------------------------------------------------
   # resample_cifti_separate() --------------------------------------------------
-  # ----------------------------------------------------------------------------
 
   do_resamp <- !(is.null(resamp_res) || identical(resamp_res, FALSE))
 
@@ -124,7 +118,10 @@ read_cifti_separate <- function(
 
     # Do resample_cifti_separate.
     resamp_result <- resample_cifti_wrapper(
-      original_res=original_res, resamp_res=resamp_res, 
+      original_res=original_res, 
+      resamp_res=resamp_res, resamp_method=resamp_method,
+      areaL_original_fname=areaL_original_fname, 
+      areaR_original_fname=areaR_original_fname,
       original_fnames=to_resample, resamp_fnames=NULL,
       surfL_original_fname=NULL, surfR_original_fname=NULL,
       read_dir=NULL, write_dir=write_dir_resamp
@@ -142,9 +139,7 @@ read_cifti_separate <- function(
     }
   }
 
-  # ----------------------------------------------------------------------------
-  # make_xifti() ---------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  # make_xifti() ---------------------------------------------------------------  
   
   to_read["mwall_values"] <- list(mwall_values=mwall_values)
   to_read$cifti_info <- cifti_info

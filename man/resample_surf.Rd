@@ -4,14 +4,7 @@
 \alias{resample_surf}
 \title{Resample a \code{"surf"} object}
 \usage{
-resample_surf(
-  surf,
-  resamp_res,
-  hemisphere = c("left", "right"),
-  resamp_method = c("barycentric", "adaptive"),
-  area_original_fname = NULL,
-  area_target_fname = NULL
-)
+resample_surf(surf, resamp_res, hemisphere = c("left", "right"))
 }
 \arguments{
 \item{surf}{A \code{"surf"}}
@@ -21,24 +14,15 @@ resample_surf(
 \item{hemisphere}{\code{"left"} or \code{"right"}. Only used if not indicated by
 \code{surf$hemisphere}. An error will be raised if it does not match the
 hemisphere indicated in the intermediate written GIFTI.}
-
-\item{resamp_method}{\code{"barycentric"} (default) or \code{"adaptive"}.
-These correspond to the Workbench command options \code{"BARYCENTRIC"} and
-\code{"ADAP_BARY_AREA"} respectively. Barycentric sampling is recommended
-for anatomical surfaces.}
-
-\item{area_original_fname, area_target_fname}{File paths to the surfaces to use
-for vertex area correction during adaptive resampling. (Only used if
-resampling with the adaptive method.) \code{area_original_fname} should
-match the current resolution of the data, and \code{area_target_fname} should
-match \code{resamp_res}.}
 }
 \value{
 The new \code{"surf"}
 }
 \description{
 Resample a \code{"surf"} by writing it to a GIFTI, using the Connectome
-Workbench to resample it, and then reading the new file.
+Workbench to resample it, and then reading the new file. The barycentric
+resampling method, which is recommended for anatomical surfaces, will be
+used.
 }
 \section{Connectome Workbench}{
 
