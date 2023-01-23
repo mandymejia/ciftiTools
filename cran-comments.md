@@ -1,6 +1,6 @@
 ## Test environments
 
-* Linux x86_64-pc-linux-gnu, R 4.0.4
+* Windows x86_64-w64-mingw32/x64, R 4.2.2
 * Mac x86_64-apple-darwin17.0, R 4.1.1
 
 ## R CMD check results
@@ -17,7 +17,7 @@ These files are necessary and have already been reduced in size.
 
 ## Downstream dependencies
 
-No downstream dependencies on CRAN.
+`fMRItools` and `fMRIscrub` do not suffer additional warnings or errors with this new version of `ciftiTools`. 
 
 ## Tests
 
