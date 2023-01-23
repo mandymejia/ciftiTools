@@ -4,7 +4,7 @@
 \alias{resamp_area_noOG_Param}
 \title{resamp_area_noOG_Param}
 \arguments{
-\item{areaL_fname, areaR_fname}{File paths to the surfaces
+\item{areaL_original_fname, areaR_original_fname}{File paths to the surfaces
 to use for vertex area correction during adaptive resampling. (Only used if
 resampling with the adaptive method.) \code{area[L/R]_fname} should
 match the current resolution of the data.

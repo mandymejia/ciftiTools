@@ -68,7 +68,7 @@ read_cifti <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
-  areaL_fname=NULL, areaR_fname=NULL,
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
@@ -138,7 +138,7 @@ read_cifti <- function(
       surfL_fname=surfL_fname, surfR_fname=surfR_fname,
       brainstructures=brainstructures, idx=idx,
       resamp_res=resamp_res, resamp_method=resamp_method,
-      areaL_fname=areaL_fname, areaR_fname=areaR_fname,
+      areaL_original_fname=areaL_original_fname, areaR_original_fname=areaR_original_fname,
       mwall_values=mwall_values, verbose=verbose,
       ...
     ))
@@ -152,7 +152,7 @@ readCIfTI <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
-  areaL_fname=NULL, areaR_fname=NULL,
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
@@ -161,7 +161,7 @@ readCIfTI <- function(
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     brainstructures=brainstructures, idx=idx,
     resamp_res=resamp_res, resamp_method=resamp_method,
-    areaL_fname=areaL_fname, areaR_fname=areaR_fname,
+    areaL_original_fname=areaL_original_fname, areaR_original_fname=areaR_original_fname,
     flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
@@ -174,7 +174,7 @@ readcii <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
-  areaL_fname=NULL, areaR_fname=NULL,
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
@@ -183,7 +183,7 @@ readcii <- function(
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     brainstructures=brainstructures, idx=idx,
     resamp_res=resamp_res, resamp_method=resamp_method,
-    areaL_fname=areaL_fname, areaR_fname=areaR_fname,
+    areaL_original_fname=areaL_original_fname, areaR_original_fname=areaR_original_fname,
     flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
@@ -196,7 +196,7 @@ read_xifti <- function(
   surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
-  areaL_fname=NULL, areaR_fname=NULL,
+  areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
@@ -205,7 +205,7 @@ read_xifti <- function(
     surfL_fname=surfL_fname, surfR_fname=surfR_fname,
     brainstructures=brainstructures, idx=idx,
     resamp_res=resamp_res, resamp_method=resamp_method,
-    areaL_fname=areaL_fname, areaR_fname=areaR_fname,
+    areaL_original_fname=areaL_original_fname, areaR_original_fname=areaR_original_fname,
     flat=flat, 
     mwall_values=mwall_values, verbose=verbose, ...
   )
