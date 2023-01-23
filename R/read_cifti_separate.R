@@ -16,7 +16,7 @@
 #' @inheritParams idx_Param
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams resamp_method_Param
-#' @inheritParams resamp_area_Param
+#' @inheritParams resamp_area_noOG_Param
 #' @param mwall_values If the medial wall locations are not indicated in the
 #'  CIFTI, use these values to infer the medial wall mask. Default: 
 #'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.
@@ -31,7 +31,7 @@ read_cifti_separate <- function(
   cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
   brainstructures=c("left","right"), idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
-  areaL_original_fname=NULL, areaR_original_fname=NULL,
+  areaL_fname=NULL, areaR_fname=NULL,
   mwall_values=c(NA, NaN), verbose=TRUE) {
 
   # Setup ----------------------------------------------------------------------
@@ -120,8 +120,8 @@ read_cifti_separate <- function(
     resamp_result <- resample_cifti_wrapper(
       original_res=original_res, 
       resamp_res=resamp_res, resamp_method=resamp_method,
-      areaL_original_fname=areaL_original_fname, 
-      areaR_original_fname=areaR_original_fname,
+      areaL_original_fname=areaL_fname, 
+      areaR_original_fname=areaR_fname,
       original_fnames=to_resample, resamp_fnames=NULL,
       surfL_original_fname=NULL, surfR_original_fname=NULL,
       read_dir=NULL, write_dir=write_dir_resamp

@@ -12,8 +12,8 @@ read_cifti_separate(
   idx = NULL,
   resamp_res = NULL,
   resamp_method = c("barycentric", "adaptive"),
-  areaL_original_fname = NULL,
-  areaR_original_fname = NULL,
+  areaL_fname = NULL,
+  areaR_fname = NULL,
   mwall_values = c(NA, NaN),
   verbose = TRUE
 )
@@ -60,14 +60,14 @@ Note that surfaces will resampled using barycentric resampling regardless of
 \code{resamp_method}, because barycentric resampling rather than adaptive
 resampling is recommended for surface data.}
 
-\item{areaL_original_fname, areaR_original_fname}{File paths to the surfaces
+\item{areaL_fname, areaR_fname}{File paths to the surfaces
 to use for vertex area correction during adaptive resampling. (Only used if
-resampling with the adaptive method.) \code{area[L/R]_original_fname} should
+resampling with the adaptive method.) \code{area[L/R]_fname} should
 match the current resolution of the data.
 
 The Workbench command for adaptive resampling requires the target surfaces
 for area correction too, but to make the workflow easier \code{ciftiTools}
-will resample \code{area[L/R]_original_fname} with the barycentric method
+will resample \code{area[L/R]_fname} with the barycentric method
 and use that for the target surface.}
 
 \item{mwall_values}{If the medial wall locations are not indicated in the

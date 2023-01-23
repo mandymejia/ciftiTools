@@ -154,6 +154,22 @@ NULL
 #' @keywords internal
 NULL
 
+#' resamp_area_noOG_Param
+#' 
+#' @param areaL_fname,areaR_fname File paths to the surfaces 
+#'  to use for vertex area correction during adaptive resampling. (Only used if
+#'  resampling with the adaptive method.) \code{area[L/R]_fname} should
+#'  match the current resolution of the data.
+#' 
+#'  The Workbench command for adaptive resampling requires the target surfaces
+#'  for area correction too, but to make the workflow easier \code{ciftiTools}
+#'  will resample \code{area[L/R]_fname} with the barycentric method 
+#'  and use that for the target surface. 
+#' 
+#' @name resamp_area_noOG_Param
+#' @keywords internal
+NULL
+
 #' ROI_brainstructures
 #'
 #' @param ROI_brainstructures Character vector indicating which ROIs should be
