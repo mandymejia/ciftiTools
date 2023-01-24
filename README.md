@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/mandymejia/ciftiTools/workflows/R-CMD-check/badge.svg)](https://github.com/mandymejia/ciftiTools/actions)
+[![R-CMD-check](https://github.com/mandymejia/ciftiTools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mandymejia/ciftiTools/actions/workflows/R-CMD-check.yaml)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/mandymejia/ciftiTools?branch=master&svg=true)](https://ci.appveyor.com/project/mandymejia/ciftiTools)
 [![Codecov test
