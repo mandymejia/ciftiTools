@@ -52,6 +52,17 @@ write_cifti <- function(
     cifti_fname <- paste0(cifti_fname, ".", extn_cifti)
   }
 
+  # Problem with label xifti that has NA/NaN data
+  if (extn_cifti=="dlabel.nii") {
+    if (any(is.na(as.matrix(xifti)))) {
+      stop(
+        "Cannot write out label data with NA/NaN values. ",
+        "Create a new label for NA/NaN, impute these values, or ", 
+        "otherwise get rid them to write out the file."
+      )
+    }
+  }
+
   sep_fnames <- write_xifti2(xifti=xifti, write_dir=tempdir(), verbose=verbose)
 
   if (verbose) { cat("Creating CIFTI file from separated components.\n") }
