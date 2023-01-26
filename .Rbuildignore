@@ -2,7 +2,6 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^\.github$
-^appveyor\.yml$
 ^vignettes$
 ^LICENSE\.md$
 ^CRAN-RELEASE$

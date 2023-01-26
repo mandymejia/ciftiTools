@@ -8,7 +8,7 @@ on:
 
 name: R-CMD-check
 
-jobs:
+jobs: 
   R-CMD-check:
     runs-on: ubuntu-latest
     env:
