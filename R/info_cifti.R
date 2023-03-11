@@ -341,7 +341,9 @@ header_cifti <- function(cifti_fname){
   if (length(out) == 0) {
     stop(
       "Workbench command '", paste(sys_path(ciftiTools.getOption("wb_path")), cmd), 
-      "' failed."
+      "' failed. This might happen when trying to read a CIFTI file located ",
+      "on the cloud, in which case you can try downloading the CIFTI locally, ",
+      "reading it in, and then deleting the local copy."
     )
   }
   out
