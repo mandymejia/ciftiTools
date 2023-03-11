@@ -1447,6 +1447,9 @@ view_xifti_surface <- function(
     }
 
     # [TO DO]: Adjust sizing
+    # Looked into htmlwidgets::sizingPolicy but it doesn't affect how the legend
+    #   scales with the plot width, which can't be controlled within RStudio
+    #   pane.
     out <- rgl::rglwidget(
       height=round(all_panels_height/1.1),
       width=round(all_panels_width/1.1)
