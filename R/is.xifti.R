@@ -432,7 +432,7 @@ is.xifti_meta <- function(x) {
 is.xifti <- function(x, messages=TRUE) {
   if (!messages) { return(suppressMessages(is.xifti(x, messages=TRUE))) }
 
-  if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
+  if (!is.list(x)) { message("`x` must be a list.\n"); return(FALSE) }
 
   y <- template_xifti()
   if (!match_exactly(names(x), names(y))) { 
