@@ -12,11 +12,10 @@
 #'
 #' @return An integer vector giving the indices of the vertices in the subset.
 #'
-#' @importFrom fMRItools is_posNum
-#'
 even_vert_samp <- function(surf, n_vert) {
   stopifnot(is.surf(surf))
-  stopifnot(fMRItools::is_posNum(n_vert))
+  stopifnot(is.numeric(n_vert) && length(n_vert)==1)
+  stopifnot(n_vert>0 && n_vert==round(n_vert))
 
   vert_og <- t(surf$vertices) # 3 x original_res
   vert_rs <- t(resample_surf(surf, n_vert)$vertices) # 3 x n_vert
