@@ -34,6 +34,7 @@ License: GPL-3
 Encoding: UTF-8
 Imports:
     fields,
+    fMRItools,
     gifti (> 0.7.5),
     grDevices,
     oro.nifti,
