@@ -10,7 +10,7 @@ vignette: >
 
 ```{r include=FALSE}
 library(knitr)
-knitr::opts_chunk$set(autodep = TRUE, cache = FALSE)
+knitr::opts_chunk$set(autodep = TRUE, cache = TRUE)
 ```
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. Used in conjunction with GIFTI surface geometry files, CIFTI files enable surface-based analysis of gray matter data, which has several advantages over traditional volumetric/voxel-based analysis. Because of this, the CIFTI-2 format is used by recent neuroimaging studies including the Human Connectome Project (HCP). `ciftiTools` supports reading, writing, visualizing, resampling, and other operations for CIFTI files with the `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"` intents. Several of these operations are made possible by the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). 
@@ -363,6 +363,51 @@ plot(surf, vertex_size=3, vertex_color="blue")
 ```{r, rgl=TRUE, fig.cap="Surface with edges drawn in black", format="png", fig.height=3.8, fig.width=2.5}
 plot(surf, edge_color="black")
 ```
+
+### Mesh operations
+
+`ciftiTools` includes several functions for operations that depend on the vertex adjacencies of the surface mesh.  
+
+`edit_mask_surf` can erode, dilate, or extract the border vertices of a binary mask. (Here we'll also demonstrate how to use `view_comp` to display multiple plots simultaneously, without the interactivity of a widget.)
+
+```{r fig.height=4.2, fig.width=5, fig.cap="500 evenly-sampled vertices"}
+xii <- load_parc("Schaefer_400")
+xii <- remove_xifti(xii, "cortex_right")
+parc_name <- rownames(xii$meta$cifti$labels[[1]])[4]
+xii <- apply_xifti(xii, 1, function(x){ifelse(x==4, 1, 0)})
+xii_d3 <- edit_mask_surf(
+  xii$data$cortex_left[,1], mwall=rep(TRUE, 32492), 
+  surf=load_surf("left"),
+  do="dilate", depth=3
+)
+xii <- newdata_xifti(xii, cbind(as.matrix(xii), xii_d3))
+xii <- convert_xifti(xii, "dlabel", colors="blue") # 17networks_LH_DefaultA_PCC_1
+
+fnames <- paste0(c(tempfile(), tempfile(), tempfile()), ".png")
+plot(xii, title=parc_name, idx=1, fname=fnames[1], legend_fname=fnames[3])
+plot(xii, title="Dilated mask", idx=2, fname=fnames[2], legend_fname=fnames[3])
+plt <- view_comp(fnames[seq(2)], fname=fnames[3], nrow=1)
+knitr::include_graphics(plt, dpi=180)
+```
+
+`even_vert_samp` obtains a subset of vertice sampled evenly across the mesh. It works by downsampling the mesh and then identifying the original vertices closest to the vertices on the downsampled mesh. 
+
+```{r, rgl=TRUE, fig.cap="500 evenly-sampled vertices", format="png", fig.height=3.8, fig.width=2.5}
+# Load a left-hemisphere surface.
+surfL <- load_surf()
+
+# Get 500 vertices evenly sampled on the mesh.
+v <- even_vert_samp(surfL, 500)
+
+# Get a mask of the 32k vertices indicating which are in the sample.
+v2 <- seq(nrow(surfL$vertices)) %in% v
+
+# Make a xifti having "1" for in-mask vertices, "0" elsewhere.
+xii <- as.xifti(as.matrix(v2*1), surfL=surfL)
+
+plot(convert_xifti(xii, "dlabel"))
+```
+
 
 # Citing `ciftiTools`
 

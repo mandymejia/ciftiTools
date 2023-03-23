@@ -12,6 +12,7 @@
 #'
 #' @return An integer vector giving the indices of the vertices in the subset.
 #'
+#' @export
 even_vert_samp <- function(surf, n_vert) {
   stopifnot(is.surf(surf))
   stopifnot(is.numeric(n_vert) && length(n_vert)==1)
