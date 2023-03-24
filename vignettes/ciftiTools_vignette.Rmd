@@ -10,7 +10,7 @@ vignette: >
 
 ```{r include=FALSE}
 library(knitr)
-knitr::opts_chunk$set(autodep = TRUE, cache = TRUE)
+knitr::opts_chunk$set(autodep = TRUE, cache = FALSE)
 ```
 
 `ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. Used in conjunction with GIFTI surface geometry files, CIFTI files enable surface-based analysis of gray matter data, which has several advantages over traditional volumetric/voxel-based analysis. Because of this, the CIFTI-2 format is used by recent neuroimaging studies including the Human Connectome Project (HCP). `ciftiTools` supports reading, writing, visualizing, resampling, and other operations for CIFTI files with the `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"` intents. Several of these operations are made possible by the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). 
