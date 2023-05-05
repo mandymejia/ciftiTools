@@ -153,7 +153,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {
       )
     }
     if (!identical(xifti$meta$cifti$names, xifti2$meta$cifti$names)) {
-      warning("The xiftis have different column names.\n")
+      ciftiTools_warn("The xiftis have different column names.\n")
     }
 
     for (bs in names(xifti$data)) {
