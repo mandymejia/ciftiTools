@@ -404,25 +404,29 @@ mask_with_boundary_surf <- function(
   list(vertices=vertices[verts_remaining,], faces=faces2$new)
 }
 
-#' Apply Mask to Surface Geometry
+#' Mask surface
+#' 
+#' Mask a surface mesh.
 #'
-#' Apply a binary mask indicating the subset of vertices on a surface to keep.
-#'  Vertices not in the mask are deleted, and faces with at least one removed 
-#'  vertex are deleted. Vertices in the faces matrix are re-numbered to correct
-#'  for the new indices after deletion.
+#' Apply a binary mask to a \code{"surf"} object (list of vertices and 
+#'  corresponding faces). Vertices not in the mask are removed, and faces 
+#'  (triangles) with any vertices not in the mask are removed. Finally,
+#'  vertex numbering for the new faces matrix is corrected.
 #'
-#' @inheritParams vertices_Param
-#' @inheritParams faces_Param
+#' @param surf A \code{"surf"} object
 #' @inheritParams mask_Param_vertices
 #'
-#' @return The masked surface geometry: a list containing the new vertices and
-#'  the new faces.
+#' @return The masked \code{"surf"} object.
 #' 
 #' @export
-mask_surf <- function(vertices, faces, mask){
+mask_surf <- function(surf, mask){
+
+  stopifnot(is.surf(surf))
+  vertices <- surf$vertices
+  faces <- surf$faces
 
   # Number of vertices
-  V <- nrow(vertices)
+  nV <- nrow(vertices)
 
   # Check index of faces
   if(min(faces) == 0){
@@ -430,12 +434,12 @@ mask_surf <- function(vertices, faces, mask){
   }
 
   mask <- as.numeric(mask)
-  if(length(mask) != V | !is.vector(mask)){
-    stop("Mask should be a vector of length V")
+  if(length(mask) != nV | !is.vector(mask)){
+    stop("`mask` should be a vector of the same length as the number of vertices in `surf`.")
   }
   # Check only 0s and 1s
   values <- sort(unique(mask))
-  if(! (min(values %in% 0:1)) ) stop("Mask should be composed of only 0s and 1s")
+  if(! (min(values %in% 0:1)) ) stop("`mask` should be composed of only 0s and 1s.")
 
   inmask <- which(mask==1)
 
@@ -456,6 +460,7 @@ mask_surf <- function(vertices, faces, mask){
   }
 
   # Return updated vertices and faces
-  result <- list(vertices=vertices_new, faces=faces_new)
-  return(result)
+  surf_new <- list(vertices=vertices_new, faces=faces_new, hemisphere=surf$hemisphere)
+  class(surf_new) <- "surf"
+  surf_new
 }

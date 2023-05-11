@@ -58,8 +58,7 @@ test_that("Miscellaneous functions are working", {
   plot(cii); rgl::rgl.close()
   plot(make_surf(
     c(mask_surf(
-      cii$surf$cortex_left$vertices,
-      cii$surf$cortex_left$faces,
+      cii$surf$cortex_left,
       move_from_mwall(cii)$data$cortex_left[,1]
     ), list(hemisphere="left"))
   )); rgl::rgl.close()
