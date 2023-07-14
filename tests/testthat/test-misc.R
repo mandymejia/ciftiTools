@@ -192,6 +192,11 @@ test_that("Miscellaneous functions are working", {
       )
     }
 
+    # set_names_xifti
+    if (grepl("label|scalar", cii_fname)) {
+      cii1 <- set_names_xifti(cii, paste0("Column ", seq(ncol(cii))))
+    }
+
     # combine_xifti
     cii1 <- combine_xifti(
       read_xifti(cii_fname, brainstructures="left"),
