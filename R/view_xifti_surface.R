@@ -2,7 +2,7 @@
 #'
 #' See \code{\link{view_xifti_surface}} for details.
 #'
-#' @param xifti The \code{"xifti"}
+#' @inheritParams xifti_Param
 #' @param surfL Left surface
 #' @param surfR Right surface
 #' @param hemisphere Hemisphere
