@@ -293,7 +293,9 @@ view_xifti_surface.color <- function(
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
       if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007)) {
-        if (length(idx) > 1) { message("Color labels from first requested column will be used.") }
+        if (length(unique(xifti_meta$cifti$labels[idx])) > 1) { 
+          message("Color labels from first requested column will be used.") 
+        }
         labs <- xifti_meta$cifti$labels[[idx[1]]]
         if (is.null(colors)) {
           pal_base <- data.frame(
