@@ -624,7 +624,7 @@ view_xifti_volume <- function(
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
       if ((!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007)) {
-        if (length(unique(xifti_meta$cifti$labels[idx])) > 1) {
+        if (length(unique(xifti$meta$cifti$labels[idx])) > 1) {
           message("Color labels from first requested column will be used.")
         }
         labs <- xifti$meta$cifti$labels[[idx[1]]]
@@ -927,7 +927,8 @@ view_xifti_volume <- function(
       img_overlay2 <- img_overlay[slices,crop_y,crop_z,drop=FALSE]
     } else { stop() }
 
-    # [TO DO] Known error: if just one non-NA value in `img_overlay2`
+    # Replace `NA` with out-of-zlim value, because `NA` has problems sometimes
+    img_overlay2[is.na(img_overlay2)] <- min(zlim) - 1
 
     oro.nifti::overlay(
       x=img2, y=img_overlay2, plane=plane,
