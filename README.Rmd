@@ -112,6 +112,15 @@ The 3D shading may make certain plots more difficult to interpret, if the color 
 
 ![Lit surface plot](README_media/vxs_lit.png){width=15%} ![Unlit surface plot](README_media/vxs_unlit.png){width=15%}
 
+#### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
+
+For a `"xifti"` object `xii` with subcortical data, the mask of data locations are saved in `xii$meta$subcort$mask`. To obtain the array coordinates of the in-mask locations, use `which(xii$meta$subcort$mask, arr.ind=TRUE) - 1`. This matrix has each subcortical voxel along the rows, and its I, J, and K array coordinates along the three columns. 1 is subtracted because the coordinates should begin with 0 rather than 1. It's equivalent to the original CIFTI metadata entry `VoxelIndicesIJK`. To convert array coordinates to MNI coordinates, multiply by the transformation matrix `xii$meta$subcort$trans_mat`:
+
+```
+VoxIJK <- which(xii$meta$subcort$mask, arr.ind=TRUE) - 1
+VoxIJK <- cbind(VoxIJK, 1) # for 4th col of transform mat (translation)
+VoxXYZ <- t(xii$meta$subcort$trans_mat[seq(3),] %*% t(VoxIJK)) # MNI coords
+```
 
 ## Related R extensions
 

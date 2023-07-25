@@ -151,21 +151,38 @@ alt="Lit surface plot" />
 <img src="README_media/vxs_unlit.png" style="width:15.0%"
 alt="Unlit surface plot" />
 
+#### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
+
+For a `"xifti"` object `xii` with subcortical data, the mask of data
+locations are saved in `xii$meta$subcort$mask`. To obtain the array
+coordinates of the in-mask locations, use
+`which(xii$meta$subcort$mask, arr.ind=TRUE) - 1`. This matrix has each
+subcortical voxel along the rows, and its I, J, and K array coordinates
+along the three columns. 1 is subtracted because the coordinates should
+begin with 0 rather than 1. It’s equivalent to the original CIFTI
+metadata entry `VoxelIndicesIJK`. To convert array coordinates to MNI
+coordinates, multiply by the transformation matrix
+`xii$meta$subcort$trans_mat`:
+
+    VoxIJK <- which(xii$meta$subcort$mask, arr.ind=TRUE) - 1
+    VoxIJK <- cbind(VoxIJK, 1) # for 4th col of transform mat (translation)
+    VoxXYZ <- t(xii$meta$subcort$trans_mat[seq(3),] %*% t(VoxIJK)) # MNI coords
+
 ## Related R extensions
 
--   NIFTI files:
-    [`oro.nifti`](https://CRAN.R-project.org/package=oro.nifti),
-    [`RNifti`](https://CRAN.R-project.org/package=RNifti)
--   GIFTI files: [`gifti`](https://CRAN.R-project.org/package=gifti)
--   CIFTI files: [`cifti`](https://CRAN.R-project.org/package=cifti) can
-    read in any CIFTI file, whereas `ciftiTools` provides a
-    user-friendly interface for CIFTI files with the dscalar, dlabel,
-    and dtseries intents only.
--   Other structural neuroimaging files:
-    [`fsbrain`](https://CRAN.R-project.org/package=fsbrain)
--   xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
--   Interactive 3D rendering:
-    [`rgl`](https://CRAN.R-project.org/package=rgl)
+- NIFTI files:
+  [`oro.nifti`](https://CRAN.R-project.org/package=oro.nifti),
+  [`RNifti`](https://CRAN.R-project.org/package=RNifti)
+- GIFTI files: [`gifti`](https://CRAN.R-project.org/package=gifti)
+- CIFTI files: [`cifti`](https://CRAN.R-project.org/package=cifti) can
+  read in any CIFTI file, whereas `ciftiTools` provides a user-friendly
+  interface for CIFTI files with the dscalar, dlabel, and dtseries
+  intents only.
+- Other structural neuroimaging files:
+  [`fsbrain`](https://CRAN.R-project.org/package=fsbrain)
+- xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
+- Interactive 3D rendering:
+  [`rgl`](https://CRAN.R-project.org/package=rgl)
 
 ## Data acknowledgement
 
