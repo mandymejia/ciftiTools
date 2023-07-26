@@ -888,6 +888,8 @@ view_xifti_volume <- function(
   if (!together && makePDF) { pdf(fname, width=width, height=height) }
 
   zlim <- sort(zlim)[c(1, length(zlim))]
+  # Problem if zlim has range of 0
+  if (zlim[1] == zlim[2]) { zlim[2] <- zlim[2] + 1e-8 }
 
   for (jj in seq(length(idx))) {
     this_idx <- idx[jj]
@@ -928,6 +930,8 @@ view_xifti_volume <- function(
     } else { stop() }
 
     # Replace `NA` with out-of-zlim value, because `NA` has problems sometimes
+    # and if it's all `NA`, it's definitely a problem. Out-of-zlim values
+    # become transparent.
     img_overlay2[is.na(img_overlay2)] <- min(zlim) - 1
 
     oro.nifti::overlay(

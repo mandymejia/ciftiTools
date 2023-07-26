@@ -70,12 +70,13 @@ write_xifti2 <- function(
     intent <- "label"
     data_type <- "INT32"
     label_table <- xifti$meta$cifti$labels
+    # [TO DO] check if this is actually necessary
     if (length(label_table) > 1) {
       if (length(unique(label_table)) > 1) {
         warning(paste(
           "CIFTI files support a different label table for each column,",
-          "but GIFTI files only support a single label table. Writing the",
-          "`xifti` requires exporting the cortical data to GIFTI files.",
+          "but GIFTI & NIFTI files only support a single label table. Writing",
+          "the `xifti` requires exporting to GIFTI & NIFTI files.",
           "Using the label table for the first column."
         ))
       }
@@ -157,6 +158,8 @@ write_xifti2 <- function(
       xifti$meta$subcort$mask,
       xifti$meta$subcort$trans_mat,
       xifti$meta$subcort$trans_units,
+      xifti$meta$cifti$names,
+      label_table,
       sep_fnames["subcortVol"],
       sep_fnames["subcortLabs"],
       sep_fnames["ROIsubcortVol"],

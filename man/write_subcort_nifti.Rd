@@ -10,6 +10,8 @@ write_subcort_nifti(
   subcortMask,
   trans_mat = NULL,
   trans_units = NULL,
+  col_names = NULL,
+  label_table = NULL,
   subcortVol_fname,
   subcortLabs_fname,
   ROIsubcortVol_fname = NULL,
@@ -31,6 +33,10 @@ sform matrix (srow_x, srow_y and srow_z) to write. If \code{NULL}, do not
 write it (all zeroes).}
 
 \item{trans_units}{The units of \code{trans_mat}. Currently not used.}
+
+\item{col_names}{(Optional) Column names.}
+
+\item{label_table}{(Optional) \code{data.frame} of labels and their colors.}
 
 \item{subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname}{File path to
 a NIFTI to save the corresponding data. \code{ROIsubcortVol_fname} is
@@ -56,6 +62,9 @@ All file path arguments are required except \code{ROIsubcortVol_fname}. If
 not provided, the volumetric mask will not be written. (It's redundant with
 the 0 values in \code{subcortLabs_fname} because valid labels have positive
 indexes.)
+
+Note that for label data (i.e. if \code{label_table} is provided) only one
+label table can be saved.
 }
 \section{Connectome Workbench}{
 

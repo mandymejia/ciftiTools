@@ -63,13 +63,19 @@ write_cifti <- function(
     }
   }
 
+  # Label xifti's with multiple columns having different label tables need to be 
+  #   written one column at a time, because GIFTI/NIFTI files only permit one
+  #   label table at a time, even for multi-column data.
+  # [TO DO]
+
   sep_fnames <- write_xifti2(xifti=xifti, write_dir=tempdir(), verbose=verbose)
 
   if (verbose) { cat("Creating CIFTI file from separated components.\n") }
   wcfs_kwargs <- list(
     cifti_fname=cifti_fname,
     timestep = xifti$meta$cifti$time_step, 
-    timestart = xifti$meta$cifti$time_start
+    timestart = xifti$meta$cifti$time_start,
+    names = xifti$meta$cifti$names
   )
   if ("cortexL" %in% names(sep_fnames)) {
     wcfs_kwargs$cortexL_fname <- sep_fnames["cortexL"]

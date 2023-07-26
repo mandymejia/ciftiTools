@@ -20,6 +20,7 @@
 #' @param timestart If a dense time series ("dtseries.nii") file is being written,
 #'  this is starting time. If \code{NULL}, use the Connectome Workbench default
 #'  (0.0).
+#' @param names For "dscalar.nii" or "dlabel.nii", these are the column names.
 #'
 #' @keywords internal
 #'
@@ -28,7 +29,7 @@ write_cifti_from_separate <- function(
   cortexL_fname=NULL, ROIcortexL_fname=NULL,
   cortexR_fname=NULL, ROIcortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
-  timestep=NULL, timestart=NULL){
+  timestep=NULL, timestart=NULL, names=NULL){
 
   # Determine what kind of CIFTI is being written.
   # Must be one of the following after the check in `cifti_info`
@@ -88,6 +89,16 @@ write_cifti_from_separate <- function(
   #   --> all values are 0 ???
   #   WARNING about conflicting key values from activations xifti. ignore?
   run_wb_cmd(cmd, ignore.stderr=TRUE)
+
+  # ADD BACK NAMES
+  if (!is.null(names)) {
+    cmd <- paste(
+      "-set-map-names",
+      sys_path(cifti_fname),
+      paste("-map", seq(length(names)), names, collapse=" ")
+    )
+    run_wb_cmd(cmd, ignore.stderr=TRUE)
+  }
 
   invisible(cifti_fname)
 }
