@@ -375,6 +375,8 @@ NULL
 #' @param bg Background color. \code{NULL} will use \code{"white"}. Does not affect
 #'  the color legend or color bar if printed separately: those will always have
 #'  white backgrounds.
+#' @param NA_color The color for the medial wall and \code{NA} values. Default:
+#'  \code{"white"}. Also used to color the entire surface for `view_surf`.
 #' @param alpha Transparency value for mesh coloring, between 0 and 1. Default:
 #'  \code{1.0} (no transparency).
 #' @param edge_color Outline each edge in this color. Default: \code{NULL} (do

@@ -293,8 +293,8 @@ view_xifti_surface.color <- function(
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
       if ((!is.null(xifti_meta$cifti$intent) && xifti_meta$cifti$intent==3007)) {
-        if (length(unique(xifti_meta$cifti$labels[idx])) > 1) { 
-          message("Color labels from first requested column will be used.") 
+        if (length(unique(xifti_meta$cifti$labels[idx])) > 1) {
+          message("Color labels from first requested column will be used.")
         }
         labs <- xifti_meta$cifti$labels[[idx[1]]]
         if (is.null(colors)) {
@@ -351,7 +351,7 @@ view_xifti_surface.color <- function(
 
   } else {
     pal <- pal_base <- NULL
-    # Will become NA_COLOR
+    # Will become NA_color
     values <- list(left=matrix(0), right=matrix(0))
   }
 
@@ -574,6 +574,9 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{TRUE} borders will be colored in black; provide the name of a different
 #'  color to use that instead. If \code{FALSE} or \code{NULL} (default), do
 #'  not draw borders.
+#' @param more_light Number from 0 (no added lighting) to 100 (maximum added
+#'  lighting) to lessen the darker shades in shadow regions of the 3D surface.
+#'  Default: \code{0}.
 #' @return If a png or html file(s) were written, the names of the files for
 #'  each index (and color legend if applicable) will be returned. Otherwise,
 #'  the widget itself is returned if a widget was used, and the rgl object IDs
@@ -592,11 +595,12 @@ view_xifti_surface <- function(
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
-  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
-  material=NULL,
+  NA_color="white", borders=FALSE, alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  material=NULL, more_light=0,
   width=NULL, height=NULL, zoom=NULL
   ) {
 
@@ -991,7 +995,6 @@ view_xifti_surface <- function(
 
   # Former arguments that are now internal
   render_rgl <- TRUE # for debugging
-  NA_COLOR <- "white" # surfaces without data will be white
   close_after_save <- TRUE # always close after saving
   widget_idx_warn <- TRUE # always warn if widget might take a while to load
 
@@ -1210,6 +1213,37 @@ view_xifti_surface <- function(
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
+      stopifnot(is.numeric(more_light) && more_light>=0 && more_light<=1)
+      if (more_light > 0) {
+        # Set maximum to 25% brightness.
+        more_light <- more_light/4
+        # Convert to a grayscale hex color.
+        more_light <- round(more_light*255)
+        more_light <- as.hexmode(more_light)
+        more_light <- paste0("#", paste0(rep(more_light, 3), collapse=""))
+        # Lights from top and bottom
+        rgl::light3d(
+          theta=0, phi=80,
+          viewpoint.rel = TRUE,
+          diffuse = more_light,
+        )
+        rgl::light3d(
+          theta=0, phi=-80,
+          viewpoint.rel = TRUE,
+          diffuse = more_light,
+        )
+        # Lights from sides
+        rgl::light3d(
+          theta=80, phi=0,
+          viewpoint.rel = TRUE,
+          diffuse = more_light,
+        )
+        rgl::light3d(
+          theta=-80, phi=0,
+          viewpoint.rel = TRUE,
+          diffuse = more_light,
+        )
+      }
       rgl::par3d(windowRect = 40 + c(0, 0, round(all_panels_width), round(all_panels_height)))
       Sys.sleep(1) #https://stackoverflow.com/questions/58546011/how-to-draw-to-the-full-window-in-rgl
       if (use_title && length(hemisphere) > 1) {
@@ -1298,9 +1332,9 @@ view_xifti_surface <- function(
       } else {
         # Get the color.
         if (any_colors) {
-          mesh_color <- c(NA_COLOR, as.character(pal$color))[color_vals[[h]][,jj] + 1]
+          mesh_color <- c(NA_color, as.character(pal$color))[color_vals[[h]][,jj] + 1]
         } else {
-          mesh_color <- rep(NA_COLOR, nrow(switch(h, left=surfL, right=surfR)$vertices))
+          mesh_color <- rep(NA_color, nrow(switch(h, left=surfL, right=surfR)$vertices))
         }
         # Draw border.
         if (!is.null(borders) && color_mode=="qualitative") {
@@ -1542,10 +1576,12 @@ view_cifti_surface <- function(
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
-  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  NA_color="white", borders=FALSE, alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  material=NULL, more_light=0,
   width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
@@ -1556,10 +1592,12 @@ view_cifti_surface <- function(
     view=view, widget=widget,
     title=title, slider_title=slider_title,
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed,
     digits=digits, scientific=scientific,
     cex.title=cex.title, text_color=text_color, bg=bg,
-    borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    NA_color=NA_color, borders=borders, alpha=alpha,
+    edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    material=material, more_light=more_light,
     width=width, height=height, zoom=zoom
   )
 }
@@ -1570,14 +1608,16 @@ viewCIfTI_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL,
   color_mode="auto", zlim=NULL, colors=NULL,
   idx=NULL, hemisphere=NULL,
-  together=NULL, together_ncol=together_ncol, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
-  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  NA_color="white", borders=FALSE, alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  material=NULL, more_light=0,
   width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
@@ -1588,10 +1628,12 @@ viewCIfTI_surface <- function(
     view=view, widget=widget,
     title=title, slider_title=slider_title,
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed,
     digits=digits, scientific=scientific,
     cex.title=cex.title, text_color=text_color, bg=bg,
-    borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    NA_color=NA_color, borders=borders, alpha=alpha,
+    edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    material=material, more_light=more_light,
     width=width, height=height, zoom=zoom
   )
 }
@@ -1602,14 +1644,16 @@ viewcii_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL,
   color_mode="auto", zlim=NULL, colors=NULL,
   idx=NULL, hemisphere=NULL,
-  together=NULL, together_ncol=together_ncol, together_title=NULL,
+  together=NULL, together_ncol=NULL, together_title=NULL,
   view=c("both", "lateral", "medial"), widget=NULL,
   title=NULL, slider_title="Index",
   fname=FALSE, fname_suffix=c("names", "idx"), legend_fname="[fname]_legend",
-  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL, 
+  legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
   cex.title=NULL, text_color="black", bg=NULL,
-  borders=FALSE, alpha=1.0, edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  NA_color="white", borders=FALSE, alpha=1.0,
+  edge_color=NULL, vertex_color=NULL, vertex_size=0,
+  material=NULL, more_light=0,
   width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
@@ -1620,10 +1664,12 @@ viewcii_surface <- function(
     view=view, widget=widget,
     title=title, slider_title=slider_title,
     fname=fname, fname_suffix=fname_suffix, legend_fname=legend_fname,
-    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed, 
+    legend_ncol=legend_ncol, legend_alllevels=legend_alllevels, legend_embed=legend_embed,
     digits=digits, scientific=scientific,
     cex.title=cex.title, text_color=text_color, bg=bg,
-    borders=borders, alpha=alpha, edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    NA_color=NA_color, borders=borders, alpha=alpha,
+    edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
+    material=material, more_light=more_light,
     width=width, height=height, zoom=zoom
   )
 }
