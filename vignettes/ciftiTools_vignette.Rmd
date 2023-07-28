@@ -198,6 +198,40 @@ view_xifti_volume(xii, interactive = TRUE)
 
 The S3 method `plot(xii)` will display all the data present in the `xifti` using `view_xifti_surface`, `view_xifti_volume`, or both. If both plots are made, the color mode and range will be shared between the two plots. 
 
+### Tips and tricks
+
+`NA` values will be uncolored. You can use this to, for example, only color values meeting a certain threshold.
+
+```{r, fig.cap="dscalar; using NA values to selectively color", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+xii <- read_cifti(cifti_fnames["dscalar"])
+# Convert to z-scores
+xii <- scale_xifti(xii)
+# Threshold
+xii <- transform_xifti(xii, function(x){ifelse(x<2, NA, x)})
+view_xifti_surface(
+  xii, title='MyelinMap_BC_decurv: z > 2', 
+  cex.title=1.3, zlim=c(2,3), NA_color="#505560"
+)
+```
+
+Something to note is that the shadows from 3D rendering will darken colors in some folded regions of the brain. Another consideration is that the colors are smoothed continuously. In some situations, these default 3D shading properties may be undesirable. The `more_light` and `material` arguments can be used to adjust aspects of 3D shading.
+
+```{r, fig.cap="Lessening the shadows", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+view_xifti_surface(
+  xii, title='MyelinMap_BC_decurv: z > 2, less shadows', 
+  cex.title=1.3, zlim=c(2,3), NA_color="#505560",
+  more_light=1
+)
+```
+
+```{r, fig.cap="Exact coloring, by disabling shadows and color smoothing", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+view_xifti_surface(
+  xii, title='MyelinMap_BC_decurv: z > 2, exact colors', 
+  cex.title=1.3, zlim=c(2,3), NA_color="#505560",
+  material=list(lit=FALSE, smooth=FALSE)
+)
+```
+
 # Resampling and smoothing
 
 ### Resampling
@@ -305,6 +339,25 @@ xii
 xii$meta$cifti$names <- paste("Column", seq(4))
 xii <- select_xifti(xii, c(4,3,2)) # Reverse column order & drop the first.
 xii
+```
+
+`apply_parc` computes a summary statistic across data for each parcel. By default, the mean is computed.
+
+```{r}
+xii <- read_cifti(ciftiTools.files()$cifti["dtseries"])
+xii_parc <- load_parc("Schaefer_400")
+xii_pmeans <- apply_parc(xii, xii_parc)
+head(xii_pmeans)
+```
+To visualize the parcellated data: 
+
+```{r, fig.cap="Mean timecourses for Schaefer 400 parcels", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+xii <- move_from_mwall(xii, NA)
+xii <- newdata_xifti(xii, xii_pmeans[c(as.matrix(xii_parc)+1)])
+plot(
+  xii, zlim=c(1.5, 2.5), cex.title=1.3,
+  colors="viridis", title="Parcellated data"
+)
 ```
 
 S3 methods allow for univariate transformations of `"xifti"` objects as well as arithmetic operations of multiple `"xifti"` objects.
