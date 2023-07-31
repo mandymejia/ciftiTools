@@ -6,6 +6,7 @@ New features
 * Add `apply_parc`.
 * Add `set_names_xifti`.
 * Add `NA_color` argument to `view_xifti_surface`.
+* Add `shadows` argument to `view_xifti_surface`.
 * `mask_surf` takes in a `"surf"` object now.
 * Misc. documentation and warning improvements.
 
