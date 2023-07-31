@@ -75,7 +75,7 @@ write_subcort_nifti <- function(
     cmd <- paste(
       "-set-map-names",
       sys_path(subcortVol_fname),
-      paste("-map", seq(length(col_names)), col_names, collapse=" ")
+      paste("-map", seq(length(col_names)), shQuote(col_names), collapse=" ")
     )
     run_wb_cmd(cmd, ignore.stderr=TRUE)
   }

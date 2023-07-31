@@ -72,8 +72,8 @@ write_cifti <- function(
       write_cifti(select_xifti(xifti, cc), ccol_fnames[cc], verbose=FALSE)
     }
     cmd <- paste(
-      "-cifti-merge", cifti_fname,
-      paste("-cifti", ccol_fnames, collapse=" ")
+      "-cifti-merge", sys_path(cifti_fname),
+      paste("-cifti", sys_path(ccol_fnames), collapse=" ")
     )
     run_wb_cmd(cmd, ignore.stderr=TRUE)
 
