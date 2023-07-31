@@ -214,13 +214,13 @@ view_xifti_surface(
 )
 ```
 
-Something to note is that the shadows from 3D rendering will darken colors in some folded regions of the brain. Another consideration is that the colors are smoothed continuously. In some situations, these default 3D shading properties may be undesirable. The `more_light` and `material` arguments can be used to adjust aspects of 3D shading.
+Something to note is that the shadows from 3D rendering will darken colors in some folded regions of the brain. Another consideration is that the colors are smoothed continuously. In some situations, these default 3D shading properties may be undesirable. The `shadows` and `material` arguments can be used to adjust aspects of 3D shading.
 
 ```{r, fig.cap="Lessening the shadows", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
 view_xifti_surface(
   xii, title='MyelinMap_BC_decurv: z > 2, less shadows', 
   cex.title=1.3, zlim=c(2,3), NA_color="#505560",
-  more_light=1
+  shadows=0
 )
 ```
 

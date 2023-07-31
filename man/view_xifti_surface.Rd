@@ -41,7 +41,7 @@ view_xifti_surface(
   vertex_color = NULL,
   vertex_size = 0,
   material = NULL,
-  more_light = 0,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -81,7 +81,7 @@ view_cifti_surface(
   vertex_color = NULL,
   vertex_size = 0,
   material = NULL,
-  more_light = 0,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -121,7 +121,7 @@ viewCIfTI_surface(
   vertex_color = NULL,
   vertex_size = 0,
   material = NULL,
-  more_light = 0,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -161,7 +161,7 @@ viewcii_surface(
   vertex_color = NULL,
   vertex_size = 0,
   material = NULL,
-  more_light = 0,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -360,9 +360,11 @@ to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
 from the color scale, rather than adding geometric shading and interpolating
 vertex colors. If \code{NULL}, use defaults.}
 
-\item{more_light}{Number from 0 (no added lighting) to 100 (maximum added
-lighting) to lessen the darker shades in shadow regions of the 3D surface.
-Default: \code{0}.}
+\item{shadows}{Number from 0 (maximum added lighting) to 1 (no added
+lighting) to control the darkness and extent of shadowing on the 3D surface.
+Default: \code{1}. Shadows help render the shape of the surface, but can
+be distracting if interpretation of the data depends on small differences in
+brightness along the color scale.}
 
 \item{width, height}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), these dimensions depend on type of output (Open GL

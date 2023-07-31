@@ -574,9 +574,11 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{TRUE} borders will be colored in black; provide the name of a different
 #'  color to use that instead. If \code{FALSE} or \code{NULL} (default), do
 #'  not draw borders.
-#' @param more_light Number from 0 (no added lighting) to 100 (maximum added
-#'  lighting) to lessen the darker shades in shadow regions of the 3D surface.
-#'  Default: \code{0}.
+#' @param shadows Number from 0 (maximum added lighting) to 1 (no added 
+#'  lighting) to control the darkness and extent of shadowing on the 3D surface. 
+#'  Default: \code{1}. Shadows help render the shape of the surface, but can 
+#'  be distracting if interpretation of the data depends on small differences in
+#'  brightness along the color scale.
 #' @return If a png or html file(s) were written, the names of the files for
 #'  each index (and color legend if applicable) will be returned. Otherwise,
 #'  the widget itself is returned if a widget was used, and the rgl object IDs
@@ -600,7 +602,7 @@ view_xifti_surface <- function(
   cex.title=NULL, text_color="black", bg=NULL,
   NA_color="white", borders=FALSE, alpha=1.0,
   edge_color=NULL, vertex_color=NULL, vertex_size=0,
-  material=NULL, more_light=0,
+  material=NULL, shadows=1,
   width=NULL, height=NULL, zoom=NULL
   ) {
 
@@ -1213,8 +1215,9 @@ view_xifti_surface <- function(
       rgl::open3d()
       if (is.null(bg)) { bg <- "white" }
       rgl::bg3d(color=bg)
-      stopifnot(is.numeric(more_light) && more_light>=0 && more_light<=1)
-      if (more_light > 0) {
+      stopifnot(is.numeric(shadows) && shadows>=0 && shadows<=1)
+      if (shadows < 1) {
+        more_light <- 1- shadows
         # Set maximum to 25% brightness.
         more_light <- more_light/4
         # Convert to a grayscale hex color.
@@ -1581,7 +1584,7 @@ view_cifti_surface <- function(
   cex.title=NULL, text_color="black", bg=NULL,
   NA_color="white", borders=FALSE, alpha=1.0,
   edge_color=NULL, vertex_color=NULL, vertex_size=0,
-  material=NULL, more_light=0,
+  material=NULL, shadows=1,
   width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
@@ -1597,7 +1600,7 @@ view_cifti_surface <- function(
     cex.title=cex.title, text_color=text_color, bg=bg,
     NA_color=NA_color, borders=borders, alpha=alpha,
     edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
-    material=material, more_light=more_light,
+    material=material, shadows=shadows,
     width=width, height=height, zoom=zoom
   )
 }
@@ -1617,7 +1620,7 @@ viewCIfTI_surface <- function(
   cex.title=NULL, text_color="black", bg=NULL,
   NA_color="white", borders=FALSE, alpha=1.0,
   edge_color=NULL, vertex_color=NULL, vertex_size=0,
-  material=NULL, more_light=0,
+  material=NULL, shadows=1,
   width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
@@ -1633,7 +1636,7 @@ viewCIfTI_surface <- function(
     cex.title=cex.title, text_color=text_color, bg=bg,
     NA_color=NA_color, borders=borders, alpha=alpha,
     edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
-    material=material, more_light=more_light,
+    material=material, shadows=shadows,
     width=width, height=height, zoom=zoom
   )
 }
@@ -1653,7 +1656,7 @@ viewcii_surface <- function(
   cex.title=NULL, text_color="black", bg=NULL,
   NA_color="white", borders=FALSE, alpha=1.0,
   edge_color=NULL, vertex_color=NULL, vertex_size=0,
-  material=NULL, more_light=0,
+  material=NULL, shadows=1,
   width=NULL, height=NULL, zoom=NULL){
 
   view_xifti_surface(
@@ -1669,7 +1672,7 @@ viewcii_surface <- function(
     cex.title=cex.title, text_color=text_color, bg=bg,
     NA_color=NA_color, borders=borders, alpha=alpha,
     edge_color=edge_color, vertex_color=vertex_color, vertex_size=vertex_size,
-    material=material, more_light=more_light,
+    material=material, shadows=shadows,
     width=width, height=height, zoom=zoom
   )
 }
