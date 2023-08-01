@@ -95,7 +95,7 @@ write_cifti_from_separate <- function(
     cmd <- paste(
       "-set-map-names",
       sys_path(cifti_fname),
-      paste("-map", seq(length(names)), names, collapse=" ")
+      paste("-map", seq(length(names)), shQuote(names), collapse=" ")
     )
     run_wb_cmd(cmd, ignore.stderr=TRUE)
   }

@@ -239,11 +239,9 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
     )
 
     names_fname <- tempfile()
+    writeLines(names, names_fname)
     cmd <- paste(cmd, "-name-file", sys_path(names_fname))
     run_wb_cmd(cmd)
-
-    # [TO DO]--set-names here
-    # or write names to `names_fname`
 
     return(cifti_target_fname)
   }

@@ -1025,7 +1025,7 @@ view_xifti_volume <- function(
           width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
         )
       }
-      if (close_after_save) { dev.off() }
+      if (close_after_save && !((together && !comp_dummy) || together_leg)) { dev.off() }
     }
   } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) {
     print(cleg)
