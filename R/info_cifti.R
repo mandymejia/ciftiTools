@@ -149,7 +149,7 @@ get_misc_meta_from_cifti_xml <- function(xml, intent=3000) {
 #'
 #' Extract intent-specific Metadata from CIFTI header XML (first "MatrixIndicesMap" entry)
 #'
-#' @param x List representing "MatrixIndicesMap" entry XML
+#' @param xml List representing "MatrixIndicesMap" entry XML
 #'  (\code{xifti$CIFTI$Matrix[[2]]})
 #' @param intent The CIFTI's NIFTI intent code
 #'
@@ -201,7 +201,7 @@ get_intn_meta_from_cifti_xml <- function(xml, intent=3000) {
 #'
 #' Extract data-related metadata from CIFTI header XML (second "MatrixIndicesMap" entry)
 #'
-#' @param x List representing "MatrixIndicesMap" entry XML
+#' @param xml List representing "MatrixIndicesMap" entry XML
 #'  (\code{xifti$CIFTI$Matrix[[3]]})
 #' @param intent The CIFTI's NIFTI intent code. Not used right now, but might be
 #'  used later. Default: \code{3000} (NIFTI_INTENT_UNKNOWN)
