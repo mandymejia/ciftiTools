@@ -1,3 +1,5 @@
+## usethis namespace: start
+## usethis namespace: end
 #' ciftiTools: Tools for Reading and Visualizing CIFTI Brain Files
 #' 
 #' Here are groups of commonly-used functions in \code{ciftiTools}:
@@ -63,6 +65,5 @@
 #'  \item{\code{rotate_surf}:}{   Rotate the geometry of a \code{"surf"}}
 #' }
 #'
-#' @docType package
 #' @name ciftiTools
-NULL
+"_PACKAGE"

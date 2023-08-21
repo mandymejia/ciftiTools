@@ -3,6 +3,7 @@
 \docType{package}
 \name{ciftiTools}
 \alias{ciftiTools}
+\alias{ciftiTools-package}
 \title{ciftiTools: Tools for Reading and Visualizing CIFTI Brain Files}
 \description{
 Here are groups of commonly-used functions in \code{ciftiTools}:
@@ -68,4 +69,26 @@ Functions for working with surfaces:
 \item{\code{resample_surf}:}{   Resample a \code{"surf"}}
 \item{\code{rotate_surf}:}{   Rotate the geometry of a \code{"surf"}}
 }
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mandymejia/ciftiTools}
+  \item Report bugs at \url{https://github.com/mandymejia/ciftiTools/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Amanda Mejia \email{mandy.mejia@gmail.com}
+
+Authors:
+\itemize{
+  \item Damon Pham \email{damondpham@gmail.com} (\href{https://orcid.org/0000-0001-7563-4727}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item John Muschelli \email{muschellij2@gmail.com} (\href{https://orcid.org/0000-0001-6469-1750}{ORCID}) [contributor]
+}
+
 }
