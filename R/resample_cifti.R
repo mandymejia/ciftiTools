@@ -91,6 +91,10 @@ resample_cifti_wrapper <- function(
 #'  putting them together. (The subcortex is not resampled.)
 #'
 #'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
+#' 
+#'  If surface data is included, it will be resampled with the barycentric
+#'  method even if \code{resamp_method=="adaptive"} because the barycentric
+#'  method is recommended for surface geometry data.  
 #'
 #' @param x The CIFTI file name or \code{"xifti"} object to resample. If
 #'  \code{NULL}, the result will be a \code{"xifti"} with resampled surfaces

@@ -75,10 +75,16 @@ resample_cifti_from_template <- function(
     write_spheres(sphereL_target_fname, sphereR_target_fname, resamp_res)
 
     if ("left" %in% brainstructures) {
-      cmd <- paste(cmd, "-left-spheres", sphereL_original_fname, sphereL_target_fname)
+      cmd <- paste(
+        cmd, "-left-spheres", 
+        sys_path(sphereL_original_fname), sys_path(sphereL_target_fname)
+      )
     }
     if ("right" %in% brainstructures) {
-      cmd <- paste(cmd, "-right-spheres", sphereR_original_fname, sphereR_target_fname)
+      cmd <- paste(
+        cmd, "-right-spheres", 
+        sys_path(sphereR_original_fname), sys_path(sphereR_target_fname)
+      )
     }
   }
 

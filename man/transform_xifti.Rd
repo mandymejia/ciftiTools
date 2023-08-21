@@ -7,7 +7,7 @@
 transform_xifti(xifti, FUN, xifti2 = NULL, idx = NULL, ...)
 }
 \arguments{
-\item{xifti}{The xifti}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{FUN}{The function. If \code{xifti2} is not provided, it should be
 a univariate function like \code{log} or \code{sqrt}. If

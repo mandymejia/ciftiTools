@@ -1,3 +1,15 @@
+# 12.0 (Jul 28, 2023)
+
+New features
+* Proper writing out of `dlabel` CIFTI data. Fixed problems if multiple columns or with subcortical data.
+* Add `even_vert_samp`.
+* Add `apply_parc`.
+* Add `set_names_xifti`.
+* Add `NA_color` argument to `view_xifti_surface`.
+* Add `shadows` argument to `view_xifti_surface`.
+* `mask_surf` takes in a `"surf"` object now.
+* Misc. documentation and warning improvements.
+
 # 11.0 (Jan 23, 2023)
 
 Changes to default behaviors

@@ -235,12 +235,12 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
 
     cmd <- paste(
       "-cifti-change-mapping", x,
-      "ROW", cifti_target_fname, "-scalar"
+      "ROW", sys_path(cifti_target_fname), "-scalar"
     )
 
     names_fname <- tempfile()
-    cat(names, file = names_fname, sep = "\n")
-    cmd <- paste(cmd, "-name-file", names_fname)
+    writeLines(names, names_fname)
+    cmd <- paste(cmd, "-name-file", sys_path(names_fname))
     run_wb_cmd(cmd)
 
     return(cifti_target_fname)
@@ -305,8 +305,8 @@ convert_to_dtseries <- function(
     stopifnot(file.exists(x))
 
     cmd <- paste(
-      "-cifti-change-mapping", x,
-      "ROW", cifti_target_fname, "-series",
+      "-cifti-change-mapping", sys_path(x),
+      "ROW", sys_path(cifti_target_fname), "-series",
       time_step, time_start, "-unit", toupper(time_unit)
     )
 

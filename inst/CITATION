@@ -4,7 +4,7 @@ ciftiTools_citations <- c(
 	bibentry(
 		bibtype      = "Article",
 		title        = "{ciftiTools}: A package for reading, writing, visualizing and manipulating {CIFTI} files in {R}",
-		author       = personList(
+		author       = c(
 			as.person("Damon D Pham"),
 			as.person("John Muschelli"),
 			as.person("Amanda F Mejia")

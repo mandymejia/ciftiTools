@@ -7,7 +7,7 @@
 ciftiTools_warn(warn)
 }
 \arguments{
-\item{msg}{The warning message}
+\item{warn}{The warning message}
 }
 \value{
 \code{NULL}, invisibly
