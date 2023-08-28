@@ -244,6 +244,17 @@ test_that("Miscellaneous functions are working", {
   scale_xifti(cii1, scale=FALSE)
   newdata_xifti(cii1, as.matrix(cii1)[,rep(seq(ncol(cii1)), 2)])
 
+  # surf_area
+  mySurf <- read_surf(ciftiTools.files()$surf["left"])
+  surf_area_ours <- surf_area(mySurf)
+  tfile <- tempfile(fileext=".func.gii")
+  ciftiTools:::run_wb_cmd(paste(
+    "-surface-vertex-areas",
+    ciftiTools:::ciftiTools.files()$surf["left"],
+    tfile
+  ))
+  surf_area_wb <- read_xifti2(tfile)$data$cortex_left[,]
+  testthat::expect_lt(max(abs(surf_area_ours-surf_area_wb)), 1e-5)
 
   x <- read_cifti(fnames$cifti[1], surfL_fname=fnames$surf["left"], brainstructures="left")
   y <- read_cifti(fnames$cifti[2], surfR_fname=fnames$surf["right"], brainstructures="right")
