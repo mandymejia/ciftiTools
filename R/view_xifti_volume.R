@@ -660,7 +660,7 @@ view_xifti_volume <- function(
       vol[vol > max(zlim)] <- max(zlim)
 
       if (is.data.frame(colors)) {
-        stopifnot(ncol(colors)==2 && colnames(colors)==c("color", "value"))
+        stopifnot(ncol(colors)==2 && all(colnames(colors)==c("color", "value")))
         pal_base <- colors
       } else {
         pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim)

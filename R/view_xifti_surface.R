@@ -318,7 +318,7 @@ view_xifti_surface.color <- function(
       pal <- pal_base
     } else {
       if (is.data.frame(colors)) {
-        stopifnot(ncol(colors)==2 && colnames(colors)==c("color", "value"))
+        stopifnot(ncol(colors)==2 && all(colnames(colors)==c("color", "value")))
         pal_base <- colors
       } else {
         pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim)
