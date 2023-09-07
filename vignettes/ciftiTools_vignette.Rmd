@@ -1,7 +1,11 @@
 ---
 title: "`ciftiTools` Demo"
 author: "Damon Pham & Amanda Mejia"
-output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+  toc: true
+  keep_md: true
 vignette: >
   %\VignetteIndexEntry{`ciftiTools` Demo}
   %\VignetteEngine{knitr::rmarkdown}
