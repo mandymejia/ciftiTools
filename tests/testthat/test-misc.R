@@ -46,7 +46,7 @@ test_that("Miscellaneous functions are working", {
     cii$surf$cortex_left,
     hemisphere="left"
   )
-  plot(cii+as.matrix(as.numeric(cii2))); rgl::rgl.close()
+  plot(cii+as.matrix(as.numeric(cii2))); rgl::close3d()
   cii2 <- edit_mask_surf(
     cii$data$cortex_left[,1],
     cii$meta$cortex$medial_wall_mask$left,
@@ -54,15 +54,15 @@ test_that("Miscellaneous functions are working", {
     hemisphere="left",
     depth=4
   )
-  plot(cii+as.matrix(as.numeric(cii2)), zlim=c(0, 2)); rgl::rgl.close()
-  plot(cii); rgl::rgl.close()
+  plot(cii+as.matrix(as.numeric(cii2)), zlim=c(0, 2)); rgl::close3d()
+  plot(cii); rgl::close3d()
   plot(make_surf(
     c(mask_surf(
       cii$surf$cortex_left$vertices,
       cii$surf$cortex_left$faces,
       move_from_mwall(cii)$data$cortex_left[,1]
     ), list(hemisphere="left"))
-  )); rgl::rgl.close()
+  )); rgl::close3d()
 
   for (cii_fname in fnames$cifti) {
     cat("\n\n"); cat(cii_fname); cat("\n\n")
