@@ -22,4 +22,3 @@ square of the units of \code{surf$vertices}.
 \description{
 Calculate surface area of a \code{"surf"} object by vertex or face.
 }
-\keyword{export}

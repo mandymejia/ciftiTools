@@ -11,7 +11,7 @@
 #' @return Vector of surface areas \code{by} vertex or face, in the same order
 #'  as how the vertices or faces are listed in \code{surf}. The units are the 
 #'  square of the units of \code{surf$vertices}. 
-#' @keywords export
+#' @export
 surf_area <- function(surf, by=c("vertex", "face")) {
   by <- match.arg(by, c("vertex", "face"))
   stopifnot(is.surf(surf))
