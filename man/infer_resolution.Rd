@@ -14,7 +14,7 @@ infer_resolution(xifti, surfL = NULL, surfR = NULL)
 \item{surfR}{Right surface}
 }
 \value{
-The inferred resolution
+The inferred resolutions for the left and right cortex.
 }
 \description{
 Infer the numbers of vertices on each cortex of a \code{"xifti"} object.

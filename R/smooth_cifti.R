@@ -64,7 +64,7 @@ smooth_cifti <- function(
     }
 
     res <- infer_resolution(x)
-    if (any(res %in% c(NA, NaN))) {
+    if (any(is.na(res))) {
       stop("Cannot smooth because the resolution could not be inferred.")
     } else if (!(any(res == 0)) && res[1] != res[2]) {
       stop("Cannot smooth because the left and right cortex have unequal inferred resolutions: ", res[1], " and ", res[2], ".")
