@@ -186,7 +186,7 @@
 #'  The vertical positioning is controlled by \code{ypos.title}, and the font
 #'  size is controlled by \code{cex.title}.
 #' @param crop Crop the slice subplots to the subcortical structures, instead of
-#'  showing the full anatomical image? Default: \code{TRUE}. 
+#'  showing the full anatomical image? Default: \code{TRUE}.
 #'  Ignored if \code{widget}.
 #' @param text_color Color for text in title and colorbar legend. Default:
 #'  \code{"white"}. If \code{"white"}, will use black instead for the color
@@ -231,7 +231,7 @@ view_xifti_volume <- function(
   legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
-  cex.title=NULL, ypos.title=0, xpos.title=0, 
+  cex.title=NULL, ypos.title=0, xpos.title=0,
   orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -1012,8 +1012,10 @@ view_xifti_volume <- function(
           height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
           width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
         )
+      } else {
+        # [TO DO] not too sure about this
+        if (close_after_save) { dev.off() }
       }
-      if (close_after_save) { dev.off() }
     }
   } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) {
     print(cleg)
@@ -1151,7 +1153,7 @@ view_cifti_volume <- function(
   legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
-  cex.title=NULL, ypos.title=0, xpos.title=0, 
+  cex.title=NULL, ypos.title=0, xpos.title=0,
   orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -1189,7 +1191,7 @@ viewCIfTI_volume <- function(
   legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
-  cex.title=NULL, ypos.title=0, xpos.title=0, 
+  cex.title=NULL, ypos.title=0, xpos.title=0,
   orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 
@@ -1227,7 +1229,7 @@ viewcii_volume <- function(
   legend_fname="[fname]_legend",
   legend_ncol=NULL, legend_alllevels=FALSE, legend_embed=NULL,
   digits=NULL, scientific=NA,
-  cex.title=NULL, ypos.title=0, xpos.title=0, 
+  cex.title=NULL, ypos.title=0, xpos.title=0,
   orientation_labels=TRUE, crop=TRUE,
   text_color="white", bg=NULL, width=NULL, height=NULL, ...) {
 

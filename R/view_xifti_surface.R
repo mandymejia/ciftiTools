@@ -1363,8 +1363,10 @@ view_xifti_surface <- function(
                   height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
                   width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
                 )
+              } else {
+                # [TO DO] not too sure about this
+                if (close_after_save) { dev.off() }
               }
-              if (close_after_save) { dev.off() }
             }
 
           } else {
