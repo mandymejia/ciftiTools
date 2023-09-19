@@ -31,7 +31,7 @@
 #' 
 #'  If \code{FALSE} (default), the result will be a \code{"xifti"} object.
 #' 
-#'  If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T} 
+#'  If \code{TRUE}, the result will be a \eqn{T \times G} matrix (\eqn{T} 
 #'  measurements, \eqn{G} grayordinates not including the medial wall if it's 
 #'  excluded from the ROI). All below arguments will be ignored because the 
 #'  brain structures cannot be identified. Surfaces will not be appended. 
@@ -51,7 +51,7 @@
 #' @param ... Additional arguments to \code{\link{read_cifti_convert}} or 
 #'  \code{\link{read_cifti_separate}}.
 #'
-#' @return If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G} 
+#' @return If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T \times G} 
 #'  matrix (\eqn{T} measurements, \eqn{G} grayordinates). 
 #' 
 #' @family common

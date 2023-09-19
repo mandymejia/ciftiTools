@@ -11,7 +11,7 @@ parc_borders(parc, surf = NULL, hemisphere = c("left", "right"))
 entry indicates the parcel that vertex belongs to.}
 
 \item{surf}{The surface which the vertices belong to, or just the \code{"faces"}
-component (\eqn{F x 3} matrix where each row indicates the vertices which
+component (\eqn{F \times 3} matrix where each row indicates the vertices which
 comprise a face). If not provided, the (resampled) default \code{hemisphere}
 surface included with \code{ciftiTools} will be used.}
 

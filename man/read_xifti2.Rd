@@ -24,15 +24,15 @@ read_xifti2(
 a metric or label GIFTI file.
 
 If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
-all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There
+all vertices on the left cortical surface (\eqn{V_L \times T} data matrix). There
 will not be a mask for the medial wall. Not providing the medial wall mask
 is appropriate for ".dlabels.nii" files where the medial wall may have its
 own label and therefore should not be treated as missing data.
 
 If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
-for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
+for all vertices on the left cortical surface (\eqn{V_L \times T} data matrix, with
 filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data
-only for non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix).
+only for non-medial wall vertices (\eqn{(V_L - mwall_L) \times T} data matrix).
 The medial wall mask will be the \code{0} values in \code{cortexL_mwall}.
 The medial wall mask should be provided whenever the medial wall should be
 treated as missing data.
@@ -44,15 +44,15 @@ Since the unmasked cortices must have the same number of vertices,
 a metric or label GIFTI file.
 
 If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
-all vertices on the right cortical surface (\eqn{V_R x T} data mre
+all vertices on the right cortical surface (\eqn{V_R \times T} data mre
 will not be a mask for the medial wall. Not providing the medial wall mask
 is appropriate for ".dlabels.nii" files where the medial wall may have its
 own label and therefore should not be treated as missing data.
 
 If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
-for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
+for all vertices on the right cortical surface (\eqn{V_R \times T} data matrix, with
 filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data
-only for non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix).
+only for non-medial wall vertices (\eqn{(V_R - mwall_R) \times T} data matrix).
 The medial wall mask will be the \code{0} values in \code{cortexR_mwall}.
 The medial wall mask should be provided whenever the medial wall should be
 treated as missing data.

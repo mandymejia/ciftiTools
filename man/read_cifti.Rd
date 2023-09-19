@@ -128,7 +128,7 @@ and use that for the target surface.}
 
 If \code{FALSE} (default), the result will be a \code{"xifti"} object.
 
-If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T}
+If \code{TRUE}, the result will be a \eqn{T \times G} matrix (\eqn{T}
 measurements, \eqn{G} grayordinates not including the medial wall if it's
 excluded from the ROI). All below arguments will be ignored because the
 brain structures cannot be identified. Surfaces will not be appended.
@@ -152,7 +152,7 @@ CIFTI, use these values to infer the medial wall mask. Default:
 \code{\link{read_cifti_separate}}.}
 }
 \value{
-If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G}
+If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T \times G}
 matrix (\eqn{T} measurements, \eqn{G} grayordinates).
 }
 \description{

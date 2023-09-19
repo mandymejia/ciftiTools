@@ -2,7 +2,7 @@
 #'
 #' Write the data for the left or right cortex to a metric GIFTI file.
 #'
-#' @param x A \eqn{V x T} data matrix (V vertices, T measurements). This can also
+#' @param x A \eqn{V \times T} data matrix (V vertices, T measurements). This can also
 #'  be an object from \code{gifti::readgii}, or a length \eqn{T} list of length
 #'  \eqn{V} vectors.
 #' @param gifti_fname Where to write the GIFTI file.

@@ -12,7 +12,7 @@
 #'  Surfaces are required for each hemisphere in the CIFTI. If they are not 
 #'  provided, the default inflated surfaces will be used. 
 #' 
-#'  Conversion for sigma: \eqn{\sigma * 2 * sqrt(2*log(2)) = FWHM}
+#'  Conversion for sigma: \eqn{\sigma \times 2 \times \sqrt(2 \times \log(2)) = FWHM}
 #' 
 #' @param x The CIFTI file name or \code{"xifti"} object to smooth.
 #' @param cifti_target_fname File name for the smoothed CIFTI. If

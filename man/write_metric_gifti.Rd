@@ -17,7 +17,7 @@ write_metric_gifti(
 )
 }
 \arguments{
-\item{x}{A \eqn{V x T} data matrix (V vertices, T measurements). This can also
+\item{x}{A \eqn{V \times T} data matrix (V vertices, T measurements). This can also
 be an object from \code{gifti::readgii}, or a length \eqn{T} list of length
 \eqn{V} vectors.}
 
