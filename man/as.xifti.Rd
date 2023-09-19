@@ -175,7 +175,7 @@ voxels. \eqn{T}, the total number of measurements (columns of data), must be
 the same for each brainstructure.
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
 \code{\link{load_surf}()},

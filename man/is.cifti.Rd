@@ -71,7 +71,7 @@ the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{read_cifti}()},
 \code{\link{resample_cifti}()},
 \code{\link{smooth_cifti}()},

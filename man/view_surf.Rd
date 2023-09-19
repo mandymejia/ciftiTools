@@ -167,7 +167,7 @@ vignette for an example.
 }
 
 \seealso{
-Other functions for working with GIFTI surface geometry data: 
+Other surfing: 
 \code{\link{is.surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},

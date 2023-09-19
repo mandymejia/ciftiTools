@@ -98,7 +98,7 @@ Read in GIFTI metric or label files as a \code{"xifti"} object. May also include
 surface geometry GIFTI files and perform resampling.
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},

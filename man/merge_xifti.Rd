@@ -21,7 +21,7 @@ brainstructures and resolutions. The first \code{"xifti"}'s metadata will be
 retained, including its intent.
 }
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},

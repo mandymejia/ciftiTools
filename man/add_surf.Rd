@@ -35,7 +35,7 @@ be resampled to match the resolution of the data. The barycentric resampling
 method, which is recommended for anatomical surfaces, will be used.
 }
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},

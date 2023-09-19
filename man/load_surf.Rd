@@ -36,7 +36,7 @@ that support the NIH Blueprint for Neuroscience Research; and by the
 McDonnell Center for Systems Neuroscience at Washington University.
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},

@@ -212,7 +212,7 @@ the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{resample_cifti}()},
 \code{\link{smooth_cifti}()},
@@ -220,7 +220,7 @@ Other commonly-used functions:
 \code{\link{view_xifti_volume}()},
 \code{\link{write_cifti}()}
 
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},

@@ -29,7 +29,7 @@ vertices. The last list entry, "hemisphere", should be "left", "right",
 or NULL indicating the brain hemisphere which the surface represents.
 }
 \seealso{
-Other functions for working with GIFTI surface geometry data: 
+Other surfing: 
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},
 \code{\link{rotate_surf}()},

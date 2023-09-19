@@ -24,7 +24,7 @@ a single \code{"xifti"}. The names, intent, and surfaces of the first will be us
 if present. To add more surfaces to the result, use \code{\link{add_surf}}.
 }
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{convert_to_dlabel}()},

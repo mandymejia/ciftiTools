@@ -131,7 +131,7 @@ This function interfaces with the \code{"-cifti-separate"} Workbench command.
 }
 
 \seealso{
-Other functions for writing CIFTI or GIFTI data: 
+Other writing: 
 \code{\link{write_cifti}()},
 \code{\link{write_metric_gifti}()},
 \code{\link{write_subcort_nifti}()},

@@ -30,7 +30,7 @@ This function interfaces with the \code{"-surface-resample"} Workbench command.
 }
 
 \seealso{
-Other functions for working with GIFTI surface geometry data: 
+Other surfing: 
 \code{\link{is.surf}()},
 \code{\link{read_surf}()},
 \code{\link{rotate_surf}()},

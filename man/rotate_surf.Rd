@@ -28,7 +28,7 @@ Rotate a \code{"surf"}. Can be used to adjust the mesh orientation prior
 to \code{\link{view_xifti_surface}}.
 }
 \seealso{
-Other functions for working with GIFTI surface geometry data: 
+Other surfing: 
 \code{\link{is.surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},

@@ -104,7 +104,7 @@ CIFTI file or \code{"xifti"} object.
 
 }}
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},

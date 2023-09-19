@@ -65,7 +65,7 @@ Command, depending on the input.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{read_cifti}()},
 \code{\link{resample_cifti}()},
@@ -73,7 +73,7 @@ Other commonly-used functions:
 \code{\link{view_xifti_surface}()},
 \code{\link{view_xifti_volume}()}
 
-Other functions for writing CIFTI or GIFTI data: 
+Other writing: 
 \code{\link{separate_cifti}()},
 \code{\link{write_metric_gifti}()},
 \code{\link{write_subcort_nifti}()},

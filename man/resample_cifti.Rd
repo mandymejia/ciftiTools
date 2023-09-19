@@ -153,7 +153,7 @@ and/or \code{"-surface-resample"} Workbench commands, depending on the input.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{read_cifti}()},
 \code{\link{smooth_cifti}()},

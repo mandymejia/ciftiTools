@@ -38,7 +38,7 @@ is not equal to \eqn{T}, then any column names or label tables will be
 removed. (A "dlabel" will be converted to a "dscalar".)
 }
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},

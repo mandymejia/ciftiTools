@@ -41,7 +41,7 @@ When using these parcellations, please cite the corresponding paper(s):
 Note that the Schaefer parcels have been matched to networks from Kong (2021+).
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_surf}()},

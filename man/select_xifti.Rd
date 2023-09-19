@@ -23,7 +23,7 @@ Select column indices to keep in a \code{"xifti"}. Can also be used to
 reorder the columns.
 }
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{add_surf}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},

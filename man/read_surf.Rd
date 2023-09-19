@@ -34,7 +34,7 @@ entries "pointset" and "triangle", or a \code{"surf"} to a
 \code{"surf"}.
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},
@@ -42,7 +42,7 @@ Other functions for reading in CIFTI or GIFTI data:
 \code{\link{read_cifti}()},
 \code{\link{read_xifti2}()}
 
-Other functions for working with GIFTI surface geometry data: 
+Other surfing: 
 \code{\link{is.surf}()},
 \code{\link{resample_surf}()},
 \code{\link{rotate_surf}()},

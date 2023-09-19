@@ -110,7 +110,7 @@ This function interfaces with the \code{"-cifti-smoothing"} Workbench command.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{read_cifti}()},
 \code{\link{resample_cifti}()},

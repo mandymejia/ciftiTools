@@ -31,7 +31,7 @@ column-wise, a numeric matrix with N rows is returned.
 For univariate functions, use \code{\link{transform_xifti}} instead.
 }
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating: 
 \code{\link{add_surf}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},
