@@ -130,12 +130,13 @@ xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels, labels_new=newLa
 # Example: add an empty level
 levels <- xii$meta$cifti$labels[[1]]$Key
 levels <- c(levels, max(levels)+1)
-xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels)
+labels_new <- c(rownames(xii$meta$cifti$labels[[1]]), "Empty")
+xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels, labels_new=labels_new)
 # Example: set all but the lowest value to the same value & re-label
 levels <- xii$meta$cifti$labels[[1]]$Key
 levels_new <- ifelse(levels==min(levels), min(levels), min(levels)+1)
 labels_new <- ifelse(levels==min(levels), "Minimum", "Not minimum")
-xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels_new, labels=labels_new)
+xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels_new, labels_new=labels_new)
 } 
 
 }
