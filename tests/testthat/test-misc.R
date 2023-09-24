@@ -124,9 +124,10 @@ test_that("Miscellaneous functions are working", {
         labels=c("a", "w", "x", "y", "z"),
         return_conversion_table = TRUE
       )
-      testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==99), 31870)
+      testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==99), 33705)
       testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==1), 4)
-      testthat::expect_equal(rownames(cii_l$xifti$meta$cifti$labels$ones), c("a", "w"))
+      testthat::expect_equal(cii_l$xifti$meta$cifti$labels$ones$Key, c(1, 99))
+      testthat::expect_equal(rownames(cii_l$xifti$meta$cifti$labels$ones), c("w", "a"))
       cii_l$xifti$data$cortex_left[seq(2),] <- c(NA, NaN)
       cii_l <- convert_to_dlabel(
         cii_l$xifti,
