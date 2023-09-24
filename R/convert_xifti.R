@@ -128,6 +128,8 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
     } else {
       as.character(levels)
     }
+  } else {
+    if (is.null(levels_new)) { stop("`labels_new` requires `levels_new`.") }
   }
 
   if (!is.null(levels_new)) {
