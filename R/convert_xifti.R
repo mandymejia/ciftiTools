@@ -2,7 +2,7 @@
 #'
 #' Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
 #'  \code{"xifti"}. Will use the same label table for each data column. Can also
-#'  be used to re-assign values in the label table.
+#'  be used to re-assign values in the label table, or to change label names.
 #'
 #' @param x The CIFTI file name or \code{"xifti"} object to convert.
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
@@ -45,6 +45,14 @@
 #'  \code{values}, the \code{values_new} (i.e. the "Keys"), and the new
 #'  \code{label} names. 
 #'
+#' @examples
+#' \dontrun{
+#' # Example: using this function to change label names
+#' values <- xii$meta$cifti$labels[[1]]$Key
+#' values <- setNames(values, newLabels)
+#' xii <- convert_to_dlabel(xii, values=values, values_new=values)
+#' } 
+#' 
 #' @export
 convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   values=NULL, values_new=NULL, nsig=Inf, colors="Set2", add_white=TRUE,

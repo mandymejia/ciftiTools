@@ -107,7 +107,7 @@ Convert the intent of a CIFTI file or \code{"xifti"} object
 \itemize{
 \item \code{convert_to_dlabel()}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
 \code{"xifti"}. Will use the same label table for each data column. Can also
-be used to re-assign values in the label table.
+be used to re-assign values in the label table, or to change label names.
 
 \item \code{convert_to_dscalar()}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
 CIFTI file or \code{"xifti"} object. Can also be used to set the names for
@@ -117,6 +117,15 @@ each column with \code{names}.
 \code{"xifti"} object. Can also be used to set the time metadata.
 
 }}
+\examples{
+\dontrun{
+# Example: using this function to change label names
+values <- xii$meta$cifti$labels[[1]]$Key
+values <- setNames(values, newLabels)
+xii <- convert_to_dlabel(xii, values=values, values_new=values)
+} 
+
+}
 \seealso{
 Other manipulating: 
 \code{\link{add_surf}()},
