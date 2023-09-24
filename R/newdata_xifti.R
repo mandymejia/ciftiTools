@@ -6,7 +6,7 @@
 #'  \code{newdata} should be a \eqn{V \times Q} matrix. If \eqn{Q}
 #'  is not equal to \eqn{T}, then any column names or label tables will be
 #'  removed. (A "dlabel" will be converted to a "dscalar".)
-#' @param xifti The \code{"xifti"}
+#' @inheritParams xifti_Param
 #' @param newdata The \eqn{V \times T} matrix of data values to replace those
 #'  in \code{xifti} with. The left cortex vertices should be at the top, right
 #'  cortex vertices in the middle, and subcortex vertices at the bottom (when

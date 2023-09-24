@@ -7,7 +7,7 @@
 newdata_xifti(xifti, newdata, newnames = NULL)
 }
 \arguments{
-\item{xifti}{The \code{"xifti"}}
+\item{xifti}{A \code{"xifti"} object.}
 
 \item{newdata}{The \eqn{V \times T} matrix of data values to replace those
 in \code{xifti} with. The left cortex vertices should be at the top, right

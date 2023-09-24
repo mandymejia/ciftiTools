@@ -9,13 +9,7 @@ view_xifti.title(xifti_meta, idx)
 \arguments{
 \item{xifti_meta}{\code{xifti$meta}}
 
-\item{title}{Title text or \code{NULL}}
-
-\item{this_idx}{The index}
-
-\item{cex.title, text_color}{See \code{\link{view_xifti_surface}}}
-
-\item{indiv_panel_width}{The width of the panel to write the title in}
+\item{idx}{The index}
 }
 \value{
 The RGL object ID for the title

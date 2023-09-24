@@ -58,8 +58,7 @@ test_that("Miscellaneous functions are working", {
   plot(cii); rgl::close3d()
   plot(make_surf(
     c(mask_surf(
-      cii$surf$cortex_left$vertices,
-      cii$surf$cortex_left$faces,
+      cii$surf$cortex_left,
       move_from_mwall(cii)$data$cortex_left[,1]
     ), list(hemisphere="left"))
   )); rgl::close3d()
@@ -212,6 +211,11 @@ test_that("Miscellaneous functions are working", {
         select_xifti(cii, rep(seq(ciftiTools:::ncol_xifti(cii)), 2))$data,
         merge_xifti(cii, cii)$data
       )
+    }
+
+    # set_names_xifti
+    if (grepl("label|scalar", cii_fname)) {
+      cii1 <- set_names_xifti(cii, paste0("Column ", seq(ncol(cii))))
     }
 
     # combine_xifti

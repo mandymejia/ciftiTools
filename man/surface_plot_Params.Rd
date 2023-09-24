@@ -54,6 +54,9 @@ sizes for increasingly longer titles.}
 the color legend or color bar if printed separately: those will always have
 white backgrounds.}
 
+\item{NA_color}{The color for the medial wall and \code{NA} values. Default:
+\code{"white"}. Also used to color the entire surface for \code{view_surf}.}
+
 \item{alpha}{Transparency value for mesh coloring, between 0 and 1. Default:
 \code{1.0} (no transparency).}
 

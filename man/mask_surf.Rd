@@ -2,29 +2,25 @@
 % Please edit documentation in R/utils_surf.R
 \name{mask_surf}
 \alias{mask_surf}
-\title{Apply Mask to Surface Geometry}
+\title{Mask surface}
 \usage{
-mask_surf(vertices, faces, mask)
+mask_surf(surf, mask)
 }
 \arguments{
-\item{vertices}{A \eqn{V \times 3} matrix, where each row contains the Euclidean
-coordinates at which a given vertex in the mesh is located. \eqn{V} is the
-number of vertices in the mesh}
-
-\item{faces}{An \eqn{F \times 3} matrix, where each row contains the vertex
-indices for a given triangular face in the mesh. \eqn{F} is the number of
-faces in the mesh.}
+\item{surf}{A \code{"surf"} object}
 
 \item{mask}{A length \eqn{V} logical vector indicating if each vertex is
 within the input mask.}
 }
 \value{
-The masked surface geometry: a list containing the new vertices and
-the new faces.
+The masked \code{"surf"} object.
 }
 \description{
-Apply a binary mask indicating the subset of vertices on a surface to keep.
-Vertices not in the mask are deleted, and faces with at least one removed
-vertex are deleted. Vertices in the faces matrix are re-numbered to correct
-for the new indices after deletion.
+Mask a surface mesh.
+}
+\details{
+Apply a binary mask to a \code{"surf"} object (list of vertices and
+corresponding faces). Vertices not in the mask are removed, and faces
+(triangles) with any vertices not in the mask are removed. Finally,
+vertex numbering for the new faces matrix is corrected.
 }

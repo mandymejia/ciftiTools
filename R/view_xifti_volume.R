@@ -624,7 +624,9 @@ view_xifti_volume <- function(
     if (color_mode=="qualitative") {
       # For .dlabel files, use the included labels metadata colors.
       if ((!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007)) {
-        if (length(idx) > 1) { message("Color labels from first requested column will be used.") }
+        if (length(unique(xifti$meta$cifti$labels[idx])) > 1) {
+          message("Color labels from first requested column will be used.")
+        }
         labs <- xifti$meta$cifti$labels[[idx[1]]]
         if (is.null(colors)) {
           pal_base <- data.frame(
@@ -886,6 +888,8 @@ view_xifti_volume <- function(
   if (!together && makePDF) { pdf(fname, width=width, height=height) }
 
   zlim <- sort(zlim)[c(1, length(zlim))]
+  # Problem if zlim has range of 0
+  if (zlim[1] == zlim[2]) { zlim[2] <- zlim[2] + 1e-8 }
 
   for (jj in seq(length(idx))) {
     this_idx <- idx[jj]
@@ -898,7 +902,10 @@ view_xifti_volume <- function(
     img_labels@.Data <- labs_bs
     img_labels@.Data[labs_bs==0] <- NA
 
-    if (crop) {
+    # Avoid error if all NA
+    if (all(is.na(img_overlay@.Data))) { img_overlay@.Data[] <- 0}
+
+    if (crop && (!all(is.na(img_overlay@.Data)))) {
       crop_x <- which(apply(!is.na(img_overlay@.Data), 1, any))
       crop_x <- seq(min(crop_x), max(crop_x))
       crop_y <- which(apply(!is.na(img_overlay@.Data), 2, any))
@@ -921,6 +928,11 @@ view_xifti_volume <- function(
       img2 <- img[slices,crop_y,crop_z]
       img_overlay2 <- img_overlay[slices,crop_y,crop_z,drop=FALSE]
     } else { stop() }
+
+    # Replace `NA` with out-of-zlim value, because `NA` has problems sometimes
+    # and if it's all `NA`, it's definitely a problem. Out-of-zlim values
+    # become transparent.
+    img_overlay2[is.na(img_overlay2)] <- min(zlim) - 1
 
     oro.nifti::overlay(
       x=img2, y=img_overlay2, plane=plane,

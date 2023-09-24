@@ -239,9 +239,9 @@ smooth_cifti <- function(
     names_fname <- tempfile()
     cat(names(cifti_info$cifti$labels), file = names_fname, sep = "\n")
     run_wb_cmd(paste(
-      "-cifti-change-mapping", old_target_fname, 
-      "ROW", cifti_target_fname,
-      "-scalar", "-name-file", names_fname
+      "-cifti-change-mapping", sys_path(old_target_fname), 
+      "ROW", sys_path(cifti_target_fname),
+      "-scalar", "-name-file", sys_path(names_fname)
     ))
   }
   

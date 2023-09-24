@@ -34,12 +34,14 @@ view_xifti_surface(
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
+  NA_color = "white",
   borders = FALSE,
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
   material = NULL,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -72,11 +74,14 @@ view_cifti_surface(
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
+  NA_color = "white",
   borders = FALSE,
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  material = NULL,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -92,7 +97,7 @@ viewCIfTI_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
-  together_ncol = together_ncol,
+  together_ncol = NULL,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -109,11 +114,14 @@ viewCIfTI_surface(
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
+  NA_color = "white",
   borders = FALSE,
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  material = NULL,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -129,7 +137,7 @@ viewcii_surface(
   idx = NULL,
   hemisphere = NULL,
   together = NULL,
-  together_ncol = together_ncol,
+  together_ncol = NULL,
   together_title = NULL,
   view = c("both", "lateral", "medial"),
   widget = NULL,
@@ -146,11 +154,14 @@ viewcii_surface(
   cex.title = NULL,
   text_color = "black",
   bg = NULL,
+  NA_color = "white",
   borders = FALSE,
   alpha = 1,
   edge_color = NULL,
   vertex_color = NULL,
   vertex_size = 0,
+  material = NULL,
+  shadows = 1,
   width = NULL,
   height = NULL,
   zoom = NULL
@@ -322,6 +333,9 @@ sizes for increasingly longer titles.}
 the color legend or color bar if printed separately: those will always have
 white backgrounds.}
 
+\item{NA_color}{The color for the medial wall and \code{NA} values. Default:
+\code{"white"}. Also used to color the entire surface for \code{view_surf}.}
+
 \item{borders}{Only applicable if \code{color_mode} is \code{"qualitative"}.
 Border vertices will be identified (those that share a face with at least
 one vertex of a different value) and colored over. If this argument is
@@ -345,6 +359,12 @@ not outline the edges).}
 to use. For example, \code{list(lit=FALSE, smooth=FALSE)} will use exact colors
 from the color scale, rather than adding geometric shading and interpolating
 vertex colors. If \code{NULL}, use defaults.}
+
+\item{shadows}{Number from 0 (maximum added lighting) to 1 (no added
+lighting) to control the darkness and extent of shadowing on the 3D surface.
+Default: \code{1}. Shadows help render the shape of the surface, but can
+be distracting if interpretation of the data depends on small differences in
+brightness along the color scale.}
 
 \item{width, height}{The dimensions of the RGL window, in pixels. If both are
 \code{NULL} (default), these dimensions depend on type of output (Open GL

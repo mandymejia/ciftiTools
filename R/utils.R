@@ -290,7 +290,7 @@ ciftiTools_msg <- function(msg){
 #' 
 #' Print warning only if ciftiTools Option "suppress_msgs" is \code{FALSE}.
 #' 
-#' @param msg The warning message
+#' @param warn The warning message
 #' @keywords internal
 #' 
 #' @return \code{NULL}, invisibly

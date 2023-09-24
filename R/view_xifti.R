@@ -3,11 +3,8 @@
 #' Determine the title(s) for the cortical surface or subcortical volume plot,
 #'  if it was not provided by the user.
 #' 
-#' @param title Title text or \code{NULL}
 #' @param xifti_meta \code{xifti$meta}
-#' @param this_idx The index
-#' @param cex.title,text_color See \code{\link{view_xifti_surface}}
-#' @param indiv_panel_width The width of the panel to write the title in
+#' @param idx The index
 #' 
 #' @return The RGL object ID for the title
 #' 

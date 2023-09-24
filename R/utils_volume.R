@@ -180,3 +180,34 @@ vox_locations <- function(mask, trans_mat, trans_units=NULL){
     trans_units = NULL
   )
 }
+
+#' Write label table to text file
+#' 
+#' Write \code{xii$meta$cifti$labels[[idx]]} to a text file for use with the
+#'  Connectome Workbench command \code{-volume-label-import}.
+#' 
+#' @param label_table The label table (one at a time!)
+#' @param fname Where to write the label table text file
+#' 
+#' @keywords internal
+write_label_table <- function(label_table, fname){
+
+  ## Must be a matrix or data.frame
+  stopifnot(is.matrix(label_table) || is.data.frame(label_table))
+
+  ## Column names
+  if (length(unique(colnames(label_table))) != length(colnames(label_table))) {
+    stop("Label table column names must be unique.")
+  }
+  if (!all(colnames(label_table) %in% c("Key", "Red", "Green", "Blue", "Alpha"))) {
+    stop("Label table columns must be among: `Key` (required), `Red`, `Green`, `Blue`, and `Alpha`.")
+  }
+  if (!("Key" %in% colnames(label_table))) { stop("`Key` column is required in the label table.") }
+
+  # Color values must be integers from to 255
+  label_table[,c("Red", "Green", "Blue", "Alpha")] <- round(label_table[,c("Red", "Green", "Blue", "Alpha")]*255)
+
+  label_table <- apply(label_table, 1, paste0, collapse=" ")
+  out <- c(rbind(names(label_table), label_table))
+  writeLines(out, fname)
+}

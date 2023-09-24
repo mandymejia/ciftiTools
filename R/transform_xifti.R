@@ -14,7 +14,7 @@
 #'  \code{function(q){(q - mean(q)) / sd(q)}} will scale each brainstructure, while
 #'  \code{scale} will scale each column of each brainstructure.
 #'
-#' @param xifti The xifti
+#' @inheritParams xifti_Param
 #' @param FUN The function. If \code{xifti2} is not provided, it should be
 #'  a univariate function like \code{log} or \code{sqrt}. If
 #'  \code{xifti2} is provided, it should take in two arguments, like \code{`+`}
@@ -153,7 +153,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {
       )
     }
     if (!identical(xifti$meta$cifti$names, xifti2$meta$cifti$names)) {
-      warning("The xiftis have different column names.\n")
+      ciftiTools_warn("The xiftis have different column names.\n")
     }
 
     for (bs in names(xifti$data)) {

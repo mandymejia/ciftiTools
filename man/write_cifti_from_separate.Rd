@@ -13,7 +13,8 @@ write_cifti_from_separate(
   subcortVol_fname = NULL,
   subcortLabs_fname = NULL,
   timestep = NULL,
-  timestart = NULL
+  timestart = NULL,
+  names = NULL
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ Workbench default (1.0).}
 \item{timestart}{If a dense time series ("dtseries.nii") file is being written,
 this is starting time. If \code{NULL}, use the Connectome Workbench default
 (0.0).}
+
+\item{names}{For "dscalar.nii" or "dlabel.nii", these are the column names.}
 }
 \description{
 Make a CIFTI file from component NIFTI/GIFTI files using the

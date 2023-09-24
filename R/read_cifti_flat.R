@@ -92,7 +92,8 @@ read_cifti_flat <- function(
     )
 
     run_wb_cmd(paste(
-      "-metric-merge", gifti_fname, "-metric", gifti_fname_original, idx_string
+      "-metric-merge", sys_path(gifti_fname), 
+      "-metric", sys_path(gifti_fname_original), idx_string
     ))
   }
 

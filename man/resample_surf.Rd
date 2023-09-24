@@ -7,7 +7,7 @@
 resample_surf(surf, resamp_res, hemisphere = c("left", "right"))
 }
 \arguments{
-\item{surf}{A \code{"surf"}}
+\item{surf}{A \code{"surf"} object}
 
 \item{resamp_res}{The desired resolution}
 
@@ -19,7 +19,7 @@ hemisphere indicated in the intermediate written GIFTI.}
 The new \code{"surf"}
 }
 \description{
-Resample a \code{"surf"} by writing it to a GIFTI, using the Connectome
+Resample a \code{"surf"} object by writing it to a GIFTI, using the Connectome
 Workbench to resample it, and then reading the new file. The barycentric
 resampling method, which is recommended for anatomical surfaces, will be
 used.

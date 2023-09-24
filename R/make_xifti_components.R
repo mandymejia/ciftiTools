@@ -103,7 +103,8 @@ make_cortex <- function(
       }
       
       run_wb_cmd(paste(
-        "-metric-merge", cortex, "-metric", cortex_original, idx_string
+        "-metric-merge", sys_path(cortex), 
+        "-metric", sys_path(cortex_original), idx_string
       ))
     }
 

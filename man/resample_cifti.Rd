@@ -145,6 +145,10 @@ putting them together. (The subcortex is not resampled.)
 }
 \details{
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
+
+If surface data is included, it will be resampled with the barycentric
+method even if \code{resamp_method=="adaptive"} because the barycentric
+method is recommended for surface geometry data.
 }
 \section{Connectome Workbench}{
 
