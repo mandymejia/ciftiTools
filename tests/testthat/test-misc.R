@@ -110,11 +110,32 @@ test_that("Miscellaneous functions are working", {
     cii_s <- convert_xifti(cii, "dscalar")
     cii_t <- convert_xifti(cii, "dtseries")
     if (!grepl("ones", cii_fname)) {
-      cii_l <- convert_xifti(cii, "dlabel", nsig=3)
+      cii_l <- convert_xifti(cii, "dlabel", nsig=2)
       cii_l1 <- select_xifti(cii, 1)
       cii_l1$data$cortex_left[1,] <- NA; cii_l1$data$cortex_left[seq(2, 100),] <- NaN
       cii_l1 <- convert_xifti(cii_l1, "dlabel", nsig=1, colors=c("grey", "blue"), add_white=FALSE)
       cii_l1 <- read_xifti(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3), brainstructures = brainstructures)
+    } else {
+      cii$data$cortex_left[seq(5),] <- seq(5)
+      cii_l <- convert_to_dlabel(cii, return_conversion_table = TRUE)
+      cii_l <- convert_to_dlabel(
+        cii_l$xifti,
+        values=c(0, 4, 3, 2, 1),
+        values_new = c(a=99, w=1, x=1, y=1, z=1),
+        return_conversion_table = TRUE
+      )
+      testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==99), 1835)
+      testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==1), 4)
+      testthat::expect_equal(rownames(cii_l$xifti$meta$cifti$labels$ones), c("a", "w"))
+      cii_l$xifti$data$cortex_left[seq(2),] <- c(NA, NaN)
+      cii_l <- convert_to_dlabel(
+        cii_l$xifti,
+        values_new = c(3, -1),
+        colors=c("red", "blue"),
+        add_white=FALSE,
+        return_conversion_table = TRUE
+      )
+      testthat::expect_equal(cii_l$xifti$data$cortex_left[seq(2),], c(NA, NaN))
     }
     cii_s1 <- read_xifti(convert_xifti(cii_fname, "dscalar", file.path(tdir, "cii.dscalar.nii")), brainstructures = brainstructures)
     cii_t1 <- read_xifti(convert_xifti(cii_fname, "dtseries", file.path(tdir, "cii.dtseries.nii")), brainstructures = brainstructures)

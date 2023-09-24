@@ -11,6 +11,7 @@ convert_to_dlabel(
   x,
   cifti_target_fname = NULL,
   values = NULL,
+  values_new = NULL,
   nsig = Inf,
   colors = "Set2",
   add_white = TRUE,
@@ -41,18 +42,29 @@ convert_xifti(
 \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 name as \code{x} but with the extension updated.}
 
-\item{values}{(Optional) A vector of the original data values. They should all
-be unique. They may not all occur in the \code{"xifti"} data, but every
-datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
-mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
-number of \code{values}. They will be sorted.
+\item{values, values_new}{(Optional) \code{values} is a vector of the original
+data values. They should all be unique. They may not all occur in the
+\code{"xifti"} data, but every datapoint in the \code{"xifti"} must occur in
+\code{values}. If \code{values} is not provided it will be the vector of all
+unique values in the data, in ascending order.
 
-If \code{values} is a named vector, the rownames of the label table in the resulting
-\code{"xifti"} will be those names. Otherwise, the rownames will be the values
-themselves.
+If \code{values_new} is not provided, the original values will be re-mapped
+to integers from $0$ to $N-1$ (the "keys"), with $N$ being the length of
+\code{values}. Otherwise, \code{values_new} can be a vector the same length
+as \code{values} specifying the corresponding new values (rather than $0$ to
+$N-1$). If \code{x} is already "dlabel", then by setting \code{values} to
+the current label table values (the "Keys") and \code{values_new} to the
+desired new values, the existing values can be re-assigned. New label names
+can be set by setting the names of the \code{values_new} vector. Duplicates
+in \code{values_new} are allowed; note that if names are provided, the name
+of the first unique value is used.
 
-Since \code{NA} datapoints will be replaced by \code{NaN}, \code{NA} in
-\code{values} will be replaced by \code{NaN}.}
+The new label names will be set to, in order of priority: the names
+of \code{values_new}; \code{values_new}; or, \code{values}.
+
+Note: \code{NA} and \code{NaN} values are handled a bit differently. Places
+that are \code{NA} or \code{NaN} will always remain unchanged. \code{NA}
+and \code{NaN} should not be included in \code{values} or \code{values_new}.}
 
 \item{nsig}{Take this many significant digits for the data values. If
 \code{Inf} (default), do not round.}
@@ -65,7 +77,9 @@ a viridisLite palette, or a character vector of colors. Default:
 \item{add_white}{Append white to the beginning of the colors? Default: \code{TRUE}.}
 
 \item{return_conversion_table}{Return the conversion table along with the
-converted \code{"xifti"}? Default: \code{FALSE}}
+converted \code{"xifti"}? Default: \code{FALSE}. It will give the original
+\code{values}, the \code{values_new} (i.e. the "Keys"), and the new
+\code{label} names.}
 
 \item{names}{The column names. If \code{NULL} (default), will be set to
 "Column 1", "Column 2", ... .}
@@ -92,15 +106,15 @@ Convert the intent of a CIFTI file or \code{"xifti"} object
 \section{Functions}{
 \itemize{
 \item \code{convert_to_dlabel()}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
-\code{"xifti"}. Will use the same label table for each data column.
-
-Note that \code{NA} values will be replaced with \code{NaN}.
+\code{"xifti"}. Will use the same label table for each data column. Can also
+be used to re-assign values in the label table.
 
 \item \code{convert_to_dscalar()}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
-CIFTI file or \code{"xifti"} object.
+CIFTI file or \code{"xifti"} object. Can also be used to set the names for
+each column with \code{names}.
 
 \item \code{convert_to_dtseries()}: Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
-\code{"xifti"} object.
+\code{"xifti"} object. Can also be used to set the time metadata.
 
 }}
 \seealso{
@@ -115,4 +129,3 @@ Other manipulating:
 \code{\link{transform_xifti}()}
 }
 \concept{manipulating}
-\keyword{internal}
