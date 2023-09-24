@@ -8,29 +8,32 @@
 #' @param cifti_target_fname File name for the converted CIFTI. Only used if
 #'  \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 #'  name as \code{x} but with the extension updated.
-#' @param values,values_new (Optional) \code{values} is a vector of the original
-#'  data values. They should all be unique. They may not all occur in the
-#'  \code{"xifti"} data, but every datapoint in the \code{"xifti"} must occur in
-#'  \code{values}. If \code{values} is not provided it will be the vector of all
-#'  unique values in the data, in ascending order.
+#' @param levels,levels_new,labels_new (Optional) \code{levels} is a vector of 
+#'  the original data values. They should all be unique. They may not all occur 
+#'  in the \code{"xifti"} data, but every datapoint in the \code{"xifti"} must 
+#'  occur in \code{levels}. If \code{levels} is not provided it will be set to 
+#'  the vector of all unique values in the data, in ascending order.
 #'
-#'  If \code{values_new} is not provided, the original values will be re-mapped
-#'  to integers from $0$ to $N-1$ (the "keys"), with $N$ being the length of
-#'  \code{values}. Otherwise, \code{values_new} can be a vector the same length
-#'  as \code{values} specifying the corresponding new values (rather than $0$ to
-#'  $N-1$). If \code{x} is already "dlabel", then by setting \code{values} to 
-#'  the current label table values (the "Keys") and \code{values_new} to the
-#'  desired new values, the existing values can be re-assigned. New label names
-#'  can be set by setting the names of the \code{values_new} vector. Duplicates
-#'  in \code{values_new} are allowed; note that if names are provided, the name 
-#'  of the first unique value is used.
+#'  If \code{levels_new} is not provided, the original values will be re-mapped
+#'  to integers from $0$ to $N-1$ (the "Keys" of a "dlabel" CIFTI), with $N$ 
+#'  being the length of \code{levels}. Otherwise, \code{levels_new} can be a 
+#'  vector the same length as \code{values} specifying the corresponding new 
+#'  integers to use (rather than $0$ to $N-1$). If \code{x} is already "dlabel", 
+#'  then by setting \code{levels} to the current label table values and 
+#'  \code{levels_new} to the desired new values, the data can be re-leveled
+#'  (see examples in function documentation). Note that duplicate levels are
+#'  allowed, to map multiple existing levels to the same new level. 
 #' 
-#'  The new label names will be set to, in order of priority: the names
-#'  of \code{values_new}; \code{values_new}; or, \code{values}.
+#'  If \code{levels_new} was provided, new label names can also be set with 
+#'  \code{labels_new}. If provided, it must be a character vector with the same
+#'  length as \code{levels_new}. If there are duplicates in \code{levels_new},
+#'  the first label for a given level will be used. If \code{labels_new} is 
+#'  not provided, the new label names will be set to \code{levels_new} if it was
+#'  provided, and \code{levels} if it was not. 
 #'
-#'  Note: \code{NA} and \code{NaN} values are handled a bit differently. Places
-#'  that are \code{NA} or \code{NaN} will always remain unchanged. \code{NA}
-#'  and \code{NaN} should not be included in \code{values} or \code{values_new}.
+#'  Note: \code{NA} and \code{NaN} values are handled a bit differently. Data
+#'  locations that are \code{NA} or \code{NaN} will remain unchanged. \code{NA}
+#'  and \code{NaN} should not be included in \code{levels} or \code{levels_new}.
 #   The function will still try to handle this case, but may result in error.
 #'
 #' @param nsig Take this many significant digits for the data values. If
@@ -47,15 +50,26 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Example: using this function to change label names
-#' values <- xii$meta$cifti$labels[[1]]$Key
-#' values <- setNames(values, newLabels)
-#' xii <- convert_to_dlabel(xii, values=values, values_new=values)
+#' # Example: change label names
+#' levels <- xii$meta$cifti$labels[[1]]$Key
+#' newLabels <- paste0("New Label #", seq(length(levels)))
+#' xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels, labels_new=newLabels)
+#' # Example: add an empty level
+#' levels <- xii$meta$cifti$labels[[1]]$Key
+#' levels <- c(levels, max(levels)+1)
+#' labels_new <- c(rownames(xii$meta$cifti$labels[[1]]), "Empty")
+#' xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels)
+#' # Example: set all but the lowest value to the same value & re-label
+#' levels <- xii$meta$cifti$labels[[1]]$Key
+#' levels_new <- ifelse(levels==min(levels), min(levels), min(levels)+1)
+#' labels_new <- ifelse(levels==min(levels), "Minimum", "Not minimum")
+#' xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels_new, labels=labels_new)
 #' } 
 #' 
 #' @export
 convert_to_dlabel <- function(x, cifti_target_fname=NULL,
-  values=NULL, values_new=NULL, nsig=Inf, colors="Set2", add_white=TRUE,
+  levels=NULL, levels_new=NULL, labels_new=NULL, nsig=Inf, 
+  colors="Set2", add_white=TRUE,
   return_conversion_table=FALSE) {
 
   # If the input is a CIFTI file name, we need to read it into R.
@@ -83,98 +97,98 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   #   }
   # }
 
-  # Get the label values.
-  if (is.null(values)) {
-    # Infer the new values.
-    values <- unique(signif(as.vector(as.matrix(x)), nsig))
+  # Get the label levels.
+  if (is.null(levels)) {
+    # Infer the new levels.
+    levels <- unique(signif(as.vector(as.matrix(x)), nsig))
     # Sort.
-    values <- sort(values, na.last=FALSE)
+    levels <- sort(levels, na.last=FALSE)
   } else {
-    # Check the new values.
-    if (any(duplicated(values))) {
-      warning("Removing duplicate `values`.\n")
-      values <- unique(values)
+    # Check the new levels.
+    if (any(duplicated(levels))) {
+      warning("Removing duplicate `levels`.\n")
+      levels <- unique(levels)
     }
     # Notice: no sorting.
   }
-  values_hasNA <- any(is.na(values) & !is.nan(values))
-  values_hasNaN <- any(is.nan(values))
+  levels_hasNA <- any(is.na(levels) & !is.nan(levels))
+  levels_hasNaN <- any(is.nan(levels))
   valfac_exclude <- list(
     NULL,
     c(NA),
     c(NaN),
     c(NA, NaN)
-  )[[1 + values_hasNA*1 + values_hasNaN*2]]
-  if (length(values) > 1000) { warning("Over 1000 unique `values` in the `xifti`.\n") }
-  values <- values[!is.na(values)]
+  )[[1 + levels_hasNA*1 + levels_hasNaN*2]]
+  if (length(levels) > 1000) { warning("Over 1000 unique `levels` in the `xifti`.\n") }
+  levels <- levels[!is.na(levels)]
 
-  labels_new <- if (!is.null(names(values_new))) {
-    names(values_new)
-  } else if (!is.null(values_new)) {
-    as.character(values_new)
-  } else {
-    as.character(values)
+  if (is.null(labels_new)) {
+    labels_new <- if (!is.null(levels_new)) {
+      as.character(levels_new)
+    } else {
+      as.character(levels)
+    }
   }
 
-  if (!is.null(values_new)) {
-    stopifnot(is.numeric(values_new))
-    stopifnot(all(values_new[!is.na(values_new)] == round(values_new[!is.na(values_new)])))
-    if (length(values) != length(values_new)) {
+  if (!is.null(levels_new)) {
+    stopifnot(is.numeric(levels_new))
+    stopifnot(all(levels_new[!is.na(levels_new)] == round(levels_new[!is.na(levels_new)])))
+    if (length(levels) != length(levels_new)) {
       stop(
-        "`values` is length ", length(values),
-        " but `values_new` is length `", length(values_new), ". ",
+        "`levels` is length ", length(levels),
+        " but `levels_new` is length `", length(levels_new), ". ",
         ifelse(
-          values_hasNA||values_hasNaN,
-          "Note that `NA` `NaN` are handled separately and should not be included in `values`.",
+          levels_hasNA||levels_hasNaN,
+          "Note that `NA` `NaN` are handled separately and should not be included in `levels`.",
           ""
         )
       )
     }
   } else {
-    values_new <- seq(length(values))-1
+    levels_new <- seq(length(levels))-1
   }
 
   conversion_table <- data.frame(
-    values=values,
-    values_new=values_new,
+    levels=levels,
+    levels_new=levels_new,
     labels=labels_new
   )
 
-  values_new_unique <- conversion_table$values_new[!duplicated(conversion_table$values_new)]
-  labels_unique <- conversion_table$labels[!duplicated(conversion_table$values_new)]
+  levels_new_unique <- conversion_table$levels_new[!duplicated(conversion_table$levels_new)]
+  labels_unique <- conversion_table$labels[!duplicated(conversion_table$levels_new)]
 
-  # Convert data to label values.
+  # Convert data to label levels.
   for (bs in names(x$data)) {
     if (is.null(x$data[[bs]])) { next }
     # Round to `nsig` decimal places.
     x$data[[bs]][] <- signif(x$data[[bs]][], nsig)
-    # Get the mask of `NaN` values to convert back later.
-    valmask_NaN <- if (values_hasNaN) { is.nan(x$data[[bs]][]) } else { NULL }
-    # Convert `NA` and `NaN` to `NaN` values.
-    if (values_hasNaN) {
+    # Get the mask of `NaN` levels to convert back later.
+    valmask_NaN <- if (levels_hasNaN) { is.nan(x$data[[bs]][]) } else { NULL }
+    # Convert `NA` and `NaN` to `NaN` levels.
+    if (levels_hasNaN) {
       x$data[[bs]][] <- ifelse(
         is.na(as.vector(x$data[[bs]])) | is.nan(as.vector(x$data[[bs]])),
         NaN, as.vector(x$data[[bs]])
       )
     }
-    # Check all values (except `NA` and `NaN` if any) are in `values`.
-    stopifnot(all(x$data[[bs]][] %in% c(NA, NaN, conversion_table$values)))
-    # Reassign from `values` to 1, 2, 3, ..., N.
+    # Check all levels (except `NA` and `NaN` if any) are in `levels`.
+    stopifnot(all(x$data[[bs]][] %in% c(NA, NaN, conversion_table$levels)))
+    # Reassign from `levels` to 1, 2, 3, ..., N.
     x$data[[bs]][] <- as.numeric(factor(
       x$data[[bs]][],
-      levels=conversion_table$values,
+      levels=conversion_table$levels,
       exclude=valfac_exclude
     ))
-    # Reassign from 1, 2, 3, ..., N to `values_new`.
-    x$data[[bs]][] <- conversion_table$values_new[x$data[[bs]][]]
+    # Reassign from 1, 2, 3, ..., N to `levels_new`.
+    x$data[[bs]][] <- conversion_table$levels_new[x$data[[bs]][]]
     # NaN got converted to NA in previous line, so here we convert them back.
     # (NA became NaN and then was converted back to NA--all good there.)
-    if (values_hasNaN) { x$data[[bs]][][valmask_NaN] <- NaN }
+    if (levels_hasNaN) { x$data[[bs]][][valmask_NaN] <- NaN }
   }
 
   # Make color table.
   # [TO DO]: Allow input of custom colors
-  N_ <- length(values_new_unique)
+  N_ <- length(levels_new_unique)
   if (N_ == 1 && add_white) {
     pal <- data.frame(value=0, color=factor("white", "white"))
   } else {
@@ -200,10 +214,11 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
 
   # Format color table in .dlabel style
   col_table <- col2rgb(pal$color, alpha=TRUE)/255
-  col_table <- rbind(values_new_unique, col_table)
+  col_table <- rbind(levels_new_unique, col_table)
   rownames(col_table) <- c("Key", "Red", "Green", "Blue", "Alpha")
   col_table <- as.data.frame(t(col_table))
   rownames(col_table) <- labels_unique
+  col_table <- col_table[order(col_table$Key),]
 
   # Add components to xifti
   T_ <- ncol_xifti(x)
