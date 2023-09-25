@@ -153,8 +153,8 @@ view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=F
   colors2 <- pal_base$color; names(colors2) <- pal_base$labels
 
   value <- NULL
-  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, color=labels)) + 
-    ggplot2::geom_point(size=point_size, shape=15) + ggplot2::theme_bw() +
+  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, fill=labels)) + 
+    ggplot2::geom_point(size=point_size, shape=22, color="black") + ggplot2::theme_bw() +
     ggplot2::scale_color_manual(values=colors2, name=ifelse(title_sub, "Labels (subcortex)", "Labels")) +
     ggplot2::guides(color=ggplot2::guide_legend(label.theme=ggplot2::element_text(color=text_color), ncol=leg_ncol)) +
     ggplot2::theme(legend.title=ggplot2::element_text(
