@@ -431,6 +431,9 @@ info_cifti <- function(cifti_fname){
   }
 
   extn <- get_cifti_extn(cifti_fname)
+  if (!(extn %in% c("dscalar.nii", "dlabel.nii", "dtseries.nii"))) {
+    warning("The file `", basename(cifti_fname), "` is not named as a CIFTI of supported intent. If it's not a CIFTI, an error will occur.")
+  }
 
   # ----------------------------------------------------------------------------
   # -nifti-information ---------------------------------------------------------
