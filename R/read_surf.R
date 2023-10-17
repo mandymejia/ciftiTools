@@ -55,7 +55,7 @@ read_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL) {
       ps_idx <- which(names(surf$data) == "pointset")[1]
       ps_meta <- surf$data_meta[[ps_idx]]
       hemisphere <- ps_meta[which(ps_meta[,1] == "AnatomicalStructurePrimary"),2]
-      if (!(hemisphere %in% c("CortexLeft", "CortexRight"))) {
+      if ((length(hemisphere)!=1) || (!(hemisphere %in% c("CortexLeft", "CortexRight")))) {
         stop(paste0(
           "The hemisphere metadata entry (AnatomicalStructurePrimary) was not ",
           "CortexLeft or CortexRight. Instead, it was ", hemisphere, 
@@ -69,7 +69,7 @@ read_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL) {
     } else {
       hemisphere <- switch(hemisphere, CortexLeft="left", CortexRight="right")
     }
-    if (!is.null(expected_hemisphere)) {
+    if ((!is.null(hemisphere)) && (!is.null(expected_hemisphere))) {
       if (hemisphere != expected_hemisphere) {
         stop(paste(
           "The expected hemisphere was", expected_hemisphere, 
