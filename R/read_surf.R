@@ -46,6 +46,10 @@ read_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL) {
     } else {
       surf <- readgii(surf) 
     }
+  } else {
+    if (length(surf)==1 && is.character(surf)) {
+      stop("`surf` is a length-one character vector, but is not an existing file path.")
+    }
   }
 
   # GIFTI --> list of vertices and faces.
