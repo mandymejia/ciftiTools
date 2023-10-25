@@ -50,7 +50,8 @@ Other writing:
 \code{\link{separate_cifti}()},
 \code{\link{write_cifti}()},
 \code{\link{write_metric_gifti}()},
-\code{\link{write_subcort_nifti}()}
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_xifti2}()}
 
 Other surfing: 
 \code{\link{is.surf}()},

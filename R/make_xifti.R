@@ -147,6 +147,27 @@ make_xifti <- function(
   if (is.fname(surfL)) { surfL <- format_path(surfL, read_dir, mode=4) }
   if (is.fname(surfR)) { surfR <- format_path(surfR, read_dir, mode=4) }
 
+  if (is.fname(cortexL)) {
+    if (!(endsWith(cortexL, "label.gii") || endsWith(cortexL, "func.gii"))) {
+      warning("File path for `cortexL`, '", cortexL, "', does not look like metric GIFTI data.")
+    }
+  }
+  if (is.fname(cortexR)) {
+    if (!(endsWith(cortexR, "label.gii") || endsWith(cortexR, "func.gii"))) {
+      warning("File path for `cortexR`, '", cortexR, "', does not look like metric GIFTI data.")
+    }
+  }
+  if (is.fname(surfL)) {
+    if (!(endsWith(surfL, "surf.gii"))) {
+      warning("File path for `surfL`, '", surfL, "', does not look like GIFTI surface geometry.")
+    }
+  }
+  if (is.fname(surfR)) {
+    if (!(endsWith(surfR, "surf.gii"))) {
+      warning("File path for `surfR`, '", surfR, "', does not look like GIFTI surface geometry.")
+    }
+  }
+
   # Template.
   xifti <- template_xifti()
 

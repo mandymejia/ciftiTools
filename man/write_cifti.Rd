@@ -77,7 +77,8 @@ Other writing:
 \code{\link{separate_cifti}()},
 \code{\link{write_metric_gifti}()},
 \code{\link{write_subcort_nifti}()},
-\code{\link{write_surf_gifti}()}
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{common}
 \concept{writing}

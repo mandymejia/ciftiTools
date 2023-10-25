@@ -12,6 +12,7 @@
 #' @return List of written files
 #' @importFrom RNifti writeNifti
 #'
+#' @family writing
 #' @export
 #'
 write_xifti2 <- function(

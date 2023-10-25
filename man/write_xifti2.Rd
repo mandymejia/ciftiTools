@@ -82,3 +82,12 @@ subcortical labels and mask in a \code{"xifti"} object. Each present
 brainstructure will be written; if a brainstructure is absent the
 corresponding file is not written.
 }
+\seealso{
+Other writing: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{writing}
