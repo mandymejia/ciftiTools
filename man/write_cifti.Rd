@@ -57,6 +57,10 @@ Named character vector of the written files
 Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI
 surface files.
 }
+\details{
+See \code{\link{write_xifti2}} to write a \code{"xifti"} object out as
+separate GIFTI and/or NIFTI files instead.
+}
 \section{Connectome Workbench}{
 
 This function interfaces with the \code{"-cifti-create-dense-timeseries"},

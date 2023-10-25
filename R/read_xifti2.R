@@ -92,22 +92,22 @@ read_xifti2 <- function(
     tdir <- tempdir()
 
   if (!is.null(cortexL)) {
-    if (!(endsWith("label.gii", cortexL) || endsWith("func.gii", cortexL))) {
+    if (!(endsWith(cortexL, "label.gii") || endsWith(cortexL, "func.gii"))) {
       warning("File path for `cortexL` does not look like metric GIFTI data.")
     }
   }
   if (!is.null(cortexR)) {
-    if (!(endsWith("label.gii", cortexR) || endsWith("func.gii", cortexR))) {
+    if (!(endsWith(cortexR, "label.gii") || endsWith(cortexR, "func.gii"))) {
       warning("File path for `cortexR` does not look like metric GIFTI data.")
     }
   }
   if (!is.null(surfL)) {
-    if (!(endsWith("surf.gii", surfL))) {
+    if (!(endsWith(surfL, "surf.gii"))) {
       warning("File path for `surfL` does not look like GIFTI surface geometry.")
     }
   }
   if (!is.null(surfR)) {
-    if (!(endsWith("surf.gii", surfR))) {
+    if (!(endsWith(surfR, "surf.gii"))) {
       warning("File path for `surfR` does not look like GIFTI surface geometry.")
     }
   }

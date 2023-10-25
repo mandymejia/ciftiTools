@@ -2,6 +2,9 @@
 #'
 #' Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI
 #'  surface files.
+#' 
+#' See \code{\link{write_xifti2}} to write a \code{"xifti"} object out as
+#'  separate GIFTI and/or NIFTI files instead.
 #'
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
