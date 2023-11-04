@@ -93,6 +93,17 @@ NULL
 #' @keywords internal
 NULL
 
+#' original_fnames: for remapping
+#'
+#' @param original_fnames The files to remap. This is a named list
+#'  where each element's name is a file type label, and each element's value
+#'  is a file name. Labels must be one of the following: "cortexL", "cortexR",
+#'  "ROIcortexL", "ROIcortexR". If \code{read_dir} is not \code{NULL}, then all
+#'  these file names should be relative to \code{read_dir}.
+#' @name original_fnames_Param_remapped
+#' @keywords internal
+NULL
+
 #'  read_dir: separated files
 #'
 #' @param read_dir Directory to append to the path of every file being read,
@@ -138,35 +149,32 @@ NULL
 #' @keywords internal
 NULL
 
-#' resamp_area_Param
+#' area_original_Param
 #' 
 #' @param areaL_original_fname,areaR_original_fname File paths to the surfaces 
 #'  to use for vertex area correction during adaptive resampling. (Only used if
 #'  resampling with the adaptive method.) \code{area[L/R]_original_fname} should
 #'  match the current resolution of the data.
 #' 
-#'  The Workbench command for adaptive resampling requires the target surfaces
-#'  for area correction too, but to make the workflow easier \code{ciftiTools}
-#'  will resample \code{area[L/R]_original_fname} with the barycentric method 
-#'  and use that for the target surface. 
+#'  For resampling: the Workbench command for adaptive resampling requires the 
+#'  target surfaces for area correction too. But to make the workflow easier, 
+#'  \code{ciftiTools} will resample \code{area[L/R]_original_fname} with the 
+#'  barycentric method and use that for the target area.
 #' 
-#' @name resamp_area_Param
+#'  For remapping: \code{area[L/R]_target_fname} must be directly provided.
+#' 
+#' @name area_original_Param
 #' @keywords internal
 NULL
 
-#' resamp_area_noOG_Param
+#' area_target_Param
 #' 
-#' @param areaL_original_fname,areaR_original_fname File paths to the surfaces 
+#' @param areaL_target_fname,areaR_target_fname File paths to the surfaces 
 #'  to use for vertex area correction during adaptive resampling. (Only used if
-#'  resampling with the adaptive method.) \code{area[L/R]_fname} should
-#'  match the current resolution of the data.
+#'  resampling with the adaptive method.) \code{area[L/R]_target_fname} should
+#'  match the target resolution of the data.
 #' 
-#'  The Workbench command for adaptive resampling requires the target surfaces
-#'  for area correction too, but to make the workflow easier \code{ciftiTools}
-#'  will resample \code{area[L/R]_fname} with the barycentric method 
-#'  and use that for the target surface. 
-#' 
-#' @name resamp_area_noOG_Param
+#' @name area_target_Param
 #' @keywords internal
 NULL
 

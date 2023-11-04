@@ -254,8 +254,9 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
 #'
 resample_cifti_default_fname <- function(original_fname, resamp_res) {
   stopifnot(!is.null(original_fname))
+  rr_suffix <- ifelse(is.null(resamp_res), "remapped", round(resamp_res))
   bname <- basename(original_fname)
-  paste("resampled", round(resamp_res), bname, sep="_")
+  paste("resampled", rr_suffix, bname, sep="_")
 }
 
 #' Unmask cortex

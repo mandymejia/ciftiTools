@@ -68,10 +68,10 @@ any directory to the path.
 \code{write_dir} must already exist, or an error will occur.}
 }
 \value{
-The return value of the \code{resample_cifti} call
+The return value of the \code{resample_cifti_components} call
 }
 \description{
-Calls \code{resample_cifti} using the original file names
+Calls \code{resample_cifti_components} using the original file names
 listed in the \code{original_fnames} argument and the target file names
 listed in the \code{resamp_fnames} argument.
 }

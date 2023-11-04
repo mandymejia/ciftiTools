@@ -113,10 +113,12 @@ to use for vertex area correction during adaptive resampling. (Only used if
 resampling with the adaptive method.) \code{area[L/R]_original_fname} should
 match the current resolution of the data.
 
-The Workbench command for adaptive resampling requires the target surfaces
-for area correction too, but to make the workflow easier \code{ciftiTools}
-will resample \code{area[L/R]_original_fname} with the barycentric method
-and use that for the target surface.}
+For resampling: the Workbench command for adaptive resampling requires the
+target surfaces for area correction too. But to make the workflow easier,
+\code{ciftiTools} will resample \code{area[L/R]_original_fname} with the
+barycentric method and use that for the target area.
+
+For remapping: \code{area[L/R]_target_fname} must be directly provided.}
 
 \item{write_dir}{Where to write the resampled CIFTI (and surfaces if present.)
 If \code{NULL} (default), will use the current working directory if \code{x}

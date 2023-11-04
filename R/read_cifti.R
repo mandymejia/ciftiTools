@@ -26,7 +26,7 @@
 #'  have to be read in with \code{-cifti-separate}, which is slower than 
 #'  \code{-cifti-convert -to-gifti-ext}.
 #' @inheritParams resamp_method_Param
-#' @inheritParams resamp_area_noOG_Param
+#' @inheritParams area_original_Param
 #' @param flat Should the result be flattened into a single matrix?
 #' 
 #'  If \code{FALSE} (default), the result will be a \code{"xifti"} object.

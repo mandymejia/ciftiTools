@@ -1,6 +1,6 @@
 #' \code{resample_cifti} wrapper
 #'
-#' Calls \code{resample_cifti} using the original file names
+#' Calls \code{resample_cifti_components} using the original file names
 #'  listed in the \code{original_fnames} argument and the target file names
 #'  listed in the \code{resamp_fnames} argument.
 #'
@@ -35,7 +35,7 @@
 #' @inheritParams read_dir_Param_separated
 #' @inheritParams write_dir_Param_generic
 #'
-#' @return The return value of the \code{resample_cifti} call
+#' @return The return value of the \code{resample_cifti_components} call
 #'
 #' @keywords internal
 #'
@@ -115,7 +115,7 @@ resample_cifti_wrapper <- function(
 #'  \code{\link{resample_cifti_default_fname}}.
 #' @inheritParams resamp_res_Param_required
 #' @inheritParams resamp_method_Param
-#' @inheritParams resamp_area_Param
+#' @inheritParams area_original_Param
 #' @param write_dir Where to write the resampled CIFTI (and surfaces if present.)
 #'  If \code{NULL} (default), will use the current working directory if \code{x}
 #'  was a CIFTI file, and a temporary directory if \code{x} was a \code{"xifti"}
