@@ -10,9 +10,9 @@
 convert_to_dlabel(
   x,
   cifti_target_fname = NULL,
+  levels_old = NULL,
   levels = NULL,
-  levels_new = NULL,
-  labels_new = NULL,
+  labels = NULL,
   nsig = Inf,
   colors = "Set2",
   add_white = TRUE,
@@ -43,32 +43,33 @@ convert_xifti(
 \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 name as \code{x} but with the extension updated.}
 
-\item{levels, levels_new, labels_new}{(Optional) \code{levels} is a vector of
+\item{levels_old, levels, labels}{(Optional) \code{levels_old} is a vector of
 the original data values. They should all be unique. They may not all occur
 in the \code{"xifti"} data, but every datapoint in the \code{"xifti"} must
-occur in \code{levels}. If \code{levels} is not provided it will be set to
+occur in \code{levels_old}. If \code{levels_old} is not provided it will be set to
 the vector of all unique values in the data, in ascending order.
 
-If \code{levels_new} is not provided, the original values will be re-mapped
+If \code{levels} is not provided, the original values will be re-mapped
 to integers from $0$ to $N-1$ (the "Keys" of a "dlabel" CIFTI), with $N$
-being the length of \code{levels}. Otherwise, \code{levels_new} can be a
-vector the same length as \code{values} specifying the corresponding new
+being the length of \code{levels_old}. Otherwise, \code{levels} can be a
+vector the same length as \code{levels_old} specifying the corresponding new
 integers to use (rather than $0$ to $N-1$). If \code{x} is already "dlabel",
-then by setting \code{levels} to the current label table values and
-\code{levels_new} to the desired new values, the data can be re-leveled
-(see examples in function documentation). Note that duplicate levels are
-allowed, to map multiple existing levels to the same new level.
+then by setting \code{levels_old} to the current label table values and
+\code{levels} to the desired new values, the data can be re-leveled
+(see examples in function documentation). Note that duplicates in
+\code{levels_old} are allowed, to map multiple existing levels to the same
+new level.
 
-If \code{levels_new} was provided, new label names can also be set with
-\code{labels_new}. If provided, it must be a character vector with the same
-length as \code{levels_new}. If there are duplicates in \code{levels_new},
-the first label for a given level will be used. If \code{labels_new} is
-not provided, the new label names will be set to \code{levels_new} if it was
-provided, and \code{levels} if it was not.
+If \code{levels} was provided, new label names can also be set with
+\code{labels}. If provided, it must be a character vector with the same
+length as \code{levels}. If there are duplicates in \code{levels},
+the first label for a given level will be used. If \code{labels} is
+not provided, the new label names will be set to \code{levels} if it was
+provided, and \code{levels_old} if it was not.
 
 Note: \code{NA} and \code{NaN} values are handled a bit differently. Data
 locations that are \code{NA} or \code{NaN} will remain unchanged. \code{NA}
-and \code{NaN} should not be included in \code{levels} or \code{levels_new}.}
+and \code{NaN} should not be included in \code{levels_old} or \code{levels}.}
 
 \item{nsig}{Take this many significant digits for the data values. If
 \code{Inf} (default), do not round.}
@@ -124,20 +125,20 @@ each column with \code{names}.
 \examples{
 \dontrun{
 # Example: change label names
-levels <- xii$meta$cifti$labels[[1]]$Key
-newLabels <- paste0("New Label #", seq(length(levels)))
-xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels, labels_new=newLabels)
+levels_old <- xii$meta$cifti$labels[[1]]$Key
+newLabels <- paste0("New Label #", seq(length(levels_old)))
+xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels_old, labels=newLabels)
 # Example: add an empty level
-levels <- xii$meta$cifti$labels[[1]]$Key
-levels <- c(levels, max(levels)+1)
-labels_new <- c(rownames(xii$meta$cifti$labels[[1]]), "Empty")
-xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels, labels_new=labels_new)
+levels_old <- xii$meta$cifti$labels[[1]]$Key
+levels_old <- c(levels_old, max(levels_old)+1)
+labels <- c(rownames(xii$meta$cifti$labels[[1]]), "Empty")
+xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels_old, labels=labels)
 # Example: set all but the lowest value to the same value & re-label
-levels <- xii$meta$cifti$labels[[1]]$Key
-levels_new <- ifelse(levels==min(levels), min(levels), min(levels)+1)
-labels_new <- ifelse(levels==min(levels), "Minimum", "Not minimum")
-xii <- convert_to_dlabel(xii, levels=levels, levels_new=levels_new, labels_new=labels_new)
-} 
+levels_old <- xii$meta$cifti$labels[[1]]$Key
+levels <- ifelse(levels_old==min(levels_old), min(levels_old), min(levels_old)+1)
+labels <- ifelse(levels_old==min(levels_old), "Minimum", "Not minimum")
+xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels, labels=labels)
+}
 
 }
 \seealso{
