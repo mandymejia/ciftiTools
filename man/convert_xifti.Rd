@@ -60,12 +60,11 @@ then by setting \code{levels_old} to the current label table values and
 \code{levels_old} are allowed, to map multiple existing levels to the same
 new level.
 
-If \code{levels} was provided, new label names can also be set with
-\code{labels}. If provided, it must be a character vector with the same
-length as \code{levels}. If there are duplicates in \code{levels},
-the first label for a given level will be used. If \code{labels} is
-not provided, the new label names will be set to \code{levels} if it was
-provided, and \code{levels_old} if it was not.
+New label names can be set with \code{labels}. If provided, it must be a
+character vector with the same length as \code{levels}. If there are
+duplicates in \code{levels}, the first label for a given level will be used.
+If \code{labels} is not provided, the new label names will be set to
+\code{levels} if it was provided, and \code{levels_old} if it was not.
 
 Note: \code{NA} and \code{NaN} values are handled a bit differently. Data
 locations that are \code{NA} or \code{NaN} will remain unchanged. \code{NA}

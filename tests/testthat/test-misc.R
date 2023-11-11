@@ -119,8 +119,8 @@ test_that("Miscellaneous functions are working", {
       cii_l <- convert_to_dlabel(cii, return_conversion_table = TRUE)
       cii_l <- convert_to_dlabel(
         cii_l$xifti,
-        levels=c(0, 4, 3, 2, 1),
-        levels_new = c(99, 1, 1, 1, 1),
+        levels_old=c(0, 4, 3, 2, 1),
+        levels = c(99, 1, 1, 1, 1),
         labels=c("a", "w", "x", "y", "z"),
         return_conversion_table = TRUE
       )
@@ -131,7 +131,7 @@ test_that("Miscellaneous functions are working", {
       cii_l$xifti$data$cortex_left[seq(2),] <- c(NA, NaN)
       cii_l <- convert_to_dlabel(
         cii_l$xifti,
-        levels_new = c(3, -1),
+        levels = c(3, -1),
         colors=c("red", "blue"),
         add_white=FALSE,
         return_conversion_table = TRUE
