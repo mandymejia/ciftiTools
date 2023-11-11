@@ -619,7 +619,7 @@ view_xifti_surface <- function(
   # Based on: `idx`, `widget`, and `fname`.
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
-  if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
+  if (is.null(legend_fname)) { legend_fname <- FALSE }
   idx <- as.numeric(idx)
   if (length(widget) > 1) {
     warning("Using the first entry of `widget`.")

@@ -259,7 +259,7 @@ view_xifti_volume <- function(
 
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
-  if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
+  if (is.null(legend_fname)) { legend_fname <- FALSE }
   idx <- as.numeric(idx)
   if (length(widget) > 1) {
     warning("Using the first entry of `widget`.")
@@ -1026,7 +1026,7 @@ view_xifti_volume <- function(
         )
       } else {
         # [TO DO] not too sure about this
-        if (close_after_save) { dev.off() }
+        if (close_after_save && !is.null(dev.list())) { dev.off() }
       }
     }
   } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) {
