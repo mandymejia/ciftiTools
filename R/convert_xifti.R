@@ -128,8 +128,6 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
     } else {
       as.character(levels_old)
     }
-  } else {
-    stopifnot(length(labels) == length(levels))
   }
 
   if (!is.null(levels)) {
@@ -149,6 +147,8 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
   } else {
     levels <- seq(length(levels_old))-1
   }
+
+  stopifnot(length(labels) == length(levels))
 
   conversion_table <- data.frame(
     levels_old=levels_old,
