@@ -1,7 +1,10 @@
 # 13.1
 
-New features
-* `surf_area`
+* Add `surf_area`.
+* `convert_to_dlabel` arguments have been renamed.
+* Add a black outline to the label table legends with `view_xifti`.
+* Add `remap_cifti`. Note that this function may change greatly in future versions.
+* Fix issue in `view_xifti` where if `legend_fname=NULL`, the legend image was still being written.
 
 # 12.0 (Jul 28, 2023)
 

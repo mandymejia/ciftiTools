@@ -91,6 +91,9 @@ remap_cifti_wrapper <- function(
 #'
 #'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file. If
 #'  the input \code{"xifti"} object has surface geometry, it will be removed.
+#' 
+#'  This function is in active development: its arguments and behavior may
+#'  change greatly in future versions of the package. 
 #'
 #' @param x The CIFTI file name or \code{"xifti"} object to resample.
 #' @param cifti_target_fname File name for the resampled CIFTI. Will be placed

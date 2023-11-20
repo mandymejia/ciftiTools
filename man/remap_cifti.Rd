@@ -122,4 +122,7 @@ fsaverage group data and fs_LR group data.
 \details{
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file. If
 the input \code{"xifti"} object has surface geometry, it will be removed.
+
+This function is in active development: its arguments and behavior may
+change greatly in future versions of the package.
 }

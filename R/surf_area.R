@@ -1,6 +1,8 @@
 #' Surface area calculation
 #' 
-#' Calculate surface area of a \code{"surf"} object by vertex or face.
+#' Calculate surface area of a \code{"surf"} object by vertex or face. Surface
+#'  area calculation by vertex matches the Workbench command 
+#'  "-surface-vertex-areas".
 #' 
 #' @param surf The \code{"surf"} object.
 #' @param by \code{"vertex"} or \code{"face"}. For \code{"vertex"}, the result
@@ -13,6 +15,11 @@
 #'  square of the units of \code{surf$vertices}. 
 #' @export
 surf_area <- function(surf, by=c("vertex", "face")) {
+
+  # Damon note to self:
+  # See Damon-Misc/gifti_surf_calc_demo.R for verification that this result
+  #   matches `diag(inla.fmesher.smorg(` and Workbench's `surface-vertex-areas`.
+
   by <- match.arg(by, c("vertex", "face"))
   stopifnot(is.surf(surf))
   nF <- nrow(surf$faces)

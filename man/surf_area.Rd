@@ -20,5 +20,7 @@ as how the vertices or faces are listed in \code{surf}. The units are the
 square of the units of \code{surf$vertices}.
 }
 \description{
-Calculate surface area of a \code{"surf"} object by vertex or face.
+Calculate surface area of a \code{"surf"} object by vertex or face. Surface
+area calculation by vertex matches the Workbench command
+"-surface-vertex-areas".
 }
