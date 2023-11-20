@@ -1,3 +1,8 @@
+# 13.1
+
+New features
+* `surf_area`
+
 # 12.0 (Jul 28, 2023)
 
 New features
