@@ -7,16 +7,23 @@
 #' 
 #' @param dat Data matrix with locations along the rows and measurements along 
 #'  the columns. If only one set of measurements were made, this may be a 
-#'  vector.
+#'  vector. Alternatively, a \code{"xifti"} object with subcortical data.
 #' @param mask Volumetric binary mask. \code{TRUE} indicates voxels inside the
-#'  mask.
+#'  mask. Required unless \code{dat} is a \code{"xifti"} object, in which case
+#'  the mask in the metadata will be used.
 #' @param fill The value for locations outside the mask. Default: \code{NA}.
 #'
 #' @return The 3D or 4D unflattened volume array
 #'
 #' @export
 #' 
-unmask_subcortex <- function(dat, mask, fill=NA) {
+unmask_subcortex <- function(dat, mask=NULL, fill=NA) {
+
+  if (is.xifti(dat, messages=FALSE) && (!is.null(dat$data$subcort))) {
+    return(unmask_subcortex(dat$data$subcort, dat$meta$subcort$mask, fill=fill))
+  } else {
+    stopifnot(!is.null(mask))
+  }
 
   # Check that dat is a vector or matrix.
   if (is.vector(dat) || is.factor(dat)) { dat <- matrix(dat, ncol=1) }

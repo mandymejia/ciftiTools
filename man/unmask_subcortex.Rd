@@ -4,15 +4,16 @@
 \alias{unmask_subcortex}
 \title{Undo a volumetric mask}
 \usage{
-unmask_subcortex(dat, mask, fill = NA)
+unmask_subcortex(dat, mask = NULL, fill = NA)
 }
 \arguments{
 \item{dat}{Data matrix with locations along the rows and measurements along
 the columns. If only one set of measurements were made, this may be a
-vector.}
+vector. Alternatively, a \code{"xifti"} object with subcortical data.}
 
 \item{mask}{Volumetric binary mask. \code{TRUE} indicates voxels inside the
-mask.}
+mask. Required unless \code{dat} is a \code{"xifti"} object, in which case
+the mask in the metadata will be used.}
 
 \item{fill}{The value for locations outside the mask. Default: \code{NA}.}
 }
