@@ -173,10 +173,10 @@ test_that("Miscellaneous functions are working", {
     #   )
     # }
 
-    # unmask_subcortex
+    # unvec_vol
     if (!is.null(cii$data$subcort)) {
-      vol2 <- unmask_subcortex(cii$data$subcort, cii$meta$subcort$mask)
-      labs2 <- unmask_subcortex(
+      vol2 <- unvec_vol(cii$data$subcort, cii$meta$subcort$mask)
+      labs2 <- unvec_vol(
         as.numeric(cii$meta$subcort$labels),
         cii$meta$subcort$mask
       )

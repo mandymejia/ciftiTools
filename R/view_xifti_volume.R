@@ -520,11 +520,11 @@ view_xifti_volume <- function(
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx,drop=FALSE]
-  vol <- unmask_subcortex(values, xifti$meta$subcort$mask, fill=NA)
+  vol <- unvec_vol(values, xifti$meta$subcort$mask, fill=NA)
   if (length(dim(vol)) == 3) {
     dim(vol) <- c(dim(vol), 1)
   }
-  labs_bs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
+  labs_bs <- unvec_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Set `color_mode` if `"auto"`; set `colors` if `NULL`
   if (color_mode == "auto" || (color_mode!="qualitative" && is.null(colors))) {

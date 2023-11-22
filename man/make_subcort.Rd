@@ -40,8 +40,8 @@ A list with components "data", "labels", "mask", and "trans_mat". The
 first two will be vectorized and ordered spatially.
 
 The volume can be recovered using:
-\code{vol <- unmask_subcortex(data, mask, fill=NA)}
-\code{labs <- unmask_subcortex(labels, mask, fill=0)}
+\code{vol <- unvec_vol(data, mask, fill=NA)}
+\code{labs <- unvec_vol(labels, mask, fill=0)}
 }
 \description{
 Coerce subcortical data into valid entries for \code{xifti$data$subcort}
