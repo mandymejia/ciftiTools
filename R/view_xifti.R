@@ -155,7 +155,7 @@ view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=F
   value <- NULL
   plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, fill=labels)) +
     ggplot2::geom_point(size=point_size, shape=22, color="black") + ggplot2::theme_bw() +
-    ggplot2::scale_color_manual(values=colors2, name=ifelse(title_sub, "Labels (subcortex)", "Labels")) +
+    ggplot2::scale_fill_manual(values=colors2, name=ifelse(title_sub, "Labels (subcortex)", "Labels")) +
     ggplot2::guides(color=ggplot2::guide_legend(label.theme=ggplot2::element_text(color=text_color), ncol=leg_ncol)) +
     ggplot2::theme(legend.title=ggplot2::element_text(
       size=ggplot2::rel(legend_title_size)),
@@ -403,7 +403,7 @@ view_xifti <- function(xifti, what=NULL, ...) {
   if (what == "both" | what == "volume") {
     args2 <- args
     write_dummy_legend <- what == "both" && args2$color_mode != "qualitative" && "legend_embed" %in% names(args2) && args2$legend_embed==FALSE
-    if (write_dummy_legend) { 
+    if (write_dummy_legend) {
       dummy_legend_fname <- tempfile(fileext=".png")
       args2$legend_fname <- dummy_legend_fname
     } else if (!("legend_fname" %in% names(args2))) {
