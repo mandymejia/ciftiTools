@@ -810,6 +810,7 @@ view_xifti_volume <- function(
         slices <- slices[mask_count > quantile(mask_count, .33)]
       }
       slices <- slices[round(seq(1, length(slices), length.out=n_slices))]
+      message("Selected ", plane, " slices: ", paste0(slices, collapse=", "))
     } else {
       slices <- as.numeric(slices)
       stopifnot(all(slices %in% seq(dim(xifti$meta$subcort$mask)[plane_dim])))
