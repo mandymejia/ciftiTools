@@ -198,7 +198,7 @@ convert_to_dlabel <- function(x, cifti_target_fname=NULL,
       colors=colors, color_mode="qualitative", zlim=ifelse(add_white, N_-1, N_)
     )
     if (length(pal$color) != length(unique(pal$color))) {
-      warning("Some colors are assigned to more than one label.")
+      ciftiTools_warn("Some colors are assigned to more than one label.")
     }
     if (add_white) {
       pal$color <- as.character(pal$color)

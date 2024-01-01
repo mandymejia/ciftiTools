@@ -286,4 +286,8 @@ test_that("Miscellaneous functions are working", {
   x <- read_cifti(fnames$cifti[1], surfL_fname=fnames$surf["left"], brainstructures="left")
   y <- read_cifti(fnames$cifti[2], surfR_fname=fnames$surf["right"], brainstructures="right")
   z <- combine_xifti(x,y)
+
+  # parcellation matrix
+  parc <- parc_add_subcortex(load_parc())
+  stopifnot(all(table(c(as.matrix(parc))) - rowSums(parc_matrix(parc)>0) == 0))
 })
