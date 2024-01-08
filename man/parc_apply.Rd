@@ -4,23 +4,22 @@
 \alias{parc_apply}
 \title{Apply function over locations in each parcel}
 \usage{
-parc_apply(dat, parc, FUN = mean, return_as = c("table", "xifti"))
+parc_apply(xii, parc, FUN = mean, mwall_value = NA, ...)
 
-parc_apply(dat, parc, FUN = mean, return_as = c("table", "xifti"))
+parc_apply(xii, parc, FUN = mean, mwall_value = NA, ...)
 }
 \arguments{
-\item{dat}{Am \code{"xifti"} object.}
-
-\item{parc}{A single-column "dlabel" \code{"xifti"} object in-register with
-\code{dat}.}
-
-\item{FUN}{The function to apply. It must return a single value. Default:
-\code{mean}.}
-
-\item{return_as}{\code{"table"} (default) or \code{"xifti"}.}
-
 \item{xii}{The \code{"xifti"} data to apply the function over, within each
 parcel.}
+
+\item{parc}{The \code{"xifti"} "dlabel" parcellation. Each parcel is defined
+by a unique key in the label table. If there are multiple columns, only the
+first column will be used. Alternatively, \code{parc} can just be a vector
+of keys whose length is the number of data locations in \code{"xii"}.}
+
+\item{FUN}{A function that takes as input an \eqn{M \times N} matrix (\eqn{M}
+locations in a given parcel, and \eqn{N} measurements/columns in \code{xii})
+and outputs a constant-sized (\eqn{Q}) numeric vector.}
 
 \item{mwall_value}{If there is a medial wall in \code{xii}, what should value
 should medial wall locations be replaced with prior to calculation?
@@ -33,18 +32,15 @@ A \eqn{P \times Q} matrix, where \eqn{P} is the number of parcels and
 \eqn{Q} is the length of the output of \code{FUN}. (For \code{mean},
 \eqn{Q = 1}).
 
-If \code{return_as} is \code{"table"}: A two-column matrix with the
-parcel keys in the first column, and the corresponding value in the second.
-Row names are the parcel labels.
-
-If \code{return_as} is \code{"xifti"}: A \code{"xifti"} in-register with
-\code{dat} in which the value at each location is the value of the
-corresponding parcel.
+A \eqn{P \times Q} matrix, where \eqn{P} is the number of parcels and
+\eqn{Q} is the length of the output of \code{FUN}. (For \code{mean},
+\eqn{Q = 1}).
 }
 \description{
 Apply a function across all locations in each parcel. By default, the mean
 value in each parcel is calculated.
 
-Applies a function (default: mean) to a \code{"xifti"} object for each parcel
-separately.
+Apply a function across all locations in each parcel, for a pair of data and
+parcellation \code{"xifti"} objects that are in registration with one
+another. By default, the mean value in each parcel is calculated.
 }

@@ -1,85 +1,99 @@
-#' Apply parcellation to CIFTI data
-#' 
-#' Applies a function (default: mean) to a \code{"xifti"} object for each parcel
-#'  separately.
-#' 
-#' @param dat Am \code{"xifti"} object.
-#' @param parc A single-column "dlabel" \code{"xifti"} object in-register with
-#'  \code{dat}.
-#' @param FUN The function to apply. It must return a single value. Default: 
-#'  \code{mean}. 
-#' @param return_as \code{"table"} (default) or \code{"xifti"}.
-#' @return If \code{return_as} is \code{"table"}: A two-column matrix with the 
-#'  parcel keys in the first column, and the corresponding value in the second. 
-#'  Row names are the parcel labels.
-#' 
-#'  If \code{return_as} is \code{"xifti"}: A \code{"xifti"} in-register with
-#'  \code{dat} in which the value at each location is the value of the
-#'  corresponding parcel.
+#' Apply function over locations in each parcel
+#'
+#' Apply a function across all locations in each parcel, for a pair of data and 
+#'  parcellation \code{"xifti"} objects that are in registration with one
+#'  another. By default, the mean value in each parcel is calculated.
+#'
+#' @param xii The \code{"xifti"} data to apply the function over, within each
+#'  parcel.
+#' @param parc The \code{"xifti"} "dlabel" parcellation. Each parcel is defined
+#'  by a unique key in the label table. If there are multiple columns, only the
+#'  first column will be used. Alternatively, \code{parc} can just be a vector
+#'  of keys whose length is the number of data locations in \code{"xii"}.
+#' @param FUN A function that takes as input an \eqn{M \times N} matrix (\eqn{M}
+#'  locations in a given parcel, and \eqn{N} measurements/columns in \code{xii})
+#'  and outputs a constant-sized (\eqn{Q}) numeric vector.
+#' @param mwall_value If there is a medial wall in \code{xii}, what should value
+#'  should medial wall locations be replaced with prior to calculation?
+#'  Default: \code{NA}.
+#' @param ... Additional arguments to \code{FUN}.
+#'
+#' @return A \eqn{P \times Q} matrix, where \eqn{P} is the number of parcels and
+#'  \eqn{Q} is the length of the output of \code{FUN}. (For \code{mean},
+#'  \eqn{Q = 1}).
+#'
 #' @export
-parc_apply <- function(dat, parc, FUN=mean, return_as=c("table", "xifti")){
-  # Check arguments.
-  stopifnot(is.xifti(dat))
+#'
+parc_apply <- function(xii, parc, FUN=mean, mwall_value=NA, ...){
+  # Arg checks
+  stopifnot(is.xifti(xii))
   parc <- assure_parc(parc)
-  stopifnot(is.function(FUN))
-  return_as <- match.arg(return_as, c("table", "xifti"))
 
-  # `dat` and `parc` must be in-register.
-  # Note: this assumes a cortex is aligned if it has the same number of 
-  #   vertices, and that the subcortex is aligned as long as it has the same 
-  #   number of voxels.
-  stopifnot(identical(
-    vapply(dat$data, nrow, 0), vapply(parc$data, nrow, 0)
-  ))
+  # Replace medial wall and convert `xifti` to matrix.
+  xii <- move_from_mwall(xii, value=mwall_value)
+  if (nrow(xii) != nrow(parc)) {
+    stop(
+      "`xii` has ", nrow(xii), " locations (including any medial wall), but ",
+      "`parc` has ", nrow(parc), " locations. They need to have the same resolution."
+    )
+  }
+  xii <- as.matrix(xii)
 
-  dat <- as.matrix(dat)
-  parc_cols <- parc$meta$cifti$labels[[1]]
+  # Convert `parc` to vector.
+  parc_names <- rownames(parc$meta$cifti$labels[[1]])
+  parc_keys <- parc$meta$cifti$labels[[1]]$Key
   parc_vec <- c(as.matrix(parc))
 
-  # Quicker way, if calculating the mean
+  nP <- length(parc_keys)
+  nV <- nrow(xii)
+  nT <- ncol(xii)
+
   if (identical(FUN, mean)) {
-    vals <- parc_mean_mat(parc) %*% dat
+    out <- parc_mean_mat(parc) %*% xii
   } else {
-    vals <- vector("numeric", nrow(parc_cols))
-    for (vv in seq(length(vals))) {
-      key_vv <- parc_cols$Key[vv]
-      vals[vv] <- FUN(dat[parc_vec == key_vv,])
+    # Compute function for each parcel.
+    out <- vector("list", nP)
+    names(out) <- parc_names
+    for (ii in seq(length(parc_keys))) {
+      out[ii] <- FUN(xii[parc_vec==parc_keys[ii],], ...)
     }
+
+    # Check that the output length is the same for each parcel.
+    stopifnot(length(unique(lapply(out, dim)))==1)
+
+    # Return.
+    out <- do.call(rbind, out)
   }
 
-  out <- cbind(parc_cols$Key, vals)
-  rownames(out) <- rownames(parc_cols)
   out
 }
 
 #' Convert parcellation values to \code{"xifti"}
 #' 
-#' From a parcellation and a corresponding value vector, make a \code{"xifti"}
-#'  object that has the values of each parcel across its locations.
+#' From a parcellation and a corresponding value matrix, make a \code{"xifti"}
+#'  object that has the value vector of each parcel across its locations.
 #' 
 #' @param parc A single-column "dlabel" \code{"xifti"} object.
-#' @param vals A numeric vector. Each element should correspond to the row in
-#'  the color table of \code{parc} at the same index. 
+#' @param vals A numeric matrix. Rows should correspond to rows in
+#'  the color table of \code{parc}. Columns will become columns in the output
+#'  \code{"xifti"} object.
 #' @return A \code{"xifti"} object
 #' @export 
 #' 
 parc_vals_to_xifti <- function(parc, vals){
   parc <- assure_parc(parc)
   stopifnot(is.numeric(vals))
+  if (is.vector(vals)) { vals <- as.matrix(vals) }
   stopifnot(nrow(parc) == length(vals))
 
   parc_cols <- parc$meta$cifti$labels[[1]]
   parc_vec <- c(as.matrix(parc))
+  parc_vec2 <- as.numeric(factor(parc_vec, levels=parc_cols$Keys))
 
-  out <- convert_xifti(parc, "dscalar")
-  out_vec <- parc_vec
+  rownames(vals) <- rownames(parc_cols)
 
-  for (vv in seq(nrow(parc_cols))) {
-    key_vv <- parc_cols$Key[vv]
-    out_vec[parc_vec == key_vv] <- vals[vv]
-  }
-
-  newdata_xifti(out, out_vec)
+  out <- vals[parc_vec2,]
+  newdata_xifti(convert_xifti(parc, "dscalar"), out)
 }
 
 #' Make parcellation mean matrix

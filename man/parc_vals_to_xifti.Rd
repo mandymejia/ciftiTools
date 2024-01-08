@@ -9,13 +9,14 @@ parc_vals_to_xifti(parc, vals)
 \arguments{
 \item{parc}{A single-column "dlabel" \code{"xifti"} object.}
 
-\item{vals}{A numeric vector. Each element should correspond to the row in
-the color table of \code{parc} at the same index.}
+\item{vals}{A numeric matrix. Rows should correspond to rows in
+the color table of \code{parc}. Columns will become columns in the output
+\code{"xifti"} object.}
 }
 \value{
 A \code{"xifti"} object
 }
 \description{
-From a parcellation and a corresponding value vector, make a \code{"xifti"}
-object that has the values of each parcel across its locations.
+From a parcellation and a corresponding value matrix, make a \code{"xifti"}
+object that has the value vector of each parcel across its locations.
 }
