@@ -345,12 +345,12 @@ xii <- select_xifti(xii, c(4,3,2)) # Reverse column order & drop the first.
 xii
 ```
 
-`apply_parc` computes a summary statistic across data for each parcel. By default, the mean is computed.
+`parc_apply` computes a summary statistic across data for each parcel. By default, the mean is computed.
 
 ```{r}
 xii <- read_cifti(ciftiTools.files()$cifti["dtseries"])
 xii_parc <- load_parc("Schaefer_400")
-xii_pmeans <- apply_parc(xii, xii_parc)
+xii_pmeans <- parc_apply(xii, xii_parc)
 head(xii_pmeans)
 ```
 To visualize the parcellated data: 

@@ -23,10 +23,10 @@
 #'
 #' @export
 #'
-apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA, ...){
+parc_apply <- function(xii, parc, FUN=mean, mwall_value=NA, ...){
   # Arg checks
   stopifnot(is.xifti(xii))
-  stopifnot(is.xifti(parc))
+  parc <- assure_parc(parc)
 
   # Replace medial wall and convert `xifti` to matrix.
   xii <- move_from_mwall(xii, value=mwall_value)
@@ -39,23 +39,19 @@ apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA, ...){
   xii <- as.matrix(xii)
 
   # Convert `parc` to vector.
-  if (ncol(parc) > 1) { ciftiTools_warn("Using the first column of `parc`.") }
   parc_names <- rownames(parc$meta$cifti$labels[[1]])
   parc_keys <- parc$meta$cifti$labels[[1]]$Key
-  parc <- as.matrix(parc)[,1]
+  parc <- c(as.matrix(parc))
 
   nP <- length(parc_keys)
   nV <- nrow(xii)
   nT <- ncol(xii)
 
-  # In case the keys are not 1 through nP
-  parc <- as.numeric(factor(parc, levels=parc_keys))
-
   # Compute function for each parcel.
   out <- vector("list", nP)
   names(out) <- parc_names
   for (ii in seq(length(parc_keys))) {
-    out[ii] <- FUN(xii[parc==ii,], ...)
+    out[ii] <- FUN(xii[parc==parc_keys[ii],], ...)
   }
 
   # Check that the output length is the same for each parcel.
