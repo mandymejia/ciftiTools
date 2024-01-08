@@ -28,3 +28,4 @@ Multiplying the result of \code{parc_mean_mat} with a \eqn{V \times T} matrix
 of timeseries data, e.g. from \code{as.matrix(dlabel_xii)}, will yield the
 average value for each Key.
 }
+\keyword{internal}

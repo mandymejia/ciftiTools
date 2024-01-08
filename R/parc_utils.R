@@ -1,6 +1,6 @@
 #' Apply function over locations in each parcel
 #'
-#' Apply a function across all locations in each parcel, for a pair of data and 
+#' Apply a function across all locations in each parcel, for a pair of data and
 #'  parcellation \code{"xifti"} objects that are in registration with one
 #'  another. By default, the mean value in each parcel is calculated.
 #'
@@ -12,11 +12,15 @@
 #'  of keys whose length is the number of data locations in \code{"xii"}.
 #' @param FUN A function that takes as input an \eqn{M \times N} matrix (\eqn{M}
 #'  locations in a given parcel, and \eqn{N} measurements/columns in \code{xii})
-#'  and outputs a constant-sized (\eqn{Q}) numeric vector.
+#'  and outputs a constant-sized (\eqn{Q}) numeric vector. Default: \code{mean}.
 #' @param mwall_value If there is a medial wall in \code{xii}, what should value
 #'  should medial wall locations be replaced with prior to calculation?
 #'  Default: \code{NA}.
-#' @param ... Additional arguments to \code{FUN}.
+#' @param return_as \code{"matrix"} (default) where each row corresponds to a
+#'  parcel, or a \code{"xifti"} object where each location's value is the value
+#'  of its corresponding parcel?
+#' @param ... Additional arguments to \code{FUN}, e.g. \code{na.rm=TRUE}.
+#'  Ignored if \code{FUN=="quick_mean"}.
 #'
 #' @return A \eqn{P \times Q} matrix, where \eqn{P} is the number of parcels and
 #'  \eqn{Q} is the length of the output of \code{FUN}. (For \code{mean},
@@ -24,19 +28,28 @@
 #'
 #' @export
 #'
-parc_apply <- function(xii, parc, FUN=mean, mwall_value=NA, ...){
-  # Arg checks
+apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
+  return_as=c("matrix", "xifti"), ...){
+
+  # Arg checks.
   stopifnot(is.xifti(xii))
   parc <- assure_parc(parc)
+  return_as <- match.arg(return_as, c("matrix", "xifti"))
 
-  # Replace medial wall and convert `xifti` to matrix.
+  # Replace medial wall.
   xii <- move_from_mwall(xii, value=mwall_value)
+
+  # Convert `xifti` to matrix.
   if (nrow(xii) != nrow(parc)) {
     stop(
       "`xii` has ", nrow(xii), " locations (including any medial wall), but ",
       "`parc` has ", nrow(parc), " locations. They need to have the same resolution."
     )
   }
+  stopifnot(identical(
+    vapply(xii$data[!vapply(xii$data, is.null, FALSE)], nrow, 0),
+    vapply(parc$data[!vapply(parc$data, is.null, FALSE)], nrow, 0)
+  ))
   xii <- as.matrix(xii)
 
   # Convert `parc` to vector.
@@ -48,47 +61,47 @@ parc_apply <- function(xii, parc, FUN=mean, mwall_value=NA, ...){
   nV <- nrow(xii)
   nT <- ncol(xii)
 
-  if (identical(FUN, mean)) {
-    out <- parc_mean_mat(parc) %*% xii
-  } else {
-    # Compute function for each parcel.
-    out <- vector("list", nP)
-    names(out) <- parc_names
-    for (ii in seq(length(parc_keys))) {
-      out[ii] <- FUN(xii[parc_vec==parc_keys[ii],], ...)
-    }
-
-    # Check that the output length is the same for each parcel.
-    stopifnot(length(unique(lapply(out, dim)))==1)
-
-    # Return.
-    out <- do.call(rbind, out)
+  # Do `FUN`.
+  stopifnot(is.function(FUN))
+  out <- vector("list", nP)
+  names(out) <- parc_names
+  for (pp in seq(nP)) {
+    out[pp] <- FUN(xii[parc_vec==parc_keys[pp],], ...)
   }
+
+  # Check that the output length is the same for each parcel.
+  stopifnot(length(unique(lapply(out, dim)))==1)
+
+  out <- do.call(rbind, out)
+
+  # Convert is applicable.
+  if (return_as=="xifti") { out <- parc_vals_to_xifti(parc, out) }
 
   out
 }
 
 #' Convert parcellation values to \code{"xifti"}
-#' 
+#'
 #' From a parcellation and a corresponding value matrix, make a \code{"xifti"}
 #'  object that has the value vector of each parcel across its locations.
-#' 
+#'
 #' @param parc A single-column "dlabel" \code{"xifti"} object.
 #' @param vals A numeric matrix. Rows should correspond to rows in
 #'  the color table of \code{parc}. Columns will become columns in the output
 #'  \code{"xifti"} object.
 #' @return A \code{"xifti"} object
-#' @export 
-#' 
+#' @export
+#'
 parc_vals_to_xifti <- function(parc, vals){
   parc <- assure_parc(parc)
   stopifnot(is.numeric(vals))
   if (is.vector(vals)) { vals <- as.matrix(vals) }
-  stopifnot(nrow(parc) == length(vals))
 
   parc_cols <- parc$meta$cifti$labels[[1]]
   parc_vec <- c(as.matrix(parc))
-  parc_vec2 <- as.numeric(factor(parc_vec, levels=parc_cols$Keys))
+  parc_vec2 <- as.numeric(factor(parc_vec, levels=parc_cols$Key))
+
+  stopifnot(nrow(parc_cols) == nrow(vals))
 
   rownames(vals) <- rownames(parc_cols)
 
@@ -97,8 +110,8 @@ parc_vals_to_xifti <- function(parc, vals){
 }
 
 #' Make parcellation mean matrix
-#' 
-#' Create a matrix that compute the average value for each parcel. 
+#'
+#' Create a matrix that compute the average value for each parcel.
 #'
 #' From a single-column "dlabel" \code{"xifti"} object, make a \eqn{K \times V}
 #'  matrix where row \eqn{k} is a vector corresponding to the kth Key value,
@@ -114,7 +127,7 @@ parc_vals_to_xifti <- function(parc, vals){
 #'
 #' @param parc A single-column "dlabel" \code{"xifti"} object.
 #' @return The parcellation matrix
-#' @export
+#' @keywords internal
 #'
 parc_mean_mat <- function(parc){
   parc <- assure_parc(parc)
@@ -139,11 +152,11 @@ parc_mean_mat <- function(parc){
 #' Add the subcortex, with each brain structure as a separate parcel, to
 #'  a "dlabel" cortical parcellation.
 #'
-#' @param parc A single-column "dlabel" \code{"xifti"} object without 
+#' @param parc A single-column "dlabel" \code{"xifti"} object without
 #'  subcortical data.
 #' @param parc_sub A single-column \code{"xifti"} object with only
 #'  subcortical data. Or, \code{"MNI"} (default) to read in and use the MNI
-#'  subcortex included in \code{ciftiTools}. (The Connectome Workbench is 
+#'  subcortex included in \code{ciftiTools}. (The Connectome Workbench is
 #'  required.)
 #' @return The new parcellation with added subcortical data and labels.
 #' @export
@@ -246,10 +259,10 @@ load_sub_parc <- function(){
 }
 
 #' Assure this is a parcellation
-#' 
+#'
 #' Assure an input \code{"xifti"} object represents a parcellation. Keep only
 #'  the first column if multiple columns are present.
-#' 
+#'
 #' @param parc The putative parcellation.
 #' @return \code{parc}, if it's a parcellation.
 #' @export
@@ -265,21 +278,21 @@ assure_parc <- function(parc){
 }
 
 #' Parcellation borders
-#' 
+#'
 #' Identify vertices which lie on the border of different parcels.
-#' 
+#'
 #' @param parc Integer vector the same length as the number of vertices. Each
 #'  entry indicates the parcel that vertex belongs to.
 #' @param surf The surface which the vertices belong to, or just the \code{"faces"}
 #'  component (\eqn{F \times 3} matrix where each row indicates the vertices which
-#'  comprise a face). If not provided, the (resampled) default \code{hemisphere} 
+#'  comprise a face). If not provided, the (resampled) default \code{hemisphere}
 #'  surface included with \code{ciftiTools} will be used.
-#' @param hemisphere Only used to choose which default surface to use if 
+#' @param hemisphere Only used to choose which default surface to use if
 #'  \code{is.null(surf)}. Should be \code{"left"} (default) or \code{"right"}.
-#' 
+#'
 #' @return Logical vector the same length as \code{parc} indicating if the
 #'  vertex lies on a border.
-#' 
+#'
 #' @export
 parc_borders <- function(parc, surf=NULL, hemisphere=c("left", "right")) {
   stopifnot(is.vector(parc))
