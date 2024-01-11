@@ -16,3 +16,4 @@ assure_parc(parc)
 Assure an input \code{"xifti"} object represents a parcellation. Keep only
 the first column if multiple columns are present.
 }
+\keyword{internal}

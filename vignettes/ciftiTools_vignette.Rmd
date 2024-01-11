@@ -345,25 +345,6 @@ xii <- select_xifti(xii, c(4,3,2)) # Reverse column order & drop the first.
 xii
 ```
 
-`parc_apply` computes a summary statistic across data for each parcel. By default, the mean is computed.
-
-```{r}
-xii <- read_cifti(ciftiTools.files()$cifti["dtseries"])
-xii_parc <- load_parc("Schaefer_400")
-xii_pmeans <- parc_apply(xii, xii_parc)
-head(xii_pmeans)
-```
-To visualize the parcellated data: 
-
-```{r, fig.cap="Mean timecourses for Schaefer 400 parcels", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
-xii <- move_from_mwall(xii, NA)
-xii <- newdata_xifti(xii, xii_pmeans[c(as.matrix(xii_parc)+1)])
-plot(
-  xii, zlim=c(1.5, 2.5), cex.title=1.3,
-  colors="viridis", title="Parcellated data"
-)
-```
-
 S3 methods allow for univariate transformations of `"xifti"` objects as well as arithmetic operations of multiple `"xifti"` objects.
 
 ```{r}
@@ -419,6 +400,72 @@ plot(surf, vertex_size=3, vertex_color="blue")
 
 ```{r, rgl=TRUE, fig.cap="Surface with edges drawn in black", format="png", fig.height=3.8, fig.width=2.5}
 plot(surf, edge_color="black")
+```
+
+### Working with parcellations
+
+`ciftiTools` includes several commonly-used parcellations which can be loaded in as a single-column dlabel `"xifti"` with `load_parc`. Refer to `?load_parc` for their corresponding references. Any other parcellations can be read in with `read_cifti`. 
+
+```{r fig.cap="Schaefer 400 parcellation", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+parc <- load_parc("Schaefer_400")
+# parc <- read_cifti("my_parcellation.dlabel.nii")
+
+plot(parc)
+```
+
+`parc_add_subcortex` will add new label levels and "parcels" data for each subcortical structure in the MNI template. 
+
+```{r}
+# Before `parc_add_subcortex`
+max(parc) # 400 parcels
+summary(parc)
+```
+
+```{r}
+parc <- parc_add_subcortex(parc)
+max(parc) # 400 cortex parcels + 19 subcortex parcels
+summary(parc) # After `parc_add_subcortex`
+```
+
+`apply_parc` will apply a function to one `"xifti"` across each parcel specified by another `"xifti"`. A common example is computing the average timeseries of each parcel:
+
+```{r}
+parc <- load_parc("Yeo_7")
+parc_tab <- parc$meta$cifti$labels[[1]]
+rbind(head(parc_tab), tail(parc_tab)) # Keys 0-51 (52 total)
+```
+
+```{r}
+dat <- read_cifti(ciftiTools.files()$cifti["dtseries"])
+dim(dat)
+```
+
+```{r}
+pmean <- apply_parc(
+  dat, parc, 
+  FUN=colMeans, # get average timeseries
+  na.rm=TRUE # medial wall vals in `dat` will be NA
+)
+dim(pmean) # 52 parcels x 2 data columns
+```
+
+For real timeseries data, `tcrossprod(pmean)` would give the parcels x parcels functional connectivity matrix.
+
+`apply_parc` also has an argument which converts the result to a `"xifti"` object. Each locations' value will be the value of its corresponding parcel.
+
+```{r fig.cap="Median parcel value", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+
+# Obtain the min/max, quartile, and mean value
+#   of the second data column, within each parcel.
+psumm <- apply_parc(
+  select_xifti(dat, idx=2),
+  parc, mwall_value=0, 
+  FUN=summary,
+  return_as="xifti"
+)
+
+# Plot the median.
+plot(psumm, idx=3, title=psumm$meta$cifti$names[3], colors="magma")
 ```
 
 ### Mesh operations

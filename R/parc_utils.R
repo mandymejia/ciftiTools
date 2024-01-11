@@ -13,6 +13,9 @@
 #' @param FUN A function that takes as input an \eqn{M \times N} matrix (\eqn{M}
 #'  locations in a given parcel, and \eqn{N} measurements/columns in \code{xii})
 #'  and outputs a constant-sized (\eqn{Q}) numeric vector. Default: \code{mean}.
+#'
+#'  Use \code{colMeans} to obtain the average timeseries of each parcel, such as
+#'  in order to compute functional connectivity.
 #' @param mwall_value If there is a medial wall in \code{xii}, what should value
 #'  should medial wall locations be replaced with prior to calculation?
 #'  Default: \code{NA}.
@@ -66,13 +69,15 @@ apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
   out <- vector("list", nP)
   names(out) <- parc_names
   for (pp in seq(nP)) {
-    out[pp] <- FUN(xii[parc_vec==parc_keys[pp],], ...)
+    out[[pp]] <- FUN(xii[parc_vec==parc_keys[pp],], ...)
   }
 
   # Check that the output length is the same for each parcel.
-  stopifnot(length(unique(lapply(out, dim)))==1)
+  stopifnot(all(vapply(out, is.numeric, FALSE) | vapply(out, is.logical, FALSE)))
+  stopifnot(length(unique(lapply(out, length)))==1)
 
   out <- do.call(rbind, out)
+  out_names <- colnames(out)
 
   # Convert is applicable.
   if (return_as=="xifti") { out <- parc_vals_to_xifti(parc, out) }
@@ -97,6 +102,8 @@ parc_vals_to_xifti <- function(parc, vals){
   stopifnot(is.numeric(vals))
   if (is.vector(vals)) { vals <- as.matrix(vals) }
 
+  vals_names <- colnames(vals)
+
   parc_cols <- parc$meta$cifti$labels[[1]]
   parc_vec <- c(as.matrix(parc))
   parc_vec2 <- as.numeric(factor(parc_vec, levels=parc_cols$Key))
@@ -106,7 +113,12 @@ parc_vals_to_xifti <- function(parc, vals){
   rownames(vals) <- rownames(parc_cols)
 
   out <- vals[parc_vec2,]
-  newdata_xifti(convert_xifti(parc, "dscalar"), out)
+
+  out <- newdata_xifti(convert_xifti(parc, "dscalar"), out)
+
+  out$meta$cifti$names <- vals_names
+
+  out
 }
 
 #' Make parcellation mean matrix
@@ -159,8 +171,8 @@ parc_mean_mat <- function(parc){
 #'  subcortex included in \code{ciftiTools}. (The Connectome Workbench is
 #'  required.)
 #' @return The new parcellation with added subcortical data and labels.
-#' @export
 #'
+#' @export
 parc_add_subcortex <- function(parc, parc_sub="MNI"){
   parc <- assure_parc(parc)
   stopifnot(is.null(parc$data$subcort))
@@ -265,7 +277,8 @@ load_sub_parc <- function(){
 #'
 #' @param parc The putative parcellation.
 #' @return \code{parc}, if it's a parcellation.
-#' @export
+#'
+#' @keywords internal
 assure_parc <- function(parc){
   stopifnot(is.xifti(parc))
   stopifnot(!is.null(parc$meta$cifti$intent))
