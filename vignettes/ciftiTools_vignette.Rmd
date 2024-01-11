@@ -449,7 +449,7 @@ pmean <- apply_parc(
 dim(pmean) # 52 parcels x 2 data columns
 ```
 
-For real timeseries data, `tcrossprod(pmean)` would give the parcels x parcels functional connectivity matrix.
+For real timeseries data, `cor(t(pmean))` would give the parcels x parcels functional connectivity matrix.
 
 `apply_parc` also has an argument which converts the result to a `"xifti"` object. Each locations' value will be the value of its corresponding parcel.
 

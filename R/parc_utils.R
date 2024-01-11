@@ -46,7 +46,8 @@ apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
   if (nrow(xii) != nrow(parc)) {
     stop(
       "`xii` has ", nrow(xii), " locations (including any medial wall), but ",
-      "`parc` has ", nrow(parc), " locations. They need to have the same resolution."
+      "`parc` has ", nrow(parc), " locations. They need to have the same ",
+      "brainstructures and resolution."
     )
   }
   stopifnot(identical(
