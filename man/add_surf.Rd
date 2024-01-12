@@ -35,14 +35,37 @@ be resampled to match the resolution of the data. The barycentric resampling
 method, which is recommended for anatomical surfaces, will be used.
 }
 \seealso{
-Other manipulating: 
+Other manipulating xifti: 
+\code{\link{apply_parc}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},
 \code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
 \code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
 \code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{resample_cifti}()},
+\code{\link{scale_xifti}()},
 \code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
 \code{\link{transform_xifti}()}
+
+Other surface-related: 
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
+\code{\link{is.surf}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{surf_area}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
 }
-\concept{manipulating}
+\concept{manipulating xifti}
+\concept{surface-related}

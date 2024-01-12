@@ -22,3 +22,12 @@ The new parcellation with added subcortical data and labels.
 Add the subcortex, with each brain structure as a separate parcel, to
 a "dlabel" cortical parcellation.
 }
+\seealso{
+Other parcellation-related: 
+\code{\link{apply_parc}()},
+\code{\link{load_parc}()},
+\code{\link{load_sub_parc}()},
+\code{\link{parc_borders}()},
+\code{\link{parc_vals_to_xifti}()}
+}
+\concept{parcellation-related}

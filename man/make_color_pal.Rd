@@ -105,3 +105,10 @@ value corresponds to the position of an individual color in the palette.
 }
 }
 }
+\seealso{
+Other coloring: 
+\code{\link{ROY_BIG_BL}()},
+\code{\link{expand_color_pal}()},
+\code{\link{use_color_pal}()}
+}
+\concept{coloring}

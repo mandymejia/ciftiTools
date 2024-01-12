@@ -26,6 +26,7 @@
 #'
 #' @importFrom grDevices col2rgb
 #'
+#' @family coloring
 #' @export
 #'
 ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
@@ -203,6 +204,7 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @import viridisLite
 #'
+#' @family coloring
 #' @export
 #'
 make_color_pal <- function(
@@ -419,6 +421,7 @@ make_color_pal <- function(
 #'
 #' @importFrom grDevices colorRampPalette
 #'
+#' @family coloring
 #' @export
 #'
 expand_color_pal <- function(pal, COLOR_RES=255) {
@@ -475,6 +478,7 @@ expand_color_pal <- function(pal, COLOR_RES=255) {
 #'
 #' @return A character vector of color names (or integers if \code{indices}).
 #'
+#' @family coloring
 #' @export
 #'
 use_color_pal <- function(data_values, pal, color_NA="white", indices=FALSE) {

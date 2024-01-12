@@ -50,3 +50,31 @@ Apply a function across all locations in each parcel, for a pair of data and
 parcellation \code{"xifti"} objects that are in registration with one
 another. By default, the mean value in each parcel is calculated.
 }
+\seealso{
+Other parcellation-related: 
+\code{\link{load_parc}()},
+\code{\link{load_sub_parc}()},
+\code{\link{parc_add_subcortex}()},
+\code{\link{parc_borders}()},
+\code{\link{parc_vals_to_xifti}()}
+
+Other manipulating xifti: 
+\code{\link{add_surf}()},
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{resample_cifti}()},
+\code{\link{scale_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating xifti}
+\concept{parcellation-related}

@@ -111,7 +111,7 @@ is.xifti_data <- function(x) {
 #'
 #' @return Logical. Is \code{x} a valid \code{"surf"}?
 #' 
-#' @family surfing
+#' @family surface-related
 #' @export
 #' 
 is.surf <- function(x) {

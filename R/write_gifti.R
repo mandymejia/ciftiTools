@@ -169,7 +169,7 @@ write_metric_gifti <- function(
 #'
 #' @importFrom gifti writegii
 #' @family writing
-#' @family surfing
+#' @family surface-related
 #' @export
 write_surf_gifti <- function(
   x, gifti_fname, hemisphere=c("left", "right"),

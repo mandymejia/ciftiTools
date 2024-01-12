@@ -30,7 +30,7 @@
 #'  and the metadata of \code{xifti2} will be discarded (if provided).
 #'
 #' @export
-#' @family manipulating
+#' @family manipulating xifti
 #' @importFrom utils capture.output
 #'
 transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {

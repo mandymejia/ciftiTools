@@ -48,5 +48,13 @@ Other reading:
 \code{\link{read_cifti}()},
 \code{\link{read_surf}()},
 \code{\link{read_xifti2}()}
+
+Other parcellation-related: 
+\code{\link{apply_parc}()},
+\code{\link{load_sub_parc}()},
+\code{\link{parc_add_subcortex}()},
+\code{\link{parc_borders}()},
+\code{\link{parc_vals_to_xifti}()}
 }
+\concept{parcellation-related}
 \concept{reading}

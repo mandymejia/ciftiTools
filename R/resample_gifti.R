@@ -61,6 +61,7 @@
 #'
 #' @importFrom gifti readgii
 #'
+#' @family gifting
 #' @export
 #'
 #' @section Connectome Workbench:

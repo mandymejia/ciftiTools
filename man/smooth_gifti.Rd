@@ -64,3 +64,9 @@ to a new GIFTI file.
 This function interfaces with the \code{"-metric-smoothing"} Workbench command.
 }
 
+\seealso{
+Other gifting: 
+\code{\link{remap_gifti}()},
+\code{\link{resample_gifti}()}
+}
+\concept{gifting}

@@ -27,6 +27,7 @@
 #' 
 #' @return The remapped GIFTI file name, invisibly
 #' 
+#' @family gifting
 #' @export
 #' 
 #' @section Connectome Workbench:

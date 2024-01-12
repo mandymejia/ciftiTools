@@ -22,7 +22,7 @@
 #' @importFrom gifti readgii is.gifti
 #'
 #' @family reading
-#' @family surfing
+#' @family surface-related
 #' @export
 #' 
 read_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL) {

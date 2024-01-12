@@ -38,3 +38,10 @@ Yields the landmark color hex codes and values for the "ROY_BIG_BL" palette.
 This is the same color palette as the default Connectome Workbench palette.
 Source: https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 }
+\seealso{
+Other coloring: 
+\code{\link{expand_color_pal}()},
+\code{\link{make_color_pal}()},
+\code{\link{use_color_pal}()}
+}
+\concept{coloring}

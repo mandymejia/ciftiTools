@@ -16,6 +16,8 @@
 #' 
 #' @return The \code{"xifti"} with re-organized data and medial wall masks
 #' 
+#' @family manipulating xifti
+#' 
 #' @export
 #' 
 #' @seealso move_from_mwall

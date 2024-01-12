@@ -22,7 +22,8 @@
 #'  right. 
 #' @inheritParams surface_plot_Params
 #' 
-#' @family surfing
+#' @family visualizing
+#' @family surface-related
 #' @export
 #' 
 view_surf <- function(

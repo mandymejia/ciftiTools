@@ -42,12 +42,19 @@ Other reading:
 \code{\link{read_cifti}()},
 \code{\link{read_xifti2}()}
 
-Other surfing: 
+Other surface-related: 
+\code{\link{add_surf}()},
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
 \code{\link{is.surf}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
 \code{\link{resample_surf}()},
 \code{\link{rotate_surf}()},
+\code{\link{surf_area}()},
 \code{\link{view_surf}()},
 \code{\link{write_surf_gifti}()}
 }
 \concept{reading}
-\concept{surfing}
+\concept{surface-related}

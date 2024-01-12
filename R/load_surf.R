@@ -20,6 +20,7 @@
 #' @return The \code{"surf"} object
 #' 
 #' @family reading
+#' @family surface-related
 #' @export
 load_surf <- function(
   hemisphere=c("left", "right"), 

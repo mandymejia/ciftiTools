@@ -133,6 +133,7 @@ resample_cifti_wrapper <- function(
 #'  potentially \code{"surfL"} (if \code{surfL_original_fname} was provided)
 #'  and/or \code{"surfR"} (if \code{surfR_original_fname} was provided).
 #'
+#' @family manipulating xifti
 #' @family common
 #' @export
 #'

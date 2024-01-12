@@ -29,11 +29,18 @@ vertices. The last list entry, "hemisphere", should be "left", "right",
 or NULL indicating the brain hemisphere which the surface represents.
 }
 \seealso{
-Other surfing: 
+Other surface-related: 
+\code{\link{add_surf}()},
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
 \code{\link{read_surf}()},
 \code{\link{resample_surf}()},
 \code{\link{rotate_surf}()},
+\code{\link{surf_area}()},
 \code{\link{view_surf}()},
 \code{\link{write_surf_gifti}()}
 }
-\concept{surfing}
+\concept{surface-related}

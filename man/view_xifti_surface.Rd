@@ -437,12 +437,10 @@ vignette for an example.
 }
 
 \seealso{
-Other common: 
-\code{\link{is.cifti}()},
-\code{\link{read_cifti}()},
-\code{\link{resample_cifti}()},
-\code{\link{smooth_cifti}()},
+Other visualizing: 
+\code{\link{view_comp}()},
+\code{\link{view_surf}()},
 \code{\link{view_xifti_volume}()},
-\code{\link{write_cifti}()}
+\code{\link{view_xifti}()}
 }
-\concept{common}
+\concept{visualizing}

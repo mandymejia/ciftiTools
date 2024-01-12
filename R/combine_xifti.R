@@ -11,7 +11,7 @@
 #'  argument, or \code{"all"} to include the other metadata in a list.
 #' @return A \code{"xifti"} with data from the inputs
 #' 
-#' @family manipulating
+#' @family manipulating xifti
 #' @export
 #' 
 combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {

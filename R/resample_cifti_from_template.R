@@ -9,6 +9,7 @@
 #'
 #' @return The \code{target_fname}, invisibly
 #' 
+#' @family manipulating xifti
 #' @export
 #'
 #' @section Connectome Workbench:

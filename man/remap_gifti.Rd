@@ -58,3 +58,9 @@ This function interfaces with the \code{"-metric-resample"}, \code{"-label-resam
 and/or \code{"-surface-resample"} Workbench commands, depending on the input.
 }
 
+\seealso{
+Other gifting: 
+\code{\link{resample_gifti}()},
+\code{\link{smooth_gifti}()}
+}
+\concept{gifting}

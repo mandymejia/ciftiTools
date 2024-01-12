@@ -24,3 +24,19 @@ Calculate surface area of a \code{"surf"} object by vertex or face. Surface
 area calculation by vertex matches the Workbench command
 "-surface-vertex-areas".
 }
+\seealso{
+Other surface-related: 
+\code{\link{add_surf}()},
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
+\code{\link{is.surf}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
+}
+\concept{surface-related}

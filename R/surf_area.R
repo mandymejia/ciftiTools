@@ -13,6 +13,8 @@
 #' @return Vector of surface areas \code{by} vertex or face, in the same order
 #'  as how the vertices or faces are listed in \code{surf}. The units are the 
 #'  square of the units of \code{surf$vertices}. 
+#' 
+#' @family surface-related
 #' @export
 surf_area <- function(surf, by=c("vertex", "face")) {
 

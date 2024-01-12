@@ -126,6 +126,9 @@ remap_cifti_wrapper <- function(
 #'  because the medial wall mask is taken into account during remapping
 #'  calculations.
 #' @inheritParams verbose_Param_TRUE
+#' 
+#' @family manipulating xifti
+#' @export
 remap_cifti <- function(
   x, cifti_target_fname=NULL,
   remap_method=c("adaptive", "barycentric"),

@@ -34,6 +34,7 @@
 #' 
 #' @return \code{x} after erosion or dilation.
 #' 
+#' @family surface-related
 #' @export
 #' 
 edit_mask_surf <- function(

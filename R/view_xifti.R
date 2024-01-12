@@ -184,6 +184,8 @@ view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=F
 #' @return The return value of \code{view_xifti_surface} or
 #'  \code{view_xifti_volume}.
 #'
+#' @family common
+#' @family visualizing
 #' @export
 #'
 view_xifti <- function(xifti, what=NULL, ...) {

@@ -20,3 +20,12 @@ A \code{"xifti"} object
 From a parcellation and a corresponding value matrix, make a \code{"xifti"}
 object that has the value vector of each parcel across its locations.
 }
+\seealso{
+Other parcellation-related: 
+\code{\link{apply_parc}()},
+\code{\link{load_parc}()},
+\code{\link{load_sub_parc}()},
+\code{\link{parc_add_subcortex}()},
+\code{\link{parc_borders}()}
+}
+\concept{parcellation-related}

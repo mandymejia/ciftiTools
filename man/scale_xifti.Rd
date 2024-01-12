@@ -17,3 +17,23 @@ The input \code{"xifti"} with scaled columns.
 \description{
 Scale CIFTI data. Similar to \code{\link[base]{scale}}.
 }
+\seealso{
+Other manipulating xifti: 
+\code{\link{add_surf}()},
+\code{\link{apply_parc}()},
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{resample_cifti}()},
+\code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating xifti}

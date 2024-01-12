@@ -118,6 +118,7 @@ dist_from_mask_surf <- function(faces, mask, boundary_width=10){
 #'  \code{boundary_width} edges of a vertex in the mesh, but is not within the
 #'  mesh itself. 
 #'
+#' @family surface-related
 #' @export
 boundary_mask_surf <- function(faces, mask, boundary_width=10){
   b_layers <- dist_from_mask_surf(
@@ -418,6 +419,7 @@ mask_with_boundary_surf <- function(
 #'
 #' @return The masked \code{"surf"} object.
 #' 
+#' @family surface-related
 #' @export
 mask_surf <- function(surf, mask){
 

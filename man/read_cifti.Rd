@@ -218,8 +218,7 @@ Other common:
 \code{\link{is.cifti}()},
 \code{\link{resample_cifti}()},
 \code{\link{smooth_cifti}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()},
+\code{\link{view_xifti}()},
 \code{\link{write_cifti}()}
 
 Other reading: 

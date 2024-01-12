@@ -21,3 +21,10 @@ codes) and \code{"value"} (numeric)
 Interpolates between entries in the input palette to make a larger palette
 with COLOR_RES entries.
 }
+\seealso{
+Other coloring: 
+\code{\link{ROY_BIG_BL}()},
+\code{\link{make_color_pal}()},
+\code{\link{use_color_pal}()}
+}
+\concept{coloring}

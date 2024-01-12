@@ -29,6 +29,8 @@
 #'  \eqn{Q} is the length of the output of \code{FUN}. (For \code{mean},
 #'  \eqn{Q = 1}).
 #'
+#' @family parcellation-related
+#' @family manipulating xifti
 #' @export
 #'
 apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
@@ -96,6 +98,8 @@ apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
 #'  the color table of \code{parc}. Columns will become columns in the output
 #'  \code{"xifti"} object.
 #' @return A \code{"xifti"} object
+#' 
+#' @family parcellation-related
 #' @export
 #'
 parc_vals_to_xifti <- function(parc, vals){
@@ -173,6 +177,7 @@ parc_mean_mat <- function(parc){
 #'  required.)
 #' @return The new parcellation with added subcortical data and labels.
 #'
+#' @family parcellation-related
 #' @export
 parc_add_subcortex <- function(parc, parc_sub="MNI"){
   parc <- assure_parc(parc)
@@ -223,6 +228,7 @@ parc_add_subcortex <- function(parc, parc_sub="MNI"){
 #' Colors are based on https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
 #'
 #' @return The subcortical parcellation
+#' @family parcellation-related
 #' @keywords internal
 load_sub_parc <- function(){
   # Table of colors for each subcortical brain structure
@@ -307,6 +313,7 @@ assure_parc <- function(parc){
 #' @return Logical vector the same length as \code{parc} indicating if the
 #'  vertex lies on a border.
 #'
+#' @family parcellation-related
 #' @export
 parc_borders <- function(parc, surf=NULL, hemisphere=c("left", "right")) {
   stopifnot(is.vector(parc))

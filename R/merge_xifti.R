@@ -11,7 +11,7 @@
 #' 
 #' @return The concatenated \code{"xifti"}
 #' 
-#' @family manipulating
+#' @family manipulating xifti
 #' @export
 merge_xifti <- function(..., xifti_list=NULL) {
   if (is.null(xifti_list)) { xifti_list <- list(...) }

@@ -38,3 +38,19 @@ since the automatic choice of color mode and limits is determined across
 the entire data and shared between the two plots. Also, if writing files
 the subcortical plots will not overwrite the cortical plots.
 }
+\seealso{
+Other common: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{write_cifti}()}
+
+Other visualizing: 
+\code{\link{view_comp}()},
+\code{\link{view_surf}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()}
+}
+\concept{common}
+\concept{visualizing}

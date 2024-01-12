@@ -212,7 +212,7 @@
 #'  each index (and color legend if applicable) will be returned. Otherwise,
 #'  \code{NULL} is invisibly returned.
 #'
-#' @family common
+#' @family visualizing
 #' @export
 #' @importFrom graphics plot.new
 #' @importFrom grDevices dev.list dev.off png pdf gray

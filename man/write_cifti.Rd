@@ -74,8 +74,7 @@ Other common:
 \code{\link{read_cifti}()},
 \code{\link{resample_cifti}()},
 \code{\link{smooth_cifti}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()}
+\code{\link{view_xifti}()}
 
 Other writing: 
 \code{\link{separate_cifti}()},

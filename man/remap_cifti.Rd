@@ -126,3 +126,23 @@ the input \code{"xifti"} object has surface geometry, it will be removed.
 This function is in active development: its arguments and behavior may
 change greatly in future versions of the package.
 }
+\seealso{
+Other manipulating xifti: 
+\code{\link{add_surf}()},
+\code{\link{apply_parc}()},
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{resample_cifti}()},
+\code{\link{scale_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating xifti}

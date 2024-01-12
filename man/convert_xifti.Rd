@@ -141,14 +141,22 @@ xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels, labels=label
 
 }
 \seealso{
-Other manipulating: 
+Other manipulating xifti: 
 \code{\link{add_surf}()},
+\code{\link{apply_parc}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
 \code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
 \code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{resample_cifti}()},
+\code{\link{scale_xifti}()},
 \code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
 \code{\link{transform_xifti}()}
 }
-\concept{manipulating}
+\concept{manipulating xifti}
