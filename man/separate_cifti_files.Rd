@@ -5,8 +5,9 @@
 \title{Separate CIFTI: file names}
 \usage{
 separate_cifti_files(
+  bs_present,
   intent = 3006,
-  brainstructures = c("left", "right"),
+  brainstructures = NULL,
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -19,6 +20,9 @@ separate_cifti_files(
 )
 }
 \arguments{
+\item{bs_present}{The brain structures actually present in the CIFTI or
+\code{"xifti"} object.}
+
 \item{intent}{3002 (default), 3006, or 3007}
 
 \item{brainstructures}{(Optional) character vector indicating a subset of

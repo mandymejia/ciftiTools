@@ -70,6 +70,8 @@ separate_cifti_wrapper <- function(
 #'  will be written. If \code{write_dir} is not \code{NULL}, files for all
 #'  existing brian components will be written to that directory. 
 #'
+#' @param bs_present The brain structures actually present in the CIFTI or 
+#'  \code{"xifti"} object.
 #' @param intent 3002 (default), 3006, or 3007
 #' @param brainstructures (Optional) character vector indicating a subset of 
 #'  brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex, 
@@ -125,8 +127,9 @@ separate_cifti_wrapper <- function(
 #'
 #' @keywords internal
 separate_cifti_files <- function(
+  bs_present,
   intent=3006,
-  brainstructures=c("left","right"),
+  brainstructures=NULL,
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",
@@ -143,16 +146,30 @@ separate_cifti_files <- function(
     stop("Provide either `write_dir` or at least one of the individual separate file names to write.")
   }
 
-  # Get the brainstructures.
-  brainstructures <- match_input(
-    brainstructures, c("left","right","subcortical","all"),
-    user_value_label="brainstructures"
-  )
-  if ("all" %in% brainstructures) {
-    brainstructures <- c("left","right","subcortical")
+  # Reconcile `brainstructures` with `bs_present`.
+  if (is.null(brainstructures)) { 
+    brainstructures <- bs_present
+  } else {
+    brainstructures <- match_input(
+      brainstructures, c("left","right","subcortical","all"),
+      user_value_label="brainstructures"
+    )
+    if ("all" %in% brainstructures) {
+      brainstructures <- c("left","right","subcortical")
+    }
+    if ("left" %in% brainstructures && !("left" %in% bs_present)) {
+      warning("Left cortex data does not exist. Ignoring. Fix `brainstructures` to remove this warning.")
+    }
+    if ("right" %in% brainstructures && !("right" %in% bs_present)) {
+      warning("Right cortex data does not exist. Ignoring. Fix `brainstructures` to remove this warning.")
+    }
+    if ("subcortical" %in% brainstructures && !("subcortical" %in% bs_present)) {
+      warning("Subcortex data does not exist. Ignoring. Fix `brainstructures` to remove this warning.")
+    }
+    brainstructures <- brainstructures[brainstructures %in% bs_present]
   }
 
-  # Subset the brainstructures if `write_dir` was not provided.
+  # If `write_dir` was not provided, only write out files with provided names.
   do <- c("left","right","subcortical","subcortical") %in% brainstructures
   if (is.null(write_dir)) {
     do <- do & (!c(
@@ -173,7 +190,7 @@ separate_cifti_files <- function(
     stopifnot(length(unique(ROI_brainstructures)) == length(ROI_brainstructures))
   }
 
-  # Subset the ROI brainstructures if `write_dir` was not provided.
+  # If `write_dir` was not provided, only write out ROI files with provided names.
   ROI_do <- c("left","right","subcortical") %in% ROI_brainstructures
   if (is.null(write_dir)) {
     ROI_do <- ROI_do & (!c(
@@ -195,7 +212,11 @@ separate_cifti_files <- function(
       if (is.null(ROIcortexL_fname)) { ROIcortexL_fname <- default_fname("ROIcortexL") }
       ROIcortexL_fname <- format_path(ROIcortexL_fname, write_dir, mode=2)
     } else { ROIcortexL_fname <- NULL }
-  } else { cortexL_fname <- ROIcortexL_fname <- NULL }
+  } else { 
+    if (is.null(write_dir) && !is.null(cortexL_fname)) { warning("`cortexL_fname` was provided, but left cortex data does not exist, or was excluded from `brainstructures`.") }
+    if (is.null(write_dir) && !is.null(ROIcortexL_fname)) { warning("`ROIcortexL_fname` was provided, but left cortex data does not exist, or was excluded from `brainstructures`.") }
+    cortexL_fname <- ROIcortexL_fname <- NULL 
+  }
 
   if (do['right']) {
     # Right cortex
@@ -206,7 +227,11 @@ separate_cifti_files <- function(
       if (is.null(ROIcortexR_fname)) { ROIcortexR_fname <- default_fname("ROIcortexR") }
       ROIcortexR_fname <- format_path(ROIcortexR_fname, write_dir, mode=2)
     } else { ROIcortexR_fname <- NULL }
-  } else { cortexR_fname <- ROIcortexR_fname <- NULL }
+  } else { 
+    if (is.null(write_dir) && !is.null(cortexR_fname)) { warning("`cortexR_fname` was provided, but right cortex data does not exist, or was excluded from `brainstructures`.") }
+    if (is.null(write_dir) && !is.null(ROIcortexR_fname)) { warning("`ROIcortexR_fname` was provided, but right cortex data does not exist, or was excluded from `brainstructures`.") }
+    cortexR_fname <- ROIcortexR_fname <- NULL 
+  }
 
   if (do['subVol']) {
     # Subcortex
@@ -216,12 +241,19 @@ separate_cifti_files <- function(
       if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort") }
       ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
     } else { ROIsubcortVol_fname <- NULL }
-  } else { subcortVol_fname <- ROIsubcortVol_fname <- NULL }
+  } else { 
+    if (is.null(write_dir) && !is.null(subcortVol_fname)) { warning("`subcortVol_fname` was provided, but subcortex data does not exist, or was excluded from `brainstructures`.") }
+    if (is.null(write_dir) && !is.null(ROIsubcortVol_fname)) { warning("`ROIsubcortVol_fname` was provided, but subcortex data does not exist, or was excluded from `brainstructures`.") }
+    subcortVol_fname <- ROIsubcortVol_fname <- NULL 
+  }
 
   if (do["subLab"]) {
     if (is.null(subcortLabs_fname)) { subcortLabs_fname <- default_fname("subcortLabs") }
     subcortLabs_fname <- format_path(subcortLabs_fname, write_dir, mode=2)
-  } else { subcortLabs_fname <- NULL }
+  } else { 
+    if (is.null(write_dir) && !is.null(subcortLabs_fname)) { warning("`subcortLabs_fname` was provided, but subcortex data does not exist, or was excluded from `brainstructures`.") }
+    subcortLabs_fname <- NULL
+  }
 
   sep_fnames <- unlist(list(
     cortexL = cortexL_fname,
@@ -292,6 +324,7 @@ separate_cifti <- function(cifti_fname,
   write_dir=NULL) {
 
   # [DEV NOTE] This function is written in a similar way to `write_xifti2`.
+  # If making changes here, consider making parallel changes there.
 
   # Check if CIFTI exists.
   cifti_fname <- format_path(cifti_fname)
@@ -300,16 +333,12 @@ separate_cifti <- function(cifti_fname,
   }
 
   # Read metadata.
-  # Check which brainstructures are present.
   cifti_info <- info_cifti(cifti_fname)
-  bs_present <- cifti_info$cifti$brainstructures
-  if (is.null(brainstructures)) { brainstructures <- cifti_info$cifti$brainstructures }
-
   # Get the components of the CIFTI file path.
   bname_cifti <- basename(cifti_fname)
   extn_cifti <- get_cifti_extn(bname_cifti)
 
-  # Convert extension to numerical intent.
+  # Get numerical intent. Use dscalar if can't be inferred from file name.
   check_cifti_type(cifti_info$cifti$intent, extn_cifti)
   if (extn_cifti %in% c("dtseries.nii", "dscalar.nii", "dlabel.nii")) {
     intent_cifti <- supported_intents()$value[
@@ -319,15 +348,21 @@ separate_cifti <- function(cifti_fname,
     intent_cifti <- 3006
   }
 
+  # Check which brainstructures are present.
+  bs_present <- cifti_info$cifti$brainstructures
+
+  # Reconcile `brainstructures` with `bs_present`.
   # Get output files: which ones to write, and their names.
   x <- separate_cifti_files(
+    bs_present=bs_present,
     intent = intent_cifti,
     brainstructures=brainstructures,
     cortexL_fname=cortexL_fname, cortexR_fname=cortexR_fname,
     subcortVol_fname=subcortVol_fname, subcortLabs_fname=subcortLabs_fname,
     ROI_brainstructures=ROI_brainstructures,
     ROIcortexL_fname=ROIcortexL_fname, ROIcortexR_fname=ROIcortexR_fname,
-    ROIsubcortVol_fname=ROIsubcortVol_fname, write_dir=write_dir
+    ROIsubcortVol_fname=ROIsubcortVol_fname, 
+    write_dir=write_dir
   )
   do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
 
@@ -339,31 +374,6 @@ separate_cifti <- function(cifti_fname,
     gsub(extn_cifti, basename(x), bname_cifti, fixed=TRUE)
   ) }
   sep_fnames <- vapply(sep_fnames, fix_sep_fname, "")
-
-  # Check that requested brainstructures are present.
-  # Modify `do` and `sep_fnames` if necessary.
-  bs2 <- c(do["left"], do["right"], do["subVol"] | do["subLab"])
-  names(bs2)[names(bs2) == "subVol"] <- "subcortical"
-  if (!all(names(bs2)[bs2] %in% bs_present)) {
-    warning(paste0(
-      "Only the following brainstructures are present in the CIFTI file: ",
-      paste(bs_present, collapse=", "), "\n"
-    ))
-    if (!("left" %in% bs_present)) { 
-      do["left"] <- FALSE
-      sep_fnames[c("cortexL", "ROIcortexL")] <- list(NULL)
-    }
-    if (!("right" %in% bs_present)) {
-      do["right"] <- FALSE
-      sep_fnames[c("cortexR", "ROIcortexR")] <- list(NULL)
-    }
-    if (!("subcortical" %in% bs_present)) {
-      do[c("subVol", "subLab")] <- FALSE
-      sep_fnames[c("subcortVol", "subcortLabs", "ROIsubcortVol")] <- list(NULL)
-    }
-    sep_fnames <- unlist(list(sep_fnames))
-  }
-  if (all(!do)) { message("Nothing to separate."); return(invisible(NULL)) }
 
   # Build the Connectome Workbench command.
   what <- switch(as.character(cifti_info$cifti$intent),
@@ -386,7 +396,7 @@ separate_cifti <- function(cifti_fname,
     # `-cifti-separate` expects to write out the volume data if the labels are written.
     # So, here we write the volume data to a dummy tempfile, to get the labels only.
     if (!do['subVol']) {
-      subVol_tfname <- sys_path(format_path("subVol.nii", tempdir(), mode=2))
+      subVol_tfname <- tempfile(fileext=".subVol.nii")
       cmd <- paste(cmd, '-volume-all', subVol_tfname)
     }
     cmd <- paste(cmd, '-label', sys_path(sep_fnames["subcortLabs"]))
