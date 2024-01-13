@@ -25,26 +25,21 @@ write_xifti2 <- function(
   ROIsubcortVol_fname=NULL, write_dir=NULL,
   verbose=FALSE) {
 
+  # [DEV NOTE] This function is written in a similar way to `separate_cifti`.
+
   # [TO DO] write label GIFTI from dlabel CIFTI?
 
-  # Check arguments.
+  # Check `xifti`.
   stopifnot(is.xifti(xifti))
+
+  # Check which brainstructures are present.
   bs_present <- c("left", "right", "subcortical")[!vapply(xifti$data, is.null, FALSE)]
-  if (is.null(brainstructures)) {
-    brainstructures <- bs_present
-  }
-  brainstructures <- match_input(
-    brainstructures, c("left","right","subcortical","all"),
-    user_value_label="brainstructures"
-  )
-  if ("all" %in% brainstructures) {
-    brainstructures <- c("left","right","subcortical")
-  }
+  if (is.null(brainstructures)) { brainstructures <- bs_present }
 
   # Write scalar files if intent is not specified.
   if (is.null(xifti$meta$cifti$intent)) { xifti$meta$cifti$intent <- 3006 }
 
-  # Get output files: which ones to write, and their names
+  # Get output files: which ones to write, and their names.
   x <- separate_cifti_files(
     intent = xifti$meta$cifti$intent,
     brainstructures=brainstructures,
@@ -56,17 +51,34 @@ write_xifti2 <- function(
   )
   do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
 
-  # Check brainstructures
-  if (!all(brainstructures %in% bs_present)) {
+  if (all(!do)) { message("Nothing to write."); return(invisible(NULL)) }
+
+  # Check that requested brainstructures are present.
+  # Modify `do` and `sep_fnames` if necessary.
+  bs2 <- c(do["left"], do["right"], do["subVol"] | do["subLab"])
+  names(bs2)[names(bs2) == "subVol"] <- "subcortical"
+  if (!all(names(bs2)[bs2] %in% bs_present)) {
     warning(paste0(
       "Only the following brainstructures are present in the CIFTI file: ",
       paste(bs_present, collapse=", "), "\n"
     ))
-    brainstructures <- bs_present
+    if (!("left" %in% bs_present)) { 
+      do["left"] <- FALSE
+      sep_fnames[c("cortexL", "ROIcortexL")] <- list(NULL)
+    }
+    if (!("right" %in% bs_present)) {
+      do["right"] <- FALSE
+      sep_fnames[c("cortexR", "ROIcortexR")] <- list(NULL)
+    }
+    if (!("subcortical" %in% bs_present)) {
+      do[c("subVol", "subLab")] <- FALSE
+      sep_fnames[c("subcortVol", "subcortLabs", "ROIsubcortVol")] <- list(NULL)
+    }
+    sep_fnames <- unlist(list(sep_fnames))
   }
-  do <- c("left","right","subcortical") %in% brainstructures
-  names(do) <- c("left", "right", "sub")
+  if (all(!do)) { message("Nothing to separate."); return(invisible(NULL)) }
 
+  # Check for and modify multiple columns with different label tables.
   if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
     intent <- "label"
     data_type <- "INT32"
@@ -116,8 +128,6 @@ write_xifti2 <- function(
         "left", data_type = "FLOAT32"
       )
     }
-  } else {
-    sep_fnames <- sep_fnames[!grepl("cortexL", names(sep_fnames))]
   }
 
   # Right cortex
@@ -146,13 +156,21 @@ write_xifti2 <- function(
         "right", data_type = "FLOAT32"
       )
     }
-  } else {
-    sep_fnames <- sep_fnames[!grepl("cortexR", names(sep_fnames))]
   }
 
   ## Subcortex: unmask to get volumetric array.
-  if (do["sub"]) {
+  if (do["subVol"] | do["subLab"]) {
     if (verbose) {cat("Writing subcortical data and labels.\n")}
+
+    # Handle case where just one of these files are requested.
+    sep_fnames2 <- sep_fnames
+    if (is.null(sep_fnames2)["subcortVol"]) {
+      sep_fnames2["subcortVol"] <- sys_path(format_path("subVol.nii", tempdir(), mode=2))
+    }
+    if (is.null(sep_fnames2)["subcortLab"]) {
+      sep_fnames2["subcortLab"] <- sys_path(format_path("subLab.nii", tempdir(), mode=2))
+    }
+
     write_subcort_nifti(
       xifti$data$subcort,
       xifti$meta$subcort$labels,
@@ -161,13 +179,11 @@ write_xifti2 <- function(
       xifti$meta$subcort$trans_units,
       xifti$meta$cifti$names,
       label_table,
-      sep_fnames["subcortVol"],
-      sep_fnames["subcortLabs"],
+      sep_fnames2["subcortVol"],
+      sep_fnames2["subcortLabs"],
       sep_fnames["ROIsubcortVol"],
       fill=0
     )
-  } else {
-    sep_fnames <- sep_fnames[!grepl("subcort", names(sep_fnames))]
   }
 
   invisible(sep_fnames)

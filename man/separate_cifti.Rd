@@ -8,7 +8,7 @@
 \usage{
 separate_cifti(
   cifti_fname,
-  brainstructures = c("left", "right"),
+  brainstructures = NULL,
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -51,54 +51,61 @@ separatecii(
 \arguments{
 \item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
-\item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
-and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
-\code{"all"} (obtain all three brain structures). Default:
-\code{c("left","right")} (cortex only).
-
-If a brain structure is indicated but does not exist in the CIFTI file, a
-warning will occur and that brain structure will be skipped.}
+\item{brainstructures}{(Optional) character vector indicating a subset of
+brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
+and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
+out all existing brain structures. Default: \code{c("left","right")}.}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names
-(*.[func/label].gii) to save the [left/right] cortex data to. If not provided,
-defaults to \code{"*[L/R].\[func/label\].gii"}, where * is the file name
-component of \code{cifti_fname}. Will be written in \code{write_dir}.
-
+(*.[func/label].gii) to save the [left/right] cortex data to.
 dtseries and dscalar files should use "func", whereas dlabel files should
-use "label".}
+use "label".
+
+If \code{NULL} and \code{write_dir} is provided, defaults to
+\code{"*[L/R].\[func/label\].gii"}, where * is the file name component of
+\code{cifti_fname}.}
 
 \item{subcortVol_fname, subcortLabs_fname}{(Optional) NIFTI file names to save
-the subcortical [volume/labels] to. If not provided, defaults to
+the subcortical [volume/labels] to. Provide both or neither.
+
+If \code{NULL} and \code{write_dir} is provided, defaults to
 \code{"*[/.labels].nii"}, where * is the file name component of
-\code{cifti_fname}. Will be written in \code{write_dir}.}
+\code{cifti_fname}.}
 
 \item{ROI_brainstructures}{Which ROIs should be obtained? \code{"all"}
 (default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL}
 to not obtain any ROIs. This should be a subset of \code{brainstructures}.}
 
 \item{ROIcortexL_fname, ROIcortexR_fname}{(Optional) GIFTI file names
-(*.[func/label].gii) to save the [left/right] cortex ROI to. If not provided,
-defaults to \code{"*ROI_[L/R].\[func/label\].gii"}, where * is the file name component
-of \code{cifti_fname}. The cortical ROIs typically represent the medial wall
-mask, with values of 1 for in-ROI (non-medial wall) vertices and 0 for
-out-of-ROI (medial wall) vertices. Will be written in \code{write_dir}.
-
+(*.[func/label].gii) to save the [left/right] cortex ROI to.
 dtseries and dscalar files should use "func", whereas dlabel files should
-use "label".}
+use "label".
+
+If \code{NULL} and \code{write_dir} is provided, defaults to
+\code{"*ROI_[L/R].\[func/label\].gii"}, where * is the file name component of
+\code{cifti_fname}.
+
+The cortical ROIs typically represent the medial wall
+mask, with values of 1 for in-ROI (non-medial wall) vertices and 0 for
+out-of-ROI (medial wall) vertices. Will be written in \code{write_dir}.}
 
 \item{ROIsubcortVol_fname}{(Optional) NIFTI file names to save
-the subcortical ROI to. If not provided, defaults to
+the subcortical ROI to.
+
+If \code{NULL} and \code{write_dir} is provided, defaults to
 \code{"*ROI.nii"}, where * is the file name component of
-\code{cifti_fname}. The subcortical ROI typically represents the volumetric
+\code{cifti_fname}.
+
+The subcortical ROI typically represents the volumetric
 mask for the entire subcortical structure, with values of 1 for in-ROI
 (in subcortex) voxels and 0 for out-of-ROI (not in subcortex) voxels. Will
 be written in \code{write_dir}.}
 
-\item{write_dir}{Where should the separated files be placed? \code{NULL}
-(default) will write them to the current working directory.
-
-\code{write_dir} must already exist, or an error will occur.}
+\item{write_dir}{(Optional) A path to an existing directory. If provided,
+every component in the \code{"xifti"} will be written to this directory,
+using automatically-generated names if their \code{*_fname} argument was
+not provided. Otherwise if \code{write_dir} is \code{NULL}, only the
+components for which their \code{*_fname} was provided will be written.}
 }
 \value{
 A named character vector with the file paths to the written
