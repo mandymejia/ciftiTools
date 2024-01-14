@@ -10,7 +10,7 @@ load_parc(
 }
 \arguments{
 \item{name}{The name of the parcellation to load:
-\itemize{
+\describe{
 \item{\code{"Schaefer_100"}:}{   (2018) 100 parcels based on the "local-global" approach.}
 \item{\code{"Schaefer_400"}:}{   (2018) 400 parcels based on the "local-global" approach.}
 \item{\code{"Schaefer_1000"}:}{   (2018) 1000 parcels based on the "local-global" approach.}

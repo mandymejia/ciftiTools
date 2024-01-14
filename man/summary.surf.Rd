@@ -18,7 +18,7 @@ See \code{\link{is.surf}} and \code{\link{make_surf}}.}
 
 \item{...}{further arguments passed to or from other methods.}
 
-\item{x}{bject of class "surf".}
+\item{x}{Object of class "surf".}
 }
 \description{
 Summary method for class "surf"

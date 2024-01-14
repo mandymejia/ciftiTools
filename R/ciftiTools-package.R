@@ -6,7 +6,7 @@
 #'
 #' Functions for reading in CIFTI or GIFTI data:
 #' 
-#' \itemize{
+#' \describe{
 #'  \item{\code{read_xifti}:}{   Read in a CIFTI file as a \code{"xifti"}}
 #'  \item{\code{read_xifti2}:}{   Read in GIFTI files as a \code{"xifti"}}
 #'  \item{\code{as.xifti}:}{   Combine numeric data to form a \code{"xifti"}}
@@ -18,7 +18,7 @@
 #' 
 #' Functions for writing CIFTI or GIFTI data:
 #' 
-#' \itemize{
+#' \describe{
 #'  \item{\code{write_cifti}:}{   Write a \code{"xifti"} to a CIFTI file}
 #'  \item{\code{write_xifti2}:}{   Write a \code{"xifti"} to GIFTI and NIFTI files}
 #'  \item{\code{write_metric_gifti}:}{   Write a numeric data matrix to a metric GIFTI file}
@@ -29,7 +29,7 @@
 #' 
 #' Functions for manipulating \code{"xifti"}s:
 #' 
-#' \itemize{
+#' \describe{
 #'  \item{\code{apply_xifti}:}{   Apply a function along the rows or columns of the \code{"xifti"} data matrix}
 #'  \item{\code{combine_xifti}:}{   Combine multiple \code{"xifti"}s with non-overlapping brain structures}
 #'  \item{\code{convert_xifti}:}{   Convert the intent of a \code{"xifti"}}
@@ -45,7 +45,7 @@
 #' 
 #' S3 methods for \code{"xifti"}s:
 #' 
-#' \itemize{
+#' \describe{
 #'  \item{\code{summary} and \code{print}:}{   Summarize the contents.}
 #'  \item{\code{as.matrix}:}{   Convert data to a locations by measurements numeric matrix.}
 #'  \item{\code{dim}:}{    Obtain number of locations and number of measurements.}
@@ -56,7 +56,7 @@
 #' 
 #' Functions for working with surfaces:
 #' 
-#' \itemize{
+#' \describe{
 #'  \item{\code{read_surf}:}{   Read in a surface GIFTI file as a \code{"surf"}}
 #'  \item{\code{is.surf}:}{   Verify a \code{"surf"}}
 #'  \item{\code{write_surf_gifti}:}{   Write a \code{"surf"} to a surface GIFTI file}
