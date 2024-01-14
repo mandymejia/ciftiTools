@@ -22,7 +22,7 @@ summary.surf <- function(object, ...) {
 #' @rdname summary.surf
 #' @export
 #' 
-#' @param x bject of class "surf". 
+#' @param x Object of class "surf". 
 #' 
 #' @method print summary.surf
 #' 

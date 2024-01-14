@@ -94,7 +94,7 @@ should be used.}
 surfaces to use for vertex area correction during adaptive resampling.
 Required if \code{remap_method} is \code{"adaptive"}.}
 
-\item{areaR_original_fname, areaR_target_fname, sphereR_original_fname, sphereR_target_fname}{See the correxponding arguments for the left cortex.}
+\item{areaR_original_fname, areaR_target_fname, sphereR_original_fname, sphereR_target_fname}{See the corresponding arguments for the left cortex.}
 
 \item{sphereL_original_fname, sphereL_target_fname}{File paths to the sphere
 surfaces in the original and target spaces, for the left cortex.}

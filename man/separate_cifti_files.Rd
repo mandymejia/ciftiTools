@@ -90,6 +90,6 @@ File paths for writing GIFTI and NIFTI files from a CIFTI or \code{"xifti"}
 \details{
 If \code{write_dir} is \code{NULL}, only components with provided file names
 will be written. If \code{write_dir} is not \code{NULL}, files for all
-existing brian components will be written to that directory.
+existing brain components will be written to that directory.
 }
 \keyword{internal}

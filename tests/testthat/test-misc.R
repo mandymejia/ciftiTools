@@ -289,5 +289,19 @@ test_that("Miscellaneous functions are working", {
 
   # parcellation matrix
   parc <- parc_add_subcortex(load_parc())
-  stopifnot(all(table(c(as.matrix(parc))) - rowSums(parc_mean_mat(parc)>0) == 0))
+  stopifnot(all(table(c(as.matrix(parc))) - rowSums(ciftiTools:::parc_mean_mat(parc)>0) == 0))
+
+  # parcellation functions
+  ### dummy data
+  cii <- read_cifti(ciftiTools.files()$cifti["dscalar_ones"], brainstructures="all", resamp_res=32000)
+  cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
+  cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
+  # tests
+  q <- apply_parc(cii, parc)
+  dim(parc_vals_to_xifti(parc, q))
+  q <- cbind(q,q); colnames(q) <- c("a", "b")
+  summary(parc_vals_to_xifti(parc, q))
+
+  # unmask_subcortex
+  q <- unmask_subcortex(cii)
 })

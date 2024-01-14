@@ -428,7 +428,7 @@ plt <- view_comp(fnames[seq(2)], fname=fnames[3], nrow=1)
 knitr::include_graphics(plt, dpi=180)
 ```
 
-`even_vert_samp` obtains a subset of vertice sampled evenly across the mesh. It works by downsampling the mesh and then identifying the original vertices closest to the vertices on the downsampled mesh. 
+`even_vert_samp` obtains a subset of vertices sampled evenly across the mesh. It works by downsampling the mesh and then identifying the original vertices closest to the vertices on the downsampled mesh. 
 
 ```{r, rgl=TRUE, fig.cap="500 evenly-sampled vertices", format="png", fig.height=3.8, fig.width=2.5}
 # Load a left-hemisphere surface.

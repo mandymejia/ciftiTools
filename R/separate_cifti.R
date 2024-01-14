@@ -68,7 +68,7 @@ separate_cifti_wrapper <- function(
 #' 
 #' If \code{write_dir} is \code{NULL}, only components with provided file names
 #'  will be written. If \code{write_dir} is not \code{NULL}, files for all
-#'  existing brian components will be written to that directory. 
+#'  existing brain components will be written to that directory. 
 #'
 #' @param bs_present The brain structures actually present in the CIFTI or 
 #'  \code{"xifti"} object.

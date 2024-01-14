@@ -1,4 +1,4 @@
-# 13.1
+# 13.2
 
 `ciftiTools` now has a couple functions which make working with parcellations easier. (A parcellation is a single-column dlabel CIFTI or `"xifti"` object. Each label level, or "Key", represents a "parcel." Each location belongs to exactly one parcel. Parcels are usually contiguous regions--but not necessarily. `ciftiTools` includes a few of the most commonly-used parcellations. These can be loaded with `load_parc`. Any other parcellation CIFTI file can be read in with `read_cifti`.)
 * `apply_parc`: Apply a parcellation `"xifti"` to a data `"xifti"`. Can be used to compute the mean of each column, e.g. for FC calculation, but also supports applying any other function parcel-wise.

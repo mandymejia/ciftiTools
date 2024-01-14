@@ -116,7 +116,7 @@ remap_cifti_wrapper <- function(
 #' @param sphereL_original_fname,sphereL_target_fname File paths to the sphere
 #'  surfaces in the original and target spaces, for the left cortex.
 #' @param areaR_original_fname,areaR_target_fname,sphereR_original_fname,sphereR_target_fname
-#'  See the correxponding arguments for the left cortex.
+#'  See the corresponding arguments for the left cortex.
 #' @param mwall_values If the medial wall locations are not indicated in the
 #'  CIFTI, and if \code{ROIcortexL/R_original_fname} is not provided, then use
 #'  these values to infer the medial wall mask. Default: \code{c(NA, NaN)}. If
