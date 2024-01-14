@@ -289,5 +289,5 @@ test_that("Miscellaneous functions are working", {
 
   # parcellation matrix
   parc <- parc_add_subcortex(load_parc())
-  stopifnot(all(table(c(as.matrix(parc))) - rowSums(parc_matrix(parc)>0) == 0))
+  stopifnot(all(table(c(as.matrix(parc))) - rowSums(parc_mean_mat(parc)>0) == 0))
 })
