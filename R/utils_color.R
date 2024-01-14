@@ -200,7 +200,6 @@ ROY_BIG_BL <- function(min=0, max=1, mid=NULL, half=NULL, pos_half=FALSE) {
 #' @return A data.frame with two columns: \code{"color"} (character: color hex
 #'  codes) and \code{"value"} (numeric)
 #'
-#' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @import viridisLite
 #'
@@ -413,7 +412,8 @@ make_color_pal <- function(
 #'  with COLOR_RES entries.
 #'
 #' @param pal The color palette to expand, as a data.frame with two columns:
-#'  \code{"color"} (character: color hex codes) and \code{"value"} (numeric).
+#'  \code{"color"} (character: color hex codes) and \code{"value"} (numeric,
+#'    ascending).
 #' @param COLOR_RES The number of entries to have in the output palette.
 #'
 #' @return A data.frame with two columns: \code{"color"} (character: color hex
@@ -436,7 +436,7 @@ expand_color_pal <- function(pal, COLOR_RES=255) {
     # Interpolate between palette values to obtain at least COLOR_RES
     #   colors levels.
     color_res <- COLOR_RES * diff(pal$value)/diff(range(pal$value))
-    color_res <- as.integer(round(pmax(color_res, 2)))
+    color_res <- as.integer(round(pmax(abs(color_res), 2))) * sign(color_res)
     diff_to_fix <- sum(color_res) + 1 - COLOR_RES # +1 b/c last added later
 
     if (diff_to_fix < 0) {
@@ -451,7 +451,7 @@ expand_color_pal <- function(pal, COLOR_RES=255) {
     for(ii in 1:(nrow(pal)-1)) {
       next_vals <- seq(pal$value[ii], pal$value[ii+1], length.out=color_res[ii]+1)
       next_vals <- next_vals[seq(length(next_vals)-1)]
-      next_cols <- colorRampPalette(c(colors[ii], colors[ii+1]))(color_res[ii]+1)
+      next_cols <- colorRampPalette(c(colors[ii], colors[ii+1]), space="Lab")(color_res[ii]+1)
       next_cols <- next_cols[seq(length(next_cols)-1)]
       vals <- c(vals, next_vals)
       cols <- c(cols, next_cols)
