@@ -9,7 +9,8 @@ expand_color_pal(pal, COLOR_RES = 255)
 }
 \arguments{
 \item{pal}{The color palette to expand, as a data.frame with two columns:
-\code{"color"} (character: color hex codes) and \code{"value"} (numeric).}
+\code{"color"} (character: color hex codes) and \code{"value"} (numeric,
+ascending).}
 
 \item{COLOR_RES}{The number of entries to have in the output palette.}
 }

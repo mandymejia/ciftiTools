@@ -102,35 +102,52 @@ to view the tutorial vignette.
 
 ## List of commonly-used functions
 
-- `apply_parc`: Apply a function to each parcel separately.
-- `apply_xifti`: Similar to `base::apply`.
+Basics: reading, plotting, writing
+
 - `ciftiTools.setOption`: Necessary to point to the Connectome Workbench
   each time `ciftiTools` is loaded.
+- `read_cifti`: Read in a CIFTI file as a `"xifti"` object.
+- `view_xifti` Plot the cortex and/or subcortex. Has many options for
+  controlling the visualization.
+- `write_cifti`: Write a `"xifti"` object to a CIFTI file.
+
+Manipulating CIFTI files
+
+- `resample_cifti`: Resample to a different resolution.
+- `separate_cifti`: Separate a CIFTI file into GIFTI and NIFTI files.
+- `smooth_cifti`: Smooth the data along the surface.
+- (Use `run_wb_cmd` to execute Connectome Workbench commands from R)
+
+Manipulating `"xifti"` objects
+
+- `apply_xifti`: Similar to `base::apply`.
 - `combine_xifti`: Combine `"xifti"`s with non-overlapping brain
   structures.
 - `convert_xifti`: Convert between dlabel, dscalar, and dtseries.
-- `load_parc`: Load a parcellation included in the package.
-- `load_surf`: Load a surface geometry included in the package.
 - `merge_xifti`: Concatenate `"xifti"`s.
 - `move_from_mwall`: Convert the medial wall mask to a data value,
   deleting the mask.
 - `move_to_mwall`: Mask out a particular data value.
 - `newdata_xifti`: Replace the data values.
-- `read_cifti`: Read in a CIFTI file as a `"xifti"` object.
-- `read_surf`: Read in a GIFTI surface geometry file as a `"surf"`
-  object.
-- `resample_cifti`: Resample to a different resolution.
+- `resample_xifti`: Resample to a different resolution.
 - `scale_xifti`: Similar to `base::scale`.
 - `select_xifti`: Rearrange the columns to reorder, take a subset, or
   repeat them.
-- `separate_cifti`: Separate a CIFTI file into GIFTI and NIFTI files.
-- `smooth_cifti`: Smooth the data along the surface.
+- `smooth_xifti`: Smooth the data along the surface.
 - `transform_xifti`: Apply a vectorizable function.
-- `view_xifti` Plot the cortex and/or subcortex. Has many options for
-  controlling the visualization.
-- `write_cifti`: Write a `"xifti"` object to a CIFTI file.
+
+Surface gemoetry
+
+- `load_surf`: Load a surface geometry included in the package.
+- `read_surf`: Read in a GIFTI surface geometry file as a `"surf"`
+  object.
 - `write_surf`: Write a `"surf"` object to a GIFTI surface geometry
   file.
+
+Parcellations
+
+- `apply_parc`: Apply a function to each parcel separately.
+- `load_parc`: Load a parcellation included in the package.
 
 See `NAMESPACE` for a full list of all exported functions.
 
