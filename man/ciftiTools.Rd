@@ -2,8 +2,8 @@
 % Please edit documentation in R/ciftiTools-package.R
 \docType{package}
 \name{ciftiTools}
-\alias{ciftiTools}
 \alias{ciftiTools-package}
+\alias{ciftiTools}
 \title{ciftiTools: Tools for Reading and Visualizing CIFTI Brain Files}
 \description{
 Here are groups of commonly-used functions in \code{ciftiTools}:
