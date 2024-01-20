@@ -16,21 +16,21 @@ seeing the structure of a \code{"xifti"} object or creating a new one.
 \details{
 Additional metadata depends on the type of CIFTI file:
 
-\itemize{
+\describe{
 \item{"dtseries"}{
-\itemize{
+\describe{
 \item{time_start:}{   Start time}
 \item{time_step:}{   The TR}
 \item{time_unit:}{   Unit of time}
 }
 }
 \item{"dscalar"}{
-\itemize{
+\describe{
 \item{names:}{   Name of each data column}
 }
 }
 \item{"dlabels"}{
-\itemize{
+\describe{
 \item{names:}{   Name of each data column}
 \item{labels:}{
 Length \eqn{T} list of \eqn{L \times 5} data.frames. List entry

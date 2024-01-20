@@ -22,3 +22,11 @@ These files are necessary and have already been reduced in size.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Previous submission
+
+#### 0.13.3
+
+  Lost braces in \itemize; meant \describe ?
+
+\itemize has been replaced with \describe.

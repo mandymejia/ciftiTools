@@ -389,21 +389,21 @@ xml_cifti <- function(cifti_fname){
 #'
 #' Additional metadata depends on the type of CIFTI file:
 #'
-#'  \itemize{
+#'  \describe{
 #'    \item{"dtseries"}{
-#'      \itemize{
+#'      \describe{
 #'        \item{time_start:}{   Start time}
 #'        \item{time_step:}{   The TR}
 #'        \item{time_unit:}{   Unit of time}
 #'      }
 #'    }
 #'    \item{"dscalar"}{
-#'      \itemize{
+#'      \describe{
 #'        \item{names:}{   Name of each data column}
 #'      }
 #'    }
 #'    \item{"dlabels"}{
-#'      \itemize{
+#'      \describe{
 #'        \item{names:}{(   Names of each data column.)}
 #'        \item{labels:}{(   List of \eqn{L \times 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
 #'      }
