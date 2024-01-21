@@ -51,7 +51,7 @@ ignored if specified.
 The \code{write_dir} argument can be used to place each separated file in
 the same directory.}
 
-\item{write_dir}{Where should the separated files be placed? \code{NULL}
+\item{write_dir}{Where should the separate files be placed? \code{NULL}
 (default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}

@@ -10,7 +10,9 @@
 convert_to_dlabel(
   x,
   cifti_target_fname = NULL,
-  values = NULL,
+  levels_old = NULL,
+  levels = NULL,
+  labels = NULL,
   nsig = Inf,
   colors = "Set2",
   add_white = TRUE,
@@ -41,18 +43,32 @@ convert_xifti(
 \code{x} is a CIFTI file name. If \code{NULL} (default), will use the same
 name as \code{x} but with the extension updated.}
 
-\item{values}{(Optional) A vector of the original data values. They should all
-be unique. They may not all occur in the \code{"xifti"} data, but every
-datapoint in the \code{"xifti"} must occur in \code{values}. Data will be
-mapped to integers from $0$ to $N-1$ (the "keys"), with $N$ being the
-number of \code{values}. They will be sorted.
+\item{levels_old, levels, labels}{(Optional) \code{levels_old} is a vector of
+the original data values. They should all be unique. They may not all occur
+in the \code{"xifti"} data, but every datapoint in the \code{"xifti"} must
+occur in \code{levels_old}. If \code{levels_old} is not provided it will be set to
+the vector of all unique values in the data, in ascending order.
 
-If \code{values} is a named vector, the rownames of the label table in the resulting
-\code{"xifti"} will be those names. Otherwise, the rownames will be the values
-themselves.
+If \code{levels} is not provided, the original values will be re-mapped
+to integers from $0$ to $N-1$ (the "Keys" of a "dlabel" CIFTI), with $N$
+being the length of \code{levels_old}. Otherwise, \code{levels} can be a
+vector the same length as \code{levels_old} specifying the corresponding new
+integers to use (rather than $0$ to $N-1$). If \code{x} is already "dlabel",
+then by setting \code{levels_old} to the current label table values and
+\code{levels} to the desired new values, the data can be re-leveled
+(see examples in function documentation). Note that duplicates in
+\code{levels_old} are allowed, to map multiple existing levels to the same
+new level.
 
-Since \code{NA} datapoints will be replaced by \code{NaN}, \code{NA} in
-\code{values} will be replaced by \code{NaN}.}
+New label names can be set with \code{labels}. If provided, it must be a
+character vector with the same length as \code{levels}. If there are
+duplicates in \code{levels}, the first label for a given level will be used.
+If \code{labels} is not provided, the new label names will be set to
+\code{levels} if it was provided, and \code{levels_old} if it was not.
+
+Note: \code{NA} and \code{NaN} values are handled a bit differently. Data
+locations that are \code{NA} or \code{NaN} will remain unchanged. \code{NA}
+and \code{NaN} should not be included in \code{levels_old} or \code{levels}.}
 
 \item{nsig}{Take this many significant digits for the data values. If
 \code{Inf} (default), do not round.}
@@ -65,7 +81,9 @@ a viridisLite palette, or a character vector of colors. Default:
 \item{add_white}{Append white to the beginning of the colors? Default: \code{TRUE}.}
 
 \item{return_conversion_table}{Return the conversion table along with the
-converted \code{"xifti"}? Default: \code{FALSE}}
+converted \code{"xifti"}? Default: \code{FALSE}. It will give the original
+\code{values}, the \code{values_new} (i.e. the "Keys"), and the new
+\code{label} names.}
 
 \item{names}{The column names. If \code{NULL} (default), will be set to
 "Column 1", "Column 2", ... .}
@@ -92,27 +110,53 @@ Convert the intent of a CIFTI file or \code{"xifti"} object
 \section{Functions}{
 \itemize{
 \item \code{convert_to_dlabel()}: Give the ".dlabel" intent (code 3007/ConnDenseLabel) to an input
-\code{"xifti"}. Will use the same label table for each data column.
-
-Note that \code{NA} values will be replaced with \code{NaN}.
+\code{"xifti"}. Will use the same label table for each data column. Can also
+be used to re-assign values in the label table, or to change label names.
 
 \item \code{convert_to_dscalar()}: Give the ".dscalar" intent (code 3006/ConnDenseScalar) to an input
-CIFTI file or \code{"xifti"} object.
+CIFTI file or \code{"xifti"} object. Can also be used to set the names for
+each column with \code{names}.
 
 \item \code{convert_to_dtseries()}: Give the ".dtseries" intent (code 3002/ConnDenseSeries) to an input
-\code{"xifti"} object.
+\code{"xifti"} object. Can also be used to set the time metadata.
 
 }}
+\examples{
+\dontrun{
+# Example: change label names
+levels_old <- xii$meta$cifti$labels[[1]]$Key
+newLabels <- paste0("New Label #", seq(length(levels_old)))
+xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels_old, labels=newLabels)
+# Example: add an empty level
+levels_old <- xii$meta$cifti$labels[[1]]$Key
+levels_old <- c(levels_old, max(levels_old)+1)
+labels <- c(rownames(xii$meta$cifti$labels[[1]]), "Empty")
+xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels_old, labels=labels)
+# Example: set all but the lowest value to the same value & re-label
+levels_old <- xii$meta$cifti$labels[[1]]$Key
+levels <- ifelse(levels_old==min(levels_old), min(levels_old), min(levels_old)+1)
+labels <- ifelse(levels_old==min(levels_old), "Minimum", "Not minimum")
+xii <- convert_to_dlabel(xii, levels_old=levels_old, levels=levels, labels=labels)
+}
+
+}
 \seealso{
-Other functions for manipulating `xifti` objects: 
+Other manipulating xifti: 
 \code{\link{add_surf}()},
+\code{\link{apply_parc}()},
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
 \code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
 \code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{resample_cifti}()},
+\code{\link{scale_xifti}()},
 \code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
 \code{\link{transform_xifti}()}
 }
-\concept{manipulating}
-\keyword{internal}
+\concept{manipulating xifti}

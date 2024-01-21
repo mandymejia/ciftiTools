@@ -2,7 +2,7 @@
 #'
 #' Reads the CIFTI data matrix by converting it to a GIFTI using the 
 #'  \code{-cifti-convert -to-gifti-ext} Connectome Workbench command. The result 
-#'  will be a \eqn{T x G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
+#'  will be a \eqn{T \times G} matrix (\eqn{T} measurements, \eqn{G} non-empty 
 #'  grayordinates). All brainstructures in the CIFTI will be obtained, with no 
 #'  indication for which brainstructure each brainordinate corresponds to.    
 #'  Medial wall vertices and voxels outside the subcortical mask will not be 
@@ -23,7 +23,7 @@
 #'
 #' @importFrom gifti readgii
 #'
-#' @return A \eqn{T x G} matrix, where \eqn{T} is the number of measurements 
+#' @return A \eqn{T \times G} matrix, where \eqn{T} is the number of measurements 
 #'  and \eqn{G} is the number of grayordinates in the CIFTI file.
 #' 
 #' @keywords internal

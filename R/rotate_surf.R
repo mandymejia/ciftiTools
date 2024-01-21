@@ -16,7 +16,7 @@
 #' 
 #' @return The rotated \code{"surf"}
 #' 
-#' @family surfing
+#' @family surface-related
 #' @export
 rotate_surf <- function(surf, r1=0, r2=0, r3=0, units=c("radians", "degrees")) {
   units <- match.arg(units, c("radians", "degrees"))

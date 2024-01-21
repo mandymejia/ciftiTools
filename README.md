@@ -100,16 +100,67 @@ See [this
 link](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html)
 to view the tutorial vignette.
 
+## List of commonly-used functions
+
+Basics: reading, plotting, writing
+
+- `ciftiTools.setOption`: Necessary to point to the Connectome Workbench
+  each time `ciftiTools` is loaded.
+- `read_cifti`: Read in a CIFTI file as a `"xifti"` object.
+- `view_xifti` Plot the cortex and/or subcortex. Has many options for
+  controlling the visualization.
+- `write_cifti`: Write a `"xifti"` object to a CIFTI file.
+
+Manipulating CIFTI files
+
+- `resample_cifti`: Resample to a different resolution.
+- `separate_cifti`: Separate a CIFTI file into GIFTI and NIFTI files.
+- `smooth_cifti`: Smooth the data along the surface.
+- (Use `run_wb_cmd` to execute Connectome Workbench commands from R)
+
+Manipulating `"xifti"` objects
+
+- `apply_xifti`: Similar to `base::apply`.
+- `combine_xifti`: Combine `"xifti"`s with non-overlapping brain
+  structures.
+- `convert_xifti`: Convert between dlabel, dscalar, and dtseries.
+- `merge_xifti`: Concatenate `"xifti"`s.
+- `move_from_mwall`: Convert the medial wall mask to a data value,
+  deleting the mask.
+- `move_to_mwall`: Mask out a particular data value.
+- `newdata_xifti`: Replace the data values.
+- `resample_xifti`: Resample to a different resolution.
+- `scale_xifti`: Similar to `base::scale`.
+- `select_xifti`: Rearrange the columns to reorder, take a subset, or
+  repeat them.
+- `smooth_xifti`: Smooth the data along the surface.
+- `transform_xifti`: Apply a vectorizable function.
+
+Surface gemoetry
+
+- `load_surf`: Load a surface geometry included in the package.
+- `read_surf`: Read in a GIFTI surface geometry file as a `"surf"`
+  object.
+- `write_surf`: Write a `"surf"` object to a GIFTI surface geometry
+  file.
+
+Parcellations
+
+- `apply_parc`: Apply a function to each parcel separately.
+- `load_parc`: Load a parcellation included in the package.
+
+See `NAMESPACE` for a full list of all exported functions.
+
 ## Illustrations
 
 <figure>
-<img src="README_media/ciftiTools_summary.png" style="width:70.0%"
+<img src="README_media/ciftiTools_summary.png" style="width:65.0%"
 alt="ciftiTools graphical summary" />
 <figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
 </figure>
 
 <figure>
-<img src="README_media/xifti_structure.png" style="width:70.0%"
+<img src="README_media/xifti_structure.png" style="width:65.0%"
 alt="“xifti” object structure" />
 <figcaption aria-hidden="true">“xifti” object structure</figcaption>
 </figure>
@@ -146,9 +197,9 @@ the color scale varies from light to dark: darker regions might be in a
 shadow, or their values might be higher. To skip shading, use the
 argument `material=list(lit=FALSE)` to `view_xifti_surface`.
 
-<img src="README_media/vxs_lit.png" style="width:15.0%"
+<img src="README_media/vxs_lit.png" style="width:14.0%"
 alt="Lit surface plot" />
-<img src="README_media/vxs_unlit.png" style="width:15.0%"
+<img src="README_media/vxs_unlit.png" style="width:14.0%"
 alt="Unlit surface plot" />
 
 #### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?

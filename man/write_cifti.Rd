@@ -57,6 +57,10 @@ Named character vector of the written files
 Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI
 surface files.
 }
+\details{
+See \code{\link{write_xifti2}} to write a \code{"xifti"} object out as
+separate GIFTI and/or NIFTI files instead.
+}
 \section{Connectome Workbench}{
 
 This function interfaces with the \code{"-cifti-create-dense-timeseries"},
@@ -65,19 +69,19 @@ Command, depending on the input.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{read_cifti}()},
 \code{\link{resample_cifti}()},
 \code{\link{smooth_cifti}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()}
+\code{\link{view_xifti}()}
 
-Other functions for writing CIFTI or GIFTI data: 
+Other writing: 
 \code{\link{separate_cifti}()},
 \code{\link{write_metric_gifti}()},
 \code{\link{write_subcort_nifti}()},
-\code{\link{write_surf_gifti}()}
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{common}
 \concept{writing}

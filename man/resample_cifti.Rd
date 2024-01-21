@@ -113,10 +113,12 @@ to use for vertex area correction during adaptive resampling. (Only used if
 resampling with the adaptive method.) \code{area[L/R]_original_fname} should
 match the current resolution of the data.
 
-The Workbench command for adaptive resampling requires the target surfaces
-for area correction too, but to make the workflow easier \code{ciftiTools}
-will resample \code{area[L/R]_original_fname} with the barycentric method
-and use that for the target surface.}
+For resampling: the Workbench command for adaptive resampling requires the
+target surfaces for area correction too. But to make the workflow easier,
+\code{ciftiTools} will resample \code{area[L/R]_original_fname} with the
+barycentric method and use that for the target area.
+
+For remapping: \code{area[L/R]_target_fname} must be directly provided.}
 
 \item{write_dir}{Where to write the resampled CIFTI (and surfaces if present.)
 If \code{NULL} (default), will use the current working directory if \code{x}
@@ -157,12 +159,30 @@ and/or \code{"-surface-resample"} Workbench commands, depending on the input.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other manipulating xifti: 
+\code{\link{add_surf}()},
+\code{\link{apply_parc}()},
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{scale_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{transform_xifti}()}
+
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{read_cifti}()},
 \code{\link{smooth_cifti}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()},
+\code{\link{view_xifti}()},
 \code{\link{write_cifti}()}
 }
 \concept{common}
+\concept{manipulating xifti}

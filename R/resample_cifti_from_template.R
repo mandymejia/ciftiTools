@@ -9,6 +9,7 @@
 #'
 #' @return The \code{target_fname}, invisibly
 #' 
+#' @family manipulating xifti
 #' @export
 #'
 #' @section Connectome Workbench:
@@ -46,12 +47,12 @@ resample_cifti_from_template <- function(
   # Cortical spheres.
   if ("left" %in% brainstructures || "right" %in% brainstructures) {
     original_res <- infer_resolution(original_info)
-    if (any(original_res %in% c(NA, NaN))) { 
+    if (any(is.na(original_res))) { 
       stop("Could not infer original CIFTI's resolution from its metadata.")
     }
 
     resamp_res <- infer_resolution(template_info)
-    if (any(resamp_res %in% c(NA, NaN))) { 
+    if (any(is.na(resamp_res))) { 
       stop("Could not infer template CIFTI's resolution from its metadata.")
     }
     

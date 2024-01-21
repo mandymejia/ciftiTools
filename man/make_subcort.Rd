@@ -8,19 +8,19 @@ make_subcort(vol, labs, mask = NULL, idx = NULL, validate_mask = FALSE)
 }
 \arguments{
 \item{vol}{represents the data values of the subcortex. It is either a NIFTI
-file path, 3D/4D data array (\eqn{i x j x k x T}), or a vectorized data
-matrix (\eqn{V_S} voxels x \eqn{T} measurements). If it's vectorized, the voxels
+file path, 3D/4D data array (\eqn{i \times j \times k \times T}), or a vectorized data
+matrix (\eqn{V_S} voxels by \eqn{T} measurements). If it's vectorized, the voxels
 should be in spatial order.}
 
 \item{labs}{represents the brainstructure labels of each voxel: see
 \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array
-(\eqn{i x j x k}) of numeric brainstructure indices, or a \eqn{V_S} length
+(\eqn{i \times j \times k}) of numeric brainstructure indices, or a \eqn{V_S} length
 vector in spatial order with brainstructure names as factors or integer
 indices. The indices should be 3-21 (2 and 3 correspond to left and right
 cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
 out-of-mask voxels.}
 
-\item{mask}{is a NIFTI file path or logical 3D data array (\eqn{i x j x k}) where \code{TRUE}
+\item{mask}{is a NIFTI file path or logical 3D data array (\eqn{i \times j \times k}) where \code{TRUE}
 values indicate subcortical voxels (in-mask). If it is not provided, the
 mask will be inferred from voxels with labels \code{0} or \code{NA} in
 \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
@@ -40,8 +40,8 @@ A list with components "data", "labels", "mask", and "trans_mat". The
 first two will be vectorized and ordered spatially.
 
 The volume can be recovered using:
-\code{vol <- unmask_subcortex(data, mask, fill=NA)}
-\code{labs <- unmask_subcortex(labels, mask, fill=0)}
+\code{vol <- unvec_vol(data, mask, fill=NA)}
+\code{labs <- unvec_vol(labels, mask, fill=0)}
 }
 \description{
 Coerce subcortical data into valid entries for \code{xifti$data$subcort}

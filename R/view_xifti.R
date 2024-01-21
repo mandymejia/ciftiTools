@@ -1,15 +1,15 @@
 #' Get title for \code{view_xifti_surface} or \code{view_xifti_volume}
-#' 
+#'
 #' Determine the title(s) for the cortical surface or subcortical volume plot,
 #'  if it was not provided by the user.
-#' 
+#'
 #' @param xifti_meta \code{xifti$meta}
 #' @param idx The index
-#' 
+#'
 #' @return The RGL object ID for the title
-#' 
+#'
 #' @keywords internal
-#'  
+#'
 view_xifti.title <- function(xifti_meta, idx){
 
   intent <- xifti_meta$cifti$intent
@@ -25,8 +25,8 @@ view_xifti.title <- function(xifti_meta, idx){
     title <- paste("Index", idx)
     if (!any(vapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null, FALSE))) {
       title <- paste0(
-        title, " (", 
-        xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*idx, 
+        title, " (",
+        xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*idx,
         " ", xifti_meta$cifti$time_unit, "s)"
       )
     }
@@ -37,7 +37,7 @@ view_xifti.title <- function(xifti_meta, idx){
     } else {
       title <- ""
     }
-    
+
   } else if (intent == 3007) {
     if (!is.null(xifti_meta$cifti$labels) && length(xifti_meta$cifti$labels)>=idx) {
       title <- names(xifti_meta$cifti$labels)[idx]
@@ -50,19 +50,19 @@ view_xifti.title <- function(xifti_meta, idx){
 }
 
 #' Make the colorbar for \code{view_xifti_surface}
-#' 
+#'
 #' See \code{\link{view_xifti_surface}} for details.
-#' 
+#'
 #' @param pal_base Base palette
 #' @param pal Full palette
 #' @param color_mode See \code{\link{view_xifti_surface}}
 #' @param text_color Color of text
 #' @param digits See \code{\link{view_xifti_surface}}
-#' 
+#'
 #' @return A list of keyword arguments to \code{\link[fields]{image.plot}}
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits, scientific=NA) {
 
   colorbar_breaks <- c(
@@ -87,18 +87,18 @@ view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits, scien
 
   if (length(colorbar_breaks) == 1) {
     colorbar_kwargs <- list(
-      legend.only=TRUE, 
-      zlim=c(1,2), 
-      col=rep(pal$color[1], 2), 
-      breaks=c(0, 1, 2), 
+      legend.only=TRUE,
+      zlim=c(1,2),
+      col=rep(pal$color[1], 2),
+      breaks=c(0, 1, 2),
       axis.args=list(at=1, labels=colorbar_breaks)
     )
   } else {
     colorbar_kwargs <- list(
-      legend.only = TRUE, 
-      zlim = range(pal$value), 
+      legend.only = TRUE,
+      zlim = range(pal$value),
       col = as.character(pal$color),
-      breaks=colorbar_breaks, 
+      breaks=colorbar_breaks,
       #legend.lab=colorbar_label,
       axis.args=list(
         cex.axis=1.7, # size of labels (numeric limits)
@@ -123,18 +123,18 @@ view_xifti.cbar <- function(pal_base, pal, color_mode, text_color, digits, scien
 }
 
 #' Draw color legend for qualitative mode
-#' 
+#'
 #' See \code{\link{view_xifti_surface}} for details.
-#' 
+#'
 #' @param pal_base Base palette + labels for each row
-#' @param leg_ncol Number of columns in legend. 
+#' @param leg_ncol Number of columns in legend.
 #' @param text_color Color of text
 #' @param scale of text
-#' 
+#'
 #' @return A color legend from ggplot2
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=FALSE){
 
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -153,30 +153,30 @@ view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=F
   colors2 <- pal_base$color; names(colors2) <- pal_base$labels
 
   value <- NULL
-  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, color=labels)) + 
-    ggplot2::geom_point(size=point_size, shape=15) + ggplot2::theme_bw() +
-    ggplot2::scale_color_manual(values=colors2, name=ifelse(title_sub, "Labels (subcortex)", "Labels")) +
+  plt <- ggplot2::ggplot(data=pal_base, ggplot2::aes(x=value, y=value, fill=labels)) +
+    ggplot2::geom_point(size=point_size, shape=22, color="black") + ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(values=colors2, name=ifelse(title_sub, "Labels (subcortex)", "Labels")) +
     ggplot2::guides(color=ggplot2::guide_legend(label.theme=ggplot2::element_text(color=text_color), ncol=leg_ncol)) +
     ggplot2::theme(legend.title=ggplot2::element_text(
-      size=ggplot2::rel(legend_title_size)), 
+      size=ggplot2::rel(legend_title_size)),
       legend.text=ggplot2::element_text(color=text_color, size=ggplot2::rel(legend_text_size))
     )
   leg <- ggpubr::as_ggplot(ggpubr::get_legend(plt))
 }
 
 #' View a \code{"xifti"} object
-#' 
-#' Displays the data in a \code{"xifti"} object using \code{\link{view_xifti_surface}} 
+#'
+#' Displays the data in a \code{"xifti"} object using \code{\link{view_xifti_surface}}
 #'  and/or \code{\link{view_xifti_volume}}. Compared to calling these two
 #'  functions separately on the same data, this function may be more convenient
 #'  since the automatic choice of color mode and limits is determined across
 #'  the entire data and shared between the two plots. Also, if writing files
-#'  the subcortical plots will not overwrite the cortical plots. 
+#'  the subcortical plots will not overwrite the cortical plots.
 #'
 #' @inheritParams xifti_Param
 #' @param what \code{"surface"}, \code{"volume"}, or \code{"both"}. \code{NULL}
-#'  will infer based on the contents of the \code{"xifti"}: if there is data, 
-#'  plot the surface cortex data if present, and the volumetric subcortical data 
+#'  will infer based on the contents of the \code{"xifti"}: if there is data,
+#'  plot the surface cortex data if present, and the volumetric subcortical data
 #'  otherwise. If there is no data, plot the surface geometry if present, and
 #'  do nothing otherwise.
 #' @param ... Additional arguments to pass to either view function.
@@ -184,11 +184,13 @@ view_xifti.cleg <- function(pal_base, leg_ncol, text_color, scale=1, title_sub=F
 #' @return The return value of \code{view_xifti_surface} or
 #'  \code{view_xifti_volume}.
 #'
+#' @family common
+#' @family visualizing
 #' @export
 #'
 view_xifti <- function(xifti, what=NULL, ...) {
   stopifnot(is.xifti(xifti))
-  
+
   has_left <- !is.null(xifti$data$cortex_left)
   has_right <- !is.null(xifti$data$cortex_right)
   has_sub <- !is.null(xifti$data$subcort)
@@ -197,11 +199,11 @@ view_xifti <- function(xifti, what=NULL, ...) {
 
   out <- list(surface = NULL, volume = NULL)
 
-  if (is.null(what)) { 
+  if (is.null(what)) {
     if ((has_left | has_right) & has_sub) {
       what <- "both"
-    } else if (has_left | has_right) { 
-      what <- "surface" 
+    } else if (has_left | has_right) {
+      what <- "surface"
     } else if (has_sub) {
       what <- "volume"
     } else if (has_surfL | has_surfR) {
@@ -229,29 +231,32 @@ view_xifti <- function(xifti, what=NULL, ...) {
   vxs <- function(
     xifti, args, color_mode, zlim, colors,
     fname, fname_sub,
-    structural_img, plane, convention, n_slices, slices, 
+    structural_img, plane, convention, n_slices, slices,
     ypos.title, xpos.title, orientation_labels,
     ...
-    ) { 
+    ) {
     view_xifti_surface(
-      xifti, color_mode=args$color_mode, zlim=args$zlim, colors=args$colors, 
+      xifti, color_mode=args$color_mode, zlim=args$zlim, colors=args$colors,
       fname=args[["fname"]], ...
-    ) 
+    )
   }
   vxv <- function(
     xifti, args, color_mode, zlim, colors,
-    fname, fname_sub, 
-    hemisphere, view, slider_title, borders, alpha, 
+    fname, fname_sub,
+    legend_fname,
+    hemisphere, view, slider_title, borders, alpha,
     edge_color, vertex_color, vertex_size, material, zoom,
     ...
-    ) { 
+    ) {
     view_xifti_volume(
-      xifti, color_mode=args$color_mode, zlim=args$zlim, colors=args$colors, 
-      fname=args[["fname"]], fname_sub=args[["fname_sub"]], ...
-    ) 
+      xifti, color_mode=args$color_mode, zlim=args$zlim, colors=args$colors,
+      fname=args[["fname"]], fname_sub=args[["fname_sub"]],
+      legend_fname=args$legend_fname,
+      ...
+    )
   }
 
-  if (length(args$widget) > 1) { 
+  if (length(args$widget) > 1) {
     args$widget <- as.logical(args$widget[[1]])
   }
 
@@ -297,7 +302,7 @@ view_xifti <- function(xifti, what=NULL, ...) {
     if (args$color_mode == "auto") {
       if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent==3007) {
         args$color_mode <- "qualitative"
-      } 
+      }
       # Otherwise, set after call to view_xifti_surface.mesh_val
     } else {
       args$color_mode <- match.arg(args$color_mode, c("sequential", "qualitative", "diverging"))
@@ -311,14 +316,14 @@ view_xifti <- function(xifti, what=NULL, ...) {
       if (args$color_mode == "sequential")
       if (args$color_mode == "auto" || is.null(args$colors)) {
         if (args$color_mode == "auto") {
-          if (length(args$zlim) == 3) { 
+          if (length(args$zlim) == 3) {
             args$color_mode <- "diverging"
-          } else if (is.null(values) || all(values %in% c(NA, NaN))) { 
+          } else if (is.null(values) || all(values %in% c(NA, NaN))) {
             args$color_mode <- "diverging"
             if (is.null(args$colors)) { args$colors <- "ROY_BIG_BL" }
           } else if (length(args$zlim) == 2) {
             args$color_mode <- ifelse(prod(args$zlim) >= 0, "sequential", "diverging")
-          } 
+          }
         }
 
         if (args$color_mode == "auto" || (args$color_mode!="qualitative" && is.null(args$colors))) {
@@ -345,11 +350,11 @@ view_xifti <- function(xifti, what=NULL, ...) {
       }
 
       # Determine `zlim`
-      if (! args$color_mode=="qualitative") {
-        
+      if (!args$color_mode=="qualitative") {
+
         # Use same iff not qualitative and some colors -------------------------
         made_same <- TRUE
-        
+
         if (is.null(args$zlim)) {
 
           if (is.null(args$digits)) {
@@ -383,9 +388,9 @@ view_xifti <- function(xifti, what=NULL, ...) {
           }
 
           message(
-            "`zlim` not provided: using color range ", 
+            "`zlim` not provided: using color range ",
             as.character(min(args$zlim)), " - ", as.character(max(args$zlim)), " ",
-            "(data limits: ", as.character(min(DATA_MIN)), " - ", 
+            "(data limits: ", as.character(min(DATA_MIN)), " - ",
             as.character(max(DATA_MAX)), ")."
           )
         }
@@ -399,10 +404,16 @@ view_xifti <- function(xifti, what=NULL, ...) {
   }
   if (what == "both" | what == "volume") {
     args2 <- args
-    if (what == "both" && args$color_mode != "qualitative" && "legend_embed" %in% names(args) && args$legend_embed=="FALSE") {
-      out$volume <- vxv(xifti, args2, legend_fname=tempfile(), ...)
-    } else {
-       out$volume <- vxv(xifti, args2, ...)
+    write_dummy_legend <- what == "both" && args2$color_mode != "qualitative" && "legend_embed" %in% names(args2) && args2$legend_embed==FALSE
+    if (write_dummy_legend) {
+      dummy_legend_fname <- tempfile(fileext=".png")
+      args2$legend_fname <- dummy_legend_fname
+    } else if (!("legend_fname" %in% names(args2))) {
+      args2$legend_fname <- "[fname]_legend"
+    }
+    out$volume <- vxv(xifti, args2, ...)
+    if (write_dummy_legend) {
+      out$volume <- out$volume[!(out$volume == dummy_legend_fname)]
     }
   }
 
@@ -426,9 +437,9 @@ view_xifti <- function(xifti, what=NULL, ...) {
 #'  \code{what}, which will be set to \code{NULL}.
 #'
 #' @method plot xifti
-#' 
+#'
 #' @export
-#' 
+#'
 plot.xifti <- function(x, ...){
   view_xifti(x, ...)
 }

@@ -23,7 +23,7 @@
 #'  no names will be used.
 #' @return The new \code{"xifti"}
 #'
-#' @family manipulating
+#' @family manipulating xifti
 #' @export
 newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   stopifnot(is.xifti(xifti))

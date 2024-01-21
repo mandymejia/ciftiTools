@@ -212,7 +212,7 @@
 #'  each index (and color legend if applicable) will be returned. Otherwise,
 #'  \code{NULL} is invisibly returned.
 #'
-#' @family common
+#' @family visualizing
 #' @export
 #' @importFrom graphics plot.new
 #' @importFrom grDevices dev.list dev.off png pdf gray
@@ -259,7 +259,7 @@ view_xifti_volume <- function(
 
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
-  if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
+  if (is.null(legend_fname)) { legend_fname <- FALSE }
   idx <- as.numeric(idx)
   if (length(widget) > 1) {
     warning("Using the first entry of `widget`.")
@@ -520,11 +520,11 @@ view_xifti_volume <- function(
 
   # Get volume and labels.
   values <- xifti$data$subcort[,idx,drop=FALSE]
-  vol <- unmask_subcortex(values, xifti$meta$subcort$mask, fill=NA)
+  vol <- unvec_vol(values, xifti$meta$subcort$mask, fill=NA)
   if (length(dim(vol)) == 3) {
     dim(vol) <- c(dim(vol), 1)
   }
-  labs_bs <- unmask_subcortex(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
+  labs_bs <- unvec_vol(as.numeric(xifti$meta$subcort$labels), xifti$meta$subcort$mask, fill=0)
 
   # Set `color_mode` if `"auto"`; set `colors` if `NULL`
   if (color_mode == "auto" || (color_mode!="qualitative" && is.null(colors))) {
@@ -662,7 +662,7 @@ view_xifti_volume <- function(
       vol[vol > max(zlim)] <- max(zlim)
 
       if (is.data.frame(colors)) {
-        stopifnot(ncol(colors)==2 && colnames(colors)==c("color", "value"))
+        stopifnot(ncol(colors)==2 && all(colnames(colors)==c("color", "value")))
         pal_base <- colors
       } else {
         pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim)
@@ -810,6 +810,7 @@ view_xifti_volume <- function(
         slices <- slices[mask_count > quantile(mask_count, .33)]
       }
       slices <- slices[round(seq(1, length(slices), length.out=n_slices))]
+      message("Selected ", plane, " slices: ", paste0(slices, collapse=", "))
     } else {
       slices <- as.numeric(slices)
       stopifnot(all(slices %in% seq(dim(xifti$meta$subcort$mask)[plane_dim])))
@@ -1024,8 +1025,10 @@ view_xifti_volume <- function(
           height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
           width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
         )
+      } else {
+        # [TO DO] not too sure about this
+        if (close_after_save && !is.null(dev.list())) { dev.off() }
       }
-      if (close_after_save && !((together && !comp_dummy) || together_leg)) { dev.off() }
     }
   } else if (use_cleg && !comp_dummy && !together_leg && isFALSE(fname)) {
     print(cleg)

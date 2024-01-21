@@ -12,7 +12,8 @@
 #' @param original_res The original resolution(s) of the CIFTI cortical surface(s).
 #' @inheritParams resamp_res_Param_required
 #' @inheritParams resamp_method_Param
-#' @inheritParams resamp_area_Param
+#' @inheritParams area_original_Param
+#' @inheritParams area_target_Param
 #' @param cortexL_original_fname,cortexR_original_fname (Optional) File path of
 #'  GIFTI data for \[left/right\] cortex to resample.
 #' @param cortexL_target_fname,cortexR_target_fname (Optional) File path to
@@ -42,11 +43,13 @@ resample_cifti_components <- function(
   original_res=NULL,
   resamp_res=NULL, resamp_method=NULL,
   areaL_original_fname=NULL, areaR_original_fname=NULL,
-  ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
+  areaL_target_fname=NULL, areaR_target_fname=NULL,
   cortexL_original_fname=NULL, cortexR_original_fname=NULL,
   cortexL_target_fname=NULL, cortexR_target_fname=NULL,
   ROIcortexL_original_fname=NULL, ROIcortexR_original_fname=NULL,
   ROIcortexL_target_fname=NULL, ROIcortexR_target_fname=NULL,
+  sphereL_original_fname=NULL, sphereR_original_fname=NULL,
+  sphereL_target_fname=NULL, sphereR_target_fname=NULL,
   surfL_original_fname=NULL, surfR_original_fname=NULL,
   surfL_target_fname=NULL, surfR_target_fname=NULL,
   read_dir=NULL, write_dir=NULL) {
@@ -55,20 +58,24 @@ resample_cifti_components <- function(
     areaL=areaL_original_fname, areaR=areaR_original_fname,
     cortexL=cortexL_original_fname, cortexR=cortexR_original_fname,
     ROIcortexL=ROIcortexL_original_fname, ROIcortexR=ROIcortexR_original_fname,
+    sphereL=sphereL_original_fname, sphereR=sphereR_original_fname,
     surfL=surfL_original_fname, surfR=surfR_original_fname
   )
   original_fnames <- original_fnames[!vapply(original_fnames, is.null, FALSE)]
 
   target_fnames <- list(
+    areaL=areaL_target_fname, areaR=areaR_target_fname,
     cortexL=cortexL_target_fname, cortexR=cortexR_target_fname,
     ROIcortexL=ROIcortexL_target_fname, ROIcortexR=ROIcortexR_target_fname,
+    sphereL=sphereL_target_fname, sphereR=sphereR_target_fname,
     surfL=surfL_target_fname, surfR=surfR_target_fname
   )
   target_fnames <- target_fnames[!vapply(target_fnames, is.null, FALSE)]
 
   all_labels <- c(
     "areaL", "areaR", "cortexL", "cortexR",
-    "ROIcortexL", "ROIcortexR", "surfL", "surfR"
+    "ROIcortexL", "ROIcortexR", "sphereL", "sphereR",
+    "surfL", "surfR"
   )
 
   # Check original files.
@@ -133,17 +140,21 @@ resample_cifti_components <- function(
 
   # Use default file names for targets without a specified file name.
   for (ii in seq_len(length(original_fnames))) {
+    if (names(original_fnames)[ii] %in% c("areaL", "areaR", "sphereL", "sphereR")) { next }
+    rr_suffix <- ifelse(is.null(resamp_res), "remap", resamp_res)
     lab <- names(original_fnames)[ii]
     if (is.null(target_fnames[[lab]])) {
       if (grepl("validROI", lab)) {
         # [TO DO]: check if this works. use cifti_component_suffix?
         target_fnames[[lab]] <- paste0(
           "validROI_", resample_cifti_default_fname(
-            original_fnames[[gsub("validROI", "", lab)]], resamp_res)
+            original_fnames[[gsub("validROI", "", lab)]], rr_suffix)
         )
       } else {
+        rr_suffix <- ifelse(is.null(resamp_res), "remap", resamp_res)
         target_fnames[[lab]] <- resample_cifti_default_fname(
-          original_fnames[[lab]], resamp_res)
+          original_fnames[[lab]], resamp_res
+        )
       }
     }
     target_fnames[[lab]] <- format_path(target_fnames[[lab]], write_dir, mode=2)
@@ -170,19 +181,45 @@ resample_cifti_components <- function(
     is_left <- substr(lab, nchar(lab), nchar(lab)) == "L" # last char: L or R.
     resample_kwargs <- c(resample_gifti_kwargs_common, list(
       original_fname=original_fnames[[lab]], target_fname=target_fnames[[lab]],
-      hemisphere=ifelse(is_left, "left", "right"),
-      original_res=ifelse(is_left, original_res[1], original_res[2])
+      hemisphere=ifelse(is_left, "left", "right")
     ))
 
     # Resample cortical data.
     if (lab %in% c("cortexL", "cortexR")) {
-      # Use ROI if provided.
-      ROI_lab <- ifelse(is_left, "ROIcortexL", "ROIcortexR")
       area_lab <- ifelse(is_left, "areaL", "areaR")
+      if (area_lab %in% names(original_fnames)) {
+        resample_kwargs <- c(
+          resample_kwargs, list(
+            area_original_fname=original_fnames[[area_lab]]
+          )
+        )
+      }
+      if (area_lab %in% names(target_fnames)) {
+        resample_kwargs <- c(
+          resample_kwargs, list(
+            area_target_fname=target_fnames[[area_lab]]
+          )
+        )
+      }
+      sphere_lab <- ifelse(is_left, "sphereL", "sphereR")
+      if (sphere_lab %in% names(original_fnames)) {
+        resample_kwargs <- c(
+          resample_kwargs, list(
+            sphere_original_fname=original_fnames[[sphere_lab]]
+          )
+        )
+      }
+      if (sphere_lab %in% names(target_fnames)) {
+        resample_kwargs <- c(
+          resample_kwargs, list(
+            sphere_target_fname=target_fnames[[sphere_lab]]
+          )
+        )
+      }
+      ROI_lab <- ifelse(is_left, "ROIcortexL", "ROIcortexR")
       if (ROI_lab %in% names(target_fnames)) {
         resample_kwargs <- c(
           resample_kwargs, list(
-            area_original_fname=original_fnames[[area_lab]],
             ROIcortex_original_fname=original_fnames[[ROI_lab]],
             ROIcortex_target_fname=target_fnames[[ROI_lab]]
           )

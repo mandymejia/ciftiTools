@@ -7,15 +7,15 @@
 #'  a metric or label GIFTI file.
 #' 
 #'  If \code{cortexL_mwall} is not provided, \code{cortexL} should have data for
-#'  all vertices on the left cortical surface (\eqn{V_L x T} data matrix). There 
+#'  all vertices on the left cortical surface (\eqn{V_L \times T} data matrix). There 
 #'  will not be a mask for the medial wall. Not providing the medial wall mask 
 #'  is appropriate for ".dlabels.nii" files where the medial wall may have its 
 #'  own label and therefore should not be treated as missing data.
 #' 
 #'  If \code{cortexL_mwall} is provided, \code{cortexL} should either have data
-#'  for all vertices on the left cortical surface (\eqn{V_L x T} data matrix, with
+#'  for all vertices on the left cortical surface (\eqn{V_L \times T} data matrix, with
 #'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data 
-#'  only for non-medial wall vertices (\eqn{(V_L - mwall_L) x T} data matrix).
+#'  only for non-medial wall vertices (\eqn{(V_L - mwall_L) \times T} data matrix).
 #'  The medial wall mask will be the \code{0} values in \code{cortexL_mwall}. 
 #'  The medial wall mask should be provided whenever the medial wall should be
 #'  treated as missing data. 
@@ -26,15 +26,15 @@
 #'  a metric or label GIFTI file.
 #' 
 #'  If \code{cortexR_mwall} is not provided, \code{cortexR} should have data for
-#'  all vertices on the right cortical surface (\eqn{V_R x T} data mre 
+#'  all vertices on the right cortical surface (\eqn{V_R \times T} data mre 
 #'  will not be a mask for the medial wall. Not providing the medial wall mask 
 #'  is appropriate for ".dlabels.nii" files where the medial wall may have its 
 #'  own label and therefore should not be treated as missing data.
 #' 
 #'  If \code{cortexR_mwall} is provided, \code{cortexR} should either have data
-#'  for all vertices on the right cortical surface (\eqn{V_R x T} data matrix, with
+#'  for all vertices on the right cortical surface (\eqn{V_R \times T} data matrix, with
 #'  filler values e.g. \code{0} or \code{NaN} for medial wall vertices), or have data 
-#'  only for non-medial wall vertices (\eqn{(V_R - mwall_R) x T} data matrix).
+#'  only for non-medial wall vertices (\eqn{(V_R - mwall_R) \times T} data matrix).
 #'  The medial wall mask will be the \code{0} values in \code{cortexR_mwall}. 
 #'  The medial wall mask should be provided whenever the medial wall should be
 #'  treated as missing data. 
@@ -90,6 +90,27 @@ read_xifti2 <- function(
   # Resample each input file, if requested.
   if (!is.null(resamp_res)) {
     tdir <- tempdir()
+
+  if (!is.null(cortexL)) {
+    if (!(endsWith(cortexL, "label.gii") || endsWith(cortexL, "func.gii"))) {
+      warning("File path for `cortexL` does not look like metric GIFTI data.")
+    }
+  }
+  if (!is.null(cortexR)) {
+    if (!(endsWith(cortexR, "label.gii") || endsWith(cortexR, "func.gii"))) {
+      warning("File path for `cortexR` does not look like metric GIFTI data.")
+    }
+  }
+  if (!is.null(surfL)) {
+    if (!(endsWith(surfL, "surf.gii"))) {
+      warning("File path for `surfL` does not look like GIFTI surface geometry.")
+    }
+  }
+  if (!is.null(surfR)) {
+    if (!(endsWith(surfR, "surf.gii"))) {
+      warning("File path for `surfR` does not look like GIFTI surface geometry.")
+    }
+  }
     
     ## Left cortex.
     if (!is.null(cortexL)) {

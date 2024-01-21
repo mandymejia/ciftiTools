@@ -116,19 +116,21 @@ resampling is recommended for surface data.}
 
 \item{areaL_original_fname, areaR_original_fname}{File paths to the surfaces
 to use for vertex area correction during adaptive resampling. (Only used if
-resampling with the adaptive method.) \code{area[L/R]_fname} should
+resampling with the adaptive method.) \code{area[L/R]_original_fname} should
 match the current resolution of the data.
 
-The Workbench command for adaptive resampling requires the target surfaces
-for area correction too, but to make the workflow easier \code{ciftiTools}
-will resample \code{area[L/R]_fname} with the barycentric method
-and use that for the target surface.}
+For resampling: the Workbench command for adaptive resampling requires the
+target surfaces for area correction too. But to make the workflow easier,
+\code{ciftiTools} will resample \code{area[L/R]_original_fname} with the
+barycentric method and use that for the target area.
+
+For remapping: \code{area[L/R]_target_fname} must be directly provided.}
 
 \item{flat}{Should the result be flattened into a single matrix?
 
 If \code{FALSE} (default), the result will be a \code{"xifti"} object.
 
-If \code{TRUE}, the result will be a \eqn{T x G} matrix (\eqn{T}
+If \code{TRUE}, the result will be a \eqn{T \times G} matrix (\eqn{T}
 measurements, \eqn{G} grayordinates not including the medial wall if it's
 excluded from the ROI). All below arguments will be ignored because the
 brain structures cannot be identified. Surfaces will not be appended.
@@ -152,7 +154,7 @@ CIFTI, use these values to infer the medial wall mask. Default:
 \code{\link{read_cifti_separate}}.}
 }
 \value{
-If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T x G}
+If \code{!flat}, a \code{"xifti"} object. Otherwise, a \eqn{T \times G}
 matrix (\eqn{T} measurements, \eqn{G} grayordinates).
 }
 \description{
@@ -212,15 +214,14 @@ the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
-Other commonly-used functions: 
+Other common: 
 \code{\link{is.cifti}()},
 \code{\link{resample_cifti}()},
 \code{\link{smooth_cifti}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()},
+\code{\link{view_xifti}()},
 \code{\link{write_cifti}()}
 
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_parc}()},

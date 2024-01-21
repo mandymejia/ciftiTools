@@ -11,7 +11,7 @@
 #'  argument, or \code{"all"} to include the other metadata in a list.
 #' @return A \code{"xifti"} with data from the inputs
 #' 
-#' @family manipulating
+#' @family manipulating xifti
 #' @export
 #' 
 combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {
@@ -68,7 +68,7 @@ combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {
     # Intent.
     dlabel_ii <- (!is.null(xiis[[ii]]$meta$cifti$intent)) && (xiis[[ii]]$meta$cifti$intent == 3007)
     if (dlabel_out && (!dlabel_ii)) {
-      xiis[[ii]] <- convert_to_dlabel(xiis[[ii]], values=dlabel_vals)
+      xiis[[ii]] <- convert_to_dlabel(xiis[[ii]], levels=dlabel_vals)
     }
 
     # Combine data.

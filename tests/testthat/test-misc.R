@@ -109,11 +109,34 @@ test_that("Miscellaneous functions are working", {
     cii_s <- convert_xifti(cii, "dscalar")
     cii_t <- convert_xifti(cii, "dtseries")
     if (!grepl("ones", cii_fname)) {
-      cii_l <- convert_xifti(cii, "dlabel", nsig=3)
+      cii_l <- convert_xifti(cii, "dlabel", nsig=2)
       cii_l1 <- select_xifti(cii, 1)
       cii_l1$data$cortex_left[1,] <- NA; cii_l1$data$cortex_left[seq(2, 100),] <- NaN
       cii_l1 <- convert_xifti(cii_l1, "dlabel", nsig=1, colors=c("grey", "blue"), add_white=FALSE)
       cii_l1 <- read_xifti(convert_xifti(cii_fname, "dlabel", file.path(tdir, "cii.dlabel.nii"), nsig=3), brainstructures = brainstructures)
+    } else {
+      cii$data$cortex_left[seq(5),] <- seq(5)
+      cii_l <- convert_to_dlabel(cii, return_conversion_table = TRUE)
+      cii_l <- convert_to_dlabel(
+        cii_l$xifti,
+        levels_old=c(0, 4, 3, 2, 1),
+        levels = c(99, 1, 1, 1, 1),
+        labels=c("a", "w", "x", "y", "z"),
+        return_conversion_table = TRUE
+      )
+      testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==99), 33705)
+      testthat::expect_equal(sum(c(as.matrix(cii_l$xifti))==1), 4)
+      testthat::expect_equal(cii_l$xifti$meta$cifti$labels$ones$Key, c(1, 99))
+      testthat::expect_equal(rownames(cii_l$xifti$meta$cifti$labels$ones), c("w", "a"))
+      cii_l$xifti$data$cortex_left[seq(2),] <- c(NA, NaN)
+      cii_l <- convert_to_dlabel(
+        cii_l$xifti,
+        levels = c(3, -1),
+        colors=c("red", "blue"),
+        add_white=FALSE,
+        return_conversion_table = TRUE
+      )
+      testthat::expect_equal(cii_l$xifti$data$cortex_left[seq(2),], c(NA, NaN))
     }
     cii_s1 <- read_xifti(convert_xifti(cii_fname, "dscalar", file.path(tdir, "cii.dscalar.nii")), brainstructures = brainstructures)
     cii_t1 <- read_xifti(convert_xifti(cii_fname, "dtseries", file.path(tdir, "cii.dtseries.nii")), brainstructures = brainstructures)
@@ -150,10 +173,10 @@ test_that("Miscellaneous functions are working", {
     #   )
     # }
 
-    # unmask_subcortex
+    # unvec_vol
     if (!is.null(cii$data$subcort)) {
-      vol2 <- unmask_subcortex(cii$data$subcort, cii$meta$subcort$mask)
-      labs2 <- unmask_subcortex(
+      vol2 <- unvec_vol(cii$data$subcort, cii$meta$subcort$mask)
+      labs2 <- unvec_vol(
         as.numeric(cii$meta$subcort$labels),
         cii$meta$subcort$mask
       )
@@ -248,8 +271,37 @@ test_that("Miscellaneous functions are working", {
   scale_xifti(cii1, scale=FALSE)
   newdata_xifti(cii1, as.matrix(cii1)[,rep(seq(ncol(cii1)), 2)])
 
+  # surf_area
+  mySurf <- read_surf(ciftiTools.files()$surf["left"])
+  surf_area_ours <- surf_area(mySurf)
+  tfile <- tempfile(fileext=".func.gii")
+  ciftiTools:::run_wb_cmd(paste(
+    "-surface-vertex-areas",
+    ciftiTools:::ciftiTools.files()$surf["left"],
+    tfile
+  ))
+  surf_area_wb <- read_xifti2(tfile)$data$cortex_left[,]
+  testthat::expect_lt(max(abs(surf_area_ours-surf_area_wb)), 1e-5)
 
   x <- read_cifti(fnames$cifti[1], surfL_fname=fnames$surf["left"], brainstructures="left")
   y <- read_cifti(fnames$cifti[2], surfR_fname=fnames$surf["right"], brainstructures="right")
   z <- combine_xifti(x,y)
+
+  # parcellation matrix
+  parc <- parc_add_subcortex(load_parc())
+  stopifnot(all(table(c(as.matrix(parc))) - rowSums(ciftiTools:::parc_mean_mat(parc)>0) == 0))
+
+  # parcellation functions
+  ### dummy data
+  cii <- read_cifti(ciftiTools.files()$cifti["dscalar_ones"], brainstructures="all", resamp_res=32000)
+  cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
+  cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
+  # tests
+  q <- apply_parc(cii, parc)
+  dim(parc_vals_to_xifti(parc, q))
+  q <- cbind(q,q); colnames(q) <- c("a", "b")
+  summary(parc_vals_to_xifti(parc, q))
+
+  # unmask_subcortex
+  q <- unmask_subcortex(cii)
 })

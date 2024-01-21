@@ -73,10 +73,11 @@ Command.
 }
 
 \seealso{
-Other functions for writing CIFTI or GIFTI data: 
+Other writing: 
 \code{\link{separate_cifti}()},
 \code{\link{write_cifti}()},
 \code{\link{write_metric_gifti}()},
-\code{\link{write_surf_gifti}()}
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{writing}

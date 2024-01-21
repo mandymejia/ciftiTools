@@ -16,7 +16,7 @@
 #' @inheritParams idx_Param
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams resamp_method_Param
-#' @inheritParams resamp_area_noOG_Param
+#' @inheritParams area_original_Param
 #' @param mwall_values If the medial wall locations are not indicated in the
 #'  CIFTI, use these values to infer the medial wall mask. Default: 
 #'  \code{c(NA, NaN)}. If \code{NULL}, do not attempt to infer the medial wall.

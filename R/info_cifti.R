@@ -389,23 +389,23 @@ xml_cifti <- function(cifti_fname){
 #'
 #' Additional metadata depends on the type of CIFTI file:
 #'
-#'  \enumerate{
+#'  \describe{
 #'    \item{"dtseries"}{
-#'      \enumerate{
+#'      \describe{
 #'        \item{time_start:}{   Start time}
 #'        \item{time_step:}{   The TR}
 #'        \item{time_unit:}{   Unit of time}
 #'      }
 #'    }
 #'    \item{"dscalar"}{
-#'      \enumerate{
+#'      \describe{
 #'        \item{names:}{   Name of each data column}
 #'      }
 #'    }
 #'    \item{"dlabels"}{
-#'      \enumerate{
+#'      \describe{
 #'        \item{names:}{(   Names of each data column.)}
-#'        \item{labels:}{(   List of \eqn{L x 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
+#'        \item{labels:}{(   List of \eqn{L \times 5} data.frames. Row names are the label names. Column names are Key, Red, Green, Blue, and Alpha. List entry names are the names of each data column.)}
 #'      }
 #'    }
 #'  }
@@ -431,6 +431,9 @@ info_cifti <- function(cifti_fname){
   }
 
   extn <- get_cifti_extn(cifti_fname)
+  if (!(extn %in% c("dscalar.nii", "dlabel.nii", "dtseries.nii"))) {
+    warning("The file `", basename(cifti_fname), "` is not named as a CIFTI of supported intent. If it's not a CIFTI, an error will occur.")
+  }
 
   # ----------------------------------------------------------------------------
   # -nifti-information ---------------------------------------------------------

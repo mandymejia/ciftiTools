@@ -16,16 +16,15 @@
 #'
 #' @return the \code{"xifti"} object with added surface geometry components.
 #'
-#' @family manipulating
+#' @family manipulating xifti
+#' @family surface-related
 #' @export
 #'
 add_surf <- function(xifti, surfL=NULL, surfR=NULL) {
   if (!is.xifti(xifti)) { stop("The input \"xifti\" object is invalid.") }
 
   resamp_res <- infer_resolution(xifti)
-  if (all(resamp_res %in% c(NA, NaN))) {
-    resamp_res <- NULL
-  }
+  if (all(is.na(resamp_res))) { resamp_res <- NULL }
 
   # Left.
   if (!is.null(surfL)) {

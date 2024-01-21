@@ -78,7 +78,7 @@ crop_image <- function(x, dims=seq(2)){
 #'  they are determined based on \code{img}. adjusting \code{widths} may be useful, 
 #'  e.g. to make the subcortex subplot be less wide than the cortex subplot.
 #'  
-#' 
+#' @family visualizing
 #' @export
 #' 
 #' @return The composite plot

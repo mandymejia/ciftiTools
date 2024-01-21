@@ -13,7 +13,7 @@
 #' 
 #' @return The new \code{"surf"}
 #' 
-#' @family surfing
+#' @family surface-related
 #' @export
 #'
 #' @section Connectome Workbench:

@@ -254,8 +254,9 @@ cifti_component_suffix <- function(label, GIFTI_type="func") {
 #'
 resample_cifti_default_fname <- function(original_fname, resamp_res) {
   stopifnot(!is.null(original_fname))
+  rr_suffix <- ifelse(is.null(resamp_res), "remapped", round(resamp_res))
   bname <- basename(original_fname)
-  paste("resampled", round(resamp_res), bname, sep="_")
+  paste("resampled", rr_suffix, bname, sep="_")
 }
 
 #' Unmask cortex
@@ -357,10 +358,10 @@ as.matrix.xifti <- function(x, ...) {
 #'
 #' @export
 #'
-#' @return The inferred resolution
+#' @return The inferred resolutions for the left and right cortex.
 #'
 infer_resolution <- function(xifti, surfL=NULL, surfR=NULL) {
-  res <- c(NA, NA)
+  res <- c(left=NA, right=NA)
 
   # info_cifti
   was_info <- identical(names(xifti), c("cortex", "subcort", "cifti"))
@@ -377,7 +378,7 @@ infer_resolution <- function(xifti, surfL=NULL, surfR=NULL) {
   }
 
   # Data/surfaces, pass 1
-  if (identical(res, c(NA, NA))) {
+  if (all(is.na(res))) {
     if (!is.null(xifti$data$cortex_left) && !is.null(xifti$data$cortex_right)) {
       if (nrow(xifti$data$cortex_left) == nrow(xifti$data$cortex_right)) {
         res[c(1,2)] <- nrow(xifti$data$cortex_left)
@@ -395,13 +396,13 @@ infer_resolution <- function(xifti, surfL=NULL, surfR=NULL) {
   }
 
   # Data, pass 2
-  if (identical(res, c(NA, NA))) {
+  if (all(is.na(res))) {
     if (!is.null(xifti$data$cortex_left)) { res[1] <- nrow(xifti$data$cortex_left) }
     if (!is.null(xifti$data$cortex_right)) { res[2] <- nrow(xifti$data$cortex_right) }
   }
 
   # Surface, pass 2
-  if (identical(res, c(NA, NA))) {
+  if (all(is.na(res))) {
     if (!is.null(surfL)) { res[1] <- nrow(surfL$vertices) }
     if (!is.null(surfR)) { res[2] <- nrow(surfR$vertices) }
   }

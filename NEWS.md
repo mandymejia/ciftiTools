@@ -1,3 +1,25 @@
+# 13.2
+
+`ciftiTools` now has a couple functions which make working with parcellations easier. (A parcellation is a single-column dlabel CIFTI or `"xifti"` object. Each label level, or "Key", represents a "parcel." Each location belongs to exactly one parcel. Parcels are usually contiguous regions--but not necessarily. `ciftiTools` includes a few of the most commonly-used parcellations. These can be loaded with `load_parc`. Any other parcellation CIFTI file can be read in with `read_cifti`.)
+* `apply_parc`: Apply a parcellation `"xifti"` to a data `"xifti"`. Can be used to compute the mean of each column, e.g. for FC calculation, but also supports applying any other function parcel-wise.
+* `parc_vals_to_xifti`: Create a `"xifti"` from a parcellation and a numeric matrix of values corresponding to each parcel.
+
+Other new functions:
+* `remap_cifti`: an extension of resampling. Beware, we might revamp this function in the future.
+* `surf_area`: computes the surface area attributable to each vertex or face of a `"surf"` object.
+
+Changes to existing functions:
+* `convert_xifti`, `convert_to_dlabel`: arguments related to levels & labels have been renamed to match `factor` more closely.
+* `separate_cifti` and `write_xifti2`: now require users to provide either the `write_dir` argument, or file names for each desired output file. This gives users more flexibility to control which files are written. 
+* `view_xifti` qualitative color legend: add black outline.
+* `view_xifti`, `view_volume`: print out indices of the selected subcortical slices.
+* `unmask_subcortex`: now expects `xifti` input. If necessary, use the internal function `ciftiTools:::unvec_vol` to unmask a numeric matrix directly.
+
+Bug fixes:
+* `view_xifti`: fix bug where legend image was still written if `legend_fname=NULL`.
+
+13.1 also includes misc. documentation and warning improvements.
+
 # 12.0 (Jul 28, 2023)
 
 New features

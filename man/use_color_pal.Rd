@@ -23,3 +23,10 @@ A character vector of color names (or integers if \code{indices}).
 \description{
 Applies a palette to a data vector to yield a vector of colors.
 }
+\seealso{
+Other coloring: 
+\code{\link{ROY_BIG_BL}()},
+\code{\link{expand_color_pal}()},
+\code{\link{make_color_pal}()}
+}
+\concept{coloring}

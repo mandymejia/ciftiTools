@@ -16,6 +16,8 @@
 #' 
 #' @return The \code{"xifti"} with re-organized data and medial wall masks
 #' 
+#' @family manipulating xifti
+#' 
 #' @export
 #' 
 #' @seealso move_from_mwall
@@ -37,6 +39,7 @@ move_to_mwall <- function(xifti, values=c(NA, NaN), drop=FALSE){
 
       if (!all(new_mwall)) {
         updated <- TRUE
+        if (all(!new_mwall)) { ciftiTools_warn(paste0("All locations are being removed in the ", h, " cortex: errors in other functions may occur.")) }
         # Update medial wall.
         old_mwall <- xifti$meta$cortex$medial_wall_mask[[h]]
         if (!is.null(old_mwall)) {

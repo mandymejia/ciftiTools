@@ -13,7 +13,7 @@
 #'  Note that the Schaefer parcels have been matched to networks from Kong (2021+).
 #' 
 #' @param name The name of the parcellation to load:
-#'  \itemize{
+#'  \describe{
 #'    \item{\code{"Schaefer_100"}:}{   (2018) 100 parcels based on the "local-global" approach.}
 #'    \item{\code{"Schaefer_400"}:}{   (2018) 400 parcels based on the "local-global" approach.}
 #'    \item{\code{"Schaefer_1000"}:}{   (2018) 1000 parcels based on the "local-global" approach.}
@@ -23,7 +23,7 @@
 #' 
 # @param map Schaefer parcels have been matched to networks from Yeo (2011) and
 #  Kong (2022). Available choices depend on the parcellation:
-#  \itemize{
+#  \describe{
 #    \item{\code{"Schaefer_*"}:}{   \code{"Yeo_7"}, \code{"Yeo_17",} or \code{"Kong_17"}}
 #    \item{\code{"Yeo_*"}:}{   None available (this argument must be \code{NULL})}
 #  }
@@ -35,6 +35,7 @@
 #'  represents one unique parcel.
 #' 
 #' @family reading
+#' @family parcellation-related
 #' @export
 load_parc <- function(
   name=c("Schaefer_100", "Schaefer_400", "Schaefer_1000", "Yeo_7", "Yeo_17")

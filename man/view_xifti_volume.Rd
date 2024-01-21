@@ -400,12 +400,10 @@ are ordered back (posterior) to front (anterior). If
 to left.
 }
 \seealso{
-Other commonly-used functions: 
-\code{\link{is.cifti}()},
-\code{\link{read_cifti}()},
-\code{\link{resample_cifti}()},
-\code{\link{smooth_cifti}()},
+Other visualizing: 
+\code{\link{view_comp}()},
+\code{\link{view_surf}()},
 \code{\link{view_xifti_surface}()},
-\code{\link{write_cifti}()}
+\code{\link{view_xifti}()}
 }
-\concept{common}
+\concept{visualizing}

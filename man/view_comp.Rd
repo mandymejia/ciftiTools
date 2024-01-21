@@ -63,3 +63,11 @@ How it works: the non-legend images (plots) are composited in a call to
 \code{grid::arrangeGrob}. If a title or legend exists, it's added to the top and
 bottom, respectively, of the plots after with another call to \code{grid::arangeGrob}.
 }
+\seealso{
+Other visualizing: 
+\code{\link{view_surf}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()},
+\code{\link{view_xifti}()}
+}
+\concept{visualizing}

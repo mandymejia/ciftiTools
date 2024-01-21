@@ -320,7 +320,7 @@ view_xifti_surface.color <- function(
       pal <- pal_base
     } else {
       if (is.data.frame(colors)) {
-        stopifnot(ncol(colors)==2 && colnames(colors)==c("color", "value"))
+        stopifnot(ncol(colors)==2 && all(colnames(colors)==c("color", "value")))
         pal_base <- colors
       } else {
         pal_base <- make_color_pal(colors=colors, color_mode=color_mode, zlim=zlim)
@@ -587,7 +587,7 @@ view_xifti_surface.draw_mesh <- function(
 #'
 #' @importFrom grDevices dev.list dev.off png rgb
 #' @importFrom stats quantile
-#' @family common
+#' @family visualizing
 #' @export
 view_xifti_surface <- function(
   xifti=NULL, surfL=NULL, surfR=NULL,
@@ -619,7 +619,7 @@ view_xifti_surface <- function(
   # Based on: `idx`, `widget`, and `fname`.
   if (is.null(idx)) { idx <- 1 }
   if (is.null(fname)) { fname <- FALSE }
-  if (is.null(legend_fname)) { legend_fname <- "[fname]_legend" }
+  if (is.null(legend_fname)) { legend_fname <- FALSE }
   idx <- as.numeric(idx)
   if (length(widget) > 1) {
     warning("Using the first entry of `widget`.")
@@ -1402,8 +1402,10 @@ view_xifti_surface <- function(
                   height = (2 + colorlegend_nrow) * cleg_h_per_row, # add 2 for title
                   width = (legend_ncol) * cleg_h_per_row * cleg_w_factor
                 )
+              } else {
+                # [TO DO] not too sure about this
+                if (close_after_save) { dev.off() }
               }
-              if (close_after_save) { dev.off() }
             }
 
           } else {

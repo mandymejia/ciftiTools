@@ -1,13 +1,13 @@
 #' Format metric data as a \code{"gifti"}
 #'
-#' Format a \eqn{V x T} numeric matrix (V vertices, T measurements) or a length-T list 
+#' Format a \eqn{V \times T} numeric matrix (V vertices, T measurements) or a length-T list 
 #'  of length-V numeric vectors as a \code{"gifti"} using a template 
 #'  \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 #' 
 #'  If \code{data} is already a \code{"gifti"}, \code{data$data} will be
 #'  used and any metadata will be overwritten by the template or discarded.
 #'
-#' @param data \eqn{V x T} numeric matrix, or length \eqn{T} list of length
+#' @param data \eqn{V \times T} numeric matrix, or length \eqn{T} list of length
 #'  \eqn{V} numeric vectors
 #' @param hemisphere The side of the brain the data represents: \code{"left"} 
 #'  (default) or \code{"right"}. Used to fill the "AnatomicalStructurePrimary"

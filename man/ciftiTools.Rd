@@ -2,6 +2,7 @@
 % Please edit documentation in R/ciftiTools-package.R
 \docType{package}
 \name{ciftiTools}
+\alias{ciftiTools-package}
 \alias{ciftiTools}
 \title{ciftiTools: Tools for Reading and Visualizing CIFTI Brain Files}
 \description{
@@ -10,7 +11,7 @@ Here are groups of commonly-used functions in \code{ciftiTools}:
 \details{
 Functions for reading in CIFTI or GIFTI data:
 
-\itemize{
+\describe{
 \item{\code{read_xifti}:}{   Read in a CIFTI file as a \code{"xifti"}}
 \item{\code{read_xifti2}:}{   Read in GIFTI files as a \code{"xifti"}}
 \item{\code{as.xifti}:}{   Combine numeric data to form a \code{"xifti"}}
@@ -22,7 +23,7 @@ Functions for reading in CIFTI or GIFTI data:
 
 Functions for writing CIFTI or GIFTI data:
 
-\itemize{
+\describe{
 \item{\code{write_cifti}:}{   Write a \code{"xifti"} to a CIFTI file}
 \item{\code{write_xifti2}:}{   Write a \code{"xifti"} to GIFTI and NIFTI files}
 \item{\code{write_metric_gifti}:}{   Write a numeric data matrix to a metric GIFTI file}
@@ -33,7 +34,7 @@ Functions for writing CIFTI or GIFTI data:
 
 Functions for manipulating \code{"xifti"}s:
 
-\itemize{
+\describe{
 \item{\code{apply_xifti}:}{   Apply a function along the rows or columns of the \code{"xifti"} data matrix}
 \item{\code{combine_xifti}:}{   Combine multiple \code{"xifti"}s with non-overlapping brain structures}
 \item{\code{convert_xifti}:}{   Convert the intent of a \code{"xifti"}}
@@ -49,7 +50,7 @@ Functions for manipulating \code{"xifti"}s:
 
 S3 methods for \code{"xifti"}s:
 
-\itemize{
+\describe{
 \item{\code{summary} and \code{print}:}{   Summarize the contents.}
 \item{\code{as.matrix}:}{   Convert data to a locations by measurements numeric matrix.}
 \item{\code{dim}:}{    Obtain number of locations and number of measurements.}
@@ -60,7 +61,7 @@ S3 methods for \code{"xifti"}s:
 
 Functions for working with surfaces:
 
-\itemize{
+\describe{
 \item{\code{read_surf}:}{   Read in a surface GIFTI file as a \code{"surf"}}
 \item{\code{is.surf}:}{   Verify a \code{"surf"}}
 \item{\code{write_surf_gifti}:}{   Write a \code{"surf"} to a surface GIFTI file}
@@ -68,4 +69,26 @@ Functions for working with surfaces:
 \item{\code{resample_surf}:}{   Resample a \code{"surf"}}
 \item{\code{rotate_surf}:}{   Rotate the geometry of a \code{"surf"}}
 }
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mandymejia/ciftiTools}
+  \item Report bugs at \url{https://github.com/mandymejia/ciftiTools/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Amanda Mejia \email{mandy.mejia@gmail.com}
+
+Authors:
+\itemize{
+  \item Damon Pham \email{damondpham@gmail.com} (\href{https://orcid.org/0000-0001-7563-4727}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item John Muschelli \email{muschellij2@gmail.com} (\href{https://orcid.org/0000-0001-6469-1750}{ORCID}) [contributor]
+}
+
 }

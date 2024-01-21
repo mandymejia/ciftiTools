@@ -8,6 +8,8 @@
 #'  equal to the same number of columns in \code{xifti}.
 #' 
 #' @return \code{xifti} with the new column names.
+#' 
+#' @family manipulating xifti
 #' @export 
 #' 
 set_names_xifti <- function(xifti, names){

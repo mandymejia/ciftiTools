@@ -10,8 +10,8 @@ resample_cifti_components(
   resamp_method = NULL,
   areaL_original_fname = NULL,
   areaR_original_fname = NULL,
-  ROIcortex_original_fname = NULL,
-  ROIcortex_target_fname = NULL,
+  areaL_target_fname = NULL,
+  areaR_target_fname = NULL,
   cortexL_original_fname = NULL,
   cortexR_original_fname = NULL,
   cortexL_target_fname = NULL,
@@ -20,6 +20,10 @@ resample_cifti_components(
   ROIcortexR_original_fname = NULL,
   ROIcortexL_target_fname = NULL,
   ROIcortexR_target_fname = NULL,
+  sphereL_original_fname = NULL,
+  sphereR_original_fname = NULL,
+  sphereL_target_fname = NULL,
+  sphereR_target_fname = NULL,
   surfL_original_fname = NULL,
   surfR_original_fname = NULL,
   surfL_target_fname = NULL,
@@ -51,10 +55,17 @@ to use for vertex area correction during adaptive resampling. (Only used if
 resampling with the adaptive method.) \code{area[L/R]_original_fname} should
 match the current resolution of the data.
 
-The Workbench command for adaptive resampling requires the target surfaces
-for area correction too, but to make the workflow easier \code{ciftiTools}
-will resample \code{area[L/R]_original_fname} with the barycentric method
-and use that for the target surface.}
+For resampling: the Workbench command for adaptive resampling requires the
+target surfaces for area correction too. But to make the workflow easier,
+\code{ciftiTools} will resample \code{area[L/R]_original_fname} with the
+barycentric method and use that for the target area.
+
+For remapping: \code{area[L/R]_target_fname} must be directly provided.}
+
+\item{areaL_target_fname, areaR_target_fname}{File paths to the surfaces
+to use for vertex area correction during adaptive resampling. (Only used if
+resampling with the adaptive method.) \code{area[L/R]_target_fname} should
+match the target resolution of the data.}
 
 \item{cortexL_original_fname, cortexR_original_fname}{(Optional) File path of
 GIFTI data for [left/right] cortex to resample.}
@@ -92,7 +103,7 @@ any directory to the path.
 
 \code{read_dir} must already exist, or an error will be raised.}
 
-\item{write_dir}{Where should the separated files be placed? \code{NULL}
+\item{write_dir}{Where should the separate files be placed? \code{NULL}
 (default) will write them to the current working directory.
 
 \code{write_dir} must already exist, or an error will occur.}

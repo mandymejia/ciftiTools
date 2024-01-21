@@ -7,6 +7,8 @@
 #' 
 #' @return The input \code{"xifti"} with scaled columns.
 #' 
+#' @family manipulating xifti
+#' 
 #' @export
 scale_xifti <- function(xifti, center=TRUE, scale=TRUE){
   stopifnot(is.xifti(xifti))

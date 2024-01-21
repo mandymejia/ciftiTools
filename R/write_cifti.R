@@ -2,6 +2,9 @@
 #'
 #' Write out a \code{"xifti"} object as a CIFTI file and (optionally) GIFTI
 #'  surface files.
+#' 
+#' See \code{\link{write_xifti2}} to write a \code{"xifti"} object out as
+#'  separate GIFTI and/or NIFTI files instead.
 #'
 #' @inheritParams xifti_Param
 #' @inheritParams cifti_fname_Param
@@ -22,8 +25,8 @@
 #'  Command, depending on the input.
 #'
 write_cifti <- function(
-  xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
-  verbose=TRUE) {
+  xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL, verbose=TRUE) {
+  stopifnot(is.xifti(xifti))
 
   # Infer extension from name, and add it to `xifti`.
   extn_cifti <- get_cifti_extn(cifti_fname)

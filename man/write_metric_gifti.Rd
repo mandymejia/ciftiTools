@@ -17,7 +17,7 @@ write_metric_gifti(
 )
 }
 \arguments{
-\item{x}{A \eqn{V x T} data matrix (V vertices, T measurements). This can also
+\item{x}{A \eqn{V \times T} data matrix (V vertices, T measurements). This can also
 be an object from \code{gifti::readgii}, or a length \eqn{T} list of length
 \eqn{V} vectors.}
 
@@ -68,10 +68,11 @@ Whether the GIFTI was successfully written
 Write the data for the left or right cortex to a metric GIFTI file.
 }
 \seealso{
-Other functions for writing CIFTI or GIFTI data: 
+Other writing: 
 \code{\link{separate_cifti}()},
 \code{\link{write_cifti}()},
 \code{\link{write_subcort_nifti}()},
-\code{\link{write_surf_gifti}()}
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{writing}

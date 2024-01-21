@@ -9,7 +9,8 @@ expand_color_pal(pal, COLOR_RES = 255)
 }
 \arguments{
 \item{pal}{The color palette to expand, as a data.frame with two columns:
-\code{"color"} (character: color hex codes) and \code{"value"} (numeric).}
+\code{"color"} (character: color hex codes) and \code{"value"} (numeric,
+ascending).}
 
 \item{COLOR_RES}{The number of entries to have in the output palette.}
 }
@@ -21,3 +22,10 @@ codes) and \code{"value"} (numeric)
 Interpolates between entries in the input palette to make a larger palette
 with COLOR_RES entries.
 }
+\seealso{
+Other coloring: 
+\code{\link{ROY_BIG_BL}()},
+\code{\link{make_color_pal}()},
+\code{\link{use_color_pal}()}
+}
+\concept{coloring}

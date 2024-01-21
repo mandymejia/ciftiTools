@@ -12,7 +12,7 @@ as.metric_gifti(
 )
 }
 \arguments{
-\item{data}{\eqn{V x T} numeric matrix, or length \eqn{T} list of length
+\item{data}{\eqn{V \times T} numeric matrix, or length \eqn{T} list of length
 \eqn{V} numeric vectors}
 
 \item{hemisphere}{The side of the brain the data represents: \code{"left"}
@@ -31,7 +31,7 @@ case the NIFTI type will be inferred from \code{data}.}
 The \code{"gifti"}
 }
 \description{
-Format a \eqn{V x T} numeric matrix (V vertices, T measurements) or a length-T list
+Format a \eqn{V \times T} numeric matrix (V vertices, T measurements) or a length-T list
 of length-V numeric vectors as a \code{"gifti"} using a template
 \code{"gifti"}. The brain hemisphere (left or right) must be indicated.
 }

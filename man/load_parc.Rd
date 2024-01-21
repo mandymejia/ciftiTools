@@ -10,7 +10,7 @@ load_parc(
 }
 \arguments{
 \item{name}{The name of the parcellation to load:
-\itemize{
+\describe{
 \item{\code{"Schaefer_100"}:}{   (2018) 100 parcels based on the "local-global" approach.}
 \item{\code{"Schaefer_400"}:}{   (2018) 400 parcels based on the "local-global" approach.}
 \item{\code{"Schaefer_1000"}:}{   (2018) 1000 parcels based on the "local-global" approach.}
@@ -41,12 +41,20 @@ When using these parcellations, please cite the corresponding paper(s):
 Note that the Schaefer parcels have been matched to networks from Kong (2021+).
 }
 \seealso{
-Other functions for reading in CIFTI or GIFTI data: 
+Other reading: 
 \code{\link{as.xifti}()},
 \code{\link{info_cifti}()},
 \code{\link{load_surf}()},
 \code{\link{read_cifti}()},
 \code{\link{read_surf}()},
 \code{\link{read_xifti2}()}
+
+Other parcellation-related: 
+\code{\link{apply_parc}()},
+\code{\link{load_sub_parc}()},
+\code{\link{parc_add_subcortex}()},
+\code{\link{parc_borders}()},
+\code{\link{parc_vals_to_xifti}()}
 }
+\concept{parcellation-related}
 \concept{reading}
