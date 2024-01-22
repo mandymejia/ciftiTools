@@ -495,7 +495,7 @@ use_color_pal <- function(data_values, pal, color_NA="white", indices=FALSE) {
     pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
 
     out <- rep(0, length(data_values))
-    out[!mask] <- apply(outer(as.numeric(data_values[!mask]), pal$cut, '>='), 1, sum)
+    out[!mask] <- as.numeric(cut(as.numeric(data_values[!mask]), c(pal$cut, Inf), right=FALSE))
   }
 
   if (!indices) {
