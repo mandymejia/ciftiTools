@@ -26,7 +26,7 @@ rotate_surf <- function(surf, r1=0, r2=0, r3=0, units=c("radians", "degrees")) {
   stopifnot(is.surf(surf))
 
   # Rotate on the mean of the data.
-  surf_colmeans <- apply(surf$vertices, 2, mean)
+  surf_colmeans <- colMeans(surf$vertices)
   surf$vertices <- t(t(surf$vertices) - surf_colmeans)
 
   R <- matrix(c(
