@@ -440,7 +440,7 @@ vignette for an example.
 Other visualizing: 
 \code{\link{view_comp}()},
 \code{\link{view_surf}()},
-\code{\link{view_xifti_volume}()},
-\code{\link{view_xifti}()}
+\code{\link{view_xifti}()},
+\code{\link{view_xifti_volume}()}
 }
 \concept{visualizing}

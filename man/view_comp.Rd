@@ -66,8 +66,8 @@ bottom, respectively, of the plots after with another call to \code{grid::arange
 \seealso{
 Other visualizing: 
 \code{\link{view_surf}()},
+\code{\link{view_xifti}()},
 \code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()},
-\code{\link{view_xifti}()}
+\code{\link{view_xifti_volume}()}
 }
 \concept{visualizing}

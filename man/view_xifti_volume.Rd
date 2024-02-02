@@ -403,7 +403,7 @@ to left.
 Other visualizing: 
 \code{\link{view_comp}()},
 \code{\link{view_surf}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti}()}
+\code{\link{view_xifti}()},
+\code{\link{view_xifti_surface}()}
 }
 \concept{visualizing}

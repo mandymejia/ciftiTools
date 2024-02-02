@@ -169,9 +169,9 @@ vignette for an example.
 \seealso{
 Other visualizing: 
 \code{\link{view_comp}()},
+\code{\link{view_xifti}()},
 \code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()},
-\code{\link{view_xifti}()}
+\code{\link{view_xifti_volume}()}
 
 Other surface-related: 
 \code{\link{add_surf}()},
