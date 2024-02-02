@@ -1127,8 +1127,8 @@ view_xifti_surface <- function(
             # Get the color legend list dimensions.
             if (is.null(legend_ncol)) {
               legend_ncol <- max(1, floor(.8 * sqrt(nrow(cleg))))
-              colorlegend_nrow <- ceiling(nrow(cleg) / legend_ncol)
             }
+            colorlegend_nrow <- ceiling(nrow(cleg) / legend_ncol)
             cleg <- view_xifti.cleg(cleg, legend_ncol, text_color)
           }
         }
