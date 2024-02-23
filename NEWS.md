@@ -1,3 +1,7 @@
+# 14.0
+
+Minor fixes and improvements.
+
 # 13.2
 
 `ciftiTools` now has a couple functions which make working with parcellations easier. (A parcellation is a single-column dlabel CIFTI or `"xifti"` object. Each label level, or "Key", represents a "parcel." Each location belongs to exactly one parcel. Parcels are usually contiguous regions--but not necessarily. `ciftiTools` includes a few of the most commonly-used parcellations. These can be loaded with `load_parc`. Any other parcellation CIFTI file can be read in with `read_cifti`.)
