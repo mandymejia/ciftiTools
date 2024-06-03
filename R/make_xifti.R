@@ -93,15 +93,12 @@
 #'  the medial wall from the data values. \code{NULL} should be used if \code{NA}
 #'  or \code{NaN} are legitimate values that non-medial wall vertices might
 #'  take on.
-#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If
-#'  GIFTI and/or NIFTI components from a CIFTI are being provided,
-#'  providing \code{cifti_info} gives metadata information that would otherwise
+#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}, i.e. 
+#'  the metadata to be put in \code{$meta$cifti}.
+#'  If GIFTI and/or NIFTI components from a CIFTI are being provided,
+#'  providing \code{cifti_info} gives information that would otherwise
 #'  have to be inferred: the NIFTI intent, brainstructures present in the
 #'  original file, and miscellaneous metadata.
-#'
-#'  This argument is probably not necessary for end users: reading a CIFTI
-#'  should be done by providing \code{cifti_fname}, and for reading separate
-#'  GIFTI/NIFTI components \code{cifti_info} is not applicable.
 #'
 #'  Column names from \code{cortexL} and \code{cortexR} take precedence over column
 #'  names from \code{cifti_info}.
