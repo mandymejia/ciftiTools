@@ -96,14 +96,16 @@ or \code{NaN} are legitimate values that non-medial wall vertices might
 take on.}
 
 \item{cifti_info}{(Optional) The result of \code{\link{info_cifti}}, i.e.
-the metadata to be put in \code{$meta$cifti}.
-If GIFTI and/or NIFTI components from a CIFTI are being provided,
-providing \code{cifti_info} gives information that would otherwise
-have to be inferred: the NIFTI intent, brainstructures present in the
-original file, and miscellaneous metadata.
+the metadata to put in \code{$meta$cifti}: the NIFTI intent, and
+miscellaneous metadata. If GIFTI and/or NIFTI components from a CIFTI are
+being provided, providing \code{cifti_info} gives information that would
+otherwise have to be inferred.
 
-Column names from \code{cortexL} and \code{cortexR} take precedence over column
-names from \code{cifti_info}.}
+Column names from \code{cortexL} and \code{cortexR} take precedence over
+column names from \code{cifti_info}.
+
+\code{$meta$cifti$brainstructures} will be based on what data is provided
+to \code{make_xifti} rather than \code{cifti_info}.}
 
 \item{surfL, surfR}{(Optional) Surface geometries for the left or right cortex.
 Can be a surface GIFTI file path or \code{"surf"} object; see
