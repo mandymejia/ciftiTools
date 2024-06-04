@@ -16,7 +16,7 @@ should be in spatial order.}
 \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array
 (\eqn{i \times j \times k}) of numeric brainstructure indices, or a \eqn{V_S} length
 vector in spatial order with brainstructure names as factors or integer
-indices. The indices should be 3-21 (2 and 3 correspond to left and right
+indices. The indices should be 3-22 (2 and 3 correspond to left and right
 cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
 out-of-mask voxels.}
 

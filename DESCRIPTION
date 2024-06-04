@@ -50,6 +50,7 @@ Suggests:
     gridExtra,
     htmlwidgets,
     manipulateWidget,
+    webshot2,
     knitr,
     rmarkdown,
     png,

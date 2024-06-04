@@ -65,23 +65,23 @@ separate_cifti_wrapper <- function(
 #' Separate CIFTI: file names
 #'
 #' File paths for writing GIFTI and NIFTI files from a CIFTI or \code{"xifti"}
-#' 
+#'
 #' If \code{write_dir} is \code{NULL}, only components with provided file names
 #'  will be written. If \code{write_dir} is not \code{NULL}, files for all
-#'  existing brain components will be written to that directory. 
+#'  existing brain components will be written to that directory.
 #'
-#' @param bs_present The brain structures actually present in the CIFTI or 
+#' @param bs_present The brain structures actually present in the CIFTI or
 #'  \code{"xifti"} object.
 #' @param intent 3002 (default), 3006, or 3007
-#' @param brainstructures (Optional) character vector indicating a subset of 
-#'  brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex, 
-#'  and/or \code{"subcortical"} structures. Can also be \code{"all"} to write 
+#' @param brainstructures (Optional) character vector indicating a subset of
+#'  brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
+#'  and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
 #'  out all existing brain structures. Default: \code{c("left","right")}.
 #' @param ROI_brainstructures Which ROIs should be obtained? \code{"all"}
 #'  (default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL}
 #'  to not obtain any ROIs. This should be a subset of \code{brainstructures}.
 #' @param cortexL_fname,cortexR_fname (Optional) GIFTI file names
-#'  (*.\[func/label\].gii) to save the \[left/right\] cortex data to. 
+#'  (*.\[func/label\].gii) to save the \[left/right\] cortex data to.
 #'  dtseries and dscalar files should use "func", whereas dlabel files should
 #'  use "label".
 #'
@@ -147,7 +147,7 @@ separate_cifti_files <- function(
   }
 
   # Reconcile `brainstructures` with `bs_present`.
-  if (is.null(brainstructures)) { 
+  if (is.null(brainstructures)) {
     brainstructures <- bs_present
   } else {
     brainstructures <- match_input(
@@ -212,10 +212,10 @@ separate_cifti_files <- function(
       if (is.null(ROIcortexL_fname)) { ROIcortexL_fname <- default_fname("ROIcortexL") }
       ROIcortexL_fname <- format_path(ROIcortexL_fname, write_dir, mode=2)
     } else { ROIcortexL_fname <- NULL }
-  } else { 
+  } else {
     if (is.null(write_dir) && !is.null(cortexL_fname)) { warning("`cortexL_fname` was provided, but left cortex data does not exist, or was excluded from `brainstructures`.") }
     if (is.null(write_dir) && !is.null(ROIcortexL_fname)) { warning("`ROIcortexL_fname` was provided, but left cortex data does not exist, or was excluded from `brainstructures`.") }
-    cortexL_fname <- ROIcortexL_fname <- NULL 
+    cortexL_fname <- ROIcortexL_fname <- NULL
   }
 
   if (do['right']) {
@@ -227,10 +227,10 @@ separate_cifti_files <- function(
       if (is.null(ROIcortexR_fname)) { ROIcortexR_fname <- default_fname("ROIcortexR") }
       ROIcortexR_fname <- format_path(ROIcortexR_fname, write_dir, mode=2)
     } else { ROIcortexR_fname <- NULL }
-  } else { 
+  } else {
     if (is.null(write_dir) && !is.null(cortexR_fname)) { warning("`cortexR_fname` was provided, but right cortex data does not exist, or was excluded from `brainstructures`.") }
     if (is.null(write_dir) && !is.null(ROIcortexR_fname)) { warning("`ROIcortexR_fname` was provided, but right cortex data does not exist, or was excluded from `brainstructures`.") }
-    cortexR_fname <- ROIcortexR_fname <- NULL 
+    cortexR_fname <- ROIcortexR_fname <- NULL
   }
 
   if (do['subVol']) {
@@ -241,16 +241,16 @@ separate_cifti_files <- function(
       if (is.null(ROIsubcortVol_fname)) { ROIsubcortVol_fname <- default_fname("ROIsubcort") }
       ROIsubcortVol_fname <- format_path(ROIsubcortVol_fname, write_dir, mode=2)
     } else { ROIsubcortVol_fname <- NULL }
-  } else { 
+  } else {
     if (is.null(write_dir) && !is.null(subcortVol_fname)) { warning("`subcortVol_fname` was provided, but subcortex data does not exist, or was excluded from `brainstructures`.") }
     if (is.null(write_dir) && !is.null(ROIsubcortVol_fname)) { warning("`ROIsubcortVol_fname` was provided, but subcortex data does not exist, or was excluded from `brainstructures`.") }
-    subcortVol_fname <- ROIsubcortVol_fname <- NULL 
+    subcortVol_fname <- ROIsubcortVol_fname <- NULL
   }
 
   if (do["subLab"]) {
     if (is.null(subcortLabs_fname)) { subcortLabs_fname <- default_fname("subcortLabs") }
     subcortLabs_fname <- format_path(subcortLabs_fname, write_dir, mode=2)
-  } else { 
+  } else {
     if (is.null(write_dir) && !is.null(subcortLabs_fname)) { warning("`subcortLabs_fname` was provided, but subcortex data does not exist, or was excluded from `brainstructures`.") }
     subcortLabs_fname <- NULL
   }
@@ -361,7 +361,7 @@ separate_cifti <- function(cifti_fname,
     subcortVol_fname=subcortVol_fname, subcortLabs_fname=subcortLabs_fname,
     ROI_brainstructures=ROI_brainstructures,
     ROIcortexL_fname=ROIcortexL_fname, ROIcortexR_fname=ROIcortexR_fname,
-    ROIsubcortVol_fname=ROIsubcortVol_fname, 
+    ROIsubcortVol_fname=ROIsubcortVol_fname,
     write_dir=write_dir
   )
   do <- x$do; ROI_do <- x$ROI_do; sep_fnames <- x$sep_fnames; rm(x)
@@ -395,6 +395,8 @@ separate_cifti <- function(cifti_fname,
   if (do['subLab']) {
     # `-cifti-separate` expects to write out the volume data if the labels are written.
     # So, here we write the volume data to a dummy tempfile, to get the labels only.
+    # [NOTE] '-cifti-separate -volume-all' seems to lose the original 
+    #   indices (they're renumberd 1-N) and colors.
     if (!do['subVol']) {
       subVol_tfname <- tempfile(fileext=".subVol.nii")
       cmd <- paste(cmd, '-volume-all', subVol_tfname)

@@ -13,7 +13,8 @@ column gives the CIFTI format name and the second column gives the
 }
 \description{
 Table of labels for cortex hemispheres (left and right) and subcortical
-substructures. The names used by the CIFTI format and the names used by
+substructures. The same labels used by the HCP data are here, plus "Other".
+Names from the CIFTI format ("CIFTI_STRUCTURE_*") and the names used by
 \code{ciftiTools} are given.
 }
 \details{

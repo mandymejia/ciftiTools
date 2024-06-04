@@ -23,7 +23,8 @@ supported_intents <- function(){
 #' Substructure table
 #'
 #' Table of labels for cortex hemispheres (left and right) and subcortical
-#'  substructures. The names used by the CIFTI format and the names used by
+#'  substructures. The same labels used by the HCP data are here, plus "Other".
+#'  Names from the CIFTI format ("CIFTI_STRUCTURE_*") and the names used by
 #'  \code{ciftiTools} are given.
 #'
 #' The names used by \code{ciftiTools} are based on those in
@@ -57,7 +58,8 @@ substructure_table <- function(){
     c("PUTAMEN_LEFT",               "Putamen-L"),
     c("PUTAMEN_RIGHT",              "Putamen-R"),
     c("THALAMUS_LEFT",              "Thalamus-L"),
-    c("THALAMUS_RIGHT",             "Thalamus-R")
+    c("THALAMUS_RIGHT",             "Thalamus-R"),
+    c("OTHER",                      "Other")
   ))
   colnames(table) <- c("Original_Name", "ciftiTools_Name")
   table$Index <- seq_len(nrow(table))

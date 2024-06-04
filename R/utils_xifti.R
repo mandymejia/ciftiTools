@@ -154,7 +154,7 @@ print.summary.xifti <- function(x, ...) {
     labs2 <- unique(gsub("-.*", "", names(x$subcort_labels)))
     for (ii in seq(length(labs2))) {
       labs2_ii <- labs2[ii]
-      if (labs2_ii != "Brain Stem") {
+      if (!(labs2_ii %in% c("Brain Stem", "Other"))) {
         labs2_ii <- paste0(labs2_ii, c("-L", "-R"))
       }
       cat(paste0(
