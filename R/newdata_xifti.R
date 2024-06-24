@@ -78,6 +78,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
 
   # For `dlabel` xifti, check that newdata values are valid.
   if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+    # [TO DO] `convert_to_dscalar`
     for (cc in seq(xifti_dim[2])) {
       if (!all(newdata[,cc] %in% xifti$meta$cifti$labels[[cc]]$Key)) {
         stop("`newdata` has values that are not in the label table for column ", cc, ".")

@@ -8,7 +8,7 @@
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param_LR
+#' @inheritParams brainstructures_Param_all
 #' @inheritParams idx_Param
 #' @param mwall_values If the medial wall mask is not present in the CIFTI, 
 #'  infer it from these data values. Default: \code{c(NA, NaN)}. If \code{NULL}, 
@@ -23,7 +23,7 @@
 read_cifti_convert <- function(
   cifti_fname, 
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), idx=NULL,
+  brainstructures="all", idx=NULL,
   mwall_values=c(NA, NaN), verbose=FALSE, ...){
 
   # Check arguments.

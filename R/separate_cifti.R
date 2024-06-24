@@ -6,8 +6,8 @@
 #' Currently used by \code{read_cifti} and \code{resample_cifti}.
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param_LR
-#' @inheritParams ROI_brainstructures_Param_LR
+#' @inheritParams brainstructures_Param_all
+#' @inheritParams ROI_brainstructures_Param_all
 #' @param sep_fnames  Where to write the separated files (override
 #'  their default file names). This is a named list
 #'  where each entry's name is a file type label, and each entry's value
@@ -76,7 +76,7 @@ separate_cifti_wrapper <- function(
 #' @param brainstructures (Optional) character vector indicating a subset of
 #'  brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
 #'  and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
-#'  out all existing brain structures. Default: \code{c("left","right")}.
+#'  out all existing brain structures. Default: \code{"all"}.
 #' @param ROI_brainstructures Which ROIs should be obtained? \code{"all"}
 #'  (default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL}
 #'  to not obtain any ROIs. This should be a subset of \code{brainstructures}.
@@ -413,7 +413,7 @@ separate_cifti <- function(cifti_fname,
 #' @rdname separate_cifti
 #' @export
 separateCIfTI <- function(cifti_fname,
-  brainstructures=c("left","right"),
+  brainstructures="all",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",
@@ -435,7 +435,7 @@ separateCIfTI <- function(cifti_fname,
 #' @rdname separate_cifti
 #' @export
 separatecii <- function(cifti_fname,
-  brainstructures=c("left","right"),
+  brainstructures="all",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",

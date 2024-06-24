@@ -98,7 +98,7 @@ apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
 #'  the color table of \code{parc}. Columns will become columns in the output
 #'  \code{"xifti"} object.
 #' @return A \code{"xifti"} object
-#' 
+#'
 #' @family parcellation-related
 #' @export
 #'
@@ -270,9 +270,11 @@ load_sub_parc <- function(){
   # Convert to dlabel and return.
   keys_sub <- xii_sub$meta$subcort$labels
   xii_sub$data$subcort[] <- as.numeric(keys_sub)
-  stopifnot(identical(levels(keys_sub), c("Cortex-L", "Cortex-R", names(SLabs))))
+  stopifnot(identical(levels(keys_sub), names(SLabs)))
+
   convert_to_dlabel(
     xii_sub,
+    levels_old = seq(length(SLabs)),
     levels = seq(length(SLabs)),
     labels = names(SLabs),
     colors = as.character(SLabs),

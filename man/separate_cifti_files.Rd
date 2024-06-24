@@ -28,7 +28,7 @@ separate_cifti_files(
 \item{brainstructures}{(Optional) character vector indicating a subset of
 brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
 and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
-out all existing brain structures. Default: \code{c("left","right")}.}
+out all existing brain structures. Default: \code{"all"}.}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names
 (*.[func/label].gii) to save the [left/right] cortex data to.

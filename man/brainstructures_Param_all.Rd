@@ -7,12 +7,15 @@
 \item{brainstructures}{Character vector indicating which brain structure(s)
 to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
 and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
-\code{"all"} (obtain all three brain structures). Default: \code{"all"}.
+\code{"all"} (obtain all three brain structures). Default:
+\code{"all"}.
 
-If a brain structure is indicated but is not included, a warning will be
-raised and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist in the CIFTI file, a
+warning will occur and that brain structure will be skipped.}
 }
 \description{
+brainstructures
+
 brainstructures
 }
 \keyword{internal}

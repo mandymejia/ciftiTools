@@ -11,7 +11,7 @@ test_that("plot_xifti `together` argument is working", {
   fnames <- ciftiTools.files()
 
   # CORTEX ---------------------------------------------------------------------
-  x <- read_cifti(fnames$cifti["dscalar"])
+  x <- read_cifti(fnames$cifti["dscalar"], brainstructures=c("left", "right"))
   y <- transform_xifti(x, function(q){rnorm(length(q))})
   x <- merge_xifti(x, y, x+y)
   x$meta$cifti$names <- c("dat", "datB", "rand", "randB", "sum", "sumB")
