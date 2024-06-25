@@ -53,11 +53,11 @@ NULL
 #'  to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
 #'  and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
 #'  \code{"all"} (obtain all three brain structures). Default:
-#'  \code{c("left","right")} (cortex only).
+#'  \code{"all"}.
 #'
 #'  If a brain structure is indicated but does not exist in the CIFTI file, a
 #'  warning will occur and that brain structure will be skipped.
-#' @name brainstructures_Param_LR
+#' @name brainstructures_Param_all
 #' @keywords internal
 NULL
 
@@ -186,7 +186,7 @@ NULL
 #'
 #' ROIs are typically the medial wall masks for the left and right cortex, and
 #'  the subcortical mask for the subcortex.
-#' @name ROI_brainstructures_Param_LR
+#' @name ROI_brainstructures_Param_all
 #' @keywords internal
 NULL
 

@@ -76,7 +76,7 @@
 #'  \code{\link{substructure_table}}. It is either a NIFTI file path, 3D data array
 #'  (\eqn{i \times j \times k}) of integer brainstructure indices, or a \eqn{V_S} length
 #'  vector in spatial order with brainstructure names as factors or integer
-#'  indices. The indices should be 3-21 (1 and 2 correspond to left and right
+#'  indices. The indices should be 3-22 (1 and 2 correspond to left and right
 #'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
 #'  out-of-mask voxels.
 #'
@@ -93,18 +93,17 @@
 #'  the medial wall from the data values. \code{NULL} should be used if \code{NA}
 #'  or \code{NaN} are legitimate values that non-medial wall vertices might
 #'  take on.
-#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}. If
-#'  GIFTI and/or NIFTI components from a CIFTI are being provided,
-#'  providing \code{cifti_info} gives metadata information that would otherwise
-#'  have to be inferred: the NIFTI intent, brainstructures present in the
-#'  original file, and miscellaneous metadata.
+#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}, i.e. 
+#'  the metadata to put in \code{$meta$cifti}: the NIFTI intent, and 
+#'  miscellaneous metadata. If GIFTI and/or NIFTI components from a CIFTI are 
+#'  being provided, providing \code{cifti_info} gives information that would 
+#'  otherwise have to be inferred.
 #'
-#'  This argument is probably not necessary for end users: reading a CIFTI
-#'  should be done by providing \code{cifti_fname}, and for reading separate
-#'  GIFTI/NIFTI components \code{cifti_info} is not applicable.
-#'
-#'  Column names from \code{cortexL} and \code{cortexR} take precedence over column
-#'  names from \code{cifti_info}.
+#'  Column names from \code{cortexL} and \code{cortexR} take precedence over 
+#'  column names from \code{cifti_info}.
+#' 
+#'  \code{$meta$cifti$brainstructures} will be based on what data is provided
+#'  to \code{make_xifti} rather than \code{cifti_info}.
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex.
 #'  Can be a surface GIFTI file path or \code{"surf"} object; see
 #'  \code{\link{make_surf}} for a full description of valid inputs.

@@ -62,7 +62,7 @@ surfL_fname <- ciftiTools.files()$surf["left"]
 surfR_fname <- ciftiTools.files()$surf["right"]
 
 xii <- read_cifti(
-  cifti_fname, brainstructures="all", 
+  cifti_fname, 
   surfL_fname=surfL_fname, surfR_fname=surfR_fname,
   resamp_res=4000
 )

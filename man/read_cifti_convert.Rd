@@ -8,7 +8,7 @@ read_cifti_convert(
   cifti_fname,
   surfL_fname = NULL,
   surfR_fname = NULL,
-  brainstructures = c("left", "right"),
+  brainstructures = "all",
   idx = NULL,
   mwall_values = c(NA, NaN),
   verbose = FALSE,
@@ -28,7 +28,7 @@ file representing the right cortex.}
 to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
 and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
 \code{"all"} (obtain all three brain structures). Default:
-\code{c("left","right")} (cortex only).
+\code{"all"}.
 
 If a brain structure is indicated but does not exist in the CIFTI file, a
 warning will occur and that brain structure will be skipped.}

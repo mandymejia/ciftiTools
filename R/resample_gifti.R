@@ -146,6 +146,8 @@ resample_gifti <- function(
 
   # Spheres
 
+  tdir <- tempdir()
+
   if (is.null(sphere_original_fname)) {
 
     # Check `original_res`
@@ -159,7 +161,6 @@ resample_gifti <- function(
     }
     stopifnot(is.numeric(original_res) && original_res > 0)
 
-    tdir <- tempdir()
     sphereL_original_fname <- format_path(paste0("sphereL_", original_res, ".surf.gii"), tdir, mode=2)
     sphereR_original_fname <- format_path(paste0("sphereR_", original_res, ".surf.gii"), tdir, mode=2)
     write_spheres(sphereL_original_fname, sphereR_original_fname, original_res)

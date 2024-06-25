@@ -1,45 +1,45 @@
 #' Make the cortical components of a \code{"xifti"}
-#' 
-#' Coerce a path to a GIFTI file, metric or label \code{"gifti"} object, 
-#'  data matrix or vector to a data matrix representing cortical data 
-#'  (and optionally a corresponding mask). 
-#'  That is, entries for \code{xifti$data$cortex_\[left/right\]} and 
+#'
+#' Coerce a path to a GIFTI file, metric or label \code{"gifti"} object,
+#'  data matrix or vector to a data matrix representing cortical data
+#'  (and optionally a corresponding mask).
+#'  That is, entries for \code{xifti$data$cortex_\[left/right\]} and
 #'  \code{xifti$meta$cortex$medial_wall_mask$\[left/right\]}. If \code{cortex} is
 #'  a path to a GIFTI file or a metric \code{"gifti"}, any column names or
 #'  a non-empty label table will also be extracted.
-#' 
-#' @param cortex A path to a metric or label GIFTI file, metric or label 
+#'
+#' @param cortex A path to a metric or label GIFTI file, metric or label
 #'  \code{"gifti"}, or numeric vector/matrix representing cortical data.
-#' 
+#'
 #'  If \code{cortex} is a path to a GIFTI file or \code{"gifti"},
 #'  the column names and the label table will also be extracted if they
-#'  exist in the GIFTI. 
-#' @param mwall A path to a metric or label GIFTI file, metric or label \code{"gifti"}, 
+#'  exist in the GIFTI.
+#' @param mwall A path to a metric or label GIFTI file, metric or label \code{"gifti"},
 #'  \eqn{V_{[L/R]} x 1} logical matrix or length \eqn{V_{[L/R]}} logical vector
-#'  representing the medial wall mask. \code{FALSE} values should indicate 
-#'  vertices that make up the medial wall. If the medial wall is unknown, use 
+#'  representing the medial wall mask. \code{FALSE} values should indicate
+#'  vertices that make up the medial wall. If the medial wall is unknown, use
 #'  \code{NULL} (default).
 #' @param idx Only applies if \code{cortex} is a GIFTI file path. This is
-#'  a numeric vector indicating the data indices to read. If \code{NULL} 
+#'  a numeric vector indicating the data indices to read. If \code{NULL}
 #'  (default), read all the data. Must be a subset of the indices present in the
-#'  file, or an error will occur. 
-#' @param cortex_is_masked Has the medial wall been masked from \code{cortex} 
-#'  yet? \code{NULL} (default) indicates whether it has been masked or not is 
+#'  file, or an error will occur.
+#' @param cortex_is_masked Has the medial wall been masked from \code{cortex}
+#'  yet? \code{NULL} (default) indicates whether it has been masked or not is
 #'  unknown.
-#' 
+#'
 #' If \code{!cortex_is_masked}, \code{cortex} should be \eqn{V_{[L/R]} x T}.
-#'  If \code{cortex_is_masked}, \code{cortex} should be 
-#'  \eqn{(V_{[L/R]} - mwall_{[L/R]}) x T}. If \code{is.null(cortex_is_masked)}, 
-#'  it may be either or. 
-#' @param rm_blank_mwall If the medial wall mask is all \code{TRUE} 
+#'  If \code{cortex_is_masked}, \code{cortex} should be
+#'  \eqn{(V_{[L/R]} - mwall_{[L/R]}) x T}. If \code{is.null(cortex_is_masked)},
+#'  it may be either or.
+#' @param rm_blank_mwall If the medial wall mask is all \code{TRUE}
 #'  (indicating no medial wall vertices), should it be discarded? Default:
 #'  \code{TRUE}. If \code{FALSE}, keep it.
-#' @param rm_bad_mwall If the medial wall mask doesn't match up with the 
+#' @param rm_bad_mwall If the medial wall mask doesn't match up with the
 #'  data (e.g. the vertex count doesn't add up), should it be discarded?
 #'  Default: \code{TRUE}. If \code{FALSE}, raise an error.
 #' @param mwall_values If the medial wall mask was not provided (or if it was
 #'  discarded), infer it from rows in \code{cortex} that are constantly one of
-#'  these values. Example: \code{c(0, NA, NaN)}. If \code{NULL} (default), 
+#'  these values. Example: \code{c(0, NA, NaN)}. If \code{NULL} (default),
 #'  do not attempt to infer the medial wall mask from the data values.
 #' @param side \code{"left"} or \code{"right"}? Just used to print warnings.
 #' @param mwall_source Description of where the mwall came from. Just used
@@ -48,9 +48,9 @@
 #' @return A list with components "data", "mwall", "col_names" and "labels".
 #'
 #' @importFrom gifti readgii is.gifti
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 make_cortex <- function(
   cortex, mwall=NULL, idx=NULL,
   cortex_is_masked=NULL,
@@ -62,7 +62,7 @@ make_cortex <- function(
 
   if (is.null(side)) {side <- ""}
   if (is.null(mwall_source)) {mwall_source <- ""}
-  
+
   col_names <- label_table <- NULL
 
   # Cannot infer the medial wall if the cortex has been masked.
@@ -87,23 +87,23 @@ make_cortex <- function(
       # Name for new GIFTI file
       if (endsWith(cortex, ".func.gii")) {
         cortex <- file.path(
-          tempdir(), 
+          tempdir(),
           gsub("\\.func\\.gii$", "\\.sel_idx\\.func\\.gii", basename(cortex_original))
         )
       } else if (endsWith(cortex, ".label.gii")) {
         cortex <- file.path(
-          tempdir(), 
+          tempdir(),
           gsub("\\.label\\.gii$", "\\.sel_idx\\.label\\.gii", basename(cortex_original))
         )
       } else {
         # Guess func.
         cortex <- file.path(
           tempdir(), paste0(basename(cortex_original), ".func.gii")
-        ) 
+        )
       }
-      
+
       run_wb_cmd(paste(
-        "-metric-merge", sys_path(cortex), 
+        "-metric-merge", sys_path(cortex),
         "-metric", sys_path(cortex_original), idx_string
       ))
     }
@@ -112,14 +112,14 @@ make_cortex <- function(
   }
   #   GIFTI --> matrix.
   if (is.gifti(cortex)) {
-    
+
     ## Extract column names if present.
     get_col_name <- function(x){
       if (!is.matrix(x)) { return("") }
       if (!all(sort(colnames(x)) == sort(c("names", "vals")))) { return("") }
       name_match <- x[,colnames(x) == "names"] == "Name"
       if (sum(name_match) > 0) {
-        if (sum(name_match) > 1) { 
+        if (sum(name_match) > 1) {
           ciftiTools_warn("Multiple \"Name\" metadata entries. Using first only.")
         }
         return(x[,colnames(x) == "vals"][name_match])
@@ -136,7 +136,7 @@ make_cortex <- function(
     if (!is.null(nrow(cortex$label)) && nrow(cortex$label) > 1) {
       label_table <- as.data.frame(cortex$label)
       label_table[,] <- apply(label_table, 2, as.numeric)
-    } 
+    }
 
     ## Extract data matrix.
     cortex <- do.call(cbind, cortex$data)
@@ -158,7 +158,7 @@ make_cortex <- function(
   # Check if medial wall mask is valid.
   msg <- ""
   if (!is.null(mwall)) {
-    
+
     # File --> GIFTI.
     if (is.fname(mwall)) {
       mwall <- readgii(mwall)
@@ -168,8 +168,8 @@ make_cortex <- function(
       mwall <- do.call(cbind, mwall$data)
       dimnames(mwall) <- NULL
     }
-    if (!is.vector(mwall) && ncol(mwall) > 1) { 
-      stop("`mwall` should be a vector of values (or column vector) but it had more than one column.") 
+    if (!is.vector(mwall) && ncol(mwall) > 1) {
+      stop("`mwall` should be a vector of values (or column vector) but it had more than one column.")
     }
     mwall <- as.logical(mwall)
 
@@ -213,7 +213,7 @@ make_cortex <- function(
           }
         }
       } else {
-        # Only one of `same_len` and `same_pos` will be TRUE b/c !all(mwall) 
+        # Only one of `same_len` and `same_pos` will be TRUE b/c !all(mwall)
         cortex_is_masked <- same_pos
       }
     }
@@ -247,7 +247,7 @@ make_cortex <- function(
   if (!is.null(mwall)) {
     if (is.null(cortex_is_masked)) { cortex_is_masked <- FALSE }
     if (!cortex_is_masked) {
-      if (nrow(cortex) != length(mwall)) { 
+      if (nrow(cortex) != length(mwall)) {
         stop("Cortex and medial wall have different numbers of data locations.")
       }
       cortex <- cortex[mwall,, drop=FALSE]
@@ -259,19 +259,19 @@ make_cortex <- function(
 }
 
 #' Make the subcortical transformation matrix
-#' 
+#'
 #' Make the transformation matrix for the subcortical volume from the sform
 #'  data in the header.
-#' 
+#'
 #' @param nii_fname Path to NIFTI file
-#' 
+#'
 #' @return 4x4 matrix representing the transformation matrix. (This includes
 #'  the last row, \code{c(0,0,0,1)}).
-#' 
+#'
 #' @importFrom oro.nifti nifti_header
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 make_trans_mat <- function(nii_fname) {
   head <- oro.nifti::nifti_header(nii_fname)
   labs_trans_mat <- rbind(head@srow_x, head@srow_y, head@srow_z)
@@ -282,60 +282,60 @@ make_trans_mat <- function(nii_fname) {
 }
 
 #' Make the subcortical components of a \code{"xifti"}
-#' 
+#'
 #' Coerce subcortical data into valid entries for \code{xifti$data$subcort}
 #'  and \code{xifti$meta$subcort}. The data arguments can be matrices/arrays or
-#'  NIFTI file paths. If the mask is not provided, it will be inferred from the 
+#'  NIFTI file paths. If the mask is not provided, it will be inferred from the
 #'  labels.
-#' 
+#'
 #' To read in the labels as the primary data, use the labels NIFTI for both
 #'  \code{vol} and \code{labs}.
 #'
 #' @inheritSection labels_Description Label Levels
-#' 
-#' @param vol represents the data values of the subcortex. It is either a NIFTI 
-#'  file path, 3D/4D data array (\eqn{i \times j \times k \times T}), or a vectorized data 
-#'  matrix (\eqn{V_S} voxels by \eqn{T} measurements). If it's vectorized, the voxels 
+#'
+#' @param vol represents the data values of the subcortex. It is either a NIFTI
+#'  file path, 3D/4D data array (\eqn{i \times j \times k \times T}), or a vectorized data
+#'  matrix (\eqn{V_S} voxels by \eqn{T} measurements). If it's vectorized, the voxels
 #'  should be in spatial order.
 #' @param labs represents the brainstructure labels of each voxel: see
-#'  \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array 
+#'  \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array
 #'  (\eqn{i \times j \times k}) of numeric brainstructure indices, or a \eqn{V_S} length
 #'  vector in spatial order with brainstructure names as factors or integer
-#'  indices. The indices should be 3-21 (2 and 3 correspond to left and right
+#'  indices. The indices should be 3-22 (2 and 3 correspond to left and right
 #'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
 #'  out-of-mask voxels.
 #' @param mask is a NIFTI file path or logical 3D data array (\eqn{i \times j \times k}) where \code{TRUE}
 #'  values indicate subcortical voxels (in-mask). If it is not provided, the
-#'  mask will be inferred from voxels with labels \code{0} or \code{NA} in 
+#'  mask will be inferred from voxels with labels \code{0} or \code{NA} in
 #'  \code{subcortLabs}. If \code{subcortLabs} are vectorized and \code{subcortMask}
 #'  is not provided, the mask cannot be inferred so an error will occur.
 #' @param idx Only applies if \code{vol} is a NIFTI file path. This is a numeric
-#'  vector indicating the data indices to read. If \code{NULL} (default), read 
-#'  all the data. Must be a subset of the indices present in the file, or an 
-#'  error will occur. 
-#' @param validate_mask If \code{mask} is provided, set this to \code{TRUE} to 
-#'  check that the mask only removes voxels with \code{NA} and \code{0} values 
+#'  vector indicating the data indices to read. If \code{NULL} (default), read
+#'  all the data. Must be a subset of the indices present in the file, or an
+#'  error will occur.
+#' @param validate_mask If \code{mask} is provided, set this to \code{TRUE} to
+#'  check that the mask only removes voxels with \code{NA} and \code{0} values
 #'  in \code{vol} and \code{labs}. Default: \code{FALSE} (saves time).
-#' 
-#' @return A list with components "data", "labels", "mask", and "trans_mat". The 
+#'
+#' @return A list with components "data", "labels", "mask", and "trans_mat". The
 #'  first two will be vectorized and ordered spatially.
-#' 
-#'  The volume can be recovered using: 
+#'
+#'  The volume can be recovered using:
 #'    \code{vol <- unvec_vol(data, mask, fill=NA)}
 #'    \code{labs <- unvec_vol(labels, mask, fill=0)}
 #'
 #' @importFrom RNifti readNifti
 #' @importFrom oro.nifti nifti_header
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 make_subcort <- function(
   vol, labs, mask=NULL, idx=NULL, validate_mask=FALSE) {
 
   vol_trans_mat <- labs_trans_mat <- mask_trans_mat <- NULL
 
   # Get vol.
-  if (is.fname(vol)) { 
+  if (is.fname(vol)) {
     vol_trans_mat <- try(make_trans_mat(vol), silent=TRUE)
     vol <- readNifti(vol, volumes=idx)
   }
@@ -345,33 +345,24 @@ make_subcort <- function(
   vol_is_vectorized <- vol_ndims < 3
 
   # Get labels.
-  if (is.fname(labs)) { 
+  labs_from_fname <- is.fname(labs)
+  if (labs_from_fname) {
     labs_trans_mat <- try(make_trans_mat(labs), silent=TRUE)
+    labs_table_fname <- file.path(tempdir(), "temp.txt")
+    run_wb_cmd(
+      paste(
+        "-volume-label-export-table", sys_path(labs), 1,
+        sys_path(labs_table_fname)
+      )
+    )
+    labs_table <- readLines(labs_table_fname)
+    labs_names <- labs_table[seq(length(labs_table)/2)*2 - 1]
+    labs_levels <- as.numeric(gsub(" .*", "", labs_table[seq(length(labs_table)/2)*2]))
     labs <- readNifti(labs)
+    # use names, dont assume the numbers will match. done after masking below.
   }
   labs_ndims <- length(dim(labs))
   labs_is_vectorized <- labs_ndims < 3
-
-  # Make labels numeric.
-  if (labs_ndims < 2) {
-    labs <- as.numeric(labs)
-  } else {
-    labs <- array(as.numeric(labs), dim=dim(labs))
-  }
-  
-  ## Add 2 to non-zero label values.
-  labs_vals <- sort(unique(as.numeric(labs)))
-  if (all(labs_vals %in% 0:19)) {
-    labs[labs > 0] <- labs[labs > 0] + 2
-    labs_vals <- sort(unique(as.vector(labs)))
-  } else if (all(labs_vals %in% c(0, 3:21))) {
-    invisible()
-  } else {
-    stop("The labels should be integers 0-19, or 0 and 3-21. See `substructure_table()`.")
-  }
-  if (!(is.numeric(as.vector(labs)) || is.factor(labs))) { 
-    stop("The labels should be integers (or factor levels) 3-21 or 0. See `substructure_table`.")
-  }
 
   # Infer mask if not provided.
   if (is.null(mask)) {
@@ -379,7 +370,7 @@ make_subcort <- function(
       mask <- labs > 0 & (!is.na(labs) & !is.nan(labs))
       if (validate_mask) {
         mask_vol <- apply(vol!=0 & !is.na(vol), c(1,2,3), all)
-        if(!isTRUE(all.equal(mask, mask_vol))) { 
+        if(!isTRUE(all.equal(mask, mask_vol))) {
           stop("The mask inferred from the labels did not match the mask inferred from the volume (NA/0 values).")
         }
       }
@@ -400,13 +391,13 @@ make_subcort <- function(
       stop_msg <- ""
       if (!labs_is_vectorized) {
         mask_labs <- labs > 0 | !is.na(labs)
-        if(!isTRUE(all.equal(mask, mask_labs))) { 
+        if(!isTRUE(all.equal(mask, mask_labs))) {
           stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the labels (NA/0 values). ")
         }
       }
       if (!vol_is_vectorized) {
         mask_vol <- apply(vol!=0 | !is.na(vol), c(1,2,3), all)
-        if(!isTRUE(all.equal(mask, mask_vol))) { 
+        if(!isTRUE(all.equal(mask, mask_vol))) {
           stop_msg <- paste0(stop_msg, "The input mask did not match the mask inferred from the volume (NA/0 values). ")
         }
       }
@@ -417,38 +408,47 @@ make_subcort <- function(
   if (sum(mask) == 0) { stop("The subcortical mask was empty (all `FALSE`).") }
 
   # Apply mask.
-  if (!vol_is_vectorized) { 
+  if (!vol_is_vectorized) {
     vol <- matrix(vol[mask], nrow=sum(mask))
   } else {
     if (nrow(vol) != sum(mask)) {
       stop(paste0(
-        "The number of subcortical voxels in the vectorized data (`vol`), ", 
+        "The number of subcortical voxels in the vectorized data (`vol`), ",
         nrow(vol), ", ",
-        "did not match the size of the subcortical mask, ", 
+        "did not match the size of the subcortical mask, ",
         sum(mask), "."
       ))
     }
   }
-  if (!labs_is_vectorized) { 
+  if (!labs_is_vectorized) {
     labs <- labs[mask]
   } else {
     if (length(labs) != sum(mask)) {
       stop(paste0(
-        "The number of subcortical voxels in the vectorized labels (`labs`), ", 
+        "The number of subcortical voxels in the vectorized labels (`labs`), ",
         length(labs), ", ",
-        "did not match the size of the subcortical mask, ", 
+        "did not match the size of the subcortical mask, ",
         sum(mask), "."
       ))
     }
   }
+  rm(labs_is_vectorized) # it is definitely a vector now.
 
-  substructure_levels <- substructure_table()$ciftiTools_Name
+  # Get the labels
+  sub_table <- substructure_table()
+  if (labs_from_fname) {
+    labs <- labs_names[match(labs, labs_levels)]
+  } else if (is.numeric(labs)) {
+    stopifnot(all(labs %in% c(0, seq(3, 22))))
+    labs <- sub_table$Original_Name[labs]
+  }
   labs <- factor(
-    labs, 
-    levels=seq_len(length(substructure_levels)), 
-    labels=substructure_levels
+    labs,
+    levels=sub_table$Original_Name,
+    labels=sub_table$ciftiTools_Name
   )
   stopifnot(is.subcort_labs(labs))
+  stopifnot(!any(is.na(labs)))
 
   # Get trans_mat. Only use if all were the same.
   trans_mat <- list(vol=vol_trans_mat, labs=labs_trans_mat, mask=mask_trans_mat)

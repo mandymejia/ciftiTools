@@ -12,7 +12,7 @@
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param_LR
+#' @inheritParams brainstructures_Param_all
 #' @inheritParams idx_Param
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams resamp_method_Param
@@ -29,7 +29,7 @@
 #' 
 read_cifti_separate <- function(
   cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), idx=NULL,
+  brainstructures="all", idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
   areaL_original_fname=NULL, areaR_original_fname=NULL,
   mwall_values=c(NA, NaN), verbose=TRUE) {

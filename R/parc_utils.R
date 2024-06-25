@@ -98,7 +98,7 @@ apply_parc <- function(xii, parc, FUN=mean, mwall_value=NA,
 #'  the color table of \code{parc}. Columns will become columns in the output
 #'  \code{"xifti"} object.
 #' @return A \code{"xifti"} object
-#' 
+#'
 #' @family parcellation-related
 #' @export
 #'
@@ -235,6 +235,8 @@ load_sub_parc <- function(){
   # Source: https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
   # Modification: cerebellum was lightened and thalamus was darkened, to enhance contrast between the two
   SLabs <- c(
+    CORTEX_LEFT = "#ffffff",
+    CORTEX_RIGHT = "#ffffff",
     ACCUMBENS_LEFT = "#007b7d",
     ACCUMBENS_RIGHT = "#007b7d",
     AMYGDALA_LEFT = "#dcd814",
@@ -253,7 +255,8 @@ load_sub_parc <- function(){
     PUTAMEN_LEFT = "#adf4fe",
     PUTAMEN_RIGHT = "#adf4fe",
     THALAMUS_LEFT = "#6e74c9",
-    THALAMUS_RIGHT = "#6e74c9"
+    THALAMUS_RIGHT = "#6e74c9",
+    OTHER = "#999999" # Damon picked this
   )
   # Rename the brain structures
   SLabs2 <- substructure_table()
@@ -267,9 +270,11 @@ load_sub_parc <- function(){
   # Convert to dlabel and return.
   keys_sub <- xii_sub$meta$subcort$labels
   xii_sub$data$subcort[] <- as.numeric(keys_sub)
-  stopifnot(identical(levels(keys_sub), c("Cortex-L", "Cortex-R", names(SLabs))))
+  stopifnot(identical(levels(keys_sub), names(SLabs)))
+
   convert_to_dlabel(
     xii_sub,
+    levels_old = seq(length(SLabs)),
     levels = seq(length(SLabs)),
     labels = names(SLabs),
     colors = as.character(SLabs),

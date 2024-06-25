@@ -19,7 +19,7 @@
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param_LR 
+#' @inheritParams brainstructures_Param_all 
 #' @inheritParams idx_Param
 #' @param resamp_res Resolution to resample the cortical data and surface to.
 #'  Default: \code{NULL} (do not resample). If not \code{NULL}, the data will 
@@ -66,7 +66,7 @@
 read_cifti <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), idx=NULL,
+  brainstructures="all", idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
   areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
@@ -150,7 +150,7 @@ read_cifti <- function(
 readCIfTI <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), idx=NULL,
+  brainstructures="all", idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
   areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
@@ -172,7 +172,7 @@ readCIfTI <- function(
 readcii <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), idx=NULL,
+  brainstructures="all", idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
   areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,
@@ -194,7 +194,7 @@ readcii <- function(
 read_xifti <- function(
   cifti_fname=NULL,
   surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures=c("left","right"), idx=NULL,
+  brainstructures="all", idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
   areaL_original_fname=NULL, areaR_original_fname=NULL,
   flat=FALSE,

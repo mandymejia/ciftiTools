@@ -13,12 +13,12 @@
 #'  not provided, the volumetric mask will not be written. (It's redundant with
 #'  the 0 values in \code{subcortLabs_fname} because valid labels have positive
 #'  indexes.)
-#' 
+#'
 #' Note that for label data (i.e. if \code{label_table} is provided) only one
 #'  label table can be saved.
 #'
 #' @param subcortVol A vectorized data matrix: V voxels by T measurements
-#' @param subcortLabs Numeric (0 and 3-21) or factor vector corresponding to
+#' @param subcortLabs Numeric (0 and 3-22) or factor vector corresponding to
 #'  subcortical structure labels. See \code{\link{substructure_table}}.
 #' @param subcortMask Logical volumetric mask. Values of 0 represent out-of-mask
 #'  voxels (not subcortical), and values of 1 represent in-mask voxels
@@ -106,12 +106,12 @@ write_subcort_nifti <- function(
     }
     # Write `label_table` and add it.
     write_label_table(label_table, label_table_tfile)
-    run_wb_cmd(cmd, ignore.stderr=TRUE)
+    run_wb_cmd(cmd, ignore.stderr=FALSE)
   }
 
   # Labels.
   stopifnot(is.subcort_labs(subcortLabs))
-  subcortLabs <- as.numeric(subcortLabs) #- 2
+  subcortLabs <- as.numeric(subcortLabs)
   subcortLabs <- unvec_vol(subcortLabs, subcortMask, fill=fill)
   if (!is.null(trans_mat)) {
     subcortLabs <- RNifti::`sform<-`(subcortLabs, trans_mat)
@@ -130,7 +130,7 @@ write_subcort_nifti <- function(
     sys_path(subcort_lab_list),
     sys_path(subcortLabs_fname)
   )
-  run_wb_cmd(cmd, ignore.stderr=TRUE)
+  run_wb_cmd(cmd, ignore.stderr=FALSE)
 
   # Mask (as numeric).
   subcortMask <- subcortMask + 0

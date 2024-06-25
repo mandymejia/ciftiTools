@@ -31,10 +31,17 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   xifti_dim <- dim(xifti)
 
   newdata_dim <- dim(newdata)
-  if (is.null(newdata_dim)) {
+  if (is.null(newdata_dim)) { 
     if (length(newdata) == 1) {
       newdata <- matrix(newdata, nrow=xifti_dim[1], ncol=xifti_dim[2])
     } else {
+      if (length(newdata) != xifti_dim[1]) {
+        stop(
+          "`xifti` and `newdata` do not have the same dimensions.\n",
+          "The `xifti` has ", xifti_dim[1], " grayordinates and ", xifti_dim[2], " measurements.\n",
+          "Meanwhile, `newdata` is length ", length(newdata), "."
+        )
+      }
       newdata <- matrix(newdata, nrow=xifti_dim[1])
     }
     newdata_dim <- dim(newdata)
@@ -71,6 +78,7 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
 
   # For `dlabel` xifti, check that newdata values are valid.
   if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3007) {
+    # [TO DO] `convert_to_dscalar`
     for (cc in seq(xifti_dim[2])) {
       if (!all(newdata[,cc] %in% xifti$meta$cifti$labels[[cc]]$Key)) {
         stop("`newdata` has values that are not in the label table for column ", cc, ".")

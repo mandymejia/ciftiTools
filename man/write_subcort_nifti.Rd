@@ -21,7 +21,7 @@ write_subcort_nifti(
 \arguments{
 \item{subcortVol}{A vectorized data matrix: V voxels by T measurements}
 
-\item{subcortLabs}{Numeric (0 and 3-21) or factor vector corresponding to
+\item{subcortLabs}{Numeric (0 and 3-22) or factor vector corresponding to
 subcortical structure labels. See \code{\link{substructure_table}}.}
 
 \item{subcortMask}{Logical volumetric mask. Values of 0 represent out-of-mask

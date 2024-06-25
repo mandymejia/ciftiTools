@@ -244,7 +244,7 @@ view_xifti <- function(xifti, what=NULL, ...) {
     xifti, args, color_mode, zlim, colors,
     fname, fname_sub,
     legend_fname,
-    hemisphere, view, slider_title, borders, alpha,
+    surfL, surfR, hemisphere, view, slider_title, borders, alpha,
     edge_color, vertex_color, vertex_size, material, zoom,
     ...
     ) {
