@@ -12,7 +12,7 @@ test_that("plot_xifti_surface and related functions are working", {
 
   fnames <- ciftiTools.files()
   for (cii_fname in fnames$cifti) {
-    cii <- readcii(cii_fname)
+    cii <- readcii(cii_fname, brainstructures=c("left", "right"))
     print(cii$meta$cifti$intent)
     plot2(cii)
     print("sequential")

@@ -225,7 +225,7 @@ test_that("Miscellaneous functions are working", {
       read_xifti(cii_fname, brainstructures="left"),
       read_xifti(cii_fname, brainstructures="right")
     )
-    cii2 <- read_xifti(cii_fname)
+    cii2 <- read_xifti(cii_fname, brainstructures=c("left", "right"))
     testthat::expect_equal(cii1, cii2)
     # [TO DO]: test with different intents; test expected errors
 
@@ -264,8 +264,9 @@ test_that("Miscellaneous functions are working", {
       c(apply(cii1, 2, quantile, c(.1, .2, .5)))
     )
 
+    cii2 <- select_xifti(cii2, idx=1)
     cii2$data$cortex_left <- as.vector(cii2$data$cortex_left)
-    is.xifti(fix_xifti(cii2))
+    stopifnot(is.xifti(fix_xifti(cii2)))
   }
 
   scale_xifti(cii1, scale=FALSE)
@@ -289,7 +290,8 @@ test_that("Miscellaneous functions are working", {
 
   # parcellation matrix
   parc <- parc_add_subcortex(load_parc())
-  stopifnot(all(table(c(as.matrix(parc))) - rowSums(ciftiTools:::parc_mean_mat(parc)>0) == 0))
+  z <- rowSums(ciftiTools:::parc_mean_mat(parc)>0)
+  stopifnot(all(table(c(as.matrix(parc))) - z[!is.na(z)] == 0))
 
   # parcellation functions
   ### dummy data
