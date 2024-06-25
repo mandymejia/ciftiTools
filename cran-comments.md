@@ -1,7 +1,7 @@
 ## Test environments
 
 * Windows x86_64-w64-mingw32/x64, R 4.2.2
-* Mac x86_64-apple-darwin17.0, R 4.3.1
+* Mac x86_64-apple-darwin17.0, R 4.4.0
 
 ## R CMD check results
 
