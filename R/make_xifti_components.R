@@ -441,12 +441,13 @@ make_subcort <- function(
   } else if (is.numeric(labs)) {
     stopifnot(all(labs %in% c(0, seq(3, 22))))
     labs <- sub_table$Original_Name[labs]
+  } else if (!identical(levels(labs), sub_table$ciftiTools_Name)) {
+    labs <- factor(
+      labs,
+      levels=sub_table$Original_Name,
+      labels=sub_table$ciftiTools_Name
+    )
   }
-  labs <- factor(
-    labs,
-    levels=sub_table$Original_Name,
-    labels=sub_table$ciftiTools_Name
-  )
   stopifnot(is.subcort_labs(labs))
   stopifnot(!any(is.na(labs)))
 
