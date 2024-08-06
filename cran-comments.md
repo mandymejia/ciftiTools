@@ -6,9 +6,9 @@
 ## R CMD check results
 
 > checking installed package size ... NOTE
-    installed size is  7.6Mb
+    installed size is  6.6Mb
     sub-directories of 1Mb or more:
-      R         2.8Mb
+      R         1.8Mb
       extdata   4.3Mb
 
 0 errors v | 0 warnings v | 1 note x
