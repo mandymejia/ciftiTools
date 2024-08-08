@@ -26,6 +26,8 @@
 #'
 write_cifti <- function(
   xifti, cifti_fname, surfL_fname=NULL, surfR_fname=NULL, verbose=TRUE) {
+  
+  xifti <- fix_xifti(xifti)
   stopifnot(is.xifti(xifti))
 
   # Infer extension from name, and add it to `xifti`.

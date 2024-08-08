@@ -111,7 +111,7 @@ write_subcort_nifti <- function(
 
   # Labels.
   ### Add "Other" level for older `xifti` objects. 
-  if (!is.subcort_labs(subcortLabs)) {
+  if (length(levels(subcortLabs)) != length(substructure_table()$ciftiTools_Name)) {
     subcortLabs <- factor(
       subcortLabs,
       levels = substructure_table()$ciftiTools_Name
