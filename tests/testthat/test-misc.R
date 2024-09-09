@@ -184,6 +184,11 @@ test_that("Miscellaneous functions are working", {
       #sub2 <- make_subcort(vol2, labs2, cii$meta$subcort$mask)
       testthat::expect_equal(sub2$data, cii$data$subcort)
       testthat::expect_equal(sub2$labels, cii$meta$subcort$labels)
+
+      cii2 <- cii
+      cii2$data$subcort[seq(3),] <- 0
+      cii2 <- move_to_submask(cii2, 0)
+      cii2 <- move_from_submask(cii$meta$subcort$mask)
     }
 
     # Operations

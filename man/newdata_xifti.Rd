@@ -46,6 +46,7 @@ Other manipulating xifti:
 \code{\link{convert_to_dlabel}()},
 \code{\link{merge_xifti}()},
 \code{\link{move_to_mwall}()},
+\code{\link{move_to_submask}()},
 \code{\link{remap_cifti}()},
 \code{\link{remove_xifti}()},
 \code{\link{resample_cifti}()},
