@@ -1,3 +1,14 @@
+# 16.1
+
+* `move_to_submask` and `move_from_submask`
+* add support for writing older xiftis w/o "Other" level in sub labels
+* fix subcortex bugs
+
+# 15.0
+
+* Make default of `read_cifti` all brain structures, instead of left and right cortex only
+* add "Other" to subcortex levels
+
 # 14.0
 
 Minor fixes and improvements.
