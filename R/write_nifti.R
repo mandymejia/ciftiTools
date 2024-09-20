@@ -110,7 +110,14 @@ write_subcort_nifti <- function(
   }
 
   # Labels.
-  stopifnot(is.subcort_labs(subcortLabs))
+  ### Add "Other" level for older `xifti` objects. 
+  if (length(levels(subcortLabs)) != length(substructure_table()$ciftiTools_Name)) {
+    subcortLabs <- factor(
+      subcortLabs,
+      levels = substructure_table()$ciftiTools_Name
+    )
+    stopifnot(is.subcort_labs(subcortLabs))
+  }
   subcortLabs <- as.numeric(subcortLabs)
   subcortLabs <- unvec_vol(subcortLabs, subcortMask, fill=fill)
   if (!is.null(trans_mat)) {

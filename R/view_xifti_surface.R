@@ -574,9 +574,9 @@ view_xifti_surface.draw_mesh <- function(
 #'  \code{TRUE} borders will be colored in black; provide the name of a different
 #'  color to use that instead. If \code{FALSE} or \code{NULL} (default), do
 #'  not draw borders.
-#' @param shadows Number from 0 (maximum added lighting) to 1 (no added 
-#'  lighting) to control the darkness and extent of shadowing on the 3D surface. 
-#'  Default: \code{1}. Shadows help render the shape of the surface, but can 
+#' @param shadows Number from 0 (maximum added lighting) to 1 (no added
+#'  lighting) to control the darkness and extent of shadowing on the 3D surface.
+#'  Default: \code{1}. Shadows help render the shape of the surface, but can
 #'  be distracting if interpretation of the data depends on small differences in
 #'  brightness along the color scale.
 #' @return If a png or html file(s) were written, the names of the files for

@@ -19,5 +19,6 @@ Make adjustments to a putative \code{"xifti"} so that it is valid. Each
 adjustment is reported.
 }
 \details{
-Right now it only coerces the data to numeric matrices.
+Right now it: coerces the data to numeric matrices; adds the
+"Other" level to the subcortex labels.
 }

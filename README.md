@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/ciftiTools)](https://cran.r-project.org/package=ciftiTools)
 [![R-CMD-check](https://github.com/mandymejia/ciftiTools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mandymejia/ciftiTools/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/mandymejia/ciftiTools/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mandymejia/ciftiTools?branch=master)
