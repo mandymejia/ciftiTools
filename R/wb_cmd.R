@@ -72,11 +72,13 @@ get_wb_cmd_path <- function(wb_path) {
       file.path(wb_path, "bin_linux64", "wb_command"),
       file.path(wb_path, "bin_rh_linux64", "wb_command"),
       file.path(wb_path, "bin_macosx64", "wb_command"),
+      file.path(wb_path, "bin_macosxub", "wb_command"),
       file.path(wb_path, "bin_windows64", "wb_command.exe"),
       # A folder containing the Workbench folder.
       file.path(wb_path, "workbench", "bin_linux64", "wb_command"),
       file.path(wb_path, "workbench", "bin_rh_linux64", "wb_command"),
       file.path(wb_path, "workbench", "bin_macosx64", "wb_command"),
+      file.path(wb_path, "workbench", "bin_macosxub", "wb_command"),
       file.path(wb_path, "workbench", "bin_windows64", "wb_command.exe")
     )
     possible_paths <- possible_paths[vapply(possible_paths, file.exists, FALSE)]
