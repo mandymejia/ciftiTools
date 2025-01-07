@@ -6,7 +6,7 @@
 #' Currently used by \code{read_cifti} and \code{resample_cifti}.
 #'
 #' @inheritParams cifti_fname_Param
-#' @inheritParams brainstructures_Param_all
+#' @inheritParams brainstructures_Param_existing
 #' @inheritParams ROI_brainstructures_Param_all
 #' @param sep_fnames  Where to write the separated files (override
 #'  their default file names). This is a named list
@@ -37,7 +37,7 @@
 #' @keywords internal
 #'
 separate_cifti_wrapper <- function(
-  cifti_fname, brainstructures=NULL, ROI_brainstructures=NULL,
+  cifti_fname, brainstructures="existing", ROI_brainstructures="all",
   sep_fnames=NULL, write_dir=NULL) {
 
   # Get kwargs.
@@ -73,10 +73,9 @@ separate_cifti_wrapper <- function(
 #' @param bs_present The brain structures actually present in the CIFTI or
 #'  \code{"xifti"} object.
 #' @param intent 3002 (default), 3006, or 3007
-#' @param brainstructures (Optional) character vector indicating a subset of
-#'  brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
-#'  and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
-#'  out all existing brain structures. Default: \code{"all"}.
+#' @param brainstructures What brain structure(s) to write: \code{"left"} cortex, 
+#'  \code{"right"} cortex, and/or \code{"subcortical"} structures. Can also be 
+#'  \code{"existing"} (default) to write out all existing brain structures.
 #' @param ROI_brainstructures Which ROIs should be obtained? \code{"all"}
 #'  (default) to obtain ROIs for each of the \code{brainstructures}. \code{NULL}
 #'  to not obtain any ROIs. This should be a subset of \code{brainstructures}.
@@ -129,7 +128,7 @@ separate_cifti_wrapper <- function(
 separate_cifti_files <- function(
   bs_present,
   intent=3006,
-  brainstructures=NULL,
+  brainstructures="existing",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",
@@ -147,13 +146,13 @@ separate_cifti_files <- function(
   }
 
   # Reconcile `brainstructures` with `bs_present`.
-  if (is.null(brainstructures)) {
+  brainstructures <- match_input(
+    brainstructures, c("left","right","subcortical","all","existing"),
+    user_value_label="brainstructures"
+  )
+  if ("existing" %in% brainstructures) {
     brainstructures <- bs_present
   } else {
-    brainstructures <- match_input(
-      brainstructures, c("left","right","subcortical","all"),
-      user_value_label="brainstructures"
-    )
     if ("all" %in% brainstructures) {
       brainstructures <- c("left","right","subcortical")
     }
@@ -183,8 +182,8 @@ separate_cifti_files <- function(
 
   # Get the ROI brainstructures.
   if (!is.null(ROI_brainstructures)) {
-    ROI_brainstructures <- match_input(ROI_brainstructures, c(brainstructures, "all"), user_value_label="ROI_brainstructures")
-    if ("all" %in% ROI_brainstructures) {
+    ROI_brainstructures <- match_input(ROI_brainstructures, c(brainstructures, "all", "existing"), user_value_label="ROI_brainstructures")
+    if ("all" %in% ROI_brainstructures || "existing" %in% ROI_brainstructures) {
       ROI_brainstructures <- brainstructures
     }
     stopifnot(length(unique(ROI_brainstructures)) == length(ROI_brainstructures))
@@ -315,7 +314,7 @@ separate_cifti_files <- function(
 #' This function interfaces with the \code{"-cifti-separate"} Workbench command.
 #'
 separate_cifti <- function(cifti_fname,
-  brainstructures=NULL,
+  brainstructures="existing",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",
@@ -413,7 +412,7 @@ separate_cifti <- function(cifti_fname,
 #' @rdname separate_cifti
 #' @export
 separateCIfTI <- function(cifti_fname,
-  brainstructures="all",
+  brainstructures="existing",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",
@@ -435,7 +434,7 @@ separateCIfTI <- function(cifti_fname,
 #' @rdname separate_cifti
 #' @export
 separatecii <- function(cifti_fname,
-  brainstructures="all",
+  brainstructures="existing",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",

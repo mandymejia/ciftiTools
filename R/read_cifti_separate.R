@@ -12,7 +12,7 @@
 #' @inheritParams cifti_fname_Param
 #' @inheritParams surfL_fname_Param
 #' @inheritParams surfR_fname_Param
-#' @inheritParams brainstructures_Param_all
+#' @inheritParams brainstructures_Param_existing
 #' @inheritParams idx_Param
 #' @inheritParams resamp_res_Param_optional
 #' @inheritParams resamp_method_Param
@@ -29,7 +29,7 @@
 #' 
 read_cifti_separate <- function(
   cifti_fname, surfL_fname=NULL, surfR_fname=NULL,
-  brainstructures="all", idx=NULL,
+  brainstructures="existing", idx=NULL,
   resamp_res=NULL, resamp_method=c("barycentric", "adaptive"),
   areaL_original_fname=NULL, areaR_original_fname=NULL,
   mwall_values=c(NA, NaN), verbose=TRUE) {
@@ -40,13 +40,12 @@ read_cifti_separate <- function(
   write_dir_sep <- write_dir_resamp <- tempdir()
 
   brainstructures <- match_input(
-    brainstructures, c("left","right","subcortical","all"),
+    brainstructures, c("left","right","subcortical","all","existing"),
     user_value_label="brainstructures"
   )
   if ("all" %in% brainstructures) { 
     brainstructures <- c("left","right","subcortical")
   }
-  ROI_brainstructures <- brainstructures
 
   stopifnot(is.null(resamp_res) || resamp_res>0)
 
@@ -55,6 +54,10 @@ read_cifti_separate <- function(
   # info_cifti() ---------------------------------------------------------------  
   
   cifti_info <- info_cifti(cifti_fname)
+  if ("existing" %in% brainstructures) { 
+    brainstructures <- cifti_info$cifti$brainstructures
+  }
+  ROI_brainstructures <- brainstructures
   bs_present <- brainstructures %in% cifti_info$cifti$brainstructures
   if (!all(bs_present)) {
     warning(paste0(

@@ -300,7 +300,7 @@ test_that("Miscellaneous functions are working", {
 
   # parcellation functions
   ### dummy data
-  cii <- read_cifti(ciftiTools.files()$cifti["dscalar_ones"], brainstructures="all", resamp_res=32000)
+  cii <- read_cifti(ciftiTools.files()$cifti["dscalar_ones"], resamp_res=32000)
   cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
   cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
   # tests

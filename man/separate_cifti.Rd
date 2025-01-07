@@ -8,7 +8,7 @@
 \usage{
 separate_cifti(
   cifti_fname,
-  brainstructures = NULL,
+  brainstructures = "existing",
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -22,7 +22,7 @@ separate_cifti(
 
 separateCIfTI(
   cifti_fname,
-  brainstructures = "all",
+  brainstructures = "existing",
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -36,7 +36,7 @@ separateCIfTI(
 
 separatecii(
   cifti_fname,
-  brainstructures = "all",
+  brainstructures = "existing",
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -51,10 +51,9 @@ separatecii(
 \arguments{
 \item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
-\item{brainstructures}{(Optional) character vector indicating a subset of
-brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
-and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
-out all existing brain structures. Default: \code{"all"}.}
+\item{brainstructures}{What brain structure(s) to write: \code{"left"} cortex,
+\code{"right"} cortex, and/or \code{"subcortical"} structures. Can also be
+\code{"existing"} (default) to write out all existing brain structures.}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names
 (*.[func/label].gii) to save the [left/right] cortex data to.

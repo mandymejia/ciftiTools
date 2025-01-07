@@ -6,8 +6,8 @@
 \usage{
 separate_cifti_wrapper(
   cifti_fname,
-  brainstructures = NULL,
-  ROI_brainstructures = NULL,
+  brainstructures = "existing",
+  ROI_brainstructures = "all",
   sep_fnames = NULL,
   write_dir = NULL
 )
@@ -16,13 +16,13 @@ separate_cifti_wrapper(
 \item{cifti_fname}{File path to a CIFTI file (ending in ".d*.nii").}
 
 \item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+to read in: \code{"left"} (left cortex), \code{"right"} (right cortex)
 and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
-\code{"all"} (obtain all three brain structures). Default:
-\code{"all"}.
+\code{"all"} (read all three brain structures), or \code{"existing"}
+(read all brain structures in the file). Default: \code{"existing"}.
 
-If a brain structure is indicated but does not exist in the CIFTI file, a
-warning will occur and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist, a warning will be
+raised and that brain structure will be skipped.}
 
 \item{ROI_brainstructures}{Character vector indicating which ROIs should be
 obtained. \code{NULL} (default) to not get any ROIs. Otherwise, this should

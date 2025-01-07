@@ -76,7 +76,7 @@ The result of `read_cifti` is a `"xifti"` object. We can get an overview of it u
 xii # same as `summary(xii)`
 ```
 
-By default, `read_cifti` will read-in all existing brainstructures. Set `brainstructures=c("left","right")`, for example, to read in just the left and right cortex data. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`, or `"all"` for all three.
+By default, `read_cifti` will read-in all existing brainstructures. Set `brainstructures=c("left","right")`, for example, to read in just the left and right cortex data. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`, `"all"` for all three, or `"existing"` (default).
 
 `"xifti"` objects are lists with entries `data` (the grayordinate data matrix, separated by brainstructure), `surf` (surface geometry), and `meta` (metadata, most of which is from the NIFTI XML header). `surf` distinguishes a `"xifti"` from a CIFTI file: the left and right cortical surface geometries are not included in CIFTI files, so they must be read from separate surface GIFTI files (ending in `surf.gii`). The surface must be compatible: the number of vertices must be the same, and each vertex in the CIFTI data must correspond to the vertex location in the corresponding GIFTI surface file. In this way, a `"xifti"` represents a combination of a CIFTI file with compatible GIFTI files for the cortical mesh.
 
@@ -126,7 +126,7 @@ With `separate_cifti`, a CIFTI can be separated and written into its component p
 ```{r}
 # Use default names for everything except left cortex
 separated_fnames = separate_cifti(
-  cifti_fnames["dscalar_ones"], brainstructures="all", 
+  cifti_fnames["dscalar_ones"], brainstructures="existing", 
   cortexL_fname="my_left_cortex.func.gii", write_dir = out_dir
 )
 # Files written to `out_dir`, or current working dir. if not specified

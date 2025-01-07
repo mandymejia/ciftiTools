@@ -17,7 +17,7 @@
 #'
 write_xifti2 <- function(
   xifti,
-  brainstructures=NULL,
+  brainstructures="existing",
   cortexL_fname=NULL, cortexR_fname=NULL,
   subcortVol_fname=NULL, subcortLabs_fname=NULL,
   ROI_brainstructures="all",

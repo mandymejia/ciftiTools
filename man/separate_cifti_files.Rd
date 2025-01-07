@@ -7,7 +7,7 @@
 separate_cifti_files(
   bs_present,
   intent = 3006,
-  brainstructures = NULL,
+  brainstructures = "existing",
   cortexL_fname = NULL,
   cortexR_fname = NULL,
   subcortVol_fname = NULL,
@@ -25,10 +25,9 @@ separate_cifti_files(
 
 \item{intent}{3002 (default), 3006, or 3007}
 
-\item{brainstructures}{(Optional) character vector indicating a subset of
-brain structure(s) to write: \code{"left"} cortex, \code{"right"} cortex,
-and/or \code{"subcortical"} structures. Can also be \code{"all"} to write
-out all existing brain structures. Default: \code{"all"}.}
+\item{brainstructures}{What brain structure(s) to write: \code{"left"} cortex,
+\code{"right"} cortex, and/or \code{"subcortical"} structures. Can also be
+\code{"existing"} (default) to write out all existing brain structures.}
 
 \item{cortexL_fname, cortexR_fname}{(Optional) GIFTI file names
 (*.[func/label].gii) to save the [left/right] cortex data to.

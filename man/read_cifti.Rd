@@ -11,7 +11,7 @@ read_cifti(
   cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
-  brainstructures = "all",
+  brainstructures = "existing",
   idx = NULL,
   resamp_res = NULL,
   resamp_method = c("barycentric", "adaptive"),
@@ -27,7 +27,7 @@ readCIfTI(
   cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
-  brainstructures = "all",
+  brainstructures = "existing",
   idx = NULL,
   resamp_res = NULL,
   resamp_method = c("barycentric", "adaptive"),
@@ -43,7 +43,7 @@ readcii(
   cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
-  brainstructures = "all",
+  brainstructures = "existing",
   idx = NULL,
   resamp_res = NULL,
   resamp_method = c("barycentric", "adaptive"),
@@ -59,7 +59,7 @@ read_xifti(
   cifti_fname = NULL,
   surfL_fname = NULL,
   surfR_fname = NULL,
-  brainstructures = "all",
+  brainstructures = "existing",
   idx = NULL,
   resamp_res = NULL,
   resamp_method = c("barycentric", "adaptive"),
@@ -81,13 +81,13 @@ file representing the left cortex.}
 file representing the right cortex.}
 
 \item{brainstructures}{Character vector indicating which brain structure(s)
-to obtain: \code{"left"} (left cortex), \code{"right"} (right cortex)
+to read in: \code{"left"} (left cortex), \code{"right"} (right cortex)
 and/or \code{"subcortical"} (subcortex and cerebellum). Can also be
-\code{"all"} (obtain all three brain structures). Default:
-\code{"all"}.
+\code{"all"} (read all three brain structures), or \code{"existing"}
+(read all brain structures in the file). Default: \code{"existing"}.
 
-If a brain structure is indicated but does not exist in the CIFTI file, a
-warning will occur and that brain structure will be skipped.}
+If a brain structure is indicated but does not exist, a warning will be
+raised and that brain structure will be skipped.}
 
 \item{idx}{Numeric vector indicating the data indices (columns) to read. If
 \code{NULL} (default), read in all the data. Must be a subset of the indices
