@@ -301,9 +301,9 @@ make_trans_mat <- function(nii_fname) {
 #'  \code{\link{substructure_table}}. It is either a NIFTI file path, a 3D data array
 #'  (\eqn{i \times j \times k}) of numeric brainstructure indices, or a \eqn{V_S} length
 #'  vector in spatial order with brainstructure names as factors or integer
-#'  indices. The indices should be 3-22 (2 and 3 correspond to left and right
-#'  cortex, respectively) or 1-19 (cortex labels omitted), with 0 representing
-#'  out-of-mask voxels.
+#'  indices. The indices should be 3-22 (1 and 2 correspond to left and right
+#'  cortex, respectively), with 0 representing out-of-mask voxels if a NIFTI or
+#'  3D array is being provided.
 #' @param mask is a NIFTI file path or logical 3D data array (\eqn{i \times j \times k}) where \code{TRUE}
 #'  values indicate subcortical voxels (in-mask). If it is not provided, the
 #'  mask will be inferred from voxels with labels \code{0} or \code{NA} in
@@ -439,7 +439,11 @@ make_subcort <- function(
   if (labs_from_fname) {
     labs <- labs_names[match(labs, labs_levels)]
   } else if (is.numeric(labs)) {
-    stopifnot(all(labs %in% c(0, seq(3, 22))))
+    if (!all(labs %in% c(0, seq(3, 22)))) {
+      warning("Subcortex labels should be zero or between 3 and 22. ",
+        "See `ciftiTools::substructure_table()`. Setting the other values to 22 ('Other').")
+      labs[!(labs %in% c(0, seq(3, 22)))] <- 22
+    }
     labs <- sub_table$Original_Name[labs]
   }
   if ((!is.factor(labs)) || (!identical(levels(labs), sub_table$ciftiTools_Name))) {
