@@ -63,8 +63,10 @@ new level.
 New label names can be set with \code{labels}. If provided, it must be a
 character vector with the same length as \code{levels}. If there are
 duplicates in \code{levels}, the first label for a given level will be used.
-If \code{labels} is not provided, the new label names will be set to
-\code{levels} if it was provided, and \code{levels_old} if it was not.
+If \code{labels} is not provided and if \code{x} is already "dlabel", old
+labels will be used if they are the same for each column; otherwise, if
+the new label names will be set to \code{levels} if it was provided, and
+\code{levels_old} if it was not.
 
 Note: \code{NA} and \code{NaN} values are handled a bit differently. Data
 locations that are \code{NA} or \code{NaN} will remain unchanged. \code{NA}
@@ -85,8 +87,8 @@ converted \code{"xifti"}? Default: \code{FALSE}. It will give the original
 \code{values}, the \code{values_new} (i.e. the "Keys"), and the new
 \code{label} names.}
 
-\item{names}{The column names. If \code{NULL} (default), will be set to
-"Column 1", "Column 2", ... .}
+\item{names}{The column names. If \code{NULL} (default) and \code{x} does not
+already have names, the names will be set to "Column 1", "Column 2", ... .}
 
 \item{time_start, time_step, time_unit}{(Optional) metadata for the new dtseries}
 
