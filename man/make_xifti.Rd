@@ -101,6 +101,9 @@ miscellaneous metadata. If GIFTI and/or NIFTI components from a CIFTI are
 being provided, providing \code{cifti_info} gives information that would
 otherwise have to be inferred.
 
+The intent can be specified like so:
+\code{cifti_info=list(cifti=list(intent="dscalar"))}.
+
 Column names from \code{cortexL} and \code{cortexR} take precedence over
 column names from \code{cifti_info}.
 

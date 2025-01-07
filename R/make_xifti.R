@@ -93,15 +93,18 @@
 #'  the medial wall from the data values. \code{NULL} should be used if \code{NA}
 #'  or \code{NaN} are legitimate values that non-medial wall vertices might
 #'  take on.
-#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}, i.e. 
-#'  the metadata to put in \code{$meta$cifti}: the NIFTI intent, and 
-#'  miscellaneous metadata. If GIFTI and/or NIFTI components from a CIFTI are 
-#'  being provided, providing \code{cifti_info} gives information that would 
+#' @param cifti_info (Optional) The result of \code{\link{info_cifti}}, i.e.
+#'  the metadata to put in \code{$meta$cifti}: the NIFTI intent, and
+#'  miscellaneous metadata. If GIFTI and/or NIFTI components from a CIFTI are
+#'  being provided, providing \code{cifti_info} gives information that would
 #'  otherwise have to be inferred.
-#'
-#'  Column names from \code{cortexL} and \code{cortexR} take precedence over 
-#'  column names from \code{cifti_info}.
 #' 
+#'  The intent can be specified like so: 
+#'  \code{cifti_info=list(cifti=list(intent="dscalar"))}.
+#'
+#'  Column names from \code{cortexL} and \code{cortexR} take precedence over
+#'  column names from \code{cifti_info}.
+#'
 #'  \code{$meta$cifti$brainstructures} will be based on what data is provided
 #'  to \code{make_xifti} rather than \code{cifti_info}.
 #' @param surfL,surfR (Optional) Surface geometries for the left or right cortex.
@@ -173,6 +176,16 @@ make_xifti <- function(
   # CIFTI metadata.
   if (!is.null(cifti_info)) {
     xifti$meta$cifti <- cifti_info$cifti
+    # Fix if provided as character.
+    if (!is.null(xifti$meta$cifti$intent) && is.character(xifti$meta$cifti$intent)) {
+      stopifnot(length(cifti_info$cifti$intent)==1)
+      stopifnot(cifti_info$cifti$intent %in% c("dtseries", "dscalar", "dlabel"))
+
+      xifti$meta$cifti$intent <- switch(
+        xifti$meta$cifti$intent,
+        dtseries=3002, dscalar=3006, dlabel=3007
+      )
+    }
     # misc_meta <- c("intent", "brainstructures", "misc")
     # xifti$meta$cifti[misc_meta] <- cifti_info$cifti[misc_meta]
     # if (!is.null(xifti$meta$cifti$intent) && xifti$meta$cifti$intent == 3002) {
