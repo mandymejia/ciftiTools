@@ -115,8 +115,8 @@ dist_from_mask_surf <- function(faces, mask, boundary_width=10){
 #' 
 #' @return A length-V logical vector. Each entry corresponds to the vertex
 #'  with the same index. The value is true if a vertex is within 
-#'  \code{boundary_width} edges of a vertex in the mesh, but is not within the
-#'  mesh itself. 
+#'  \code{boundary_width} edges of a vertex in the mask, but is not within the
+#'  mask itself. 
 #'
 #' @family surface-related
 #' @export

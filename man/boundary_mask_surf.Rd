@@ -22,8 +22,8 @@ number of edges away from the closest vertex in the input mask. Default:
 \value{
 A length-V logical vector. Each entry corresponds to the vertex
 with the same index. The value is true if a vertex is within
-\code{boundary_width} edges of a vertex in the mesh, but is not within the
-mesh itself.
+\code{boundary_width} edges of a vertex in the mask, but is not within the
+mask itself.
 }
 \description{
 Identify the vertices within \code{boundary_width} edges of a vertex in the

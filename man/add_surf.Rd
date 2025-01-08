@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_surf.R
 \name{add_surf}
 \alias{add_surf}
-\title{Add surface(s) to a \code{"xifti"}}
+\title{Add HCP surface(s) to a \code{"xifti"}}
 \usage{
 add_surf(xifti, surfL = NULL, surfR = NULL)
 }
@@ -23,7 +23,8 @@ object.}
 the \code{"xifti"} object with added surface geometry components.
 }
 \description{
-Add left or right cortical surface geometry to a \code{"xifti"} object.
+Add left or right cortical surface geometry from the HCP S1200 release
+to a \code{"xifti"} object.
 }
 \details{
 \code{surfL} will be added to \code{xifti$surf$cortex_left} and \code{surfR}
