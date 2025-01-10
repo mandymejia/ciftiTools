@@ -49,6 +49,11 @@ neighbors.
 
 Note that during imputation, locations in \code{mask}, as well as the medial
 wall for the cortex, are temporarily set to \code{NA}.
+
+Note that handling of \code{NA} values and the mask slightly differs from
+the cortex and subcortex. \code{impute_FUN} like \code{mean} will behave
+similarly, but functions which change depending on the amount of neighbor
+locations with \code{NA} values may differ.
 \code{impute_FUN} should handle \code{NA} values accordingly.
 For most use cases, it will make sense to pass \code{na.rm=TRUE} to
 \code{...} if \code{impute_FUN} is a summary function like \code{mean}.

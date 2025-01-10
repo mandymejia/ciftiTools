@@ -8,6 +8,11 @@
 #'
 #' Note that during imputation, locations in \code{mask}, as well as the medial
 #'  wall for the cortex, are temporarily set to \code{NA}.
+#'
+#' Note that handling of \code{NA} values and the mask slightly differs from
+#'  the cortex and subcortex. \code{impute_FUN} like \code{mean} will behave
+#'  similarly, but functions which change depending on the amount of neighbor
+#'  locations with \code{NA} values may differ.
 #'  \code{impute_FUN} should handle \code{NA} values accordingly.
 #'  For most use cases, it will make sense to pass \code{na.rm=TRUE} to
 #'  \code{...} if \code{impute_FUN} is a summary function like \code{mean}.
@@ -108,6 +113,7 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
 
     dat_now <- xifti$data[[c_hemi]]
     mask_now <- mask_bs[[c_hemi]]
+    has_changed_count <- Inf
     for (rr in seq(nR)) { # really a while(TRUE) but I figured this is safer.
       ## Compute the imputed values. ---------------
       # `i_mask`: verts to impute bordering at least one vert not being imputed
@@ -119,7 +125,7 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
       if (sum(i_mask) < 1) { break }
       # verbose <- TRUE
       # if (verbose) { cat("Imputing", sum(i_mask), hemi, "cortex values.\n") }
-      # `j_mask`: non-imputed verts bordering at least one vert being imputed
+      # `j_mask`: non-imputing verts bordering at least one vert being imputed
       j_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1) & mwall_og[[hemi]] & !mask_now
       # `v_adj`: adjacency matrix between `i_mask` and `j_mask`
       v_adj <- vert_adjacency(xifti$surf[[c_hemi]]$faces, i_mask, j_mask)
@@ -133,17 +139,21 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
       v_impv <- do.call(rbind, v_impv)
 
       ## Update. -------
-      # Set imputed values.
-      dat_now[i_mask,] <- v_impv
       # Check which vertices have been updated.
-      has_changed <- (v_impv - dat_now[i_mask,]) == 0
-      has_changed <- ifelse(
+      has_changed <- (v_impv - dat_now[i_mask,]) != 0
+      has_changed[] <- ifelse(
         is.na(has_changed),
-        is.na(v_impv) & is.na(dat_now[i_mask,]),
+        xor(is.na(v_impv[]), is.na(dat_now[i_mask,][])),
         has_changed
       )
+
+      # Set imputed values.
+      dat_now[i_mask,] <- v_impv
+
+      # Check for change.
       if (!any(has_changed)) { break }
       has_changed <- apply(has_changed, 1, all)
+
       # Remove updated verts from mask of verts to impute.
       mask_now[i_mask][has_changed] <- FALSE
     }
@@ -166,8 +176,8 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
 
   # Subcortex. -----------------------------------------------------------------
   if (!is.null(xifti$data$subcort)) {
-    mask_now <- mask_bs[[c_hemi]]
 
+    ## Precomputes. ------------------------------------------------------------
     # Get the six neighbors for each voxel.
     sdim <- dim(xifti$meta$subcort$mask)
     # Get the index of each voxel in both vector and array form.
@@ -188,25 +198,52 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
       match(ind_arr2vox(ind_arr+c(0,0,-1)), ind_vox, NA),
       match(ind_arr2vox(ind_arr+c(0,0,1)), ind_vox, NA)
     )
-    # Takes vector of values and imputes with the six neighbors.
-    imp_vox <- function(vals_x) {
-      apply(matrix(vals_x[ind_nbr], nrow=nrow(ind_nbr)), 1, impute_FUN, ...)
-    }
-    imp_vox_wrap <- function(vals_x) {
-      ifelse(is.na(vals_x), imp_vox(vals_x), vals_x)
+    # Takes vector of values and impute with the six neighbors.
+    imp_vox <- function(vals_now, mask_imp) {
+      # `vals_nbr`: `NA` values can be either in-mask `NA` values or out-of-mask
+      vals_nbr <- matrix(vals_now[ind_nbr], nrow=nrow(ind_nbr))
+      # `mimp_nbr`: TRUE if the neighbor voxel is a voxel being imputed
+      mimp_nbr <- matrix(mask_imp[ind_nbr], nrow=nrow(ind_nbr))
+      mimp_nbr[is.na(mimp_nbr)] <- FALSE
+      # `z`: vector of new imputed values.
+      z <- rep(NA, sum(mask_imp))
+      for (rr in seq(sum(mask_imp))) {
+        valid_vox <- !is.na(ind_nbr[rr,]) & !mimp_nbr[rr,] # rm out-of-mask and is-being-imputed
+        z[rr] <- impute_FUN(vals_nbr[which(mask_imp)[rr],][valid_vox], ...)
+      }
+      z
     }
 
-    # Set `mask` locations to `NA`.
-    xifti$data$subcort[mask_bs$subcort,] <- NA
-    # Keep imputing until all `NA` values are replaced, as much as possible.
-    # (Voxels without immediate neighbors may remain `NA` indefinitely.)
-    NA_count <- sum(is.na(xifti$data$subcort))
+    ## Impute loop. ------------------------------------------------------------
+    dat_now <- xifti$data$subcort
+    mask_now <- mask_bs$subcort
+
+    has_changed_count <- Inf
     for (rr in seq(nR)) {
-      xifti$data$subcort <- apply(xifti$data$subcort, 2, imp_vox_wrap)
-      NA_count_new <- sum(is.na(xifti$data$subcort))
-      if (!(NA_count_new < NA_count)) { break }
-      NA_count <- NA_count_new
+      # Impute.
+      v_impv <- apply(dat_now, 2, imp_vox, mask_now)
+      # Check which voxels have been updated.
+      has_changed <- (v_impv - dat_now[mask_now,]) != 0
+      has_changed[] <- ifelse(
+        is.na(has_changed),
+        xor(is.na(v_impv[]), is.na(dat_now[mask_now,][])),
+        has_changed
+      )
+
+      # Set imputed values.
+      dat_now[mask_now,] <- v_impv
+
+      print(sum(has_changed))
+
+      # Check for change.
+      if (!any(has_changed)) { break }
+      has_changed <- apply(has_changed, 1, all)
+
+      # Remove updated verts from mask of verts to impute.
+      mask_now[has_changed] <- FALSE
     }
+
+    xifti$data$subcort <- dat_now
 
     # Set locations with original `NA` values back to `NA`.
     if (keepNA) { xifti$data$subcort[which_NA$subcort] <- NA }

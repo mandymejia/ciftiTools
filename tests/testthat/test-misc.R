@@ -193,14 +193,22 @@ test_that("Miscellaneous functions are working", {
 
     # `impute_xifti`
     cii <- read_cifti(cii_fname)
+    #if (grepl("ones_1k", cii_fname)) { cii <- newdata_xifti(cii, seq(prod(dim(cii)))) }
+    if (ncol(cii) < 2) { cii <- select_xifti(cii, c(1,1)) }
     cii <- add_surf(cii, "midthickness", "midthickness")
     cii_x <- cii
     cii_x$data$cortex_left[,2] <- ifelse(
       rnorm(nrow(cii_x$data$cortex_left)) > 0,
       NA, cii_x$data$cortex_left[,2]
     )
-    cii_x$data$cortex_right[seq(12000),] <- NA
-    cii_i <- impute_xifti(cii_x)
+    cii_x$data$cortex_right[seq(floor(nrow(cii_x$data$cortex_right)/5)),] <- NA
+    if (!is.null(cii_x$data$subcort)) {
+      cii_x$data$subcort[,1] <- ifelse(
+        rnorm(nrow(cii_x$data$subcort)) > 1,
+        NA, cii_x$data$subcort[,1]
+      )
+    }
+    cii_i <- impute_xifti(cii_x, impute_FUN = length)
     z <- merge_xifti(select_xifti(cii_x, 2), select_xifti(cii_i, 2))
     plt <- plot(
       z, idx=seq(2), together="idx", widget=FALSE,
