@@ -12,12 +12,19 @@ included for each cortex with data. \code{\link{add_surf}} can be used to
 add HCP S1200 surfaces.}
 
 \item{mask}{A logical vector whose length matches the number of rows in
-\code{xifti}, indicating which vertices in \code{xifti} to impute. If
-\code{NULL} (default), will use the mask of vertices with at least one
-\code{NA} and \code{NaN} value across the columns of \code{xifti}.}
+\code{xifti}, indicating which locations in \code{xifti} to impute.
+
+If \code{NULL} (default), will use the mask of locations with at least one
+\code{NA} and \code{NaN} value across the columns of \code{xifti}. The
+\code{NA} and \code{NaN} locations will be replaced with numeric values
+(except in the case of voxels with no immediate neighbors).
+
+On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
+values originally in \code{xifti}, and not in \code{mask} will be left
+alone. Only locations in \code{mask} will be imputed.}
 
 \item{impute_FUN}{The function to use to impute the values. It should accept
-a vector of numeric values (the values of a vertex's neighbors) and return
+a vector of numeric values (the values of neighboring locations) and return
 a single numeric value (the value to assign). Default: \code{mean}.}
 
 \item{...}{Additional arguments to \code{impute_FUN}.}
@@ -26,10 +33,17 @@ a single numeric value (the value to assign). Default: \code{mean}.}
 The input \code{xifti} with imputed data values.
 }
 \description{
-Impute masked values using the values of adjacent, non-masked locations.
+Impute locations using the values of neighboring locations.
 }
 \details{
-For the purpose of imputation, medial wall vertices will be temporarily set
-to \code{NA}.
+Cortex vertices will be imputed using the five or six other vertices which
+share a face. Subcortex voxels will be imputed using the up to six immediate
+neighbors.
+
+Note that during imputation, locations in \code{mask}, as well as the medial
+wall for the cortex, are temporarily set to \code{NA}.
+\code{impute_FUN} should handle \code{NA} values accordingly.
+For most use cases, it will make sense to pass \code{na.rm=TRUE} to
+\code{...} if \code{impute_FUN} is a summary function like \code{mean}.
 }
 \keyword{internal}

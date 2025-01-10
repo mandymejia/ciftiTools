@@ -1,23 +1,33 @@
 #' Impute \code{"xifti"} data
 #'
-#' Impute masked values using the values of adjacent, non-masked locations.
+#' Impute locations using the values of neighboring locations.
 #'
-# \code{NA} values not included in \code{mask} will be ignored, but an error
-#  will be raised if a vertex in \code{mask} is surrounded by \code{NA} values
-#  not included in \code{mask}.
+#' Cortex vertices will be imputed using the five or six other vertices which
+#'  share a face. Subcortex voxels will be imputed using the up to six immediate
+#'  neighbors.
 #'
-#' For the purpose of imputation, medial wall vertices will be temporarily set
-#'  to \code{NA}.
+#' Note that during imputation, locations in \code{mask}, as well as the medial
+#'  wall for the cortex, are temporarily set to \code{NA}.
+#'  \code{impute_FUN} should handle \code{NA} values accordingly.
+#'  For most use cases, it will make sense to pass \code{na.rm=TRUE} to
+#'  \code{...} if \code{impute_FUN} is a summary function like \code{mean}.
 #'
 #' @param xifti A \code{"xifti"} object. The corresponding surface must be
 #'  included for each cortex with data. \code{\link{add_surf}} can be used to
 #'  add HCP S1200 surfaces.
 #' @param mask A logical vector whose length matches the number of rows in
-#'  \code{xifti}, indicating which vertices in \code{xifti} to impute. If
-#'  \code{NULL} (default), will use the mask of vertices with at least one
-#'  \code{NA} and \code{NaN} value across the columns of \code{xifti}.
+#'  \code{xifti}, indicating which locations in \code{xifti} to impute.
+#'
+#'  If \code{NULL} (default), will use the mask of locations with at least one
+#'  \code{NA} and \code{NaN} value across the columns of \code{xifti}. The
+#'  \code{NA} and \code{NaN} locations will be replaced with numeric values
+#'  (except in the case of voxels with no immediate neighbors).
+#'
+#'  On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
+#'  values originally in \code{xifti}, and not in \code{mask} will be left
+#'  alone. Only locations in \code{mask} will be imputed.
 #' @param impute_FUN The function to use to impute the values. It should accept
-#'  a vector of numeric values (the values of a vertex's neighbors) and return
+#'  a vector of numeric values (the values of neighboring locations) and return
 #'  a single numeric value (the value to assign). Default: \code{mean}.
 #' @param ... Additional arguments to \code{impute_FUN}.
 #'
@@ -32,6 +42,11 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
   nR <- nrow(xifti)
   nC <- ncol(xifti)
 
+  keepNA <- !is.null(mask)
+  if (keepNA) {
+    which_NA <- lapply(xifti$data, function(x){which(is.na(x))})
+  }
+
   if (is.null(mask)) {
     mask <- apply(is.na(as.matrix(xifti)), 1, any)
   }
@@ -41,24 +56,38 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
     stop("The length of `mask` should match the number of rows in `xifti`.")
   }
 
-  max_width <- Inf
-
-  # Handle medial wall. --------------------------------------------------------
-  mwall_og <- xifti$meta$cortex$medial_wall_mask
-  # Unapply the medial wall mask to the input mask.
-  mask2 <- as.logical(do.call(c, mwall_og))
-  mask2[mask2] <- mask
-  mask <- mask2
-  rm(mask2)
-  # Set mwall values to `NA` for now.
-  xifti <- move_from_mwall(xifti)
-
   # Split `mask` by brain structure. -------------------------------------------
   mask_bs <- list(
     cortex_left = NULL,
     cortex_right = NULL,
     subcort = NULL
   )
+  for (bs in c("cortex_left", "cortex_right", "subcort")) {
+    if (!is.null(xifti$data[[bs]])) {
+      mask_bs[[bs]] <- mask[seq(nrow(xifti$data[[bs]]))]
+      mask <- mask[seq(nrow(xifti$data[[bs]])+1, length(mask))]
+    }
+  }
+
+  # Handle medial wall. --------------------------------------------------------
+  if (!is.null(xifti$data$cortex_left) || !is.null(xifti$data$cortex_right)) {
+    mwall_og <- xifti$meta$cortex$medial_wall_mask
+    if (!is.null(xifti$data$cortex_left) && is.null(mwall_og$left)) {
+      mwall_og$left <- rep(TRUE, nrow(xifti$data$cortex_left))
+    }
+    if (!is.null(xifti$data$cortex_right) && is.null(mwall_og$right)) {
+      mwall_og$right <- rep(TRUE, nrow(xifti$data$cortex_right))
+    }
+    # Unapply the medial wall mask to the input mask.
+    mask2c <- as.logical(do.call(c, mwall_og))
+    mask2c[mask2c] <- c(mask_bs$cortex_left, mask_bs$cortex_right)
+    mask <- c(mask2c, mask_bs$subcort)
+    rm(mask2c)
+    # Set mwall values to `NA` for now.
+    xifti <- move_from_mwall(xifti)
+  }
+
+  # Split mask by brain structure again, after medial wall insertion.
   for (bs in c("cortex_left", "cortex_right", "subcort")) {
     if (!is.null(xifti$data[[bs]])) {
       mask_bs[[bs]] <- mask[seq(nrow(xifti$data[[bs]]))]
@@ -83,8 +112,8 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
       if (sum(i_mask) < 1) { break }
       # verbose <- TRUE
       # if (verbose) { cat("Imputing", sum(i_mask), hemi, "cortex values.\n") }
-      # `j_mask`: verts not being imputed bordering at least one vert being imputed
-      j_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1)
+      # `j_mask`: verts bordering at least one vert being imputed
+      j_mask <- (mask_now) | boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1)
       # `v_adj`: adjacency matrix between `i_mask` and `j_mask`
       v_adj <- vert_adjacency(xifti$surf[[c_hemi]]$faces, i_mask, j_mask)
       stopifnot(all(rowSums(v_adj) > 0))
@@ -95,18 +124,6 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
       # `v_impv`: The imputed values.
       v_impv <- lapply(v_vals, function(x){apply(x, 2, impute_FUN, ...)})
       v_impv <- do.call(rbind, v_impv)
-
-      # ## Check for values that repeatedly could not be imputed. ----------
-      # # `i_stillNA`: vertices that were attempted to impute, but are `NA`.
-      # i_stillNA <- which(mask_bs[[c_hemi]])[i_mask][!apply(is.na(v_impv), 1, any)]
-      # i_stillNA_again <- i_stillNA[i_stillNA %in% i_wasNA]
-      # if (length(i_stillNA_again) > 0) {
-      #   warning("Some vertices could not be imputed for the ", hemi,
-      #     " cortex. Returning the indices of these vertices. Please remove ",
-      #     "them from the mask of vertices to impute, or modify `impute_FUN`.")
-      #   return(i_stillNA_again)
-      # }
-      # i_wasNA <- i_stillNA
 
       ## Update. -------
       # Set imputed values.
@@ -124,10 +141,60 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
       xifti$data[[c_hemi]] <- xifti$data[[c_hemi]][mwall_og[[hemi]],,drop=FALSE]
       xifti$meta$cortex$medial_wall_mask[[hemi]] <- mwall_og[[hemi]]
     }
+
+    # Put original `NA` values back if applicable.
+    if (keepNA) {
+      xifti$data[[c_hemi]][which_NA[[c_hemi]]] <- NA
+    }
   }
 
   # Subcortex. -----------------------------------------------------------------
-  if (!is.null(xifti$data$subcort)) { stop("Subcortex data imputation not implemented yet.") }
+  if (!is.null(xifti$data$subcort)) {
+    mask_now <- mask_bs[[c_hemi]]
+
+    # Get the six neighbors for each voxel.
+    sdim <- dim(xifti$meta$subcort$mask)
+    # Get the index of each voxel in both vector and array form.
+    # `ind_arr2vox` converts from the latter to the former.
+    ind_arr2vox <- function(arr) {
+      arr[1,] + (arr[2,]-1)*sdim[1] + (arr[3,]-1)*sdim[2]*sdim[1]
+    }
+    ind_arr <- t(which(xifti$meta$subcort$mask, arr.ind=TRUE))
+    ind_vox <- which(xifti$meta$subcort$mask)
+    stopifnot(all(ind_arr2vox(ind_arr) == ind_vox)) # check
+    # Jitter each voxel's array location by one step each direction (six total)
+    #   and match to the vector location index. `NA`: out-of-bounds of the mask.
+    ind_nbr <- cbind(
+      match(ind_arr2vox(ind_arr+c(-1,0,0)), ind_vox, NA),
+      match(ind_arr2vox(ind_arr+c(1,0,0)), ind_vox, NA),
+      match(ind_arr2vox(ind_arr+c(0,-1,0)), ind_vox, NA),
+      match(ind_arr2vox(ind_arr+c(0,1,0)), ind_vox, NA),
+      match(ind_arr2vox(ind_arr+c(0,0,-1)), ind_vox, NA),
+      match(ind_arr2vox(ind_arr+c(0,0,1)), ind_vox, NA)
+    )
+    # Takes vector of values and imputes with the six neighbors.
+    imp_vox <- function(vals_x) {
+      apply(matrix(vals_x[ind_nbr], nrow=nrow(ind_nbr)), 1, impute_FUN, ...)
+    }
+    imp_vox_wrap <- function(vals_x) {
+      ifelse(is.na(vals_x), imp_vox(vals_x), vals_x)
+    }
+
+    # Set `mask` locations to `NA`.
+    xifti$data$subcort[mask_bs$subcort,] <- NA
+    # Keep imputing until all `NA` values are replaced, as much as possible.
+    # (Voxels without immediate neighbors may remain `NA` indefinitely.)
+    NA_count <- sum(is.na(xifti$data$subcort))
+    for (rr in seq(nR)) {
+      xifti$data$subcort <- apply(xifti$data$subcort, 2, imp_vox_wrap)
+      NA_count_new <- sum(is.na(xifti$data$subcort))
+      if (!(NA_count_new < NA_count)) { break }
+      NA_count <- NA_count_new
+    }
+
+    # Set locations with original `NA` values back to `NA`.
+    if (keepNA) { xifti$data$subcort[which_NA$subcort] <- NA }
+  }
 
   xifti
 }
