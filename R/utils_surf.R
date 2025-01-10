@@ -2,12 +2,12 @@
 #'
 #' Summary method for class "surf"
 #'
-#' @param object Object of class "surf". 
+#' @param object Object of class "surf".
 #'  See \code{\link{is.surf}} and \code{\link{make_surf}}.
 #' @param ... further arguments passed to or from other methods.
-#' 
+#'
 #' @export
-#' 
+#'
 #' @method summary surf
 summary.surf <- function(object, ...) {
   out <- list(
@@ -21,11 +21,11 @@ summary.surf <- function(object, ...) {
 
 #' @rdname summary.surf
 #' @export
-#' 
-#' @param x Object of class "surf". 
-#' 
+#'
+#' @param x Object of class "surf".
+#'
 #' @method print summary.surf
-#' 
+#'
 print.summary.surf <- function(x, ...) {
   cat("Vertices:   ", x$vertices, "\n")
   cat("Faces:      ", x$faces, "\n")
@@ -34,34 +34,34 @@ print.summary.surf <- function(x, ...) {
 
 #' @rdname summary.surf
 #' @export
-#' 
+#'
 #' @method print surf
-#' 
+#'
 print.surf <- function(x, ...) {
   print.summary.surf(summary(x))
 }
 
 #' Distance from mask on surface
 #'
-#' Identify the vertices within \code{boundary_width} edges of a vertex in the 
+#' Identify the vertices within \code{boundary_width} edges of a vertex in the
 #'  input mask on a triangular mesh. Returns the number of edges a vertex is
-#'  away from the closest mask vertex. 
-#' 
+#'  away from the closest mask vertex.
+#'
 #' @inheritParams faces_Param
 #' @inheritParams mask_Param_vertices
-#' @param boundary_width A positive integer representing the width of the 
+#' @param boundary_width A positive integer representing the width of the
 #'  boundary to compute. The furthest vertices from the input mask will be this
-#'  number of edges away from the closest vertex in the input mask. Default: 
+#'  number of edges away from the closest vertex in the input mask. Default:
 #'  \code{10}.
-#' 
+#'
 #' @return A length-V numeric vector. Each entry corresponds to the vertex
 #'  with the same index. For vertices within the boundary, the value will be the
 #'  number of vertices away from the closest vertex in the input mask.
 #'  Vertices inside the input mask but at the edge of it (i.e. the vertices
-#'  that define the boundary) will have value 0. Then, all other vertices will 
+#'  that define the boundary) will have value 0. Then, all other vertices will
 #'  have value -1.
 #'
-#' @keywords internal 
+#' @keywords internal
 dist_from_mask_surf <- function(faces, mask, boundary_width=10){
   s <- ncol(faces)
   v <- max(faces)
@@ -101,22 +101,22 @@ dist_from_mask_surf <- function(faces, mask, boundary_width=10){
 }
 
 #' Boundary region of a mask
-#' 
-#' Identify the vertices within \code{boundary_width} edges of a vertex in the 
+#'
+#' Identify the vertices within \code{boundary_width} edges of a vertex in the
 #'  input mask on a triangular mesh. Returns a logical indicating if a vertex
-#'  is within \code{boundary_width} edges of the mask. 
-#' 
+#'  is within \code{boundary_width} edges of the mask.
+#'
 #' @inheritParams faces_Param
 #' @inheritParams mask_Param_vertices
-#' @param boundary_width A positive integer representing the width of the 
+#' @param boundary_width A positive integer representing the width of the
 #'  boundary to compute. The furthest vertices from the input mask will be this
-#'  number of edges away from the closest vertex in the input mask. Default: 
+#'  number of edges away from the closest vertex in the input mask. Default:
 #'  \code{10}.
-#' 
+#'
 #' @return A length-V logical vector. Each entry corresponds to the vertex
-#'  with the same index. The value is true if a vertex is within 
+#'  with the same index. The value is true if a vertex is within
 #'  \code{boundary_width} edges of a vertex in the mask, but is not within the
-#'  mask itself. 
+#'  mask itself.
 #'
 #' @family surface-related
 #' @export
@@ -139,40 +139,33 @@ boundary_mask_surf <- function(faces, mask, boundary_width=10){
 #'  alternatively be a vector if integers corresponding to vertex indices.
 #'
 #' @return Adjacency matrix
-#' 
-#' @keywords internal 
+#'
+#' @keywords internal
 vert_adjacency <- function(faces, v1, v2=NULL){
   v_all <- unique(as.vector(faces))
   # Arguments.
   if (is.logical(v1)) { v1 <- which(v1) }
-  v1 <- sort(unique(v1))
+  #v1 <- sort(unique(v1))
   stopifnot(all(v1 %in% v_all))
   if (is.null(v2)) {
     v2 <- v1
   } else {
     if (is.logical(v2)) { v2 <- which(v2) }
-    v2 <- sort(unique(v2))
+    #v2 <- sort(unique(v2))
     stopifnot(all(v2 %in% v_all))
   }
-
-  # # Faces with at least one vertex in v1, and at least one vertex in v2.
-  # #   This step reduces the number of faces we check in the next step.
-  # #   It also used the subset index.
-  # f_btwn <- apply(matrix(faces %in% v1, ncol=3), 1, any)
-  # f_btwn_mask <- f_btwn & apply(matrix(faces %in% v2, ncol=3), 1, any)
-  # f_btwn <- faces[f_btwn_mask,]
-  v_reidx <- rep(NA, max(as.numeric(faces)))
-  v_reidx[v1] <- 1:length(v1)
-  v_reidx[v2] <- 1:length(v2)
-  f_reidx <- matrix(v_reidx[as.vector(faces)], ncol=ncol(faces))
 
   # Check each pair of vertices in each face.
   adj <- matrix(FALSE, nrow=length(v1), ncol=length(v2))
   for (ii in 1:3) {
     for (jj in 1:3) {
       if (ii == jj) { next }
-      # Mark adjacency betwen (v1, v2) pairs sharing a face.
-      v_pairs <- f_reidx[(faces[,ii] %in% v1) & (faces[,jj] %in% v2), c(ii,jj)]
+      # Mark adjacency between (v1, v2) pairs sharing a face.
+      row_match <- (faces[,ii] %in% v1) & (faces[,jj] %in% v2)
+      v_pairs <- faces[row_match, c(ii,jj)]
+      if (sum(row_match)==1) { v_pairs <- matrix(v_pairs, ncol=2) }
+      v_pairs[,1] <- match(v_pairs[,1], v1)
+      v_pairs[,2] <- match(v_pairs[,2], v2)
       adj[v_pairs] <- TRUE
     }
   }
@@ -188,11 +181,11 @@ vert_adjacency <- function(faces, v1, v2=NULL){
 #' Order vertices on circular manifold by radians (after 2D CMDS projection).
 #'
 #' @inheritParams vertices_Param
-#' 
+#'
 #' @return Index ordering of \code{vertices}
-#' 
+#'
 #' @importFrom stats cmdscale dist
-#' @keywords internal 
+#' @keywords internal
 radial_order_surf <- function(vertices){
   # Use CMDS to project onto 2-dimensional subspace. Scale each dimension.
   x <- scale(cmdscale(dist(vertices)))
@@ -235,10 +228,10 @@ radial_order_surf <- function(vertices){
 #'  \code{k1}/\code{k2} as long.
 #'
 #' @return A new mesh (list with components vertices and faces)
-#' 
+#'
 #' @importFrom stats quantile
 #'
-#' @keywords internal 
+#' @keywords internal
 mask_with_boundary_surf <- function(
   vertices, faces, mask, width1=4, k1=2, width2=6, k2=3){
 
@@ -406,11 +399,11 @@ mask_with_boundary_surf <- function(
 }
 
 #' Mask surface
-#' 
+#'
 #' Mask a surface mesh.
 #'
-#' Apply a binary mask to a \code{"surf"} object (list of vertices and 
-#'  corresponding faces). Vertices not in the mask are removed, and faces 
+#' Apply a binary mask to a \code{"surf"} object (list of vertices and
+#'  corresponding faces). Vertices not in the mask are removed, and faces
 #'  (triangles) with any vertices not in the mask are removed. Finally,
 #'  vertex numbering for the new faces matrix is corrected.
 #'
@@ -418,7 +411,7 @@ mask_with_boundary_surf <- function(
 #' @inheritParams mask_Param_vertices
 #'
 #' @return The masked \code{"surf"} object.
-#' 
+#'
 #' @family surface-related
 #' @export
 mask_surf <- function(surf, mask){
