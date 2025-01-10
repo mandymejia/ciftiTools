@@ -24,18 +24,20 @@
 #'  (except in the case of voxels with no immediate neighbors).
 #'
 #'  On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
-#'  values originally in \code{xifti}, and not in \code{mask} will be left
+#'  values originally in \code{xifti}, and not in \code{mask}, will be left
 #'  alone. Only locations in \code{mask} will be imputed.
 #' @param impute_FUN The function to use to impute the values. It should accept
 #'  a vector of numeric values (the values of neighboring locations) and return
-#'  a single numeric value (the value to assign). Default: \code{mean}.
+#'  a single numeric value (the value to assign). Default: \code{mean(..., na.rm=TRUE)}.
 #' @param ... Additional arguments to \code{impute_FUN}.
 #'
 #' @return The input \code{xifti} with imputed data values.
 #'
 #' @keywords internal
 #'
-impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
+#' @export
+#'
+impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=TRUE)}, ...) {
   stopifnot(is.xifti(xifti))
   if (!is.null(xifti$meta$cifti$intent))
 
@@ -94,6 +96,7 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
       mask <- mask[seq(nrow(xifti$data[[bs]])+1, length(mask))]
     }
   }
+  rm(mask)
 
   # Cortex. --------------------------------------------------------------------
   for (hemi in c("left", "right")) {
@@ -108,12 +111,16 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
     for (rr in seq(nR)) { # really a while(TRUE) but I figured this is safer.
       ## Compute the imputed values. ---------------
       # `i_mask`: verts to impute bordering at least one vert not being imputed
-      i_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, !mask_now, 1)
+      i_mask <- boundary_mask_surf(
+        xifti$surf[[c_hemi]]$faces,
+        (!mask_now) & (mwall_og[[hemi]]),
+        1
+      ) & (mwall_og[[hemi]]) & mask_now
       if (sum(i_mask) < 1) { break }
       # verbose <- TRUE
       # if (verbose) { cat("Imputing", sum(i_mask), hemi, "cortex values.\n") }
-      # `j_mask`: verts bordering at least one vert being imputed
-      j_mask <- (mask_now) | boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1)
+      # `j_mask`: non-imputed verts bordering at least one vert being imputed
+      j_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1) & mwall_og[[hemi]] & !mask_now
       # `v_adj`: adjacency matrix between `i_mask` and `j_mask`
       v_adj <- vert_adjacency(xifti$surf[[c_hemi]]$faces, i_mask, j_mask)
       stopifnot(all(rowSums(v_adj) > 0))
@@ -128,8 +135,17 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=mean, ...) {
       ## Update. -------
       # Set imputed values.
       dat_now[i_mask,] <- v_impv
-      # Remove imputed verts from mask of verts to impute.
-      mask_now[i_mask] <- FALSE
+      # Check which vertices have been updated.
+      has_changed <- (v_impv - dat_now[i_mask,]) == 0
+      has_changed <- ifelse(
+        is.na(has_changed),
+        is.na(v_impv) & is.na(dat_now[i_mask,]),
+        has_changed
+      )
+      if (!any(has_changed)) { break }
+      has_changed <- apply(has_changed, 1, all)
+      # Remove updated verts from mask of verts to impute.
+      mask_now[i_mask][has_changed] <- FALSE
     }
 
     xifti$data[[c_hemi]][mask_bs[[c_hemi]],] <- dat_now[mask_bs[[c_hemi]],]

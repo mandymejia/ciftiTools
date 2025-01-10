@@ -4,7 +4,14 @@
 \alias{impute_xifti}
 \title{Impute \code{"xifti"} data}
 \usage{
-impute_xifti(xifti, mask = NULL, impute_FUN = mean, ...)
+impute_xifti(
+  xifti,
+  mask = NULL,
+  impute_FUN = function(x) {
+     mean(x, na.rm = TRUE)
+ },
+  ...
+)
 }
 \arguments{
 \item{xifti}{A \code{"xifti"} object. The corresponding surface must be
@@ -20,12 +27,12 @@ If \code{NULL} (default), will use the mask of locations with at least one
 (except in the case of voxels with no immediate neighbors).
 
 On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
-values originally in \code{xifti}, and not in \code{mask} will be left
+values originally in \code{xifti}, and not in \code{mask}, will be left
 alone. Only locations in \code{mask} will be imputed.}
 
 \item{impute_FUN}{The function to use to impute the values. It should accept
 a vector of numeric values (the values of neighboring locations) and return
-a single numeric value (the value to assign). Default: \code{mean}.}
+a single numeric value (the value to assign). Default: \code{mean(..., na.rm=TRUE)}.}
 
 \item{...}{Additional arguments to \code{impute_FUN}.}
 }

@@ -191,6 +191,32 @@ test_that("Miscellaneous functions are working", {
       cii2 <- move_from_submask(cii$meta$subcort$mask)
     }
 
+    # `impute_xifti`
+    cii <- read_cifti(cii_fname)
+    cii <- add_surf(cii, "midthickness", "midthickness")
+    cii_x <- cii
+    cii_x$data$cortex_left[,2] <- ifelse(
+      rnorm(nrow(cii_x$data$cortex_left)) > 0,
+      NA, cii_x$data$cortex_left[,2]
+    )
+    cii_x$data$cortex_right[seq(12000),] <- NA
+    cii_i <- impute_xifti(cii_x)
+    z <- merge_xifti(select_xifti(cii_x, 2), select_xifti(cii_i, 2))
+    plt <- plot(
+      z, idx=seq(2), together="idx", widget=FALSE,
+      fname=file.path(tempdir(), "x.png"),
+      material=list(lit=FALSE, smooth=FALSE), edge_color="black"
+    )
+
+    cii_xi <- select_xifti(cii, 2)
+    cii_xi <- remove_xifti(cii_xi, "cortex_left")
+    i_mask <- !(as.matrix(cii_xi) %in% c(min(cii_xi), max(cii_xi)))
+    cii_i <- impute_xifti(cii_xi, mask=i_mask)
+    cii_xi <- newdata_xifti(cii_xi, ifelse(!i_mask, as.matrix(cii_xi), NA))
+    cii_i2 <- impute_xifti(cii_xi)
+
+    testthat::expect_equal(max(cii_i- cii_i2), 0)
+
     # Operations
     # warnings should happen for dlabel file
     if (grepl("label", cii_fname)) {
