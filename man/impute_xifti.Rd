@@ -20,11 +20,12 @@ add HCP S1200 surfaces.}
 
 \item{mask}{A logical vector whose length matches the number of rows in
 \code{xifti}, indicating which locations in \code{xifti} to impute.
+(Locations that are \code{TRUE} will be imputed.)
 
 If \code{NULL} (default), will use the mask of locations with at least one
 \code{NA} and \code{NaN} value across the columns of \code{xifti}. The
 \code{NA} and \code{NaN} locations will be replaced with numeric values
-(except in the case of voxels with no immediate neighbors).
+(except in the case of any voxels with no immediate neighbors).
 
 On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
 values originally in \code{xifti}, and not in \code{mask}, will be left
