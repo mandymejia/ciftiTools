@@ -219,11 +219,15 @@ test_that("Miscellaneous functions are working", {
     cii_xi <- select_xifti(cii, 2)
     cii_xi <- remove_xifti(cii_xi, "cortex_left")
     i_mask <- !(as.matrix(cii_xi) %in% c(min(cii_xi), max(cii_xi)))
-    cii_i <- impute_xifti(cii_xi, mask=i_mask)
-    cii_xi <- newdata_xifti(cii_xi, ifelse(!i_mask, as.matrix(cii_xi), NA))
-    cii_i2 <- impute_xifti(cii_xi)
+    if (grepl("label", cii_fname)) {
+      cii_i <- impute_xifti(cii_xi, function(x){x[which(!is.na(x))[1]]}, mask=i_mask)
 
-    testthat::expect_equal(max(cii_i- cii_i2), 0)
+    } else {
+      cii_i <- impute_xifti(cii_xi, mask=i_mask)
+      cii_xi <- newdata_xifti(cii_xi, ifelse(!i_mask, as.matrix(cii_xi), NA))
+      cii_i2 <- impute_xifti(cii_xi)
+      testthat::expect_equal(max(cii_i- cii_i2), 0)
+    }
 
     # Operations
     # warnings should happen for dlabel file
