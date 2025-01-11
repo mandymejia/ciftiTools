@@ -350,9 +350,9 @@ dim.xifti <- function(x) {
 as.matrix.xifti <- function(x, subcortex_by_bs=FALSE, ...) {
   if (!is.null(x$data$subcort) && subcortex_by_bs) {
     x$data$subcort <- x$data$subcort[order(x$meta$subcort$labels),,drop=FALSE]
-  } else {
-    do.call(rbind, x$data)
   }
+  
+  do.call(rbind, x$data)
 }
 
 #' Infer resolution from \code{"xifti"} and surfaces
