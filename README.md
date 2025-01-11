@@ -126,6 +126,7 @@ Manipulating `"xifti"` objects
 - `combine_xifti`: Combine `"xifti"`s with non-overlapping brain
   structures.
 - `convert_xifti`: Convert between dlabel, dscalar, and dtseries.
+- `impute_xifti`: Impute data values from neighboring vertices/voxels.
 - `merge_xifti`: Concatenate `"xifti"`s.
 - `move_from_mwall`: Convert the medial wall mask to a data value,
   deleting the mask.
