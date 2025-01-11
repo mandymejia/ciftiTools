@@ -170,6 +170,8 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
 
   for (hemi in c("left", "right")) {
     c_hemi <- paste0("cortex_", hemi)
+    if (is.null(xifti$data[[c_hemi]])) { next }
+    
     # Put the medial wall back.
     if (!is.null(mwall_og[[hemi]])) {
       xifti$data[[c_hemi]] <- xifti$data[[c_hemi]][mwall_og[[hemi]],,drop=FALSE]
