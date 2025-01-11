@@ -4,10 +4,15 @@
 \alias{as.matrix.xifti}
 \title{Convert a \code{"xifti"} to a matrix}
 \usage{
-\method{as.matrix}{xifti}(x, ...)
+\method{as.matrix}{xifti}(x, subcortex_by_bs = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{"xifti"} object.}
+
+\item{subcortex_by_bs}{If subcortical data exists in \code{x}, should the
+resulting matrix order locations by brain structure? Default: \code{FALSE}.
+If \code{TRUE}, subcortex locations will be sorted by brain structure first,
+and then array index second.}
 
 \item{...}{Unused}
 }

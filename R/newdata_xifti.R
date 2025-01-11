@@ -21,12 +21,19 @@
 #'  (default), keep the original names, except if the number of columns
 #'  in \code{newdata} doesn't match that of \code{xifti}, in which case
 #'  no names will be used.
+#' @param subcortex_by_bs If subcortical data is being provided in 
+#'  \code{newdata}, are the locations ordered by brain structure? Default: 
+#'  \code{FALSE}. The \code{"xifti"} data matrix is not ordered by brain 
+#'  structure, but CIFTI files and most other CIFTI packages do sort subcortical
+#'  data by brain structure first, and then array index second. 
 #' @return The new \code{"xifti"}
 #'
 #' @family manipulating xifti
 #' @export
-newdata_xifti <- function(xifti, newdata, newnames=NULL) {
+newdata_xifti <- function(xifti, newdata, newnames=NULL, subcortex_by_bs=FALSE) {
   stopifnot(is.xifti(xifti))
+  stopifnot(is.logical(subcortex_by_bs))
+  stopifnot(length(subcortex_by_bs)==1)
 
   xifti_dim <- dim(xifti)
 
@@ -91,7 +98,12 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL) {
   for (bs in names(xifti$data)) {
     if (!is.null(xifti$data[[bs]])) {
       V_bs <- nrow(xifti$data[[bs]])
-      xifti$data[[bs]] <- newdata[seq(V_start+1, V_bs+V_start),,drop=FALSE]
+      dat_idx <- if (bs=="subcort" && subcortex_by_bs) {
+        seq(V_start+1, V_bs+V_start)[order(order(xifti$meta$subcort$labels))]
+      } else {
+        seq(V_start+1, V_bs+V_start)
+      }
+      xifti$data[[bs]] <- newdata[dat_idx,,drop=FALSE]
       V_start <- V_bs+V_start
     }
   }
