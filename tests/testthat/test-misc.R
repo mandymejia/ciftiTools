@@ -221,11 +221,11 @@ test_that("Miscellaneous functions are working", {
     i_mask <- !(as.matrix(cii_xi) %in% c(min(cii_xi), max(cii_xi)))
     if (grepl("label", cii_fname)) {
       cii_i <- impute_xifti(cii_xi, function(x){x[which(!is.na(x))[1]]}, mask=i_mask)
-
     } else {
       cii_i <- impute_xifti(cii_xi, mask=i_mask)
       cii_xi <- newdata_xifti(cii_xi, ifelse(!i_mask, as.matrix(cii_xi), NA))
       cii_i2 <- impute_xifti(cii_xi)
+      print(summary(cii_i2))
       testthat::expect_equal(max(cii_i- cii_i2), 0)
     }
 
@@ -358,4 +358,16 @@ test_that("Miscellaneous functions are working", {
   cii$data$subcort[] <- rep(my_vec, 5000)[seq(nrow(cii$data$subcort))]
   cii2 <- impute_xifti(cii)
   #plot(cii); plot(cii2)
+
+  # `subcort_by_bs`
+  cii <- read_cifti(ciftiTools.files()$cifti["dscalar_ones"])
+  cii <- newdata_xifti(cii, seq(prod(dim(cii))))
+  testthat::expect_equal(
+    cii$data,
+    newdata_xifti(cii, as.matrix(cii))$data
+  )
+  testthat::expect_equal(
+    cii$data,
+    newdata_xifti(cii, as.matrix(cii, subcortex_by_bs=TRUE), subcortex_by_bs=TRUE)$data
+  )
 })
