@@ -349,4 +349,13 @@ test_that("Miscellaneous functions are working", {
 
   # unmask_subcortex
   q <- unmask_subcortex(cii)
+
+  # More `impute_xifti` tests
+  cii <- read_cifti(ciftiTools.files()$cifti["dscalar_ones"])
+  cii <- add_surf(cii, surfL="inflated")
+  my_vec <- c(0, rep(NA, 98), 1, NA, .1, NA, NA)
+  cii$data$cortex_left[] <- rep(my_vec, 500)[seq(nrow(cii$data$cortex_left))]
+  cii$data$subcort[] <- rep(my_vec, 5000)[seq(nrow(cii$data$subcort))]
+  cii2 <- impute_xifti(cii)
+  #plot(cii); plot(cii2)
 })

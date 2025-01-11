@@ -59,4 +59,25 @@ locations with \code{NA} values may differ.
 For most use cases, it will make sense to pass \code{na.rm=TRUE} to
 \code{...} if \code{impute_FUN} is a summary function like \code{mean}.
 }
-\keyword{internal}
+\seealso{
+Other manipulating xifti: 
+\code{\link{add_surf}()},
+\code{\link{apply_parc}()},
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_to_dlabel}()},
+\code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
+\code{\link{move_to_submask}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{scale_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{transform_xifti}()}
+}
+\concept{manipulating xifti}

@@ -39,10 +39,9 @@
 #'
 #' @return The input \code{xifti} with imputed data values.
 #'
-#' @keywords internal
+#' @family manipulating xifti
 #'
 #' @export
-#'
 impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=TRUE)}, ...) {
   stopifnot(is.xifti(xifti))
   if (!is.null(xifti$meta$cifti$intent))

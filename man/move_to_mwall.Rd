@@ -35,6 +35,7 @@ Other manipulating xifti:
 \code{\link{apply_xifti}()},
 \code{\link{combine_xifti}()},
 \code{\link{convert_to_dlabel}()},
+\code{\link{impute_xifti}()},
 \code{\link{merge_xifti}()},
 \code{\link{move_to_submask}()},
 \code{\link{newdata_xifti}()},

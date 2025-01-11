@@ -29,6 +29,7 @@ Other manipulating xifti:
 \code{\link{apply_parc}()},
 \code{\link{apply_xifti}()},
 \code{\link{convert_to_dlabel}()},
+\code{\link{impute_xifti}()},
 \code{\link{merge_xifti}()},
 \code{\link{move_to_mwall}()},
 \code{\link{move_to_submask}()},
