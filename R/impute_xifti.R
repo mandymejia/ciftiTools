@@ -233,8 +233,6 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
       # Set imputed values.
       dat_now[mask_now,] <- v_impv
 
-      print(sum(has_changed))
-
       # Check for change.
       if (!any(has_changed)) { break }
       has_changed <- apply(has_changed, 1, all)
