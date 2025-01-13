@@ -57,10 +57,10 @@ test_that("Miscellaneous functions are working", {
   plot(cii+as.matrix(as.numeric(cii2)), zlim=c(0, 2)); rgl::close3d()
   plot(cii); rgl::close3d()
   plot(make_surf(
-    c(mask_surf(
+    mask_surf(
       cii$surf$cortex_left,
       move_from_mwall(cii)$data$cortex_left[,1]
-    ), list(hemisphere="left"))
+    )
   )); rgl::close3d()
 
   for (cii_fname in fnames$cifti) {
