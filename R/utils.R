@@ -249,23 +249,23 @@ match_exactly <- function(
   )
 
   msg <- paste0(
-    "Mismatch between:\n",
+    #"Mismatch between:\n",
     "\t\"", paste0(user, collapse="\", \""), "\".\n",
     "and:\n",
     "\t\"", paste0(expected, collapse="\", \""), "\".\n"
   )
 
-  tryCatch(
-    {
-      if (length(user) != length(expected)) { stop("Different lengths.") }
-      if (!all(user == expected)) { stop("At least one different entry.") }
-    },
-    error = function(e) {
-      unrecognized_FUN(msg)
-      return(FALSE)
-    },
-    finally = {}
-  )
+  if (length(user) != length(expected)) {
+    msg <- paste0("Different lengths:\n", msg)
+    unrecognized_FUN(msg)
+    return(FALSE)
+  }
+
+  if (!all(user == expected)) {
+    msg <- paste0("Mismatch:\n", msg)
+    unrecognized_FUN(msg)
+    return(FALSE)
+  }
 
   return(TRUE)
 }
