@@ -193,6 +193,15 @@ plot(xii)
 We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 (or vice versa) using the `"xifti"` object as an intermediary.
 
+#### How do I convert volumetric cortical data in NIFTI format to surface-based cortical data in CIFTI format?
+
+There are options from other software packages including the [Connectome
+Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to-surface-mapping),
+[FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_vol2surf),
+[ciftify](https://edickie.github.io/ciftify/#/03b_cifti-for-your_fmri),
+and
+[Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html).
+
 #### How do I visualize cortical data without applying shading to the mesh geometry?
 
 The 3D shading may make certain plots more difficult to interpret, if
