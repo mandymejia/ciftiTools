@@ -186,7 +186,8 @@ but also GIFTI and NIFTI files. For example, we can plot a surface
 GIFTI:
 
 ``` r
-xii <- as.xifti(surfL=read_surf(ciftiTools.files()$surf["left"]))
+gii_surf <- read_surf(ciftiTools.files()$surf["left"])
+xii <- as.xifti(surfL=gii_surf)
 plot(xii)
 ```
 
@@ -202,11 +203,16 @@ Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to
 and
 [Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html).
 
+#### How do I convert volumetric subcortical data from NIFTI format to CIFTI format?
+
+Use the Connectome Workbench command
+[-cifti-create-dense-from-template](https://www.humanconnectome.org/software/workbench-command/-cifti-create-dense-from-template).
+
 #### How do I visualize cortical data without applying shading to the mesh geometry?
 
 The 3D shading may make certain plots more difficult to interpret, if
-the color scale varies from light to dark: darker regions might be in a
-shadow, or their values might be higher. To skip shading, use the
+the color scale varies from dark to light: darker regions might be in a
+shadow, or their values might be lower. To skip shading, use the
 argument `material=list(lit=FALSE)` to `view_xifti_surface`.
 
 <img src="README_media/vxs_lit.png" style="width:14.0%"
@@ -217,7 +223,7 @@ alt="Unlit surface plot" />
 #### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
 
 For a `"xifti"` object `xii` with subcortical data, the mask of data
-locations are saved in `xii$meta$subcort$mask`. To obtain the array
+locations is saved in `xii$meta$subcort$mask`. To obtain the array
 coordinates of the in-mask locations, use
 `which(xii$meta$subcort$mask, arr.ind=TRUE) - 1`. This matrix has each
 subcortical voxel along the rows, and its I, J, and K array coordinates
