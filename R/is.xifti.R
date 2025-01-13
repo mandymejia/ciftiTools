@@ -1,15 +1,15 @@
 #' Validate a numeric matrix
-#' 
+#'
 #' Check if object is a numeric matrix.
-#' 
+#'
 #' This is a helper function for \code{\link{is.xifti}}.
-#' 
+#'
 #' @param x The putative numeric matrix
-#' 
+#'
 #' @return Logical. Is \code{x} a valid numeric matrix?
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 is.nummat <- function(x) {
   if (!is.matrix(x) || !is.numeric(x)) {
     message("The data must be a numeric matrix.\n"); return(FALSE)
@@ -20,9 +20,9 @@ is.nummat <- function(x) {
 
 #' Validate the "data" component of a \code{"xifti"} object
 #'
-#' Check if object is valid for \code{xifti$data}, where \code{xifti} is a 
+#' Check if object is valid for \code{xifti$data}, where \code{xifti} is a
 #'  \code{"xifti"} object.
-#' 
+#'
 #'  This is a helper function for \code{\link{is.xifti}}.
 #'
 #'  Requirements: a list with entries "cortex_left", "cortex_right", and
@@ -35,31 +35,31 @@ is.nummat <- function(x) {
 #' @param x The putative "data" component.
 #'
 #' @return Logical. Is \code{x} a valid "data" component?
-#' 
+#'
 #' @keywords internal
 #'
 is.xifti_data <- function(x) {
   # Check that the entries are as expected.
   y <- template_xifti()$data
-  if (!match_exactly(names(x), names(y))) { 
-    message("List names are not correct.\n"); return(FALSE) 
+  if (!match_exactly(names(x), names(y))) {
+    message("List names are not correct.\n"); return(FALSE)
   }
 
   ## There must be at least one non-empty data entry.
   #not_null <- names(x)[!vapply(x, is.null, FALSE)]
-  #if (length(not_null) < 1) { 
+  #if (length(not_null) < 1) {
   #  message("At least one entry in \"data\" must be non-empty.\n"); return(FALSE)
   #}
 
   # Non-empty entries should be numeric matrices.
   not_null <- names(x)[!vapply(x, is.null, FALSE)]
-  for (ii in not_null) { 
+  for (ii in not_null) {
     if (!is.nummat(x[[ii]])) {
       message(
         "`xifti` data can be coerced to numeric matrices using `fix_xifti`.\n"
       )
       return(FALSE)
-    } 
+    }
   }
 
   if (!is.null(x$cortex_left) && nrow(x$cortex_left) > 200000) {
@@ -76,7 +76,7 @@ is.xifti_data <- function(x) {
   n_meas <- vapply(x[not_null], ncol, 1)
   if (length(unique(n_meas)) > 1) {
     message(paste0(
-      paste( 
+      paste(
         "The left cortex, right cortex, and subcortical data (when present)",
         "must all have the same number of measurements (columns),",
         "but they do not."
@@ -93,27 +93,27 @@ is.xifti_data <- function(x) {
 
 #' Validate a \code{"surf"} object (vertices + faces)
 #'
-#' Check if object is valid for \code{xifti$surf$cortex_left} or 
+#' Check if object is valid for \code{xifti$surf$cortex_left} or
 #'  \code{xifti$surf$cortex_right}, where \code{xifti} is a \code{"xifti"}
 #'  object.
-#' 
+#'
 #'  This is a helper function for \code{\link{is.xifti}}.
-#' 
-#'  Requirements: the \code{"surf"} must be a list of three components: "vertices", 
-#'  "faces", and "hemisphere". The first two should each be a numeric matrix 
-#'  with three columns. The values in "vertices" represent spatial coordinates 
-#'  whereas the values in "faces" represent vertex indices defining the face. 
-#'  Thus, values in "faces" should be integers between 1 and the number of 
-#'  vertices. The last list entry, "hemisphere", should be "left", "right", 
+#'
+#'  Requirements: the \code{"surf"} must be a list of three components: "vertices",
+#'  "faces", and "hemisphere". The first two should each be a numeric matrix
+#'  with three columns. The values in "vertices" represent spatial coordinates
+#'  whereas the values in "faces" represent vertex indices defining the face.
+#'  Thus, values in "faces" should be integers between 1 and the number of
+#'  vertices. The last list entry, "hemisphere", should be "left", "right",
 #'  or NULL indicating the brain hemisphere which the surface represents.
 #'
 #' @param x The putative \code{"surf"}.
 #'
 #' @return Logical. Is \code{x} a valid \code{"surf"}?
-#' 
+#'
 #' @family surface-related
 #' @export
-#' 
+#'
 is.surf <- function(x) {
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
@@ -163,29 +163,34 @@ is.surf <- function(x) {
 }
 
 #' Validate a factor vector of subcortical labels
-#' 
+#'
 #' Check if object is a factor vector of subcortical structures.This is a helper
 #'  function for \code{\link{is.xifti}}.
-#' 
+#'
 #' Requirements: see the "Label Levels" section for the expected factor levels.
 #'
 #' @inheritSection labels_Description Label Levels
-#' 
+#'
 #' @param x The putative factor vector of brain substructures.
 #'
 #' @return Logical. Is \code{x} a factor vector of subcortical
 #'  structures?
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 is.subcort_labs <- function(x) {
   if (!is.factor(x)) {
     message("The labels must be a factor.\n"); return(FALSE)
   }
 
   substructure_levels <- substructure_table()$ciftiTools_Name
-  if (!match_exactly(levels(x), substructure_levels)) { 
-    message("Level names did not match.\n"); return(FALSE) 
+  if (!match_exactly(levels(x), substructure_levels, fail_action="nothing")) {
+    # Try w/ adding "Other", for older xiftis.
+    if (!match_exactly(c(levels(x), "Other"), substructure_levels, fail_action="nothing")) {
+      # Do again w/o adding "Other" to print the correct message.
+      q <- match_exactly(levels(x), substructure_levels)
+      message("Level names did not match.\n"); return(FALSE)
+    }
   }
 
   TRUE
@@ -196,17 +201,17 @@ is.subcort_labs <- function(x) {
 #' Check if object is a 3D binary mask.
 #'
 #'  This is a helper function for \code{\link{is.xifti}}.
-#' 
+#'
 #'  Requirements: the mask must be a boolean 3D array. \code{TRUE} should
-#'  indicate voxels included in the mask, whereas \code{FALSE} 
+#'  indicate voxels included in the mask, whereas \code{FALSE}
 #'  should indicate voxels outside of it.
 #'
 #' @param x The putative subcortical mask.
 #'
 #' @return Logical. Is \code{x} a valid subcortical mask?
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 is.3D_mask <- function(x) {
   if (!is.array(x) || !is.logical(x)) {
     message("Mask must be a logical array.\n"); return(FALSE)
@@ -222,31 +227,31 @@ is.3D_mask <- function(x) {
 
 #' Validate the \code{"meta"} component of a \code{"xifti"} object
 #'
-#' Check if object is valid for \code{xifti$meta}, where \code{xifti} is a 
+#' Check if object is valid for \code{xifti$meta}, where \code{xifti} is a
 #'  \code{"xifti"} object.
-#' 
+#'
 #'  This is a helper function for \code{\link{is.xifti}}.
 #'
 #'  Requirements: the structure must match that of the \code{"meta"} component
-#'  of \code{\link{template_xifti}}. 
+#'  of \code{\link{template_xifti}}.
 #'
 #' @param x The putative \code{"meta"} component.
 #'
 #' @return Logical. Is \code{x} a valid \code{"meta"} component?
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 is.xifti_meta <- function(x) {
   if (!is.list(x)) { message("x must be a list.\n"); return(FALSE) }
 
   y <- template_xifti()$meta
-  if (!match_exactly(names(x), names(y))) { 
-    message("List names are not correct.\n"); return(FALSE) 
+  if (!match_exactly(names(x), names(y))) {
+    message("List names are not correct.\n"); return(FALSE)
   }
 
   # Cortex.
-  if (!match_exactly(names(x$cortex), names(y$cortex))) { 
-    message("Cortex sublist names are not correct.\n"); return(FALSE) 
+  if (!match_exactly(names(x$cortex), names(y$cortex))) {
+    message("Cortex sublist names are not correct.\n"); return(FALSE)
   }
   if (!is.null(x$cortex$medial_wall_mask$left)) {
     if (!is.logical(x$cortex$medial_wall_mask$left)) {
@@ -286,10 +291,10 @@ is.xifti_meta <- function(x) {
   }
 
   # Subcortical.
-  if (!match_exactly(names(x$subcort), names(y$subcort), fail_action="nothing")) { 
+  if (!match_exactly(names(x$subcort), names(y$subcort), fail_action="nothing")) {
     ny2 <- names(y$subcort)[names(y$subcort) != "trans_units"]
-    if (!match_exactly(names(x$subcort), ny2, fail_action="message")) { 
-      message("Subcortical sublist names are not correct.\n"); return(FALSE) 
+    if (!match_exactly(names(x$subcort), ny2, fail_action="message")) {
+      message("Subcortical sublist names are not correct.\n"); return(FALSE)
     }
   }
   if (!is.null(x$subcort$labels) && !is.subcort_labs(x$subcort$labels)) {
@@ -332,7 +337,7 @@ is.xifti_meta <- function(x) {
       if (length(bs_missing) > 0) {
         message(paste(
           "These brainstructures with data are not in $meta$cifti$brainstructures:",
-          paste(bs_missing, collapse=", "), 
+          paste(bs_missing, collapse=", "),
           ". Add them or set this metadata entry to `NULL`.\n"
         ))
         return(FALSE)
@@ -387,7 +392,7 @@ is.xifti_meta <- function(x) {
         `3007` = c("names", "labels")
       )
       cifti_meta_names <- c(
-        "intent", "brainstructures", "misc", 
+        "intent", "brainstructures", "misc",
         intent_specific_names
       )
       bad_names <- !(names(x$cifti) %in% cifti_meta_names)
@@ -406,37 +411,37 @@ is.xifti_meta <- function(x) {
 }
 
 #' Validate a \code{"xifti"} object.
-#' 
+#'
 #' Check if object is valid for a \code{"xifti"} object.
 #'
-#' Requirements: it is a list with the same structure as 
-#'  \code{\link{template_xifti}}. The size of each data entry must be 
-#'  compatible with its corresponding mask (medial wall for the cortex and 
-#'  volumetric mask for the subcortex). Metadata should be present if and only 
+#' Requirements: it is a list with the same structure as
+#'  \code{\link{template_xifti}}. The size of each data entry must be
+#'  compatible with its corresponding mask (medial wall for the cortex and
+#'  volumetric mask for the subcortex). Metadata should be present if and only
 #'  if the corresponding data is also present. The surfaces can be present
 #'  whether or not the cortex data are present.
-#' 
-#'  See the "Label Levels" section for the requirements of 
+#'
+#'  See the "Label Levels" section for the requirements of
 #'  \code{xifti$meta$subcort$labels}.
-#' 
+#'
 #' @inheritSection labels_Description Label Levels
-#' 
+#'
 #' @param x The putative \code{"xifti"} object.
-#' @param messages If \code{x} is not a \code{"xifti"} object, print messages 
+#' @param messages If \code{x} is not a \code{"xifti"} object, print messages
 #'  explaining the problem? Default is \code{TRUE}.
-#' 
+#'
 #' @return Logical. Is \code{x} a valid \code{"xifti"} object?
-#' 
+#'
 #' @export
-#' 
+#'
 is.xifti <- function(x, messages=TRUE) {
   if (!messages) { return(suppressMessages(is.xifti(x, messages=TRUE))) }
 
   if (!is.list(x)) { message("`x` must be a list.\n"); return(FALSE) }
 
   y <- template_xifti()
-  if (!match_exactly(names(x), names(y))) { 
-    message("List names are not correct.\n"); return(FALSE) 
+  if (!match_exactly(names(x), names(y))) {
+    message("List names are not correct.\n"); return(FALSE)
   }
 
   # ----------------------------------------------------------------------------
@@ -462,9 +467,9 @@ is.xifti <- function(x, messages=TRUE) {
   if (!is.null(x$data$cortex_left) && !is.null(x$meta$cortex$medial_wall_mask$left)) {
     if (nrow(x$data$cortex_left) != sum(x$meta$cortex$medial_wall_mask$left)) {
       message(paste0(
-        "Number of left cortex vertices (rows), ", nrow(x$data$cortex_left), 
+        "Number of left cortex vertices (rows), ", nrow(x$data$cortex_left),
         ", doesn't match ",
-        "the number of non-medial wall locations in the mask, ", 
+        "the number of non-medial wall locations in the mask, ",
         sum(x$meta$cortex$medial_wall_mask$left), ".\n"
       ))
       return(FALSE)
@@ -476,9 +481,9 @@ is.xifti <- function(x, messages=TRUE) {
   if (!is.null(x$data$cortex_right) && !is.null(x$meta$cortex$medial_wall_mask$right)) {
     if (nrow(x$data$cortex_right) != sum(x$meta$cortex$medial_wall_mask$right)) {
       message(paste0(
-        "Number of right cortex vertices (rows), ", nrow(x$data$cortex_right), 
+        "Number of right cortex vertices (rows), ", nrow(x$data$cortex_right),
         ", doesn't match ",
-        "the number of non-medial wall locations in the mask, ", 
+        "the number of non-medial wall locations in the mask, ",
         sum(x$meta$cortex$medial_wall_mask$right), ".\n"
       ))
       return(FALSE)
@@ -513,7 +518,7 @@ is.xifti <- function(x, messages=TRUE) {
     if (!is.null(x$surf[[cortex]]) && !is.null(x$meta$cortex$medial_wall_mask[[side]])) {
       if (length(x$meta$cortex$medial_wall_mask[[side]]) != nrow(x$surf[[cortex]]$vertices)) {
         message(paste0(
-          "Number of vertices in ", side, 
+          "Number of vertices in ", side,
           " cortex data (including the medial wall), ",
           length(x$meta$cortex$medial_wall_mask[[side]]),
           ", does not match the number of vertices in the corresponding surface, ",
@@ -556,9 +561,9 @@ is.xifti <- function(x, messages=TRUE) {
             vl_trnc <- length(vl_show) > vl_show_max
             if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
             message(paste(
-              "These label values in the left cortex data column", ii, 
+              "These label values in the left cortex data column", ii,
               "are not in the corresponding label table:\n\t",
-              paste(all_labels[vl_show], collapse=", "), 
+              paste(all_labels[vl_show], collapse=", "),
               ifelse(vl_trnc, "[TRUNCATED]", ""), "\n"
             ))
             return(FALSE)
@@ -575,9 +580,9 @@ is.xifti <- function(x, messages=TRUE) {
             vl_trnc <- length(vl_show) > vl_show_max
             if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
             message(paste(
-              "These label values in the right cortex data column", ii, 
+              "These label values in the right cortex data column", ii,
               "are not in the corresponding label table:\n\t",
-              paste(all_labels[vl_show], collapse=", "), 
+              paste(all_labels[vl_show], collapse=", "),
               ifelse(vl_trnc, "[TRUNCATED]", ""), "\n"
             ))
             return(FALSE)
@@ -594,9 +599,9 @@ is.xifti <- function(x, messages=TRUE) {
             vl_trnc <- length(vl_show) > vl_show_max
             if (vl_trnc) { vl_show <- vl_show[seq(vl_show_max)] }
             message(paste(
-              "These label values in the subcortex data column", ii, 
+              "These label values in the subcortex data column", ii,
               "are not in the corresponding label table:\n\t",
-              paste(all_labels[vl_show], collapse=", "), 
+              paste(all_labels[vl_show], collapse=", "),
               ifelse(vl_trnc, "[TRUNCATED]", ""), "\n"
             ))
             return(FALSE)
@@ -617,32 +622,32 @@ is_xifti <- function(x, messages=TRUE){
 }
 
 #' Validate a \code{"xifti"} object
-#' 
-#' Check if object is valid for a \code{"xifti"}. This alias for 
-#'  \code{\link{is.xifti}} is offered as a convenience, and a message will warn 
+#'
+#' Check if object is valid for a \code{"xifti"}. This alias for
+#'  \code{\link{is.xifti}} is offered as a convenience, and a message will warn
 #'  the user. We recommend using \code{\link{is.xifti}} instead.
 #'
-#' Requirements: it is a list with the same structure as 
-#'  \code{\link{template_xifti}}. The size of each data entry must be 
-#'  compatible with its corresponding mask (medial wall for the cortex and 
-#'  volumetric mask for the subcortex). Metadata should be present if and only 
+#' Requirements: it is a list with the same structure as
+#'  \code{\link{template_xifti}}. The size of each data entry must be
+#'  compatible with its corresponding mask (medial wall for the cortex and
+#'  volumetric mask for the subcortex). Metadata should be present if and only
 #'  if the corresponding data is also present. The surfaces can be present
 #'  whether or not the cortex data are present.
-#' 
-#'  See the "Label Levels" section for the requirements of 
+#'
+#'  See the "Label Levels" section for the requirements of
 #'  \code{xifti$meta$subcort$labels}.
-#' 
+#'
 #' @inheritSection labels_Description Label Levels
-#' 
+#'
 #' @param x The putative \code{"xifti"}.
-#' @param messages If \code{x} is not a \code{"xifti"}, print messages 
+#' @param messages If \code{x} is not a \code{"xifti"}, print messages
 #'  explaining the problem? Default is \code{TRUE}.
-#' 
+#'
 #' @return Logical. Is \code{x} a valid \code{"xifti"}?
-#' 
+#'
 #' @family common
 #' @export
-#' 
+#'
 is.cifti <- function(x, messages=TRUE){
   warning("is.cifti() is an alias for is.xifti().\n")
   is.xifti(x, messages=messages)
@@ -651,11 +656,11 @@ is.cifti <- function(x, messages=TRUE){
 #' @rdname is.cifti
 #' @export
 is_cifti <- function(x, messages=TRUE){
- is.cifti(x, messages=messages) 
+ is.cifti(x, messages=messages)
 }
 
 #' @rdname is.cifti
 #' @export
 isCIfTI <- function(x, messages=TRUE){
- is.cifti(x, messages=messages) 
+ is.cifti(x, messages=messages)
 }
