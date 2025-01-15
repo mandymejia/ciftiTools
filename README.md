@@ -196,7 +196,7 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 
 ### How do I convert to CIFTI Format…
 
-#### from NIFTI volumetric cortical data?
+#### …from NIFTI volumetric cortical data?
 
 The cortex data will have to be projected to the surface. There are
 options from other software packages including the [Connectome
@@ -206,7 +206,7 @@ Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to
 and
 [Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html).
 
-#### from NIFTI volumetric subcortical data?
+#### …from NIFTI volumetric subcortical data?
 
 Use the Connectome Workbench command
 [-cifti-create-dense-from-template](https://www.humanconnectome.org/software/workbench-command/-cifti-create-dense-from-template).
