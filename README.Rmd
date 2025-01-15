@@ -165,7 +165,7 @@ Use the Connectome Workbench command [-cifti-create-dense-from-template](https:/
 
 The 3D shading may make certain plots more difficult to interpret, if the color scale varies from dark to light: darker regions might be in a shadow, or their values might be lower. To skip shading, use the argument `material=list(lit=FALSE)` to `view_xifti_surface`.
 
-![Lit surface plot](man/figures/vxs_lit.jpg){width=14%} ![Unlit surface plot](man/figures/vxs_unlit.jpg){width=14%}
+![Lit surface plot](man/figures/vxs_lit.jpg){width=20%} ![Unlit surface plot](man/figures/vxs_unlit.jpg){width=20%}
 
 #### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
 

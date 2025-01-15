@@ -215,9 +215,9 @@ the color scale varies from dark to light: darker regions might be in a
 shadow, or their values might be lower. To skip shading, use the
 argument `material=list(lit=FALSE)` to `view_xifti_surface`.
 
-<img src="man/figures/vxs_lit.jpg" style="width:14.0%"
+<img src="man/figures/vxs_lit.jpg" style="width:20.0%"
 alt="Lit surface plot" />
-<img src="man/figures/vxs_unlit.jpg" style="width:14.0%"
+<img src="man/figures/vxs_unlit.jpg" style="width:20.0%"
 alt="Unlit surface plot" />
 
 #### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
