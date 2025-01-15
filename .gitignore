@@ -1,8 +1,12 @@
-.DS_Store
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-vignettes/ciftiTools_vignette_cache/*
-vignettes/output/*
-!vignettes/output/.gitkeep 
+inst/doc
+man/figures/full-res
+
+*DS_Store
+/doc/
+/Meta/
+
+*WbViewMovie

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# ciftiTools
+# ciftiTools <img src="man/figures/logo.png" align="right" height="139" alt="ciftiTools sticker" />
 
 <!-- badges: start -->
 
@@ -157,19 +157,19 @@ See `NAMESPACE` for a full list of all exported functions.
 ## Illustrations
 
 <figure>
-<img src="README_media/ciftiTools_summary.png" style="width:65.0%"
+<img src="man/figures/ciftiTools_summary.jpg" style="width:65.0%"
 alt="ciftiTools graphical summary" />
 <figcaption aria-hidden="true">ciftiTools graphical summary</figcaption>
 </figure>
 
 <figure>
-<img src="README_media/xifti_structure.png" style="width:65.0%"
+<img src="man/figures/xifti_structure.jpg" style="width:65.0%"
 alt="“xifti” object structure" />
 <figcaption aria-hidden="true">“xifti” object structure</figcaption>
 </figure>
 
 <figure>
-<img src="README_media/surf_tour.gif" style="width:25.0%"
+<img src="man/figures/surf_tour.gif" style="width:25.0%"
 alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools through the function load_surf. See the data acknowledgement section at the bottom of this README." />
 <figcaption aria-hidden="true">Surfaces comparison. The “very inflated”,
 “inflated”, and “midthickness” surfaces are included in ciftiTools
@@ -215,9 +215,9 @@ the color scale varies from dark to light: darker regions might be in a
 shadow, or their values might be lower. To skip shading, use the
 argument `material=list(lit=FALSE)` to `view_xifti_surface`.
 
-<img src="README_media/vxs_lit.png" style="width:14.0%"
+<img src="man/figures/vxs_lit.jpg" style="width:14.0%"
 alt="Lit surface plot" />
-<img src="README_media/vxs_unlit.png" style="width:14.0%"
+<img src="man/figures/vxs_unlit.jpg" style="width:14.0%"
 alt="Unlit surface plot" />
 
 #### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?

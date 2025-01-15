@@ -112,7 +112,7 @@ read_xifti(cifti_fnames["dtseries"], idx=2) # second column only
 When a `"xifti"` object is written to files, the CIFTI components are placed in a CIFTI file and the surface geometries, if any, are placed in GIFTI files.
 
 ```{r}
-out_dir <- "output"
+out_dir <- tempdir()
 
 write_xifti(
   xii, 
