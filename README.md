@@ -179,7 +179,7 @@ acknowledgement section at the bottom of this README.</figcaption>
 
 ## FAQ
 
-#### Why is a CIFTI file that has been read in called a `"xifti"`?
+### Why is a CIFTI file that has been read in called a `"xifti"`?
 
 The `"xifti"` object is a general interface for not only CIFTI files,
 but also GIFTI and NIFTI files. For example, we can plot a surface
@@ -194,21 +194,24 @@ plot(xii)
 We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 (or vice versa) using the `"xifti"` object as an intermediary.
 
-#### How do I convert volumetric cortical data in NIFTI format to surface-based cortical data in CIFTI format?
+### How do I convert to CIFTI Format…
 
-There are options from other software packages including the [Connectome
+#### from NIFTI volumetric cortical data?
+
+The cortex data will have to be projected to the surface. There are
+options from other software packages including the [Connectome
 Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to-surface-mapping),
 [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_vol2surf),
 [ciftify](https://edickie.github.io/ciftify/#/03b_cifti-for-your_fmri),
 and
 [Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html).
 
-#### How do I convert volumetric subcortical data from NIFTI format to CIFTI format?
+#### from NIFTI volumetric subcortical data?
 
 Use the Connectome Workbench command
 [-cifti-create-dense-from-template](https://www.humanconnectome.org/software/workbench-command/-cifti-create-dense-from-template).
 
-#### How do I visualize cortical data without applying shading to the mesh geometry?
+### How do I visualize cortical data without applying shading to the mesh geometry?
 
 The 3D shading may make certain plots more difficult to interpret, if
 the color scale varies from dark to light: darker regions might be in a
@@ -220,7 +223,7 @@ alt="Lit surface plot" />
 <img src="man/figures/vxs_unlit.jpg" style="width:20.0%"
 alt="Unlit surface plot" />
 
-#### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
+### How do I get `VoxelIndicesIJK` or the MNI coordinates for the subcortex?
 
 For a `"xifti"` object `xii` with subcortical data, the mask of data
 locations is saved in `xii$meta$subcort$mask`. To obtain the array
