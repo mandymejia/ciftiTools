@@ -15,6 +15,7 @@
 ^inst/extdata/S1200\.R\.midthickness_MSMAll\.32k_fs_LR\.surf\.gii$
 ^inst/extdata/MNI152_T1_2mm\.nii\.gz$
 ^tests/run_ciftiTools_tests\.R$
+^vignettes/ciftiTools_vignette\.html$
 ^codecov\.yml$
 ^cran-comments\.md
 ^CRAN-RELEASE$

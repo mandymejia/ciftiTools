@@ -165,7 +165,7 @@ Now let's take a look!
 
 Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. (In our case, the included surfaces _are_ the default surfaces.) We'll also make the second plot interactive by requesting display of two `idx`. Try clicking and dragging around the second plot to rotate, and scrolling to zoom in and out. Note that the first and third plots are OpenGL window snapshots, and that the second plot is an embedded HTML widget.
 
-```{r, fig.cap="dtseries file; first column; sequential palette", rgl=TRUE, format="png", fig.height=4.2, fig.width=5}
+```{r, fig.cap="dtseries file; first column; sequential palette", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=5}
 # Normally `cex.title` doesn't need to be set, as it defaults to a good choice.
 #   But when knitting static images this way, the default becomes a bit too big
 #   based on how knitting works.
@@ -180,7 +180,7 @@ view_xifti_surface(
 )
 ```
 
-```{r, fig.cap="dlabel file; first label; palette from label metadata", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r, fig.cap="dlabel file; first label; palette from label metadata", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 view_xifti_surface(
   read_cifti(cifti_fnames["dlabel"]), 
   # Interactively, a color legend that displays the label names will also be printed.
@@ -210,7 +210,7 @@ The S3 method `plot(xii)` will display all the data present in the `xifti` using
 
 `NA` values will be uncolored. You can use this to, for example, only color values meeting a certain threshold.
 
-```{r, fig.cap="dscalar; using NA values to selectively color", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r, fig.cap="dscalar; using NA values to selectively color", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 xii <- read_cifti(cifti_fnames["dscalar"])
 # Convert to z-scores
 xii <- scale_xifti(xii)
@@ -224,7 +224,7 @@ view_xifti_surface(
 
 Something to note is that the shadows from 3D rendering will darken colors in some folded regions of the brain. Another consideration is that the colors are smoothed continuously. In some situations, these default 3D shading properties may be undesirable. The `shadows` and `material` arguments can be used to adjust aspects of 3D shading.
 
-```{r, fig.cap="Lessening the shadows", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r, fig.cap="Lessening the shadows", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 view_xifti_surface(
   xii, title='MyelinMap_BC_decurv: z > 2, less shadows', 
   cex.title=1.3, zlim=c(2,3), NA_color="#505560",
@@ -232,7 +232,7 @@ view_xifti_surface(
 )
 ```
 
-```{r, fig.cap="Exact coloring, by disabling shadows and color smoothing", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r, fig.cap="Exact coloring, by disabling shadows and color smoothing", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 view_xifti_surface(
   xii, title='MyelinMap_BC_decurv: z > 2, exact colors', 
   cex.title=1.3, zlim=c(2,3), NA_color="#505560",
@@ -271,7 +271,7 @@ read_cifti(cifti_fnames["dscalar"], resamp_res=2000)
 
 Use `smooth_cifti` to perform smoothing. Like resampling, this function works on both CIFTI files and `"xifti"` objects.
 
-```{r, fig.cap="Smoothed CIFTI", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r, fig.cap="Smoothed CIFTI", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 smoothed_xii_fname <- "my_smoothed_cifti.dtseries.nii"
 
 # Smoothing a CIFTI file
@@ -370,7 +370,7 @@ surf
 These can be written back to GIFTI files, visualized, and resampled. Resampling can be performed on the `"surf"` objects or the surface GIFTI files directly:
 
 
-```{r, rgl=TRUE, format="png", fig.cap="Inflated surface", fig.height=3.8, fig.width=2.5}
+```{r, rgl=TRUE, format="jpg", fig.cap="Inflated surface", fig.height=3.8, fig.width=2.5}
 # Writing
 write_surf_gifti(surf, file.path(out_dir, "my.L.surf"))
 
@@ -387,7 +387,7 @@ resample_gifti(surfL_fname, file.path(out_dir, "my.L.2k.surf.gii"), "left", resa
 
 As mentioned earlier, the inflated surface is included as a GIFTI file and can be accessed with `ciftiTools.files()`. It is used as default for visualizing data with `view_xifti_surface`. But two more surfaces are available through the function `load_surf`:
 
-```{r, fig.cap="Two alternative surfaces", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r, fig.cap="Two alternative surfaces", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 xii <- as.xifti(
   surfL = load_surf("left", "very inflated"),
   surfR = load_surf("right", "midthickness")
@@ -397,12 +397,12 @@ plot(xii, title = "Left very inflated | Right midthickness")
 
 Lastly, let's demonstrate the ability to plot vertices and edges. (This can also be done when plotting `"xifti"` objects with data, using the same arguments.)
 
-```{r, rgl=TRUE, fig.cap="Surface with vertices drawn in blue", format="png", fig.height=3.8, fig.width=2.5}
+```{r, rgl=TRUE, fig.cap="Surface with vertices drawn in blue", format="jpg", fig.height=3.8, fig.width=2.5}
 # Recall that surf was resampled to 2k
 plot(surf, vertex_size=3, vertex_color="blue")
 ```
 
-```{r, rgl=TRUE, fig.cap="Surface with edges drawn in black", format="png", fig.height=3.8, fig.width=2.5}
+```{r, rgl=TRUE, fig.cap="Surface with edges drawn in black", format="jpg", fig.height=3.8, fig.width=2.5}
 plot(surf, edge_color="black")
 ```
 
@@ -434,7 +434,7 @@ knitr::include_graphics(plt, dpi=180)
 
 `even_vert_samp` obtains a subset of vertices sampled evenly across the mesh. It works by downsampling the mesh and then identifying the original vertices closest to the vertices on the downsampled mesh. 
 
-```{r, rgl=TRUE, fig.cap="500 evenly-sampled vertices", format="png", fig.height=3.8, fig.width=2.5}
+```{r, rgl=TRUE, fig.cap="500 evenly-sampled vertices", format="jpg", fig.height=3.8, fig.width=2.5}
 # Load a left-hemisphere surface.
 surfL <- load_surf()
 
@@ -456,7 +456,7 @@ plot(convert_xifti(xii, "dlabel"))
 
 `ciftiTools` includes several commonly-used parcellations which can be loaded in as a single-column dlabel `"xifti"` with `load_parc`. Refer to `?load_parc` for their corresponding references. Any other parcellations can be read in with `read_cifti`. 
 
-```{r fig.cap="Schaefer 400 parcellation", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r fig.cap="Schaefer 400 parcellation", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 parc <- load_parc("Schaefer_400")
 # parc <- read_cifti("my_parcellation.dlabel.nii")
 
@@ -505,7 +505,7 @@ For real timeseries data, `cor(t(pmean))` would give the parcels x parcels funct
 
 `apply_parc` also has an argument which converts the result to a `"xifti"` object. Each locations' value will be the value of its corresponding parcel.
 
-```{r fig.cap="Median parcel value", rgl=TRUE, format="png", fig.height=3.8, fig.width=5}
+```{r fig.cap="Median parcel value", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 
 # Obtain the min/max, quartile, and mean value
 #   of the second data column, within each parcel.
