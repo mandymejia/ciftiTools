@@ -88,7 +88,9 @@ newdata_xifti <- function(xifti, newdata, newnames=NULL, subcortex_by_bs=FALSE) 
     # [TO DO] `convert_to_dscalar`
     for (cc in seq(xifti_dim[2])) {
       if (!all(newdata[,cc] %in% xifti$meta$cifti$labels[[cc]]$Key)) {
-        stop("`newdata` has values that are not in the label table for column ", cc, ".")
+        warning("`newdata` has values that are not in the label table for column ", cc, ". Converting to `dscalar`.")
+        xifti <- convert_to_dscalar(xifti)
+        break
       }
     }
   }
