@@ -22,3 +22,15 @@ These files are necessary and have already been reduced in size.
 ## Tests
 
 Passes all the tests in `tests/run_ciftiTools_tests.R`
+
+## Previous submission
+
+  Quitting from lines 69-71 [unnamed-chunk-6] (ciftiTools_vignette.Rmd)
+  Error: processing vignette 'ciftiTools_vignette.Rmd' failed with diagnostics:
+  '"C:\Users\CRAN\Documents/Applications"' not found
+  --- failed re-building 'ciftiTools_vignette.Rmd'
+
+  SUMMARY: processing the following file failed:
+    'ciftiTools_vignette.Rmd'
+
+* The vignette has been modified to avoid this error. 

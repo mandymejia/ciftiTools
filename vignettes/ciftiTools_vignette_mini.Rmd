@@ -1,0 +1,126 @@
+---
+title: "`ciftiTools` Mini Demo"
+author: "Damon Pham & Amanda Mejia"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+  toc: true
+  keep_md: true
+vignette: >
+  %\VignetteIndexEntry{`ciftiTools` Mini Demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(autodep = TRUE, cache = FALSE)
+```
+
+`ciftiTools` is an R package for working with CIFTI-2 format brain imaging data. Used in conjunction with GIFTI surface geometry files, CIFTI files enable surface-based analysis of gray matter data, which has several advantages over traditional volumetric/voxel-based analysis. Because of this, the CIFTI-2 format is used by recent neuroimaging studies including the Human Connectome Project (HCP). `ciftiTools` supports reading, writing, visualizing, resampling, and other operations for CIFTI files with the `".dscalar.nii"`, `".dtseries.nii"`, and `".dlabel.nii"` intents. Several of these operations are made possible by the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). 
+
+_Several key operations in `ciftiTools`, including reading and writing CIFTI files, are made possible by the [Connectome Workbench](https://www.humanconnectome.org/software/connectome-workbench). Since the Workbench must be locally installed, this vignette made for CRAN can only demonstrate a few functions. Please refer to the [full vignette on GitHub](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html)._
+
+To get started, the first time you use `ciftiTools`, install it from either CRAN with `install.packages()` or Github with `devtools::install_github()`. Here, we will use the CRAN version.
+
+```{r}
+# Check if package installed. If not, install it.
+if(!require('ciftiTools', quietly=TRUE)){
+  install.packages('ciftiTools')
+  # devtools::install_github('mandymejia/ciftiTools') # development version
+}
+```
+
+Now we load the `ciftiTools` package. 
+
+```{r}
+library(ciftiTools)
+```
+
+
+Next, we indicate where to find the Connectome Workbench. This can be the full path to the Connectome Workbench executable file, or the path to its containing folder, in which case `ciftiTools` will locate the full path. Here, we will use the latter. 
+
+_Note that this step is skipped with `eval=FALSE` for the purpose of including the vignette on CRAN._
+
+```{r eval=FALSE}
+# Replace '~/Applications' with the actual path to the 
+#   Connectome Workbench folder on your computer. If
+#   successful, the Workbench executable path will be printed.
+ciftiTools.setOption('wb_path', '~/Applications')
+```
+
+Since reading in CIFTI files requires the Connectome Workbench, let's instead use `load_parc` to load one of the cortex parcellations included in `ciftiTools`.
+
+```{r}
+xii <- load_parc() # Loads the Schaefer 100 parcellation.
+xii # Summary of the `"xifti"` object.
+```
+
+# Visualization
+
+Cortex plots in `ciftiTools` are made possible by the `rgl` package. To prepare the R Markdown document for knitting we need to do the following: 
+
+```{r}
+library(rgl)
+rgl::setupKnitr()
+
+# Sometimes the first OpenGL window does not render properly.
+rgl::open3d(); rgl::close3d()
+
+# These are also required.
+library(manipulateWidget)
+library(ggpubr)
+```
+
+Now we can use `view_xifti_surface(xii)` to display the cortical data on the surface mesh. This function has several primary arguments:
+
+* `color_mode` specifies the nature of the data values: `"sequential"`, `"qualitative"` and `"diverging"`. If it is not provided, a default mode that makes sense for the data will be used.
+* `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
+* `idx` controls which column(s) to display.
+* `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an OpenGL window if the length of `idx` is one, and an embedded HTML widget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image files (png) for each `idx` are created, unless `fname` ends in `.html` in which case an interactive html file will be saved. Lastly, both OpenGL windows and HTML widgets can be embedded in R Markdown documents for knitting; refer to the source code of this vignette to see how this works.
+* `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the surfaces in the `"xifti"` object is used. But if those are also unavailable, the "inflated" surfaces included in `ciftiTools` are used.
+
+Let's plot our `"xifti"` object. Note that interactively, a color legend which displays the label names will also be printed.
+
+```{r, fig.cap="Schaefer 100 parcellation", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=5}
+# Normally `cex.title` doesn't need to be set, as it defaults to a good choice.
+#   But when knitting static images this way, the default becomes a bit too big
+#   based on how knitting works.
+view_xifti_surface(xii, idx=1, title='Schaefer 100', cex.title=1.3)
+```
+
+# Manipulation
+
+`add_surf` adds surface geometry to the `"xifti"` object.
+
+```{r, fig.cap="Schaefer 100 on midthickness surface", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=5}
+xii <- add_surf(xii, "midthickness", "midthickness")
+view_xifti_surface(xii, title='Midthickness surface', cex.title=1.3)
+```
+
+`remove_xifti` removes a brain structure.
+
+```{r, fig.cap="Removed right cortex", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=2.5}
+xii <- remove_xifti(xii, c("cortex_right", "surf_right"))
+view_xifti_surface(xii, title='Left cortex only', cex.title=1.3)
+```
+
+`transform_xifti` applies a function to the data values. Let's isolate and view the frontal pole cortex.
+
+```{r, fig.cap="Plotting one parcel", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=2.5}
+label_to_viz <- "17networks_LH_DefaultB_FPole_1"
+key_idx <- which(rownames(xii$meta$cifti$labels$parcels)==label_to_viz)
+key <- xii$meta$cifti$labels$parcels$Key[key_idx]
+xii <- transform_xifti(xii, function(v){ifelse(v==key, v, 0)})
+view_xifti_surface(xii, title='"FPole" parcel', cex.title=1.3)
+```
+
+# Citing `ciftiTools`
+
+A citation for the package itself can be printed with:
+
+```{r}
+citation("ciftiTools")
+```
+
+Refer to the README for citation information for the surfaces, parcellations, and other data included in `ciftiTools`, as well as the Connectome Workbench. Also check the DESCRIPTION file to get a list of R packages used, including `rgl` and `papayar`. Lastly, check out the [full vignette on GitHub](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html).
