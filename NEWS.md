@@ -1,4 +1,4 @@
-# 17.2
+# 17.4
 
 * Set read/write default for `brainstructures` to `"existing"` (rather than all or just cortex).
 * `impute_xifti`: Add this function which imputes values based on nearby locations.

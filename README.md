@@ -168,15 +168,6 @@ alt="“xifti” object structure" />
 <figcaption aria-hidden="true">“xifti” object structure</figcaption>
 </figure>
 
-<figure>
-<img src="man/figures/surf_tour.gif" style="width:25.0%"
-alt="Surfaces comparison. The “very inflated”, “inflated”, and “midthickness” surfaces are included in ciftiTools through the function load_surf. See the data acknowledgement section at the bottom of this README." />
-<figcaption aria-hidden="true">Surfaces comparison. The “very inflated”,
-“inflated”, and “midthickness” surfaces are included in ciftiTools
-through the function <code>load_surf</code>. See the data
-acknowledgement section at the bottom of this README.</figcaption>
-</figure>
-
 ## FAQ
 
 ### Why is a CIFTI file that has been read in called a `"xifti"`?

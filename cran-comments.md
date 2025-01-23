@@ -25,12 +25,10 @@ Passes all the tests in `tests/run_ciftiTools_tests.R`
 
 ## Previous submission
 
-  Quitting from lines 69-71 [unnamed-chunk-6] (ciftiTools_vignette.Rmd)
-  Error: processing vignette 'ciftiTools_vignette.Rmd' failed with diagnostics:
-  '"C:\Users\CRAN\Documents/Applications"' not found
-  --- failed re-building 'ciftiTools_vignette.Rmd'
+Thanks, we see:
 
-  SUMMARY: processing the following file failed:
-    'ciftiTools_vignette.Rmd'
+   Size of tarball: 6613479 bytes
 
-* The vignette has been modified to avoid this error. 
+Last version was 4 MB, why can't you reduce to less than 5 MB?
+
+* The vignette and README have been modified to reduce the package size.

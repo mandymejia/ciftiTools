@@ -82,37 +82,37 @@ Now we can use `view_xifti_surface(xii)` to display the cortical data on the sur
 
 Let's plot our `"xifti"` object. Note that interactively, a color legend which displays the label names will also be printed.
 
-```{r, fig.cap="Schaefer 100 parcellation", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=5}
+```{r, fig.cap="Schaefer 100 parcellation", rgl=TRUE, format="jpg", fig.height=2.1, fig.width=2.5}
 # Normally `cex.title` doesn't need to be set, as it defaults to a good choice.
 #   But when knitting static images this way, the default becomes a bit too big
 #   based on how knitting works.
-view_xifti_surface(xii, idx=1, title='Schaefer 100', cex.title=1.3)
+view_xifti_surface(xii, idx=1, title='Schaefer 100', cex.title=1.2)
 ```
 
 # Manipulation
 
 `add_surf` adds surface geometry to the `"xifti"` object.
 
-```{r, fig.cap="Schaefer 100 on midthickness surface", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=5}
+```{r}
 xii <- add_surf(xii, "midthickness", "midthickness")
-view_xifti_surface(xii, title='Midthickness surface', cex.title=1.3)
+xii
 ```
 
 `remove_xifti` removes a brain structure.
 
-```{r, fig.cap="Removed right cortex", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=2.5}
+```{r}
 xii <- remove_xifti(xii, c("cortex_right", "surf_right"))
-view_xifti_surface(xii, title='Left cortex only', cex.title=1.3)
+xii
 ```
 
-`transform_xifti` applies a function to the data values. Let's isolate and view the frontal pole cortex.
+`transform_xifti` applies a function to the data values. Let's isolate and view the frontal pole cortex. Note the midthickness surface that was added will be used now, instead of the default inflated surface.
 
-```{r, fig.cap="Plotting one parcel", rgl=TRUE, format="jpg", fig.height=4.2, fig.width=2.5}
+```{r, fig.cap="Plotting the FPole parcel", rgl=TRUE, format="jpg", fig.height=2, fig.width=1.3}
 label_to_viz <- "17networks_LH_DefaultB_FPole_1"
 key_idx <- which(rownames(xii$meta$cifti$labels$parcels)==label_to_viz)
 key <- xii$meta$cifti$labels$parcels$Key[key_idx]
 xii <- transform_xifti(xii, function(v){ifelse(v==key, v, 0)})
-view_xifti_surface(xii, title='"FPole" parcel', cex.title=1.3)
+view_xifti_surface(xii)
 ```
 
 # Citing `ciftiTools`

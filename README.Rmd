@@ -136,9 +136,6 @@ See `NAMESPACE` for a full list of all exported functions.
 
 !["xifti" object structure](man/figures/xifti_structure.jpg){width=65%}
 
-![Surfaces comparison. The "very inflated", "inflated", and "midthickness" surfaces are included in ciftiTools through the function `load_surf`. See the data acknowledgement section at the bottom of this README.](man/figures/surf_tour.gif){width=25%}
-
-
 ## FAQ
 
 ### Why is a CIFTI file that has been read in called a `"xifti"`?
