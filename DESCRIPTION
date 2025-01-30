@@ -1,7 +1,7 @@
 Type: Package
 Package: ciftiTools
 Title: Tools for Reading, Writing, Viewing and Manipulating CIFTI Files
-Version: 0.17.4
+Version: 0.18.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
