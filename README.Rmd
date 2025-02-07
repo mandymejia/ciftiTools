@@ -154,7 +154,10 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files (or vic
 
 #### ...from NIFTI volumetric cortical data?
 
-The cortex data will have to be projected to the surface. There are options from other software packages including the [Connectome Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to-surface-mapping), [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_vol2surf), [ciftify](https://edickie.github.io/ciftify/#/03b_cifti-for-your_fmri), and [Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html).
+The cortex data will have to be projected to the surface. If the data are in [BIDS format](https://bids.neuroimaging.io/), then [fMRIprep](https://fmriprep.org/en/latest/index.html) can be used to convert the volumetric cortex data to `fsaverage` surface space. Note that `ciftiTools::remap_cifti` can be used after to convert from `fsaverage` to `fs_LR` surface space, since some CIFTI-related packages assume the data are registered to `fs_LR`. `fMRIprep` is a wrapper around [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/) commands; alternatively, commands from FreeSurfer can be used directly. Relevant commands include `mri_vol2surf`, `fslregister`, `mris_preproc`, and `mris_convert`. The result of `mris_convert` will be in GIFTI format, which can be converted into CIFTI format with `ciftiTools::as.cifti`. 
+
+Options options include those from the [Connectome Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to-surface-mapping), [ciftify](https://edickie.github.io/ciftify/#/03b_cifti-for-your_fmri), 
+[DeepPrep](https://deepprep.readthedocs.io/en/latest/), and [Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html). We also welcome input from the community about additional ways for converting from volumetric data to CIFTI format.
 
 #### ...from NIFTI volumetric subcortical data?
 
