@@ -202,7 +202,7 @@ commands include `mri_vol2surf`, `fslregister`, `mris_preproc`, and
 `mris_convert`. The result of `mris_convert` will be in GIFTI format,
 which can be converted into CIFTI format with `ciftiTools::as.cifti`.
 
-Options options include those from the [Connectome
+More options include those from the [Connectome
 Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to-surface-mapping),
 [ciftify](https://edickie.github.io/ciftify/#/03b_cifti-for-your_fmri),
 [DeepPrep](https://deepprep.readthedocs.io/en/latest/), and
