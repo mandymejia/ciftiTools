@@ -179,6 +179,10 @@ VoxIJK <- cbind(VoxIJK, 1) # for 4th col of transform mat (translation)
 VoxXYZ <- t(xii$meta$subcort$trans_mat[seq(3),] %*% t(VoxIJK)) # MNI coords
 ```
 
+### Why do the labels/orders of Limbic A and Limbic B in the Yeo 17 parcellation appear swapped, relative to this Figure from an earlier paper?
+
+The copy of the Yeo 17 parcellation included in `ciftiTools` is correct. An earlier figure for the Yeo 17 parcellation had mistakenly swapped these labels, but this error has since been corrected. See the "Important note" from this page: https://github.com/ThomasYeoLab/CBIG/blob/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/README.md#version-12-schaefer2018_roisparcels_717networks_order
+
 ## Related R extensions
 
 * NIFTI files: [`oro.nifti`](https://CRAN.R-project.org/package=oro.nifti), [`RNifti`](https://CRAN.R-project.org/package=RNifti)
