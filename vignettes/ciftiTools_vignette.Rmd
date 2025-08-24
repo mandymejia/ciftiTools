@@ -436,7 +436,7 @@ knitr::include_graphics(plt, dpi=180)
 
 ```{r, rgl=TRUE, fig.cap="500 evenly-sampled vertices", format="jpg", fig.height=3.8, fig.width=2.5}
 # Load a left-hemisphere surface.
-surfL <- load_surf()
+surfL <- load_surf("left")
 
 # Get 500 vertices evenly sampled on the mesh.
 v <- even_vert_samp(surfL, 500)
@@ -454,7 +454,7 @@ plot(convert_xifti(xii, "dlabel"))
 
 ### Loading included parcellations 
 
-`ciftiTools` includes several commonly-used parcellations which can be loaded in as a single-column dlabel `"xifti"` with `load_parc`. Refer to `?load_parc` for their corresponding references. Any other parcellations can be read in with `read_cifti`. 
+`ciftiTools` includes several commonly-used parcellations which can be loaded in as a single-column dlabel `"xifti"` with `load_parc`: the 2018 Schaefer parcellations at 100, 400, and 1000 parcels resolutions, and the 2011 Yeo 7- and 17-network parcellations. Refer to `?load_parc` for their corresponding references. Any other parcellations can be read in with `read_cifti`. 
 
 ```{r fig.cap="Schaefer 400 parcellation", rgl=TRUE, format="jpg", fig.height=3.8, fig.width=5}
 parc <- load_parc("Schaefer_400")
