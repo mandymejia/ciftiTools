@@ -1443,7 +1443,7 @@ view_xifti_surface <- function(
     }
 
     if (!widget && saving_file) {
-      rgl::rgl.snapshot(fname[jj])
+      rgl::rgl.snapshot(fname[jj]) # Do not use snapshot3d because it requires Chrome. 
       rgl::close3d()
     }
   }
