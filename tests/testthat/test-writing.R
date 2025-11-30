@@ -29,6 +29,21 @@ test_that("Writing CIFTI and GIFTI files is working", {
     # (Some metadata will be different)
     ciftiTools:::expect_equal_xifti(cii, cii2)
 
+    # Test writing when there's `NA` values.
+    if (ncol(cii2) > 2) {
+      cii2$data$cortex_left[seq(100), c(2,3)] <- NA
+      if (cii2$meta$cifti$intent == 3007) {
+        testthat::expect_warning(write_cifti(cii2, cii_fname2))
+        # another test w/ custom args and calling replace FUN directly
+        cii3 <- ciftiTools:::replace_NA_with_label(
+          cii2, idx=c(2,3), NA_value=-7, NA_color="#123456FF", NA_label="myNA")
+        write_cifti(cii3, cii_fname2)
+        rm(cii3)
+      } else {
+        write_cifti(cii2, cii_fname2)
+      }
+    }
+
     write_cifti(cii, file.path(tdir, "temp")) # intent is not provided in name
 
     write_xifti2(cii, write_dir = tdir)
