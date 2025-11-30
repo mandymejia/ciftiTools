@@ -1,3 +1,12 @@
+# 18.0
+
+* update NIFTI --> CIFTI conversion info
+* bug fix in `resample_gifti` when `resamp_res` and `original_res` are NULL
+* update README w/ Limbic A and B in Yeo 17 info
+* updates to vignette
+* add message to `load_surf` if hemisphere not provided
+* add `replace_NA_with_label` 
+
 # 17.4
 
 * Set read/write default for `brainstructures` to `"existing"` (rather than all or just cortex).
