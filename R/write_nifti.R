@@ -60,13 +60,19 @@ write_subcort_nifti <- function(
   if (!is.null(trans_mat)) {
     stopifnot(is.nummat(trans_mat))
     trans_mat <- structure(trans_mat, code = 2L)
+    pixdims <- sqrt(colSums(trans_mat[1:3,1:3]^2)) # should not be negative
   }
 
   # Data.
   subcortVol <- unvec_vol(subcortVol, subcortMask, fill=fill)
   ## https://github.com/jonclayden/RNifti/issues/5
   if (!is.null(trans_mat)) {
+    subcortVol <- RNifti::`pixdim<-`(subcortVol, pixdims)
     subcortVol <- RNifti::`sform<-`(subcortVol, trans_mat)
+    # Do not set qform: redundant.
+  }
+  if (!is.null(trans_units)) {
+    subcortVol <- RNifti::`pixunits<-`(subcortVol, trans_units)
   }
   RNifti::writeNifti(subcortVol, subcortVol_fname)
 
@@ -110,7 +116,7 @@ write_subcort_nifti <- function(
   }
 
   # Labels.
-  ### Add "Other" level for older `xifti` objects. 
+  ### Add "Other" level for older `xifti` objects.
   if (length(levels(subcortLabs)) != length(substructure_table()$ciftiTools_Name)) {
     subcortLabs <- factor(
       subcortLabs,
@@ -121,7 +127,11 @@ write_subcort_nifti <- function(
   subcortLabs <- as.numeric(subcortLabs)
   subcortLabs <- unvec_vol(subcortLabs, subcortMask, fill=fill)
   if (!is.null(trans_mat)) {
+    subcortLabs <- RNifti::`pixdim<-`(subcortLabs, pixdims)
     subcortLabs <- RNifti::`sform<-`(subcortLabs, trans_mat)
+  }
+  if (!is.null(trans_units)) {
+    subcortLabs <- RNifti::`pixunits<-`(subcortLabs, trans_units)
   }
   RNifti::writeNifti(subcortLabs, subcortLabs_fname)
 
@@ -142,7 +152,11 @@ write_subcort_nifti <- function(
   # Mask (as numeric).
   subcortMask <- subcortMask + 0
   if (!is.null(trans_mat)) {
+    subcortMask <- RNifti::`pixdim<-`(subcortMask, pixdims)
     subcortMask <- RNifti::`sform<-`(subcortMask, trans_mat)
+  }
+  if (!is.null(trans_units)) {
+    subcortMask <- RNifti::`pixunits<-`(subcortMask, trans_units)
   }
   if (!is.null(ROIsubcortVol_fname)) {
     RNifti::writeNifti(subcortMask, ROIsubcortVol_fname)
