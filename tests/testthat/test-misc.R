@@ -370,4 +370,8 @@ test_that("Miscellaneous functions are working", {
     cii$data,
     newdata_xifti(cii, as.matrix(cii, subcortex_by_bs=TRUE), subcortex_by_bs=TRUE)$data
   )
+
+  cii <- as.xifti(cortexL = matrix(as.integer(rep(0, 29696)), ncol = 1),
+                  cortexR = matrix(as.integer(rep(0, 29716)), ncol = 1),
+                  HCP_32k_auto_mwall = TRUE)
 })
