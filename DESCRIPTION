@@ -1,7 +1,7 @@
 Type: Package
 Package: ciftiTools
 Title: Tools for Reading, Writing, Viewing and Manipulating CIFTI Files
-Version: 0.17.4
+Version: 0.18.0
 Authors@R: c(
     person(given = "Amanda",
            family = "Mejia",
@@ -61,5 +61,5 @@ VignetteBuilder:
     knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Language: en-US

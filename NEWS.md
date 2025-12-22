@@ -1,3 +1,15 @@
+# 18.0
+
+* fix `HCP_32k_mwall_template`
+* fix: set `pixdim` and `pixunits` when writing NIFTIs.
+* bug fix in `resample_gifti` when `resamp_res` and `original_res` are NULL
+* update NIFTI --> CIFTI conversion info
+* update README w/ Limbic A and B in Yeo 17 info
+* updates to vignette
+* add message to `load_surf` if hemisphere not provided
+* add `replace_NA_with_label` 
+* add qform <-> transformation matrix conversions for reference
+
 # 17.4
 
 * Set read/write default for `brainstructures` to `"existing"` (rather than all or just cortex).

@@ -60,11 +60,12 @@ write_cifti <- function(
   # Problem with label xifti that has NA/NaN data
   if (extn_cifti=="dlabel.nii") {
     if (any(is.na(as.matrix(xifti)))) {
-      stop(
+      warning(
         "Cannot write out label data with NA/NaN values. ",
-        "Create a new label for NA/NaN, impute these values, or ",
-        "otherwise get rid them to write out the file."
+        "Creating a new label for NA/NaN values using ",
+        "`ciftiTools:::replace_NA_with_label`."
       )
+      xifti <- replace_NA_with_label(xifti)
     }
   }
 

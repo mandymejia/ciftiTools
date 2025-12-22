@@ -47,7 +47,7 @@ test_that("plot_xifti_surface and related functions are working", {
   }
 
   plot2(read_surf(ciftiTools.files()$surf["left"]))
-  plot2(load_surf(name="midthickness"))
+  plot2(load_surf("left", name="midthickness"))
   testthat::expect_warning(
     plot2(as.xifti(surfR=make_surf(ciftiTools.files()$surf["right"])), hemisphere="both", title="My Awesome Surfs")
   )

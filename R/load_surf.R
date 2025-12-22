@@ -28,6 +28,9 @@ load_surf <- function(
   resamp_res=NULL) {
 
   name <- match.arg(name, c("inflated", "very inflated", "midthickness"))
+  if (length(hemisphere) == 2 && all(hemisphere == c("left", "right"))) {
+    message("Loading the left hemisphere.")
+  }
   hemisphere <- match.arg(hemisphere, c("left", "right"))
   hemi <- switch(hemisphere, left="L", right="R")
 

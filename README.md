@@ -96,7 +96,7 @@ xii2 <- as.xifti(
 write_cifti(xii2, "my_cifti.dtseries.nii")
 ```
 
-## Vignette
+## Vignette/Demo
 
 See [this
 link](https://htmlpreview.github.io/?https://github.com/mandymejia/ciftiTools/blob/master/vignettes/ciftiTools_vignette.html)
@@ -189,13 +189,26 @@ We can also convert metric GIFTI files and/or NIFTI files to CIFTI files
 
 #### …from NIFTI volumetric cortical data?
 
-The cortex data will have to be projected to the surface. There are
-options from other software packages including the [Connectome
+The cortex data will have to be projected to the surface. If the data
+are in [BIDS format](https://bids.neuroimaging.io/), then
+[fMRIprep](https://fmriprep.org/en/latest/index.html) can be used to
+convert the volumetric cortex data to `fsaverage` surface space. Note
+that `ciftiTools::remap_cifti` can be used after to convert from
+`fsaverage` to `fs_LR` surface space, since some CIFTI-related packages
+assume the data are registered to `fs_LR`. `fMRIprep` is a wrapper
+around [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/) commands;
+alternatively, commands from FreeSurfer can be used directly. Relevant
+commands include `mri_vol2surf`, `fslregister`, `mris_preproc`, and
+`mris_convert`. The result of `mris_convert` will be in GIFTI format,
+which can be converted into CIFTI format with `ciftiTools::as.cifti`.
+
+More options include those from the [Connectome
 Workbench](https://www.humanconnectome.org/software/workbench-command/-volume-to-surface-mapping),
-[FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_vol2surf),
 [ciftify](https://edickie.github.io/ciftify/#/03b_cifti-for-your_fmri),
-and
+[DeepPrep](https://deepprep.readthedocs.io/en/latest/), and
 [Nilearn](https://nilearn.github.io/stable/modules/generated/nilearn.surface.vol_to_surf.html).
+We also welcome input from the community about additional ways for
+converting from volumetric data to CIFTI format.
 
 #### …from NIFTI volumetric subcortical data?
 
@@ -230,6 +243,14 @@ coordinates, multiply by the transformation matrix
     VoxIJK <- which(xii$meta$subcort$mask, arr.ind=TRUE) - 1
     VoxIJK <- cbind(VoxIJK, 1) # for 4th col of transform mat (translation)
     VoxXYZ <- t(xii$meta$subcort$trans_mat[seq(3),] %*% t(VoxIJK)) # MNI coords
+
+### Why do the labels/orders of Limbic A and Limbic B in the Yeo 17 parcellation appear swapped, relative to this Figure from an earlier paper?
+
+The copy of the Yeo 17 parcellation included in `ciftiTools` is correct.
+An earlier figure for the Yeo 17 parcellation had mistakenly swapped
+these labels, but this error has since been corrected. See the
+“Important note” from this page:
+<https://github.com/ThomasYeoLab/CBIG/blob/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/README.md#version-12-schaefer2018_roisparcels_717networks_order>
 
 ## Related R extensions
 
