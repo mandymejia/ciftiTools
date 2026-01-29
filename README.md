@@ -268,6 +268,17 @@ these labels, but this error has since been corrected. See the
 - Interactive 3D rendering:
   [`rgl`](https://CRAN.R-project.org/package=rgl)
 
+## Surface rendering issue on Mac OS Tahoe
+
+On Mac OS Tahoe, Open GL windows will not work due to a problem with
+`rgl` and XQuartz
+(<https://github.com/dmurdoch/rgl/issues/488#issuecomment-3506547361>).
+To render the cortical surface with `plot` or `view_xifti_surface`, you
+will need to choose to use the htmlwidget instead of the Open GL window.
+Set `widget=TRUE` for interactive viewing, and set `fname="*.html"` to
+write files. The `ciftiTools` development team is currently exploring
+workarounds for this issue.
+
 ## Data acknowledgement
 
 The following data are included in the package for convenience:
