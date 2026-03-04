@@ -79,7 +79,11 @@ get_wb_cmd_path <- function(wb_path) {
       file.path(wb_path, "workbench", "bin_rh_linux64", "wb_command"),
       file.path(wb_path, "workbench", "bin_macosx64", "wb_command"),
       file.path(wb_path, "workbench", "bin_macosxub", "wb_command"),
-      file.path(wb_path, "workbench", "bin_windows64", "wb_command.exe")
+      file.path(wb_path, "workbench", "bin_windows64", "wb_command.exe"),
+      # New
+      file.path(wb_path, "wb_view.app/Contents/usr/bin", "wb_command"),
+      file.path(wb_path, "Contents/usr/bin", "wb_command"),
+      file.path("~/Applications/wb_view.app/Contents/usr/bin", "wb_command")
     )
     possible_paths <- possible_paths[vapply(possible_paths, file.exists, FALSE)]
     if (length(possible_paths) == 0) {

@@ -7,7 +7,7 @@
 apply_parc(
   xii,
   parc,
-  FUN = mean,
+  FUN = colMeans,
   mwall_value = NA,
   return_as = c("matrix", "xifti"),
   ...
