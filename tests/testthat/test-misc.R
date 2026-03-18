@@ -342,7 +342,7 @@ test_that("Miscellaneous functions are working", {
   cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
   cii <- newdata_xifti(cii, cbind(as.matrix(cii), as.matrix(cii)+rnorm(prod(dim(cii)))))
   # tests
-  q <- apply_parc(cii, parc)
+  q <- apply_parc(cii, parc, FUN=mean)
   dim(parc_vals_to_xifti(parc, q))
   q <- cbind(q,q); colnames(q) <- c("a", "b")
   summary(parc_vals_to_xifti(parc, q))
