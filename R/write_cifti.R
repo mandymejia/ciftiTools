@@ -82,6 +82,7 @@ write_cifti <- function(
       paste("-cifti", sys_path(ccol_fnames), collapse=" ")
     )
     run_wb_cmd(cmd, ignore.stderr=TRUE)
+    file.remove(ccol_fnames)
 
   } else {
     sep_fnames <- write_xifti2(xifti=xifti, write_dir=tempdir(), verbose=verbose)
@@ -111,6 +112,7 @@ write_cifti <- function(
       }
     }
     do.call(write_cifti_from_separate, wcfs_kwargs)
+    file.remove(sep_fnames)
   }
 
   # Surfaces
