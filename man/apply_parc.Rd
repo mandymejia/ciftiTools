@@ -7,7 +7,7 @@
 apply_parc(
   xii,
   parc,
-  FUN = mean,
+  FUN = colMeans,
   mwall_value = NA,
   return_as = c("matrix", "xifti"),
   ...
@@ -24,10 +24,10 @@ of keys whose length is the number of data locations in \code{"xii"}.}
 
 \item{FUN}{A function that takes as input an \eqn{M \times N} matrix (\eqn{M}
 locations in a given parcel, and \eqn{N} measurements/columns in \code{xii})
-and outputs a constant-sized (\eqn{Q}) numeric vector. Default: \code{mean}.
-
-Use \code{colMeans} to obtain the average timeseries of each parcel, such as
-in order to compute functional connectivity.}
+and outputs a constant-sized (\eqn{Q}) numeric vector. Default:
+\code{colMeans}, which will give the average timeseries of each parcel.
+If \code{xii} has time-series data, using \code{cor} on the result of
+\code{apply_parc} with \code{FUN=mean} will yield functional connectivity.}
 
 \item{mwall_value}{If there is a medial wall in \code{xii}, what should value
 should medial wall locations be replaced with prior to calculation?

@@ -117,7 +117,7 @@ Manipulating `"xifti"` objects
 * `smooth_xifti`: Smooth the data along the surface.
 * `transform_xifti`: Apply a vectorizable function.
 
-Surface gemoetry
+Surface geometry
 
 * `load_surf`: Load a surface geometry included in the package. 
 * `read_surf`: Read in a GIFTI surface geometry file as a `"surf"` object.

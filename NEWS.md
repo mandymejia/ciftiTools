@@ -1,3 +1,9 @@
+# 19.0
+
+* `apply_parc`: change default `FUN` from `mean` to `colMeans`
+* new Connectome Workbench paths
+* `write_cifti`: delete intermediate files once no longer used
+
 # 18.0
 
 * fix `HCP_32k_mwall_template`
