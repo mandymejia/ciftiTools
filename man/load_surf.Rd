@@ -24,8 +24,8 @@ method, which is recommended for anatomical surfaces, will be used.}
 The \code{"surf"} object
 }
 \description{
-Load a \code{"surf"} object from one of the three 32k anatomical surfaces
-included in \code{ciftiTools}.
+Load a \code{"surf"} object from one of the three 32k fs_LR anatomical
+surfaces included in \code{ciftiTools}.
 }
 \details{
 The surfaces are from the HCP and are included according to these data use

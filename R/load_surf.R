@@ -1,7 +1,7 @@
 #' Load a \code{"surf"} included in \code{ciftiTools}
 #'
-#' Load a \code{"surf"} object from one of the three 32k anatomical surfaces 
-#'  included in \code{ciftiTools}.
+#' Load a \code{"surf"} object from one of the three 32k fs_LR anatomical 
+#'  surfaces included in \code{ciftiTools}.
 #'
 #' The surfaces are from the HCP and are included according to these data use
 #'  terms: Data were provided \[in part\] by the Human Connectome Project,
