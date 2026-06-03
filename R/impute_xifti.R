@@ -3,8 +3,10 @@
 #' Impute locations using the values of neighboring locations.
 #'
 #' Cortex vertices will be imputed using the five or six other vertices which
-#'  share a face. Subcortex voxels will be imputed using the up to six immediate
-#'  neighbors.
+#'  share a face. The surface geometry must be present in the \code{"xifti"}.
+#'
+#' Subcortex voxels will be imputed using the six immediate neighbors (ignoring
+#'  any out-of-mask location): above, below, left, right, forward, and back.
 #'
 #' Note that during imputation, locations in \code{mask}, as well as the medial
 #'  wall for the cortex, are temporarily set to \code{NA}.
@@ -19,7 +21,7 @@
 #'
 #' @param xifti A \code{"xifti"} object. The corresponding surface must be
 #'  included for each cortex with data. \code{\link{add_surf}} can be used to
-#'  add HCP S1200 surfaces.
+#'  add HCP fs_LR surfaces.
 #' @param mask A logical vector whose length matches the number of rows in
 #'  \code{xifti}, indicating which locations in \code{xifti} to impute.
 #'  (Locations that are \code{TRUE} will be imputed.)
@@ -35,6 +37,13 @@
 #' @param impute_FUN The function to use to impute the values. It should accept
 #'  a vector of numeric values (the values of neighboring locations) and return
 #'  a single numeric value (the value to assign). Default: \code{mean(..., na.rm=TRUE)}.
+#' @param smooth Smooth the imputed values? Smoothing will be calculated using
+#'  the original and imputed data together, but only at imputed locations will
+#'  the data be replaced with the smoothed values. Default: \code{TRUE}.
+#' @param smooth_args List of arguments to \code{\link{smooth_cifti}}. Ignored
+#'  if \code{!smooth}. \code{x} and \code{cifti_target_fname} should not be
+#'  provided: \code{x} will be set to \code{xifti}, and \code{cifti_taget_fname}
+#'  will remain \code{NULL}.
 #' @param ... Additional arguments to \code{impute_FUN}.
 #'
 #' @return The input \code{xifti} with imputed data values.
@@ -42,7 +51,11 @@
 #' @family manipulating xifti
 #'
 #' @export
-impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=TRUE)}, ...) {
+impute_xifti <- function(
+  xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=TRUE)},
+  smooth=TRUE, smooth_args=NULL,
+  ...) {
+
   stopifnot(is.xifti(xifti))
   if (!is.null(xifti$meta$cifti$intent))
 
@@ -63,6 +76,11 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
     stop("The length of `mask` should match the number of rows in `xifti`.")
   }
 
+  if (smooth && !is.null(smooth_args)) {
+    stopifnot(is.list(smooth_args))
+    stopifnot(!("cifti_target_fname" %in% names(smooth_args)))
+  }
+
   # Split `mask` by brain structure. -------------------------------------------
   mask_bs <- list(
     cortex_left = NULL,
@@ -76,6 +94,8 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
       mask2 <- mask2[seq(nrow(xifti$data[[bs]])+1, length(mask2))]
     }
   }
+
+  mask_no_mwall <- mask # used if smoothing
 
   # Handle medial wall. --------------------------------------------------------
   if (!is.null(xifti$data$cortex_left) || !is.null(xifti$data$cortex_right)) {
@@ -103,8 +123,6 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
       mask2 <- mask2[seq(nrow(xifti$data[[bs]])+1, length(mask2))]
     }
   }
-
-  rm(mask2)
 
   # Cortex. --------------------------------------------------------------------
   for (hemi in c("left", "right")) {
@@ -171,7 +189,7 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
   for (hemi in c("left", "right")) {
     c_hemi <- paste0("cortex_", hemi)
     if (is.null(xifti$data[[c_hemi]])) { next }
-    
+
     # Put the medial wall back.
     if (!is.null(mwall_og[[hemi]])) {
       xifti$data[[c_hemi]] <- xifti$data[[c_hemi]][mwall_og[[hemi]],,drop=FALSE]
@@ -258,6 +276,16 @@ impute_xifti <- function(xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=
 
     # Put original `NA` values back if applicable.
     if (keepNA) { xifti$data$subcort[which_NA$subcort] <- NA }
+  }
+
+  # Smooth, if applicable. -----------------------------------------------------
+  if (smooth) {
+    # Do smoothing.
+    xifti_sm <- do.call(smooth_xifti, c(list(x=xifti), smooth_args))
+    # Only replace imputed locations.
+    xifti_out_mat <- as.matrix(xifti)
+    xifti_out_mat[mask_no_mwall,] <- as.matrix(xifti_sm)[mask_no_mwall,]
+    xifti <- newdata_xifti(xifti, xifti_out_mat)
   }
 
   xifti

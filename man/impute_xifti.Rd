@@ -10,13 +10,15 @@ impute_xifti(
   impute_FUN = function(x) {
      mean(x, na.rm = TRUE)
  },
+  smooth = TRUE,
+  smooth_args = NULL,
   ...
 )
 }
 \arguments{
 \item{xifti}{A \code{"xifti"} object. The corresponding surface must be
 included for each cortex with data. \code{\link{add_surf}} can be used to
-add HCP S1200 surfaces.}
+add HCP fs_LR surfaces.}
 
 \item{mask}{A logical vector whose length matches the number of rows in
 \code{xifti}, indicating which locations in \code{xifti} to impute.
@@ -35,6 +37,15 @@ alone. Only locations in \code{mask} will be imputed.}
 a vector of numeric values (the values of neighboring locations) and return
 a single numeric value (the value to assign). Default: \code{mean(..., na.rm=TRUE)}.}
 
+\item{smooth}{Smooth the imputed values? Smoothing will be calculated using
+the original and imputed data together, but only at imputed locations will
+the data be replaced with the smoothed values. Default: \code{TRUE}.}
+
+\item{smooth_args}{List of arguments to \code{\link{smooth_cifti}}. Ignored
+if \code{!smooth}. \code{x} and \code{cifti_target_fname} should not be
+provided: \code{x} will be set to \code{xifti}, and \code{cifti_taget_fname}
+will remain \code{NULL}.}
+
 \item{...}{Additional arguments to \code{impute_FUN}.}
 }
 \value{
@@ -45,8 +56,10 @@ Impute locations using the values of neighboring locations.
 }
 \details{
 Cortex vertices will be imputed using the five or six other vertices which
-share a face. Subcortex voxels will be imputed using the up to six immediate
-neighbors.
+share a face. The surface geometry must be present in the \code{"xifti"}.
+
+Subcortex voxels will be imputed using the six immediate neighbors (ignoring
+any out-of-mask location): above, below, left, right, forward, and back.
 
 Note that during imputation, locations in \code{mask}, as well as the medial
 wall for the cortex, are temporarily set to \code{NA}.
@@ -60,24 +73,24 @@ For most use cases, it will make sense to pass \code{na.rm=TRUE} to
 \code{...} if \code{impute_FUN} is a summary function like \code{mean}.
 }
 \seealso{
-Other manipulating xifti: 
-\code{\link{add_surf}()},
-\code{\link{apply_parc}()},
-\code{\link{apply_xifti}()},
-\code{\link{combine_xifti}()},
-\code{\link{convert_xifti}()},
-\code{\link{merge_xifti}()},
-\code{\link{move_to_mwall}()},
-\code{\link{move_to_submask}()},
-\code{\link{newdata_xifti}()},
-\code{\link{remap_cifti}()},
-\code{\link{remove_xifti}()},
-\code{\link{resample_cifti}()},
-\code{\link{resample_cifti_from_template}()},
-\code{\link{scale_xifti}()},
-\code{\link{select_xifti}()},
-\code{\link{set_names_xifti}()},
-\code{\link{smooth_cifti}()},
-\code{\link{transform_xifti}()}
+Other manipulating xifti:
+\code{\link[=add_surf]{add_surf()}},
+\code{\link[=apply_parc]{apply_parc()}},
+\code{\link[=apply_xifti]{apply_xifti()}},
+\code{\link[=combine_xifti]{combine_xifti()}},
+\code{\link[=convert_xifti]{convert_xifti()}},
+\code{\link[=merge_xifti]{merge_xifti()}},
+\code{\link[=move_to_mwall]{move_to_mwall()}},
+\code{\link[=move_to_submask]{move_to_submask()}},
+\code{\link[=newdata_xifti]{newdata_xifti()}},
+\code{\link[=remap_cifti]{remap_cifti()}},
+\code{\link[=remove_xifti]{remove_xifti()}},
+\code{\link[=resample_cifti]{resample_cifti()}},
+\code{\link[=resample_cifti_from_template]{resample_cifti_from_template()}},
+\code{\link[=scale_xifti]{scale_xifti()}},
+\code{\link[=select_xifti]{select_xifti()}},
+\code{\link[=set_names_xifti]{set_names_xifti()}},
+\code{\link[=smooth_cifti]{smooth_cifti()}},
+\code{\link[=transform_xifti]{transform_xifti()}}
 }
 \concept{manipulating xifti}
