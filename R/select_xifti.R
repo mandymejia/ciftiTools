@@ -3,6 +3,9 @@
 #' Select column indices to keep in a \code{"xifti"}. Can also be used to
 #'  reorder the columns.
 #' 
+#' Note: for selecting brainstructures to keep, use \code{\link{remove_xifti}}
+#'  instead. 
+#' 
 #' @inheritParams xifti_Param
 #' @param idx The column indices to keep, in order.
 #' @param add_meta Add \code{idx} to \code{xifti$meta$cifti$misc[[add_meta]]}
