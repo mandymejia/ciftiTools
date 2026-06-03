@@ -24,9 +24,9 @@ A character vector of color names (or integers if \code{indices}).
 Applies a palette to a data vector to yield a vector of colors.
 }
 \seealso{
-Other coloring: 
-\code{\link{ROY_BIG_BL}()},
-\code{\link{expand_color_pal}()},
-\code{\link{make_color_pal}()}
+Other coloring:
+\code{\link[=ROY_BIG_BL]{ROY_BIG_BL()}},
+\code{\link[=expand_color_pal]{expand_color_pal()}},
+\code{\link[=make_color_pal]{make_color_pal()}}
 }
 \concept{coloring}

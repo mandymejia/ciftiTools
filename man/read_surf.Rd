@@ -34,27 +34,27 @@ entries "pointset" and "triangle", or a \code{"surf"} to a
 \code{"surf"}.
 }
 \seealso{
-Other reading: 
-\code{\link{as.xifti}()},
-\code{\link{info_cifti}()},
-\code{\link{load_parc}()},
-\code{\link{load_surf}()},
-\code{\link{read_cifti}()},
-\code{\link{read_xifti2}()}
+Other reading:
+\code{\link[=as.xifti]{as.xifti()}},
+\code{\link[=info_cifti]{info_cifti()}},
+\code{\link[=load_parc]{load_parc()}},
+\code{\link[=load_surf]{load_surf()}},
+\code{\link[=read_cifti]{read_cifti()}},
+\code{\link[=read_xifti2]{read_xifti2()}}
 
-Other surface-related: 
-\code{\link{add_surf}()},
-\code{\link{boundary_mask_surf}()},
-\code{\link{edit_mask_surf}()},
-\code{\link{even_vert_samp}()},
-\code{\link{is.surf}()},
-\code{\link{load_surf}()},
-\code{\link{mask_surf}()},
-\code{\link{resample_surf}()},
-\code{\link{rotate_surf}()},
-\code{\link{surf_area}()},
-\code{\link{view_surf}()},
-\code{\link{write_surf_gifti}()}
+Other surface-related:
+\code{\link[=add_surf]{add_surf()}},
+\code{\link[=boundary_mask_surf]{boundary_mask_surf()}},
+\code{\link[=edit_mask_surf]{edit_mask_surf()}},
+\code{\link[=even_vert_samp]{even_vert_samp()}},
+\code{\link[=is.surf]{is.surf()}},
+\code{\link[=load_surf]{load_surf()}},
+\code{\link[=mask_surf]{mask_surf()}},
+\code{\link[=resample_surf]{resample_surf()}},
+\code{\link[=rotate_surf]{rotate_surf()}},
+\code{\link[=surf_area]{surf_area()}},
+\code{\link[=view_surf]{view_surf()}},
+\code{\link[=write_surf_gifti]{write_surf_gifti()}}
 }
 \concept{reading}
 \concept{surface-related}

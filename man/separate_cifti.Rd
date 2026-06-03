@@ -137,11 +137,11 @@ This function interfaces with the \code{"-cifti-separate"} Workbench command.
 }
 
 \seealso{
-Other writing: 
-\code{\link{write_cifti}()},
-\code{\link{write_metric_gifti}()},
-\code{\link{write_subcort_nifti}()},
-\code{\link{write_surf_gifti}()},
-\code{\link{write_xifti2}()}
+Other writing:
+\code{\link[=write_cifti]{write_cifti()}},
+\code{\link[=write_metric_gifti]{write_metric_gifti()}},
+\code{\link[=write_subcort_nifti]{write_subcort_nifti()}},
+\code{\link[=write_surf_gifti]{write_surf_gifti()}},
+\code{\link[=write_xifti2]{write_xifti2()}}
 }
 \concept{writing}

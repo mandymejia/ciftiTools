@@ -93,12 +93,12 @@ the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
-Other reading: 
-\code{\link{as.xifti}()},
-\code{\link{load_parc}()},
-\code{\link{load_surf}()},
-\code{\link{read_cifti}()},
-\code{\link{read_surf}()},
-\code{\link{read_xifti2}()}
+Other reading:
+\code{\link[=as.xifti]{as.xifti()}},
+\code{\link[=load_parc]{load_parc()}},
+\code{\link[=load_surf]{load_surf()}},
+\code{\link[=read_cifti]{read_cifti()}},
+\code{\link[=read_surf]{read_surf()}},
+\code{\link[=read_xifti2]{read_xifti2()}}
 }
 \concept{reading}

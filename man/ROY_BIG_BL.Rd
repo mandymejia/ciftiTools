@@ -39,9 +39,9 @@ This is the same color palette as the default Connectome Workbench palette.
 Source: https://github.com/Washington-University/workbench/blob/master/src/Files/PaletteFile.cxx
 }
 \seealso{
-Other coloring: 
-\code{\link{expand_color_pal}()},
-\code{\link{make_color_pal}()},
-\code{\link{use_color_pal}()}
+Other coloring:
+\code{\link[=expand_color_pal]{expand_color_pal()}},
+\code{\link[=make_color_pal]{make_color_pal()}},
+\code{\link[=use_color_pal]{use_color_pal()}}
 }
 \concept{coloring}

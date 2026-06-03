@@ -89,11 +89,11 @@ brainstructure will be written; if a brainstructure is absent the
 corresponding file is not written.
 }
 \seealso{
-Other writing: 
-\code{\link{separate_cifti}()},
-\code{\link{write_cifti}()},
-\code{\link{write_metric_gifti}()},
-\code{\link{write_subcort_nifti}()},
-\code{\link{write_surf_gifti}()}
+Other writing:
+\code{\link[=separate_cifti]{separate_cifti()}},
+\code{\link[=write_cifti]{write_cifti()}},
+\code{\link[=write_metric_gifti]{write_metric_gifti()}},
+\code{\link[=write_subcort_nifti]{write_subcort_nifti()}},
+\code{\link[=write_surf_gifti]{write_surf_gifti()}}
 }
 \concept{writing}
