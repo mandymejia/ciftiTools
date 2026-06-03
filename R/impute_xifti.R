@@ -50,6 +50,8 @@
 #'
 #' @family manipulating xifti
 #'
+#' @importFrom Matrix sparseMatrix rowSums Diagonal
+#'
 #' @export
 impute_xifti <- function(
   xifti, mask=NULL, impute_FUN=function(x){mean(x, na.rm=TRUE)},
@@ -133,57 +135,41 @@ impute_xifti <- function(
       stop("The ", hemi, " surface is needed for imputing ", hemi , " cortex data.")
     }
 
-    ## Impute loop. ------------------------------------------------------------
-    dat_now <- xifti$data[[c_hemi]]
-    mask_now <- mask_bs[[c_hemi]]
-    has_changed_count <- Inf
-    for (rr in seq(nR)) { # really a while(TRUE) but I figured this is safer.
-      ### Compute the imputed values. ------------------------------------------
-      # `i_mask`: verts to impute bordering at least one vert not being imputed
-      i_mask <- boundary_mask_surf(
-        xifti$surf[[c_hemi]]$faces,
-        (!mask_now) & (mwall_og[[hemi]]),
-        1
-      ) & (mwall_og[[hemi]]) & mask_now
-      if (sum(i_mask) < 1) { break }
-      # verbose <- TRUE
-      # if (verbose) { cat("Imputing", sum(i_mask), hemi, "cortex values.\n") }
-      # `j_mask`: non-imputing verts bordering at least one vert being imputed
-      j_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1) & mwall_og[[hemi]] & !mask_now
-      # `v_adj`: adjacency matrix between `i_mask` and `j_mask`
-      v_adj <- vert_adjacency(xifti$surf[[c_hemi]]$faces, i_mask, j_mask)
-      stopifnot(all(rowSums(v_adj) > 0))
-      # `v_vals`: for each vert to impute, the values from which to impute.
-      #   All vertices in `v_vals` should have at least one value, but there may
-      #   be `NA` vals from the medial wall or if the original data was `NA`.
-      v_vals <- apply(v_adj, 1, function(x){dat_now[which(j_mask)[x],,drop=FALSE]}, simplify=FALSE)
-      # `v_impv`: The imputed values.
-      v_impv <- lapply(v_vals, function(x){apply(x, 2, impute_FUN, ...)})
-      v_impv <- do.call(rbind, v_impv)
+    ## Impute (Laplacian smoothing). -------------------------------------------
+    dat_h  <- xifti$data[[c_hemi]]
+    mask_h <- mask_bs[[c_hemi]]
 
-      ### Update. --------------------------------------------------------------
-      # Check which vertices have been updated.
-      has_changed <- (v_impv - dat_now[i_mask,]) != 0
-      has_changed[] <- ifelse(
-        is.na(has_changed),
-        xor(is.na(v_impv[]), is.na(dat_now[i_mask,][])),
-        has_changed
-      )
+    # Make adjacency list.
+    faces <- xifti$surf[[c_hemi]]$faces
+    nV <- nrow(xifti$surf[[c_hemi]]$vertices)
+    edges <- rbind(faces[, c(1,2)], faces[, c(2,3)], faces[, c(1,3)])
+    edges <- rbind(edges, edges[, c(2,1)]) # make symmetric.
+    edges <- unique(edges)
 
-      # Set imputed values.
-      dat_now[i_mask,] <- v_impv
+    A <- Matrix::sparseMatrix(i=edges[,1], j=edges[,2], x=1, dims=c(nV, nV))
+    deg <- Matrix::rowSums(A)
+    W <- A / deg
+    idx_imp <- which( mask_h & mwall_og[[hemi]])
+    idx_val <- which(!mask_h & mwall_og[[hemi]])
 
-      # Check for change.
-      if (!any(has_changed)) { break }
-      has_changed <- apply(has_changed, 1, all)
+    idx_valid <- which(mwall_og[[hemi]])   # all valid verts (imp + val)
+    A_valid <- A[idx_valid, idx_valid]     # restrict to medial-wall-excluded verts
+    deg_valid <- Matrix::rowSums(A_valid)  # degree within valid subgraph
 
-      # Remove updated verts from mask of verts to impute.
-      mask_now[i_mask][has_changed] <- FALSE
-    }
+    # Local indices within idx_valid
+    is_imp <- mask_h[idx_valid]
+    loc_imp <- which( is_imp)
+    loc_val <- which(!is_imp)
 
-    xifti$data[[c_hemi]][mask_bs[[c_hemi]],] <- dat_now[mask_bs[[c_hemi]],]
-    rm(dat_now)
-    rm(mask_now)
+    W_uu <- A_valid[loc_imp, loc_imp] / deg_valid[loc_imp]
+    W_uk <- A_valid[loc_imp, loc_val] / deg_valid[loc_imp]
+
+    LHS <- Matrix::Diagonal(length(loc_imp)) - W_uu
+    f_k <- dat_h[idx_val, , drop=FALSE]
+    RHS <- W_uk %*% f_k
+
+    f_u <- Matrix::solve(LHS, RHS)
+    xifti$data[[c_hemi]][idx_imp, ] <- as.matrix(f_u)
   }
 
   for (hemi in c("left", "right")) {
@@ -227,9 +213,9 @@ impute_xifti <- function(
       match(ind_arr2vox(ind_arr+c(0,0,1)), ind_vox, NA)
     )
     # Takes vector of values and impute with the six neighbors.
-    imp_vox <- function(vals_now, mask_imp) {
+    imp_vox <- function(vals_h, mask_imp) {
       # `vals_nbr`: `NA` values can be either in-mask `NA` values or out-of-mask
-      vals_nbr <- matrix(vals_now[ind_nbr], nrow=nrow(ind_nbr))
+      vals_nbr <- matrix(vals_h[ind_nbr], nrow=nrow(ind_nbr))
       # `mimp_nbr`: TRUE if the neighbor voxel is a voxel being imputed
       mimp_nbr <- matrix(mask_imp[ind_nbr], nrow=nrow(ind_nbr))
       mimp_nbr[is.na(mimp_nbr)] <- FALSE
@@ -244,35 +230,35 @@ impute_xifti <- function(
     }
 
     ## Impute loop. ------------------------------------------------------------
-    dat_now <- xifti$data$subcort
-    mask_now <- mask_bs$subcort
+    dat_h <- xifti$data$subcort
+    mask_h <- mask_bs$subcort
     has_changed_count <- Inf
     for (rr in seq(nR)) {
       ### Compute the imputed values. ------------------------------------------
-      v_impv <- apply(dat_now, 2, imp_vox, mask_now)
+      v_impv <- apply(dat_h, 2, imp_vox, mask_h)
       ### Update. --------------------------------------------------------------
       # Check which voxels have been updated.
-      has_changed <- (v_impv - dat_now[mask_now,]) != 0
+      has_changed <- (v_impv - dat_h[mask_h,]) != 0
       has_changed[] <- ifelse(
         is.na(has_changed),
-        xor(is.na(v_impv[]), is.na(dat_now[mask_now,][])),
+        xor(is.na(v_impv[]), is.na(dat_h[mask_h,][])),
         has_changed
       )
 
       # Set imputed values.
-      dat_now[mask_now,] <- v_impv
+      dat_h[mask_h,] <- v_impv
 
       # Check for change.
       if (!any(has_changed)) { break }
       has_changed <- apply(has_changed, 1, all)
 
       # Remove updated verts from mask of verts to impute.
-      mask_now[mask_now][has_changed] <- FALSE
+      mask_h[mask_h][has_changed] <- FALSE
     }
 
-    xifti$data$subcort <- dat_now
-    rm(dat_now)
-    rm(mask_now)
+    xifti$data$subcort <- dat_h
+    rm(dat_h)
+    rm(mask_h)
 
     # Put original `NA` values back if applicable.
     if (keepNA) { xifti$data$subcort[which_NA$subcort] <- NA }
