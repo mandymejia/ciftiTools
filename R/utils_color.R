@@ -490,6 +490,8 @@ use_color_pal <- function(data_values, pal, color_NA="white", indices=FALSE) {
   # Indices of colors for each datapoint in `data_values`
   if (nrow(pal) == 1) {
     out <- 1 - as.numeric(mask)
+  } else if (length(unique(pal$value))==1) { # constant data. `cut` would have an error.
+    out <- 1 - as.numeric(mask)
   } else {
     pal$cut <- -Inf
     pal$cut[2:nrow(pal)] <- diff(pal$value)/2 + pal$value[1:(length(pal$value)-1)]
