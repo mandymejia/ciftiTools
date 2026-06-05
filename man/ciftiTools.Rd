@@ -79,11 +79,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Amanda Mejia \email{mandy.mejia@gmail.com}
+\strong{Maintainer}: Amanda Mejia \email{mandy.mejia@gmail.com} (\href{https://orcid.org/0000-0002-4312-8974}{ORCID})
 
 Authors:
 \itemize{
-  \item Amanda Mejia \email{mandy.mejia@gmail.com}
+  \item Amanda Mejia \email{mandy.mejia@gmail.com} (\href{https://orcid.org/0000-0002-4312-8974}{ORCID})
   \item Damon Pham \email{damondpham@gmail.com} (\href{https://orcid.org/0000-0001-7563-4727}{ORCID})
 }
 
