@@ -7,10 +7,11 @@
 impute_xifti(
   xifti,
   mask = NULL,
-  impute_FUN = function(x) {
+  method = c("layerwise", "laplacian"),
+  layerwise_FUN = function(x) {
      mean(x, na.rm = TRUE)
  },
-  smooth = TRUE,
+  smooth = NULL,
   smooth_args = NULL,
   ...
 )
@@ -33,20 +34,30 @@ On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
 values originally in \code{xifti}, and not in \code{mask}, will be left
 alone. Only locations in \code{mask} will be imputed.}
 
-\item{impute_FUN}{The function to use to impute the values. It should accept
-a vector of numeric values (the values of neighboring locations) and return
-a single numeric value (the value to assign). Default: \code{mean(..., na.rm=TRUE)}.}
+\item{method}{The imputation method, applied to both the cortex and subcortex.
+\code{"layerwise"} (default) iteratively fills in boundary vertices/voxels
+one layer at a time using \code{layerwise_FUN} applied to neighboring values.
+\code{"laplacian"} solves a sparse linear system (harmonic interpolation)
+to impute all masked locations simultaneously.}
+
+\item{layerwise_FUN}{The function to use to impute the values if
+\code{method=="layerwise"}. It should accept a vector of numeric values
+(the values of neighboring locations) and return a single numeric value (the
+value to assign). Default: \code{mean(..., na.rm=TRUE)}. Not used if
+\code{method="laplacian"}.}
 
 \item{smooth}{Smooth the imputed values? Smoothing will be calculated using
 the original and imputed data together, but only at imputed locations will
-the data be replaced with the smoothed values. Default: \code{TRUE}.}
+the data be replaced with the smoothed values. If \code{NULL} (default),
+smooth if \code{method=="layerwise"} and not if \code{method=="laplacian"},
+which already produces very smooth results.}
 
 \item{smooth_args}{List of arguments to \code{\link{smooth_cifti}}. Ignored
 if \code{!smooth}. \code{x} and \code{cifti_target_fname} should not be
 provided: \code{x} will be set to \code{xifti}, and \code{cifti_taget_fname}
 will remain \code{NULL}.}
 
-\item{...}{Additional arguments to \code{impute_FUN}.}
+\item{...}{Additional arguments to \code{layerwise_FUN}.}
 }
 \value{
 The input \code{xifti} with imputed data values.
@@ -65,12 +76,12 @@ Note that during imputation, locations in \code{mask}, as well as the medial
 wall for the cortex, are temporarily set to \code{NA}.
 
 Note that handling of \code{NA} values and the mask slightly differs from
-the cortex and subcortex. \code{impute_FUN} like \code{mean} will behave
+the cortex and subcortex. \code{layerwise_FUN} like \code{mean} will behave
 similarly, but functions which change depending on the amount of neighbor
 locations with \code{NA} values may differ.
-\code{impute_FUN} should handle \code{NA} values accordingly.
+\code{layerwise_FUN} should handle \code{NA} values accordingly.
 For most use cases, it will make sense to pass \code{na.rm=TRUE} to
-\code{...} if \code{impute_FUN} is a summary function like \code{mean}.
+\code{...} if \code{layerwise_FUN} is a summary function like \code{mean}.
 }
 \seealso{
 Other manipulating xifti:

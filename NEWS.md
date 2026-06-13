@@ -1,3 +1,9 @@
+# 20.0 
+
+* `load_surf`: Note that the surfaces are fs_LR
+* `add_surf`: Document ability to accept fs_LR surface names
+* `impute_xifti`: Add laplacian method and smoothing
+
 # 19.0
 
 * `apply_parc`: change default `FUN` from `mean` to `colMeans`
