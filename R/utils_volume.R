@@ -1,15 +1,15 @@
 #' Undo the volumetric mask to the subcortex
-#' 
+#'
 #' Un-applies the mask to the subcortical data in a \code{"xifti"} to yield its
-#'  volumetric representation. 
-#' 
+#'  volumetric representation.
+#'
 #' @inheritParams xifti_Param
 #' @param fill The value for locations outside the mask. Default: \code{NA}.
 #'
 #' @return The 3D or 4D unflattened volume array
 #'
 #' @export
-#' 
+#'
 unmask_subcortex <- function(xifti, fill=NA) {
   stopifnot(is.xifti(xifti))
   if (is.null(xifti$data$subcort)) { stop("No subcortical data to unmask.") }
@@ -22,7 +22,7 @@ unmask_subcortex <- function(xifti, fill=NA) {
 #'  This effectively undoes a crop.
 #'
 #' @param x A 3D array, e.g. \code{unmask_subcortex(xifti$data$subcort, xifti$meta$subcort$mask)}.
-#' @param padding A \eqn{d \times 2} matrix indicating the number of 
+#' @param padding A \eqn{d \times 2} matrix indicating the number of
 #'  slices to add at the beginning and end of each of the d dimensions, e.g.
 #'  \code{xifti$meta$subcort$mask_padding}.
 #' @param fill Values to pad with. Default: \code{NA}.
@@ -30,7 +30,7 @@ unmask_subcortex <- function(xifti, fill=NA) {
 #' @return The padded array
 #'
 #' @keywords internal
-#' 
+#'
 pad_vol <- function(x, padding, fill=NA){
   stopifnot(length(dim(x))==3)
   new_dim <- vector("numeric", 3)
@@ -47,30 +47,30 @@ pad_vol <- function(x, padding, fill=NA){
 }
 
 #' @rdname pad_vol
-#' 
+#'
 uncrop_vol <- function(x, padding, fill=NA){
   pad_vol(x, padding, fill)
 }
 
 #' Convert coordinate list to volume
-#' 
+#'
 #' Converts a sparse coordinate list to its non-sparse volumetric representation.
-#' 
+#'
 #' @param coords The sparse coordinate list. Should be a data.frame or matrix
-#'  with voxels along the rows and three or four columns. The first three 
+#'  with voxels along the rows and three or four columns. The first three
 #'  columns should be integers indicating the spatial coordinates of the voxel.
 #'  If the fourth column is present, it will be the value used for that voxel.
 #'  If it is absent, the value will be \code{TRUE} or \code{1} if \code{fill}
 #'  is not those values, and \code{FALSE} or \code{0} if \code{fill} is. The
 #'  data type will be the same as that of \code{fill}.
 #'  \code{fill}. The fourth column must be logical or numeric.
-#' @param fill Fill value for the volume. Must be logical or numeric. Default: 
+#' @param fill Fill value for the volume. Must be logical or numeric. Default:
 #'  \code{FALSE}.
-#' 
+#'
 #' @return The volumetric data
 #'
 #' @keywords internal
-#' 
+#'
 coordlist_to_vol <- function(coords, fill=FALSE){
   stopifnot(length(fill)==1)
   if (is.logical(fill)) {
@@ -89,8 +89,8 @@ coordlist_to_vol <- function(coords, fill=FALSE){
     )
     coords <- cbind(coords, val)
   } else {
-    if (any(coords[,4] == fill, na.rm=TRUE)) { 
-      warning("The fill value occurs in the data.") 
+    if (any(coords[,4] == fill, na.rm=TRUE)) {
+      warning("The fill value occurs in the data.")
     }
   }
 
@@ -100,13 +100,13 @@ coordlist_to_vol <- function(coords, fill=FALSE){
 }
 
 #' Crop a 3D array
-#' 
+#'
 #' Remove empty (zero-valued) edge slices from a 3D array.
 #'
 #' @param x The 3D array to crop.
 #'
 #' @keywords internal
-#' 
+#'
 crop_vol <- function(x) {
   d <- length(dim(x))
 
@@ -120,13 +120,13 @@ crop_vol <- function(x) {
     first_slice <- min(which(!empty_slice[[ii]]))
     last_slice <- max(which(!empty_slice[[ii]]))
     padding[ii,1] <- ifelse(
-      first_slice != 1, 
-      first_slice - 1, 
+      first_slice != 1,
+      first_slice - 1,
       0
     )
     padding[ii,2] <- ifelse(
-      last_slice != length(empty_slice[[ii]]), 
-      length(empty_slice[[ii]]) - last_slice, 
+      last_slice != length(empty_slice[[ii]]),
+      length(empty_slice[[ii]]) - last_slice,
       0
     )
   }
@@ -136,15 +136,15 @@ crop_vol <- function(x) {
 }
 
 #' Get spatial locations of each voxel
-#' 
+#'
 #' Use subcortical metadata (mask, transformation matrix and units) to get
 #'  voxel locations in 3D space.
-#' 
+#'
 #' @param mask,trans_mat,trans_units The subcortical metadata
 #' @return A list: \code{coords} and \code{units}
-#' 
+#'
 #' @keywords internal
-#' 
+#'
 vox_locations <- function(mask, trans_mat, trans_units=NULL){
   list(
     coords = (cbind(which(mask, arr.ind=TRUE), 1) %*% trans_mat)[,seq(3)],
@@ -153,13 +153,13 @@ vox_locations <- function(mask, trans_mat, trans_units=NULL){
 }
 
 #' Write label table to text file
-#' 
+#'
 #' Write \code{xii$meta$cifti$labels[[idx]]} to a text file for use with the
 #'  Connectome Workbench command \code{-volume-label-import}.
-#' 
+#'
 #' @param label_table The label table (one at a time!)
 #' @param fname Where to write the label table text file
-#' 
+#'
 #' @keywords internal
 write_label_table <- function(label_table, fname){
 
@@ -184,13 +184,13 @@ write_label_table <- function(label_table, fname){
 }
 
 #' Convert vectorized data back to volume
-#' 
+#'
 #' Un-applies a mask to vectorized data to yield its volumetric representation.
 #'  The mask and data should have compatible dimensions: the number of rows in
 #'  \code{dat} should equal the number of locations within the \code{mask}.
-#' 
-#' @param dat Data matrix with locations along the rows and measurements along 
-#'  the columns. If only one set of measurements were made, this may be a 
+#'
+#' @param dat Data matrix with locations along the rows and measurements along
+#'  the columns. If only one set of measurements were made, this may be a
 #'  vector.
 #' @param mask Volumetric binary mask. \code{TRUE} indicates voxels inside the
 #'  mask.
@@ -199,7 +199,7 @@ write_label_table <- function(label_table, fname){
 #' @return The 3D or 4D unflattened volume array
 #'
 #' @keywords internal
-#' 
+#'
 unvec_vol <- function(dat, mask, fill=NA) {
 
   # Check that dat is a vector or matrix.

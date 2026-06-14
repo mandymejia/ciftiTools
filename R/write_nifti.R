@@ -51,7 +51,10 @@ write_subcort_nifti <- function(
   subcortVol_fname, subcortLabs_fname, ROIsubcortVol_fname=NULL,
   fill=0){
 
+  # Checks. --------------------------------------------------------------------
+
   nC <- ncol(subcortVol)
+  nV <- dim(subcortMask)
 
   if (!is.null(col_names)) {
     stopifnot(is.character(col_names) && length(col_names) == nC)
@@ -63,20 +66,40 @@ write_subcort_nifti <- function(
     pixdims <- sqrt(colSums(trans_mat[1:3,1:3]^2)) # should not be negative
   }
 
-  # Data.
-  subcortVol <- unvec_vol(subcortVol, subcortMask, fill=fill)
+  # Data. ----------------------------------------------------------------------
+
+  # Size check for `subcortVol`.
+  subcortVol_GB <- nC * prod(nV) * 8 / 1024^3
+  do_columnwise <- subcortVol_GB > 3
+
+  # If the full array would be too big to construct, we will just construct
+  ##  the first volume, write that, and then concatenate the rest of the data
+  ##  directly into the file.
+  # `subcortVol_initial` is what we'll construct as an array to write.
+  subcortVol_initial <- if (!do_columnwise) {
+    subcortVol
+  } else {
+    subcortVol[,1,drop=FALSE]
+  }
+  subcortVol_initial <- unvec_vol(subcortVol_initial, subcortMask, fill=fill)
+
+  ## Write (the full array, or just the first volume). -------------------------
   ## https://github.com/jonclayden/RNifti/issues/5
   if (!is.null(trans_mat)) {
-    subcortVol <- RNifti::`pixdim<-`(subcortVol, pixdims)
-    subcortVol <- RNifti::`sform<-`(subcortVol, trans_mat)
+    subcortVol_initial <- RNifti::`pixdim<-`(subcortVol_initial, pixdims)
+    subcortVol_initial <- RNifti::`sform<-`(subcortVol_initial, trans_mat)
+    # # Alternative to above, if memory use is high?
+    # attr(subcortVol_initial, "srow_x") <- trans_mat[1, ]
+    # attr(subcortVol_initial, "srow_y") <- trans_mat[2, ]
+    # attr(subcortVol_initial, "srow_z") <- trans_mat[3, ]
     # Do not set qform: redundant.
   }
   if (!is.null(trans_units)) {
-    subcortVol <- RNifti::`pixunits<-`(subcortVol, trans_units)
+    subcortVol_initial <- RNifti::`pixunits<-`(subcortVol_initial, trans_units)
   }
-  RNifti::writeNifti(subcortVol, subcortVol_fname)
+  RNifti::writeNifti(subcortVol_initial, subcortVol_fname)
 
-  ### Add back names: if `dlabel` or `dscalar`.
+  ## Add back names: if `dlabel` or `dscalar`. ---------------------------------
   if (!is.null(col_names)) {
     cmd <- paste(
       "-set-map-names",
@@ -86,7 +109,7 @@ write_subcort_nifti <- function(
     run_wb_cmd(cmd, ignore.stderr=TRUE)
   }
 
-  ### Add back labels: if `dlabel`.
+  ## Add back labels: if `dlabel`. ---------------------------------------------
   if (!is.null(label_table)) {
     # Prepare Workbench command.
     label_table_tfile <- paste0(tempfile(), ".txt")
@@ -115,8 +138,8 @@ write_subcort_nifti <- function(
     run_wb_cmd(cmd, ignore.stderr=FALSE)
   }
 
-  # Labels.
-  ### Add "Other" level for older `xifti` objects.
+  ## Labels. -------------------------------------------------------------------
+  # Add "Other" level for older `xifti` objects.
   if (length(levels(subcortLabs)) != length(substructure_table()$ciftiTools_Name)) {
     subcortLabs <- factor(
       subcortLabs,
@@ -135,8 +158,8 @@ write_subcort_nifti <- function(
   }
   RNifti::writeNifti(subcortLabs, subcortLabs_fname)
 
-  ### Add back labels: subcortical structures.
-  ### https://www.humanconnectome.org/software/workbench-command/-volume-help
+  # Add back labels: subcortical structures.
+  # https://www.humanconnectome.org/software/workbench-command/-volume-help
   subcort_lab_list <- system.file(
     "extdata", "subcort_label_list.txt",
     package="ciftiTools"
@@ -149,7 +172,76 @@ write_subcort_nifti <- function(
   )
   run_wb_cmd(cmd, ignore.stderr=FALSE)
 
-  # Mask (as numeric).
+  ## Write the rest of the volumes directly into the file if needed. -----------
+  if (do_columnwise) {
+    ### Begin: Adapted from Claude! --------------------------------------------
+    # Get bytes per vox. Verify datatype and endianness.
+    hdr <- RNifti::niftiHeader(subcortVol_fname)
+    datatype <- hdr$datatype
+    if (datatype == 16) {
+      bytes_per_vox <- 4
+      convert_fun <- function(x) as.single(x)
+    } else if (datatype == 64) {
+      bytes_per_vox <- 8
+      convert_fun <- function(x) as.double(x)
+    } else {
+      stop("Unsupported datatype (", datatype, ") in written NIfTI. Expected 16 (float32) or 64 (float64).")
+    }
+    endian <- ifelse(hdr$sizeof_hdr == 348, "little", "big")
+    vox_offset <- hdr$vox_offset
+
+    # Patch header to reflect target number of timepoints.
+    ## Use read-modify-write on raw bytes. Note: `seek` did not seem to work.
+
+    ## Read and check before.
+    con <- file(subcortVol_fname, open="rb")
+    header_raw <- readBin(con, raw(), n=vox_offset)
+    close(con)
+    sizeof_hdr <- readBin(header_raw[1:4], integer(), size=4, endian=endian)
+    if (sizeof_hdr != 348) {
+      stop("sizeof_hdr is ", sizeof_hdr, " not 348 -- file may be corrupt or wrong endianness.")
+    }
+
+    ## Overwrite the relevant metadata. 
+    ### dims. yes, this is needed for RNifti
+    header_raw[41:42] <- writeBin(as.integer(4), raw(), size=2, endian=endian)
+    ### the number of volumes.
+    header_raw[49:50] <- writeBin(as.integer(nC), raw(), size=2, endian=endian)
+
+    ## Check after. 
+    sizeof_hdr_after <- readBin(header_raw[1:4], integer(), size=4, endian=endian)
+    if (sizeof_hdr_after != 348) {
+      stop("sizeof_hdr was corrupted during dim[4] patch.")
+    }
+
+    ## Write the header. 
+    con <- file(subcortVol_fname, open="r+b")
+    writeBin(header_raw, con, size=1)
+    close(con)
+    
+    ## Verify dim[4].
+    con <- file(subcortVol_fname, open="rb")
+    dim4_check <- readBin(readBin(con, raw(), n=50)[49:50], integer(), size=2, endian=endian)
+    close(con)
+    if (dim4_check != nC) {
+      stop("dim[4] write failed: expected ", nC, " but got ", dim4_check, ".")
+    }
+
+    # Append remaining volumes.
+    if (nC > 1) {
+      con <- file(subcortVol_fname, open="ab")
+      for (ii in 2:nC) {
+        vol_ii <- array(fill, dim=dim(subcortMask))
+        vol_ii[subcortMask] <- subcortVol[, ii]
+        writeBin(convert_fun(as.vector(vol_ii)), con, size=bytes_per_vox, endian=endian)
+        rm(vol_ii)
+      }
+      close(con)
+    }
+    ### End: Adapted from Claude! ----------------------------------------------
+  }
+
+  # Mask (as numeric). --------------------------------------------------------
   subcortMask <- subcortMask + 0
   if (!is.null(trans_mat)) {
     subcortMask <- RNifti::`pixdim<-`(subcortMask, pixdims)
@@ -162,6 +254,7 @@ write_subcort_nifti <- function(
     RNifti::writeNifti(subcortMask, ROIsubcortVol_fname)
   }
 
+  # Return! --------------------------------------------------------------------
   c(
     subcortVol=subcortVol_fname,
     subcortLabs=subcortLabs_fname,
