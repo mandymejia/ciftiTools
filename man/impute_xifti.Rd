@@ -7,7 +7,7 @@
 impute_xifti(
   xifti,
   mask = NULL,
-  method = c("layerwise", "laplacian"),
+  method = c("laplacian", "layerwise"),
   layerwise_FUN = function(x) {
      mean(x, na.rm = TRUE)
  },
@@ -35,10 +35,13 @@ values originally in \code{xifti}, and not in \code{mask}, will be left
 alone. Only locations in \code{mask} will be imputed.}
 
 \item{method}{The imputation method, applied to both the cortex and subcortex.
-\code{"layerwise"} (default) iteratively fills in boundary vertices/voxels
-one layer at a time using \code{layerwise_FUN} applied to neighboring values.
-\code{"laplacian"} solves a sparse linear system (harmonic interpolation)
-to impute all masked locations simultaneously.}
+\code{"laplacian"} (default) solves a sparse linear system (harmonic
+interpolation) to impute all masked locations simultaneously, whereas
+\code{"layerwise"} iteratively fills in boundary vertices/voxels one layer
+at a time using \code{layerwise_FUN} applied to neighboring values.
+
+For high-resolution cortex data or the subcortex, the Laplacian method may
+run out of memory, in which case the layerwise method is an alternative.}
 
 \item{layerwise_FUN}{The function to use to impute the values if
 \code{method=="layerwise"}. It should accept a vector of numeric values

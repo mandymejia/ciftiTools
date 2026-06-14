@@ -53,6 +53,7 @@ Suggests:
     gridExtra,
     htmlwidgets,
     manipulateWidget,
+    Matrix,
     webshot2,
     knitr,
     rmarkdown,

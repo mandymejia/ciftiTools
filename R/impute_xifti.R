@@ -34,16 +34,19 @@
 #'  On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
 #'  values originally in \code{xifti}, and not in \code{mask}, will be left
 #'  alone. Only locations in \code{mask} will be imputed.
+#' @param method The imputation method, applied to both the cortex and subcortex.
+#'  \code{"laplacian"} (default) solves a sparse linear system (harmonic 
+#'  interpolation) to impute all masked locations simultaneously, whereas 
+#'  \code{"layerwise"} iteratively fills in boundary vertices/voxels one layer 
+#'  at a time using \code{layerwise_FUN} applied to neighboring values.
+#' 
+#'  For high-resolution cortex data or the subcortex, the Laplacian method may
+#'  run out of memory, in which case the layerwise method is an alternative. 
 #' @param layerwise_FUN The function to use to impute the values if
 #'  \code{method=="layerwise"}. It should accept a vector of numeric values
 #'  (the values of neighboring locations) and return a single numeric value (the
 #'  value to assign). Default: \code{mean(..., na.rm=TRUE)}. Not used if
 #'  \code{method="laplacian"}.
-#' @param method The imputation method, applied to both the cortex and subcortex.
-#'  \code{"layerwise"} (default) iteratively fills in boundary vertices/voxels
-#'  one layer at a time using \code{layerwise_FUN} applied to neighboring values.
-#'  \code{"laplacian"} solves a sparse linear system (harmonic interpolation)
-#'  to impute all masked locations simultaneously.
 #' @param smooth Smooth the imputed values? Smoothing will be calculated using
 #'  the original and imputed data together, but only at imputed locations will
 #'  the data be replaced with the smoothed values. If \code{NULL} (default),
@@ -59,11 +62,9 @@
 #'
 #' @family manipulating xifti
 #'
-#' @importFrom Matrix sparseMatrix rowSums Diagonal solve
-#'
 #' @export
 impute_xifti <- function(
-  xifti, mask=NULL, method=c("layerwise", "laplacian"),
+  xifti, mask=NULL, method=c("laplacian", "layerwise"),
   layerwise_FUN=function(x){mean(x, na.rm=TRUE)},
   smooth=NULL, smooth_args=NULL,
   ...) {
@@ -74,7 +75,14 @@ impute_xifti <- function(
   }
 
   method <- match.arg(method)
-  if (is.null(smooth)) { smooth <- method=="layerwise"}
+
+  if (method == "laplacian") {
+    if (!requireNamespace("Matrix", quietly = TRUE)) {
+      stop("Package \"Matrix\" needed for Laplacian imputation. Please install or set `method` to `'layerwise'` instead.")
+    }
+  }
+
+  if (is.null(smooth)) { smooth <- method=="layerwise" }
   stopifnot(isTRUE(smooth) || isFALSE(smooth))
 
   nR <- nrow(xifti)
@@ -201,6 +209,7 @@ impute_xifti <- function(
       xifti$data[[c_hemi]][mask_bs[[c_hemi]], ] <- dat_now[mask_bs[[c_hemi]],,drop=FALSE]
 
     ## Impute, Laplacian. ------------------------------------------------------
+    ## Begin: written by Claude! -----------------------------------------------
     } else {
       # Build sparse adjacency matrix from surface faces.
       faces <- xifti$surf[[c_hemi]]$faces
@@ -244,6 +253,7 @@ impute_xifti <- function(
     rm(dat_now)
     rm(mask_now)
   }
+    ## End: written by Claude! -------------------------------------------------
 
   for (hemi in c("left", "right")) {
     c_hemi <- paste0("cortex_", hemi)
@@ -320,6 +330,7 @@ impute_xifti <- function(
       }
 
     ## Impute (Laplacian). -----------------------------------------------------
+    ## Begin: written by Claude! -----------------------------------------------
     } else {
       nV <- length(ind_vox)
       # Build sparse adjacency matrix from ind_nbr (ignoring out-of-mask NAs).
@@ -348,6 +359,7 @@ impute_xifti <- function(
         dat_now[loc_imp,] <- as.matrix(f_u)
       }
     }
+    ## End: written by Claude! -------------------------------------------------
 
     xifti$data$subcort <- dat_now
     rm(dat_now)
