@@ -32,7 +32,9 @@ If \code{NULL} (default), will use the mask of locations with at least one
 
 On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
 values originally in \code{xifti}, and not in \code{mask}, will be left
-alone. Only locations in \code{mask} will be imputed.}
+alone. Only locations in \code{mask} will be imputed.
+
+Can also be a matrix to impute different locations for different columns.}
 
 \item{method}{The imputation method, applied to both the cortex and subcortex.
 \code{"laplacian"} (default) solves a sparse linear system (harmonic

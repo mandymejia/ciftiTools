@@ -34,14 +34,16 @@
 #'  On the other hand, if \code{mask} is provided, the \code{NA} and \code{NaN}
 #'  values originally in \code{xifti}, and not in \code{mask}, will be left
 #'  alone. Only locations in \code{mask} will be imputed.
+#'
+#'  Can also be a matrix to impute different locations for different columns.
 #' @param method The imputation method, applied to both the cortex and subcortex.
-#'  \code{"laplacian"} (default) solves a sparse linear system (harmonic 
-#'  interpolation) to impute all masked locations simultaneously, whereas 
-#'  \code{"layerwise"} iteratively fills in boundary vertices/voxels one layer 
+#'  \code{"laplacian"} (default) solves a sparse linear system (harmonic
+#'  interpolation) to impute all masked locations simultaneously, whereas
+#'  \code{"layerwise"} iteratively fills in boundary vertices/voxels one layer
 #'  at a time using \code{layerwise_FUN} applied to neighboring values.
-#' 
+#'
 #'  For high-resolution cortex data or the subcortex, the Laplacian method may
-#'  run out of memory, in which case the layerwise method is an alternative. 
+#'  run out of memory, in which case the layerwise method is an alternative.
 #' @param layerwise_FUN The function to use to impute the values if
 #'  \code{method=="layerwise"}. It should accept a vector of numeric values
 #'  (the values of neighboring locations) and return a single numeric value (the
@@ -86,19 +88,31 @@ impute_xifti <- function(
   stopifnot(isTRUE(smooth) || isFALSE(smooth))
 
   nR <- nrow(xifti)
+  nC <- ncol(xifti)
 
-  keepNA <- !is.null(mask)
-  if (keepNA) {
-    which_NA <- lapply(xifti$data, function(x){which(is.na(x))})
-  }
-
+  # Make `mask`: `nR` x `nC` of locations to impute.
   if (is.null(mask)) {
-    mask <- apply(is.na(as.matrix(xifti)), 1, any)
-  }
-
-  stopifnot(is.logical(mask))
-  if (length(mask) != nR) {
-    stop("The length of `mask` should match the number of rows in `xifti`.")
+    keep_NA <- FALSE
+    mask <- is.na(as.matrix(xifti))
+  } else {
+    keep_NA <- TRUE
+    stopifnot(is.logical(mask[]))
+    if (is.matrix(mask)) {
+      stopifnot(all(dim(mask) == dim(xifti)))
+    } else {
+      stopifnot(is.vector(mask))
+      if (length(mask) != nR) {
+        stop("The length of `mask` should match the number of rows in `xifti`.")
+      }
+      mask <- matrix(rep(mask, nC), ncol=nC)
+    }
+    # Get `which_NA`: for each brain structure, the locations of `NA` values
+    #   that are not in `mask`.
+    xdat <- is.na(as.matrix(xifti)) & (!mask)
+    xdat[] <- as.numeric(xdat) # just to be nice to `newdata_xifti`
+    xifti2 <- newdata_xifti(xifti, xdat)
+    which_NA <- lapply(xifti2$data, function(x){which(x>0)})
+    rm(xdat, xifti2)
   }
 
   if (smooth && !is.null(smooth_args)) {
@@ -115,8 +129,8 @@ impute_xifti <- function(
   mask2 <- mask
   for (bs in c("cortex_left", "cortex_right", "subcort")) {
     if (!is.null(xifti$data[[bs]])) {
-      mask_bs[[bs]] <- mask2[seq(nrow(xifti$data[[bs]]))]
-      mask2 <- mask2[seq(nrow(xifti$data[[bs]])+1, length(mask2))]
+      mask_bs[[bs]] <- mask2[seq(nrow(xifti$data[[bs]])),,drop=FALSE]
+      mask2 <- mask2[-seq(nrow(xifti$data[[bs]])),,drop=FALSE]
     }
   }
 
@@ -133,10 +147,11 @@ impute_xifti <- function(
       mwall_og$right <- rep(TRUE, nrow(xifti$data$cortex_right))
     }
     # Unapply the medial wall mask to the input mask.
-    mask2c <- as.logical(do.call(c, mwall_og))
-    mask2c[mask2c] <- c(mask_bs$cortex_left, mask_bs$cortex_right)
-    mask <- c(mask2c, mask_bs$subcort)
-    rm(mask2c)
+    mwall_vec <- as.logical(do.call(c, mwall_og))
+    mask2c <- matrix(FALSE, nrow=length(mwall_vec), ncol=nC)
+    mask2c[mwall_vec,] <- rbind(mask_bs$cortex_left, mask_bs$cortex_right)
+    mask <- rbind(mask2c, mask_bs$subcort)
+    rm(mwall_vec, mask2c)
     # Set mwall values to `NA` for now.
     xifti <- move_from_mwall(xifti)
   }
@@ -145,12 +160,12 @@ impute_xifti <- function(
   mask2 <- mask
   for (bs in c("cortex_left", "cortex_right", "subcort")) {
     if (!is.null(xifti$data[[bs]])) {
-      mask_bs[[bs]] <- mask2[seq(nrow(xifti$data[[bs]]))]
-      mask2 <- mask2[seq(nrow(xifti$data[[bs]])+1, length(mask2))]
+      mask_bs[[bs]] <- mask2[seq(nrow(xifti$data[[bs]])),,drop=FALSE]
+      mask2 <- mask2[-seq(nrow(xifti$data[[bs]])),,drop=FALSE]
     }
   }
 
-  # Cortex. --------------------------------------------------------------------
+  # Cortex. ------------------------------------------------------------------
   for (hemi in c("left", "right")) {
     c_hemi <- paste0("cortex_", hemi)
     if (is.null(xifti$data[[c_hemi]])) { next }
@@ -164,53 +179,57 @@ impute_xifti <- function(
 
     ## Impute loop (layerwise). ------------------------------------------------
     if (method == "layerwise") {
-      for (rr in seq(nR)) { # really a while(TRUE) but I figured this is safer.
-        ### Compute the imputed values. ----------------------------------------
-        # `i_mask`: verts to impute bordering at least one vert not being imputed
-        i_mask <- boundary_mask_surf(
-          xifti$surf[[c_hemi]]$faces,
-          (!mask_now) & (mwall_og[[hemi]]),
-          1
-        ) & (mwall_og[[hemi]]) & mask_now
-        if (sum(i_mask) < 1) { break }
-        # `j_mask`: non-imputing verts bordering at least one vert being imputed
-        j_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_now, 1) & mwall_og[[hemi]] & !mask_now
-        # `v_adj`: adjacency matrix between `i_mask` and `j_mask`
-        v_adj <- vert_adjacency(xifti$surf[[c_hemi]]$faces, i_mask, j_mask)
-        stopifnot(all(rowSums(v_adj) > 0))
-        # `v_vals`: for each vert to impute, the values from which to impute.
-        #   All vertices in `v_vals` should have at least one value, but there may
-        #   be `NA` vals from the medial wall or if the original data was `NA`.
-        v_vals <- apply(v_adj, 1, function(x){dat_now[which(j_mask)[x],,drop=FALSE]}, simplify=FALSE)
-        # `v_impv`: The imputed values.
-        v_impv <- lapply(v_vals, function(x){apply(x, 2, layerwise_FUN, ...)})
-        v_impv <- do.call(rbind, v_impv)
+      for (cc in seq(nC)) {
+        dat_cc <- dat_now[,cc]
+        mask_cc <- mask_now[,cc]
+        for (rr in seq(nR)) { # really a while(TRUE) but I figured this is safer.
+          ### Precomputes same for each volume. ----------------------------------
+          # `i_mask`: verts to impute bordering at least one vert not being imputed
+          i_mask <- boundary_mask_surf(
+            xifti$surf[[c_hemi]]$faces,
+            (!mask_cc) & (mwall_og[[hemi]]),
+            1
+          ) & (mwall_og[[hemi]]) & mask_cc
+          if (sum(i_mask) < 1) { break }
+          # `j_mask`: non-imputing verts bordering at least one vert being imputed
+          j_mask <- boundary_mask_surf(xifti$surf[[c_hemi]]$faces, mask_cc, 1) & mwall_og[[hemi]] & !mask_cc
+          # `v_adj`: adjacency matrix between `i_mask` and `j_mask`
+          v_adj <- vert_adjacency(xifti$surf[[c_hemi]]$faces, i_mask, j_mask)
+          stopifnot(all(rowSums(v_adj) > 0))
 
-        ### Update. ------------------------------------------------------------
-        # Check which vertices have been updated.
-        has_changed <- (v_impv - dat_now[i_mask,]) != 0
-        has_changed[] <- ifelse(
-          is.na(has_changed),
-          xor(is.na(v_impv[]), is.na(dat_now[i_mask,][])),
-          has_changed
-        )
+          ### Calculate. ---------------------------------------------------------
+          # `v_vals`: for each vert to impute, the values from which to impute.
+          #   All vertices in `v_vals` should have at least one value, but there may
+          #   be `NA` vals from the medial wall or if the original data was `NA`.
+          v_vals <- apply(v_adj, 1, function(x){dat_cc[which(j_mask)[x]]}, simplify=FALSE)
+          # `v_impv`: The imputed values.
+          v_impv <- lapply(v_vals, layerwise_FUN, ...)
+          v_impv <- do.call(rbind, v_impv)
 
-        # Set imputed values.
-        dat_now[i_mask,] <- v_impv
+          ### Update. ----------------------------------------------------------
+          # Check which vertices have been updated.
+          has_changed <- (v_impv - dat_cc[i_mask]) != 0
+          has_changed[] <- ifelse(
+            is.na(has_changed),
+            xor(is.na(v_impv[]), is.na(dat_cc[i_mask][])),
+            has_changed
+          )
 
-        # Check for change.
-        if (!any(has_changed)) { break }
-        has_changed <- apply(has_changed, 1, all)
+          # Set imputed values.
+          dat_cc[i_mask] <- v_impv
 
-        # Remove updated verts from mask of verts to impute.
-        mask_now[i_mask][has_changed] <- FALSE
+          # Check for change.
+          if (!any(has_changed)) { break }
+
+          # Remove updated verts from mask of verts to impute.
+          mask_cc[i_mask][has_changed] <- FALSE
+        }
+        xifti$data[[c_hemi]][,cc] <- dat_cc
       }
 
-      xifti$data[[c_hemi]][mask_bs[[c_hemi]], ] <- dat_now[mask_bs[[c_hemi]],,drop=FALSE]
-
-    ## Impute, Laplacian. ------------------------------------------------------
-    ## Begin: written by Claude! -----------------------------------------------
+    ## Impute, Laplacian. ----------------------------------------------------
     } else {
+      ### Begin: written by Claude! ------------------------------------------
       # Build sparse adjacency matrix from surface faces.
       faces <- xifti$surf[[c_hemi]]$faces
       nV <- nrow(xifti$surf[[c_hemi]]$vertices)
@@ -223,58 +242,42 @@ impute_xifti <- function(
       A_valid <- A[idx_valid, idx_valid]     # restrict to medial-wall-excluded verts
       deg_valid <- Matrix::rowSums(A_valid)  # degree within valid subgraph
 
-      # Local indices within idx_valid.
-      is_imp <- mask_now[idx_valid]
-      loc_imp <- which(is_imp)
-      loc_val <- which(!is_imp)
+      for (cc in seq(nC)) {
+        mask_cc <- mask_now[,cc]
+        # Local indices within idx_valid.
+        is_imp <- mask_cc[idx_valid]
+        loc_imp <- which(is_imp)
+        loc_val <- which(!is_imp)
 
-      idx_imp <- which(mask_now & mwall_og[[hemi]])
-      idx_val <- which(!mask_now & mwall_og[[hemi]])
+        idx_imp <- which(mask_cc & mwall_og[[hemi]])
+        idx_val <- which(!mask_cc & mwall_og[[hemi]])
 
-      # Return `NaN` instead of `0` if no non-NA to impute from.
-      if (length(loc_val) == 0) {
-        xifti$data[[c_hemi]][idx_imp,] <- NaN
-        rm(dat_now)
-        rm(mask_now)
-        next
+        # Return `NaN` instead of `0` if no non-NA to impute from.
+        if (length(loc_val) == 0) {
+          xifti$data[[c_hemi]][idx_imp,cc] <- NaN
+          next
+        }
+
+        W_uu <- A_valid[loc_imp, loc_imp] / deg_valid[loc_imp]
+        W_uk <- A_valid[loc_imp, loc_val] / deg_valid[loc_imp]
+
+        LHS <- Matrix::Diagonal(length(loc_imp)) - W_uu
+        f_k <- dat_now[idx_val,cc,drop=FALSE]
+        RHS <- W_uk %*% f_k
+
+        f_u <- Matrix::solve(LHS, RHS)
+        xifti$data[[c_hemi]][idx_imp,cc] <- as.numeric(f_u)
       }
-
-      W_uu <- A_valid[loc_imp, loc_imp] / deg_valid[loc_imp]
-      W_uk <- A_valid[loc_imp, loc_val] / deg_valid[loc_imp]
-
-      LHS <- Matrix::Diagonal(length(loc_imp)) - W_uu
-      f_k <- dat_now[idx_val,,drop=FALSE]
-      RHS <- W_uk %*% f_k
-
-      f_u <- Matrix::solve(LHS, RHS)
-      xifti$data[[c_hemi]][idx_imp,] <- as.matrix(f_u)
     }
 
     rm(dat_now)
-    rm(mask_now)
-  }
-    ## End: written by Claude! -------------------------------------------------
-
-  for (hemi in c("left", "right")) {
-    c_hemi <- paste0("cortex_", hemi)
-    if (is.null(xifti$data[[c_hemi]])) { next }
-
-    # Put the medial wall back.
-    if (!is.null(mwall_og[[hemi]])) {
-      xifti$data[[c_hemi]] <- xifti$data[[c_hemi]][mwall_og[[hemi]],,drop=FALSE]
-      xifti$meta$cortex$medial_wall_mask[[hemi]] <- mwall_og[[hemi]]
-    }
-
-    # Put original `NA` values back if applicable.
-    if (keepNA) {
-      xifti$data[[c_hemi]][which_NA[[c_hemi]]] <- NA
-    }
+    ### End: written by Claude! ----------------------------------------------
   }
 
-  # Subcortex. -----------------------------------------------------------------
+  # Subcortex. ---------------------------------------------------------------
   if (!is.null(xifti$data$subcort) && any(mask_bs$subcort)) {
 
-    ## Precomputes. ------------------------------------------------------------
+    ## Precomputes. ----------------------------------------------------------
     # Get the six neighbors for each voxel.
     sdim <- dim(xifti$meta$subcort$mask)
     # Get the index of each voxel in both vector and array form.
@@ -299,7 +302,7 @@ impute_xifti <- function(
     dat_now <- xifti$data$subcort
     mask_now <- mask_bs$subcort
 
-    ## Impute loop (layerwise). ------------------------------------------------
+    ## Impute loop (layerwise). ----------------------------------------------
     if (method == "layerwise") {
       imp_vox <- function(vals_now, mask_imp) {
         vals_nbr <- matrix(vals_now[ind_nbr], nrow=nrow(ind_nbr))
@@ -315,23 +318,27 @@ impute_xifti <- function(
         z
       }
 
-      for (rr in seq(nR)) {
-        v_impv <- apply(dat_now, 2, imp_vox, mask_now)
-        has_changed <- (v_impv - dat_now[mask_now,]) != 0
-        has_changed[] <- ifelse(
-          is.na(has_changed),
-          xor(is.na(v_impv[]), is.na(dat_now[mask_now,][])),
-          has_changed
-        )
-        dat_now[mask_now,] <- v_impv
-        if (!any(has_changed)) { break }
-        has_changed <- apply(has_changed, 1, all)
-        mask_now[mask_now][has_changed] <- FALSE
+      for (cc in seq(nC)) {
+        dat_cc <- dat_now[,cc]
+        mask_cc <- mask_now[,cc]
+        for (rr in seq(nR)) { # really a while loop
+          v_impv <- imp_vox(dat_cc, mask_cc)
+          has_changed <- (v_impv - dat_cc[mask_cc]) != 0
+          has_changed[] <- ifelse(
+            is.na(has_changed),
+            xor(is.na(v_impv[]), is.na(dat_cc[mask_cc])),
+            has_changed
+          )
+          dat_cc[mask_cc] <- v_impv
+          if (!any(has_changed)) { break }
+          mask_cc[mask_cc][has_changed] <- FALSE
+        }
+        xifti$data$subcort[,cc] <- dat_cc
       }
 
-    ## Impute (Laplacian). -----------------------------------------------------
-    ## Begin: written by Claude! -----------------------------------------------
+    ## Impute (Laplacian). ---------------------------------------------------
     } else {
+      ### Begin: written by Claude! ------------------------------------------
       nV <- length(ind_vox)
       # Build sparse adjacency matrix from ind_nbr (ignoring out-of-mask NAs).
       row_idx <- rep(seq(nV), times=6)
@@ -342,32 +349,58 @@ impute_xifti <- function(
         dims=c(nV, nV)
       )
       deg <- Matrix::rowSums(A)
-      # Local indices for imputed vs. known voxels.
-      loc_imp <- which( mask_now)
-      loc_val <- which(!mask_now)
 
-      if (length(loc_val) == 0) {
-        # Return `NaN` instead of `0` if no non-NA to impute from.
-        dat_now[loc_imp,] <- NaN
-      } else {
-        W_uu <- A[loc_imp, loc_imp] / deg[loc_imp]
-        W_uk <- A[loc_imp, loc_val] / deg[loc_imp]
-        LHS  <- Matrix::Diagonal(length(loc_imp)) - W_uu
-        f_k  <- dat_now[loc_val,,drop=FALSE]
-        RHS  <- W_uk %*% f_k
-        f_u  <- Matrix::solve(LHS, RHS)
-        dat_now[loc_imp,] <- as.matrix(f_u)
+      for (cc in seq(nC)) {
+        mask_cc <- mask_now[,cc]
+        # Local indices for imputed vs. known voxels.
+        loc_imp <- which(mask_cc)
+        loc_val <- which(!mask_cc)
+
+        if (length(loc_val) == 0) {
+          # Return `NaN` instead of `0` if no non-NA to impute from.
+          dat_now[loc_imp,cc] <- NaN
+        } else {
+          W_uu <- A[loc_imp, loc_imp] / deg[loc_imp]
+          W_uk <- A[loc_imp, loc_val] / deg[loc_imp]
+          LHS  <- Matrix::Diagonal(length(loc_imp)) - W_uu
+          f_k  <- dat_now[loc_val,cc,drop=FALSE]
+          RHS  <- W_uk %*% f_k
+          f_u  <- Matrix::solve(LHS, RHS)
+          dat_now[loc_imp,cc] <- as.numeric(f_u)
+        }
       }
+
+      ### End: written by Claude! --------------------------------------------
     }
-    ## End: written by Claude! -------------------------------------------------
 
     xifti$data$subcort <- dat_now
     rm(dat_now)
-    rm(mask_now)
+  }
+
+  # Edit cortical results, if applicable. --------------------------------------
+  for (hemi in c("left", "right")) {
+    c_hemi <- paste0("cortex_", hemi)
+    if (is.null(xifti$data[[c_hemi]])) { next }
+
+    # Put the medial wall back.
+    if (!is.null(mwall_og[[hemi]])) {
+      xifti$data[[c_hemi]] <- xifti$data[[c_hemi]][mwall_og[[hemi]],,drop=FALSE]
+      xifti$meta$cortex$medial_wall_mask[[hemi]] <- mwall_og[[hemi]]
+    }
 
     # Put original `NA` values back if applicable.
-    if (keepNA) { xifti$data$subcort[which_NA$subcort] <- NA }
+    if (keep_NA) {
+      xifti$data[[c_hemi]][which_NA[[c_hemi]]] <- NA
+    }
   }
+
+  if (!is.null(xifti$data$subcort)) {
+    # Put original `NA` values back if applicable.
+    if (keep_NA) {
+      xifti$data$subcort[which_NA$subcort] <- NA
+    }
+  }
+
 
   # Smooth, if applicable. -----------------------------------------------------
   if (smooth) {
@@ -375,7 +408,7 @@ impute_xifti <- function(
     xifti_sm <- do.call(smooth_xifti, c(list(x=xifti), smooth_args))
     # Only replace imputed locations.
     xifti_out_mat <- as.matrix(xifti)
-    xifti_out_mat[mask_no_mwall,] <- as.matrix(xifti_sm)[mask_no_mwall,]
+    xifti_out_mat[mask_no_mwall] <- as.matrix(xifti_sm)[mask_no_mwall]
     xifti <- newdata_xifti(xifti, xifti_out_mat)
   }
 
