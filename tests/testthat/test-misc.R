@@ -208,7 +208,15 @@ test_that("Miscellaneous functions are working", {
         NA, cii_x$data$subcort[,1]
       )
     }
-    cii_i <- impute_xifti(cii_x, impute_FUN = length)
+
+    if (grepl("label", cii_fname)) {
+      cii_i <- testthat::expect_warning(
+        impute_xifti(cii_x, method="layerwise", layerwise_FUN = length, smooth=FALSE)
+      )
+    } else {
+      cii_i <- impute_xifti(cii_x, method="layerwise", layerwise_FUN = length, smooth=FALSE)
+    }
+
     z <- merge_xifti(select_xifti(cii_x, 2), select_xifti(cii_i, 2))
     plt <- plot(
       z, idx=seq(2), together="idx", widget=FALSE,
@@ -220,13 +228,16 @@ test_that("Miscellaneous functions are working", {
     cii_xi <- remove_xifti(cii_xi, "cortex_left")
     i_mask <- !(as.matrix(cii_xi) %in% c(min(cii_xi), max(cii_xi)))
     if (grepl("label", cii_fname)) {
-      cii_i <- impute_xifti(cii_xi, function(x){x[which(!is.na(x))[1]]}, mask=i_mask)
+      cii_i <- impute_xifti(cii_xi, method="layerwise", smooth=FALSE,
+                            layerwise_FUN=function(x){x[which(!is.na(x))[1]]}, mask=i_mask)
     } else {
-      cii_i <- impute_xifti(cii_xi, mask=i_mask)
+      cii_i <- impute_xifti(cii_xi, method="layerwise", smooth=FALSE, mask=i_mask)
       cii_xi <- newdata_xifti(cii_xi, ifelse(!i_mask, as.matrix(cii_xi), NA))
-      cii_i2 <- impute_xifti(cii_xi)
+      cii_i2 <- impute_xifti(cii_xi, method="layerwise", smooth=FALSE)
       print(summary(cii_i2))
       testthat::expect_equal(max(cii_i- cii_i2), 0)
+      cii_i <- impute_xifti(cii_xi, method="layerwise", smooth=TRUE, mask=i_mask)
+      cii_i <- impute_xifti(cii_xi, method="laplacian")
     }
 
     # Operations
@@ -309,7 +320,23 @@ test_that("Miscellaneous functions are working", {
 
     cii2 <- select_xifti(cii2, idx=1)
     cii2$data$cortex_left <- as.vector(cii2$data$cortex_left)
-    stopifnot(is.xifti(fix_xifti(cii2)))
+    cii2 <- fix_xifti(cii2)
+    stopifnot(is.xifti(cii2))
+
+    cii2 <- add_surf(cii2, "midthickness", "very inflated")
+    cii2$data$cortex_left[seq(5, 450),] <- NA
+
+    if (!grepl("dlabel", cii_fname)) {
+      cii3 <- impute_xifti(cii2)
+      cii3 <- impute_xifti(cii2, method="laplacian", mask=
+                             c(rep(TRUE,200), rep(FALSE, nrow(cii2)-200)))
+      cii3 <- select_xifti(cii2, rep(1, 4))
+      cii3$data$cortex_left[seq(550, 805),2] <- NA
+      cii3$data$cortex_left[seq(895),3] <- mean(c(as.matrix(cii3)), na.rm=TRUE)
+      cii3 <- impute_xifti(cii3, method="layerwise", smooth=FALSE)
+    } else {
+      testthat::expect_warning(impute_xifti(cii2))
+    }
   }
 
   scale_xifti(cii1, scale=FALSE)
@@ -356,7 +383,7 @@ test_that("Miscellaneous functions are working", {
   my_vec <- c(0, rep(NA, 98), 1, NA, .1, NA, NA)
   cii$data$cortex_left[] <- rep(my_vec, 500)[seq(nrow(cii$data$cortex_left))]
   cii$data$subcort[] <- rep(my_vec, 5000)[seq(nrow(cii$data$subcort))]
-  cii2 <- impute_xifti(cii)
+  cii2 <- impute_xifti(cii, method="layerwise")
   #plot(cii); plot(cii2)
 
   # `subcort_by_bs`
