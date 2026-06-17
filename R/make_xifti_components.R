@@ -273,7 +273,7 @@ make_cortex <- function(
 #' @keywords internal
 #'
 make_trans_mat <- function(nii_fname) {
-  head <- oro.nifti::nifti_header(nii_fname)
+  head <- suppressWarnings(oro.nifti::nifti_header(nii_fname)) # problem w/ oro.nifti
   labs_trans_mat <- rbind(head@srow_x, head@srow_y, head@srow_z)
   if (!isTRUE(all.equal(dim(labs_trans_mat), c(3, 4)))) {
     stop("trans_mat had unexpected dimensions.")
