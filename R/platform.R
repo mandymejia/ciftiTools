@@ -1,0 +1,77 @@
+#' Platform detection
+#'
+#' Tiny module for OS-version branching. Predicates are evaluated lazily and
+#' cached, so callers can use them freely without re-shelling out.
+#'
+#' @keywords internal
+#' @name platform
+NULL
+
+# Private cache: filled by the predicates on first call.
+.platform <- new.env(parent = emptyenv())
+
+#' Is the host running macOS Tahoe (26.0+)?
+#'
+#' Mirrors the helper of the same name defined locally inside
+#' `rgl::.onLoad` (`rgl/R/zzz.R`, ~line 39). Reproduced here because
+#' rgl doesn't export it. Result is cached after the first call.
+#'
+#' @keywords internal
+#' @return `TRUE` on macOS 26.0 or newer, `FALSE` otherwise.
+is_tahoe <- function() {
+  if (is.null(.platform$is_tahoe)) {
+    .platform$is_tahoe <- if (unname(Sys.info()["sysname"]) != "Darwin") {
+      FALSE
+    } else {
+      v <- tryCatch(
+        as.numeric_version(system("sw_vers -productVersion", intern = TRUE)),
+        error = function(e) NA, warning = function(w) NA
+      )
+      isTRUE(!is.na(v) && v >= as.numeric_version("26.0"))
+    }
+  }
+  .platform$is_tahoe
+}
+
+#' Verify that the rgl rendering backend has what it needs
+#'
+#' Called at the entry of view functions so users get an actionable install
+#' message instead of a stack trace from deep inside `rgl::snapshot3d` or
+#' `webshot2::webshot`.
+#'
+#' - `rgl` is always required (Suggests).
+#' - When rgl is in null-device mode (Tahoe, or any user-set
+#'   `options(rgl.useNULL = TRUE)`), the web backend is in play and we also
+#'   need `webshot2`, `htmlwidgets`, and a Chrome/Chromium binary.
+#'
+#' @keywords internal
+#' @return Invisibly `NULL`; stops with an error if anything is missing.
+check_render_backend <- function() {
+  if (!requireNamespace("rgl", quietly = TRUE)) {
+    stop("Needs the `rgl` package. Install with `install.packages('rgl')`.",
+         call. = FALSE)
+  }
+  if (!rgl::rgl.useNULL()) return(invisible(NULL))
+
+  needed <- c("webshot2", "htmlwidgets")
+  missing_pkgs <- needed[
+    !vapply(needed, requireNamespace, FALSE, quietly = TRUE)
+  ]
+  if (length(missing_pkgs)) {
+    stop("rgl's web backend (`rgl.useNULL = TRUE`) needs: ",
+         paste(missing_pkgs, collapse = ", "), ". Install with ",
+         "`install.packages(c(",
+         paste(sprintf("'%s'", missing_pkgs), collapse = ", "), "))`.",
+         call. = FALSE)
+  }
+  chrome <- tryCatch(chromote::find_chrome(), error = function(e) "")
+  if (!nzchar(chrome)) {
+    stop("rgl's web backend needs Chrome/Chromium. Either:\n",
+         "  - install Chrome/Chromium on this system, or\n",
+         "  - in R, run: ",
+         "chromote::local_chrome_version(\"latest-stable\", ",
+         "binary = \"chrome-headless-shell\")",
+         call. = FALSE)
+  }
+  invisible(NULL)
+}

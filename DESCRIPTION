@@ -42,10 +42,10 @@ Imports:
     oro.nifti,
     RNifti,
     RColorBrewer,
-    rgl,
     viridisLite,
     xml2
 Suggests:
+    chromote,
     covr,
     ggplot2,
     ggpubr,
@@ -54,6 +54,7 @@ Suggests:
     htmlwidgets,
     manipulateWidget,
     Matrix,
+    rgl,
     webshot2,
     knitr,
     rmarkdown,
@@ -65,3 +66,4 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3

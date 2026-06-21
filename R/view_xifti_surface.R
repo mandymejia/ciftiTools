@@ -606,6 +606,8 @@ view_xifti_surface <- function(
   width=NULL, height=NULL, zoom=NULL
   ) {
 
+  check_render_backend()
+
   # Try to avoid this error with colorbar:
   #   Error in par(old.par) :
   #   invalid value specified for graphical parameter "pin"
@@ -625,56 +627,29 @@ view_xifti_surface <- function(
     warning("Using the first entry of `widget`.")
     widget <- as.logical(widget[[1]])
   }
-  if (rgl::rgl.useNULL()) {
-    if (isFALSE(widget)) {
-      warning("`rgl.useNULL` is `TRUE`, and the null device cannot render the Open GL window. Using a widget instead.\n")
+  if (isFALSE(fname)) {
+    if (isFALSE(widget) && (length(idx) > 1)) {
+      warning(
+        "`widget` is `FALSE` but `length(idx) > 1`. ",
+        "This is not permissible since the OpenGL window can only show one measurement at a time. ",
+        "Setting `widget` to `TRUE`. ",
+        "To view multiple measurements without a widget, set `fname` to save .png files or an .html file. ",
+        "Or, select a single `idx` to view in the OpenGL window.\n"
+      )
+      widget <- TRUE
     }
-    if (length(fname) > 1) {
-      warning("Using first entry of `fname`, since only one html file is being written.\n")
-      fname <- fname[1]
-    }
-    if (is.character(fname)) {
-      if (endsWith(fname, ".png")) {
-        warning("`rgl.useNULL` is `TRUE`, and the null device cannot render the Open GL window to create the pngs. Using an html file instead.\n")
-      }
-    }
-    widget <- TRUE
+    if (is.null(widget)) { widget <- length(idx) > 1 }
   } else {
-    if (isFALSE(fname)) {
-      if (isFALSE(widget) && (length(idx) > 1)) {
-        warning(
-          "`widget` is `FALSE` but `length(idx) > 1`. ",
-          "This is not permissible since the OpenGL window can only show one measurement at a time. ",
-          "Setting `widget` to `TRUE`. ",
-          "To view multiple measurements without a widget, set `fname` to save .png files or an .html file. ",
-          "Or, select a single `idx` to view in the OpenGL window.\n"
-        )
+    if (is.character(fname)) {
+      fname_dirs <- unique(dirname(fname))
+      if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
+      if (any(grepl("html", fname))) {
+        if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
+        if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
+        fname <- fname[grepl("html", fname)][1]
+        if (isFALSE(widget)) { warning("Saving an .html file requires rendering a widget. Setting `widget=TRUE`.\n") }
         widget <- TRUE
-      }
-      if (is.null(widget)) { widget <- length(idx) > 1 }
-    } else {
-      if (is.character(fname)) {
-        fname_dirs <- unique(dirname(fname))
-        if (!all(dir.exists(fname_dirs))) { stop("`fname` directory does not exist.") }
-        if (any(grepl("html", fname))) {
-          if (length(fname) > 1) { warning("Using the first entry of `fname` with `'html'` in it.\n") }
-          if (!endsWith(fname, ".html")) { warning("fname has `html` in its name aside from the file extension.\n"); fname <- paste0(fname, ".html") }
-          fname <- fname[grepl("html", fname)][1]
-          if (isFALSE(widget)) { warning("Saving an .html file requires rendering a widget. Setting `widget=TRUE`.\n") }
-          widget <- TRUE
-        } else {
-          if (isTRUE(widget)) {
-            warning(
-              "`fname` is not `FALSE` but `widget` is `TRUE`. ",
-              "`view_xifti_surface` assumes the user wants to save a .png file(s), but these can only be rendered using the Open GL window. ",
-              "Setting `widget` to `FALSE` in order to render .png file(s) using OpenGL. ",
-              "To save an html file instead, append `'.html'` to `fname`. ",
-              "Or, to view a widget rather than writing any files, set `fname` to `FALSE`.\n"
-            )
-          }
-          widget <- FALSE
-        }
-      } else if (isTRUE(fname)) {
+      } else {
         if (isTRUE(widget)) {
           warning(
             "`fname` is not `FALSE` but `widget` is `TRUE`. ",
@@ -686,6 +661,17 @@ view_xifti_surface <- function(
         }
         widget <- FALSE
       }
+    } else if (isTRUE(fname)) {
+      if (isTRUE(widget)) {
+        warning(
+          "`fname` is not `FALSE` but `widget` is `TRUE`. ",
+          "`view_xifti_surface` assumes the user wants to save a .png file(s), but these can only be rendered using the Open GL window. ",
+          "Setting `widget` to `FALSE` in order to render .png file(s) using OpenGL. ",
+          "To save an html file instead, append `'.html'` to `fname`. ",
+          "Or, to view a widget rather than writing any files, set `fname` to `FALSE`.\n"
+        )
+      }
+      widget <- FALSE
     }
   } # `widget` should be `TRUE` or `FALSE` now.
 
@@ -763,7 +749,7 @@ view_xifti_surface <- function(
     }
 
     # `fname` if saving htmlwidget.
-    if (any(grepl("\\.html$", fname)) || rgl::rgl.useNULL()) {
+    if (any(grepl("\\.html$", fname)) || widget) {
       if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
         stop(
           "Package \"htmlwidgets\" will be needed by `view_xifti_surface` to ",
@@ -990,7 +976,14 @@ view_xifti_surface <- function(
   # `width`, `height`, `zoom`
   # [TO DO]: Improve this?
   if (is.null(zoom)) {
-    if (widget) { zoom <- .67 } else { zoom <- .6 }
+    if (widget) {
+      zoom <- .67
+    } else if (rgl::rgl.useNULL()) {
+      # Webshot/WebGL render is tighter than native at same zoom; back off slightly.
+      zoom <- .68
+    } else {
+      zoom <- .6
+    }
   }
   if (!is.null(width)) { width <- as.numeric(width) }
   if (!is.null(height)) { height <- as.numeric(height) }
@@ -1380,7 +1373,8 @@ view_xifti_surface <- function(
             # Error in par(old.par) :
             #   invalid value specified for graphical parameter "pin"
             try(suppressWarnings(do.call(fields::image.plot, colorbar_kwargs)), silent=TRUE),
-            bg.color=bg
+            bg.color=bg,
+            magnify = 1.2  # render colorbar texture at 1.2x viewport for sharpness
           )
         }
 
@@ -1443,7 +1437,12 @@ view_xifti_surface <- function(
     }
 
     if (!widget && saving_file) {
-      rgl::rgl.snapshot(fname[jj]) # Do not use snapshot3d because it requires Chrome. 
+      if (rgl::rgl.useNULL()) {
+        # Tahoe / headless: route through web backend (webshot2 + Chrome).
+        rgl::snapshot3d(fname[jj])
+      } else {
+        rgl::rgl.snapshot(fname[jj])
+      }
       rgl::close3d()
     }
   }
