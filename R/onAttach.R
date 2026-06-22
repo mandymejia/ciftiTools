@@ -16,10 +16,9 @@
   ciftiTools.setOption("EPS", 1e-8)
   ciftiTools.setOption("suppress_msgs", TRUE)
 
-  # On Tahoe, Apple's OpenGL/XQuartz path is broken — route rgl through the
-  # web backend so PNG output goes through `snapshot3d()`. Other platforms
-  # keep native rgl (faster, no Chrome dependency).
-  if (is_tahoe()) options(rgl.useNULL = TRUE)
+  # Apply any platform-specific overrides (see R/platform.R).
+  # Currently: Tahoe -> set `rgl.useNULL = TRUE` so we use rgl's web backend.
+  apply_platform_overrides()
 
   invisible(NULL)
 }
