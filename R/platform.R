@@ -47,30 +47,46 @@ is_tahoe <- function() {
 #' @keywords internal
 #' @return Invisibly `NULL`; stops with an error if anything is missing.
 check_render_backend <- function() {
-  if (!requireNamespace("rgl", quietly = TRUE)) {
-    stop("Needs the `rgl` package. Install with `install.packages('rgl')`.",
-         call. = FALSE)
-  }
-  if (!rgl::rgl.useNULL()) return(invisible(NULL))
+  # `rgl::rgl.useNULL()` needs rgl installed; if missing, fall back to
+  # `is_tahoe()` so a fresh Tahoe user gets ALL their missing deps in one go.
+  rgl_ok <- requireNamespace("rgl", quietly = TRUE)
+  on_web <- if (rgl_ok) rgl::rgl.useNULL() else is_tahoe()
 
-  needed <- c("webshot2", "htmlwidgets")
+  needed <- "rgl"
+  if (on_web) needed <- c(needed, "webshot2", "htmlwidgets")
   missing_pkgs <- needed[
     !vapply(needed, requireNamespace, FALSE, quietly = TRUE)
   ]
-  if (length(missing_pkgs)) {
-    stop("rgl's web backend (`rgl.useNULL = TRUE`) needs: ",
-         paste(missing_pkgs, collapse = ", "), ". Install with ",
-         "`install.packages(c(",
-         paste(sprintf("'%s'", missing_pkgs), collapse = ", "), "))`.",
-         call. = FALSE)
+
+  # Only check for Chrome once chromote is reachable (it's a webshot2 dep).
+  chrome_missing <- FALSE
+  if (on_web && !"webshot2" %in% missing_pkgs) {
+    chrome <- tryCatch(
+      suppressMessages(chromote::find_chrome()),
+      error = function(e) NULL
+    )
+    chrome_missing <- is.null(chrome) || !nzchar(chrome)
   }
-  chrome <- tryCatch(chromote::find_chrome(), error = function(e) "")
-  if (!nzchar(chrome)) {
-    stop("rgl's web backend needs Chrome/Chromium. Either:\n",
-         "  - install Chrome/Chromium on this system, or\n",
-         "  - in R, run: ",
-         "chromote::local_chrome_version(\"latest-stable\", ",
-         "binary = \"chrome-headless-shell\")",
+
+  problems <- character()
+  if (length(missing_pkgs)) {
+    problems <- c(problems, sprintf(
+      "Missing R package(s): %s. Install with `install.packages(c(%s))`.",
+      paste(missing_pkgs, collapse = ", "),
+      paste(sprintf("'%s'", missing_pkgs), collapse = ", ")
+    ))
+  }
+  if (chrome_missing) {
+    problems <- c(problems, paste0(
+      "Missing Chrome/Chromium for rgl's web backend. Either install ",
+      "Chrome/Chromium, or in R run: ",
+      "chromote::local_chrome_version(\"latest-stable\", ",
+      "binary = \"chrome-headless-shell\")"
+    ))
+  }
+  if (length(problems)) {
+    stop("`view_xifti_surface` cannot render:\n  - ",
+         paste(problems, collapse = "\n  - "),
          call. = FALSE)
   }
   invisible(NULL)
