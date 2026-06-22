@@ -627,7 +627,24 @@ view_xifti_surface <- function(
     warning("Using the first entry of `widget`.")
     widget <- as.logical(widget[[1]])
   }
-  if (isFALSE(fname)) {
+
+  # rgl can't make pixels but no platform override enabled the web backend:
+  # fall back to an HTML widget so the user always gets *something*.
+  if (rgl::rgl.useNULL() && !isTRUE(getOption("ciftiTools.web_render"))) {
+    if (is.character(fname) && any(endsWith(fname, ".png"))) {
+      warning(
+        "Cannot render PNG: rgl is in null-device mode and no web backend is ",
+        "enabled. Saving an HTML widget instead. Either set up xvfb + native ",
+        "rgl, or install webshot2 + Chrome and `options(ciftiTools.web_render = TRUE)`.\n",
+        call. = FALSE
+      )
+    }
+    if (length(fname) > 1) {
+      warning("Using first entry of `fname`, since only one html file is being written.\n")
+      fname <- fname[1]
+    }
+    widget <- TRUE
+  } else if (isFALSE(fname)) {
     if (isFALSE(widget) && (length(idx) > 1)) {
       warning(
         "`widget` is `FALSE` but `length(idx) > 1`. ",

@@ -1,13 +1,4 @@
 #' Platform detection and per-platform overrides
-#'
-#' Two layers:
-#'
-#' 1. **Predicates** (`is_*`) report facts about the host OS.
-#' 2. **Overrides registry** (`.platform_overrides`) encodes
-#'    "if predicate X holds, run apply()". Adding a new platform-specific
-#'    behavior means adding one entry to the registry — no edits to
-#'    `.onAttach` or view functions.
-#'
 #' @keywords internal
 #' @name platform
 NULL
@@ -17,10 +8,6 @@ NULL
 # ----------------------------------------------------------------------------
 
 #' Is the host running macOS Tahoe (26.0+)?
-#'
-#' Mirrors the helper of the same name defined locally inside
-#' `rgl::.onLoad` (`rgl/R/zzz.R`). Reproduced because rgl doesn't export it.
-#'
 #' @keywords internal
 is_tahoe <- function() {
   if (unname(Sys.info()["sysname"]) != "Darwin") return(FALSE)
@@ -31,39 +18,31 @@ is_tahoe <- function() {
   isTRUE(!is.na(v) && v >= as.numeric_version("26.0"))
 }
 
-# When a new OS-specific bug needs handling, add a sibling predicate above.
-
 # ----------------------------------------------------------------------------
 # Registry of per-platform overrides
 # ----------------------------------------------------------------------------
 
-# Each entry is a list with four fields:
-#   name   : human-readable, unique label
+# Entry fields:
+#   name   : unique label
 #   when   : nullary predicate; entry fires iff TRUE
-#   apply  : nullary side-effecting thunk to run when `when()` is TRUE
-#   reason : free-form rationale (for users + introspection)
+#   apply  : nullary thunk to run when `when()` is TRUE
+#   reason : free-form rationale
 #
-# To handle a new OS-specific quirk, append a new entry.
+# Entries whose `apply` enables rgl's web backend should also set
+# `ciftiTools.web_render = TRUE` so view functions know the web path is
+# available (and don't fall back to the HTML-widget path).
 .platform_overrides <- list(
   list(
     name   = "macOS Tahoe -> rgl web backend",
     when   = is_tahoe,
-    apply  = function() options(rgl.useNULL = TRUE),
-    reason = paste(
-      "Apple's OpenGL/XQuartz path is broken on macOS Tahoe (26.0+).",
-      "Force rgl into null-device mode so `view_xifti_surface` routes",
-      "PNG output through `rgl::snapshot3d()` -> `webshot2` -> Chrome."
-    )
+    apply  = function() options(rgl.useNULL = TRUE, ciftiTools.web_render = TRUE),
+    reason = "Apple's OpenGL/XQuartz path is broken on macOS Tahoe (26.0+)."
   )
 )
 
-#' Apply every override whose `when` predicate matches the host
-#'
-#' Called once from `.onAttach`. Errors inside `apply` are demoted to
-#' warnings so a misbehaving override can't block package attach.
-#'
+#' Run every override whose `when` matches the host.
+#' Errors inside `apply` become warnings so a bad override can't block attach.
 #' @keywords internal
-#' @return Character vector of override names that fired, invisibly.
 apply_platform_overrides <- function() {
   fired <- character()
   for (ov in .platform_overrides) {
@@ -85,31 +64,31 @@ apply_platform_overrides <- function() {
 # View-function dependency check
 # ----------------------------------------------------------------------------
 
-#' Verify the rgl rendering backend has what it needs
-#'
-#' Called at the entry of view functions so users get an actionable error
-#' instead of a stack trace from deep inside `rgl::snapshot3d` or
-#' `webshot2::webshot`. Collects all missing dependencies so the user gets
-#' a single error listing everything (rather than one-at-a-time).
-#'
+#' Verify the rgl rendering backend has what it needs.
+#' Required deps depend on the path that will run:
+#'   native               -> rgl
+#'   HTML widget fallback -> rgl + htmlwidgets
+#'   web PNG (Tahoe etc)  -> rgl + webshot2 + htmlwidgets + Chrome
+#' @param fname As passed to the view function.
 #' @keywords internal
-#' @return Invisibly `NULL`; stops with an error if anything is missing.
-check_render_backend <- function() {
-  # The web backend is in play iff `rgl.useNULL` option is TRUE. The option
-  # was already set (or not) by `apply_platform_overrides()` at attach time,
-  # so we don't need to ask rgl directly — the option is the source of truth
-  # regardless of whether rgl is installed.
-  on_web <- isTRUE(getOption("rgl.useNULL"))
+check_render_backend <- function(fname = FALSE) {
+  on_useNULL <- isTRUE(getOption("rgl.useNULL"))
+  on_web     <- isTRUE(getOption("ciftiTools.web_render"))
+  wants_png  <- isTRUE(fname) ||
+    (is.character(fname) && all(endsWith(fname, ".png")))
+
+  will_use_web_png   <- on_useNULL && on_web && wants_png
+  will_render_widget <- on_useNULL && !will_use_web_png
 
   needed <- "rgl"
-  if (on_web) needed <- c(needed, "webshot2", "htmlwidgets")
-  missing_pkgs <- needed[
+  if (will_render_widget) needed <- c(needed, "htmlwidgets")
+  if (will_use_web_png)   needed <- c(needed, "webshot2", "htmlwidgets")
+  missing_pkgs <- unique(needed[
     !vapply(needed, requireNamespace, FALSE, quietly = TRUE)
-  ]
+  ])
 
-  # Chrome check only meaningful once chromote is reachable (webshot2 dep).
   chrome_missing <- FALSE
-  if (on_web && !"webshot2" %in% missing_pkgs) {
+  if (will_use_web_png && !"webshot2" %in% missing_pkgs) {
     chrome <- tryCatch(
       suppressMessages(chromote::find_chrome()),
       error = function(e) NULL
