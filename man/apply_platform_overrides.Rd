@@ -2,15 +2,13 @@
 % Please edit documentation in R/platform.R
 \name{apply_platform_overrides}
 \alias{apply_platform_overrides}
-\title{Apply every override whose \code{when} predicate matches the host}
+\title{Run every override whose \code{when} matches the host.
+Errors inside \code{apply} become warnings so a bad override can't block attach.}
 \usage{
 apply_platform_overrides()
 }
-\value{
-Character vector of override names that fired, invisibly.
-}
 \description{
-Called once from \code{.onAttach}. Errors inside \code{apply} are demoted to
-warnings so a misbehaving override can't block package attach.
+Run every override whose \code{when} matches the host.
+Errors inside \code{apply} become warnings so a bad override can't block attach.
 }
 \keyword{internal}

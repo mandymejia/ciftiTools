@@ -2,24 +2,22 @@
 % Please edit documentation in R/platform.R
 \name{check_render_backend}
 \alias{check_render_backend}
-\title{Verify that the rgl rendering backend has what it needs}
+\title{Verify the rgl rendering backend has what it needs.
+Required deps depend on the path that will run:
+native               -> rgl
+HTML widget fallback -> rgl + htmlwidgets
+web PNG (Tahoe etc)  -> rgl + webshot2 + htmlwidgets + Chrome}
 \usage{
-check_render_backend()
+check_render_backend(fname = FALSE)
 }
-\value{
-Invisibly \code{NULL}; stops with an error if anything is missing.
+\arguments{
+\item{fname}{As passed to the view function.}
 }
 \description{
-Called at the entry of view functions so users get an actionable install
-message instead of a stack trace from deep inside \code{rgl::snapshot3d} or
-\code{webshot2::webshot}.
-}
-\details{
-\itemize{
-\item \code{rgl} is always required (Suggests).
-\item When rgl is in null-device mode (Tahoe, or any user-set
-\code{options(rgl.useNULL = TRUE)}), the web backend is in play and we also
-need \code{webshot2}, \code{htmlwidgets}, and a Chrome/Chromium binary.
-}
+Verify the rgl rendering backend has what it needs.
+Required deps depend on the path that will run:
+native               -> rgl
+HTML widget fallback -> rgl + htmlwidgets
+web PNG (Tahoe etc)  -> rgl + webshot2 + htmlwidgets + Chrome
 }
 \keyword{internal}

@@ -2,9 +2,8 @@
 % Please edit documentation in R/platform.R
 \name{platform}
 \alias{platform}
-\title{Platform detection}
+\title{Platform detection and per-platform overrides}
 \description{
-Tiny module for OS-version branching. Predicates are evaluated lazily and
-cached, so callers can use them freely without re-shelling out.
+Platform detection and per-platform overrides
 }
 \keyword{internal}

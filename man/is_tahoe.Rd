@@ -6,12 +6,7 @@
 \usage{
 is_tahoe()
 }
-\value{
-\code{TRUE} on macOS 26.0 or newer, \code{FALSE} otherwise.
-}
 \description{
-Mirrors the helper of the same name defined locally inside
-\code{rgl::.onLoad} (\code{rgl/R/zzz.R}, ~line 39). Reproduced here because
-rgl doesn't export it. Result is cached after the first call.
+Is the host running macOS Tahoe (26.0+)?
 }
 \keyword{internal}
