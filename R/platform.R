@@ -72,6 +72,11 @@ apply_platform_overrides <- function() {
 #' @param fname As passed to the view function.
 #' @keywords internal
 check_render_backend <- function(fname = FALSE) {
+  # Opting in to web_render implies useNULL — keep the user from having to set both.
+  if (isTRUE(getOption("ciftiTools.web_render")) &&
+      !isTRUE(getOption("rgl.useNULL"))) {
+    options(rgl.useNULL = TRUE)
+  }
   on_useNULL <- isTRUE(getOption("rgl.useNULL"))
   on_web     <- isTRUE(getOption("ciftiTools.web_render"))
   wants_png  <- isTRUE(fname) ||
