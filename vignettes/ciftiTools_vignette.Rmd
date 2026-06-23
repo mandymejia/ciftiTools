@@ -43,6 +43,11 @@ Next, we indicate where to find the Connectome Workbench. This can be the full p
 #   the Connectome Workbench folder on your computer.
 #   If successful, the path to the Workbench executable will be printed.
 ciftiTools.setOption('wb_path', '~/Applications')
+
+# For Tahoe
+if (ciftiTools:::is_tahoe()) {
+  options(ciftiTools.web_render = TRUE)
+}
 ```
 
 In this vignette, we will use example data included in the `ciftiTools` package. The files are originally from [NITRC](https://www.nitrc.org/frs/?group_id=454):
@@ -143,6 +148,19 @@ The cortical plots in `ciftiTools` are made possible by the `rgl` package. To pr
 ```{r}
 library(rgl)
 
+if (ciftiTools:::is_tahoe()) {
+  chromote::local_chrome_version("latest-stable", binary = "chrome-headless-shell")
+  # # Did not seem to be needed.
+  #try(chromote::ChromoteSession$default()$close(), silent = TRUE) 
+  #try(chromote::Chromote$default()$close(), silent = TRUE)
+  # Sometimes the first Chromium screenshot fails.
+  b <- chromote::ChromoteSession$new()
+  b$Page$navigate("about:blank")
+  Sys.sleep(1)
+  b$screenshot(tempfile(fileext=".png"))
+  b$close()
+}
+
 rgl::setupKnitr()
 
 # Sometimes the first OpenGL window does not render properly.
@@ -152,8 +170,16 @@ rgl::open3d(); rgl::close3d()
 is_knit <- knitr::is_html_output() || knitr::is_latex_output()
 knit_pic <- function(dpi=200){
   pic <- tempfile(fileext=".png")
-  rgl:::rgl.snapshot(pic)
-  rgl::close3d()
+  if (ciftiTools:::is_tahoe()) {
+    rgl::snapshot3d(pic, "png", delay = 3)
+    # # Seems to be the same as above.
+    # tmp <- tempfile(fileext = ".html")
+    # htmlwidgets::saveWidget(rgl::rglwidget(), tmp, selfcontained = TRUE)
+    # webshot2::webshot(tmp, "~/Downloads/temp.png", delay = 3)
+  } else {
+    rgl:::rgl.snapshot(pic)
+    rgl::close3d()
+  }
   knitr::include_graphics(pic, dpi=dpi)
 }
 
