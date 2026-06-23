@@ -1456,7 +1456,7 @@ view_xifti_surface <- function(
     if (!widget && saving_file) {
       if (rgl::rgl.useNULL()) {
         # Tahoe / headless: route through web backend (webshot2 + Chrome).
-        rgl::snapshot3d(fname[jj], delay=3)
+        suppressMessages(rgl::snapshot3d(fname[jj], delay=3))
       } else {
         rgl::rgl.snapshot(fname[jj])
       }

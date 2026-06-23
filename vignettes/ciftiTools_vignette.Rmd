@@ -171,7 +171,7 @@ is_knit <- knitr::is_html_output() || knitr::is_latex_output()
 knit_pic <- function(dpi=200){
   pic <- tempfile(fileext=".png")
   if (ciftiTools:::is_tahoe()) {
-    rgl::snapshot3d(pic, "png", delay = 3)
+    suppressMessages(rgl::snapshot3d(pic, "png", delay = 3))
     # # Seems to be the same as above.
     # tmp <- tempfile(fileext = ".html")
     # htmlwidgets::saveWidget(rgl::rglwidget(), tmp, selfcontained = TRUE)
