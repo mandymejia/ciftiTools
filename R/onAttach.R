@@ -8,17 +8,18 @@
 #'
 #' @keywords internal
 .onAttach <- function(...) {
+  ciftiTools.setOption("EPS", 1e-8)
+  ciftiTools.setOption("suppress_msgs", TRUE)
+
+  # Apply platform overrides BEFORE the welcome banner so it can include the
+  # web-render notice on the first attach (see R/platform.R).
+  apply_platform_overrides()
+
   if (interactive()) {
     if (is.null(getOption("ciftiTools_wb_path"))) {
       packageStartupMessage(welcome_msg())
     }
   }
-  ciftiTools.setOption("EPS", 1e-8)
-  ciftiTools.setOption("suppress_msgs", TRUE)
-
-  # Apply any platform-specific overrides (see R/platform.R).
-  # Currently: Tahoe -> set `rgl.useNULL = TRUE` so we use rgl's web backend.
-  apply_platform_overrides()
 
   invisible(NULL)
 }
@@ -32,8 +33,11 @@
 welcome_msg <- function() {
   paste0(
     "\n*****************************************************************\n",
-    "*   Welcome to ciftiTools! Please cite our paper in your work:  *\n", 
+    "*   Welcome to ciftiTools! Please cite our paper in your work:  *\n",
     "*                   > citation('ciftiTools')                    *",
-    wb_path_request()
+    "\n*****************************************************************",
+    wb_path_request(),
+    web_render_notice(),
+    "\n*****************************************************************\n"
   )
 }

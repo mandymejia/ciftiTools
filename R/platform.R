@@ -18,6 +18,42 @@ is_tahoe <- function() {
   isTRUE(!is.na(v) && v >= as.numeric_version("26.0"))
 }
 
+#' Is the rgl web backend in use?
+#' Single source of truth for branching on web vs native render path.
+#' @keywords internal
+web_render_active <- function() {
+  isTRUE(getOption("ciftiTools.web_render"))
+}
+
+# ----------------------------------------------------------------------------
+# Actions
+# ----------------------------------------------------------------------------
+
+#' Switch ciftiTools onto the rgl web render backend.
+#' Sets both options atomically — `rgl.useNULL` (no native display) is
+#' required for the web path, so it's enforced here rather than left to
+#' callers to remember.
+#' @keywords internal
+enable_web_render <- function() {
+  options(rgl.useNULL = TRUE, ciftiTools.web_render = TRUE)
+}
+
+#' Startup notice when the web render backend is active.
+#' Returns "" when web render isn't active, so callers can always paste it.
+#' Body lines nest inside the welcome banner's bottom section in the same
+#' style as `wb_path_request()` — `*****` borders are owned by `welcome_msg()`.
+#' @keywords internal
+web_render_notice <- function() {
+  if (!web_render_active()) return("")
+  paste(
+    "\n                                                                 ",
+    "       Tahoe users: Browser-based fix has been implemented       ",
+    "     for interactive and PNG visualization. Please disregard     ",
+    "       rgl warnings and install webshot2 and htmlwidgets.        ",
+    sep = '\n'
+  )
+}
+
 # ----------------------------------------------------------------------------
 # Registry of per-platform overrides
 # ----------------------------------------------------------------------------
@@ -28,14 +64,13 @@ is_tahoe <- function() {
 #   apply  : nullary thunk to run when `when()` is TRUE
 #   reason : free-form rationale
 #
-# Entries whose `apply` enables rgl's web backend should also set
-# `ciftiTools.web_render = TRUE` so view functions know the web path is
-# available (and don't fall back to the HTML-widget path).
+# Web-backend entries use `enable_web_render` so the useNULL + web_render
+# pair stays in lockstep.
 .platform_overrides <- list(
   list(
     name   = "macOS Tahoe -> rgl web backend",
     when   = is_tahoe,
-    apply  = function() options(rgl.useNULL = TRUE, ciftiTools.web_render = TRUE),
+    apply  = enable_web_render,
     reason = "Apple's OpenGL/XQuartz path is broken on macOS Tahoe (26.0+)."
   )
 )
@@ -72,13 +107,12 @@ apply_platform_overrides <- function() {
 #' @param fname As passed to the view function.
 #' @keywords internal
 check_render_backend <- function(fname = FALSE) {
-  # Opting in to web_render implies useNULL — keep the user from having to set both.
-  if (isTRUE(getOption("ciftiTools.web_render")) &&
-      !isTRUE(getOption("rgl.useNULL"))) {
-    options(rgl.useNULL = TRUE)
+  # Power user opting in via options() should still get the useNULL pair.
+  if (web_render_active() && !isTRUE(getOption("rgl.useNULL"))) {
+    enable_web_render()
   }
   on_useNULL <- isTRUE(getOption("rgl.useNULL"))
-  on_web     <- isTRUE(getOption("ciftiTools.web_render"))
+  on_web     <- web_render_active()
   wants_png  <- isTRUE(fname) ||
     (is.character(fname) && all(endsWith(fname, ".png")))
 

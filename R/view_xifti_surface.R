@@ -630,7 +630,7 @@ view_xifti_surface <- function(
 
   # rgl can't make pixels but no platform override enabled the web backend:
   # fall back to an HTML widget so the user always gets *something*.
-  if (rgl::rgl.useNULL() && !isTRUE(getOption("ciftiTools.web_render"))) {
+  if (!web_render_active() && rgl::rgl.useNULL()) {
     if (is.character(fname) && any(endsWith(fname, ".png"))) {
       warning(
         "Cannot render PNG: rgl is in null-device mode and no web backend is ",
@@ -995,7 +995,7 @@ view_xifti_surface <- function(
   if (is.null(zoom)) {
     if (widget) {
       zoom <- .67
-    } else if (rgl::rgl.useNULL()) {
+    } else if (web_render_active()) {
       # Webshot/WebGL render is tighter than native at same zoom; back off slightly.
       zoom <- .68
     } else {
@@ -1454,8 +1454,8 @@ view_xifti_surface <- function(
     }
 
     if (!widget && saving_file) {
-      if (rgl::rgl.useNULL()) {
-        # Tahoe / headless: route through web backend (webshot2 + Chrome).
+      if (web_render_active()) {
+        # Tahoe / headless web backend: webshot2 + Chrome rasterizes the scene.
         suppressMessages(rgl::snapshot3d(fname[jj], delay=3))
       } else {
         rgl::rgl.snapshot(fname[jj])
