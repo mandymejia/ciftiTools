@@ -647,6 +647,13 @@ view_xifti_surface <- function(
   } else if (isFALSE(fname)) {
     if (web_render_active()) {
       # Web-render backend has no native OpenGL window; interactive view = widget.
+      if (isFALSE(widget)) {
+        warning(
+          "`widget=FALSE` is not supported on the web-render backend. ",
+          "Setting `widget` to `TRUE`.\n",
+          call. = FALSE
+        )
+      }
       widget <- TRUE
     } else if (isFALSE(widget) && (length(idx) > 1)) {
       warning(
