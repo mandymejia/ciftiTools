@@ -71,11 +71,11 @@ the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
-Other common:
-\code{\link[=read_cifti]{read_cifti()}},
-\code{\link[=resample_cifti]{resample_cifti()}},
-\code{\link[=smooth_cifti]{smooth_cifti()}},
-\code{\link[=view_xifti]{view_xifti()}},
-\code{\link[=write_cifti]{write_cifti()}}
+Other common: 
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti}()},
+\code{\link{write_cifti}()}
 }
 \concept{common}

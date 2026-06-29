@@ -175,12 +175,12 @@ voxels. \eqn{T}, the total number of measurements (columns of data), must be
 the same for each brainstructure.
 }
 \seealso{
-Other reading:
-\code{\link[=info_cifti]{info_cifti()}},
-\code{\link[=load_parc]{load_parc()}},
-\code{\link[=load_surf]{load_surf()}},
-\code{\link[=read_cifti]{read_cifti()}},
-\code{\link[=read_surf]{read_surf()}},
-\code{\link[=read_xifti2]{read_xifti2()}}
+Other reading: 
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{load_surf}()},
+\code{\link{read_cifti}()},
+\code{\link{read_surf}()},
+\code{\link{read_xifti2}()}
 }
 \concept{reading}

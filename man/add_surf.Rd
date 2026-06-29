@@ -38,39 +38,39 @@ be resampled to match the resolution of the data. The barycentric resampling
 method, which is recommended for anatomical surfaces, will be used.
 }
 \seealso{
-Other manipulating xifti:
-\code{\link[=apply_parc]{apply_parc()}},
-\code{\link[=apply_xifti]{apply_xifti()}},
-\code{\link[=combine_xifti]{combine_xifti()}},
-\code{\link[=convert_xifti]{convert_xifti()}},
-\code{\link[=impute_xifti]{impute_xifti()}},
-\code{\link[=merge_xifti]{merge_xifti()}},
-\code{\link[=move_to_mwall]{move_to_mwall()}},
-\code{\link[=move_to_submask]{move_to_submask()}},
-\code{\link[=newdata_xifti]{newdata_xifti()}},
-\code{\link[=remap_cifti]{remap_cifti()}},
-\code{\link[=remove_xifti]{remove_xifti()}},
-\code{\link[=resample_cifti]{resample_cifti()}},
-\code{\link[=resample_cifti_from_template]{resample_cifti_from_template()}},
-\code{\link[=scale_xifti]{scale_xifti()}},
-\code{\link[=select_xifti]{select_xifti()}},
-\code{\link[=set_names_xifti]{set_names_xifti()}},
-\code{\link[=smooth_cifti]{smooth_cifti()}},
-\code{\link[=transform_xifti]{transform_xifti()}}
+Other manipulating xifti: 
+\code{\link{apply_parc}()},
+\code{\link{apply_xifti}()},
+\code{\link{combine_xifti}()},
+\code{\link{convert_xifti}()},
+\code{\link{impute_xifti}()},
+\code{\link{merge_xifti}()},
+\code{\link{move_to_mwall}()},
+\code{\link{move_to_submask}()},
+\code{\link{newdata_xifti}()},
+\code{\link{remap_cifti}()},
+\code{\link{remove_xifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{resample_cifti_from_template}()},
+\code{\link{scale_xifti}()},
+\code{\link{select_xifti}()},
+\code{\link{set_names_xifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{transform_xifti}()}
 
-Other surface-related:
-\code{\link[=boundary_mask_surf]{boundary_mask_surf()}},
-\code{\link[=edit_mask_surf]{edit_mask_surf()}},
-\code{\link[=even_vert_samp]{even_vert_samp()}},
-\code{\link[=is.surf]{is.surf()}},
-\code{\link[=load_surf]{load_surf()}},
-\code{\link[=mask_surf]{mask_surf()}},
-\code{\link[=read_surf]{read_surf()}},
-\code{\link[=resample_surf]{resample_surf()}},
-\code{\link[=rotate_surf]{rotate_surf()}},
-\code{\link[=surf_area]{surf_area()}},
-\code{\link[=view_surf]{view_surf()}},
-\code{\link[=write_surf_gifti]{write_surf_gifti()}}
+Other surface-related: 
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
+\code{\link{is.surf}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{surf_area}()},
+\code{\link{view_surf}()},
+\code{\link{write_surf_gifti}()}
 }
 \concept{manipulating xifti}
 \concept{surface-related}

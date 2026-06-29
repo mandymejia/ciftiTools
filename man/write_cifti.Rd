@@ -69,19 +69,19 @@ Command, depending on the input.
 }
 
 \seealso{
-Other common:
-\code{\link[=is.cifti]{is.cifti()}},
-\code{\link[=read_cifti]{read_cifti()}},
-\code{\link[=resample_cifti]{resample_cifti()}},
-\code{\link[=smooth_cifti]{smooth_cifti()}},
-\code{\link[=view_xifti]{view_xifti()}}
+Other common: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti}()}
 
-Other writing:
-\code{\link[=separate_cifti]{separate_cifti()}},
-\code{\link[=write_metric_gifti]{write_metric_gifti()}},
-\code{\link[=write_subcort_nifti]{write_subcort_nifti()}},
-\code{\link[=write_surf_gifti]{write_surf_gifti()}},
-\code{\link[=write_xifti2]{write_xifti2()}}
+Other writing: 
+\code{\link{separate_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{common}
 \concept{writing}

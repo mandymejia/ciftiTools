@@ -68,11 +68,11 @@ Whether the GIFTI was successfully written
 Write the data for the left or right cortex to a metric GIFTI file.
 }
 \seealso{
-Other writing:
-\code{\link[=separate_cifti]{separate_cifti()}},
-\code{\link[=write_cifti]{write_cifti()}},
-\code{\link[=write_subcort_nifti]{write_subcort_nifti()}},
-\code{\link[=write_surf_gifti]{write_surf_gifti()}},
-\code{\link[=write_xifti2]{write_xifti2()}}
+Other writing: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{writing}

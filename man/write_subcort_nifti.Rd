@@ -73,11 +73,11 @@ Command.
 }
 
 \seealso{
-Other writing:
-\code{\link[=separate_cifti]{separate_cifti()}},
-\code{\link[=write_cifti]{write_cifti()}},
-\code{\link[=write_metric_gifti]{write_metric_gifti()}},
-\code{\link[=write_surf_gifti]{write_surf_gifti()}},
-\code{\link[=write_xifti2]{write_xifti2()}}
+Other writing: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_surf_gifti}()},
+\code{\link{write_xifti2}()}
 }
 \concept{writing}

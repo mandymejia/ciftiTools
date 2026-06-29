@@ -39,18 +39,18 @@ the entire data and shared between the two plots. Also, if writing files
 the subcortical plots will not overwrite the cortical plots.
 }
 \seealso{
-Other common:
-\code{\link[=is.cifti]{is.cifti()}},
-\code{\link[=read_cifti]{read_cifti()}},
-\code{\link[=resample_cifti]{resample_cifti()}},
-\code{\link[=smooth_cifti]{smooth_cifti()}},
-\code{\link[=write_cifti]{write_cifti()}}
+Other common: 
+\code{\link{is.cifti}()},
+\code{\link{read_cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{write_cifti}()}
 
-Other visualizing:
-\code{\link[=view_comp]{view_comp()}},
-\code{\link[=view_surf]{view_surf()}},
-\code{\link[=view_xifti_surface]{view_xifti_surface()}},
-\code{\link[=view_xifti_volume]{view_xifti_volume()}}
+Other visualizing: 
+\code{\link{view_comp}()},
+\code{\link{view_surf}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()}
 }
 \concept{common}
 \concept{visualizing}

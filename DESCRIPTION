@@ -39,6 +39,7 @@ Imports:
     fields,
     gifti (> 0.7.5),
     grDevices,
+    htmltools,
     oro.nifti,
     RNifti,
     RColorBrewer,

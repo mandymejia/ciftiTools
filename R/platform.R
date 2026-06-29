@@ -20,7 +20,7 @@ is_tahoe <- function() {
 
 #' Is the rgl web backend in use?
 #' Single source of truth for branching on web vs native render path.
-#' @keywords internal
+#' @noRd
 web_render_active <- function() {
   isTRUE(getOption("ciftiTools.web_render"))
 }
@@ -33,7 +33,7 @@ web_render_active <- function() {
 #' Sets both options atomically — `rgl.useNULL` (no native display) is
 #' required for the web path, so it's enforced here rather than left to
 #' callers to remember.
-#' @keywords internal
+#' @noRd
 enable_web_render <- function() {
   options(rgl.useNULL = TRUE, ciftiTools.web_render = TRUE)
 }
@@ -42,7 +42,7 @@ enable_web_render <- function() {
 #' Returns "" when web render isn't active, so callers can always paste it.
 #' Body lines nest inside the welcome banner's bottom section in the same
 #' style as `wb_path_request()` — `*****` borders are owned by `welcome_msg()`.
-#' @keywords internal
+#' @noRd
 web_render_notice <- function() {
   if (!web_render_active()) return("")
   paste(
@@ -126,15 +126,6 @@ check_render_backend <- function(fname = FALSE) {
     !vapply(needed, requireNamespace, FALSE, quietly = TRUE)
   ])
 
-  chrome_missing <- FALSE
-  if (will_use_web_png && !"webshot2" %in% missing_pkgs) {
-    chrome <- tryCatch(
-      suppressMessages(chromote::find_chrome()),
-      error = function(e) NULL
-    )
-    chrome_missing <- is.null(chrome) || !nzchar(chrome)
-  }
-
   problems <- character()
   if (length(missing_pkgs)) {
     problems <- c(problems, sprintf(
@@ -143,13 +134,27 @@ check_render_backend <- function(fname = FALSE) {
       paste(sprintf("'%s'", missing_pkgs), collapse = ", ")
     ))
   }
-  if (chrome_missing) {
-    problems <- c(problems, paste0(
-      "Missing Chrome/Chromium for rgl's web backend. Either install ",
-      "Chrome/Chromium, or in R run: ",
-      "chromote::local_chrome_version(\"latest-stable\", ",
-      "binary = \"chrome-headless-shell\")"
-    ))
+
+  # Chrome state for web PNG: silent (chrome-headless-shell), warn (regular
+  # Chrome — flaky), or error (no Chrome at all).
+  if (will_use_web_png && !"webshot2" %in% missing_pkgs) {
+    chrome <- tryCatch(
+      suppressMessages(chromote::find_chrome()),
+      error = function(e) NULL
+    )
+    install_cmd <- "chromote::local_chrome_version(\"latest-stable\", binary = \"chrome-headless-shell\")"
+    if (is.null(chrome) || !nzchar(chrome)) {
+      problems <- c(problems, paste0(
+        "Missing Chrome/Chromium for rgl's web backend. In R run: ", install_cmd
+      ))
+    } else if (!grepl("chrome-headless-shell", chrome, fixed = TRUE)) {
+      warning(
+        "Using regular Chrome for PNG generation; this is known to flake ",
+        "under repeated calls (e.g. knitting). For reliable output, ",
+        "install chrome-headless-shell: ", install_cmd,
+        call. = FALSE
+      )
+    }
   }
   if (length(problems)) {
     stop("`view_xifti_surface` cannot render:\n  - ",

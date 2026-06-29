@@ -98,12 +98,12 @@ Read in GIFTI metric or label files as a \code{"xifti"} object. May also include
 surface geometry GIFTI files and perform resampling.
 }
 \seealso{
-Other reading:
-\code{\link[=as.xifti]{as.xifti()}},
-\code{\link[=info_cifti]{info_cifti()}},
-\code{\link[=load_parc]{load_parc()}},
-\code{\link[=load_surf]{load_surf()}},
-\code{\link[=read_cifti]{read_cifti()}},
-\code{\link[=read_surf]{read_surf()}}
+Other reading: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{load_surf}()},
+\code{\link{read_cifti}()},
+\code{\link{read_surf}()}
 }
 \concept{reading}

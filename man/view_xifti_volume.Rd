@@ -400,10 +400,10 @@ are ordered back (posterior) to front (anterior). If
 to left.
 }
 \seealso{
-Other visualizing:
-\code{\link[=view_comp]{view_comp()}},
-\code{\link[=view_surf]{view_surf()}},
-\code{\link[=view_xifti]{view_xifti()}},
-\code{\link[=view_xifti_surface]{view_xifti_surface()}}
+Other visualizing: 
+\code{\link{view_comp}()},
+\code{\link{view_surf}()},
+\code{\link{view_xifti}()},
+\code{\link{view_xifti_surface}()}
 }
 \concept{visualizing}

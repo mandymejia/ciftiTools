@@ -26,11 +26,11 @@ vertex lies on a border.
 Identify vertices which lie on the border of different parcels.
 }
 \seealso{
-Other parcellation-related:
-\code{\link[=apply_parc]{apply_parc()}},
-\code{\link[=load_parc]{load_parc()}},
-\code{\link[=load_sub_parc]{load_sub_parc()}},
-\code{\link[=parc_add_subcortex]{parc_add_subcortex()}},
-\code{\link[=parc_vals_to_xifti]{parc_vals_to_xifti()}}
+Other parcellation-related: 
+\code{\link{apply_parc}()},
+\code{\link{load_parc}()},
+\code{\link{load_sub_parc}()},
+\code{\link{parc_add_subcortex}()},
+\code{\link{parc_vals_to_xifti}()}
 }
 \concept{parcellation-related}

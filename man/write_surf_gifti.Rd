@@ -46,26 +46,26 @@ Whether the GIFTI was successfully written
 Write the data for the left or right surface to a surface GIFTI file.
 }
 \seealso{
-Other writing:
-\code{\link[=separate_cifti]{separate_cifti()}},
-\code{\link[=write_cifti]{write_cifti()}},
-\code{\link[=write_metric_gifti]{write_metric_gifti()}},
-\code{\link[=write_subcort_nifti]{write_subcort_nifti()}},
-\code{\link[=write_xifti2]{write_xifti2()}}
+Other writing: 
+\code{\link{separate_cifti}()},
+\code{\link{write_cifti}()},
+\code{\link{write_metric_gifti}()},
+\code{\link{write_subcort_nifti}()},
+\code{\link{write_xifti2}()}
 
-Other surface-related:
-\code{\link[=add_surf]{add_surf()}},
-\code{\link[=boundary_mask_surf]{boundary_mask_surf()}},
-\code{\link[=edit_mask_surf]{edit_mask_surf()}},
-\code{\link[=even_vert_samp]{even_vert_samp()}},
-\code{\link[=is.surf]{is.surf()}},
-\code{\link[=load_surf]{load_surf()}},
-\code{\link[=mask_surf]{mask_surf()}},
-\code{\link[=read_surf]{read_surf()}},
-\code{\link[=resample_surf]{resample_surf()}},
-\code{\link[=rotate_surf]{rotate_surf()}},
-\code{\link[=surf_area]{surf_area()}},
-\code{\link[=view_surf]{view_surf()}}
+Other surface-related: 
+\code{\link{add_surf}()},
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
+\code{\link{is.surf}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{surf_area}()},
+\code{\link{view_surf}()}
 }
 \concept{surface-related}
 \concept{writing}

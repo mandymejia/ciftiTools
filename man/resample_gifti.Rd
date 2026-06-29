@@ -131,8 +131,8 @@ and/or \code{"-surface-resample"} Workbench commands, depending on the input.
 }
 
 \seealso{
-Other gifting:
-\code{\link[=remap_gifti]{remap_gifti()}},
-\code{\link[=smooth_gifti]{smooth_gifti()}}
+Other gifting: 
+\code{\link{remap_gifti}()},
+\code{\link{smooth_gifti}()}
 }
 \concept{gifting}

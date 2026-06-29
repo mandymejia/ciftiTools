@@ -214,20 +214,20 @@ the first two levels (left and right cortex) are not used.
 }
 
 \seealso{
-Other common:
-\code{\link[=is.cifti]{is.cifti()}},
-\code{\link[=resample_cifti]{resample_cifti()}},
-\code{\link[=smooth_cifti]{smooth_cifti()}},
-\code{\link[=view_xifti]{view_xifti()}},
-\code{\link[=write_cifti]{write_cifti()}}
+Other common: 
+\code{\link{is.cifti}()},
+\code{\link{resample_cifti}()},
+\code{\link{smooth_cifti}()},
+\code{\link{view_xifti}()},
+\code{\link{write_cifti}()}
 
-Other reading:
-\code{\link[=as.xifti]{as.xifti()}},
-\code{\link[=info_cifti]{info_cifti()}},
-\code{\link[=load_parc]{load_parc()}},
-\code{\link[=load_surf]{load_surf()}},
-\code{\link[=read_surf]{read_surf()}},
-\code{\link[=read_xifti2]{read_xifti2()}}
+Other reading: 
+\code{\link{as.xifti}()},
+\code{\link{info_cifti}()},
+\code{\link{load_parc}()},
+\code{\link{load_surf}()},
+\code{\link{read_surf}()},
+\code{\link{read_xifti2}()}
 }
 \concept{common}
 \concept{reading}

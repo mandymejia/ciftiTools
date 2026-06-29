@@ -167,25 +167,25 @@ vignette for an example.
 }
 
 \seealso{
-Other visualizing:
-\code{\link[=view_comp]{view_comp()}},
-\code{\link[=view_xifti]{view_xifti()}},
-\code{\link[=view_xifti_surface]{view_xifti_surface()}},
-\code{\link[=view_xifti_volume]{view_xifti_volume()}}
+Other visualizing: 
+\code{\link{view_comp}()},
+\code{\link{view_xifti}()},
+\code{\link{view_xifti_surface}()},
+\code{\link{view_xifti_volume}()}
 
-Other surface-related:
-\code{\link[=add_surf]{add_surf()}},
-\code{\link[=boundary_mask_surf]{boundary_mask_surf()}},
-\code{\link[=edit_mask_surf]{edit_mask_surf()}},
-\code{\link[=even_vert_samp]{even_vert_samp()}},
-\code{\link[=is.surf]{is.surf()}},
-\code{\link[=load_surf]{load_surf()}},
-\code{\link[=mask_surf]{mask_surf()}},
-\code{\link[=read_surf]{read_surf()}},
-\code{\link[=resample_surf]{resample_surf()}},
-\code{\link[=rotate_surf]{rotate_surf()}},
-\code{\link[=surf_area]{surf_area()}},
-\code{\link[=write_surf_gifti]{write_surf_gifti()}}
+Other surface-related: 
+\code{\link{add_surf}()},
+\code{\link{boundary_mask_surf}()},
+\code{\link{edit_mask_surf}()},
+\code{\link{even_vert_samp}()},
+\code{\link{is.surf}()},
+\code{\link{load_surf}()},
+\code{\link{mask_surf}()},
+\code{\link{read_surf}()},
+\code{\link{resample_surf}()},
+\code{\link{rotate_surf}()},
+\code{\link{surf_area}()},
+\code{\link{write_surf_gifti}()}
 }
 \concept{surface-related}
 \concept{visualizing}
