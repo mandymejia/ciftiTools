@@ -645,7 +645,10 @@ view_xifti_surface <- function(
     }
     widget <- TRUE
   } else if (isFALSE(fname)) {
-    if (isFALSE(widget) && (length(idx) > 1)) {
+    if (web_render_active()) {
+      # Web-render backend has no native OpenGL window; interactive view = widget.
+      widget <- TRUE
+    } else if (isFALSE(widget) && (length(idx) > 1)) {
       warning(
         "`widget` is `FALSE` but `length(idx) > 1`. ",
         "This is not permissible since the OpenGL window can only show one measurement at a time. ",
@@ -1503,14 +1506,27 @@ view_xifti_surface <- function(
       controls <- c(controls, list(rightControl))
     }
 
-    # [TO DO]: Adjust sizing
-    # Looked into htmlwidgets::sizingPolicy but it doesn't affect how the legend
-    #   scales with the plot width, which can't be controlled within RStudio
-    #   pane.
-    out <- rgl::rglwidget(
-      height=round(all_panels_height/1.1),
-      width=round(all_panels_width/1.1)
-    )
+    # Explicit pixel dims override sizingPolicy fill in htmlwidgets, so pass
+    # NULL when we want the widget to track its container (Viewer / browser).
+    if (saving_file) {
+      out <- rgl::rglwidget(
+        height=round(all_panels_height/1.1),
+        width=round(all_panels_width/1.1)
+      )
+    } else {
+      out <- rgl::rglwidget(width=NULL, height=NULL)
+      out$sizingPolicy <- htmlwidgets::sizingPolicy(
+        defaultWidth = "100%",
+        viewer.fill = TRUE,
+        browser.fill = TRUE,
+        padding = 0
+      )
+      # Lock natural aspect ratio so legend + brain scale together without distortion.
+      out <- htmlwidgets::prependContent(out, htmltools::tags$style(sprintf(
+        ".rglWebGL { aspect-ratio: %d / %d !important; height: auto !important; }",
+        all_panels_width, all_panels_height
+      )))
+    }
     if (length(idx) > 1) {
       out <- rgl::playwidget(
         out, start=0, stop=length(idx)-1, interval=1,
