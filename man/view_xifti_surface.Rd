@@ -437,10 +437,10 @@ vignette for an example.
 }
 
 \seealso{
-Other visualizing: 
-\code{\link{view_comp}()},
-\code{\link{view_surf}()},
-\code{\link{view_xifti}()},
-\code{\link{view_xifti_volume}()}
+Other visualizing:
+\code{\link[=view_comp]{view_comp()}},
+\code{\link[=view_surf]{view_surf()}},
+\code{\link[=view_xifti]{view_xifti()}},
+\code{\link[=view_xifti_volume]{view_xifti_volume()}}
 }
 \concept{visualizing}

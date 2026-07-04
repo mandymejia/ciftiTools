@@ -41,20 +41,20 @@ When using these parcellations, please cite the corresponding paper(s):
 Note that the Schaefer parcels have been matched to networks from Kong (2021+).
 }
 \seealso{
-Other reading: 
-\code{\link{as.xifti}()},
-\code{\link{info_cifti}()},
-\code{\link{load_surf}()},
-\code{\link{read_cifti}()},
-\code{\link{read_surf}()},
-\code{\link{read_xifti2}()}
+Other reading:
+\code{\link[=as.xifti]{as.xifti()}},
+\code{\link[=info_cifti]{info_cifti()}},
+\code{\link[=load_surf]{load_surf()}},
+\code{\link[=read_cifti]{read_cifti()}},
+\code{\link[=read_surf]{read_surf()}},
+\code{\link[=read_xifti2]{read_xifti2()}}
 
-Other parcellation-related: 
-\code{\link{apply_parc}()},
-\code{\link{load_sub_parc}()},
-\code{\link{parc_add_subcortex}()},
-\code{\link{parc_borders}()},
-\code{\link{parc_vals_to_xifti}()}
+Other parcellation-related:
+\code{\link[=apply_parc]{apply_parc()}},
+\code{\link[=load_sub_parc]{load_sub_parc()}},
+\code{\link[=parc_add_subcortex]{parc_add_subcortex()}},
+\code{\link[=parc_borders]{parc_borders()}},
+\code{\link[=parc_vals_to_xifti]{parc_vals_to_xifti()}}
 }
 \concept{parcellation-related}
 \concept{reading}

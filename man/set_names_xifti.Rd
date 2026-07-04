@@ -20,24 +20,24 @@ Change the column names of a \code{"dscalar"} or \code{"dlabel"}
 \code{"xifti"} object.
 }
 \seealso{
-Other manipulating xifti: 
-\code{\link{add_surf}()},
-\code{\link{apply_parc}()},
-\code{\link{apply_xifti}()},
-\code{\link{combine_xifti}()},
-\code{\link{convert_xifti}()},
-\code{\link{impute_xifti}()},
-\code{\link{merge_xifti}()},
-\code{\link{move_to_mwall}()},
-\code{\link{move_to_submask}()},
-\code{\link{newdata_xifti}()},
-\code{\link{remap_cifti}()},
-\code{\link{remove_xifti}()},
-\code{\link{resample_cifti}()},
-\code{\link{resample_cifti_from_template}()},
-\code{\link{scale_xifti}()},
-\code{\link{select_xifti}()},
-\code{\link{smooth_cifti}()},
-\code{\link{transform_xifti}()}
+Other manipulating xifti:
+\code{\link[=add_surf]{add_surf()}},
+\code{\link[=apply_parc]{apply_parc()}},
+\code{\link[=apply_xifti]{apply_xifti()}},
+\code{\link[=combine_xifti]{combine_xifti()}},
+\code{\link[=convert_xifti]{convert_xifti()}},
+\code{\link[=impute_xifti]{impute_xifti()}},
+\code{\link[=merge_xifti]{merge_xifti()}},
+\code{\link[=move_to_mwall]{move_to_mwall()}},
+\code{\link[=move_to_submask]{move_to_submask()}},
+\code{\link[=newdata_xifti]{newdata_xifti()}},
+\code{\link[=remap_cifti]{remap_cifti()}},
+\code{\link[=remove_xifti]{remove_xifti()}},
+\code{\link[=resample_cifti]{resample_cifti()}},
+\code{\link[=resample_cifti_from_template]{resample_cifti_from_template()}},
+\code{\link[=scale_xifti]{scale_xifti()}},
+\code{\link[=select_xifti]{select_xifti()}},
+\code{\link[=smooth_cifti]{smooth_cifti()}},
+\code{\link[=transform_xifti]{transform_xifti()}}
 }
 \concept{manipulating xifti}

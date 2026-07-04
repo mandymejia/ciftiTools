@@ -23,9 +23,9 @@ Interpolates between entries in the input palette to make a larger palette
 with COLOR_RES entries.
 }
 \seealso{
-Other coloring: 
-\code{\link{ROY_BIG_BL}()},
-\code{\link{make_color_pal}()},
-\code{\link{use_color_pal}()}
+Other coloring:
+\code{\link[=ROY_BIG_BL]{ROY_BIG_BL()}},
+\code{\link[=make_color_pal]{make_color_pal()}},
+\code{\link[=use_color_pal]{use_color_pal()}}
 }
 \concept{coloring}

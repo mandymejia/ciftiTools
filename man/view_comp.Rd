@@ -64,10 +64,10 @@ How it works: the non-legend images (plots) are composited in a call to
 bottom, respectively, of the plots after with another call to \code{grid::arangeGrob}.
 }
 \seealso{
-Other visualizing: 
-\code{\link{view_surf}()},
-\code{\link{view_xifti}()},
-\code{\link{view_xifti_surface}()},
-\code{\link{view_xifti_volume}()}
+Other visualizing:
+\code{\link[=view_surf]{view_surf()}},
+\code{\link[=view_xifti]{view_xifti()}},
+\code{\link[=view_xifti_surface]{view_xifti_surface()}},
+\code{\link[=view_xifti_volume]{view_xifti_volume()}}
 }
 \concept{visualizing}
