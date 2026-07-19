@@ -57,13 +57,15 @@ In this vignette, we will use example data included in the `ciftiTools` package.
 * The "ones" dscalar file is the only file to include subcortical voxels. All its data values are 1. 
 * To reduce the size of `ciftiTools`, the dscalar and dlabel CIFTIs were resampled to 6k and the "ones" dscalar was resampled to 1k.
 
-We will also use GIFTI files containing inflated surface geometry.
+We will also use GIFTI files containing surface geometry.
 
 ```{r}
 cifti_fnames <- ciftiTools.files()$cifti
 surfL_fname <- ciftiTools.files()$surf["left"]
 surfR_fname <- ciftiTools.files()$surf["right"]
 ```
+
+These files are all in `fs_LR` coordinates, but `ciftiTools` can work with files created with other brain templates too, sich as `fsaverage`. 
 
 # Reading and Writing
 
@@ -82,9 +84,9 @@ The result of `read_cifti` is a `"xifti"` object. We can get an overview of it u
 xii # same as `summary(xii)`
 ```
 
-By default, `read_cifti` will read-in all existing brainstructures. Set `brainstructures=c("left","right")`, for example, to read in just the left and right cortex data. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`, `"all"` for all three, or `"existing"` (default).
+By default, `read_cifti` will read-in all existing brainstructures. Set `brainstructures=c("left","right")`, for example, to read in just the left and right cortex data. The full set of choices for brainstructures is any combination of `"left"`, `"right"` and `"subcortical"`; `"all"` for all three; or, `"existing"` (default).
 
-`"xifti"` objects are lists with entries `data` (the grayordinate data matrix, separated by brainstructure), `surf` (surface geometry), and `meta` (metadata, most of which is from the NIFTI XML header). `surf` distinguishes a `"xifti"` from a CIFTI file: the left and right cortical surface geometries are not included in CIFTI files, so they must be read from separate surface GIFTI files (ending in `surf.gii`). The surface must be compatible: the number of vertices must be the same, and each vertex in the CIFTI data must correspond to the vertex location in the corresponding GIFTI surface file. In this way, a `"xifti"` represents a combination of a CIFTI file with compatible GIFTI files for the cortical mesh.
+`"xifti"` objects are lists of three entries: `data` (the grayordinate data matrix, separated by brainstructure), `surf` (surface geometry), and `meta` (metadata, most of which is from the NIFTI XML header). `surf` distinguishes a `"xifti"` from a CIFTI file: the left and right cortical surface geometries are not included in CIFTI files, so they must be read from separate surface GIFTI files (ending in `surf.gii`). A surface must be compatible: the number of vertices must be the same, and each vertex in the CIFTI data must correspond to the vertex location in the corresponding GIFTI surface file. In this way, a `"xifti"` represents a combination of a CIFTI file with compatible GIFTI files for the cortical mesh.
 
 We can add GIFTI surface geometries with `add_surf`:
 
@@ -127,7 +129,7 @@ write_xifti(
 )
 ```
 
-With `separate_cifti`, a CIFTI can be separated and written into its component parts: the cortical data can be written to GIFTI metric or label files, and the subcortical data can be written to a NIFTI file. In addition, any ROIs or labels will also be written to files. The files are automatically named unless a new file name is provided.
+With `separate_cifti`, a CIFTI can be separated and written into its component parts: the cortical data can be written to GIFTI metric or label files, and the subcortical data can be written to a NIFTI file. In addition, any ROIs or labels will also be written to files. The files are automatically named unless new file names are provided.
 
 ```{r}
 # Use default names for everything except left cortex
@@ -150,42 +152,12 @@ library(rgl)
 
 if (ciftiTools:::is_tahoe()) {
   chromote::local_chrome_version("latest-stable", binary = "chrome-headless-shell")
-  # # Did not seem to be needed.
-  #try(chromote::ChromoteSession$default()$close(), silent = TRUE) 
-  #try(chromote::Chromote$default()$close(), silent = TRUE)
-  # Sometimes the first Chromium screenshot fails.
-  b <- chromote::ChromoteSession$new()
-  b$Page$navigate("about:blank")
-  Sys.sleep(1)
-  b$screenshot(tempfile(fileext=".png"))
-  b$close()
 }
 
 rgl::setupKnitr()
 
 # Sometimes the first OpenGL window does not render properly.
 rgl::open3d(); rgl::close3d()
-
-# Define function for rendering images, to use only if knitting.
-is_knit <- knitr::is_html_output() || knitr::is_latex_output()
-knit_pic <- function(dpi=200){
-  pic <- tempfile(fileext=".png")
-  if (ciftiTools:::is_tahoe()) {
-    suppressMessages(rgl::snapshot3d(pic, "png", delay = 3))
-    # # Seems to be the same as above.
-    # tmp <- tempfile(fileext = ".html")
-    # htmlwidgets::saveWidget(rgl::rglwidget(), tmp, selfcontained = TRUE)
-    # webshot2::webshot(tmp, "~/Downloads/temp.png", delay = 3)
-  } else {
-    rgl:::rgl.snapshot(pic)
-    rgl::close3d()
-  }
-  knitr::include_graphics(pic, dpi=dpi)
-}
-
-# These are also required.
-library(manipulateWidget)
-library(ggpubr)
 ```
 
 Now let's take a look! 
@@ -197,17 +169,16 @@ Now let's take a look!
 * `color_mode` specifies the nature of the data values: `"sequential"`, `"qualitative"` and `"diverging"`. If it is not provided, a default mode that makes sense for the data will be used.
 * `colors` specifies the color palette to use. If it is not provided, a default palette that makes sense for the `color_mode` is used.
 * `idx` controls which column(s) to display.
-* `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an OpenGL window if the length of `idx` is one, and an embedded HTML widget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image files (png) for each `idx` are created, unless `fname` ends in `.html` in which case an interactive html file will be saved. Lastly, both OpenGL windows and HTML widgets can be embedded in R Markdown documents for knitting; refer to the source code of this vignette to see how this works.
-* `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the surfaces in the `"xifti"` object is used. But if those are also unavailable, the "inflated" surfaces included in `ciftiTools` are used.
+* `widget` and `fname` control the output type. If `fname` is not provided, an interactive plot is created: by default, an OpenGL window if the length of `idx` is one, and an embedded HTML widget if the length of `idx` is greater than one. `widget` can be used to override this default. On the other hand, if `fname` is provided, static image files (png) for each `idx` are created, unless `fname` ends in `.html` in which case an interactive html file will be saved. Lastly, although OpenGL windows can be embedded in R Markdown documents for knitting through screenshotting capabilities, the results are unstable. We recommend embedding either widgets or static images (using `fname` to save temporary image files, and then adding them with `:knitr::include_graphics`). Refer to the source code of this vignette to see how this works.
+* `surfL` and `surfR` specify the surface geometry to plot the data on. If not provided, the surfaces in the `"xifti"` object is used, if available; if not, the "inflated" surfaces included in `ciftiTools` are used.
 
-Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. (In our case, the included surfaces _are_ the default surfaces.) We'll also make the second plot interactive by requesting display of two `idx`. Try clicking and dragging around the second plot to rotate, and scrolling to zoom in and out. Note that the first and third plots are OpenGL window snapshots, and that the second plot is an embedded HTML widget.
+Let's see an example using each `color_mode` option. Note how the included surfaces are used in the first plot, but if none are present as in the second and third plots, the default surfaces are automatically used for visualization. (In our case, the included surfaces _are_ the default surfaces.) We'll use widgets for each plot, but for the second plot we'll also display two `idx`. Notice how a slider is added to control which index is being visualized. Try clicking and dragging around the plots to rotate, and scrolling to zoom in and out. 
 
-```{r, fig.cap="dtseries file; first column; sequential palette"}
+```{r, fig.cap="dtseries file; first column; sequential palette", fig.width=5}
 view_xifti_surface(xii, idx=1, zlim=c(1,2), title='color_mode = "sequential"')
-if (is_knit) { knit_pic() }
 ```
 
-```{r fig.height=4.2, fig.width=5.5}
+```{r, fig.cap="dtseries file; first two columns, diverging palette", fig.height=3.7, fig.width=5}
 xii <- read_cifti(cifti_fnames["dscalar"]) # no GIFTI included, so the default inflated surface is used.
 view_xifti_surface(
   xii, idx=1:2, zlim=c(0,5), color_mode = "diverging",
@@ -215,14 +186,13 @@ view_xifti_surface(
 )
 ```
 
-```{r, fig.cap="dlabel file; first label; palette from label metadata"}
+```{r, fig.cap="dlabel file; first label; palette from label metadata", fig.width=5}
 view_xifti_surface(
   read_cifti(cifti_fnames["dlabel"]), 
   # Interactively, a color legend that displays the label names will also be printed.
   legend_ncol=5, 
   title='color_mode = "qualitative"'
 )
-if (is_knit) { knit_pic() }
 ```
 
 ### Volume visualization
@@ -246,7 +216,7 @@ The S3 method `plot(xii)` will display all the data present in the `xifti` using
 
 `NA` values will be uncolored. You can use this to, for example, only color values meeting a certain threshold.
 
-```{r, fig.cap="dscalar; using NA values to selectively color"}
+```{r, fig.cap="dscalar; using NA values to selectively color", fig.width=5}
 xii <- read_cifti(cifti_fnames["dscalar"])
 # Convert to z-scores
 xii <- scale_xifti(xii)
@@ -256,27 +226,24 @@ view_xifti_surface(
   xii, title='MyelinMap_BC_decurv: z > 2', 
   zlim=c(2,3), NA_color="#505560"
 )
-if (is_knit) { knit_pic() }
 ```
 
 Something to note is that the shadows from 3D rendering will darken colors in some folded regions of the brain. Another consideration is that the colors are smoothed continuously. In some situations, these default 3D shading properties may be undesirable. The `shadows` and `material` arguments can be used to adjust aspects of 3D shading.
 
-```{r, fig.cap="Lessening the shadows"}
+```{r, fig.cap="Lessening the shadows", fig.width=5}
 view_xifti_surface(
   xii, title='MyelinMap_BC_decurv: z > 2, less shadows', 
   zlim=c(2,3), NA_color="#505560",
   shadows=0
 )
-if (is_knit) { knit_pic() }
 ```
 
-```{r, fig.cap="Exact coloring, by disabling shadows and color smoothing"}
+```{r, fig.cap="Exact coloring, by disabling shadows and color smoothing", fig.width=5}
 view_xifti_surface(
   xii, title='MyelinMap_BC_decurv: z > 2, exact colors', 
   zlim=c(2,3), NA_color="#505560",
   material=list(lit=FALSE, smooth=FALSE)
 )
-if (is_knit) { knit_pic() }
 ```
 
 # Resampling and smoothing
@@ -324,7 +291,7 @@ smooth_cifti(
 
 We'll plot this smoothed CIFTI file with a diverging palette. Let's try both the default pallete and an RColorBrewer palette. 
 
-```{r, fig.cap="Smoothed CIFTI, default palette"}
+```{r, fig.cap="Smoothed CIFTI, default palette", fig.width=5}
 # Visualizing the smoothed file.
 # Let's demonstrate the ability to use RColorBrewer palettes!
 plot(
@@ -332,17 +299,15 @@ plot(
   surfL=surfL_fname, surfR=surfR_fname, 
   zlim=c(.6,1.8), color_mode="diverging"
 )
-if (is_knit) { knit_pic() }
 ```
 
-```{r, fig.cap="Smoothed CIFTI, RColorBrewer palette"}
+```{r, fig.cap="Smoothed CIFTI, RColorBrewer palette", fig.width=5}
 # Let's demonstrate the ability to use RColorBrewer palettes!
 plot(
   read_cifti(file.path(out_dir, smoothed_xii_fname)), 
   surfL=surfL_fname, surfR=surfR_fname, 
   zlim=c(.6,1.8), color_mode="diverging", colors="Spectral"
 )
-if (is_knit) { knit_pic() }
 ```
 
 # Manipulation & Math
@@ -424,13 +389,12 @@ surf
 These can be written back to GIFTI files, visualized, and resampled. Resampling can be performed on the `"surf"` objects or the surface GIFTI files directly:
 
 
-```{r}
+```{r, fig.width=2.5}
 # Writing
 write_surf_gifti(surf, file.path(out_dir, "my.L.surf"))
 
 # Visualizing
 plot(surf)
-if (is_knit) { knit_pic() }
 ```
 
 ```{r}
@@ -442,26 +406,24 @@ resample_gifti(surfL_fname, file.path(out_dir, "my.L.2k.surf.gii"), "left", resa
 
 As mentioned earlier, the inflated surface is included as a GIFTI file and can be accessed with `ciftiTools.files()`. It is used as default for visualizing data with `view_xifti_surface`. But two more surfaces are available through the function `load_surf`:
 
-```{r, fig.cap="Two alternative surfaces"}
+```{r, fig.cap="Two alternative surfaces", fig.width=5}
 xii <- as.xifti(
   surfL = load_surf("left", "very inflated"),
   surfR = load_surf("right", "midthickness")
 )
+xii <- resample_cifti(xii, resamp_res=5000)
 plot(xii, title = "Left very inflated | Right midthickness")
-if (is_knit) { knit_pic() }
 ```
 
 Lastly, let's demonstrate the ability to plot vertices and edges. (This can also be done when plotting `"xifti"` objects with data, using the same arguments.)
 
-```{r, fig.cap="Surface with vertices drawn in blue"}
+```{r, fig.cap="Surface with vertices drawn in blue", fig.width=2.5}
 # Recall that surf was resampled to 2k
 plot(surf, vertex_size=3, vertex_color="blue")
-if (is_knit) { knit_pic() }
 ```
 
-```{r, fig.cap="Surface with edges drawn in black"}
+```{r, fig.cap="Surface with edges drawn in black", fig.width=2.5}
 plot(surf, edge_color="black")
-if (is_knit) { knit_pic() }
 ```
 
 ### Mesh operations
@@ -492,7 +454,7 @@ knitr::include_graphics(plt, dpi=180)
 
 `even_vert_samp` obtains a subset of vertices sampled evenly across the mesh. It works by downsampling the mesh and then identifying the original vertices closest to the vertices on the downsampled mesh. 
 
-```{r, fig.cap="500 evenly-sampled vertices"}
+```{r, fig.cap="500 evenly-sampled vertices", fig.width=2.5}
 # Load a left-hemisphere surface.
 surfL <- load_surf("left")
 
@@ -505,8 +467,9 @@ v2 <- seq(nrow(surfL$vertices)) %in% v
 # Make a xifti having "1" for in-mask vertices, "0" elsewhere.
 xii <- as.xifti(as.matrix(v2*1), surfL=surfL)
 
-plot(convert_xifti(xii, "dlabel"))
-if (is_knit) { knit_pic() }
+xii <- convert_xifti(xii, "dlabel")
+xii <- resample_cifti(xii, resamp_res=50000)
+plot(xii)
 ```
 
 # Working with parcellations
@@ -515,12 +478,11 @@ if (is_knit) { knit_pic() }
 
 `ciftiTools` includes several commonly-used parcellations which can be loaded in as a single-column dlabel `"xifti"` with `load_parc`: the 2018 Schaefer parcellations at 100, 400, and 1000 parcels resolutions, and the 2011 Yeo 7- and 17-network parcellations. Refer to `?load_parc` for their corresponding references. Any other parcellations can be read in with `read_cifti`. 
 
-```{r fig.cap="Schaefer 400 parcellation"}
+```{r fig.cap="Schaefer 400 parcellation", fig.width=5}
 parc <- load_parc("Schaefer_400")
 # parc <- read_cifti("my_parcellation.dlabel.nii")
 
 plot(parc)
-if (is_knit) { knit_pic() }
 ```
 
 `parc_add_subcortex` will add new label levels and "parcels" data for each subcortical structure in the MNI template. 
@@ -565,9 +527,9 @@ For real timeseries data, `cor(t(pmean))` would give the parcels x parcels funct
 
 `apply_parc` also has an argument which converts the result to a `"xifti"` object. Each locations' value will be the value of its corresponding parcel.
 
-```{r fig.cap="Median parcel value"}
+```{r, fig.cap="Median parcel value", fig.width=5}
 
-# Obtain the min/max, quartile, and mean value
+# Obtain the min/max, quartiles, and mean value
 #   of the second data column, within each parcel.
 psumm <- apply_parc(
   select_xifti(dat, idx=2),
@@ -577,9 +539,7 @@ psumm <- apply_parc(
 )
 
 # Plot the median.
-plot(psumm, idx=3, title=psumm$meta$cifti$names[3], colors="magma")
-
-if (is_knit) { knit_pic() }
+plot(psumm, idx=3, title=psumm$meta$cifti$names[3], colors="magma", zlim=c(0, 3), widget=TRUE)
 ```
 
 # Citing `ciftiTools`
