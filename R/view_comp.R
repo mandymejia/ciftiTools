@@ -178,7 +178,7 @@ view_comp <- function(
   grid::grid.draw(comp)
   if (write_comp) { 
     dev.off()
-    return(fname)
+    return(invisible(fname))
   } else {
     return(invisible(comp))
   }
