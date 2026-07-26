@@ -228,6 +228,11 @@ view_xifti <- function(xifti, what=NULL, ...) {
 
   args <- list(...)
 
+  # Mirror the web-render force in view_xifti_surface - tech debt: this should be handled in a more centralized way, but for now this is the only place that needs it.
+  if (web_render_active() && (is.null(args[["fname"]]) || isFALSE(args[["fname"]]))) {
+    args$widget <- TRUE
+  }
+
   vxs <- function(
     xifti, args, color_mode, zlim, colors,
     fname, fname_sub,
