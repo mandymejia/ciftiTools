@@ -1,11 +1,7 @@
-# Regression tests for the view_xifti / view_xifti_surface widget visibility
-# parity bug (fixed in R/view_xifti.R). Both entry points must return the
-# widget visibly on the web-render backend when no fname is given, so
-# htmlwidgets auto-prints it into the RStudio Viewer or the user's browser.
-#
-# Previous bug: view_xifti wrapped the widget in invisible() unless the caller
-# passed widget=TRUE explicitly, so plot() / view_xifti() silently produced
-# nothing while view_xifti_surface() worked.
+# Tests for the web-render (Tahoe / opt-in) backend.
+# Add new web-render regressions here rather than a new file per bug.
+# Each test uses with_web_render() below to force the backend on regardless
+# of host platform, so these run anywhere with Connectome Workbench.
 
 check_wb <- function() {
   if (is.null(ciftiTools.getOption("wb_path"))) {
