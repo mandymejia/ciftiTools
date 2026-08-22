@@ -282,33 +282,25 @@ read_cifti(cifti_fnames["dscalar"], resamp_res=2000)
 Use `smooth_cifti` to perform smoothing. Like resampling, this function works on both CIFTI files and `"xifti"` objects.
 
 ```{r}
-smoothed_xii_fname <- "my_smoothed_cifti.dtseries.nii"
+sm_xii_fname <- "my_smoothed_cifti.dtseries.nii"
 
 # Smoothing a CIFTI file
 smooth_cifti(
-  cifti_fnames["dtseries"], file.path(out_dir, smoothed_xii_fname),
-  surf_FWHM=2, vol_FWHM=2,
-  surfL_fname=surfL_fname, surfR_fname=surfR_fname,
-  subcortical_zeroes_as_NA=TRUE
+  cifti_fnames["dtseries"], file.path(out_dir, sm_xii_fname), surf_FWHM=7
 )
 ```
 
-We'll plot this smoothed CIFTI file with a diverging palette. Let's try both the default pallete and an RColorBrewer palette. 
+We'll make a widget comparing the original and smoothed CIFTI, and use the default diverging palette.
 
-```{r, fig.cap="Smoothed CIFTI, default palette", fig.width=5}
-view_xifti_surface(
-  read_cifti(file.path(out_dir, smoothed_xii_fname)), 
-  surfL=surfL_fname, surfR=surfR_fname, 
-  zlim=c(.6,1.8), color_mode="diverging", title="Default diverging palette"
+```{r, fig.cap="CIFTI smoothing", fig.width=5, fig.height=4.2}
+cii <- merge_xifti(
+  read_cifti(cifti_fnames["dtseries"], idx=1),
+  read_cifti(file.path(out_dir, sm_xii_fname), idx=1)
 )
-```
 
-```{r, fig.cap="Smoothed CIFTI, RColorBrewer palette", fig.width=5}
 view_xifti_surface(
-  read_cifti(file.path(out_dir, smoothed_xii_fname)), 
-  surfL=surfL_fname, surfR=surfR_fname, 
-  zlim=c(.6,1.8), color_mode="diverging", colors="Spectral",
-  title="RColorBrewer diverging palette"
+  cii, zlim=c(.6,1.8), idx=seq(2), 
+  color_mode="diverging", title=c("Original", "Smoothed")
 )
 ```
 
@@ -540,7 +532,7 @@ dim(pmean) # 52 parcels x 2 data columns
 
 For real timeseries data, `cor(t(pmean))` would give the parcels x parcels functional connectivity matrix.
 
-`apply_parc` also has an argument which converts the result to a `"xifti"` object. Each locations' value will be the value of its corresponding parcel.
+`apply_parc` also has an argument which converts the result to a `"xifti"` object. Each locations' value will be the value of its corresponding parcel. Below is an example. We'll also take this opportunity to show that palettes from `RColorBrewer` and `viridis` are supported, by using the magma palette from `viridis`. 
 
 ```{r, fig.cap="Median values for the 51 components in the Yeo 7 parcellation"}
 
