@@ -1,47 +1,47 @@
 #' Smooth CIFTI data
 #'
 #' Spatially smooth the metric data of a CIFTI file or \code{"xifti"} object.
-#' 
+#'
 #' If the CIFTI is a ".dlabel" file (intent 3007), then it will be converted
 #'  to a ".dscalar" file because the values will no longer be integer indices.
 #'  Unless the label values were ordinal, this is probably not desired so a
 #'  warning will be printed.
-#' 
+#'
 #'  Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
-#' 
-#'  Surfaces are required for each hemisphere in the CIFTI. If they are not 
-#'  provided, the default inflated surfaces will be used. 
-#' 
+#'
+#'  Surfaces are required for each hemisphere in the CIFTI. If they are not
+#'  provided, the midthickness surfaces will be used.
+#'
 #'  Conversion for sigma: \eqn{\sigma \times 2 \times \sqrt(2 \times \log(2)) = FWHM}
-#' 
+#'
 #' @param x The CIFTI file name or \code{"xifti"} object to smooth.
 #' @param cifti_target_fname File name for the smoothed CIFTI. If
 #'  \code{NULL}, will be written to "smoothed.d*.nii" in the current working
-#'  directory if \code{x} was a CIFTI file, and in a temporary directory if 
+#'  directory if \code{x} was a CIFTI file, and in a temporary directory if
 #'  \code{x} was a \code{"xifti"} object.
 #' @param surf_FWHM,vol_FWHM The full width at half maximum (FWHM) parameter
 #'  for the gaussian surface or volume smoothing kernel, in mm. Default: \code{5}
 #'  for cortex (surface) and \code{3} for subcortex (volume).
-#' @param surfL_fname,surfR_fname (Required if the corresponding cortex is 
+#' @param surfL_fname,surfR_fname (Required if the corresponding cortex is
 #'  present) Surface GIFTI files for the left and right cortical surfaces. If
 #'  not provided, the surfaces in \code{x} are used, but if those are also not
-#'  present, the default surfaces will be used.
+#'  present, the midthickness surfaces will be used.
 #' @param cerebellum_fname (Optional) Surface GIFTI file for the cerebellar surface
-#' @param subcortical_zeroes_as_NA,cortical_zeroes_as_NA Should zero-values in 
+#' @param subcortical_zeroes_as_NA,cortical_zeroes_as_NA Should zero-values in
 #'  the subcortical volume or cortex be treated as NA? Default: \code{FALSE}.
 #' @param subcortical_merged Smooth across subcortical structure boundaries?
 #'  Default: \code{FALSE}.
 #'
 #' @return The \code{cifti_target_fname}, invisibly, if \code{x} was a CIFTI
 #'  file name. A \code{"xifti"} object if \code{x} was a \code{"xifti"} object.
-#' 
+#'
 #' @family manipulating xifti
 #' @family common
 #' @export
 #'
 #' @section Connectome Workbench:
 #' This function interfaces with the \code{"-cifti-smoothing"} Workbench command.
-#' 
+#'
 smooth_cifti <- function(
   x, cifti_target_fname=NULL,
   surf_FWHM=5, vol_FWHM=3,
@@ -99,7 +99,7 @@ smooth_cifti <- function(
     if (!is.null(x$data$cortex_left)) { brainstructures <- c(brainstructures, "left") }
     if (!is.null(x$data$cortex_right)) { brainstructures <- c(brainstructures, "right") }
     if (!is.null(x$data$subcort)) { brainstructures <- c(brainstructures, "subcortical") }
-  
+
   } else {
     # Check that the original file is valid.
     cifti_original_fname <- x
@@ -123,15 +123,15 @@ smooth_cifti <- function(
     ))
     fix_dlabel <- TRUE
     cifti_target_fname <- gsub(
-      "dlabel.nii", "dscalar.nii", 
+      "dlabel.nii", "dscalar.nii",
       cifti_target_fname, fixed=TRUE
     )
   }
 
-  # Build the Connectome Workbench command. 
+  # Build the Connectome Workbench command.
   cmd <- paste(
-    "-cifti-smoothing", 
-    sys_path(cifti_original_fname), 
+    "-cifti-smoothing",
+    sys_path(cifti_original_fname),
     surf_FWHM / (2*sqrt(2*log(2))),
     vol_FWHM / (2*sqrt(2*log(2))),
     "COLUMN",
@@ -174,11 +174,9 @@ smooth_cifti <- function(
       x_res <- nrow(x$data$cortex_left)
     }
 
+    surfL <- load_surf(hemisphere="left", name="midth", resamp_res=x_res)
     surfL_fname <- file.path(tempdir(), "left.surf.gii")
-    surfL_fname <- resample_gifti(
-      ciftiTools.files()$surf["left"], 
-      surfL_fname, hemisphere="left", file_type="surface", resamp_res=x_res
-    )
+    write_surf(surfL, surfL_fname, "left")
   }
 
   ## Try in this order: `resamp_res`, medial wall mask, data length
@@ -214,17 +212,15 @@ smooth_cifti <- function(
       x_res <- nrow(x$data$cortex_right)
     }
 
+    surfR <- load_surf(hemisphere="right", name="midth", resamp_res=x_res)
     surfR_fname <- file.path(tempdir(), "right.surf.gii")
-    surfR_fname <- resample_gifti(
-      ciftiTools.files()$surf["right"], 
-      surfR_fname, hemisphere="right", file_type="surface", resamp_res=x_res
-    )
+    write_surf(surfR, surfR_fname, "right")
   }
 
   # Build and run command ------------------------------------------------------
   if (!is.null(surfL_fname)) { cmd <- paste(cmd, "-left-surface", sys_path(surfL_fname)) }
   if (!is.null(surfR_fname)) { cmd <- paste(cmd, "-right-surface", sys_path(surfR_fname)) }
-  if (!is.null(cerebellum_fname)) { cmd <- paste(cmd, "-cerebellum-surface", sys_path(cerebellum_fname)) }  
+  if (!is.null(cerebellum_fname)) { cmd <- paste(cmd, "-cerebellum-surface", sys_path(cerebellum_fname)) }
 
   if (subcortical_zeroes_as_NA) { cmd <- paste(cmd, "-fix-zeros-volume") }
   if (cortical_zeroes_as_NA) { cmd <- paste(cmd, "-fix-zeros-surface") }
@@ -240,16 +236,16 @@ smooth_cifti <- function(
     names_fname <- tempfile()
     cat(names(cifti_info$cifti$labels), file = names_fname, sep = "\n")
     run_wb_cmd(paste(
-      "-cifti-change-mapping", sys_path(old_target_fname), 
+      "-cifti-change-mapping", sys_path(old_target_fname),
       "ROW", sys_path(cifti_target_fname),
       "-scalar", "-name-file", sys_path(names_fname)
     ))
   }
-  
+
   # Return results -------------------------------------------------------------
   if (input_is_xifti) {
     read_xifti_args <- list(
-      cifti_fname = cifti_target_fname, 
+      cifti_fname = cifti_target_fname,
       brainstructures = brainstructures
     )
     if (surfL_delete) { file.remove(surfL_fname) }

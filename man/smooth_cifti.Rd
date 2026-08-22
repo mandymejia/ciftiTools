@@ -74,7 +74,7 @@ for cortex (surface) and \code{3} for subcortex (volume).}
 \item{surfL_fname, surfR_fname}{(Required if the corresponding cortex is
 present) Surface GIFTI files for the left and right cortical surfaces. If
 not provided, the surfaces in \code{x} are used, but if those are also not
-present, the default surfaces will be used.}
+present, the midthickness surfaces will be used.}
 
 \item{cerebellum_fname}{(Optional) Surface GIFTI file for the cerebellar surface}
 
@@ -100,7 +100,7 @@ warning will be printed.
 Can accept a \code{"xifti"} object as well as a path to a CIFTI-file.
 
 Surfaces are required for each hemisphere in the CIFTI. If they are not
-provided, the default inflated surfaces will be used.
+provided, the midthickness surfaces will be used.
 
 Conversion for sigma: \eqn{\sigma \times 2 \times \sqrt(2 \times \log(2)) = FWHM}
 }
