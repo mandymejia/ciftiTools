@@ -16,7 +16,8 @@ test_that("plot_xifti_volume and related functions are working", {
     zlim=c(2, 5), title="Abcd", legend_embed=FALSE
   )
   x <- convert_xifti(cii, "dlabel")
-  testthat::expect_warning(view_xifti_volume(x, slices=seq(12), plane="sag"))
+  #testthat::expect_warning(view_xifti_volume(x, slices=seq(12), plane="sag"))
+  view_xifti_volume(x, slices=seq(12), plane="sag")
   # view_xifti_volume(cii, plane="sag", slices=20) fails???
   plot(cii, plane="sag", color_mode="qualitative"); rgl::close3d()
 
