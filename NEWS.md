@@ -1,3 +1,8 @@
+# 21.0
+
+* Use widgets and Chromium on Tahoe, to work around broken Open GL windows.
+* Use midthickness surfaces for smoothing as default! Rather than inflated.
+
 # 20.0 
 
 * `load_surf`: Note that the surfaces are fs_LR

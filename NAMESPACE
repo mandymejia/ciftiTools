@@ -129,31 +129,45 @@ export(write_xifti)
 export(write_xifti2)
 export(writecii)
 import(viridisLite)
-importFrom(RColorBrewer,brewer.pal)
-importFrom(RColorBrewer,brewer.pal.info)
-importFrom(RNifti,"sform<-")
-importFrom(RNifti,readNifti)
-importFrom(RNifti,writeNifti)
-importFrom(gifti,is.gifti)
-importFrom(gifti,readgii)
-importFrom(gifti,writegii)
-importFrom(grDevices,col2rgb)
-importFrom(grDevices,colorRampPalette)
-importFrom(grDevices,dev.list)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,gray)
-importFrom(grDevices,pdf)
-importFrom(grDevices,png)
-importFrom(grDevices,rgb)
+importFrom(RColorBrewer,
+  brewer.pal,
+  brewer.pal.info
+)
+importFrom(RNifti,
+  "sform<-",
+  readNifti,
+  writeNifti
+)
+importFrom(gifti,
+  is.gifti,
+  readgii,
+  writegii
+)
+importFrom(grDevices,
+  col2rgb,
+  colorRampPalette,
+  dev.list,
+  dev.off,
+  gray,
+  pdf,
+  png,
+  rgb
+)
 importFrom(graphics,plot.new)
-importFrom(oro.nifti,as.nifti)
-importFrom(oro.nifti,nifti_header)
-importFrom(oro.nifti,overlay)
-importFrom(oro.nifti,readNIfTI)
-importFrom(stats,cmdscale)
-importFrom(stats,dist)
-importFrom(stats,median)
-importFrom(stats,quantile)
+importFrom(oro.nifti,
+  as.nifti,
+  nifti_header,
+  overlay,
+  readNIfTI
+)
+importFrom(stats,
+  cmdscale,
+  dist,
+  median,
+  quantile
+)
 importFrom(utils,capture.output)
-importFrom(xml2,as_list)
-importFrom(xml2,read_xml)
+importFrom(xml2,
+  as_list,
+  read_xml
+)
