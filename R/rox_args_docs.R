@@ -410,28 +410,31 @@ NULL
 #' @keywords internal
 NULL
 
-#'  faces
+#' faces
 #'
 #' @param faces An \eqn{F \times 3} matrix, where each row contains the vertex
 #'  indices for a given triangular face in the mesh. \eqn{F} is the number of
 #'  faces in the mesh.
 #'
 #' @name faces_Param
+#' @keywords internal
 NULL
 
-#'  vertices
+#' vertices
 #'
 #' @param vertices A \eqn{V \times 3} matrix, where each row contains the Euclidean
 #'  coordinates at which a given vertex in the mesh is located. \eqn{V} is the
 #'  number of vertices in the mesh
 #'
 #' @name vertices_Param
+#' @keywords internal
 NULL
 
 #' mask: vertices
 #'
-#' @param mask  A length \eqn{V} logical vector indicating if each vertex is
+#' @param mask A length \eqn{V} logical vector indicating if each vertex is
 #'  within the input mask.
 #'
 #' @name mask_Param_vertices
+#' @keywords internal
 NULL
