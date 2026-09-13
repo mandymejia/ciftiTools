@@ -86,7 +86,11 @@ write_subcort_nifti <- function(
   ## Write (the full array, or just the first volume). -------------------------
   ## https://github.com/jonclayden/RNifti/issues/5
   if (!is.null(trans_mat)) {
-    subcortVol_initial <- RNifti::`pixdim<-`(subcortVol_initial, pixdims)
+    subcortVol_initial <- if (length(dim(subcortVol_initial))==3) {
+      RNifti::`pixdim<-`(subcortVol_initial, pixdims)
+    } else {
+      RNifti::`pixdim<-`(subcortVol_initial, c(pixdims, 1))
+    }
     subcortVol_initial <- RNifti::`sform<-`(subcortVol_initial, trans_mat)
     # # Alternative to above, if memory use is high?
     # attr(subcortVol_initial, "srow_x") <- trans_mat[1, ]
@@ -150,7 +154,11 @@ write_subcort_nifti <- function(
   subcortLabs <- as.numeric(subcortLabs)
   subcortLabs <- unvec_vol(subcortLabs, subcortMask, fill=fill)
   if (!is.null(trans_mat)) {
-    subcortLabs <- RNifti::`pixdim<-`(subcortLabs, pixdims)
+    subcortLabs <- if (length(dim(subcortLabs))==3) {
+      RNifti::`pixdim<-`(subcortLabs, pixdims)
+    } else {
+      RNifti::`pixdim<-`(subcortLabs, c(pixdims, 1))
+    }
     subcortLabs <- RNifti::`sform<-`(subcortLabs, trans_mat)
   }
   if (!is.null(trans_units)) {
@@ -202,23 +210,23 @@ write_subcort_nifti <- function(
       stop("sizeof_hdr is ", sizeof_hdr, " not 348 -- file may be corrupt or wrong endianness.")
     }
 
-    ## Overwrite the relevant metadata. 
+    ## Overwrite the relevant metadata.
     ### dims. yes, this is needed for RNifti
     header_raw[41:42] <- writeBin(as.integer(4), raw(), size=2, endian=endian)
     ### the number of volumes.
     header_raw[49:50] <- writeBin(as.integer(nC), raw(), size=2, endian=endian)
 
-    ## Check after. 
+    ## Check after.
     sizeof_hdr_after <- readBin(header_raw[1:4], integer(), size=4, endian=endian)
     if (sizeof_hdr_after != 348) {
       stop("sizeof_hdr was corrupted during dim[4] patch.")
     }
 
-    ## Write the header. 
+    ## Write the header.
     con <- file(subcortVol_fname, open="r+b")
     writeBin(header_raw, con, size=1)
     close(con)
-    
+
     ## Verify dim[4].
     con <- file(subcortVol_fname, open="rb")
     dim4_check <- readBin(readBin(con, raw(), n=50)[49:50], integer(), size=2, endian=endian)
@@ -244,7 +252,11 @@ write_subcort_nifti <- function(
   # Mask (as numeric). --------------------------------------------------------
   subcortMask <- subcortMask + 0
   if (!is.null(trans_mat)) {
-    subcortMask <- RNifti::`pixdim<-`(subcortMask, pixdims)
+    subcortMask <- if (length(dim(subcortMask))==3) {
+      RNifti::`pixdim<-`(subcortMask, pixdims)
+    } else {
+      RNifti::`pixdim<-`(subcortMask, c(pixdims, 1))
+    }
     subcortMask <- RNifti::`sform<-`(subcortMask, trans_mat)
   }
   if (!is.null(trans_units)) {
