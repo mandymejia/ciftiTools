@@ -628,6 +628,8 @@ view_xifti_surface <- function(
     widget <- as.logical(widget[[1]])
   }
 
+  fname <- resolve_together_fname(together, fname)
+
   # rgl can't make pixels but no platform override enabled the web backend:
   # fall back to an HTML widget so the user always gets *something*.
   if (!web_render_active() && rgl::rgl.useNULL()) {
