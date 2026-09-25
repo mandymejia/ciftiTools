@@ -1,3 +1,29 @@
+#' Ensure `together` has a file to write to.
+#'
+#' `together` composites per-idx snapshots into one image, so it requires
+#'  `saving_file = TRUE` (widget = FALSE downstream). When the caller didn't
+#'  provide `fname`, generate a temp path and message where the composite
+#'  will be written. Called from both `view_xifti()` and
+#'  `view_xifti_surface()` so the auto-fname behavior is defined once.
+#'
+#' @param together The `together` arg (character or `NULL`).
+#' @param fname The `fname` arg (character path, `TRUE`, `FALSE`, or `NULL`).
+#'
+#' @return `fname` unchanged if `together` is `NULL`; otherwise a character
+#'  path guaranteed to satisfy the file-save code path.
+#'
+#' @keywords internal
+resolve_together_fname <- function(together, fname) {
+  if (!is.null(together) && (is.null(fname) || isFALSE(fname))) {
+    fname <- tempfile(fileext = ".png")
+    message(
+      "`together` requires saving files. Composite will be written to: ",
+      fname
+    )
+  }
+  fname
+}
+
 #' Get title for \code{view_xifti_surface} or \code{view_xifti_volume}
 #'
 #' Determine the title(s) for the cortical surface or subcortical volume plot,
@@ -227,6 +253,8 @@ view_xifti <- function(xifti, what=NULL, ...) {
   }
 
   args <- list(...)
+
+  args[["fname"]] <- resolve_together_fname(args[["together"]], args[["fname"]])
 
   # Mirror the web-render force in view_xifti_surface - tech debt: this should be handled in a more centralized way, but for now this is the only place that needs it.
   if (web_render_active() && (is.null(args[["fname"]]) || isFALSE(args[["fname"]]))) {

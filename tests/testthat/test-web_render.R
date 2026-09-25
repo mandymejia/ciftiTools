@@ -89,3 +89,55 @@ test_that("plot() with explicit widget=FALSE on web-render warns and forces widg
     expect_s3_class(r$value, "htmlwidget")
   })
 })
+
+test_that("plot(..., together='idx') without fname auto-generates a temp path and writes the composite", {
+  check_wb()
+  skip_if_not_installed("png")
+  skip_if_not_installed("grid")
+  skip_if_not_installed("gridExtra")
+  with_web_render({
+    xii <- load_xii("dscalar")
+    tmp_pattern <- tempfile(pattern = "before_")   # unused; just to snapshot the tempdir mtime baseline
+    r <- expect_message(
+      withVisible(plot(xii, idx = 1:2, together = "idx")),
+      "Composite will be written to"
+    )
+    # side-effect only: return should be silent, file should exist
+    expect_false(r$visible)
+    expect_type(r$value, "character")
+    expect_true(file.exists(r$value))
+    unlink(r$value)
+  })
+})
+
+test_that("view_xifti_surface(..., together='idx') direct call also auto-generates fname", {
+  check_wb()
+  skip_if_not_installed("png")
+  skip_if_not_installed("grid")
+  skip_if_not_installed("gridExtra")
+  with_web_render({
+    xii <- load_xii("dscalar")
+    r <- expect_message(
+      withVisible(view_xifti_surface(xii, idx = 1:2, together = "idx")),
+      "Composite will be written to"
+    )
+    expect_false(r$visible)
+    expect_true(file.exists(r$value))
+    unlink(r$value)
+  })
+})
+
+test_that("plot(..., together='idx', fname=<path>) writes composite to the caller's path", {
+  check_wb()
+  skip_if_not_installed("png")
+  skip_if_not_installed("grid")
+  skip_if_not_installed("gridExtra")
+  with_web_render({
+    xii <- load_xii("dscalar")
+    out <- tempfile(fileext = ".png")
+    on.exit(unlink(out), add = TRUE)
+    r <- withVisible(plot(xii, idx = 1:2, together = "idx", fname = out))
+    expect_false(r$visible)
+    expect_true(file.exists(out))
+  })
+})
