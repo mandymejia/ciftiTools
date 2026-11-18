@@ -16,7 +16,7 @@ Authors@R: c(
     person(given = "Zeshawn",
            family = "Zahid",
            email = "zeshawn.zahid@gmail.com",
-           role = c("ctb")),
+           role = c("ctb"),
            comment = c(ORCID = "0009-0002-1396-7408")),
     person(given = "John",
            family = "Muschelli",
@@ -71,4 +71,4 @@ VignetteBuilder:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Language: en-US
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1

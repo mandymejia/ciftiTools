@@ -89,6 +89,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Zeshawn Zahid \email{zeshawn.zahid@gmail.com} (\href{https://orcid.org/0009-0002-1396-7408}{ORCID}) [contributor]
   \item John Muschelli \email{muschellij2@gmail.com} (\href{https://orcid.org/0000-0001-6469-1750}{ORCID}) [contributor]
 }
 
