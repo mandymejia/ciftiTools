@@ -337,9 +337,10 @@ parc_borders <- function(parc, surf=NULL, hemisphere=c("left", "right")) {
     }
   }
 
-  x <- matrix(parc[as.vector(surf$faces)], ncol=ncol(surf$faces))
+  faces <- if (is.matrix(surf)) surf else surf$faces
+  x <- matrix(parc[as.vector(faces)], ncol=ncol(faces))
   x <- (x[,1] != x[,2]) | (x[,2] != x[,3])
-  x <- unique(as.vector(surf$faces[x,]))
+  x <- unique(as.vector(faces[x,]))
   isBorder <- rep(FALSE, length(parc))
   isBorder[x] <- TRUE
   isBorder
