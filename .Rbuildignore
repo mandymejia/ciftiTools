@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
+^appveyor\.yml$
 ^README\.Rmd$
 ^LICENSE\.md$
 ^deprecated$
