@@ -81,7 +81,12 @@ get_wb_cmd_path <- function(wb_path) {
       # New
       file.path(wb_path, "wb_view.app/Contents/usr/bin", "wb_command"),
       file.path(wb_path, "Contents/usr/bin", "wb_command"),
-      file.path("~/Applications/wb_view.app/Contents/usr/bin", "wb_command")
+      file.path("~/Applications/wb_view.app/Contents/usr/bin", "wb_command"),
+      # New 
+      file.path(wb_path, "Contents/usr/bin", "wb_command"),
+      file.path(wb_path, "ConnectomeWorkbench.app/Contents/usr/bin", "wb_command"),
+      file.path("~/Applications/ConnectomeWorkbench.app/Contents/usr/bin", "wb_command")
+
     )
     possible_paths <- possible_paths[vapply(possible_paths, file.exists, FALSE)]
     if (length(possible_paths) == 0) {
