@@ -1,3 +1,10 @@
+# 22.0
+
+* `write_nifti` patch for 4D inputs
+* `view_xifti_surface` patch for `isTRUE(together)`
+* README updated with new XQuartz / Tahoe info
+* Continuous Integration fix
+
 # 21.0
 
 * Use widgets and Chromium on Tahoe, to work around broken Open GL windows.
