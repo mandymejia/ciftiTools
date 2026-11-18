@@ -254,7 +254,7 @@ mask_with_boundary_surf <- function(
   # ----------------------------------------------------------------------------
   b_layers <- dist_from_mask_surf(faces, mask, width)
   b_adjies <- vector("list", width)
-  for (ii in 1:length(b_adjies)){
+  for (ii in seq_along(b_adjies)){
     b_adjies[[ii]] <- vert_adjacency(
       faces,
       v1 = which(b_layers == ii-1),
@@ -393,7 +393,7 @@ mask_with_boundary_surf <- function(
   #faces2$new <- rbind(faces[!faces2$rm,], faces2$new)
   verts_remaining <- unique(as.vector(faces2$new))
   verts2 <- rep(NA, V_)
-  verts2[verts_remaining] <- 1:length(verts_remaining)
+  verts2[verts_remaining] <- seq_along(verts_remaining)
   faces2$new <- matrix(verts2[as.vector(faces2$new)], ncol=s)
   list(vertices=vertices[verts_remaining,], faces=faces2$new)
 }
@@ -424,7 +424,7 @@ mask_surf <- function(surf, mask){
   nV <- nrow(vertices)
 
   # Check index of faces
-  if(min(faces) == 0){
+  if(length(faces) > 0 && min(faces) == 0){
     faces <- faces + 1
   }
 
@@ -439,16 +439,19 @@ mask_surf <- function(surf, mask){
   inmask <- which(mask==1)
 
   # Apply mask to vertices
-  vertices_new <- vertices[inmask,]
+  vertices_new <- vertices[inmask, , drop=FALSE]
 
   ### Apply mask to faces (triangles)
 
   # Identify triangles where any vertex is outside of the mask
-  faces <- faces[(faces[,1] %in% inmask) & (faces[,2] %in% inmask) & (faces[,3] %in% inmask),]
+  faces <- faces[
+    (faces[,1] %in% inmask) & (faces[,2] %in% inmask) & (faces[,3] %in% inmask),
+    , drop=FALSE
+  ]
 
   # Re-number faces
   faces_new <- faces*0
-  for(ii in 1:nrow(faces)){
+  for(ii in seq_len(nrow(faces))){
     faces_new[ii,1] <- which(inmask == faces[ii,1])
     faces_new[ii,2] <- which(inmask == faces[ii,2])
     faces_new[ii,3] <- which(inmask == faces[ii,3])

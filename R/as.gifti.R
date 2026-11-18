@@ -66,7 +66,7 @@ as.metric_gifti <- function(
   # Format data as a list.
   if (is.vector(data)) { data <- matrix(data, ncol=1) }
   if (suppressMessages(is.nummat(data))) {
-    data <- split(t(data), seq(ncol(data)))
+    data <- split(t(data), seq_len(ncol(data)))
     data <- lapply(data, function(x){matrix(x, ncol=1)})
     names(data) <- rep(intent_short, length(data))
   }
@@ -74,7 +74,13 @@ as.metric_gifti <- function(
   if (!is.list(data)) {
     stop("data must be a numeric matrix or a list of numeric vectors.")
   }
-  stopifnot(length(unique(vapply(data, length, 1))) == 1)
+  data_lengths <- vapply(data, length, 1)
+  if (length(data_lengths) == 0 || any(data_lengths == 0)) {
+    stop("`data` must contain at least one non-empty measurement.")
+  }
+  if (length(unique(data_lengths)) != 1) {
+    stop("All data entries must have the same length.")
+  }
 
   # Get data type.
   if (is.null(data_type)) {

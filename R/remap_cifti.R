@@ -23,9 +23,9 @@
 #'
 #'  The \code{write_dir} argument can be used to place each resampled file in
 #'  the same directory.
-#' @param remap_method \code{"adaptive"} (default) or \code{"adaptive"}
+#' @param remap_method \code{"adaptive"} (default) or \code{"barycentric"}
 #'  resampling. These options correspond to the Workbench command options
-#'  \code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, respectively.
+#'  \code{"ADAP_BARY_AREA"} and \code{"BARYCENTRIC"}, respectively.
 #'
 #'  For remapping between fs_LR group data and FreeSurfer fsaverage group data,
 #'  adaptive resampling should be used.
@@ -103,9 +103,9 @@ remap_cifti_wrapper <- function(
 #'  If \code{NULL} (default), will use the current working directory if \code{x}
 #'  was a CIFTI file, and a temporary directory if \code{x} was a \code{"xifti"}
 #'  object.
-#' @param remap_method \code{"adaptive"} (default) or \code{"adaptive"}
+#' @param remap_method \code{"adaptive"} (default) or \code{"barycentric"}
 #'  resampling. These options correspond to the Workbench command options
-#'  \code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, respectively.
+#'  \code{"ADAP_BARY_AREA"} and \code{"BARYCENTRIC"}, respectively.
 #'
 #'  For remapping fs_LR group data to fsaverage, barycentric should be
 #'  used. For remapping FreeSurfer fsaverage group data to fs_LR, adaptive
@@ -138,12 +138,11 @@ remap_cifti <- function(
   sphereL_target_fname=NULL, sphereR_target_fname=NULL,
   write_dir=NULL, mwall_values=c(NA, NaN), verbose=TRUE) {
 
+  remap_method <- match.arg(remap_method, c("adaptive", "barycentric"))
   input_is_xifti <- is.xifti(x, messages=FALSE)
 
   # Args check -----------------------------------------------------------------
   if (is.null(write_dir) & input_is_xifti) { write_dir <- tempdir() }
-  stopifnot(file.exists(areaL_original_fname))
-  stopifnot(file.exists(areaR_original_fname))
   surfL_return <- surfR_return <- FALSE
 
   if (verbose) { exec_time <- Sys.time() }
@@ -217,6 +216,28 @@ remap_cifti <- function(
   if (!("left" %in% brainstructures || "right" %in% brainstructures)) {
     warning("The CIFTI does not have cortical data, so there's nothing to remap.")
     if (input_is_xifti) { return(x) } else { return(NULL) }
+  }
+
+  if (remap_method == "adaptive") {
+    if ("left" %in% brainstructures) {
+      if (is.null(areaL_original_fname)) {
+        stop("Adaptive remapping requires `areaL_original_fname` for the left cortex.")
+      }
+      if (!file.exists(areaL_original_fname)) {
+        stop("`areaL_original_fname` does not exist: ", areaL_original_fname)
+      }
+    }
+    if ("right" %in% brainstructures) {
+      if (is.null(areaR_original_fname)) {
+        stop("Adaptive remapping requires `areaR_original_fname` for the right cortex.")
+      }
+      if (!file.exists(areaR_original_fname)) {
+        stop("`areaR_original_fname` does not exist: ", areaR_original_fname)
+      }
+    }
+  } else {
+    areaL_original_fname <- areaR_original_fname <- NULL
+    areaL_target_fname <- areaR_target_fname <- NULL
   }
 
   # Separate the CIFTI ---------------------------------------------------------

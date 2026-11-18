@@ -61,7 +61,7 @@ remove_xifti <- function(xifti, remove=NULL, remove_sub=NULL){
       if (any(is.na(remove_sub)) || !all(remove_sub %in% sst$ciftiTools_Name)) {
         stop("Invalid subcortical substructures in `remove_sub`.")
       }
-      for (ii in seq(length(remove_sub))) {
+      for (ii in seq_along(remove_sub)) {
         x_brainstemMask <- xifti$meta$subcort$labels != remove_sub[ii]
 
         # Take subset

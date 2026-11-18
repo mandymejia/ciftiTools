@@ -19,4 +19,17 @@ test_that("dscalar xiftis support arithmetic and math operations", {
 
   right_only <- as.xifti(cortexR = matrix(1, nrow = 2))
   expect_error(xii + right_only, "brainstructures")
+
+  left_masked_1 <- as.xifti(
+    cortexL = matrix(1:4),
+    cortexL_mwall = c(1, 1, 0, 0)
+  )
+  left_masked_2 <- as.xifti(
+    cortexL = matrix(1:4),
+    cortexL_mwall = c(1, 0, 1, 0)
+  )
+  expect_error(
+    left_masked_1 + left_masked_2,
+    "same resolution but different medial wall masks"
+  )
 })

@@ -82,9 +82,9 @@ remap_xifti(
 in \code{write_dir}. If \code{NULL}, will be written to "resampled.d*.nii".
 \code{write_dir} will be appended to the beginning of the path.}
 
-\item{remap_method}{\code{"adaptive"} (default) or \code{"adaptive"}
+\item{remap_method}{\code{"adaptive"} (default) or \code{"barycentric"}
 resampling. These options correspond to the Workbench command options
-\code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, respectively.
+\code{"ADAP_BARY_AREA"} and \code{"BARYCENTRIC"}, respectively.
 
 For remapping fs_LR group data to fsaverage, barycentric should be
 used. For remapping FreeSurfer fsaverage group data to fs_LR, adaptive

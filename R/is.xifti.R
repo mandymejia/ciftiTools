@@ -146,11 +146,13 @@ is.surf <- function(x) {
     message("x$faces must be only integers.\n"); return(FALSE)
   }
 
-  if (max(x$faces) > nrow(x$vertices)) {
-    message("The max vertex index in x$faces is too high.\n"); return(FALSE)
-  }
-  if (min(x$faces) < 1) {
-    message("The min vertex index in x$faces is too low.\n"); return(FALSE)
+  if (nrow(x$faces) > 0) {
+    if (max(x$faces) > nrow(x$vertices)) {
+      message("The max vertex index in x$faces is too high.\n"); return(FALSE)
+    }
+    if (min(x$faces) < 1) {
+      message("The min vertex index in x$faces is too low.\n"); return(FALSE)
+    }
   }
 
   if (!is.null(x$hemisphere)) {

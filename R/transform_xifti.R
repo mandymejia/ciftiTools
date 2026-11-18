@@ -155,21 +155,27 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {
     if (!identical(xifti$meta$cifti$names, xifti2$meta$cifti$names)) {
       ciftiTools_warn("The xiftis have different column names.\n")
     }
-
     for (bs in names(xifti$data)) {
       if (!is.null(xifti$data[[bs]])) {
-        if (nrow(xifti$data[[bs]]) != nrow(xifti2$data[[bs]])) {
-          if (grepl("cortex", bs)) {
-            len_mwall1 <- length(xifti$meta$cortex$medial_wall_mask[[gsub("cortex_", "", bs)]])
-            len_mwall2 <- length(xifti2$meta$cortex$medial_wall_mask[[gsub("cortex_", "", bs)]])
-            if (!is.null(len_mwall1) && len_mwall1 == len_mwall2) {
+        if (grepl("cortex", bs)) {
+          side <- sub("cortex_", "", bs)
+          mwall1 <- xifti$meta$cortex$medial_wall_mask[[side]]
+          mwall2 <- xifti2$meta$cortex$medial_wall_mask[[side]]
+          if (is.null(mwall1) && !is.null(mwall2)) {
+            mwall1 <- rep(TRUE, length(mwall2))
+          } else if (is.null(mwall2) && !is.null(mwall1)) {
+            mwall2 <- rep(TRUE, length(mwall1))
+          }
+          if (!identical(mwall1, mwall2)) {
+            if (length(mwall1) == length(mwall2)) {
               stop("The xiftis have the same resolution but different medial wall masks in the ", bs, " brainstructure.")
             } else {
-              stop("The xiftis have different number of vertices/voxels for the ", bs, " brainstructure.")
+              stop("The xiftis have different number of vertices for the ", bs, " brainstructure.")
             }
-          } else {
-            stop("The xiftis have different number of vertices/voxels for the ", bs, " brainstructure.")
           }
+        }
+        if (nrow(xifti$data[[bs]]) != nrow(xifti2$data[[bs]])) {
+          stop("The xiftis have different number of vertices/voxels for the ", bs, " brainstructure.")
         }
         xifti$data[[bs]][] <- tapp_wrap(xifti$data[[bs]], x2=xifti2$data[[bs]], FUN=FUN, idx=idx, ...)
       }

@@ -46,9 +46,9 @@ ignored if specified.
 The \code{write_dir} argument can be used to place each resampled file in
 the same directory.}
 
-\item{remap_method}{\code{"adaptive"} (default) or \code{"adaptive"}
+\item{remap_method}{\code{"adaptive"} (default) or \code{"barycentric"}
 resampling. These options correspond to the Workbench command options
-\code{"BARYCENTRIC"} and \code{"ADAP_BARY_AREA"}, respectively.
+\code{"ADAP_BARY_AREA"} and \code{"BARYCENTRIC"}, respectively.
 
 For remapping between fs_LR group data and FreeSurfer fsaverage group data,
 adaptive resampling should be used.}

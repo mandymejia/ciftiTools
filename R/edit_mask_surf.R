@@ -80,7 +80,8 @@ edit_mask_surf <- function(
     }
   }
 
-  for (dd in seq(depth)) {
+  nD <- if (do == "borders") 1L else depth
+  for (dd in seq_len(nD)) {
     x2 <- x
     x2[is.na(x2)] <- do != "dilate"
     y <- rowSums(matrix(x2[as.vector(surf$faces)], ncol=ncol(surf$faces)))

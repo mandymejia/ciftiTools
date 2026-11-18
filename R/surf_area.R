@@ -27,6 +27,11 @@ surf_area <- function(surf, by=c("vertex", "face")) {
   nF <- nrow(surf$faces)
   nV <- nrow(surf$vertices)
 
+  if (nF == 0) {
+    if (by == "face") { return(numeric(0)) }
+    return(numeric(nV))
+  }
+
   ### Step 1: area of each face
   # make an array that's faces by vertices by 3D coordinates
   x <- array(surf$vertices[surf$faces[],], dim=c(nF, 3, 3))
@@ -42,7 +47,7 @@ surf_area <- function(surf, by=c("vertex", "face")) {
   if (by == "face") { return(f) }
   
   ### Step 2: Area of each vertex
-  nFpV <- table(surf$faces)
+  nFpV <- tabulate(surf$faces, nbins=nV)
   maxFpV <- max(nFpV)
   
   if (!(all(nFpV %in% c(maxFpV, maxFpV-1)))) {
@@ -72,8 +77,8 @@ surf_area <- function(surf, by=c("vertex", "face")) {
   q <- ceiling((order(surf$faces[])-1) %% nrow(surf$faces))+1
   
   # assign dummy face (will have zero area) to vertices with 5 faces
-  verts_with_less <- sort(which(nFpV == maxFpV - 1))
-  for (vv in seq(length(verts_with_less))) {
+  verts_with_less <- which(nFpV == maxFpV - 1)
+  for (vv in verts_with_less) {
     q <- add_val(q, (vv*maxFpV), nF+1)
   }
   stopifnot(length(q) == nrow(surf$vertices)*maxFpV)
