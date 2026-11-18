@@ -252,6 +252,19 @@ these labels, but this error has since been corrected. See the
 “Important note” from this page:
 <https://github.com/ThomasYeoLab/CBIG/blob/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/README.md#version-12-schaefer2018_roisparcels_717networks_order>
 
+### When loading `rgl` on a Mac, how do I fix “Library not loaded: /opt/X11/lib/libGLU.1.dylib”?
+
+To fix the error that looks like this:
+
+    Error in dyn.load(dynlib <- getDynlib(dir)) : 
+      unable to load shared object '/Library/Frameworks/R.framework/Versions/4.6/Resources/library/rgl/libs/rgl.so':
+      dlopen(/Library/Frameworks/R.framework/Versions/4.6/Resources/library/rgl/libs/rgl.so, 0x0006): Library not loaded: /opt/X11/lib/libGLU.1.dylib
+      Referenced from: <(UUID)> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/rgl/libs/rgl.so
+      Reason: tried: '/opt/X11/lib/libGLU.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libGLU.1.dylib' (no such file), '/opt/X11/lib/libGLU.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libGLU.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libGLU.1.dylib' (no such file)
+
+you should [download XQuartz](https://www.xquartz.org/) and install it.
+Then, restart your computer and try loading `rgl` again.
+
 ## Related R extensions
 
 - NIFTI files:
@@ -267,17 +280,6 @@ these labels, but this error has since been corrected. See the
 - xml files: [`xml2`](https://CRAN.R-project.org/package=xml2)
 - Interactive 3D rendering:
   [`rgl`](https://CRAN.R-project.org/package=rgl)
-
-## Surface rendering issue on Mac OS Tahoe
-
-On Mac OS Tahoe, Open GL windows will not work due to a problem with
-`rgl` and XQuartz
-(<https://github.com/dmurdoch/rgl/issues/488#issuecomment-3506547361>).
-To render the cortical surface with `plot` or `view_xifti_surface`, you
-will need to choose to use the htmlwidget instead of the Open GL window.
-Set `widget=TRUE` for interactive viewing, and set `fname="*.html"` to
-write files. The `ciftiTools` development team is currently exploring
-workarounds for this issue.
 
 ## Data acknowledgement
 
