@@ -53,7 +53,7 @@ read_cifti_flat <- function(
   # If gifti_fname is not provided, use the CIFTI_fname but replace the 
   #   extension with "flat.gii".
   if (is.null(gifti_fname)) {
-    if (grepl(bname_cifti, extn_cii2)) {
+    if (grepl(extn_cii2, bname_cifti)) {
       gifti_fname <- gsub(extn_cii2, extn_gii2, bname_cifti)
     } else {
       gifti_fname <- paste0(bname_cifti, extn_gii)

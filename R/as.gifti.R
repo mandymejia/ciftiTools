@@ -64,7 +64,7 @@ as.metric_gifti <- function(
   }
   
   # Format data as a list.
-  if (is.vector(data)) { data <- matrix(data, ncol=1) }
+  if (is.vector(data) && !is.list(data)) { data <- matrix(data, ncol=1) }
   if (suppressMessages(is.nummat(data))) {
     data <- split(t(data), seq_len(ncol(data)))
     data <- lapply(data, function(x){matrix(x, ncol=1)})

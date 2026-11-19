@@ -193,8 +193,8 @@ smooth_cifti <- function(
     } else if (!is.null(x$meta$cortex$medial_wall_mask$right)) {
       x_res <- length(x$meta$cortex$medial_wall_mask$right)
     } else {
-      if (!is.null(x$data$cortex_right) && !is.null(x$data$cortex_right)) {
-        if (nrow(x$data$cortex_right) != nrow(x$data$cortex_right)) {
+      if (!is.null(x$data$cortex_left) && !is.null(x$data$cortex_right)) {
+        if (nrow(x$data$cortex_left) != nrow(x$data$cortex_right)) {
           stop(paste(
             "The cortex resolution needs to be known to resample the cortex surface",
             "for use in smoothing. But, there was no resampling resolution",
@@ -260,7 +260,7 @@ smooth_cifti <- function(
 #' @export
 smoothCIfTI <- function(
   x, cifti_target_fname=NULL,
-  surf_FWHM=5, vol_FWHM=5,
+  surf_FWHM=5, vol_FWHM=3,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
@@ -278,7 +278,7 @@ smoothCIfTI <- function(
 #' @export
 smoothcii <- function(
   x, cifti_target_fname=NULL,
-  surf_FWHM=5, vol_FWHM=5,
+  surf_FWHM=5, vol_FWHM=3,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){
@@ -296,7 +296,7 @@ smoothcii <- function(
 #' @export
 smooth_xifti <- function(
   x, cifti_target_fname=NULL,
-  surf_FWHM=5, vol_FWHM=5,
+  surf_FWHM=5, vol_FWHM=3,
   surfL_fname=NULL, surfR_fname=NULL, cerebellum_fname=NULL,
   subcortical_zeroes_as_NA=FALSE, cortical_zeroes_as_NA=FALSE,
   subcortical_merged=FALSE){

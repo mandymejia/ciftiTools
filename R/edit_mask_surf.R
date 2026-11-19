@@ -58,7 +58,7 @@ edit_mask_surf <- function(
   do <- match.arg(do, c("erode", "dilate", "borders"))
   if (do != "borders") {
     depth <- round(as.numeric(depth))
-    if (depth == 0) { return(x) }
+    if (depth == 0) { return(if (is.null(mwall)) x else x[mwall]) }
     if (depth < 0) { 
       do <- switch(do, erode="dilate", dilate="erode")
       depth <- -depth

@@ -108,6 +108,7 @@ read_surf <- function(surf, expected_hemisphere=NULL, resamp_res=NULL) {
 
   # Resample, if necessary & possible
   if (need_to_resample) {
+    if (is.null(hemisphere)) { hemisphere <- expected_hemisphere }
     if (is.null(hemisphere)) {
       warning("Cannot resample, because the hemisphere is unknown.")
     } else {

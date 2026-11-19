@@ -26,19 +26,17 @@ flatten_xifti <- function(xifti, medial_wall=NULL, subcort_order="alphabetical")
   if (!is.null(medial_wall)) {
     stopifnot(length(medial_wall) == 1)
     if (!is.null(xifti$data$cortex_left)) {
-      cortex_dat <- matrix(medial_wall,
-        nrow=length(xifti$meta$cortex$medial_wall_mask$left), 
-        ncol=ncol(xifti$data$cortex_left)
-      )
-      cortex_dat[xifti$meta$cortex$medial_wall_mask$left,] <- xifti$data$cortex_left
+      mwall_L <- xifti$meta$cortex$medial_wall_mask$left
+      if (is.null(mwall_L)) { mwall_L <- rep(TRUE, nrow(xifti$data$cortex_left)) }
+      cortex_dat <- matrix(medial_wall, nrow=length(mwall_L), ncol=ncol(xifti$data$cortex_left))
+      cortex_dat[mwall_L,] <- xifti$data$cortex_left
       xifti$data$cortex_left <- cortex_dat
     }
     if (!is.null(xifti$data$cortex_right)) {
-      cortex_dat <- matrix(medial_wall,
-        nrow=length(xifti$meta$cortex$medial_wall_mask$right), 
-        ncol=ncol(xifti$data$cortex_right)
-      )
-      cortex_dat[xifti$meta$cortex$medial_wall_mask$right,] <- xifti$data$cortex_right
+      mwall_R <- xifti$meta$cortex$medial_wall_mask$right
+      if (is.null(mwall_R)) { mwall_R <- rep(TRUE, nrow(xifti$data$cortex_right)) }
+      cortex_dat <- matrix(medial_wall, nrow=length(mwall_R), ncol=ncol(xifti$data$cortex_right))
+      cortex_dat[mwall_R,] <- xifti$data$cortex_right
       xifti$data$cortex_right <- cortex_dat
     }
   }

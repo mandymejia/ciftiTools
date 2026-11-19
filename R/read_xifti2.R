@@ -79,8 +79,9 @@ read_xifti2 <- function(
 
   # Check that each input file exists.
   badfile <- function(x){
+    if (is.null(x)) { return(FALSE) }
     if (!is.null(read_dir)) { x <- file.path(read_dir, x) }
-    (!is.null(x)) && (!file.exists(x))
+    !file.exists(x)
   }
   if (badfile(cortexL)) { stop("Left cortex does not reference an existing file.") }
   if (badfile(cortexL_mwall)) { stop("Left cortex ROI does not reference an existing file.") }

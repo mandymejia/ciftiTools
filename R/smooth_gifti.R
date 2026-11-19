@@ -71,21 +71,25 @@ smooth_gifti <- function(
 #' @rdname smooth_gifti
 #' @export
 smoothGIfTI <- function(
-  original_fname, target_fname, surf_fname, surf_FWHM=5,
-  zeroes_as_NA=FALSE) {
+  original_fname, target_fname, surf_fname=NULL, surf_FWHM=5,
+  hemisphere=c("left", "right"), ROI_fname=NULL, zeroes_as_NA=FALSE) {
 
   smooth_gifti(
-    original_fname, target_fname, surf_fname, surf_FWHM, zeroes_as_NA
+    original_fname=original_fname, target_fname=target_fname, surf_fname=surf_fname,
+    surf_FWHM=surf_FWHM, hemisphere=hemisphere, ROI_fname=ROI_fname,
+    zeroes_as_NA=zeroes_as_NA
   )
 }
 
 #' @rdname smooth_gifti
 #' @export
 smoothgii <- function(
-  original_fname, target_fname, surf_fname, surf_FWHM=5,
-  zeroes_as_NA=FALSE) {
+  original_fname, target_fname, surf_fname=NULL, surf_FWHM=5,
+  hemisphere=c("left", "right"), ROI_fname=NULL, zeroes_as_NA=FALSE) {
 
   smooth_gifti(
-    original_fname, target_fname, surf_fname, surf_FWHM, zeroes_as_NA
+    original_fname=original_fname, target_fname=target_fname, surf_fname=surf_fname,
+    surf_FWHM=surf_FWHM, hemisphere=hemisphere, ROI_fname=ROI_fname,
+    zeroes_as_NA=zeroes_as_NA
   )
 }

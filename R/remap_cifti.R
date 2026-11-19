@@ -160,12 +160,12 @@ remap_cifti <- function(
 
     # Drop the surfaces, if any. 
     if (!is.null(x$surf$cortex_left)) {
-      cat("Removing left cortex surface from `x`.")
-      remove_xifti(x, "cortex_left")
+      cat("Removing left cortex surface from `x`.\n")
+      x <- remove_xifti(x, "surf_left")
     }
     if (!is.null(x$surf$cortex_right)) {
-      cat("Removing right cortex surface from `x`.")
-      remove_xifti(x, "cortex_right")
+      cat("Removing right cortex surface from `x`.\n")
+      x <- remove_xifti(x, "surf_right")
     }
 
     # Write out the CIFTI.

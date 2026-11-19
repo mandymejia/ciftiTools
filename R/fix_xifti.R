@@ -18,11 +18,11 @@ fix_xifti <- function(xifti, verbose=TRUE) {
   bs <- names(xifti$data)[!vapply(xifti$data, is.null, FALSE)]
   for (b in bs) {
     if (!is.matrix(xifti$data[[b]])) {
-      cat("Coercing", b, "data to a matrix with one column\n")
+      if (verbose) { cat("Coercing", b, "data to a matrix with one column\n") }
       xifti$data[[b]] <- as.matrix(xifti$data[[b]])
     }
     if (!is.numeric(xifti$data[[b]])) {
-      cat("Coercing", b, "data to numeric.\n")
+      if (verbose) { cat("Coercing", b, "data to numeric.\n") }
       class(xifti$data[[b]]) <- "numeric"
     }
   }

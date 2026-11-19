@@ -160,8 +160,6 @@ resample_cifti_components <- function(
     target_fnames[[lab]] <- format_path(target_fnames[[lab]], write_dir, mode=2)
   }
 
-  original_fnames[names(original_fnames)] <- format_path(
-    as.character(original_fnames), read_dir, mode=4)
   # [TO DO]: error if a file name is absolute?
 
   # Step 2 and 3: Use -metric-resample or -surface-rsample to resample

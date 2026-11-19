@@ -38,10 +38,12 @@ remap_gifti <- function(
   original_fname, target_fname,
   hemisphere=c("left", "right"),
   remap_method=c("adaptive", "barycentric"),
-  area_original_fname, area_target_fname,
-  ROIcortex_original_fname, ROIcortex_target_fname,
-  sphere_original_fname, sphere_target_fname
+  area_original_fname=NULL, area_target_fname=NULL,
+  ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
+  sphere_original_fname=NULL, sphere_target_fname=NULL
 ){
+  hemisphere <- match.arg(hemisphere, c("left", "right"))
+  remap_method <- match.arg(remap_method, c("adaptive", "barycentric"))
 
   resample_gifti(
     original_fname=original_fname,

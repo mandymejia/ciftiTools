@@ -72,7 +72,7 @@ apply_parc <- function(xii, parc, FUN=colMeans, mwall_value=NA,
   out <- vector("list", nP)
   names(out) <- parc_names
   for (pp in seq(nP)) {
-    out[[pp]] <- FUN(xii[parc_vec==parc_keys[pp],], ...)
+    out[[pp]] <- FUN(xii[which(parc_vec==parc_keys[pp]),,drop=FALSE], ...)
   }
 
   # Check that the output length is the same for each parcel.
@@ -340,7 +340,7 @@ parc_borders <- function(parc, surf=NULL, hemisphere=c("left", "right")) {
   faces <- if (is.matrix(surf)) surf else surf$faces
   x <- matrix(parc[as.vector(faces)], ncol=ncol(faces))
   x <- (x[,1] != x[,2]) | (x[,2] != x[,3])
-  x <- unique(as.vector(faces[x,]))
+  x <- unique(as.vector(faces[which(x),,drop=FALSE]))
   isBorder <- rep(FALSE, length(parc))
   isBorder[x] <- TRUE
   isBorder

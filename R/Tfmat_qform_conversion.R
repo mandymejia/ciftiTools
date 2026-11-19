@@ -106,6 +106,7 @@ qform_from_Tfmat <- function(A) {
     b <- (r13 + r31) / (4 * d)
     c <- (r23 + r32) / (4 * d)
   }
+  if (a < 0) { a <- -a; b <- -b; c <- -c; d <- -d }
   # Normalize quaternions.
   qnorm <- sqrt(a^2 + b^2 + c^2+ d^2)
   a <- a / qnorm

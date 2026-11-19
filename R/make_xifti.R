@@ -142,12 +142,12 @@ make_xifti <- function(
   read_dir=NULL, validate=TRUE) {
 
   # Add `read_dir` and check file paths.
-  if (is.fname(cortexL)) { cortexL <- format_path(cortexL, read_dir, mode=4) }
-  if (is.fname(cortexR)) { cortexR <- format_path(cortexR, read_dir, mode=4) }
-  if (is.fname(subcortVol)) { subcortVol <- format_path(subcortVol, read_dir, mode=4) }
-  if (is.fname(subcortLabs)) { subcortLabs <- format_path(subcortLabs, read_dir, mode=4) }
-  if (is.fname(surfL)) { surfL <- format_path(surfL, read_dir, mode=4) }
-  if (is.fname(surfR)) { surfR <- format_path(surfR, read_dir, mode=4) }
+  if (is.character(cortexL) && length(cortexL)==1) { cortexL <- format_path(cortexL, read_dir, mode=4) }
+  if (is.character(cortexR) && length(cortexR)==1) { cortexR <- format_path(cortexR, read_dir, mode=4) }
+  if (is.character(subcortVol) && length(subcortVol)==1) { subcortVol <- format_path(subcortVol, read_dir, mode=4) }
+  if (is.character(subcortLabs) && length(subcortLabs)==1) { subcortLabs <- format_path(subcortLabs, read_dir, mode=4) }
+  if (is.character(surfL) && length(surfL)==1) { surfL <- format_path(surfL, read_dir, mode=4) }
+  if (is.character(surfR) && length(surfR)==1) { surfR <- format_path(surfR, read_dir, mode=4) }
 
   if (is.fname(cortexL)) {
     if (!(endsWith(cortexL, "label.gii") || endsWith(cortexL, "func.gii"))) {
@@ -207,7 +207,7 @@ make_xifti <- function(
 
     ## Column names and label table, if intent is not dtseries.
     if (is.null(xifti$meta$cifti$intent) || xifti$meta$cifti$intent != 3002) {
-      xifti$meta$cifti$names <- x$col_names
+      if (!is.null(x$col_names)) { xifti$meta$cifti$names <- x$col_names }
       if (!is.null(x$label_table)) {
         xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
         if (!is.null(x$col_names)) {
@@ -252,11 +252,11 @@ make_xifti <- function(
               paste(x$col_names, collapse=","), "\n\n",
               "Pasting them together.\n"
             ))
-            xifti$meta$cifti$names <- paste(x$col_names, xifti$meta$cifti$names, " ||| ")
+            xifti$meta$cifti$names <- paste(x$col_names, xifti$meta$cifti$names, sep=" ||| ")
           }
+        } else {
+          xifti$meta$cifti$names <- x$col_names
         }
-      } else {
-        xifti$meta$cifti$names <- x$col_names
       }
       if (!is.null(x$label_table)) {
         if (!is.null(xifti$meta$cifti$labels)) {
@@ -268,8 +268,8 @@ make_xifti <- function(
           }
         } else {
           xifti$meta$cifti$labels <- rep(list(x$label_table), ncol(x$data))
-          if (!is.null(xifti$meta$cifti$col_names)) {
-            names(xifti$meta$cifti$labels) <- xifti$meta$cifti$col_names
+          if (!is.null(xifti$meta$cifti$names)) {
+            names(xifti$meta$cifti$labels) <- xifti$meta$cifti$names
           }
         }
       }

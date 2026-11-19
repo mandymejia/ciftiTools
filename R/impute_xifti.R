@@ -283,7 +283,10 @@ impute_xifti <- function(
     # Get the index of each voxel in both vector and array form.
     # `ind_arr2vox` converts from the latter to the former.
     ind_arr2vox <- function(arr) {
-      arr[1,] + (arr[2,]-1)*sdim[1] + (arr[3,]-1)*sdim[2]*sdim[1]
+      oob <- arr[1,] < 1 | arr[1,] > sdim[1] | arr[2,] < 1 | arr[2,] > sdim[2] | arr[3,] < 1 | arr[3,] > sdim[3]
+      out <- arr[1,] + (arr[2,]-1)*sdim[1] + (arr[3,]-1)*sdim[2]*sdim[1]
+      out[oob] <- NA
+      out
     }
     ind_arr <- t(which(xifti$meta$subcort$mask, arr.ind=TRUE))
     ind_vox <- which(xifti$meta$subcort$mask)

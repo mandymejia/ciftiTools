@@ -124,7 +124,7 @@ transform_xifti <- function(xifti, FUN, xifti2=NULL, idx=NULL, ...) {
       }
     }
   # matrix + xifti
-  } else if (is.numeric(xifti) && length(dim(xifti))==2 && is.xifti(xifti2, messages=FALSE && all(dim(xifti) == dim(xifti2)))) {
+  } else if (is.numeric(xifti) && length(dim(xifti))==2 && is.xifti(xifti2, messages=FALSE) && all(dim(xifti) == dim(xifti2))) {
     xifti <- newdata_xifti(xifti2, xifti)
     for (bs in names(xifti2$data)) {
       if (!is.null(xifti2$data[[bs]])) {
@@ -225,7 +225,10 @@ Math.xifti <- function(x, ...) {
 #' @name S3_Ops
 #' @method Ops xifti
 #' @export
-Ops.xifti <- function(e1, e2=NULL) {
+Ops.xifti <- function(e1, e2) {
+  if (missing(e2)) {
+    return(transform_xifti(e1, function(q1){do.call(.Generic, list(q1))}))
+  }
   transform_xifti(e1, function(q1, q2){do.call(.Generic, list(q1, q2))}, e2)
 }
 

@@ -332,31 +332,33 @@ write_spheres <- function(
 #' @rdname resample_gifti
 #' @export
 resampleGIfTI <- function(
-  original_fname, target_fname, hemisphere,
+  original_fname, target_fname, hemisphere=c("left", "right"),
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL){
 
   resample_gifti(
-    original_fname, target_fname, hemisphere,
-    file_type, original_res, resamp_res,
-    ROIcortex_original_fname, ROIcortex_target_fname,
-    read_dir, write_dir
+    original_fname=original_fname, target_fname=target_fname, hemisphere=hemisphere,
+    file_type=file_type, original_res=original_res, resamp_res=resamp_res,
+    ROIcortex_original_fname=ROIcortex_original_fname,
+    ROIcortex_target_fname=ROIcortex_target_fname,
+    read_dir=read_dir, write_dir=write_dir
   )
 }
 
 #' @rdname resample_gifti
 #' @export
 resamplegii <- function(
-  original_fname, target_fname, hemisphere,
+  original_fname, target_fname, hemisphere=c("left", "right"),
   file_type=NULL, original_res=NULL, resamp_res,
   ROIcortex_original_fname=NULL, ROIcortex_target_fname=NULL,
   read_dir=NULL, write_dir=NULL){
 
   resample_gifti(
-    original_fname, target_fname, hemisphere,
-    file_type, original_res, resamp_res,
-    ROIcortex_original_fname, ROIcortex_target_fname,
-    read_dir, write_dir
+    original_fname=original_fname, target_fname=target_fname, hemisphere=hemisphere,
+    file_type=file_type, original_res=original_res, resamp_res=resamp_res,
+    ROIcortex_original_fname=ROIcortex_original_fname,
+    ROIcortex_target_fname=ROIcortex_target_fname,
+    read_dir=read_dir, write_dir=write_dir
   )
 }

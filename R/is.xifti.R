@@ -364,7 +364,7 @@ is.xifti_meta <- function(x) {
           time_units <- c("second", "hertz", "meter", "radian")
           if (!(x$cifti$time_unit %in% time_units)) {
             message("cifti$time_unit must be second, hertz, meter, or radian.\n")
-            if (tolower(x$cifti_time_unit) %in% time_units) {
+            if (tolower(x$cifti$time_unit) %in% time_units) {
               message("Use lowercase.\n")
             }
             return(FALSE)

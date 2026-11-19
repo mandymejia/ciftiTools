@@ -20,7 +20,7 @@ scale_xifti <- function(xifti, center=TRUE, scale=TRUE){
     }
   }
 
-  xifti <- newdata_xifti(
+  newdata_xifti(
     xifti,
     scale(as.matrix(xifti), center=center, scale=scale)
   )

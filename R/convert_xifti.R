@@ -352,7 +352,7 @@ convert_to_dscalar <- function(x, cifti_target_fname=NULL, names=NULL) {
     }
 
     cmd <- paste(
-      "-cifti-change-mapping", x,
+      "-cifti-change-mapping", sys_path(x),
       "ROW", sys_path(cifti_target_fname), "-scalar"
     )
 

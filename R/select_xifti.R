@@ -37,7 +37,7 @@ select_xifti <- function(xifti, idx, add_meta="select") {
   if (!is.null(xifti$meta$cifti$labels)) {
     xifti$meta$cifti$labels <- xifti$meta$cifti$labels[idx]
   }
-  if (length(add_meta) > 0) {
+  if (length(add_meta) > 0 && nzchar(as.character(add_meta)[1])) {
     add_meta <- as.character(add_meta)
     if (length(add_meta) > 1) { warning("Using the first entry of `add_meta`.") }
     xifti$meta$cifti$misc[[add_meta]] <- idx
