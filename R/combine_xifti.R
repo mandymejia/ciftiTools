@@ -50,7 +50,7 @@ combine_xifti <- function(..., xii_list=NULL, meta=c("first", "all")) {
     dlabel_vals <- unique(do.call(c, lapply(out$meta$cifti$labels, function(x){x$Key})))
   }
   T_ <- ncol_xifti(out)
-  for (ii in seq(2, length(xiis))) {
+  for (ii in seq_along(xiis)[-1]) {
     # More validity checks.
     if (ncol_xifti(xiis[[ii]]) != T_) {
       stop(
