@@ -46,18 +46,18 @@ view_surf <- function(
 
   # If surface arguments are named, use the names to get the hemisphere.
   if (any(names(surf) == "surfL")) {
-    this_hemi <- is.null(surf[names(surf) == "surfL"]$hemisphere)
+    this_hemi <- surf[["surfL"]]$hemisphere
     if (is.null(this_hemi)) {
-      surf[names(surf) == "surfL"]$hemisphere <- "left"
-    } else {
+      surf[["surfL"]]$hemisphere <- "left"
+    } else if (this_hemi != "left") {
       stop("surfL argument represents the right hemisphere.")
     }
   }
   if (any(names(surf) == "surfR")) {
-    this_hemi <- is.null(surf[names(surf) == "surfR"]$hemisphere)
+    this_hemi <- surf[["surfR"]]$hemisphere
     if (is.null(this_hemi)) {
-      surf[names(surf) == "surfR"]$hemisphere <- "right"
-    } else {
+      surf[["surfR"]]$hemisphere <- "right"
+    } else if (this_hemi != "right") {
       stop("surfR argument represents the left hemisphere.")
     }
   }
@@ -115,7 +115,7 @@ view_surf <- function(
     hemisphere=hemisphere, view=view, widget=widget, title=title, 
     fname=fname, cex.title=cex.title, text_color=text_color, bg=bg,
     alpha=alpha, edge_color=edge_color, 
-    vertex_color=vertex_color, vertex_size=vertex_size,
+    vertex_color=vertex_color, vertex_size=vertex_size, material=material,
     width=width, height=height, zoom=zoom
   )
 }
@@ -135,15 +135,12 @@ view_surf <- function(
 #' @method plot surf
 #' 
 #' @export
-plot.surf <- function(x, ...){
+plot.surf <- function(x, hemisphere=NULL, ...){
   stopifnot(is.surf(x))
 
-  if (is.null(x$hemisphere)) {
-    if ("hemisphere" %in% names(list(...))) {
-      hemisphere <- list(...)$hemisphere
-      stopifnot(hemisphere %in% c("left", "right"))
-      x$hemisphere <- hemisphere
-    }
+  if (is.null(x$hemisphere) && !is.null(hemisphere)) {
+    stopifnot(hemisphere %in% c("left", "right"))
+    x$hemisphere <- hemisphere
   }
 
   view_surf(x, ...)

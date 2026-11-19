@@ -234,7 +234,7 @@ view_xifti_surface.color <- function(
   nvertL <- ifelse("left" %in% hemisphere, nrow(values$left), 0)
   if (!is.null(values)) {
     values <- do.call(rbind, values)
-    values[values == NaN] <- NA
+    values[is.nan(values)] <- NA
     if (all(is.na(values))) { values <- NULL }
   }
 
@@ -999,7 +999,7 @@ view_xifti_surface <- function(
   }
   alpha <- as.numeric(alpha)
   if (!is.null(edge_color)) { edge_color <- as.character(edge_color) }
-  if (!is.null(vertex_color)) { vertex_color <- as.character(vertex_color) }
+  vertex_color <- if (is.null(vertex_color)) "black" else as.character(vertex_color)
   if (!is.null(vertex_size)) { vertex_size <- as.numeric(vertex_size) }
 
   # `width`, `height`, `zoom`

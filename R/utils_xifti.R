@@ -34,7 +34,7 @@ summary.xifti <- function(object, ...) {
   names(x$surf) <- bs_nice[names(x$surf)]
 
   # Handle NULL/0/etc.
-  x$verts_per_bs[vapply(x$vertx_per_bs, is.null, FALSE)] <- 0
+  x$verts_per_bs[vapply(x$verts_per_bs, is.null, FALSE)] <- 0
   x["verts_per_bs"] <- list(unlist(x$verts_per_bs))
   x$medial_wall_mask[vapply(x$medial_wall_mask, dim, 0) < 1] <- NULL
   if (all(vapply(x$medial_wall_mask, is.null, FALSE))) {

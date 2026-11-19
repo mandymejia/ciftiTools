@@ -160,7 +160,7 @@ write_xifti2 <- function(
       label_table,
       sep_fnames2["subcortVol"],
       sep_fnames2["subcortLabs"],
-      sep_fnames["ROIsubcortVol"],
+      if ("ROIsubcortVol" %in% names(sep_fnames)) { sep_fnames[["ROIsubcortVol"]] } else { NULL },
       fill=0
     )
   }

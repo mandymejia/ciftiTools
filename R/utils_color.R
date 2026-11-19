@@ -483,7 +483,7 @@ expand_color_pal <- function(pal, COLOR_RES=255) {
 #'
 use_color_pal <- function(data_values, pal, color_NA="white", indices=FALSE) {
 
-  stopifnot(is.character(color_NA) && length(color_NA==1))
+  stopifnot(is.character(color_NA) && length(color_NA)==1)
 
   mask <- is.na(data_values)
 

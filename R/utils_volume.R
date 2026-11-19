@@ -147,8 +147,8 @@ crop_vol <- function(x) {
 #'
 vox_locations <- function(mask, trans_mat, trans_units=NULL){
   list(
-    coords = (cbind(which(mask, arr.ind=TRUE), 1) %*% trans_mat)[,seq(3)],
-    trans_units = NULL
+    coords = (cbind(which(mask, arr.ind=TRUE) - 1, 1) %*% t(trans_mat))[,seq(3)],
+    trans_units = trans_units
   )
 }
 

@@ -52,7 +52,7 @@ view_xifti.title <- function(xifti_meta, idx){
     if (!any(vapply(xifti_meta$cifti[c("time_start", "time_step", "time_unit")], is.null, FALSE))) {
       title <- paste0(
         title, " (",
-        xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*idx,
+        xifti_meta$cifti$time_start+xifti_meta$cifti$time_step*(idx-1),
         " ", xifti_meta$cifti$time_unit, "s)"
       )
     }
@@ -346,7 +346,6 @@ view_xifti <- function(xifti, what=NULL, ...) {
     if (!is.null(values)) {
 
       # Determine `color_mode` and `colors`
-      if (args$color_mode == "sequential")
       if (args$color_mode == "auto" || is.null(args$colors)) {
         if (args$color_mode == "auto") {
           if (length(args$zlim) == 3) {

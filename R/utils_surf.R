@@ -268,6 +268,7 @@ mask_with_boundary_surf <- function(
   lay_idxs <- c(0, seq(1, width1, k1))
   if (width2 != 0) { lay_idxs <- c(lay_idxs, seq(width1+1, width1+width2, k2)) }
   lay_k <- c(1, rep(k1, width1), rep(k2, width2))
+  lay_k <- lay_k[lay_idxs + 1]
 
   # At each iteration, we will calcuate these "layer facts":
   # Note: verts_pre must be in radial order: lay$verts[lay$rad_order],]

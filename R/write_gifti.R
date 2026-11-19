@@ -74,6 +74,7 @@ write_metric_gifti <- function(
     }
   }
 
+  data_type <- gsub("NIFTI_TYPE_", "", toupper(data_type[1]))
   T_ <- length(x$data)
 
   if (data_type=="INT32") {
@@ -106,7 +107,7 @@ write_metric_gifti <- function(
           }
           x$data_meta[[ii]][which(md_names=="Name")[1],2] <- col_names[ii]
         } else {
-          x$data_meta[[ii]] <- rbind(x$data_meta[[ii]], c("names"="Name", "vals"=x$data_meta[[ii]]))
+          x$data_meta[[ii]] <- rbind(x$data_meta[[ii]], c("names"="Name", "vals"=col_names[ii]))
         }
       } else {
         ciftiTools_warn(paste0("Data meta entry for data column ", ii, "did not have the expected columns `names` and `vals`. Overwriting."))

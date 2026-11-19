@@ -138,9 +138,9 @@ merge_kwargs <- function(kwargsA, kwargsB,
     stop(paste0(
       "A keyword argument(s) was provided twice with different values. Here is the kwarg(s) in disagreement:\n",
       "The ", labelA, " was:\n",
-      "\"", paste0(kwargsA[kwargs_mismatch], collapse="\", \""), "\".\n",
+      "\"", paste0(kwargsA[repeated][kwargs_mismatch], collapse="\", \""), "\".\n",
       "The ", labelB, " was:\n",
-      "\"", paste0(kwargsB[kwargs_mismatch], collapse="\", \""), "\".\n",
+      "\"", paste0(kwargsB[repeated][kwargs_mismatch], collapse="\", \""), "\".\n",
       extraMsg
     ))
   }

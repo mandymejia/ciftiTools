@@ -564,7 +564,7 @@ view_xifti_volume <- function(
     }
   }
 
-  values[values == NaN] <- NA
+  values[is.nan(values)] <- NA
   unique_vals <- NULL
   if (all(is.na(values))) {
     values <- NULL
