@@ -21,7 +21,7 @@
 #' @family manipulating xifti
 #' @export
 #' 
-apply_xifti <- function(xifti, margin=c(1,2), FUN, ...) {
+apply_xifti <- function(xifti, margin=1, FUN, ...) {
   if (!is.xifti(xifti, messages=FALSE)) {
     stop("`xifti` is not a xifti.")
   }
